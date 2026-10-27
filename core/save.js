@@ -1,5 +1,6 @@
 import {DEFAULT_BINDINGS,normalizeBindings} from '../game/bindings.js';
 import {cleanFieldMission} from '../game/field-mission.js';
+import {cleanDaily,emptyDaily} from '../game/daily.js';
 import {JEWEL} from '../game/jewels.js';
 import {cleanHouse} from '../game/furniture.js';
 import {LEGACY} from '../academics/bank.js';
@@ -40,7 +41,7 @@ export const VERSION=9;
    docs/reference/SPEC_DECISIONS.md). An additive field, not a format change: a save without it is from before the re-curve. */
 export const LADDER=2;
 
-export function fresh(){return {version:VERSION,hero:'warrior',delve:emptyDelve(),skills:{crafting:0},adventurer:{tasks:{}},heroNames:{},fieldMission:cleanFieldMission(),level:1,xp:0,gold:30,mastery:{},answers:{},loadouts:{},equipment:{},potions:3,regenPotions:0,potionKind:'health',pet:'study',jewels:{owned:{},worn:{necklace:null,ring:null},pity:{}},gear:emptyGear(),house:{owned:{},items:[]},petBond:{},cleared:[],bossPhase2:false,cinematicSeen:false,schoolMode:null,settings:{sound:true,music:true,motion:!globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches,bindings:{...DEFAULT_BINDINGS}},started:false,lessons:{},kept:[],placement:{},levels:{},starPass:[],bestiary:{},/* v2:hub */boons:{pending:[],bounty:null},hub:{seen:[]},party:emptyParty(),quests:emptyQuests(),town:{seen:[]},/* fast travel (25 Oct, additive within v9) */travel:{places:[],hinted:false},/* v2:edu */awakened:false,/* v2:gamedesign */ladder:LADDER};}
+export function fresh(){return {version:VERSION,hero:'warrior',delve:emptyDelve(),skills:{crafting:0},adventurer:{tasks:{}},heroNames:{},fieldMission:cleanFieldMission(),level:1,xp:0,gold:30,mastery:{},answers:{},loadouts:{},equipment:{},potions:3,regenPotions:0,potionKind:'health',pet:'study',jewels:{owned:{},worn:{necklace:null,ring:null},pity:{}},gear:emptyGear(),house:{owned:{},items:[]},petBond:{},cleared:[],bossPhase2:false,cinematicSeen:false,schoolMode:null,settings:{sound:true,music:true,motion:!globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches,bindings:{...DEFAULT_BINDINGS}},started:false,lessons:{},kept:[],placement:{},levels:{},starPass:[],bestiary:{},/* v2:hub */boons:{pending:[],bounty:null},hub:{seen:[]},party:emptyParty(),quests:emptyQuests(),town:{seen:[]},/* fast travel (25 Oct, additive within v9) */travel:{places:[],hinted:false},/* daily goals (herocard-oct27, additive within v9, no streaks) */daily:emptyDaily(),/* v2:edu */awakened:false,/* v2:gamedesign */ladder:LADDER};}
 
 const obj=v=>!!v&&typeof v==='object'&&!Array.isArray(v);
 const HEROES=['warrior','mage','rogue','ranger','paladin','berserker','summoner'];
@@ -181,6 +182,9 @@ const frac=(v,a,b)=>Math.max(a,Math.min(b,Number(v)||0));
 
  /* fast travel (25 Oct, game/fasttravel.js): additive within v9, so no version bump; a save without it counts every place it clearly reached */
  s.travel=cleanTravel(value.travel,s);
+
+ /* daily goals (herocard-oct27, game/daily.js): additive within v9; a save without them starts empty, and nothing counts days */
+ s.daily=cleanDaily(value.daily);
 
  syncTasks(s);
  s.version=VERSION;
