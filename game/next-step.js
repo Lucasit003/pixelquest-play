@@ -70,7 +70,8 @@ function adventure(save){
  return null;
 }
 export function nextStep(save,{room}={}){
- if(!levelDone(save,'prologue'))return {id:'prologue',text:'Goblins at the south gate! Go and see.',target:{kind:'gate'}};
+ /* newplayer-oct27: after a lost first fight the HUD no longer reads as if the child had never been to the gate; it offers the Library too, as the defeat card does */
+ if(!levelDone(save,'prologue'))return {id:'prologue',text:save?.levels?.prologue?.plays>0?'Goblins still hold the south gate. Try again, or awaken an ability at the Library first.':'Goblins at the south gate! Go and see.',target:{kind:'gate'}};
  /* 25 Oct (first-hour playtest): after a defeat with an empty bag the goal points at the Alchemist first, when the hero can afford a
     potion. It clears as soon as one is bought, or once that level is won (levels[id].resolve counts defeats since the last win).
     oct26-midgame: it names the Apothecary, the shop's name on its door, the map and fast travel. */

@@ -2561,3 +2561,10 @@ html:not(.m-mode) #toast.travel-hint{top:auto;bottom:calc(6px + 13*var(--u) + 11
 .m-mode dialog:is([data-view=alchemist],[data-view=tiers]){width:100vw;max-width:none}
 /* balance-oct26: the result card's hero level line (the one level counter on the card) */
 dialog[data-view=result] .level-hero-progress{display:flex;align-items:center;justify-content:center;gap:8px;margin:4px 0 0}dialog[data-view=result] .level-hero-progress .run-bar{width:120px}dialog[data-view=result] .level-hero-progress strong{color:#ffe9a8}
+
+/* newplayer-oct27: on a phone a placement or quiz reading with two answers no longer hides its own question: the answer row stops reserving a second line, the reading takes the room, and Read to me sits under the picture so the text runs wide */
+@media(max-height:500px){html.m-mode #modal#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question:has(#quiz-feedback:empty)>#quiz-form.choice-form:not(:has(.choice-answers>:nth-child(3))){min-height:0;flex:0 0 auto}
+html.m-mode #modal#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question:has(#quiz-feedback:empty)>.question-reading{flex:1 1 auto}
+html.m-mode #modal#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question:has(#quiz-feedback:empty)>.question-reading:has(>#quiz-pic)>.edu-read{grid-column:1;grid-row:2;align-self:start;justify-self:start}
+html.m-mode #modal#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question:has(#quiz-feedback:empty)>.question-reading:has(>#quiz-pic)>h3{grid-column:2/4;grid-row:1/span 2;align-self:start}
+html.m-mode #modal#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question:has(#quiz-feedback:empty)>.question-reading:has(>#quiz-pic){align-items:start;grid-template-rows:auto 1fr}}

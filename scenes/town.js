@@ -777,13 +777,14 @@ export function drawHub(c, state, t, kit) {
   const hidden = restoreOf(S).hidden;
   for (const i of list) {
     if (hidden.has(i) || lot?.step.has(i)) continue;
-    const swapped = !!lot?.swap.has(i), s = swapped ? [D.sprites[i][0], BARRACKS.x, BARRACKS.y, 224, 240, BARRACKS.base, 8, -1] : D.sprites[i];
+    const swapped = !!lot?.swap.has(i), s = swapped ? Object.assign([D.sprites[i][0], BARRACKS.x, BARRACKS.y, 224, 240, BARRACKS.base, 8, -1], {barracks: true}) : D.sprites[i];
     /* overhead art (a room's vignette, chandeliers, chimney smoke) goes over everyone, and over the flames */
     if (s[5] >= 1e6) ambient();
     while (fi < figures.length && figures[fi].y < s[5]) { if (figures[fi].hero) heroAt = i; figures[fi++].draw(); }
     /* every sprite drawn over the hero can hide him (hedges and stalls as well as roofs and trees); the
        ghost is cut to their opaque pixels, so this only ever shows where he is really covered */
-    if (heroAt >= 0 && !(s[6] & 8)) occluders.push(s);
+    /* newplayer-oct27: the Barracks is drawn from its own image and carries the shadow flag (8), which kept it out of this list: a hero walking behind it vanished */
+    if (heroAt >= 0 && (!(s[6] & 8) || s.barracks)) occluders.push(s);
     if (swapped) { const im = (H.barracks ??= load(BARRACKS.img)); if (ready(im)) c.drawImage(im, BARRACKS.x, BARRACKS.y); continue; }
     drawSprite(c, I, D, s, ms);
   }
@@ -955,7 +956,7 @@ function silhouette(c, p, t, kit, over, I, D, ms) {
   if (px) { const d = px.data; for (let i = 3; i < d.length; i += 4) { d[i] = d[i] > 127 ? 255 : 0; if (d[i]) { body++; const n = (i - 3) / 4, x = n % 120, y = Math.floor(n / 120); x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); } } g.putImageData(px, 0, 0); }
   g.globalCompositeOperation = 'source-in'; g.fillStyle = GHOST.color; g.fillRect(0, 0, 120, 110);
   m.setTransform(1, 0, 0, 1, 0, 0); m.clearRect(0, 0, 120, 110); m.imageSmoothingEnabled = false;
-  m.translate(-bx, -by); for (const s of over) drawSprite(m, I, D, s, ms, true); m.setTransform(1, 0, 0, 1, 0, 0);
+  m.translate(-bx, -by); for (const s of over) { if (!s.barracks) drawSprite(m, I, D, s, ms, true); else if (ready(H.barracks)) m.drawImage(H.barracks, s[1], s[2]); } m.setTransform(1, 0, 0, 1, 0, 0);
   const edge=xedge.getContext('2d');edge.clearRect(0,0,120,110);edge.drawImage(xray,0,0);g.globalCompositeOperation = 'source-over';for(const [dx,dy] of [[-1,0],[1,0],[0,-1],[0,1]])g.drawImage(xedge,dx,dy);g.globalCompositeOperation='destination-out';g.drawImage(xedge,0,0);edge.globalCompositeOperation='source-in';edge.fillStyle=GHOST.fill;edge.fillRect(0,0,120,110);edge.globalCompositeOperation='source-over';g.globalCompositeOperation='source-over';g.drawImage(xedge,0,0);g.globalCompositeOperation = 'destination-in'; g.drawImage(xmask, 0, 0); g.globalCompositeOperation = 'source-over';
   /* a hero only ankle-deep in a bush is plainly visible: ghost him only when a real share of him is covered */
   /* Only the body and its one-pixel outline can survive the mask. Read that rectangle, not the empty padding. */

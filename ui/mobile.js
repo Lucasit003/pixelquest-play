@@ -73,12 +73,15 @@ async function startJoystick(){
   doc().documentElement.classList.add('m-dpad');
  }
 }
-const VERB=/^(talk|leave|enter|read|search|study|open|rest|shop|buy|travel|place|pray|hire)\b/i;
+const VERB=/^(talk|leave|enter|read|search|study|open|rest|shop|buy|travel|place|pray|hire|sleep|play|pet|choose|plan|defend|ask|order|warm|browse|go)\b/i;
+/* newplayer-oct27: a sign, board or tally is read, not opened ("Village noticeboard" said Open) */
+const READS=/notice|board|signpost|timetable|tally|map\b/i;
 export function promptVerb(text){
  const t=String(text||'').trim();if(!t)return '';
  const m=t.match(VERB);if(m)return m[1][0].toUpperCase()+m[1].slice(1).toLowerCase();
  if(/talk to/i.test(t)||t.includes(':'))return 'Talk';
- return /gate|door|road|path|map/i.test(t)?'Go':'Open';
+ if(READS.test(t)&&!/gate|road|path|lane/i.test(t))return 'Read';
+ return /gate|door|road|path|lane|pier|stair/i.test(t)?'Go':'Open';
 }
 function portrait(){const w=win();return (w.innerHeight||0)>(w.innerWidth||0);}
 function orient(){
