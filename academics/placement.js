@@ -99,6 +99,10 @@ export function finishPlacement(save,run){
  /* balance-oct26 (owner): the highest grade passed opens, even past a failed lower block (Middle 2/4, 4/4, 3/4 opens Grade 8; it
     used to stop at the failed Grade 6 and open nothing). Every grade below a placement is open too (lessons.js gradeOpen), so a
     later pass also opens Grade 6. Same rule for the Elementary and High checks. Still only ever raises; never masters a topic. */
+ /* hook-oct27 (lead, newplayer-oct27 finding 8): a Middle or High check that passes no grade still opens the floor of the stage the
+    child chose (Grade 6, Grade 9: gs[0], the lowest grade the check asks), a starting point with nothing mastered, instead of
+    leaving a beginner with no lesson to open. The Elementary check keeps its own floor (Grade 2). Only ever raises. */
+ if(STAGE_GRADES[run.stage]&&gs.length)floor=gs[0];
  for(const r of scores)if(r.score>=PLACEMENT_PASS)floor=Math.max(floor,opensGrade(run.stage,r.grade));
  (save.placement??={})[run.subject]=Math.max(placementGrade(save,run.subject),floor);
  run.closed=true;const current=openGrade(save,run.subject);

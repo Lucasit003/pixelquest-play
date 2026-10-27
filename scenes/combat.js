@@ -112,7 +112,7 @@ export class World{
   this.town();this.tierKey=k;this.tierMul=tierScale(l,k);this.level=normalLevel(composeEncounter(l,k,tierLevel(l,k)),k);if(this.level.encounter){this.tierMul.hp*=this.level.encounter.hp/tierOf(k).hp;if(this.level.encounter.atk)this.tierMul.atk*=this.level.encounter.atk/tierOf(k).atk;else if(this.level.encounter.atkStep)this.tierMul.atk*=this.level.encounter.atkStep;}this.layout=levelGeometry(this.level);this.found=new Set(this.save.levels?.[id]?.secrets||[]);this.zone=ZONE[l.chapter]||'forest';this.arena=l.kind==='arena';
   /* a replay of a cleared tier, or the arena, pays half kill gold (game/tiers.js killGold) */
   this.replayGold=this.arena||tierDone(this.save,id,k);
-  this.runGold=0;this.kills=0;this.wave=0;this.group=0;this.addsSpawned=false;this.run={time:0,damage:0,taken:0,xp:0,waves:0,bestiary:[],secrets:[],rec:l.kind==='level'?adviceLevel(l,k):0,hero:this.save.level||1};this.lastResult=null;this.rally=null;this.rallies=0;this.resolve=resolveOf(this.save,id);this.halfSaid=false;this.quote=null;
+  this.runGold=0;this.kills=0;this.wave=0;this.group=0;this.addsSpawned=false;this.run={time:0,damage:0,taken:0,xp:0,waves:0,bestiary:[],secrets:[],rec:l.kind==='level'?adviceLevel(l,k):0,hero:this.save.level||1};this.lastResult=null;this.rally=null;this.rallies=0;this.resolve=resolveOf(this.save,id);this.halfSaid=false;this.potHint=null;this.quote=null;
   runStart(this,l,k,prevRun);
   this.tut=l.tutorial?(learned||{done:new Set(),moved:0}):null;this.controlsTutorial=controls;if(this.controlsTutorial)this.events.persist?.();
   for(const key of new Set([...(this.level.waves||[]).flatMap(w=>waveGroups(w).flat().map(e=>typeof e==='string'?e:e.type)),l.boss].filter(Boolean))){const sp=baseDef(key).sprite;if(sp)loadSprite(sp);}

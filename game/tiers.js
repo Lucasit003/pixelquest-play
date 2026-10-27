@@ -53,12 +53,18 @@ export const CH2_BOSS_HP={ex1:.7,ex2:.7,m1:.7,m2:.7,m3:.7,m4:.55,m5:.7,m6:.6,m7:
 /* The same crude kid takes about a fifth of its health a boss hit there and never dodges, so the race was lost at 40-50% boss
    health even with the trim; on Normal those bosses also hit for CH2_BOSS_ATK (their own blows and shots only). */
 export const CH2_BOSS_ATK={ex1:.75,ex2:.75,m1:.75,m2:.75,m3:.75,m4:.6,m5:.75,m6:.65,m7:.65,mx1:.6};
-export const bossAtkTrim=(id,k,from)=>(from?.by?.boss||from?.boss)&&tierKey(k)==='normal'?CH2_BOSS_ATK[id]||1:1;
+/* hook-oct27 (lead: the first fight must be winnable): a new player who mashes attack, never dodges, has no ability yet and does
+   not know the potion key lost the prologue to Bramblejaw (tools/balance-sim.mjs --only=prologue --bot=masher --skill=0
+   --abilities=0 --gear=starter --controls-seen --potions=never: 8 of 56 first tries won). The prologue (always Normal) takes
+   FIRST_FIGHT: the boss's health and blows, and the scouts' blows. After it the same kid wins 279 of 280 first tries and ends on
+   about half its health (25-60% was the target: still a fight). Nothing else changes. tests/hook-oct27.test.js. */
+export const FIRST_FIGHT={bossHp:.65,bossAtk:.35,foeAtk:.4};
+export const bossAtkTrim=(id,k,from)=>tierKey(k)!=='normal'?1:id==='prologue'?((from?.by?.boss||from?.boss)?FIRST_FIGHT.bossAtk:FIRST_FIGHT.foeAtk):(from?.by?.boss||from?.boss)?CH2_BOSS_ATK[id]||1:1;
 /* A Grave Wraith keeps 110 px from the hero, so a kid who only walks and swings chased it round the arena (oct26-midgame). On
    Normal it holds NORMAL_KEEP instead, close enough for a swing to reach it after a few steps; Heroic and Legendary keep 110. */
 export const NORMAL_KEEP={'skeleton-mage':70};
 export const keepOf=(e,k)=>tierKey(k)==='normal'&&NORMAL_KEEP[e?.key]||e?.keep||110;
-export const bossTrim=(id,k,boss)=>boss&&tierKey(k)==='normal'?(NORMAL_BOSS_HP[id]||1)*(CH2_BOSS_HP[id]||1):1;
+export const bossTrim=(id,k,boss)=>boss&&tierKey(k)==='normal'?(NORMAL_BOSS_HP[id]||1)*(CH2_BOSS_HP[id]||1)*(id==='prologue'?FIRST_FIGHT.bossHp:1):1;
 /* 17 Oct, three-seed pacing audit: ease m4's isolated spike; fill Heroic v6's boss-time trough. Normal is untouched. */
 /* oct25-tiers: with the tier step (game/tier-encounters.js READABLE_STEP) the Starfall Ruins pylon fight ran about 1.6x the
    chapter's other boss times on both tiers, and Legendary Shaman Grove and Furnace Depths about 1.3x; trim those bosses only. */

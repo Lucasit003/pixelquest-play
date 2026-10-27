@@ -55,7 +55,13 @@ export function stageBanners(w){if(!w?.level)return [];const f=w.flow,k=w.flowT|
     and new players fell to the first bosses with potions still in the bag) */
  /* oct24-balance2: it covered a hazard's CLEAR label (late playtest 07), so it waits while a hazard warning is up: step to safety first */
  /* oct24-progress: never over the Thorn King's cutscene captions (a low hero now keeps that health into phase two) */
- const pl=w.player;if(w.run&&!w.run.drank&&!w.tierFx?.current&&!w.cinematicTarget&&!out.some(b=>b.step==='danger')&&(f==='wave'||f==='boss')&&pl?.hp>0&&pl.hp<pl.maxHp*.35&&potionCount(w.save||{},pl)>0){const pk=String(w.save?.settings?.bindings?.potion||'q').toUpperCase();out.push({kind:'prompt',step:'potion',title:`LOW HEALTH! PRESS ${pk} FOR A POTION`,touchTitle:'LOW HEALTH! TAP THE POTION BOTTLE',y:214,alpha:1});}
+ const pl=w.player;
+ /* hook-oct27: the prologue (a new player's first fight) says it sooner and plainly: the first time health falls under 40%, a short
+    "press Q to drink" for 6 s (a kid who mashed through the first fight never knew the key). The regular reminder below is for levels. */
+ if(w.level.tutorial){const pk=String(w.save?.settings?.bindings?.potion||'q').toUpperCase(),now=w.run?.time||0;
+  if(!w.potHint&&w.run&&!w.run.drank&&(f==='wave'||f==='boss')&&pl?.hp>0&&pl.hp<pl.maxHp*.4&&potionCount(w.save||{},pl)>0)w.potHint={at:now};
+  if(w.potHint&&!w.run?.drank&&now-w.potHint.at<6&&pl?.hp>0&&!w.cinematicTarget)out.push({kind:'prompt',step:'potion',title:`PRESS ${pk} TO DRINK A POTION`,touchTitle:'TAP THE POTION BOTTLE TO DRINK',y:214,alpha:Math.min(1,(6-(now-w.potHint.at))/.4)});}
+ else if(w.run&&!w.run.drank&&!w.tierFx?.current&&!w.cinematicTarget&&!out.some(b=>b.step==='danger')&&(f==='wave'||f==='boss')&&pl?.hp>0&&pl.hp<pl.maxHp*.35&&potionCount(w.save||{},pl)>0){const pk=String(w.save?.settings?.bindings?.potion||'q').toUpperCase();out.push({kind:'prompt',step:'potion',title:`LOW HEALTH! PRESS ${pk} FOR A POTION`,touchTitle:'LOW HEALTH! TAP THE POTION BOTTLE',y:214,alpha:1});}
  /* Dialogue yields to actionable warnings; its reading time pauses rather than expiring underneath them. */
  const wood=w.level.encounter?.readable||paced,danger=wood&&(veilFx||links||copies||(w.level.encounter?.emberkeep||w.level.encounter?.veilmoor)&&w.dark||w.tierFx?.current||w.enemies?.some(e=>e.hp>0&&['tele','act'].includes(e.brain?.mode))),q=w.quote;
  if(wood&&q&&w.run){const dt=Math.max(0,w.run.time-(q.seenAt??w.run.time));if(danger)q.at+=dt;q.seenAt=w.run.time;}

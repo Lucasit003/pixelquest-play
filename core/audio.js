@@ -37,7 +37,7 @@ function resume(){if(ac&&ac.state==='suspended')ac.resume().catch(()=>{});}
 /* Browsers start audio suspended until a gesture. Call once with the window; the first key or tap resumes. */
 export function unlockAudio(target=globalThis){
  if(!target?.addEventListener)return;
- const go=()=>{if(ctx()){resume();if(wanted&&!wanted.live)playMusic(wanted.key,{fade:.8});}};
+ const go=()=>{gestured=true;if(ctx()){resume();if(wanted&&!wanted.live)playMusic(wanted.key,{fade:.8});}};
  for(const ev of ['pointerdown','keydown','touchstart'])target.addEventListener(ev,go,{passive:true});
 }
 
@@ -235,19 +235,28 @@ export function musicKey(k){
  const head=k.split(/[-_ ]/)[0];
  return MUSIC_KEYS.includes(head)?head:({fire:'lava',volcano:'lava',ember:'lava',purple:'mystic',veil:'mystic',arcane:'mystic',wood:'forest'}[head]||'forest');
 }
-let current=null,wanted=null,token=0;
+let current=null,wanted=null,token=0,gestured=false;
+/* hook-oct27 (lighter first load): no music file is fetched before the player's first key or tap. A browser could not play it
+   before then anyway, and on a phone the title and town tracks (2.6 and 3.9 MB) were downloading beside the game's own code. The
+   wanted track starts on that first gesture (unlockAudio). Where the browser cannot tell (Node, old browsers) nothing waits. */
+const activated=()=>{const ua=globalThis.navigator?.userActivation;return gestured||!ua||ua.hasBeenActive===true;};
 export function currentMusic(){return wanted?.key||null;}
 export function playMusic(key,{fade=1.4}={}){
  probe('music',key);
  const k=musicKey(key);if(!k)return stopMusic(fade);
  if(wanted?.live&&musicFile(wanted.key)===musicFile(k)){wanted.key=k;return;}
  wanted={key:k,live:false};
- if(!musicOn||!ctx())return;
+ if(!musicOn||!activated()||!ctx())return;
  wanted.live=true;resume();
  const my=++token;
  load(k).then(track=>{
   if(my!==token||!ac)return;
   if(!track){wanted.live=false;return;}
+  loopBuffer(k,track,fade);
+ });
+}
+/* The decoded loop: click-free seam (seam()), the Oakhaven playlist timer. */
+function loopBuffer(k,track,fade){
   const now=ac.currentTime,g=ac.createGain(),s=ac.createBufferSource(),level=musicTrim(k);
   s.buffer=track.buf;s.loop=true;s.loopStart=track.start;s.loopEnd=track.end;
   g.gain.setValueAtTime(.0001,now);g.gain.exponentialRampToValueAtTime(level,now+Math.max(.05,fade));
@@ -256,7 +265,6 @@ export function playMusic(key,{fade=1.4}={}){
   current={key:k,s,g};s.onended=()=>{s.disconnect();g.disconnect();s.buffer=null;};
   /* Oakhaven playlist: once this town track has played through, the next one fades in. */
   if(k==='town'&&soundtrack==='medieval'){const t=current.timer=setTimeout(()=>{if(current?.s===s&&wanted?.key==='town'){nextTownTrack();playMusic('town',{fade:3});}},Math.max(5,track.end-track.start-3)*1000);t.unref?.();}
- });
 }
 function fadeOut(v,fade){clearTimeout(v.timer);const now=ac.currentTime;try{v.g.gain.cancelScheduledValues(now);v.g.gain.setValueAtTime(Math.max(.0001,v.g.gain.value),now);v.g.gain.exponentialRampToValueAtTime(.0001,now+Math.max(.05,fade));v.s.stop(now+Math.max(.05,fade)+.05);}catch{}}
 export function stopMusic(fade=1){wanted=null;token++;if(current&&ac)fadeOut(current,fade);current=null;}

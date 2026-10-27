@@ -14,6 +14,8 @@ const LIVE=typeof window!=='undefined'&&typeof document!=='undefined'&&typeof Pe
 const BASE=new URL('../',import.meta.url);
 const rel=u=>{try{const x=new URL(u,BASE);if(x.origin!==BASE.origin||!x.pathname.startsWith(BASE.pathname))return null;return decodeURIComponent(x.pathname.slice(BASE.pathname.length))||'index.html';}catch{return null;}};
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+/* hook-oct27: precached for offline play, but never preloaded with the boot set: the lesson pools and the country outlines load after the title (academics/lessons.js loadPools, gfx/lesson-geography.js loadCountryAtlas) */
+export const AFTER_TITLE=Object.freeze(['academics/lesson-catalog.js','gfx/country-atlas.js']);
 /* exposed for tools/perf-measure.mjs and the tests */
 export const loaderState={done:new Set(),expect:new Map(),pct:0,shownAt:0,hiddenAt:0,titleReady:false,scene:null,level:null,gated:0,released:{biomes:0,sprites:0},sw:null};
 const S=loaderState;let M=null,G=null,C=null,el=null,watch=null;
@@ -24,7 +26,7 @@ const exists=p=>{if(!M)return true;const i=p.lastIndexOf('/'),d=i<0?'':p.slice(0
 
 /* ---------- the loading screen ---------- */
 const CSS=`#pq-loading{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;background:#0b0806;font:400 16px/1.4 'Pixel Operator',ui-monospace,monospace;color:#f1e6cc;-webkit-font-smoothing:none;transition:opacity .3s steps(3)}
-#pq-loading .pq-load-panel{visibility:hidden}#pq-loading.pq-ready .pq-load-panel{visibility:visible}#pq-loading.pq-over{background:#0b0806c0}#pq-loading.pq-out{opacity:0;pointer-events:none}
+#pq-loading.pq-over{background:#0b0806c0}#pq-loading.pq-out{opacity:0;pointer-events:none}
 #pq-loading .pq-load-panel{width:min(440px,86vw);display:flex;flex-direction:column;align-items:center;padding:8px 18px 14px;border-style:solid;border-width:28px;border-color:transparent;border-image:url(${new URL('ui/skin/panel.png',BASE).href}) 24 fill/48px round;image-rendering:pixelated}
 #pq-loading .pq-load-crest{width:180px;height:72px;background:url(${new URL('ui/skin/crest.png',BASE).href}) center/100% 100% no-repeat;image-rendering:pixelated}
 #pq-loading h1{margin:4px 0 0;font:700 32px/1 'Pixel Operator',ui-monospace,monospace;letter-spacing:2px;color:#e8c47a;text-shadow:0 2px 0 #2a1408}
@@ -47,7 +49,8 @@ function screen(){if(el||!LIVE)return el;
  el=document.createElement('div');el.id='pq-loading';el.setAttribute('role','progressbar');el.setAttribute('aria-label','Loading PixelQuest');el.setAttribute('aria-valuemin','0');el.setAttribute('aria-valuemax','100');
  el.innerHTML=`<div class="pq-load-panel"><div class="pq-load-logo"><span class="pq-load-crest" aria-hidden="true"></span><h1>PIXELQUEST</h1><div class="pq-load-sub"><i></i><span data-load-title>THE THORN KINGDOM</span><i></i></div></div><div class="pq-load-foot"><div class="progress xp"><i></i></div><small data-load-note>Opening the gates…</small></div></div>`;
  document.body.appendChild(el);S.shownAt=performance.now();
- /* the panel shows once its own pack pieces are in (never half-skinned); they jump the queue ahead of the modules */
+ /* hook-oct27: the panel (name, bar, note) shows at once on the dark ground; it used to stay hidden until its five skin images were
+    in (about 1.6 s on Fast 4G, a black screen). The pack pieces still jump the queue and fill in as they land; pq-ready marks that. */
  const e=el,ready=()=>e.classList.add('pq-ready');Promise.race([preloadSkin(),sleep(2500)]).then(ready);
  return el;}
 const SKIN=['keyart.webp','crest.png','divider.png','rod.png','fill-gold.png'],skinHeld=[];
@@ -67,7 +70,7 @@ if(LIVE){
  const start=()=>{screen();paint(0);};
  if(document.body)start();else document.addEventListener('DOMContentLoaded',start,{once:true});
  manifest.then(m=>{if(!m)return;
-  const mods=m.PRECACHE.filter(p=>/\.js$/.test(p)&&!/^assets\/(worldmap|biomes)\//.test(p)&&p!=='core/asset-manifest.js');
+  const mods=m.PRECACHE.filter(p=>/\.js$/.test(p)&&!/^assets\/(worldmap|biomes)\//.test(p)&&p!=='core/asset-manifest.js'&&!AFTER_TITLE.includes(p));
   /* the whole boot set up front, so the bar only ever moves forward: modules, styles, fonts, the UI skin and the
      title's art (every hero for class select, the part of the hub behind the menu); perfBoot adds the exact group */
   const boot=[...m.PRECACHE.filter(p=>/^(fonts\/.*\.ttf|ui\/(skin|font)\/[^/]*\.png)$/.test(p)),...(m.TITLE||[])];

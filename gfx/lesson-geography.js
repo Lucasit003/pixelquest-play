@@ -1,5 +1,11 @@
 // Spatial lesson diagrams and source-backed country maps.
-import {COUNTRY_ATLAS} from './country-atlas.js';
+/* hook-oct27 (lighter first load): the Natural Earth country outlines (about 105 KB gzipped) are not needed for the title or the
+   town. A browser loads them after the title with the lesson pools (main.js; Begin waits for both); Node and jsdom load them here. */
+const EAGER=typeof window==='undefined'||/jsdom/i.test(globalThis.navigator?.userAgent||'');
+let COUNTRY_ATLAS=EAGER?(await import('./country-atlas.js')).COUNTRY_ATLAS:[];
+let atlasTask=null;
+export const countryAtlasReady=()=>COUNTRY_ATLAS.length>0;
+export const loadCountryAtlas=()=>atlasTask??=import('./country-atlas.js').then(m=>{COUNTRY_ATLAS=m.COUNTRY_ATLAS;}).catch(e=>{atlasTask=null;throw e;});
 const ink='#1d2a3a',paper='#f6f1e4';
 const text=(c,s,x,y,size=14)=>{c.fillStyle=ink;c.font=`${size}px sans-serif`;c.textAlign='center';c.textBaseline='middle';c.fillText(String(s),x,y);};
 const symbol=(c,s,x,y)=>{c.fillStyle='#477655';c.strokeStyle=ink;c.lineWidth=2;c.beginPath();if(s==='circle')c.arc(x,y,9,0,Math.PI*2);else if(s==='triangle'){c.moveTo(x,y-10);c.lineTo(x+10,y+9);c.lineTo(x-10,y+9);c.closePath();}else c.rect(x-8,y-8,16,16);c.fill();c.stroke();};

@@ -17,21 +17,27 @@ export const stageName=t=>STAGES[stageOf(t)].name;
 // disk -- expanded form, subtract without regrouping, missing addend, number-line jumps, doubling,
 // compare numbers, compare three-digit, odd and even -- and can come back. A save keeps any points it
 // banked on them (elementary() sums the save's records, and load keeps unknown topic ids).
-import {CATALOG,LESSON_PATHS} from './lesson-catalog.js';
+/* hook-oct27 (lighter first load): topic metadata boots (lesson-meta.js); the retirement ids of every pool (lesson-catalog.js,
+   about 450 KB gzipped) load after the title: loadPools(), which Begin awaits (main.js) and every lesson load awaits. Until then
+   POOL holds an empty frozen list per topic, so nothing reads undefined. Node and jsdom load them before this module finishes. */
+import {META,LESSON_PATHS} from './lesson-meta.js';
 const EAGER=typeof window==='undefined'||/jsdom/i.test(globalThis.navigator?.userAgent||'');
-export const TOPICS=CATALOG.map(({pool,...t})=>t);
+export const TOPICS=META.map(t=>({...t}));
 const items={},pool={},checks={};
 const idOf=(t,prompt)=>`${t.subject}-${t.level}-${hash(prompt)}`;
 const bankIds=new Set(BANK.map(q=>q.id));
 // A repeated id would let one answer retire two questions, or silently un-retire one: refuse to load.
 const claim=(id,where)=>{if(bankIds.has(id)||items[id]||checks[id])throw new Error(`lessons: duplicate id ${id} (${where})`);};
-for(const t of CATALOG)pool[t.id]=Object.freeze(t.pool);
-export const ITEMS=items,POOL=Object.freeze(pool),CHECKS=checks;
+const NONE=Object.freeze([]);for(const t of META)pool[t.id]=NONE;
+export const ITEMS=items,POOL=pool,CHECKS=checks;
+let poolsTask=null,poolsIn=false;
+export const poolsLoaded=()=>poolsIn;
+export function loadPools(){return poolsTask??=import('./lesson-catalog.js').then(m=>{for(const t of META)pool[t.id]=Object.freeze(m.POOLS[t.id]);Object.freeze(pool);poolsIn=true;}).catch(e=>{poolsTask=null;throw e;});}
 const pending=new Map(),loaded=new Set();
 export const lessonLoaded=id=>loaded.has(id);
 export async function loadLesson(id){if(loaded.has(id))return TOPICS.find(t=>t.id===id);if(pending.has(id))return pending.get(id);
  const path=LESSON_PATHS[id];if(!path)throw new Error(`Unknown lesson: ${id}`);
- const task=import(new URL(path,import.meta.url).href).then(m=>{const i=TOPICS.findIndex(t=>t.id===id),t=EAGER?(TOPICS[i]=m.default):Object.assign(TOPICS[i],m.default);install(t);loaded.add(id);return t;}).finally(()=>pending.delete(id));pending.set(id,task);return task;}
+ const task=loadPools().then(()=>import(new URL(path,import.meta.url).href)).then(m=>{const i=TOPICS.findIndex(t=>t.id===id),t=EAGER?(TOPICS[i]=m.default):Object.assign(TOPICS[i],m.default);install(t);loaded.add(id);return t;}).finally(()=>pending.delete(id));pending.set(id,task);return task;}
 function install(t){
  {const st=STAGES[stageOf(t)];if(t.level!==st.level||!t.id.startsWith(`${t.subject}-${st.tag}-`))throw new Error(`lessons: ${t.id} must be level ${st.level} with a -${st.tag}- id for grade ${t.grade}`);}
  const ids=[];
@@ -41,7 +47,7 @@ function install(t){
   checks[id]=Object.freeze({id,subject:t.subject,level:t.level,topic:t.id,skill:s.skill,step:i,...s.check,numeric:typeof s.check.answer==='number'});});
  if(JSON.stringify(ids)!==JSON.stringify(pool[t.id]))throw new Error(`Stale lesson catalog: ${t.id}`);}
 /* Node's content audits keep the synchronous API. Browsers load only a requested lesson or placement/course group. */
-if(EAGER){for(const t of TOPICS)await loadLesson(t.id);Object.freeze(items);Object.freeze(checks);}Object.freeze(TOPICS);
+if(EAGER){await loadPools();for(const t of TOPICS)await loadLesson(t.id);Object.freeze(items);Object.freeze(checks);}Object.freeze(TOPICS);
 // A subject's 100 Elementary points are earned by climbing its grades: each grade is worth 25,
 // shared between the topics in it, so five topics in a grade are 5 points each and twelve are
 // 25/12. Points are weighted here rather than in the topic file, so adding a topic to a grade
