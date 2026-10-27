@@ -1,0 +1,24 @@
+{
+ "image": "fx-tentacle.png",
+ "cell": [
+  48,
+  64
+ ],
+ "anchor": [
+  24,
+  59
+ ],
+ "faces": "right",
+ "scale": 1,
+ "states": {
+  "rise": {
+   "row": 0,
+   "frames": 11,
+   "fps": 14,
+   "loop": false,
+   "contact": [
+    5
+   ]
+  }
+ }
+}

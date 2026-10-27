@@ -1,0 +1,1 @@
+{"image":"theater-scholar.png","cell":[160,160],"anchor":[78,110],"faces":"right","scale":1,"credit":"Epic RPG World by RafaelMatos (https://rafaelmatos.itch.io), owner-bought licence.","source":"NPCs/old wise wizard","states":{"idle":{"row":0,"frames":10,"fps":8,"loop":true},"cast":{"row":1,"frames":21,"fps":10,"loop":true}},"height":52}

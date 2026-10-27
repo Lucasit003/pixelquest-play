@@ -1,0 +1,62 @@
+{
+  "image": "hero-rogue-directions-v1.png",
+  "cell": [
+    112,
+    100
+  ],
+  "anchor": [
+    57,
+    79
+  ],
+  "faces": "right",
+  "scale": 1,
+  "states": {
+    "idle-south": {
+      "row": 0,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "idle-north": {
+      "row": 1,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    }
+  },
+  "source": "pixellab",
+  "unmodified": false,
+  "sourcePixelsUnmodified": true,
+  "credit": "PixelQuest original character, made with PixelLab (pixellab.ai) for PixelQuest. Front and back standing views for the character creator (owner, 15 October 2026).",
+  "contract": "art/heroes/rogue/directions.json",
+  "sources": [
+    {
+      "state": "idle-south",
+      "frame": 0,
+      "file": "art/heroes/rogue/pixellab/rotations/south.png",
+      "sha256": "a2f6bdad62cfa1ba10d785ad75e0cb1e1df638fbdf437d675d748567cf9c5c27",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        19
+      ]
+    },
+    {
+      "state": "idle-north",
+      "frame": 0,
+      "file": "art/heroes/rogue/pixellab/rotations/north.png",
+      "sha256": "44f279971738a61dd7adfbe157a310fc7f97ce475b1a56fdd7adf563a2746115",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        20
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+{"image":"theater-trader.png","cell":[160,160],"anchor":[88,120],"faces":"right","scale":1,"credit":"Epic RPG World by RafaelMatos (https://rafaelmatos.itch.io), owner-bought licence.","source":"NPCs/Vendor","states":{"idle":{"row":0,"frames":8,"fps":8,"loop":true},"wave":{"row":1,"frames":8,"fps":9,"loop":true}},"height":49}

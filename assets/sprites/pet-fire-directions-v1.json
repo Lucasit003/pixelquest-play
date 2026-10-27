@@ -1,0 +1,298 @@
+{
+  "image": "pet-fire-directions-v1.png",
+  "cell": [
+    60,
+    60
+  ],
+  "anchor": [
+    30,
+    44
+  ],
+  "faces": "right",
+  "scale": 1,
+  "source": "pixellab-pet-fire-directions",
+  "sourcePixelsUnmodified": true,
+  "unmodified": false,
+  "credit": "PixelQuest original companion, made with PixelLab",
+  "contract": "art/pets/fire/directions.json",
+  "states": {
+    "walk-north": {
+      "row": 0,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    },
+    "idle-north": {
+      "row": 1,
+      "frames": 1,
+      "fps": 1,
+      "loop": true
+    },
+    "walk-south": {
+      "row": 2,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    },
+    "idle-south": {
+      "row": 3,
+      "frames": 1,
+      "fps": 1,
+      "loop": true
+    }
+  },
+  "sources": [
+    {
+      "state": "walk-north",
+      "frame": 0,
+      "file": "art/pets/fire/pixellab/walk-north/0.png",
+      "sha256": "f31b16d80ea907b79bbeb8887b2079466c45d591c8d454a7ba6893fa4bbff194",
+      "size": [
+        60,
+        60
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 1,
+      "file": "art/pets/fire/pixellab/walk-north/1.png",
+      "sha256": "86c0eb9381accd29bea66f740e2c9ae6255613d6ce346d1f31f5db8803321d37",
+      "size": [
+        60,
+        60
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 2,
+      "file": "art/pets/fire/pixellab/walk-north/2.png",
+      "sha256": "e7247c9b894ce55e48b5984ff1ef3e1c5f37828290e39a2962adb9f119db0384",
+      "size": [
+        60,
+        60
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 3,
+      "file": "art/pets/fire/pixellab/walk-north/3.png",
+      "sha256": "78f41c4a820cfc07480069ea9ca2dd190625182010957eaf65d0fa2c65061c0e",
+      "size": [
+        60,
+        60
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 4,
+      "file": "art/pets/fire/pixellab/walk-north/4.png",
+      "sha256": "3c0d78e7251eeb967ea4b9aea0f47b628fda15eedf128bea2d07526696d1c26b",
+      "size": [
+        60,
+        60
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 5,
+      "file": "art/pets/fire/pixellab/walk-north/5.png",
+      "sha256": "77631b19c586f8e92b1f8ae3a87dacb5b8f87e01ca7f7792ce1d3f12fa82b193",
+      "size": [
+        60,
+        60
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 6,
+      "file": "art/pets/fire/pixellab/walk-north/6.png",
+      "sha256": "e0bab4d5df74423719a85c6cd6b8f42c78ffe28da39cc1439056fc65acb936dd",
+      "size": [
+        60,
+        60
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 7,
+      "file": "art/pets/fire/pixellab/walk-north/7.png",
+      "sha256": "03e8776fcf5828035da5fc042cb69dd55a6349e7aaa7a4cc9de2ac2322551d02",
+      "size": [
+        60,
+        60
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "state": "idle-north",
+      "frame": 0,
+      "file": "art/pets/fire/pixellab/rotations/north.png",
+      "sha256": "2fccd69ba4304a7b820f27aa9e6764159283b237000dc9a0cde8459b5aba84fa",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        2,
+        3
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 0,
+      "file": "art/pets/fire/pixellab/walk-south/0.png",
+      "sha256": "b39fe30ea421c18c4cc51112b02537df0f03572c1245c49c3ed5d1be9fd778ee",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        2,
+        3
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 1,
+      "file": "art/pets/fire/pixellab/walk-south/1.png",
+      "sha256": "8ca959f7dc34b95d7decb053b92028202a6f037a40af512c13de635f56d8fcb0",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        2,
+        3
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 2,
+      "file": "art/pets/fire/pixellab/walk-south/2.png",
+      "sha256": "8c94e2e0d62cd2b0d687d24468d7610b7a4961a5957880ace2403ca82464d7dc",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        2,
+        3
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 3,
+      "file": "art/pets/fire/pixellab/walk-south/3.png",
+      "sha256": "f418805889c2fff4381fba9118bde36a41ec7347655640ac3e7f2c81a073de9a",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        2,
+        3
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 4,
+      "file": "art/pets/fire/pixellab/walk-south/4.png",
+      "sha256": "71da41895962baaac52657943ff4f59de92a63ddecba01e4def48bd937408ff0",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        2,
+        3
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 5,
+      "file": "art/pets/fire/pixellab/walk-south/5.png",
+      "sha256": "962039bdac6b5d30a3cf4d2b5e3e1c1550a077909ba907a7031302b82172f43f",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        2,
+        3
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 6,
+      "file": "art/pets/fire/pixellab/walk-south/6.png",
+      "sha256": "28fa005c8e47a88e14317d9b42638e2f431d3adcaf07c7c8edd6795840d32c82",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        2,
+        3
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 7,
+      "file": "art/pets/fire/pixellab/walk-south/7.png",
+      "sha256": "a1d92ab4dcd18530a0a682bbf99b3d791a006baf1ba9a124e25a8fbbc1ea6662",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        2,
+        3
+      ]
+    },
+    {
+      "state": "idle-south",
+      "frame": 0,
+      "file": "art/pets/fire/pixellab/rotations/south.png",
+      "sha256": "cf68895e4e13eab88481d511ddeb5e8de63c6eccdec1094592ac8a6634e14386",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        2,
+        3
+      ]
+    }
+  ]
+}

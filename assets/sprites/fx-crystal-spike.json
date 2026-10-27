@@ -1,0 +1,33 @@
+{
+ "image": "fx-crystal-spike.png",
+ "cell": [
+  26,
+  29
+ ],
+ "anchor": [
+  14,
+  26
+ ],
+ "faces": "right",
+ "scale": 1,
+ "states": {
+  "rise": {
+   "row": 0,
+   "frames": 9,
+   "fps": 14,
+   "loop": false,
+   "contact": [
+    2
+   ],
+   "reach": 10
+  }
+ },
+ "height": 6,
+ "shadow": [
+  4,
+  2
+ ],
+ "grade": {
+  "outline": "none"
+ }
+}

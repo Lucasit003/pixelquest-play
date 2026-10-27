@@ -1,0 +1,98 @@
+/* The character creator (ui/creator.js). Scoped to .creator and the title's "look" step; style.css is left alone.
+   Swatches and frames use the game's own pixel skin (ui/skin/pl-*.png) at whole-pixel scale. */
+.creator{display:grid;grid-template-columns:minmax(220px,300px) minmax(0,1fr);gap:18px;align-items:start;color:var(--ink)}
+.creator .cr-preview{display:grid;grid-template-columns:1fr auto;grid-template-areas:"stage stage" "close ctl";gap:10px;align-items:end}
+.creator .cr-stage{grid-area:stage;display:grid;place-items:center;min-height:210px;border-style:solid;border-width:calc(3*var(--u));border-color:transparent;
+ border-image:url(skin/pl-slot.png) 5 5 5 5 fill/calc(6*var(--u)) calc(6*var(--u)) stretch;image-rendering:pixelated;
+ background:radial-gradient(ellipse 60% 22% at 50% 88%,#00000055,transparent 70%),linear-gradient(#3c3a2f,#2a2a22)}
+.creator canvas{image-rendering:pixelated;image-rendering:crisp-edges}
+.creator .cr-figure{width:200px;height:200px;max-width:100%}
+.creator .cr-closeup{grid-area:close;display:flex;align-items:center;gap:8px}
+.creator .cr-bust{width:96px;height:96px;border-style:solid;border-width:calc(3*var(--u));border-color:transparent;border-image:url(skin/pl-slot.png) 5 5 5 5 fill/calc(6*var(--u)) calc(6*var(--u)) stretch;background:#2a2a22}
+.creator .cr-cap{font-size:var(--fs);color:var(--muted)}
+.creator .cr-preview-ctl{grid-area:ctl;display:flex;justify-content:flex-end}
+.creator .cr-toggle{min-height:44px;padding:8px 14px}
+.creator .cr-toggle[aria-pressed="false"]{color:var(--muted)}
+.creator .cr-opts{display:flex;flex-direction:column;gap:10px;min-width:0}
+.creator .cr-row{display:flex;flex-direction:column;gap:4px}
+.creator .cr-head{display:flex;gap:10px;align-items:baseline}
+.creator .cr-label{font-weight:700;color:var(--gold-2);text-transform:uppercase;letter-spacing:1px}
+.creator .cr-value{color:var(--ink-2)}
+.creator .cr-swatches,.creator .cr-bodies{display:flex;flex-wrap:wrap;gap:6px}
+.creator .cr-sw,.creator .cr-body{position:relative;min-width:44px;min-height:44px;width:44px;height:44px;padding:0;display:grid;place-items:center;
+ border-width:calc(3*var(--u));border-image:url(skin/pl-slot.png) 5 5 5 5 fill/calc(6*var(--u)) calc(6*var(--u)) stretch}
+.creator .cr-body{width:64px;height:64px}
+.creator .cr-body canvas{width:56px;height:56px}
+.creator .cr-sw i{display:block;width:24px;height:24px;background:linear-gradient(135deg,var(--sw-hi) 0 25%,var(--sw) 25% 70%,var(--sw-lo) 70%);box-shadow:0 0 0 2px #0d0806}
+.creator .cr-sw.cr-orig i{background:repeating-linear-gradient(45deg,#8b7a5c 0 4px,#4a3e2c 4px 8px)}
+.creator .cr-sw:hover:not(:disabled),.creator .cr-body:hover{border-image-source:url(skin/pl-slot-hover.png)}
+.creator [aria-checked="true"]{border-image-source:url(skin/pl-slot-hover.png);transform:translateY(-2px)}
+.creator [aria-checked="true"]::after{content:"";position:absolute;left:50%;bottom:-8px;width:8px;height:4px;margin-left:-4px;background:var(--gold);box-shadow:0 2px 0 #0d0806}
+.creator .cr-off .cr-head .cr-label{color:var(--faint)}
+.creator .cr-note{margin:0;color:var(--muted);font-style:normal}
+.creator .cr-hint{margin:4px 0 0;color:var(--muted)}
+.creator .cr-actions{display:flex;gap:10px;flex-wrap:wrap}
+.creator .cr-actions button{min-height:44px}
+html[data-motion="reduced"] .creator [aria-checked="true"]{transform:none}
+/* narrow panels and phone mode: preview on top, options below, everything still reachable by thumb */
+@media (max-width:720px){.creator{grid-template-columns:1fr}.creator .cr-stage{min-height:170px}.creator .cr-figure{width:160px;height:160px}}
+.m-mode .creator{grid-template-columns:minmax(170px,230px) minmax(0,1fr);gap:10px}
+.m-mode .creator .cr-stage{min-height:150px}.m-mode .creator .cr-figure{width:150px;height:150px}.m-mode .creator .cr-bust{width:72px;height:72px}
+@media (max-height:430px){.m-mode .creator .cr-closeup .cr-cap{display:none}.m-mode .creator .cr-opts{gap:6px}}
+/* the title's look step (ui/title.js): the creator takes the place of the hero list and the numbers */
+.title-screen[data-step="look"] .er-list,.title-screen[data-step="look"] .er-stage,.title-screen[data-step="look"] .er-stats>:not(.hero-look):not(.hero-look-actions){display:none}
+.title-screen:not([data-step="look"]) .hero-look,.title-screen:not([data-step="look"]) .hero-look-actions{display:none}
+/* the look step is a screen of its own, like the setup step: the title pane and the hero list are gone, not showing through */
+.title-screen[data-step="look"]{background:radial-gradient(ellipse at 45% 35%,#26394b 0%,#141d2c 48%,#0a101d 100%)}
+.title-screen[data-step="look"] .title-pane{opacity:0;pointer-events:none;visibility:hidden}
+.title-screen[data-step="look"] .title-bg{opacity:.09}
+.title-screen[data-step="look"] .select-pane{padding:clamp(8px,2vh,20px) clamp(12px,2vw,28px);overflow-x:hidden;overflow-y:auto;background:#141e2c;justify-content:safe center}
+/* short windows (owner, 16 Oct: a 530 px tall laptop window clipped Next): the pane scrolls and Next stays pinned in view */
+.title-screen[data-step="look"] .hero-look-actions{position:sticky;bottom:0;z-index:2;padding:8px 0;background:linear-gradient(#141e2c00,#141e2c 35%)}
+.title-screen[data-step="look"] .select-pane .select-head,.title-screen[data-step="look"] .hero-select.er{width:min(960px,100%)}
+.title-screen[data-step="look"] .hero-select.er{flex:0 1 auto;min-height:0}
+.title-screen[data-step="look"] .select-pane .armory-sword{display:none}
+.title-screen[data-step="look"] .select-pane .hero-select.er .er-list{display:none}
+.title-screen[data-step="look"] .hero-select.er{grid-template-columns:1fr}
+.title-screen[data-step="look"] .er-detail.hero-detail{grid-template-columns:1fr}
+.title-screen .hero-look-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:12px}
+
+/* First-ten-minute layout: captions and footer stay in the content flow. */
+.creator .cr-cap{white-space:nowrap}.creator .cr-preview{grid-template-areas:"stage stage" "close close" "ctl ctl"}.creator .cr-toggle[hidden]{display:none}.title-screen[data-step="look"] .er-detail.hero-detail{min-height:0}.title-screen[data-step="look"] .er-stats{padding-bottom:0}.title-screen[data-step="look"] .hero-look-actions{position:static;background:none}
+.title-screen[data-step="look"] .select-pane .er-detail.hero-detail{height:auto;overflow:visible}.title-screen[data-step="look"] .select-pane .hero-select.er{flex:0 0 auto}.title-screen[data-step="look"] .er-stats{padding:14px}.title-screen[data-step="look"] .hero-look-actions{margin-top:8px;padding:0}
+@media(max-height:600px){.title-screen[data-step="look"] .creator{gap:14px;grid-template-columns:260px minmax(0,1fr)}.title-screen[data-step="look"] .cr-stage{min-height:160px}.title-screen[data-step="look"] .cr-figure{width:150px;height:150px}.title-screen[data-step="look"] .cr-bust{width:64px;height:64px}.title-screen[data-step="look"] .cr-opts{gap:5px}.title-screen[data-step="look"] .cr-body{height:48px;width:48px}.title-screen[data-step="look"] .cr-body canvas{height:40px;width:40px}.title-screen[data-step="look"] .cr-sw{min-height:36px;min-width:36px;width:36px;height:36px}.title-screen[data-step="look"] .cr-hint{font-size:14px}.title-screen[data-step="look"] .cr-actions button{min-height:32px;padding:4px 12px}}
+
+/* Shared framed sprite stage: fixed CSS pixels preserve the renderer's integer scale at both laptop sizes. */
+.title-screen .select-pane .er-detail.hero-detail[data-hero] .er-stage,.title-screen .creator .cr-stage{height:176px;min-height:176px;width:224px;max-width:none;align-self:center;justify-self:center;display:grid;place-items:center;box-sizing:border-box;border:6px solid transparent;border-image:url(skin/pl-slot.png) 5 fill / 6px;background:#202b36 url(skin/stages/warrior.png) center bottom / cover no-repeat;box-shadow:none}
+.creator .cr-figure,.title-screen .select-pane .er-stage .er-hero.detail-sprite,.title-screen .creator .cr-figure{width:192px;height:144px;max-width:none;max-height:none;margin:0;object-fit:fill;image-rendering:pixelated}
+.title-screen .select-pane .er-stage .er-light{display:none}
+.title-screen[data-step="look"] .select-pane .er-detail.hero-detail[data-hero] .er-stage{display:none}
+
+/* Phone look step: scroll the options above an always-visible Next action. */
+.m-mode .title-screen[data-step="look"] .select-pane{overflow:hidden;justify-content:flex-start}
+.m-mode .title-screen[data-step="look"] .select-head{flex:none}
+.m-mode .title-screen[data-step="look"] .select-pane .hero-select.er{flex:1;min-height:0}
+.m-mode .title-screen[data-step="look"] .select-pane .er-detail.hero-detail{height:100%;min-height:0;overflow:hidden}
+.m-mode .title-screen[data-step="look"] .er-stats{height:100%;min-height:0;box-sizing:border-box;display:flex;flex-direction:column}
+.m-mode .title-screen[data-step="look"] .hero-look{min-height:0;overflow:auto;flex:1;padding:4px}
+.m-mode .title-screen[data-step="look"] .hero-look-actions{flex:none;margin-top:6px}
+.m-mode .creator .cr-hint{display:block}
+
+/* Laptop windows (polish, 19 Oct): the framed preview steps up to the next whole scale (3x: 288x216 sprite) so it fills
+   its column beside the stats card instead of floating in empty space, and the hero list keeps a gap above the
+   window's bottom edge. Phones keep the 2x stage above. */
+@media(min-width:940px) and (min-height:500px){html:not(.m-mode) .title-screen .select-pane .er-detail.hero-detail[data-hero] .er-stage{width:300px;height:228px;min-height:228px}html:not(.m-mode) .title-screen .select-pane .er-stage .er-hero.detail-sprite{width:288px;height:216px}}
+@media(max-height:600px){html:not(.m-mode) .title-screen .select-pane .hero-select.er{margin-bottom:14px}}
+@media(min-width:1200px) and (min-height:680px){html:not(.m-mode) .title-screen .select-pane .er-detail.hero-detail[data-hero] .er-stage{width:396px;height:300px;min-height:300px}html:not(.m-mode) .title-screen .select-pane .er-stage .er-hero.detail-sprite{width:384px;height:288px}}
+/* first-hour playtest 24 Oct: phone mode hides every <p> in the hero card, which left a bare "Hair colour" heading on the Mage, Rogue and Paladin; the note says why there is no choice */
+.m-mode .hero-detail .creator p.cr-note{display:block;font-size:14px}
+/* oct25-followups2 (phone creator): at 844x390 and 740x360 the close-up sat under the stage, below the fold of the look
+   step's scrolling column. On phones the close-up stands beside the stage, and the preview stays in place (sticky) while
+   the colour rows scroll, so the face is in view while choosing hair, skin and eye colours. */
+.m-mode .title-screen[data-step="look"] .creator{grid-template-columns:300px minmax(0,1fr)}
+.m-mode .title-screen[data-step="look"] .creator .cr-preview{position:sticky;top:0;z-index:1;grid-template-columns:auto auto;grid-template-areas:"stage close" "ctl ctl";gap:8px;align-items:end;justify-content:start}
+.m-mode .title-screen[data-step="look"] .creator .cr-closeup{flex-direction:column;align-items:center;gap:2px}
+/* the same for Home -> Appearance on phones: stage and close-up side by side, held at the top while the panel scrolls */
+.m-mode dialog[data-view=appearance] .creator{grid-template-columns:minmax(0,310px) minmax(0,1fr)}
+.m-mode dialog[data-view=appearance] .creator .cr-preview{position:sticky;top:0;z-index:1;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"stage close" "ctl ctl";gap:8px;align-items:end}
+.m-mode dialog[data-view=appearance] .creator .cr-closeup{flex-direction:column;align-items:center;gap:2px}

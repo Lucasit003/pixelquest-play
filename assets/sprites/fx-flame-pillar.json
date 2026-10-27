@@ -1,0 +1,1 @@
+{"image":"fx-flame-pillar.png","cell":[31,40],"anchor":[15,40],"faces":"right","scale":1,"states":{"rise":{"row":0,"frames":8,"fps":14,"loop":false,"contact":[3],"reach":16}},"height":38,"shadow":[13,4],"grade":{"outline":"none"}}

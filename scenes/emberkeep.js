@@ -1,0 +1,29 @@
+/* Spawn-local Emberkeep remixes. Every follow-up receives a fresh tell and a protected recovery. */
+export function emberBoss(w,e){if(e.key!==w.level.encounter.boss)return e;const id=w.level.id,l=w.tierKey==='legendary',edit=(name,patch)=>{e.attacks=e.attacks.map(a=>a.name===name?{...a,...patch}:a);};
+ e.attacks=e.attacks.map(a=>({...a,recover:Math.max(1.8,a.recover||0),windup:Math.max(1.4,a.windup||0),label:a.label||'Watch the glowing ground!'}));e.waitHelpers=true;
+ if(id==='m1'){for(const name of ['flame lash','inferno arc','fire fan','firefall'])edit(name,{recover:3.4});edit('summon guard',{count:l?2:1,max:2,spots:'ember-gate',mods:l?[null,'swift']:[],key:l?'imp':'skeleton-warrior',then:'gate strike',label:'Guards! Clear the marked gate!'});e.attacks.push({name:'gate strike',kind:'sweep',state:'attack',len:88,band:8,dur:.8,range:280,windup:1.8,fullTell:true,dmg:1,cd:6,forced:true,recover:2.8,label:'Gate fire! Move to the green lane!'});}
+ if(id==='m2'){for(const name of ['anvil fist','arm cannon'])edit(name,{recover:3.2});edit('forge eruption',{count:1,radius:24,repeat:1,sequential:true,forced:false,uses:0,then:'core laser',recover:3.5,label:'Hammer! Leave the circle!'});edit('core laser',{kind:'sweep',len:88,band:8,dur:.75,windup:1.8,forced:true,recover:4.5,label:'Hot vent! Move to the green lane!'});if(l)e.attacks.push({...e.attacks.find(a=>a.name==='forge eruption'),name:'return hammer',forced:true,then:'return vent',label:'Second hammer! Leave the circle!'}, {...e.attacks.find(a=>a.name==='core laser'),name:'return vent',from:'near',label:'Other vent! Move to the green lane!'});}
+ if(id==='m3'){edit('dive under',{then:l?'dive under':null,recover:2.6,label:'Dive! Leave the circle!',after:{kind:'zone',burn:.35,every:1.2,dur:4,slow:.15,radius:24,tint:'#ff7a2a',fx:'fx-ember',fxs:'burn'}});edit('fire-breath arc',{len:88,windup:1.8,back:l,recover:3,label:'Fire breath! Move to the green lane!',returnLabel:'Breath returns! Move to the green lane!'});}
+ if(id==='m4'){edit('en garde',{then:null,forced:false,uses:0,label:'Guard up! Wait or move behind!'});edit('blazing arc',{feint:true,label:'Fake swing! Wait for the full glow!'});edit('flame wall',{then:l?'ember rush':null,windup:1.8,recover:2.6,label:'Flame wall! Step above or below the row!'});edit('ember rush',{trail:null,recover:3,label:'Rush! Step off the glowing row!'});edit('drill call',{count:1,max:1,uses:1,label:'Guard arriving! Clear the circle!'});}
+ if(id==='m5'){edit('imp swarm',{count:2,max:2,spots:'ember-gate',then:'fire rain',forced:false,uses:0,cd:12,label:'Imps! Clear the marked gate!'});edit('fire rain',{kind:'sweep',len:88,band:8,dur:.75,windup:2,forced:true,recover:3,label:'Furnace blast! Move to the green lane!'});}
+ if(id==='m6'){edit('mirror guard',{then:l?'void wave':null,forced:false,uses:0,hold:.65,cd:12,recover:4,label:'Mirror guard! Wait or move behind!'});edit('void wave',{windup:2,speed:95,band:10,recover:3.5,label:'Glass wave! Step above or below the row!'});edit('shatter field',{count:6,spread:30,radius:12,windup:1.8,label:'Glass falling! Leave the circles!'});edit('glass spikes',{count:4,gap:28,label:'Glass spikes! Step between the circles!'});}
+ if(id==='m7'){edit('meteor rain',{kind:'leap',radius:22,air:.7,range:280,count:1,repeat:l?2:1,windup:1.8,forced:false,uses:0,then:'cooling ring',recover:2.6,label:l?'Two bounces! Leave each island circle!':'Big leap! Leave the island circle!'});e.attacks.push({name:'cooling ring',kind:'wave',shape:'ring',state:'cast',previewReach:true,reach:70,r0:10,speed:60,band:6,range:280,windup:1.8,fullTell:true,dmg:1,cd:6,forced:true,recover:3,label:'Lava ring! Step outside the big circle!'});}
+ if(id==='mx1'){edit('ash storm',{banner:null,then:null,dur:6,forced:false,uses:0,label:'Ash storm! Keep to the clear ground!'});edit('pillar form',{then:l?'pillar form':null,speed:20,dur:2,maxHits:1,windup:2,recover:4,label:l?'Two pillars! Leave each circle!':'Fire pillar! Leave the circle!'});}
+ return e;}
+export function emberTick(e,w){const b=e.brain;if(!b||b.mode!=='tele'||e.emberMove===b.atk)return;e.emberMove=b.atk;const id=w.level.id,l=w.tierKey==='legendary';if(id==='mx1'&&b.atk.kind==='pillar')w.dark=null;
+ if(l&&b.phase===2&&id==='m3'&&b.atk.kind==='sweep')b.atk={...b.atk,from:(b.used[b.atk.name]||0)%2?'near':'far'};e.emberMove=b.atk;
+}
+
+/* Marked gate arrivals alternate. The boss attacks from the other gate with a separate warning. */
+export function emberPrepare(e,w,a){if(!w.level?.encounter?.emberkeep)return;const id=w.level.id,B=w.bounds(),left=Math.max(B.x0+90,(w.camX||0)+90),right=Math.min(B.x1-90,(w.camX||0)+390),n=e.brain?.used?.[a.name]||0;
+ if(a.kind==='dash'||a.kind==='wave'&&a.shape==='front'){const band=a.band||12;e.y=w.player.y<(B.y0+B.y1)/2?Math.min(e.y,B.y1-48-band-2):Math.max(e.y,B.y0+48+band+2);}
+ if(['m1','m5'].includes(id)&&a.kind==='summon'){e.emberGate=n%2;e.x=e.emberGate?left:right;}
+}
+export function emberMarkers(e,w,a,ms){if(!w.level?.encounter?.emberkeep)return ms;const B=w.bounds(),id=w.level.id,l=w.tierKey==='legendary',n=e.brain?.used?.[a.name]||0;
+ if(a.kind==='wave'&&a.shape==='front')return ms.map(m=>({...m,x0:e.x+(e.facing||1)*(12-(a.th||8)),x1:e.x+(e.facing||1)*(12+a.reach+(a.th||8))}));
+ if(id==='m6'&&a.name==='shatter field'&&l&&e.brain?.phase===2){const y=n%2?B.y1-12:B.y0+12;return ms.map(m=>({...m,y}));}
+ if(id==='m7'&&a.name==='meteor rain'){const left=Math.max(B.x0+100,(w.camX||0)+100),right=Math.min(B.x1-100,(w.camX||0)+380),x=n%2?right:left;return ms.map(m=>({...m,x,y:(B.y0+B.y1)/2}));}
+ return a.kind==='melee'?ms.map(m=>({...m,hide:false})):ms;}
+
+/* The Legendary forge alternates slam and vent twice, then grants the whole cooling window. */
+export function emberEnd(e,w,b){if(!w.level?.encounter?.emberkeep)return;if(w.level.id==='m2'&&w.tierKey==='legendary'&&b.phase===2&&b.atk.name==='core laser'){b.force='return hammer';b.chained=false;}}

@@ -1,0 +1,787 @@
+/* PixelQuest education UI (v2:edu): the Library, lesson narration controls, "study to unlock", the hero XP
+   bar, the pre-boss knowledge check and the unlock banner. Loaded by dist/ui/edu.js. style.css belongs to
+   the ui agent; nothing here edits it.
+
+   One skin (art review round 1, fix 5; STYLE_GUIDE rule 7). Every panel here is drawn with the UI pack's
+   own 9-slice images through CSS border-image, the same files and slices style.css uses:
+   ui/skin/parchment.png (content), ui/skin/panel-plain-2.png (a wooden block), ui/skin/divider.png,
+   our PixelLab icons in ui/skin (packicons3-oct25; the Shikashi strip only through .edu-ico's fallback) and ui/skin/fx-burst.png. No drawn bevels, gradients or
+   shadow frames. Buttons, inputs and bars are left to style.css, so they match every other screen.
+   If a skin image is missing, the browser falls back to the plain border colour given beside it.
+   Colours and fonts come from the skin's custom properties (--skin-*, --u), with fallbacks. */
+:root{
+ --edu-u:var(--u,2px);
+ --edu-font:var(--skin-font,var(--pixel-font,'Pixel Operator',var(--serif,Georgia,serif)));
+ --edu-body:var(--skin-body-font,var(--ui,system-ui,sans-serif));
+ --edu-ink:var(--skin-ink,#3a2614);--edu-ink-soft:var(--skin-ink-soft,#6a4b2c);
+ --edu-gold:var(--skin-gold,#f0d48a);--edu-gold-dark:var(--skin-gold-dark,#7e5a24);
+ --edu-edge:var(--skin-parchment-edge,#a9865a);--edu-outline:var(--skin-outline,#1e130b);
+ --edu-parch:var(--skin-parchment,#ead9b0);--edu-leaf:var(--skin-leaf,#5f8f4e);
+}
+/* The two frames, as utilities: parchment for content, a wooden block for groups. */
+dialog[data-view=library] .lesson-card,.edu-study,.edu-kc,.edu-unlock,.edu-xp{
+ border-style:solid;border-width:calc(4*var(--edu-u));border-color:var(--edu-edge);border-image:url(skin/parchment.png) 10 fill/calc(10*var(--edu-u)) round;
+ background:var(--edu-parch);color:var(--edu-ink);border-radius:0;box-shadow:none;image-rendering:pixelated}
+dialog[data-view=library] .grade-ladder{
+ border-style:solid;border-width:calc(5*var(--edu-u));border-color:var(--edu-outline);border-image:url(skin/panel-plain-2.png) 12 fill/calc(12*var(--edu-u)) round;image-rendering:pixelated}
+/* A pack icon from the 32 px strip: set --i to its index in ui/icon-names.js. */
+.edu-ico{display:inline-block;width:32px;height:32px;flex:none;background:url(skin/icons.png) calc(var(--i)*-32px) 0/auto 32px no-repeat;image-rendering:pixelated}
+
+/* ---------- Library ---------- */
+dialog[data-view=library] .modal-head h2,dialog[data-view=library] .lesson-strip>h3{font-family:var(--edu-font)}
+dialog[data-view=library] .lesson-strip{display:block;margin:0 0 18px}
+dialog[data-view=library] .grade-ladder{position:relative;margin:18px 0 22px;padding:12px 12px 4px}
+dialog[data-view=library] .grade-ladder>h3{margin:0 0 4px;font-family:var(--edu-font);font-size:1.15rem;color:var(--edu-gold)}
+dialog[data-view=library] .grade-ladder>h3::before{content:'';display:inline-block;width:10px;height:10px;margin-right:8px;background:var(--accent);vertical-align:1px}
+dialog[data-view=library] .grade-ladder>p.subtle{margin:0 0 6px}
+dialog[data-view=library] .grade-ladder>[data-placement],dialog[data-view=library] .grade-ladder>[data-placement-middle],dialog[data-view=library] .ladder-more>button{margin:0 8px 8px 0}
+/* art director round 3: placement checks behind "More", after a shelf's lessons */
+dialog[data-view=library] .ladder-more{margin:4px 0 8px}
+dialog[data-view=library] .ladder-more>summary{list-style:none;cursor:pointer;min-height:32px;display:inline-flex;align-items:center;font-family:var(--edu-font);color:var(--edu-gold)}
+dialog[data-view=library] .ladder-more>summary::-webkit-details-marker{display:none}
+dialog[data-view=library] .ladder-more>summary::before{content:'▸';margin-right:8px}
+dialog[data-view=library] .ladder-more[open]>summary::before{content:'▾'}
+dialog[data-view=library] .ladder-more>summary:focus-visible{outline:2px solid var(--edu-gold);outline-offset:2px}
+dialog[data-view=library] .ladder-more[open]>summary{margin-bottom:6px}
+/* Grades are <details>: only the current grade starts open (playtest M7: the Library was a 17,000 px scroll). */
+dialog[data-view=library] .grade-row{display:block;margin:6px 0 10px}
+dialog[data-view=library] .grade-row>summary{list-style:none;cursor:pointer;min-height:36px;display:flex;align-items:center}
+dialog[data-view=library] .grade-row>summary::-webkit-details-marker{display:none}
+dialog[data-view=library] .grade-row>summary::before{content:'▸';margin-right:8px;color:var(--edu-gold)}
+dialog[data-view=library] .grade-row[open]>summary::before{content:'▾'}
+dialog[data-view=library] .grade-row>summary:focus-visible{outline:2px solid var(--edu-gold);outline-offset:2px}
+dialog[data-view=library] .grade-row h4{margin:0;font-family:var(--edu-font);font-size:1rem;color:var(--edu-gold)}
+dialog[data-view=library] .grade-row>.grade-focus{margin:2px 0 8px;font-size:13.5px;line-height:1.45}
+dialog[data-view=library] .grade-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+/* Grades are separated by the pack's divider, not a drawn plank. */
+dialog[data-view=library] .grade-row+.grade-row,dialog[data-view=library] .stage-head{padding-top:14px;background:url(skin/divider.png) center top/calc(82*var(--edu-u)) calc(14*var(--edu-u)) no-repeat}
+dialog[data-view=library] .grade-row.shut h4,dialog[data-view=library] .grade-row.shut>.grade-focus{opacity:.75}
+dialog[data-view=library] .stage-head{margin:22px 0 4px;padding-top:calc(18*var(--edu-u));text-align:center;font-family:var(--edu-font);font-size:1.1rem;letter-spacing:2px;text-transform:uppercase;color:var(--edu-gold)}
+
+/* Lesson cards: parchment, a subject-coloured edge, three stamps. */
+dialog[data-view=library] .lesson-card{position:relative;gap:6px;padding:8px 10px 10px 14px}
+dialog[data-view=library] .lesson-card::before{content:'';position:absolute;top:0;left:-2px;bottom:0;width:4px;background:var(--accent)}
+dialog[data-view=library] .lesson-card .tag{color:var(--edu-ink-soft)}
+dialog[data-view=library] .lesson-card strong{font-family:var(--edu-font);font-size:1.05rem;line-height:1.25;color:var(--edu-ink)}
+dialog[data-view=library] .lesson-card .subtle,dialog[data-view=library] .lesson-card .lesson-track{color:var(--edu-ink-soft);font-size:13px;line-height:1.4}
+dialog[data-view=library] .lesson-card.shut{opacity:.7}
+dialog[data-view=library] .lesson-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+dialog[data-view=library] .lesson-actions .subtle{flex-basis:100%;font-size:12px}
+dialog[data-view=library] .lesson-actions .tag{display:none}
+/* The three stamps (lesson, quiz, test): a pack icon each, bright when done, faded when not; the word stays. */
+.lesson-stamps{display:flex;gap:10px;margin:2px 0}
+.lesson-stamps .stamp{display:inline-flex;align-items:center;gap:3px;font:700 12px/1 var(--edu-body);font-style:normal;color:var(--edu-ink-soft)}
+.lesson-stamps .stamp::before{content:'';width:32px;height:32px;background:url(skin/uiicons/book-open.png) 0 0/32px 32px no-repeat;image-rendering:pixelated;filter:grayscale(1) opacity(.35)}
+/* packicons3-oct25: our PixelLab book, scroll and quill (were Shikashi strip cells 65, 67, 69) */
+.lesson-stamps .stamp:nth-child(2)::before{background-image:url(skin/rewards/scroll.png)}.lesson-stamps .stamp:nth-child(3)::before{background-image:url(skin/uiicons/quill.png)}
+.lesson-stamps .stamp.on{color:var(--edu-ink)}
+.lesson-stamps .stamp.on::before{filter:none}
+.lesson-stamps .stamp.on::after{content:'✓';color:var(--edu-leaf)}
+/* Mastered and test-ready: a pack icon in the card's corner (the stamps row above carries the words). */
+dialog[data-view=library] .lesson-card:has(.lesson-actions .tag)::after,dialog[data-view=library] .lesson-card:has([data-test]:not(:disabled))::after{content:'';position:absolute;top:4px;right:6px;width:32px;height:32px;background:url(skin/packicons3/skull.png) 0 0/32px 32px no-repeat;image-rendering:pixelated}
+dialog[data-view=library] .lesson-card:has(.lesson-actions .tag)::after{background-position:calc(2*-32px) 0}
+dialog[data-view=library] .lesson-card:has([data-test]:not(:disabled))::after{background-position:calc(54*-32px) 0}
+/* (Open cards that are not mastered always carry a [data-test] button; mastered ones show a tag instead.) */
+/* Oct 19: the grade's progress is its own badge beside the heading (it read "Grade 2 0 of 5 mastered"); a finished
+   grade's badge says "Grade complete ✓", so the heading no longer adds a second tick. */
+dialog[data-view=library] .grade-row>summary{flex-wrap:wrap;row-gap:4px}
+dialog[data-view=library] .grade-count{margin-left:12px;display:inline-flex;align-items:center;min-height:22px;padding:1px 10px;border:1px solid #f0d48a55;background:#0e1424b3;color:#e6dcc4;font-size:16px;letter-spacing:0;line-height:20px;font-weight:400;border-radius:2px}
+dialog[data-view=library] .grade-count.done{border-color:#7fb06a99;color:#bfe3ac;background:#1a2c1fb3}
+dialog[data-view=library] .grade-count.locked{opacity:.8}
+
+/* ---------- Hero XP bar (xpBarHTML) ---------- */
+.edu-xp{display:flex;align-items:center;gap:12px;padding:6px 10px}
+.edu-xp-lv{flex:none;font:700 14px/1 var(--edu-font);color:var(--edu-ink)}
+.edu-xp-bar{flex:1;min-width:80px;height:calc(7*var(--edu-u));background:#3a2a1a;border:calc(1*var(--edu-u)) solid var(--edu-outline)}
+.edu-xp-bar i{display:block;height:100%;background:url(skin/fill-gold.png) 0 0/100% 100%,var(--edu-gold);image-rendering:pixelated}
+.edu-xp-num{flex:none;font-size:13px;color:var(--edu-ink-soft);font-variant-numeric:tabular-nums}
+
+/* ---------- Lesson narration controls (mountLessonVoice) ---------- */
+.edu-voice{display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px}
+.edu-voice .edu-speak{display:inline-flex;align-items:center;gap:8px}
+.edu-voice .edu-speak.speaking{color:var(--edu-gold)}
+.edu-narration{display:inline-flex;align-items:center;gap:8px;min-height:44px;font-size:14px;cursor:pointer}
+.edu-narration input{width:20px;height:20px;margin:0;accent-color:var(--edu-gold-dark);cursor:pointer}
+.edu-voice :focus-visible{outline:2px solid var(--edu-gold);outline-offset:3px}
+
+/* ---------- Study to unlock (studyPanelHTML) ---------- */
+.edu-study{padding:12px 14px 8px}
+.edu-title{margin:0 0 8px;font-family:var(--edu-font);font-size:1.2rem;color:var(--edu-ink)}
+.edu-plans{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.edu-plan{position:relative;padding:6px 8px 8px 14px;border-bottom:2px dotted var(--edu-edge)}
+.edu-plan:last-child{border-bottom:0}
+.edu-plan::before{content:'';position:absolute;left:0;top:6px;bottom:8px;width:4px;background:var(--accent)}
+.edu-plan-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px}
+.edu-plan-head strong{font-family:var(--edu-font);font-size:1.05rem}
+.edu-sub{font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--edu-ink-soft)}
+.edu-meter{position:relative;height:16px;margin:6px 0;background:#3a2a1a;border:calc(1*var(--edu-u)) solid var(--edu-outline)}
+.edu-meter i{display:block;height:100%;background:var(--accent)}
+.edu-meter span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:700 11px/1 var(--edu-body);color:#fff8e4;text-shadow:1px 1px 0 var(--edu-outline)}
+.edu-summary{margin:4px 0;font-size:14px;line-height:1.45}
+.edu-steps{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.edu-step{font-size:13px;line-height:1.4}
+.edu-step-k{display:inline-block;min-width:88px;margin-right:6px;font:700 11px/1.6 var(--edu-body);letter-spacing:1px;text-transform:uppercase;color:var(--edu-ink-soft)}
+.edu-step ul{list-style:none;margin:4px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.edu-step small,.edu-more,.edu-rule,.edu-empty{color:var(--edu-ink-soft)}
+.edu-topic small{display:block;font-weight:400;font-size:11px}
+.edu-rule,.edu-empty{margin:8px 0 0;font-size:12.5px}
+
+/* ---------- Pre-boss knowledge check (mountKnowledgeCheck): one parchment panel inside the skinned dialog ---------- */
+.edu-kc{max-width:680px;margin:0 auto;padding:14px 18px 12px}
+.edu-kc-eyebrow{display:block;font:700 11px/1.4 var(--edu-body);letter-spacing:2px;text-transform:uppercase;color:var(--edu-ink-soft)}
+.edu-kc .edu-title{font-size:1.4rem;margin:4px 0 6px}
+.edu-kc p{margin:6px 0;font-size:15px;line-height:1.5}
+.edu-kc-rules{color:var(--edu-ink-soft)}
+.edu-kc-pips{display:flex;gap:6px;margin:6px 0 10px}
+.edu-kc-pips i{width:calc(13*var(--edu-u));height:calc(12*var(--edu-u));background:url(skin/pip-off.png) center/100% 100% no-repeat,#9a8466;image-rendering:pixelated}
+.edu-kc-pips i.on,.edu-kc-pips i.right{background:url(skin/pip.png) center/100% 100% no-repeat,var(--edu-gold)}
+.edu-kc-pips i.miss{opacity:.5}
+.edu-kc-pic{display:block;width:min(100%,520px);height:auto;margin:6px auto 10px}
+.edu-kc-q{margin:6px 0 10px;font-family:var(--edu-font);font-size:1.25rem;line-height:1.35}
+.edu-kc-form{display:flex;gap:10px;flex-wrap:wrap}
+.edu-kc-input{flex:1 1 220px;min-height:44px;font-size:18px}
+.edu-kc-feedback{min-height:1.5em;font-weight:600}
+.edu-kc-feedback.right{color:#2f5a25}
+.edu-kc-feedback.miss{color:var(--edu-ink-soft)}
+.edu-kc-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+.edu-kc-buff{padding:8px 0;font-weight:600}
+.edu-kc-buff.on{color:#24461c}
+
+/* ---------- The unlock and awakening banner (unlockBannerHTML) ---------- */
+.edu-unlock{position:relative;overflow:hidden;max-width:620px;margin:10px auto;padding:22px 24px 18px;text-align:center}
+.edu-unlock>*{position:relative;z-index:1}
+/* The pack's burst (ui/skin/fx-burst.png: 7 frames of 64 px) played at 3x behind the rune, twice. */
+.edu-unlock-rays{position:absolute!important;z-index:0!important;left:50%;top:104px;width:192px;height:192px;margin:-96px 0 0 -96px;background:url(skin/fx-burst.png) 0 0/1344px 192px no-repeat;image-rendering:pixelated;animation:edu-burst .84s steps(7) 2 forwards;pointer-events:none}
+.edu-unlock .edu-unlock-eyebrow{display:block;color:var(--edu-gold-dark);letter-spacing:3px}
+.edu-unlock .edu-unlock-rune{width:64px;height:64px;margin:12px auto 8px;font-size:0;background:url(skin/rewards/xp.png) 0 0/64px 64px no-repeat;image-rendering:pixelated}
+.edu-unlock .edu-unlock-ribbon{display:inline-block;margin:6px 0 2px;font:700 14px/1 var(--edu-font);letter-spacing:3px;color:var(--edu-gold-dark)}
+.edu-unlock .edu-unlock-name{margin:8px 0 6px;font-family:var(--edu-font);font-size:clamp(1.8rem,5vw,2.6rem);color:var(--edu-ink);animation:edu-pop .45s cubic-bezier(.2,1.4,.4,1) both}
+.edu-unlock .edu-unlock-meta,.edu-unlock .subtle{color:var(--edu-ink-soft)}
+.edu-unlock .edu-unlock-subject{font-weight:700;color:var(--edu-ink)}
+.edu-unlock .edu-unlock-why{margin:10px auto 4px;font-weight:600;color:#2f5a25}
+.edu-unlock .edu-unlock-quote{max-width:44ch;margin:8px auto;font-family:var(--edu-font);font-style:italic}
+.edu-unlock .edu-unlock-desc{max-width:46ch;margin:8px auto;font-size:14px;color:var(--edu-ink-soft)}
+.edu-unlock .edu-unlock-next{margin-top:10px;min-width:180px}
+@keyframes edu-burst{from{background-position:0 0}to{background-position:-1344px 0}}
+/* Oct 19: the burst played 3x, centred 18 px below the rune, and its dark smoke frames hid "ABILITY AWAKENED" (b7).
+   It now plays at 2x centred on the rune, the rune has more room under it, and the eyebrow and ribbon sit on a
+   plate of the card's own parchment colour above the burst, so no frame can cover them. */
+.edu-unlock-rays{top:82px;width:128px;height:128px;margin:-64px 0 0 -64px;background-size:896px 128px;animation-name:edu-burst-2x}
+.edu-unlock .edu-unlock-rune{margin-bottom:16px}
+.edu-unlock .edu-unlock-eyebrow,.edu-unlock .edu-unlock-ribbon{z-index:2;width:max-content;max-width:100%;margin-left:auto;margin-right:auto;padding:2px 12px;background:#dcc47c}
+@keyframes edu-burst-2x{from{background-position:0 0}to{background-position:-896px 0}}
+@keyframes edu-pop{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:none}}
+
+@media (max-width:560px){dialog[data-view=library] .grade-cards{grid-template-columns:1fr}.edu-kc{padding:12px}.edu-step-k{display:block}}
+@media (prefers-reduced-motion:reduce){.edu-unlock-rays{animation:none;background-position:-384px 0}.edu-unlock .edu-unlock-name{animation:none}}
+@media (forced-colors:active){dialog[data-view=library] .lesson-card,.edu-study,.edu-kc,.edu-plan{border:2px solid CanvasText}}
+
+/* ---------- The next lesson, goals in lessons, Read to me (owner decisions 8 Oct; review change 5) ---------- */
+.edu-next{display:flex;align-items:center;gap:14px;margin:12px 0;padding:10px 14px;border-style:solid;border-width:calc(4*var(--edu-u));border-color:var(--edu-edge);border-image:url(skin/parchment.png) 10 fill/calc(10*var(--edu-u)) round;background:var(--edu-parch);color:var(--edu-ink);image-rendering:pixelated}
+.edu-next .edu-ico{transform:scale(2);margin:0 16px}
+.edu-next-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.edu-next-k{font:700 12px/1.2 var(--edu-body);letter-spacing:2px;text-transform:uppercase;color:var(--edu-ink-soft)}
+.edu-next-text strong{font-family:var(--edu-font);font-size:1.35rem;line-height:1.2}
+.edu-next-text small{color:var(--edu-ink-soft)}
+.edu-next-goal{font-weight:700;color:#2f5a25}
+/* art director round 3: at a subject station, where the hero's next unlock is when it is on another shelf */
+.edu-next-away{display:block;margin:4px 0 0;font-weight:700;color:#5a3a1a}
+/* oct24-polish3: the other shelf's ability is its own labelled line under a rule, apart from this shelf's road */
+.edu-next-text .edu-next-away{margin:6px 0 0;padding:5px 0 0;border-top:2px dotted rgba(90,58,26,.35)}
+.edu-away-k{display:inline;margin-right:8px;font:700 12px/1.2 var(--edu-body);letter-spacing:2px;text-transform:uppercase;color:var(--edu-ink-soft)}
+.edu-next-go{display:inline-block;margin:4px 0 0 8px;vertical-align:middle}
+.edu-next-actions{display:flex;flex-direction:column;gap:6px}
+.edu-next-actions .primary{min-width:120px;font-size:1.1rem}
+@media (max-width:640px){.edu-next{display:grid;grid-template-columns:48px minmax(0,1fr);gap:12px}.edu-next .edu-ico{justify-self:center;margin:0}.edu-next-actions{grid-column:1/-1;flex-direction:row;flex-wrap:wrap}.edu-next-actions>button{flex:1;min-width:0}.edu-next-actions .primary{min-width:0}}
+@media (max-width:420px){.edu-next-actions{flex-direction:column}.edu-next-actions>button{width:100%}}
+.edu-goal{display:flex;align-items:center;gap:8px;margin:4px 0;font-size:15px}
+.edu-read{display:inline-flex;align-items:center;gap:6px;min-height:32px;padding:2px 10px;font-size:12px;vertical-align:middle}
+.edu-read::before{content:'';width:32px;height:32px;margin:-6px 0;background:url(skin/uiicons/lyre.png) 0 0/32px 32px no-repeat;image-rendering:pixelated}
+/* Paired with another button (the unlock card's Continue, the Library's Next card): the same height, type size and line
+   as its neighbour, never a smaller sibling. */
+:is(.edu-next-actions,.modal-actions)>.edu-read,button:not(.edu-read)~.edu-read{min-height:38px;padding:8px 22px 9px 14px;font-size:var(--fs)}
+.edu-unlock .edu-unlock-next~.edu-read{margin-top:10px}.edu-unlock :is(.edu-unlock-next,.edu-unlock-next~.edu-read){vertical-align:top}
+
+/* ---------- A topic's four steps (playtest m15) ---------- */
+.edu-progress{list-style:none;display:flex;flex-wrap:wrap;gap:6px 14px;margin:8px 0;padding:0}
+.edu-pstep{display:flex;align-items:center;gap:6px;font:700 13px/1.2 var(--edu-body);color:var(--edu-ink-soft)}
+.edu-pstep::before{content:'';width:32px;height:32px;background:url(skin/uiicons/book-open.png) 0 0/32px 32px no-repeat;image-rendering:pixelated;filter:grayscale(1) opacity(.35)}
+/* packicons3-oct25: our book, scroll, crossed swords and quill (were Shikashi cells 65, 67, 9, 69) */
+.edu-pstep.lesson{flex-direction:row;gap:6px}.edu-pstep.quiz::before{background-image:url(skin/rewards/scroll.png)}.edu-pstep.practice::before{background-image:url(skin/uiicons/swords.png)}.edu-pstep.test::before{background-image:url(skin/uiicons/quill.png)}
+.edu-pstep.on{color:var(--edu-ink)}.edu-pstep.on::before{filter:none}
+.edu-pbar{display:inline-block;width:56px;height:8px;margin-left:4px;background:#3a2a1a;border:1px solid var(--edu-outline)}
+.edu-pbar i{display:block;height:100%;background:url(skin/fill-green.png) 0 0/100% 100%,var(--edu-leaf)}
+.edu-progress.compact{gap:4px 10px}.edu-progress.compact .edu-pstep{font-size:12px}
+.edu-progress.compact .edu-pstep::before{width:24px;height:24px;background-size:auto 24px;background-position:calc(var(--i)*-24px) 0}
+/* Outside the parchment cards (dark panels), the words stay light. */
+.lesson .edu-pstep,.result .edu-pstep{color:var(--muted,#c9b98f)}.lesson .edu-pstep.on,.result .edu-pstep.on{color:var(--gold-2,#f0d48a)}
+
+/* ---------- A right answer: the pack burst (playtest m14) ---------- */
+.edu-burst{position:absolute;left:50%;top:50%;width:128px;height:128px;margin:-64px 0 0 -64px;background:url(skin/fx-burst.png) 0 0/896px 128px no-repeat;image-rendering:pixelated;pointer-events:none;animation:edu-burst2 .7s steps(7) 1 forwards}
+@keyframes edu-burst2{from{background-position:0 0}to{background-position:-896px 0}}
+.lesson-check #lesson-feedback{position:relative;min-height:1.6em;font-family:var(--edu-font);font-size:1.5rem;color:var(--gold-2,#f0d48a)}
+.lesson[data-kind=lesson]{position:relative;align-items:center;text-align:center;gap:14px;padding:18px 8px}
+.lesson[data-kind=lesson] .lesson-xp{font-family:var(--edu-font);font-size:1.4rem}
+.lesson[data-kind=lesson] .actions{justify-content:center;flex-wrap:wrap;gap:10px}
+.lesson[data-kind=lesson]>.edu-burst{top:24px}
+@media (prefers-reduced-motion:reduce){.edu-burst{animation:none;background-position:-384px 0}}
+/* ---------- Art director round 3: one response line, and the burst on the chosen answer ----------
+   The line is Archivist Aldous's (his pack face at 2x beside it); a second line never shows. The burst plays once
+   on the answer button, under its label (isolation + z-index -1), then hides, so it never covers text. */
+.lesson-check #lesson-feedback:not(:empty){display:flex;align-items:center;gap:12px;text-align:left}
+.lesson-check #lesson-feedback:not(:empty)::before{content:'';flex:none;width:80px;height:80px;background:url(portraits/archivist.png) 0 0/80px 80px no-repeat;image-rendering:pixelated}
+.lesson-check #lesson-hint:empty{display:none}
+.lesson-answers button{position:relative;isolation:isolate}
+.lesson-answers button.right,.lesson-answers button.right:disabled{color:var(--ink,#f4ead2);opacity:1;text-shadow:0 2px 0 #0d0806}
+.lesson-answers button>.edu-burst{z-index:-1;animation:edu-burst2 .7s steps(7) 1 forwards,edu-burst-out 1ms linear .7s forwards}
+@keyframes edu-burst-out{to{visibility:hidden}}
+@media (prefers-reduced-motion:reduce){.lesson-answers button>.edu-burst{display:none}}
+
+/* ---------- 720p: the Try-it sits beside the picture on wide screens (playtest m14) ---------- */
+@media (min-width:900px){
+ .lesson:has(> .lesson-check){display:grid;grid-template-columns:minmax(0,1.35fr) minmax(260px,1fr);column-gap:16px;align-items:start}
+ .lesson:has(> .lesson-check)>*{grid-column:1/-1}
+ .lesson:has(> .lesson-check)>#lesson-pic{grid-column:1;width:100%;max-height:44vh}
+ .lesson:has(> .lesson-check)>.lesson-check{grid-column:2;align-self:stretch}
+}
+/* art director round 3: the step text keeps the font's 2x size on short screens too (the plate grows instead) */
+@media (max-height:760px){#lesson-pic{max-height:40vh;width:auto;max-width:100%}}
+/* The completion screen: the four-step sigil already says what opens the test, so the long line goes. */
+.lesson[data-kind=lesson] .actions>.subtle{display:none}
+.lesson[data-kind=lesson] .edu-progress{justify-content:center}
+dialog[data-view=library] .edu-pstep,.edu-pstep{flex-wrap:nowrap;white-space:nowrap}
+dialog[data-view=library] .edu-pstep>span{display:inline}
+
+/* ---------- The Grown-ups' report card (edu-report.js) ---------- */
+.edu-grownups{position:relative;overflow:hidden}
+.edu-grownups::after{content:'';position:absolute;left:0;bottom:0;height:4px;width:0;background:var(--edu-gold)}
+/* The two-second hold: the bar fills; its animationend opens the report (no JavaScript timer). */
+.edu-grownups.holding::after{animation:edu-hold 2s linear forwards}
+@keyframes edu-hold{to{width:100%}}
+@media (prefers-reduced-motion:reduce){.edu-grownups.holding::after{animation-duration:2s}}
+#edu-report{position:fixed;inset:0;z-index:2147483000;overflow:auto;padding:24px 16px;background:#f7f1e2;color:#2a1d10;font:16px/1.5 var(--edu-body)}
+.edu-rc-bar{position:sticky;top:0;display:flex;gap:10px;justify-content:flex-end;max-width:820px;margin:0 auto 12px}
+.edu-rc{max-width:820px;margin:0 auto}
+.edu-rc h2{margin:0;font-family:var(--edu-font);font-size:1.8rem}
+.edu-rc h3{margin:18px 0 6px;font-family:var(--edu-font);font-size:1.2rem;border-bottom:2px solid #c9b48a}
+.edu-rc-totals{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:14px 0}
+.edu-rc-totals div{padding:10px;border:2px solid #c9b48a;text-align:center}
+.edu-rc-totals b{display:block;font-size:1.8rem}
+.edu-rc table{width:100%;border-collapse:collapse;font-size:14px}
+.edu-rc th,.edu-rc td{padding:4px 6px;border-bottom:1px solid #e0d2b0;text-align:left}
+.edu-rc-line,.edu-rc-none,.edu-rc-note,.edu-rc small{color:#5a4630}
+.edu-rc-cert{display:inline-flex;flex-direction:column;gap:2px;margin:6px 8px 6px 0;padding:14px 18px;border:3px double #8a6a2a;background:#fffaf0;min-width:240px}
+.edu-rc-cert span{font:700 11px/1 var(--edu-body);letter-spacing:3px;text-transform:uppercase;color:#8a6a2a}
+@media print{
+ body>*:not(#edu-report){display:none!important}
+ #edu-report{position:static;padding:0;background:#fff}
+ .edu-rc-bar{display:none}
+ .edu-rc-cert{break-inside:avoid}
+}
+
+/* ---------- Art review round 2 ---------- */
+/* The guide: Archivist Aldous beside every lesson step, speaking the caption from a parchment plate. */
+.edu-guide-row{display:flex;align-items:flex-start;gap:12px}
+/* A filled border image paints over a replaced IMG's content. Keep the pack frame on its
+   parent, with the portrait above it; the 40px source stays at a whole 3x (mobile 2x) scale. */
+.edu-guide-frame{display:block;flex:none;isolation:isolate;image-rendering:pixelated;border-style:solid;border-width:calc(3*var(--edu-u));border-color:var(--edu-outline);border-image:url(skin/slot.png) 6 fill/calc(6*var(--edu-u)) stretch}
+.edu-guide{display:block;position:relative;z-index:1;width:120px;height:120px;image-rendering:pixelated;border:0;border-image:none;transform-origin:50% 100%}
+.edu-guide.cheer{animation:edu-bob .5s steps(2) 3}
+.edu-guide.think{transform:rotate(-3deg)}
+@keyframes edu-bob{50%{transform:translateY(-6px)}}
+.edu-speech{position:relative;flex:1;min-width:0;padding:8px 12px;border-style:solid;border-width:calc(4*var(--edu-u));border-color:var(--edu-edge);border-image:url(skin/parchment.png) 10 fill/calc(10*var(--edu-u)) round;color:var(--edu-ink);image-rendering:pixelated}
+.edu-speech .lesson-say{color:var(--edu-ink);font-size:var(--fs-2,32px);line-height:1.25}
+.m-mode .edu-speech .lesson-say{font-size:var(--fs,16px)}
+.edu-speaker{display:block;font:700 12px/1.4 var(--edu-body);letter-spacing:2px;text-transform:uppercase;color:var(--edu-ink-soft)}
+@media (max-width:640px){.edu-guide{width:80px;height:80px}}
+@media (prefers-reduced-motion:reduce){.edu-guide.cheer{animation:none}}
+/* A wrong first try is a second look, never a red cross. */
+.lesson-answers button.wrong{text-decoration:none!important;opacity:.55;filter:grayscale(.6)}
+/* The knowledge check is one parchment-coloured block inside the dialog's frame: no frame of its own. */
+dialog .edu-kc,.edu-kc{border:0!important;border-image:none!important;background:none!important;box-shadow:none!important;color:var(--ink,#f1e6cc)}
+.edu-kc .edu-kc-eyebrow,.edu-kc .edu-kc-rules,.edu-kc .edu-kc-feedback.miss{color:var(--gold-2,#f0d48a)!important}
+.edu-kc .edu-title,.edu-kc .edu-kc-q,.edu-kc p{color:var(--ink,#f1e6cc)!important}
+/* Library cards: the status badge is a stamp on the card's top-right edge, clear of the title; no sparkle. */
+dialog[data-view=library] .lesson-card{overflow:visible}
+dialog[data-view=library] .lesson-card:has(.lesson-actions .tag)::after,dialog[data-view=library] .lesson-card:has([data-test]:not(:disabled))::after{top:-14px!important;right:6px!important;width:auto!important;height:auto!important;min-height:0!important;padding:4px 10px!important;background:none!important;border-style:solid!important;border-width:calc(2*var(--edu-u)) calc(9*var(--edu-u))!important;border-color:transparent!important;border-image:url(skin/btn-primary.png) 2 9 fill/calc(2*var(--edu-u)) calc(9*var(--edu-u)) stretch!important;font:700 11px/1.2 var(--edu-body)!important;letter-spacing:1px;color:#fff2d0!important;z-index:2}
+dialog[data-view=library] .lesson-card:has(.lesson-actions .tag)::after{content:'MASTERED'!important}
+dialog[data-view=library] .lesson-card:has([data-test]:not(:disabled))::after{content:'TEST READY'!important}
+dialog[data-view=library] .grade-cards{align-items:start}
+dialog[data-view=library] .lesson-card{height:auto!important;min-height:0!important}
+.edu-kc .edu-kc-q+.edu-read{margin:0 0 12px}
+.edu-pstep>.edu-pstep-name,dialog[data-view=library] .edu-pstep>.edu-pstep-name{display:inline!important;white-space:nowrap}
+
+/* ---------- Lessons polish (14 Oct): the 16 px grid, the answer moment, pips, results ---------- */
+/* Pixel Operator is drawn on a 16 px grid: everything on these screens is --fs (16) or --fs-2 (32), so the text setting
+   still scales it (125 % and 150 % redefine both). */
+dialog:is([data-view=lesson],[data-view=lesson-quiz],[data-view=placement],[data-view=review],[data-view=lesson-summary],[data-view=placement-summary],[data-view=review-summary],[data-view=library],[data-view=course]) :is(.edu-speaker,.edu-read,.edu-pstep,.edu-progress.compact .edu-pstep,.edu-next-k,.lesson-actions .subtle){font-size:var(--fs)}
+dialog[data-view] .edu-speaker{letter-spacing:1px}
+@media(min-width:760px) and (max-height:900px){
+ dialog[data-view=lesson] .edu-speech .lesson-say,dialog[data-view=lesson] .lesson-check>p{font-size:var(--fs);line-height:1.5}
+ dialog[data-view=lesson] .lesson-eq{font-size:var(--fs-2)}
+}
+/* Giveaways (17 Oct): an eq line that would show the Try-it's answer keeps its space but waits until the Try-it is answered. */
+.lesson-eq.held{visibility:hidden;position:relative}
+/* 25 Oct: a Try-it's own picture is up, so the step's equation is hidden (space kept) rather than captioning the wrong picture */
+.lesson-eq.swapped{visibility:hidden}
+.lesson-eq.held::after{content:'The working shows here after you try.';visibility:visible;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:var(--fs);font-weight:400;font-style:italic;opacity:.75}
+dialog[data-view=lesson] .lesson-check #lesson-feedback{font-size:var(--fs);line-height:1.5;color:var(--gold-2,#f0d48a)}
+dialog[data-view=lesson] .lesson-check #lesson-feedback .edu-fb-say:first-child{display:block;font-size:var(--fs-2);line-height:1.2;color:#9fe07a}
+dialog[data-view=lesson] .lesson-check:not(:has(button.right)) #lesson-feedback .edu-fb-say:first-child{color:var(--gold-2,#f0d48a)}
+dialog[data-view=library] .edu-next strong{font-size:var(--fs-2);line-height:1.2}
+dialog:is([data-view=placement],[data-view=lesson-quiz],[data-view=review]) .question h3{font-size:var(--fs);line-height:1.5}
+/* 25 Oct (first-hour playtest): one prompt size for typed and choice questions; a short typed prompt no longer jumps to 32 px beside a 16 px choice prompt */
+dialog:is([data-view=placement],[data-view=lesson-quiz],[data-view=review]) .question h3.big{font-size:var(--fs);line-height:1.5}
+dialog:is([data-view=placement],[data-view=lesson-quiz]) #quiz-form button{font-size:var(--fs)}
+dialog:is([data-view=placement],[data-view=lesson-quiz]) .question-reading .tag{font-size:var(--fs)}
+.lesson-xp,.lesson[data-kind=lesson] .lesson-xp{font-size:var(--fs-2)!important;line-height:1.2}
+/* The question keeps room for its words and Read button when the explanation opens; the explanation picture is a reminder,
+   not the main view. */
+dialog:is([data-view=placement],[data-view=lesson-quiz]) .question:has(#quiz-feedback:not(:empty)) .question-reading{min-height:112px}
+dialog:is([data-view=placement],[data-view=lesson-quiz]) #quiz-feedback #lesson-pic{max-height:160px;width:auto;max-width:100%}
+
+/* A right Try-it answer turns green (the red primary skin, hue-turned), never the red that reads as wrong. */
+.lesson-answers button.right,.lesson-answers button.right:disabled{filter:hue-rotate(105deg) saturate(1.3)}
+.lesson-answers button.right>.edu-burst{filter:hue-rotate(-105deg)}
+
+/* The answer moment */
+.am{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;position:relative}
+.am-badge{flex:none;width:32px;height:32px;background:url(skin/pl-icons/answer-right.png) 0 0/32px 32px no-repeat;image-rendering:pixelated}
+.am-right .am-badge{animation:am-pop .32s steps(4) both}
+.am-wrong .am-badge{background-image:url(skin/pl-icons/answer-hint.png)}
+.am-say{font-size:var(--fs);color:#4a1f0c}
+.am-right .am-say{color:#2f5a25}
+.am-xp{display:inline-block;padding:2px 8px;font:700 var(--fs)/1.2 var(--edu-font);color:#fff3c4;background:#3d6b2c;border:2px solid #20351a;box-shadow:0 2px 0 #20351a;animation:am-pop .4s steps(5) .08s both}
+.am-spark{position:absolute;left:16px;top:16px;width:128px;height:128px;margin:-64px 0 0 -64px;background:url(skin/fx-burst.png) 0 0/896px 128px no-repeat;image-rendering:pixelated;pointer-events:none;animation:edu-burst2 .7s steps(7) 1 forwards,edu-burst-out 1ms linear .7s forwards}
+.am-note{color:var(--parch-ink,#5a3a1c)}
+.am-level{font-weight:700;color:#7a4d00}
+@keyframes am-pop{0%{transform:scale(0)}60%{transform:scale(1.25)}100%{transform:scale(1)}}
+.feedback:has(.am-right){filter:drop-shadow(0 0 6px rgba(140,220,110,.45))}
+@media (prefers-reduced-motion:reduce){.am-badge,.am-xp{animation:none!important}.am-spark{display:none}}
+:root[data-motion=reduced] :is(.am-badge,.am-xp){animation:none!important}:root[data-motion=reduced] .am-spark{display:none}
+
+/* The sitting's pips: one per question */
+.am-pips{display:inline-flex;gap:4px;vertical-align:middle;margin-left:10px}
+.am-pips i{width:16px;height:8px;background:#2a3050;border:2px solid #0d1020;box-sizing:content-box}
+.am-pips i.right{background:var(--gold-2,#f0d48a)}
+.am-pips i.miss{position:relative;background:#d98b67}
+/* a wrong answer is a soft coral square with a thin dark cross: clearly not an empty slot, never an alarm red */
+.am-pips i.miss::after{content:'';position:absolute;inset:0;background:linear-gradient(to top right,#0000 calc(50% - 1px),#4a2418 calc(50% - 1px) calc(50% + 1px),#0000 calc(50% + 1px)),linear-gradient(to bottom right,#0000 calc(50% - 1px),#4a2418 calc(50% - 1px) calc(50% + 1px),#0000 calc(50% + 1px))}
+.am-pips i.now{background:#2a3050;border-color:var(--gold-2,#f0d48a)}
+
+/* The lesson's steps read as one bar that fills, not a row of tiny dots */
+.lesson-footer .lesson-dots{gap:4px;max-width:480px;margin:0 auto;max-height:none}
+.lesson-footer .lesson-dots i{flex:1;width:auto;height:8px;min-width:8px;background:#2a3050;border:2px solid #0d1020;opacity:1}
+.lesson-footer .lesson-dots i.done{background:var(--gold-deep,#b8862b)}
+.lesson-footer .lesson-dots i.on{background:var(--gold-2,#f0d48a)}
+.lesson-footer #lesson-next{min-width:128px}
+
+/* What this leads to: the next ability card on result screens */
+.am-goal{width:min(100%,520px);box-sizing:border-box;display:grid;grid-template-columns:auto 1fr;align-items:center;gap:4px 12px;max-width:560px;margin:8px auto;padding:8px 14px;text-align:left;color:var(--edu-ink,#3b2a14);border-style:solid;border-width:calc(4*var(--edu-u,1px));border-color:var(--edu-edge,#8a6a3a);border-image:url(skin/parchment.png) 10 fill/calc(10*var(--edu-u,1px)) round;image-rendering:pixelated}
+.am-goal::before{content:'';grid-row:1/span 3;width:32px;height:32px;background:url(skin/pl-icons/level-up-emblem.png) center/32px 32px no-repeat;image-rendering:pixelated}
+.am-goal-k{font:700 var(--fs)/1.2 var(--edu-body);letter-spacing:1px;text-transform:uppercase;color:var(--edu-ink-soft,#6b5332)}
+.am-goal strong{font:700 var(--fs-2)/1.1 var(--edu-font);color:var(--edu-ink,#3b2a14)}
+.am-goal-meter{display:block;height:12px;background:#3a2a1a;border:2px solid var(--edu-outline,#2a1a0a)}
+.am-goal-meter i{display:block;height:100%;background:var(--accent,#5f8f4e)}
+/* oct24-polish2: one pip per topic on a short road; the newest lights up once (no motion with reduced motion) */
+.am-goal-meter.pips{display:flex;gap:2px;padding:1px}
+.am-goal-meter.pips b{flex:1;height:100%;background:#00000040}
+.am-goal-meter.pips b.on{background:var(--accent,#5f8f4e)}
+.am-goal-meter.pips b.new{background:#ffd96a;box-shadow:0 0 6px #ffd96a;animation:road-pip .7s steps(4) 2}
+@keyframes road-pip{50%{transform:scaleY(1.6)}}
+@media(prefers-reduced-motion:reduce){.am-goal-meter.pips b.new{animation:none}}
+.road-plus{display:block;font-weight:700;color:#7a4a00;line-height:1.25}
+.am-goal-line{grid-column:2;font-size:var(--fs);color:var(--edu-ink,#3b2a14)}
+.am-goal.done::before{grid-row:auto}
+/* The mastered seal and the result title */
+.am-seal{display:block;width:128px;height:128px;margin:0 auto -4px;background:url(skin/pl-icons/topic-mastered.png) 0 0/128px 128px no-repeat;image-rendering:pixelated;animation:am-pop .5s steps(6) both}
+@media (prefers-reduced-motion:reduce){.am-seal{animation:none}}
+.result .am-score{margin:4px 0;font:700 var(--fs-2)/1.2 var(--edu-font);color:var(--gold-2,#f0d48a)}
+.result .am-pips{margin:0 0 8px}
+.result .am-pips i{width:32px;height:16px}
+.result .modal-actions,.lesson[data-kind=lesson] .actions{justify-content:center;flex-wrap:wrap}
+.m-mode .am-seal{width:64px;height:64px;background-size:64px 64px}
+.m-mode .am-goal strong{font-size:var(--fs)}
+/* The next step stays in view on a laptop: the result's buttons come before the topic's steps and the ability card. */
+#modal-content>.result:has(>.am-goal){display:flex;flex-direction:column;align-items:center;gap:4px}
+#modal-content>.result:has(>.am-goal)>*{max-width:100%}
+#modal-content>.result:has(>.am-goal)>.modal-actions:last-child{order:4;margin:8px 0}
+#modal-content>.result:has(>.am-goal)>.edu-progress{order:5;justify-content:center}
+#modal-content>.result:has(>.am-goal)>.am-goal{order:6}
+#modal-content>.result:has(>.am-goal)>p{margin:4px 0}
+@media(max-height:800px){.am-seal{width:64px;height:64px;background-size:64px 64px;margin-bottom:0}#modal-content>.result:has(>.am-goal)>.unlock.mastered{margin:4px auto;padding-top:6px;padding-bottom:6px}#modal-content>.result:has(>.am-goal) .am-score{margin:0}}
+/* Course page: table text on the 16 px grid, progress as a small bar, mastered units in gold */
+dialog[data-view=course] .course-table :is(th,td){font-size:var(--fs);line-height:1.5}
+dialog[data-view=course] .course-done{color:var(--gold-2,#f0d48a)}
+.am-minibar{display:block;width:128px;max-width:100%;height:8px;margin-top:4px;background:#2a3050;border:2px solid #0d1020}
+.am-minibar i{display:block;height:100%;background:var(--gold-2,#f0d48a)}
+/* Phones: the next step comes straight after the score, before the mastered card. */
+.m-mode #modal-content>.result:has(>.am-goal)>.modal-actions:last-child{order:3}
+.m-mode #modal-content>.result:has(>.am-goal)>.unlock.mastered{order:4}
+.m-mode .result .am-pips i{width:16px;height:8px}
+.m-mode dialog:is([data-view=placement],[data-view=lesson-quiz],[data-view=review]) .question h3.big{font-size:var(--fs);line-height:1.5}
+/* Answer buttons for choice questions (learning-flow fix, 17 Oct; ui/answer-choices.js) */
+.choice-form{margin:10px 0 0}
+.choice-form .choice-answers{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.choice-form .choice-answers.long{grid-template-columns:1fr}
+.choice-answers button{min-height:44px;justify-content:flex-start}
+.choice-answers button .tag{flex:none;min-width:22px;text-align:center;color:var(--gold,#e3b85a)}
+.choice-answers button .choice-text{flex:1;min-width:0;overflow-wrap:anywhere}
+.choice-answers button:disabled{opacity:.6}
+.choice-answers button.right,.choice-answers button.right:disabled{opacity:1;filter:hue-rotate(105deg) saturate(1.3);color:var(--ink,#f4ead2)}
+.choice-answers button.wrong{opacity:.55;filter:grayscale(.6)}
+.choice-answers button.picked{outline:2px solid var(--gold,#e3b85a);outline-offset:1px}
+.choice-form .choice-keys{margin:6px 0 0;font-size:.8em}
+@media (max-width:640px){.choice-form .choice-answers{grid-template-columns:1fr}.choice-form .choice-keys{display:none}}
+/* the two halves of an ability's gate, ticked (learning-flow fix, 17 Oct) */
+.am-goal .am-goal-checks{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.85em;opacity:.85}
+.am-goal .am-goal-check.ok{color:#5a8a3a;opacity:1}
+.am-goal::before{grid-row:1/span 5}
+.am-goal .am-goal-checks{grid-column:2}
+/* Lesson nav in fixed slots (learning-flow fix, 17 Oct): Start over at the left, Back and Replay beside it, Next always
+   at the right edge, on every step and at every window size. The body above scrolls; the footer never does. */
+dialog[data-view=lesson] .lesson-footer .actions{display:flex;align-items:center;justify-content:flex-start;flex-wrap:nowrap;gap:8px;padding:8px 10px 10px 8px;overflow:visible}
+dialog[data-view=lesson] .lesson-footer #lesson-next{margin-left:auto}
+dialog[data-view=lesson] .lesson-footer #lesson-restart:disabled{visibility:hidden}
+/* Rounds 2-3 (17 Oct, owner laptop 1000x530): fitLessonPic() in main.js measures each step and only when its content does
+   not fit adds .lesson-compact to the dialog, so the header, guide card and Try-it compact and the Try-it's answers show
+   without scrolling; with room to spare nothing compacts and the picture grows. */
+dialog[data-view=lesson] .lesson-check #lesson-feedback:empty{display:none}
+.lesson-answers [data-answer] .tag{display:inline-block;min-width:1em;opacity:.75;font-size:.85em}
+ dialog[data-view=lesson].lesson-compact .modal-head{margin-bottom:4px;padding-top:0;padding-bottom:6px}
+ dialog[data-view=lesson].lesson-compact #modal-content .modal-head h2{font-size:24px;line-height:1.1;margin:0}
+ dialog[data-view=lesson].lesson-compact .modal-head p{margin:2px 0 0;font-size:14px;line-height:1.3}
+ dialog[data-view=lesson].lesson-compact .edu-narration{min-height:28px}
+ dialog[data-view=lesson].lesson-compact .edu-speaker{display:none}
+ dialog[data-view=lesson].lesson-compact .lesson-body{gap:6px;padding-bottom:2px}
+ dialog[data-view=lesson].lesson-compact .edu-guide{width:56px;height:56px}
+ dialog[data-view=lesson].lesson-compact .edu-speech{padding:4px 8px}
+ dialog[data-view=lesson].lesson-compact .edu-speech .lesson-say{font-size:var(--fs);line-height:1.3;margin:2px 0}
+ dialog[data-view=lesson].lesson-compact .edu-voice{margin-top:2px;gap:4px 10px}
+ dialog[data-view=lesson].lesson-compact .edu-voice button{min-height:28px;padding:0 8px}
+ dialog[data-view=lesson].lesson-compact .lesson-eq{font-size:calc(var(--fs)*1.15);line-height:1.15}
+ dialog[data-view=lesson].lesson-compact .lesson-check{padding:12px 10px 6px}
+ dialog[data-view=lesson].lesson-compact .lesson-check h3{margin:0 0 2px;font-size:var(--fs)}
+ dialog[data-view=lesson].lesson-compact .lesson-check h3{float:left;margin:0 10px 0 0;line-height:1.3}
+ dialog[data-view=lesson].lesson-compact .lesson-check>p{font-size:var(--fs);line-height:1.3;margin:2px 0 6px}
+ dialog[data-view=lesson].lesson-compact .lesson-answers{gap:6px}
+ dialog[data-view=lesson].lesson-compact .lesson-answers [data-answer]{min-height:34px;padding:2px 4px;gap:8px}
+ dialog[data-view=lesson].lesson-compact .lesson-answers [data-answer]{border-left-width:12px!important;border-right-width:12px!important}
+ dialog[data-view=lesson].lesson-compact .lesson-check #lesson-feedback:not(:empty)::before{width:44px;height:44px;background-size:44px 44px}
+ dialog[data-view=lesson].lesson-compact .lesson-check #lesson-feedback .edu-fb-say:first-child{font-size:calc(var(--fs)*1.2)}
+ dialog[data-view=lesson].lesson-compact .lesson{gap:4px}
+ dialog[data-view=lesson] .lesson-footer{padding-top:4px}
+ dialog[data-view=lesson] .lesson-footer .actions{padding:4px 10px 6px 8px;margin-top:2px}
+ dialog[data-view=lesson] .lesson-footer .actions button{min-height:38px;padding-top:4px;padding-bottom:4px}
+/* the picture column is as wide as fitLessonPic() measured (--pic-w); the guide card takes the rest, its portrait going
+   above the caption when the column is narrow */
+dialog[data-view=lesson] .lesson-body{grid-template-columns:minmax(0,1fr) var(--pic-w,minmax(0,1fr))}
+dialog[data-view=lesson] .lesson-body .lesson-visual #lesson-pic{width:100%;max-height:none;margin-left:auto;margin-right:auto}
+dialog[data-view=lesson] .edu-guide-row{flex-wrap:wrap}
+dialog[data-view=lesson] .edu-guide-row>.edu-speech{flex:1 1 var(--say-basis,170px)}
+/* last before shrinking the text: the guide's portrait steps aside so the picture can grow to a readable size */
+dialog[data-view=lesson] .lesson-body.no-guide .edu-guide-frame{display:none}
+/* fitLessonPic() adds .wide-check when the Try-it would fall below the fold: it spans the width under the guide and picture */
+dialog[data-view=lesson] .lesson-body.wide-check:has(> .lesson-check)>.lesson-check{grid-column:1/-1;grid-row:2}
+dialog[data-view=lesson] .lesson-body.wide-check:has(> .lesson-check)>.lesson-visual{grid-column:2;grid-row:1}
+dialog[data-view=lesson] .lesson-body.wide-check .lesson-answers{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
+ /* the subtitle already says "Step 2 of 9", so the dots give their row back; Read to me and Narration sit beside the
+    caption as icons (each keeps its name for screen readers) instead of taking a row of their own */
+ /* the footer is the same on every step and at every size (Back and Next never move): the subtitle's "Step 2 of 9"
+    replaces the dots */
+ dialog[data-view=lesson] .lesson-footer .lesson-dots{display:none}
+/* Round 3: on short windows (the owner's 1000x530 laptop) the lesson window gives its outer margin and some frame padding to
+   the lesson, so the picture and the Try-it get about 50px more height; the same at every step, so Back and Next never move */
+@media(min-width:760px) and (max-height:620px){
+ dialog[data-view=lesson]{height:calc(100dvh - 10px);max-height:calc(100dvh - 10px);width:min(1040px,calc(100vw - 16px));padding:8px 16px 8px}
+ dialog[data-view=lesson] #modal-content{padding-bottom:4px}
+ dialog[data-view=lesson] .lesson-footer .actions{padding-bottom:2px}
+ dialog[data-view=lesson] .modal-head .close{width:38px;min-width:38px;height:38px;min-height:38px}
+ dialog[data-view=lesson] .lesson-footer .actions button{min-height:36px}
+}
+ dialog[data-view=lesson].lesson-compact .edu-speech{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:6px;align-items:start}
+ dialog[data-view=lesson].lesson-compact .edu-speech .edu-voice{flex-direction:column;flex-wrap:nowrap;align-items:stretch;gap:4px;margin:2px 0 0}
+ dialog[data-view=lesson].lesson-compact .edu-speech :is(.edu-speak,.edu-narration)>span{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+ dialog[data-view=lesson].lesson-compact .edu-speech .edu-speak{padding:0 6px;justify-content:center}
+ dialog[data-view=lesson].lesson-compact .edu-speech .edu-narration{min-height:26px;justify-content:center;gap:0}
+ dialog[data-view=lesson].lesson-compact .modal-head>div{display:flex;align-items:baseline;flex-wrap:wrap;column-gap:14px}
+/* and when even that is not enough (the longest steps on a 530px-tall window), the guide's caption steps down one text
+   size (19 Oct: the Try-it's question and answers keep full size, they were too small to read); past that the body
+   scrolls itself to show the answers */
+dialog[data-view=lesson] .lesson-body.tight-check .lesson-say{font-size:calc(var(--fs)*.88);line-height:1.25}
+dialog[data-view=lesson] .lesson-body.tight-check :is(.lesson-check>p,.lesson-answers [data-answer]){font-size:max(15px,calc(var(--fs)*.94));line-height:1.25}
+dialog[data-view=lesson] .lesson-body.tight-check .lesson-answers{grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr))}
+dialog[data-view=lesson] .lesson-body.tight-check .lesson-answers [data-answer]{min-height:30px;padding-top:0;padding-bottom:0;line-height:1.2}
+dialog[data-view=lesson] .lesson-body.tight-check .lesson-check h3{margin-top:0;margin-bottom:0}
+/* 17 Oct: the tightest layout also trims the Try-it card's own padding and the answers' line height (the longest world-map step at 1000x530 needed ~20px for its picture text to reach 12px) */
+dialog[data-view=lesson] .lesson-body.tight-check>.lesson-check{padding-top:4px;padding-bottom:0}
+/* 19 Oct: with that little padding the card's 2x frame bar ran over the question's first line; the tightest card draws its frame at 1x */
+dialog[data-view=lesson] .lesson-body.tight-check>.lesson-check{border-image-width:calc(6*var(--u))}
+dialog[data-view=lesson] .lesson-body.tight-check .lesson-answers [data-answer]{line-height:1.05}
+dialog[data-view=lesson] .lesson-body.tight-check{row-gap:2px}
+dialog[data-view=lesson].lesson-compact .edu-speech .edu-speak{border-left-width:9px!important;border-right-width:9px!important}
+/* Round 2: a question's answers (buttons or the typed box) sit right under it (no gap down to the bottom of the card), with the
+   choice key hint on its own line beneath them; Stop / Next keep their place at the bottom. */
+dialog:is([data-view=placement],[data-view=lesson-quiz],[data-view=review]) .question:has(#quiz-form) .question-reading{flex:0 1 auto}
+dialog:is([data-view=placement],[data-view=lesson-quiz],[data-view=review]) #quiz-form.choice-form{display:block;margin:8px 0 0}
+dialog:is([data-view=placement],[data-view=lesson-quiz],[data-view=review]) #quiz-form.choice-form .choice-keys{display:block;margin:6px 2px 0}
+dialog:is([data-view=placement],[data-view=lesson-quiz],[data-view=review]) .question:has(#quiz-form)>.modal-actions{margin-top:auto}
+/* Round 2: on a short window a result screen (lesson, quiz, practice, test) shows its buttons without scrolling: the
+   header compacts and the buttons come up under the progress strip, above the next-ability card. */
+@media(min-width:760px) and (max-height:620px){
+ dialog[data-view=lesson-summary] .modal-head{margin-bottom:6px;padding-top:0;padding-bottom:6px}
+ dialog[data-view=lesson-summary] .modal-head .eyebrow{display:none}
+ dialog[data-view=lesson-summary] #modal-content .modal-head h2{font-size:24px;line-height:1.1;margin:0}
+ dialog[data-view=lesson-summary] .modal-head p{margin:2px 0 0;font-size:14px}
+ dialog[data-view=lesson-summary] .lesson{gap:6px}
+ dialog[data-view=lesson-summary] .lesson>p{margin:0}
+ dialog[data-view=lesson-summary] .lesson>.edu-progress{margin:2px 0}
+ dialog[data-view=lesson-summary] .lesson>.actions{order:1;margin:4px 0}
+ dialog[data-view=lesson-summary] .lesson>.am-goal{order:2;margin-top:6px}
+}
+@media(min-width:760px) and (max-height:620px){
+ #modal-content>.result:has(>.am-goal)>.modal-actions:last-child{order:3;margin:6px 0}
+ #modal-content>.result:has(>.am-goal)>.unlock.mastered{order:4}
+ .result>.am-seal{width:48px;height:48px;background-size:48px 48px}
+}
+/* Round 8: on a tight Try-it step the picture gives up its own top/bottom margin and the line above it sits snug, so the
+   picture can be drawn at least ~480px wide (its smallest bitmap text then stays at 12px or more on a 1000x530 window) */
+dialog[data-view=lesson] .lesson-body.tight-check .lesson-visual #lesson-pic{margin-top:2px;margin-bottom:0}
+dialog[data-view=lesson] .lesson-body.tight-check .lesson-eq{line-height:1}
+/* Round 8: when a very long caption would hold the picture under ~482px (fitLessonPic), the caption card scrolls inside a box as tall as the picture column */
+dialog[data-view=lesson] .lesson-body.say-scroll .edu-speech{max-height:calc(var(--pic-w)*.4375 + 26px);overflow-y:auto;overscroll-behavior:contain}
+dialog[data-view=lesson] .lesson-body.tight-check .lesson-answers [data-answer]{min-height:28px}
+dialog[data-view=lesson] .lesson-body.tight-check>.lesson-check{padding-top:2px}
+/* Round 8: last resort for a long Try-it on a small window (fitLessonPic): the answers sit to the right of the prompt, so the card is one row shorter and the picture keeps its text at 12px or more */
+dialog[data-view=lesson] .lesson-body.side-answers.wide-check>.lesson-check{display:grid;grid-template-columns:auto minmax(0,1fr) auto;column-gap:10px;align-items:center}
+dialog[data-view=lesson] .lesson-body.side-answers.wide-check>.lesson-check>h3{float:none;grid-column:1;margin:0}
+dialog[data-view=lesson] .lesson-body.side-answers.wide-check>.lesson-check>p{grid-column:2;margin:0}
+dialog[data-view=lesson] .lesson-body.side-answers.wide-check>.lesson-check>p~p{grid-column:1/-1}
+dialog[data-view=lesson] .lesson-body.side-answers.wide-check.tight-check>.lesson-check>.lesson-answers{grid-column:3;grid-row:1;grid-template-columns:repeat(auto-fit,minmax(72px,auto));min-width:min(40vw,240px);max-width:42vw}
+/* Round 8: on a short window a tight Try-it step also gets a slimmer header (smaller close button), the last few pixels its picture needs to keep 12px text */
+@media(min-width:760px) and (max-height:620px){
+ dialog[data-view=lesson]:has(.lesson-body.tight-check) .modal-head{padding-bottom:2px;margin-bottom:2px}
+ dialog[data-view=lesson]:has(.lesson-body.tight-check) .modal-head .close{width:30px;min-width:30px;height:30px;min-height:30px;font-size:24px;border-width:4px}
+}
+@media(min-width:760px) and (max-height:620px){
+ dialog[data-view=lesson]:has(.lesson-body.tight-check) .lesson-footer .actions button{min-height:32px}
+ dialog[data-view=lesson]:has(.lesson-body.tight-check) .lesson-footer .actions{padding-top:2px}
+}
+/* Polish 19 Oct: the Next card's primary action wears the primary (red) button like every other panel's main action,
+   headlines balance instead of leaving one word on a line, and the meta line breaks between its parts, not inside. */
+dialog[data-view=library] .edu-next-actions button.primary{border-image-source:url(skin/pl-button-primary.png)!important;color:#fff2d0!important}
+dialog[data-view=library] .edu-next-actions button.primary:hover:not(:disabled){border-image-source:url(skin/pl-button-primary-hover.png)!important}
+.edu-next-text strong{text-wrap:balance}
+.edu-next-text .edu-nw{white-space:nowrap}
+/* Learning road: existing ability icons and topic seals, with read-only topic counts. */
+.am-goal.road{grid-template-columns:48px minmax(0,1fr);gap:4px 12px;width:100%;max-width:620px}
+.am-goal.road::before{display:none}
+.road>:not(.road-icon){grid-column:2;min-width:0;overflow-wrap:anywhere}
+.road .road-icon{grid-column:1;grid-row:1/span 4;align-self:center;justify-self:center}
+.road .road-count{font-weight:700;line-height:1.25}
+.road-count small{display:block;font-weight:400;font-size:var(--fs)}
+.road .am-goal-checks{display:flex;flex-wrap:wrap;gap:4px 12px}
+.road-badges{display:flex;align-items:center;gap:6px;font-weight:700;font-size:var(--fs)}
+.road-badges i{flex:none;width:28px;height:28px;background:url(skin/pl-icons/topic-mastered.png) center/28px 28px no-repeat;image-rendering:pixelated}
+.road-badges.earned i{animation:am-pop .5s steps(6) both}
+.road .road-preview{justify-self:start;max-width:100%;white-space:normal;min-height:36px;padding:4px 12px}
+.road .road-canvas{justify-self:center;max-width:100%;image-rendering:pixelated;background:#172034;border:2px solid #8a6a3a}
+.road .road-canvas[hidden]{display:none}
+.road .am-goal-line:empty{display:none}
+.adventure-power .road{margin:0;grid-template-columns:32px minmax(0,1fr);padding:8px;gap:6px}
+.adventure-power .road-icon .ico{--s:32px!important}
+.adventure-power .road strong{font-size:20px}
+.adventure-power .road .am-goal-checks{display:none}
+#modal-content>.result:has(>.road-earned)>.road-earned{order:2}
+#modal-content>.result:has(>.road-earned)>.unlock.mastered{display:none}
+#modal-content>.result:has(>.road-earned)>.am-seal{display:none}
+#next-unlock .road{margin:0;padding:0;border:0;border-image:none;grid-template-columns:32px minmax(0,1fr);gap:3px 8px;color:var(--ink)}
+#next-unlock .road span{letter-spacing:0;text-transform:none;color:inherit;font-size:14px}
+/* first-hour playtest 24 Oct: Pixel Operator drops pixel rows at 12px regular and 14px bold ("_ang_age", "nastered"); the corner card uses 16px bold and 14px regular, the sizes the font draws whole */
+#next-unlock .road .road-count{font-size:16px}
+#next-unlock .road .am-goal-k{font-size:16px;color:var(--gold-deep)}
+#next-unlock .road strong{font-size:18px;color:var(--ink)}
+#next-unlock .road small{font-size:14px}
+#next-unlock .road .am-goal-meter{height:8px}
+@media(max-height:600px){.am-goal.road{padding:6px 10px;gap:3px 8px}.road .am-goal-checks{display:none}.road .am-goal-line{font-size:15px}.road .road-count small{display:inline;margin-left:6px}.road-badges{font-size:15px}.road-badges i{width:24px;height:24px;background-size:24px 24px}}
+@media(prefers-reduced-motion:reduce){.road-badges.earned i{animation:none}}
+:root[data-motion=reduced] .road-badges.earned i{animation:none}
+.road .road-count small{display:inline;margin-left:6px}
+.road .am-goal-checks{display:none}
+.road .am-goal-line{line-height:1.3}
+#modal-content>.result>.am-goal.road{max-width:620px}
+@media(max-height:600px) and (min-width:700px){
+ #modal-content>.result:has(>.road-earned){display:grid;grid-template-columns:120px minmax(0,1fr);gap:4px 16px;align-items:start;text-align:center}
+ #modal-content>.result:has(>.road-earned)>.am-score{grid-column:1;grid-row:1;align-self:end}
+ #modal-content>.result:has(>.road-earned)>.am-pips{grid-column:1;grid-row:2;display:flex;flex-wrap:wrap;justify-content:center;gap:4px;margin:0}
+ #modal-content>.result:has(>.road-earned)>.am-pips i{width:16px;height:8px}
+ #modal-content>.result:has(>.road-earned)>.reward-chips{grid-column:1;grid-row:3;align-self:start}
+ #modal-content>.result:has(>.road-earned)>.road-earned{grid-column:2;grid-row:1/span 3;margin:0;max-width:none}
+ #modal-content>.result:has(>.road-earned)>.modal-actions:last-child{grid-column:1/-1;grid-row:4;margin:4px 0}
+ #modal-content>.result:has(>.road-earned)>.edu-progress{grid-column:1/-1;grid-row:5;margin:0}
+}
+/* Short landscape screens keep the study action beside its ability road. */
+@media(max-height:600px) and (min-width:700px){
+ dialog[data-view=library] .library-content{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;align-content:start;align-items:start}
+ dialog[data-view=library] .library-content>*{grid-column:1/-1;min-width:0}
+ dialog[data-view=library] .library-content>.road{grid-column:1;margin:0}
+ dialog[data-view=library] .library-content>.edu-next{grid-column:2;margin:0;display:flex;flex-direction:column;align-items:stretch;gap:6px;padding:6px 10px}
+ dialog[data-view=library] .edu-next>.edu-ico{display:none}
+ dialog[data-view=library] .edu-next-text strong{font-size:18px}
+ dialog[data-view=library] .edu-next-text small{font-size:13px;line-height:1.2}
+ dialog[data-view=library] .edu-next-actions{display:flex;flex-direction:row;flex-wrap:wrap;gap:4px}
+ dialog[data-view=library] .edu-next-actions button{font-size:14px;min-width:0;min-height:34px;padding:4px 8px}
+ .m-mode .adventure-plan{grid-template-columns:minmax(0,1fr) minmax(0,1.5fr)}
+ .m-mode .adventure-plan>.adventure-field{grid-column:1/-1}
+ .m-mode .adventure-plan>.adventure-power{padding:0;background:none;border:0}
+}
+
+/* Touch lessons scroll as one readable page; the navigation stays outside this body. */
+.m-mode dialog[data-view=lesson] .lesson-body{display:flex;flex-direction:column;gap:12px}
+.m-mode dialog[data-view=lesson] .lesson-body>*{flex:none}
+.m-mode dialog[data-view=lesson] .lesson-body .lesson-visual{width:100%}
+.m-mode dialog[data-view=lesson] .lesson-body .edu-speech{max-height:none;overflow:visible}
+/* first-hour playtest 24 Oct: the answer group takes focus on a new question (focusAnswers); no ring around the whole group */
+.choice-answers[tabindex="-1"]:focus,.lesson-answers[tabindex="-1"]:focus,#answer-form .answers[tabindex="-1"]:focus{outline:none}
+/* first-hour playtest 24 Oct: on a landscape phone the lesson stacked text, picture and Try-it in one column, so only the top third of the picture showed and the Try-it sat 400px below the fold (kids tapped Next past it); text and Try-it go left, the whole picture right, as on desktop */
+.m-mode dialog[data-view=lesson] .lesson-body{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:10px 12px}
+html.m-mode dialog[data-view=lesson] .lesson-body.lesson-body>.edu-guide-row{grid-column:1;grid-row:1;min-width:0}
+html.m-mode dialog[data-view=lesson] .lesson-body.lesson-body>.lesson-check{grid-column:1;grid-row:2;min-width:0}
+html.m-mode dialog[data-view=lesson] .lesson-body.lesson-body>.lesson-visual{grid-column:2;grid-row:1/span 2;width:auto}
+.m-mode dialog[data-view=lesson] .lesson-body .lesson-visual #lesson-pic{width:auto;max-width:min(440px,52vw);max-height:calc(100dvh - 200px)}
+html.m-mode dialog[data-view=lesson] .lesson-body:has(> .lesson-check) .lesson-visual #lesson-pic{max-height:calc(100dvh - 240px)}
+html.m-mode dialog[data-view=lesson] .lesson-body.lesson-body>.lesson-check .lesson-answers{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:6px}
+.m-mode .edu-unlock-keys{display:none}
+/* first-hour playtest 24 Oct: on a 390px-high phone a typed quiz answer's feedback pushed Next question below the dialog's clipped edge and squeezed Read to me behind the answer box; a one-line head and Read to me in the corner give it back */
+.m-mode dialog:is([data-view=lesson-quiz],[data-view=placement]) .modal-head{margin-bottom:4px;padding-top:0;padding-bottom:6px}
+.m-mode dialog:is([data-view=lesson-quiz],[data-view=placement]) .modal-head>div{display:flex;align-items:baseline;flex-wrap:wrap;column-gap:14px}
+.m-mode dialog:is([data-view=lesson-quiz],[data-view=placement]) #modal-content .modal-head h2{font-size:24px;line-height:1.1;margin:0}
+.m-mode dialog:is([data-view=lesson-quiz],[data-view=placement]) .modal-head p{margin:2px 0 0;font-size:14px;line-height:1.3}
+.m-mode dialog:is([data-view=lesson-quiz],[data-view=placement]) .question-reading{position:relative}
+.m-mode dialog:is([data-view=lesson-quiz],[data-view=placement]) .question-reading>.edu-read{position:absolute;top:0;right:4px;margin:0}
+/* 25 Oct (first-hour playtest, phone): after a wrong typed answer "Try it again" showed only after scrolling the 72 px
+   feedback box. Once answered, the spent answer row folds away (the feedback names the answer), the question keeps
+   only the room it needs, and the explanation's Read to me sits in the feedback's corner. */
+.m-mode dialog:is([data-view=lesson-quiz],[data-view=placement]) .question:has(#quiz-form:not(.choice-form)):has(#quiz-feedback:not(:empty)) .question-reading{min-height:0;flex:0 0 auto}
+.m-mode dialog:is([data-view=lesson-quiz],[data-view=placement]) .question:has(#quiz-form:not(.choice-form))>#quiz-feedback:not(:empty){max-height:none;flex:1 1 auto}
+.m-mode dialog:is([data-view=lesson-quiz],[data-view=placement]) .question:has(#quiz-feedback:not(:empty)) #quiz-form:not(.choice-form){display:none}
+.m-mode dialog:is([data-view=lesson-quiz],[data-view=placement]) #quiz-feedback .feedback{position:relative}
+.m-mode dialog:is([data-view=lesson-quiz],[data-view=placement]) #quiz-feedback .feedback>.edu-read{position:absolute;top:6px;right:6px;margin:0}
+.m-mode dialog:is([data-view=lesson-quiz],[data-view=placement]) #quiz-feedback .feedback:has(>.edu-read)>:first-child{padding-right:150px}
+.m-mode dialog:is([data-view=lesson-quiz],[data-view=placement]) .question:has(#quiz-form:not(.choice-form)):has(#quiz-feedback:not(:empty)) .question-reading h3{margin:6px 0}
+/* 25 Oct: Next on an unanswered Try-it lights the Try-it once (main.js lessonStep); no timer, Skip Try-it goes on. */
+.lesson-check.nudge{outline:3px solid #f0d48a;outline-offset:3px;border-radius:2px;animation:pq-tryit-nudge .45s ease-out 2}
+.lesson-check.nudge #lesson-hint{color:#fff1c8}
+@keyframes pq-tryit-nudge{50%{outline-color:#fff6d8;outline-offset:6px}}
+@media (prefers-reduced-motion:reduce){.lesson-check.nudge{animation:none}}
+html[data-motion=reduced] .lesson-check.nudge{animation:none}
+/* oct25-followups2: one plain "what it does" line for the ability on the Library's ability card, and one for the next lesson's ability when it is a different one (Fireball vs Ember Dart) */
+.am-goal .am-goal-what{grid-column:2;display:block;margin:0 0 4px;color:#5a3a12;font-size:var(--fs);line-height:1.25}
+.am-goal .am-goal-next-what b{font-weight:700}
+
+/* 25 Oct (learning-loop playtest): the practice answer that opens the mastery test says so */
+.test-open-note{margin:.45em 0 0;color:#2c6a35}
+.test-open-note b{color:inherit}
+
+/* 25 Oct (learning-loop playtest): the no-lessons line sits on the dark panel, not on a parchment card */
+.library-content>.edu-next-away{color:#efe3c4;font-weight:400}
+/* 25 Oct (learning-loop playtest, 1280x720): with a Preview button the road card pushed the mastery result's only way back below the
+   panel; on screens up to 800px tall the buttons sit above the card, as on the quiz and practice results */
+@media(max-height:800px){#modal-content>.result:has(>.road-earned)>.modal-actions:last-child{order:1;margin:6px 0 4px}}
+/* 25 Oct learning-loop playtest: the new "Closer:" line pushed a lesson result's buttons below a 1280x720 screen. On short screens
+   the buttons sit above the ability card, as on the mastery result. */
+@media(max-height:800px){#modal-content>.lesson:has(>.am-goal.road)>.actions{order:1}#modal-content>.lesson:has(>.am-goal.road)>.am-goal.road{order:2}}
+/* oct25-tryit P9: the unlock card's buttons in one row (Try it in a fight · Continue · Read to me), wrapping on narrow cards */
+.edu-unlock .edu-unlock-actions{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px;margin-top:8px}
+.edu-unlock .edu-unlock-actions>button{margin:0!important;vertical-align:middle;min-width:0}
+.edu-unlock .edu-unlock-where{margin:4px 0 0}
+/* oct25-tryit P11 (learning-loop playtest): at 844x390 and 740x360 the Library's "Start lesson" and "Find your level" needed a scroll on
+   the first visit. On phones the ability card is compacted into a narrower column (smaller icon, no badge count; the
+   buttons' height depends only on the lesson card, so its width is what matters), the lesson card drops its subject/grade line (the subject is in the chooser)
+   and Find your level sits beside Start lesson, Read to me after them. Desktop is unchanged (.m-mode only). */
+@media(max-height:600px) and (min-width:700px){
+ .m-mode dialog[data-view=library] .library-content{grid-template-columns:minmax(0,1fr) minmax(455px,1.5fr)}
+ .m-mode dialog[data-view=library] .library-content>.road{padding:8px 10px;column-gap:8px}
+ .m-mode dialog[data-view=library] .library-content>.road .road-icon .ico{--s:32px!important;width:32px;height:32px}
+ .m-mode dialog[data-view=library] .library-content>.road .road-badges{display:none}
+ .m-mode dialog[data-view=library] .edu-next-text>small{display:none}
+ .m-mode dialog[data-view=library] .edu-next-goal{line-height:1.25}
+ .m-mode dialog[data-view=library] .edu-next-actions>[data-find-start]{order:1}
+ .m-mode dialog[data-view=library] .edu-next-actions>.edu-read{order:2}
+}
+/* oct25-tryit lead review: at 740x360 the narrow ability card ran past the Library's visible area (its count, bar and step line
+   were cut). On short phones the icon sits beside the kicker and name, the rest uses the card's full width, and the subject
+   word (already in the chooser) is dropped; on the shortest (360px) the "Gives you..." line goes too. Both buttons stay in view. */
+@media(max-height:400px) and (min-width:700px){
+ .m-mode dialog[data-view=library] .library-content>.road{grid-template-columns:32px minmax(0,1fr);row-gap:2px;align-content:start;line-height:1.2}
+ .m-mode dialog[data-view=library] .library-content>.road>.road-icon{grid-column:1;grid-row:1/span 2;align-self:center}
+ .m-mode dialog[data-view=library] .library-content>.road>:is(.am-goal-k,strong){grid-column:2}
+ .m-mode dialog[data-view=library] .library-content>.road>:not(.road-icon,.am-goal-k,strong){grid-column:1/-1}
+ .m-mode dialog[data-view=library] .library-content>.road .road-count small{display:none}
+ .m-mode dialog[data-view=library] .library-content>.road .am-goal-line{line-height:1.2;margin:0}
+}
+@media(max-height:370px) and (min-width:700px){
+ .m-mode dialog[data-view=library] .library-content>.road>:is(.am-goal-what,.am-goal-next-what){display:none}
+}
+/* oct25-quizpolish (P7): on a phone a Try-it step keeps the full-height picture (its labels need the room; pictures grow their small
+   labels to 11 CSS px, gfx/lesson-art.js labelBoost), and the "Try it" button (main.js tryItCue) waits in the footer beside Next
+   while the Try-it is below the fold. */
+html.m-mode dialog[data-view=lesson] .lesson-body:has(> .lesson-check) .lesson-visual #lesson-pic{max-height:calc(100dvh - 200px)}
+html.m-mode dialog[data-view=lesson] .lesson-footer .actions>.try-it-cue{margin-left:auto;box-shadow:0 0 10px 2px rgba(255,214,110,.6)}
+html.m-mode dialog[data-view=lesson] .lesson-footer .actions>.try-it-cue[hidden]{display:none}
+/* oct25-exploit2 O2: at 1280x720 the Library's fourth button ("Already know Grade N? Find your level") sat below the panel's fold.
+   On desktop screens up to 800px tall Read to me sits beside Start lesson (as phones and short screens already do); the adventure
+   button and Find your level keep a full row. Phones (.m-mode) and screens up to 600px tall keep their own rules above. */
+@media(min-height:601px) and (max-height:800px) and (min-width:641px){
+ html:not(.m-mode) dialog[data-view=library] .edu-next-actions{flex-direction:row;flex-wrap:wrap;flex:0 0 min(360px,45%);align-content:start}
+ html:not(.m-mode) dialog[data-view=library] .edu-next-actions>button{flex:1 1 40%;min-width:0}
+ html:not(.m-mode) dialog[data-view=library] .edu-next-actions>:is([data-go-adventure],[data-find-start]){flex-basis:100%}
+}
+/* oct26-phonelesson: phone lesson legibility (docs/playtest/oct26-phonelesson). The lesson sheet takes the whole screen like every other
+   phone sheet (it was 92dvh, 29-31px lost). The picture column is exactly as wide as the picture (min-content): a long equation line above
+   the picture used to set the column to its full length and squeeze the step's text to one word a line (AP Micro, APUSH). main.js
+   fitLessonPic sizes the picture from the body's real height and leaves the text column at least PHONE_TEXT px; the picture stays in view
+   (sticky) while the text and Try-it scroll. The read-aloud buttons sit in the card's corner and the text runs under them. A tap on the
+   picture shows it full screen (labels and table cells at about twice the size); a tap anywhere closes it. Table and label text in the
+   pictures is drawn at least LABEL_MIN (12) CSS px on a phone (gfx/lesson-art.js). Desktop is unchanged (html.m-mode only). */
+html.m-mode dialog[data-view=lesson]{height:100dvh}
+html.m-mode dialog[data-view=lesson] .lesson-body.lesson-body{grid-template-columns:minmax(0,1fr) min-content}
+html.m-mode dialog[data-view=lesson] .lesson-body.lesson-body>.lesson-visual{position:sticky;top:0;align-self:start;min-width:0;z-index:1}
+html.m-mode dialog[data-view=lesson] .lesson-body .lesson-visual>.lesson-eq{white-space:normal;overflow-wrap:anywhere}
+html.m-mode dialog[data-view=lesson].lesson-compact .edu-speech{display:block;position:relative}
+html.m-mode dialog[data-view=lesson].lesson-compact .edu-speech>.edu-voice{position:absolute;top:4px;right:6px;margin:0}
+html.m-mode dialog[data-view=lesson].lesson-compact .edu-speech>.lesson-say::before{content:'';float:right;width:68px;height:76px}
+html.m-mode dialog[data-view=lesson] #modal-content{padding-bottom:0}
+html.m-mode dialog[data-view=lesson] .lesson-footer .actions>*{white-space:nowrap}
+html.m-mode dialog[data-view=lesson] .lesson-body .lesson-visual #lesson-pic{margin:0 auto;cursor:zoom-in}
+html.m-mode dialog[data-view=lesson] .lesson-body.eq-wide>.lesson-visual{display:contents}
+html.m-mode dialog[data-view=lesson] .lesson-body.eq-wide>.lesson-visual>.lesson-eq{grid-column:1/-1;grid-row:1}
+html.m-mode dialog[data-view=lesson] .lesson-body.eq-wide>.edu-guide-row{grid-row:2}
+html.m-mode dialog[data-view=lesson] .lesson-body.eq-wide>.lesson-check{grid-row:3}
+html.m-mode dialog[data-view=lesson] .lesson-body.eq-wide>.lesson-visual>#lesson-pic{grid-column:2;grid-row:2/span 2;position:sticky;top:0;align-self:start}
+html.m-mode dialog[data-view=lesson] .lesson-footer .actions>.pic-zoom{flex:none;min-width:44px;padding:0 10px;display:grid;place-items:center}
+html.m-mode dialog[data-view=lesson].pic-zoomed .lesson-body.lesson-body>.lesson-visual{position:fixed;inset:0;z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:8px;background:rgba(14,12,26,.96)}
+html.m-mode dialog[data-view=lesson].pic-zoomed .lesson-body .lesson-visual>#lesson-pic{position:static;max-width:calc(100vw - 16px)!important;max-height:calc(100dvh - 16px)!important;margin:0;cursor:zoom-out}
+html.m-mode dialog[data-view=lesson].pic-zoomed .lesson-body .lesson-visual>.lesson-eq~#lesson-pic{max-height:calc(100dvh - 60px)!important}
+html.m-mode dialog[data-view=lesson] .lesson-footer .actions>.more-cue{margin-left:auto}
+html.m-mode dialog[data-view=lesson] .lesson-footer .actions>.more-cue[hidden]{display:none}
+/* phonetry-oct26: on a phone a step's Try-it sat in the short text column beside the picture (about 280 px wide, 226 px tall at
+   844x390), so 2 of 4 options or the third of 3 were below the fold with no cue (docs/playtest/phonetry-oct26). The Try-it now takes the
+   whole width under the text and the picture: its prompt runs one or two lines and its options sit in one or two rows, so it fits the
+   body (long High options wrap to five lines at 740x360, so the Try-it's top padding and the option line height are a little tighter) and one tap of "Try it ↓" (which now waits until the last option shows) brings all of it into view. On a Try-it step the
+   picture scrolls with the text instead of staying pinned (pinned, it sat over the right half of the full-width Try-it); the magnifier
+   beside Replay still shows it full screen. Steps without a Try-it keep the pinned picture. Phones only. */
+html.m-mode dialog[data-view=lesson] .lesson-body.lesson-body.lesson-body>.lesson-check{grid-column:1/-1;grid-row:2}
+html.m-mode dialog[data-view=lesson] .lesson-body.lesson-body.lesson-body>.lesson-visual{grid-row:1}
+html.m-mode dialog[data-view=lesson]:not(.pic-zoomed) .lesson-body.lesson-body:has(>.lesson-check)>.lesson-visual{position:relative}
+html.m-mode dialog[data-view=lesson]:not(.pic-zoomed) .lesson-body.eq-wide:has(>.lesson-check)>.lesson-visual>#lesson-pic{position:relative}
+html.m-mode dialog[data-view=lesson] .lesson-body.lesson-body.eq-wide>.lesson-check{grid-row:3}
+html.m-mode dialog[data-view=lesson] .lesson-body.lesson-body.eq-wide>.lesson-visual>#lesson-pic{grid-row:2}
+html.m-mode dialog[data-view=lesson] .lesson-body.lesson-body.lesson-body>.lesson-check .lesson-answers{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+html.m-mode dialog[data-view=lesson].lesson-compact .lesson-body.lesson-body>.lesson-check{padding-top:8px}
+html.m-mode dialog[data-view=lesson] .lesson-body.lesson-body>.lesson-check .lesson-answers [data-answer]{line-height:1.2}
+html.m-mode dialog:is([data-view=placement],[data-view=lesson-quiz]) .question-reading>.quiz-zoom{grid-column:1;grid-row:1;align-self:start;justify-self:end;position:sticky;top:38px;z-index:2;display:grid;place-items:center;width:26px;height:26px;min-width:0;min-height:0!important;margin:0 -6px 0 0;padding:0;border:2px solid #f0d48a;border-image:none;border-radius:4px;background:#1c1830;color:#f6e7b8;box-shadow:0 1px 0 #0d0806;cursor:zoom-in}
+html.m-mode dialog:is([data-view=placement],[data-view=lesson-quiz]) .question-reading>#quiz-pic{cursor:zoom-in}
+html.m-mode dialog:is([data-view=placement],[data-view=lesson-quiz]).pic-zoomed .question-reading>.quiz-zoom{position:fixed!important;inset:0;width:auto;height:auto;margin:0;z-index:30;border:0;border-radius:0;background:rgba(14,12,26,.96);cursor:zoom-out}
+html.m-mode dialog:is([data-view=placement],[data-view=lesson-quiz]).pic-zoomed .question-reading>.quiz-zoom>svg{display:none}
+html.m-mode dialog:is([data-view=placement],[data-view=lesson-quiz]).pic-zoomed .question-reading>#quiz-pic{position:fixed!important;inset:0!important;margin:auto!important;z-index:31!important;width:min(calc(100vw - 16px),calc((100dvh - 16px)*640/280))!important;height:auto!important;max-width:none!important;max-height:none!important;cursor:zoom-out}

@@ -1,0 +1,62 @@
+{
+  "image": "hero-summoner-directions-v1.png",
+  "cell": [
+    112,
+    100
+  ],
+  "anchor": [
+    57,
+    79
+  ],
+  "faces": "right",
+  "scale": 1,
+  "states": {
+    "idle-south": {
+      "row": 0,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "idle-north": {
+      "row": 1,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    }
+  },
+  "source": "pixellab",
+  "unmodified": false,
+  "sourcePixelsUnmodified": true,
+  "credit": "PixelQuest original character, made with PixelLab (pixellab.ai) for PixelQuest. Front and back standing views for the character creator (owner, 15 October 2026).",
+  "contract": "art/heroes/summoner/directions.json",
+  "sources": [
+    {
+      "state": "idle-south",
+      "frame": 0,
+      "file": "art/heroes/summoner/pixellab/rotations/south.png",
+      "sha256": "355ba1c901c9ed550151f43f30e71145269c564c65e6ea9c098d659491efeb6b",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        19
+      ]
+    },
+    {
+      "state": "idle-north",
+      "frame": 0,
+      "file": "art/heroes/summoner/pixellab/rotations/north.png",
+      "sha256": "40f71b0d86e70c9612225616ce4bdce1efb205e6a5097d4de51ee23f6e484a57",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        20
+      ]
+    }
+  ]
+}

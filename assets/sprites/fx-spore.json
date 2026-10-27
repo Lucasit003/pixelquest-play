@@ -1,0 +1,1 @@
+{"image":"fx-spore.png","cell":[20,18],"anchor":[11,9],"faces":"right","scale":1,"states":{"fly":{"row":0,"frames":4,"fps":12,"loop":true},"blast":{"row":1,"frames":4,"fps":14,"loop":false}},"height":4,"shadow":[4,2],"grade":{"outline":"none"}}

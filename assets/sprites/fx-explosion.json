@@ -1,0 +1,1 @@
+{"image":"fx-explosion.png","cell":[53,55],"anchor":[27,44],"faces":"right","scale":1,"states":{"rise":{"row":0,"frames":7,"fps":14,"loop":false,"contact":[2],"reach":25}},"height":26,"shadow":[11,4],"grade":{"outline":"none"}}

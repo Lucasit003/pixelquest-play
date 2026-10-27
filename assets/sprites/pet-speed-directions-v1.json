@@ -1,0 +1,298 @@
+{
+  "image": "pet-speed-directions-v1.png",
+  "cell": [
+    56,
+    59
+  ],
+  "anchor": [
+    28,
+    43
+  ],
+  "faces": "right",
+  "scale": 1,
+  "source": "pixellab-pet-speed-directions",
+  "sourcePixelsUnmodified": true,
+  "unmodified": false,
+  "credit": "PixelQuest original companion, made with PixelLab",
+  "contract": "art/pets/speed/directions.json",
+  "states": {
+    "walk-north": {
+      "row": 0,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    },
+    "idle-north": {
+      "row": 1,
+      "frames": 1,
+      "fps": 1,
+      "loop": true
+    },
+    "walk-south": {
+      "row": 2,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    },
+    "idle-south": {
+      "row": 3,
+      "frames": 1,
+      "fps": 1,
+      "loop": true
+    }
+  },
+  "sources": [
+    {
+      "state": "walk-north",
+      "frame": 0,
+      "file": "art/pets/speed/pixellab/walk-north/0.png",
+      "sha256": "592456f5d44a9d9b782a9ea07868ff3d7ab6343972dc6ba6adc54a510fcb90a6",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 1,
+      "file": "art/pets/speed/pixellab/walk-north/1.png",
+      "sha256": "cc7dbab8907aa823452864654f876aa074ff20bd053c2173504833f3d7b8cf42",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 2,
+      "file": "art/pets/speed/pixellab/walk-north/2.png",
+      "sha256": "204c5f0f5e96a1174f7ad5ea7b4280ccfb0e4628bd659bf3626fb9506d8673e8",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 3,
+      "file": "art/pets/speed/pixellab/walk-north/3.png",
+      "sha256": "0e6ee5478ab25a142c56b0dc4beb6ad1ca099f2f7b4a191693fc82436cfea74c",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 4,
+      "file": "art/pets/speed/pixellab/walk-north/4.png",
+      "sha256": "3962bdaafb62d29629ab3db4be09df5a6edee74cd043802ef9ec90042db3433c",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 5,
+      "file": "art/pets/speed/pixellab/walk-north/5.png",
+      "sha256": "8d228a642b63f6c82091360b1ef0254986c75202a7b8af1c9006f174d9f0f4cc",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 6,
+      "file": "art/pets/speed/pixellab/walk-north/6.png",
+      "sha256": "a9cda0a0799ca1a07880d2e9c640ef3ffa9eb579e470cc771a0fc300614499c2",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 7,
+      "file": "art/pets/speed/pixellab/walk-north/7.png",
+      "sha256": "98f8f07427c88303396316aa3a318046fad19e1beaeb01dd90dfa3a64d7b13e4",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "state": "idle-north",
+      "frame": 0,
+      "file": "art/pets/speed/pixellab/rotations/north.png",
+      "sha256": "ddc425fedcb4d11b36c8269a5d75b444e7a34a996c13f75f88b5d1831f50ad49",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 0,
+      "file": "art/pets/speed/pixellab/walk-south/0.png",
+      "sha256": "c87a8f666511b67745d9e4207f8826150d28c1ebccd03c7b307ca5d6600a630d",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        3
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 1,
+      "file": "art/pets/speed/pixellab/walk-south/1.png",
+      "sha256": "dc51d78767bd4983047b99bea5454c1f649f36157982b9b71f8a8db9744629fd",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        3
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 2,
+      "file": "art/pets/speed/pixellab/walk-south/2.png",
+      "sha256": "494718b1cd25bc45a36b9a2719e9b0cee5ff76bebabef710da7a15bb26039d8b",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        3
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 3,
+      "file": "art/pets/speed/pixellab/walk-south/3.png",
+      "sha256": "9676fa4bcd25cb4acc387b4c80e486167a315bb1c7af0c6ed5785089a2a27274",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        3
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 4,
+      "file": "art/pets/speed/pixellab/walk-south/4.png",
+      "sha256": "0ae0c9eef7e38f9ac0145e3693e4940f71518e1531391f0ee705e53b322b452d",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        3
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 5,
+      "file": "art/pets/speed/pixellab/walk-south/5.png",
+      "sha256": "c4e75c75bf9f2daed05623c19b62093ddb53ddc5759893eec9f27d1efb964499",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        3
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 6,
+      "file": "art/pets/speed/pixellab/walk-south/6.png",
+      "sha256": "04049ad011ee60c644a7d6bdffdc31a8dbfdacd17578c3454243cb146a268da1",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        3
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 7,
+      "file": "art/pets/speed/pixellab/walk-south/7.png",
+      "sha256": "9152da9696967f924e1af9afca52fbcb18d7114f541fc9cd7a8330fc8dd9cdfb",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        3
+      ]
+    },
+    {
+      "state": "idle-south",
+      "frame": 0,
+      "file": "art/pets/speed/pixellab/rotations/south.png",
+      "sha256": "1c2e2a2a55c0c6cd4eb2cc49966f9b178ebc2277ee4ee636a80b22c736cbd963",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        3
+      ]
+    }
+  ]
+}

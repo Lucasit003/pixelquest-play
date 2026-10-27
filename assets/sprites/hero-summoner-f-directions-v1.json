@@ -1,0 +1,62 @@
+{
+  "image": "hero-summoner-f-directions-v1.png",
+  "cell": [
+    112,
+    100
+  ],
+  "anchor": [
+    57,
+    79
+  ],
+  "faces": "right",
+  "scale": 1,
+  "states": {
+    "idle-south": {
+      "row": 0,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "idle-north": {
+      "row": 1,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    }
+  },
+  "source": "pixellab",
+  "unmodified": false,
+  "sourcePixelsUnmodified": true,
+  "credit": "PixelQuest original character, female body, made with PixelLab (pixellab.ai) for PixelQuest. Front and back standing views for the character creator (owner, 15 October 2026).",
+  "contract": "art/heroes/summoner-f/directions.json",
+  "sources": [
+    {
+      "state": "idle-south",
+      "frame": 0,
+      "file": "art/heroes/summoner-f/pixellab/rotations/south.png",
+      "sha256": "dc5d85a6562c0d1eab04fd3c241d4737d461a189f8e0ef044a71601b34aeb82b",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        19
+      ]
+    },
+    {
+      "state": "idle-north",
+      "frame": 0,
+      "file": "art/heroes/summoner-f/pixellab/rotations/north.png",
+      "sha256": "f6430b704624f010a2aee0a11f636055b6ea8866a61889b199632beeb0a900b1",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        20
+      ]
+    }
+  ]
+}

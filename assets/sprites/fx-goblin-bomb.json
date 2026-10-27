@@ -1,0 +1,1 @@
+{"image":"fx-goblin-bomb.png","cell":[54,62],"anchor":[26,42],"faces":"right","scale":1,"states":{"rise":{"row":0,"frames":19,"fps":14,"loop":false,"contact":[12],"reach":17}},"height":14,"shadow":[5,2],"grade":{"outline":"none"}}

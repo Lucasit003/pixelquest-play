@@ -1,0 +1,1 @@
+{"image":"fx-fire-burst.png","cell":[37,32],"anchor":[4,29],"faces":"right","scale":1,"states":{"rise":{"row":0,"frames":7,"fps":12,"loop":false,"contact":[2],"reach":21}},"height":25,"shadow":[14,4],"grade":{"outline":"none"}}

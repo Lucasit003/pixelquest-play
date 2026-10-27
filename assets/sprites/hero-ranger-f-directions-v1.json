@@ -1,0 +1,62 @@
+{
+  "image": "hero-ranger-f-directions-v1.png",
+  "cell": [
+    112,
+    100
+  ],
+  "anchor": [
+    57,
+    79
+  ],
+  "faces": "right",
+  "scale": 1,
+  "states": {
+    "idle-south": {
+      "row": 0,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "idle-north": {
+      "row": 1,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    }
+  },
+  "source": "pixellab",
+  "unmodified": false,
+  "sourcePixelsUnmodified": true,
+  "credit": "PixelQuest original character, female body, made with PixelLab (pixellab.ai) for PixelQuest. Front and back standing views for the character creator (owner, 15 October 2026).",
+  "contract": "art/heroes/ranger-f/directions.json",
+  "sources": [
+    {
+      "state": "idle-south",
+      "frame": 0,
+      "file": "art/heroes/ranger-f/pixellab/rotations/south.png",
+      "sha256": "bb603628ea4c18c948851d68a63ea32a5619e59d33b3e531f639b5194a58810f",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        19
+      ]
+    },
+    {
+      "state": "idle-north",
+      "frame": 0,
+      "file": "art/heroes/ranger-f/pixellab/rotations/north.png",
+      "sha256": "2ef3c04a71450132397aa182fc8fc0753a0c71c8c2539279f8007d08599389ca",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        20
+      ]
+    }
+  ]
+}

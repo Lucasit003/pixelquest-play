@@ -1,0 +1,298 @@
+{
+  "image": "hero-warrior-directions-v1.png",
+  "cell": [
+    112,
+    100
+  ],
+  "anchor": [
+    57,
+    79
+  ],
+  "faces": "right",
+  "scale": 1,
+  "states": {
+    "idle-south": {
+      "row": 0,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "walk-south": {
+      "row": 1,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    },
+    "idle-north": {
+      "row": 2,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "walk-north": {
+      "row": 3,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    }
+  },
+  "source": "pixellab",
+  "unmodified": false,
+  "sourcePixelsUnmodified": true,
+  "credit": "PixelQuest original character, made with PixelLab (pixellab.ai) for PixelQuest. Directional walking authorized by the owner on 12 October 2026.",
+  "contract": "art/heroes/warrior/directions.json",
+  "sources": [
+    {
+      "state": "idle-south",
+      "frame": 0,
+      "file": "art/heroes/warrior/pixellab/rotations/south.png",
+      "sha256": "2d974d4cae3dbe24b545d9512d16eb9b1ea89fba12e35a16e622816e16c11594",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        19
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 0,
+      "file": "art/heroes/warrior/pixellab/walk-south/0.png",
+      "sha256": "f529982a986f429ace9e7b5b0700549f468eb924383e4ce14b4094b657ee250a",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 1,
+      "file": "art/heroes/warrior/pixellab/walk-south/1.png",
+      "sha256": "1600fb0c2beb4f3a5008912a00de4539c3be68dbe9bc51cb25cdde1956775933",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 2,
+      "file": "art/heroes/warrior/pixellab/walk-south/2.png",
+      "sha256": "115970681e1e42713784955066a0634e7b9ed676d1813b0350aa4012b98ecb03",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 3,
+      "file": "art/heroes/warrior/pixellab/walk-south/3.png",
+      "sha256": "e793fe44d416f3705189816c1f91868ed4a9089a8d80fff7670b4fffb0927229",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 4,
+      "file": "art/heroes/warrior/pixellab/walk-south/4.png",
+      "sha256": "20565b36c21070c442398ca56727c76c5e1e79c65908a902da5c201a7fabc084",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 5,
+      "file": "art/heroes/warrior/pixellab/walk-south/5.png",
+      "sha256": "224f0198ff63518275cc60b103c9ca5dd7044e5cb3e64b373bff187870365934",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 6,
+      "file": "art/heroes/warrior/pixellab/walk-south/6.png",
+      "sha256": "cb545016a1eea661a6536830d648444a0c9f14b5fe2a9bf7bf5abea1b617df63",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 7,
+      "file": "art/heroes/warrior/pixellab/walk-south/7.png",
+      "sha256": "a8cd5d6c683a742a60aa6553974a2c1e6994192be55f046cc813edf11a109e8e",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "idle-north",
+      "frame": 0,
+      "file": "art/heroes/warrior/pixellab/rotations/north.png",
+      "sha256": "5a8332808acccf90f7120462977fa1f4ed8add408f3a2fe0d576522e6fbff842",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        20
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 0,
+      "file": "art/heroes/warrior/pixellab/walk-north/0.png",
+      "sha256": "c67d7010d59f2e7806154983eac9593224500d19ac887245c3eeca9d68ceed0a",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 1,
+      "file": "art/heroes/warrior/pixellab/walk-north/1.png",
+      "sha256": "09624813861f71cf11592202f6e7bcbd9f82e61b8b46b9e9893026ec04416dc5",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 2,
+      "file": "art/heroes/warrior/pixellab/walk-north/2.png",
+      "sha256": "e102c12dea7e0db8b53a6958f888478b99251e65859864a3cac473ed7bc5e25d",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 3,
+      "file": "art/heroes/warrior/pixellab/walk-north/3.png",
+      "sha256": "8e31895591d1286bd37fd75d3a3d9eac1a8e762487c423f6d729a35c7a6c695f",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 4,
+      "file": "art/heroes/warrior/pixellab/walk-north/4.png",
+      "sha256": "18d02580d2c109661645ba43515c571130a4775c19a4ed44cee890774d41507f",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 5,
+      "file": "art/heroes/warrior/pixellab/walk-north/5.png",
+      "sha256": "fc7b4370b3ca1a8b38e7118d8ad37445e6ef746123e04232072f608512beed19",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 6,
+      "file": "art/heroes/warrior/pixellab/walk-north/6.png",
+      "sha256": "306923866661f3a26c9d146275bc86066d593f750255cb50a8ec1a8d17daa9c0",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 7,
+      "file": "art/heroes/warrior/pixellab/walk-north/7.png",
+      "sha256": "1eadb675d7701264a47e4fcdc25d533dc7867e8bfe018930e8b0525053cf8d3e",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    }
+  ]
+}

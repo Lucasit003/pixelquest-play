@@ -1,0 +1,1 @@
+{"image":"fx-fireball.png","cell":[37,32],"anchor":[13,15],"faces":"right","scale":1,"states":{"fly":{"row":0,"frames":6,"fps":12,"loop":true},"blast":{"row":1,"frames":7,"fps":14,"loop":false}},"height":6,"shadow":[7,2],"grade":{"outline":"none"}}

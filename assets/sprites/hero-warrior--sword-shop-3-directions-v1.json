@@ -1,0 +1,298 @@
+{
+  "image": "hero-warrior--sword-shop-3-directions-v1.png",
+  "cell": [
+    112,
+    100
+  ],
+  "anchor": [
+    57,
+    79
+  ],
+  "faces": "right",
+  "scale": 1,
+  "states": {
+    "idle-south": {
+      "row": 0,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "walk-south": {
+      "row": 1,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    },
+    "idle-north": {
+      "row": 2,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "walk-north": {
+      "row": 3,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    }
+  },
+  "source": "pixellab",
+  "unmodified": false,
+  "sourcePixelsUnmodified": true,
+  "credit": "PixelQuest original character (the Warrior holding the Kingsbane), made with PixelLab (pixellab.ai) for PixelQuest. Directional walking as authorized for the Warrior by the owner on 12 October 2026.",
+  "contract": "art/heroes/warrior-w/sword-shop-3/directions.json",
+  "sources": [
+    {
+      "state": "idle-south",
+      "frame": 0,
+      "file": "art/heroes/warrior-w/sword-shop-3/pixellab/rotations/south.png",
+      "sha256": "f515a31d3a937ec2dfb75da3c710088fc50466fd96fea2efdb694cd6a68bb68d",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        19
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 0,
+      "file": "art/heroes/warrior-w/sword-shop-3/pixellab/walk-south/0.png",
+      "sha256": "3dcef7ddf9050ab5ec0b5ae65e37dc3813b615b1a96246e68428ac56b3f7d164",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 1,
+      "file": "art/heroes/warrior-w/sword-shop-3/pixellab/walk-south/1.png",
+      "sha256": "a6254a2716b05c2f8779594f815726b0fc17db1a5ce6df8270a153c48e6c77ca",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 2,
+      "file": "art/heroes/warrior-w/sword-shop-3/pixellab/walk-south/2.png",
+      "sha256": "7db5e101cff47bfd8b3fab878b72b3a6132e45ff302581bb2bfb556495a24a45",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 3,
+      "file": "art/heroes/warrior-w/sword-shop-3/pixellab/walk-south/3.png",
+      "sha256": "4146a129e41011def5d2784fae0efea88ac407300982b53014f3830ead544459",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 4,
+      "file": "art/heroes/warrior-w/sword-shop-3/pixellab/walk-south/4.png",
+      "sha256": "64358e3438357f11331d6cfbcb7bcf01d9adad7d231fc23a028ee3bab944a323",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 5,
+      "file": "art/heroes/warrior-w/sword-shop-3/pixellab/walk-south/5.png",
+      "sha256": "b27e42b3503b870aca5b781cfb6127d6f58553ae6f5683eebd6614623a5536a3",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 6,
+      "file": "art/heroes/warrior-w/sword-shop-3/pixellab/walk-south/6.png",
+      "sha256": "46bee08df58ec133a54cf5fe50fe9fd160da94113976575d22682c9e4f55d1e3",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 7,
+      "file": "art/heroes/warrior-w/sword-shop-3/pixellab/walk-south/7.png",
+      "sha256": "9128f5d21b427802bf25e789efa63e971c28875df4f123c47b1d68d5ba48798e",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "idle-north",
+      "frame": 0,
+      "file": "art/heroes/warrior-w/sword-shop-3/pixellab/rotations/north.png",
+      "sha256": "3c47e58acc64b03e948c5d88ac9b6ccbe91966a32b9ddee1141081ed9cd95e23",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        20
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 0,
+      "file": "art/heroes/warrior-w/sword-shop-3/pixellab/walk-north/0.png",
+      "sha256": "38c132cf43a2a5a2e0922b444d0231e574918c68bff74e6f31d4484845dbfd72",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 1,
+      "file": "art/heroes/warrior-w/sword-shop-3/pixellab/walk-north/1.png",
+      "sha256": "c3eb566500940bcba2e15c72e1067724ee1e0c26a7e77393d042d327f4c55c7b",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 2,
+      "file": "art/heroes/warrior-w/sword-shop-3/pixellab/walk-north/2.png",
+      "sha256": "9384e4ca2b4972c9de20c7343180281d01bfb32e1f6c339c8a56037ee178c112",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 3,
+      "file": "art/heroes/warrior-w/sword-shop-3/pixellab/walk-north/3.png",
+      "sha256": "9e2efef385f3da4bcd76c4ed04c301e37fef20d7d5bab3329042e44ba3b2ba8d",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 4,
+      "file": "art/heroes/warrior-w/sword-shop-3/pixellab/walk-north/4.png",
+      "sha256": "aa5657b534a59cfc3a9952196301fdbe23b3549b78d83359874a03d2b4693f0f",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 5,
+      "file": "art/heroes/warrior-w/sword-shop-3/pixellab/walk-north/5.png",
+      "sha256": "ac433ede70292e2cdca1bec3d031edc41b8f15474519155a40f8bd18a309f1f6",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 6,
+      "file": "art/heroes/warrior-w/sword-shop-3/pixellab/walk-north/6.png",
+      "sha256": "7a93e39e994d1ec79774126eead2e97da020672cf95113d31ab5f79b5608de7d",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 7,
+      "file": "art/heroes/warrior-w/sword-shop-3/pixellab/walk-north/7.png",
+      "sha256": "9d9e03844e4ee7a5f8c22e9038ac579ea5d7d115e201eda2c9ddac122cb33bb5",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    }
+  ]
+}

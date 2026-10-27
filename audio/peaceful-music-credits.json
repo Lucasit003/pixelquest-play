@@ -1,0 +1,22 @@
+{
+  "license": "CC0",
+  "tracks": [
+    {
+      "title": "Sunset Plains",
+      "author": "Yoiyami",
+      "license": "CC0",
+      "source": "https://opengameart.org/content/sunset-plains",
+      "download": "https://opengameart.org/sites/default/files/sunset_plains.wav",
+      "conversion": "MP3 160 kbps; full track, no musical edits",
+      "durationSeconds": 329.68
+    },
+    {
+      "title": "Medieval: Exploration",
+      "author": "RandomMind",
+      "license": "CC0",
+      "source": "https://opengameart.org/content/medieval-exploration",
+      "download": "https://opengameart.org/sites/default/files/Exploration_0.mp3",
+      "durationSeconds": 236.15
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "image": "hero-paladin-directions-v1.png",
+  "cell": [
+    112,
+    100
+  ],
+  "anchor": [
+    57,
+    79
+  ],
+  "faces": "right",
+  "scale": 1,
+  "states": {
+    "idle-south": {
+      "row": 0,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "idle-north": {
+      "row": 1,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    }
+  },
+  "source": "pixellab",
+  "unmodified": false,
+  "sourcePixelsUnmodified": true,
+  "credit": "PixelQuest original character, made with PixelLab (pixellab.ai) for PixelQuest. Front and back standing views for the character creator (owner, 15 October 2026).",
+  "contract": "art/heroes/paladin/directions.json",
+  "sources": [
+    {
+      "state": "idle-south",
+      "frame": 0,
+      "file": "art/heroes/paladin/pixellab/rotations/south.png",
+      "sha256": "c4bf88d1525835944fa8de52c67dd41254d20fab8b8d75683ae93b82d52b63e0",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        19
+      ]
+    },
+    {
+      "state": "idle-north",
+      "frame": 0,
+      "file": "art/heroes/paladin/pixellab/rotations/north.png",
+      "sha256": "b597bbcd099a7125b0a83f6e0e0f5dfc636e75dfbb5ba5fce490db7d5d38ed20",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        20
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+{"image":"fx-bolt-fire.png","cell":[64,55],"anchor":[35,32],"faces":"right","scale":1,"states":{"fly":{"row":0,"frames":5,"fps":14,"loop":true},"blast":{"row":1,"frames":7,"fps":16,"loop":false}},"height":16,"shadow":[27,9],"grade":{"outline":"none"}}

@@ -1,0 +1,1 @@
+{"image":"theater-duck.png","cell":[28,24],"anchor":[11,23],"faces":"right","scale":1,"credit":"Epic RPG World – Grass Land 2.0 ducks (RafaelMatos), owner-bought licence.","source":"wl-duck-a (18 frames)","states":{"idle":{"row":0,"frames":18,"fps":8,"loop":true},"walk":{"row":1,"frames":18,"fps":12,"loop":true}},"height":23}

@@ -1,0 +1,1 @@
+{"image":"fx-geyser.png","cell":[32,64],"anchor":[16,64],"faces":"right","scale":1,"states":{"rise":{"row":0,"frames":13,"fps":14,"loop":false,"contact":[4],"reach":14}},"height":2,"shadow":[11,4],"grade":{"outline":"none"}}

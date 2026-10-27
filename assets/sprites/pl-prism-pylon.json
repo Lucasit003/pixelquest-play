@@ -1,0 +1,41 @@
+{
+ "image": "pl-prism-pylon.png",
+ "cell": [
+  48,
+  80
+ ],
+ "anchor": [
+  24,
+  68
+ ],
+ "faces": "right",
+ "scale": 1,
+ "height": 58,
+ "width": 32,
+ "shadow": [
+  10,
+  3
+ ],
+ "src": "PixelQuest original (Prism Pylon), made with PixelLab",
+ "source": "pixellab",
+ "states": {
+  "idle": {
+   "row": 0,
+   "frames": 4,
+   "fps": 4,
+   "loop": true
+  },
+  "hurt": {
+   "row": 1,
+   "frames": 1,
+   "fps": 8,
+   "loop": false
+  },
+  "death": {
+   "row": 2,
+   "frames": 5,
+   "fps": 10,
+   "loop": false
+  }
+ }
+}

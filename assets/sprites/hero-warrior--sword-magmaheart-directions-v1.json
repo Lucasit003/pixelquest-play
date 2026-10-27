@@ -1,0 +1,298 @@
+{
+  "image": "hero-warrior--sword-magmaheart-directions-v1.png",
+  "cell": [
+    112,
+    100
+  ],
+  "anchor": [
+    57,
+    79
+  ],
+  "faces": "right",
+  "scale": 1,
+  "states": {
+    "idle-south": {
+      "row": 0,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "walk-south": {
+      "row": 1,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    },
+    "idle-north": {
+      "row": 2,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "walk-north": {
+      "row": 3,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    }
+  },
+  "source": "pixellab",
+  "unmodified": false,
+  "sourcePixelsUnmodified": true,
+  "credit": "PixelQuest original character (the Warrior holding the Magmaheart Greatsword), made with PixelLab (pixellab.ai) for PixelQuest. Directional walking as authorized for the Warrior by the owner on 12 October 2026.",
+  "contract": "art/heroes/warrior-w/sword-magmaheart/directions.json",
+  "sources": [
+    {
+      "state": "idle-south",
+      "frame": 0,
+      "file": "art/heroes/warrior-w/sword-magmaheart/pixellab/rotations/south.png",
+      "sha256": "fb5d6101d9e21bcb405a0bb54c3c1a00aa50cfb11cd7c6ada7a6c36c5f518c7d",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        19
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 0,
+      "file": "art/heroes/warrior-w/sword-magmaheart/pixellab/walk-south/0.png",
+      "sha256": "6dd606172f92fefc0b63ecc917a89fde1bc66dcba71a8486e05a386ff0bce341",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 1,
+      "file": "art/heroes/warrior-w/sword-magmaheart/pixellab/walk-south/1.png",
+      "sha256": "cbe19268cb4c4ff42d61eb1934cefdb556b00e894577207d0e9620b600b05a0f",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 2,
+      "file": "art/heroes/warrior-w/sword-magmaheart/pixellab/walk-south/2.png",
+      "sha256": "88a544aaedd6e798898f9667d6a18a0a77086fd37d0ee4ab1d4176f69ead201a",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 3,
+      "file": "art/heroes/warrior-w/sword-magmaheart/pixellab/walk-south/3.png",
+      "sha256": "58677ec5bb6d72343da3c7145ba39a75293cf0f1fb8cb6686712e499113c3ac5",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 4,
+      "file": "art/heroes/warrior-w/sword-magmaheart/pixellab/walk-south/4.png",
+      "sha256": "50015d29f4c7b38672faaaeeed0b9f3f9eede33069a13175af8faf88996cf411",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 5,
+      "file": "art/heroes/warrior-w/sword-magmaheart/pixellab/walk-south/5.png",
+      "sha256": "4b1c40a8df8be115d1ae0822077ef05875634fe71fc9b50b0bdb59676be338b3",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 6,
+      "file": "art/heroes/warrior-w/sword-magmaheart/pixellab/walk-south/6.png",
+      "sha256": "f8ece440c59a4872944194ee870fcc0f397650fc92fe6b2a731c10a179d96eea",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 7,
+      "file": "art/heroes/warrior-w/sword-magmaheart/pixellab/walk-south/7.png",
+      "sha256": "87a746b5d281a7472c591bceff615807b706e21dfaf2a4b200be62b2c904728b",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "idle-north",
+      "frame": 0,
+      "file": "art/heroes/warrior-w/sword-magmaheart/pixellab/rotations/north.png",
+      "sha256": "9ccb7e7dbd38b7610eef1b7d2328cc803ec3eb095a79d6ba20dba75d24e9a31e",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        20
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 0,
+      "file": "art/heroes/warrior-w/sword-magmaheart/pixellab/walk-north/0.png",
+      "sha256": "dcab5f4a454da1dca44257f966425faf0e4d02e37c5321eb22f5b8e230725b70",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 1,
+      "file": "art/heroes/warrior-w/sword-magmaheart/pixellab/walk-north/1.png",
+      "sha256": "2c4472742d94ddc865b700cd6714adf34e55bb627bcedf577072f61a9b889a8c",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 2,
+      "file": "art/heroes/warrior-w/sword-magmaheart/pixellab/walk-north/2.png",
+      "sha256": "d7900b4131ba49a3db2ffe96fb6187bc077221b903d97e611cad9a125b84e9d2",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 3,
+      "file": "art/heroes/warrior-w/sword-magmaheart/pixellab/walk-north/3.png",
+      "sha256": "085340de957b08d09449c0e544947ac22b9067e4fb73faba744ef76c4862fdb9",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 4,
+      "file": "art/heroes/warrior-w/sword-magmaheart/pixellab/walk-north/4.png",
+      "sha256": "4b588263b1c42f453226513eca94063a693e2464fd2c0e011ac9cc2edbdf1ce6",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 5,
+      "file": "art/heroes/warrior-w/sword-magmaheart/pixellab/walk-north/5.png",
+      "sha256": "b901574fe37a0daa0e252c69f1f60a07da8c61773c4bcb83dc23fb5bbd81e441",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 6,
+      "file": "art/heroes/warrior-w/sword-magmaheart/pixellab/walk-north/6.png",
+      "sha256": "d3c224d769841806cfe0c18a1b092feeede2aec0f55bdab2839d8409c049e9ff",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 7,
+      "file": "art/heroes/warrior-w/sword-magmaheart/pixellab/walk-north/7.png",
+      "sha256": "40ee07f38d14a91a67e3ed98b3f0e3871179bfb30ddc3cf9949bfce167320742",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    }
+  ]
+}

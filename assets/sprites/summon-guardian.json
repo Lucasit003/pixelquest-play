@@ -1,0 +1,1 @@
+{"image":"summon-guardian.png","cell":[80,80],"anchor":[42,66],"faces":"right","scale":1,"credit":"PixelQuest original spirit, made with PixelLab.","source":"pixellab","states":{"idle":{"row":0,"frames":4,"fps":5,"loop":true},"walk":{"row":1,"frames":8,"fps":10,"loop":true},"attack":{"row":2,"frames":9,"fps":15,"loop":false}}}

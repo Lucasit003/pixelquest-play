@@ -1,0 +1,298 @@
+{
+  "image": "pet-defence-directions-v1.png",
+  "cell": [
+    56,
+    63
+  ],
+  "anchor": [
+    28,
+    45
+  ],
+  "faces": "right",
+  "scale": 1,
+  "source": "pixellab-pet-defence-directions",
+  "sourcePixelsUnmodified": true,
+  "unmodified": false,
+  "credit": "PixelQuest original companion, made with PixelLab",
+  "contract": "art/pets/defence/directions.json",
+  "states": {
+    "walk-north": {
+      "row": 0,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    },
+    "idle-north": {
+      "row": 1,
+      "frames": 1,
+      "fps": 1,
+      "loop": true
+    },
+    "walk-south": {
+      "row": 2,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    },
+    "idle-south": {
+      "row": 3,
+      "frames": 1,
+      "fps": 1,
+      "loop": true
+    }
+  },
+  "sources": [
+    {
+      "state": "walk-north",
+      "frame": 0,
+      "file": "art/pets/defence/pixellab/walk-north/0.png",
+      "sha256": "9efad83cdaa8627810d6a0244cc9d253bf4cde9931f668111141cee2fa3e07f7",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 1,
+      "file": "art/pets/defence/pixellab/walk-north/1.png",
+      "sha256": "782ba7cdd7760f76f8aaea41e8ad09e2b7204367aef2e8165f8936d0f7de378a",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 2,
+      "file": "art/pets/defence/pixellab/walk-north/2.png",
+      "sha256": "9351811b107d4a3609344f645e84ca413269b64366ea04e6ed3008fc2669677d",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 3,
+      "file": "art/pets/defence/pixellab/walk-north/3.png",
+      "sha256": "8ccffd2f825be586ae57f9d7170185dec11c885ed46be30c0bf5f31107c8611e",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 4,
+      "file": "art/pets/defence/pixellab/walk-north/4.png",
+      "sha256": "94e32bbe252dcc9bbff8f20904f4227d0fdb1dbc73b4f9540abff45ebd09345d",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 5,
+      "file": "art/pets/defence/pixellab/walk-north/5.png",
+      "sha256": "24e809dd61e1dbaa480fbeb01688cd35b5cd118cc23c7e9cc645a2c33c118cab",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 6,
+      "file": "art/pets/defence/pixellab/walk-north/6.png",
+      "sha256": "f52c16c29cacc878b3f633f0099eb39eb0d3cdf285e75f35db3a09933432c847",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 7,
+      "file": "art/pets/defence/pixellab/walk-north/7.png",
+      "sha256": "bc7a5b6eca07ee1fc90fb845b82a06d83f922c27dc5833a6d8bfec301cf4372a",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        2
+      ]
+    },
+    {
+      "state": "idle-north",
+      "frame": 0,
+      "file": "art/pets/defence/pixellab/rotations/north.png",
+      "sha256": "cc21300c72569f6f9473f7bc5fa591bec9812c0c2a9e5a5c145f07cc448721e2",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 0,
+      "file": "art/pets/defence/pixellab/walk-south/0.png",
+      "sha256": "ab8683be95198e159af0667f6882ed21389015c1561baeca5911e049b193bf4f",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        7
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 1,
+      "file": "art/pets/defence/pixellab/walk-south/1.png",
+      "sha256": "e66dcf55ec71f45a27a1b1400efb9c7c55dd74528f1592af42f3e23bbefec9c9",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        7
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 2,
+      "file": "art/pets/defence/pixellab/walk-south/2.png",
+      "sha256": "1183f5b40ad149a5d7c7acf6c8dc7c87861a14c4ca9a9ff5f195fea78d2821cd",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        7
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 3,
+      "file": "art/pets/defence/pixellab/walk-south/3.png",
+      "sha256": "f9b204aedbcbad9e69d3fe445e5b0f21edf91b29d61d02d8849102f19e2d7996",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        7
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 4,
+      "file": "art/pets/defence/pixellab/walk-south/4.png",
+      "sha256": "698233771719d41e33945dab8e0120c8221270c944a4a95e460f47fc7a22f25d",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        7
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 5,
+      "file": "art/pets/defence/pixellab/walk-south/5.png",
+      "sha256": "c3d0b625f8e8ce1e4140b83eb494c1415f385c3f6465968007b35818079b6dc5",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        7
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 6,
+      "file": "art/pets/defence/pixellab/walk-south/6.png",
+      "sha256": "1ddf5d61819e6c3e86a0c09a8bb604693c7082245741515efc2149ca91cee6d0",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        7
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 7,
+      "file": "art/pets/defence/pixellab/walk-south/7.png",
+      "sha256": "87f4fd6ad6ec36559f33130dfb98521b4611eb654c8dce16ae600b32aebc5f0b",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        7
+      ]
+    },
+    {
+      "state": "idle-south",
+      "frame": 0,
+      "file": "art/pets/defence/pixellab/rotations/south.png",
+      "sha256": "4deb61c1f15ca7a7e2f5cfa23773e82aa7353b11175085b7f67c240a5c8d3332",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        4
+      ]
+    }
+  ]
+}

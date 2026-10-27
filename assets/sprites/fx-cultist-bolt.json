@@ -1,0 +1,1 @@
+{"image":"fx-cultist-bolt.png","cell":[44,47],"anchor":[20,25],"faces":"right","scale":1,"states":{"fly":{"row":0,"frames":4,"fps":12,"loop":true},"blast":{"row":1,"frames":7,"fps":14,"loop":false}},"height":6,"shadow":[12,4],"grade":{"outline":"none"}}

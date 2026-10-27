@@ -1,0 +1,1 @@
+{"image":"fx-hit-physical.png","cell":[62,62],"anchor":[31,31],"faces":"right","scale":1,"states":{"star":{"row":0,"frames":10,"fps":30,"loop":false},"splash":{"row":1,"frames":10,"fps":24,"loop":false}},"height":3,"shadow":[4,2],"grade":{"outline":"none"}}

@@ -1,0 +1,1 @@
+{"image":"fx-eye-bolt.png","cell":[44,44],"anchor":[23,23],"faces":"right","scale":1,"states":{"fly":{"row":0,"frames":3,"fps":12,"loop":true},"blast":{"row":1,"frames":5,"fps":14,"loop":false}},"height":8,"shadow":[8,3],"grade":{"outline":"none"}}

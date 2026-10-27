@@ -1,0 +1,35 @@
+{
+ "image": "fx-abyss-beam.png",
+ "cell": [
+  270,
+  44
+ ],
+ "anchor": [
+  22,
+  22
+ ],
+ "faces": "right",
+ "scale": 1,
+ "states": {
+  "charge": {
+   "row": 0,
+   "frames": 7,
+   "fps": 12,
+   "loop": false
+  },
+  "beam": {
+   "row": 1,
+   "frames": 6,
+   "fps": 14,
+   "loop": false
+  }
+ },
+ "height": 4,
+ "shadow": [
+  5,
+  2
+ ],
+ "grade": {
+  "outline": "none"
+ }
+}

@@ -1,0 +1,278 @@
+{
+  "image": "pet-loot-directions-v1.png",
+  "cell": [
+    56,
+    59
+  ],
+  "anchor": [
+    28,
+    43
+  ],
+  "faces": "right",
+  "scale": 1,
+  "source": "pixellab-pet-loot-directions",
+  "sourcePixelsUnmodified": true,
+  "unmodified": false,
+  "credit": "PixelQuest original companion, made with PixelLab",
+  "contract": "art/pets/loot/directions.json",
+  "states": {
+    "walk-north": {
+      "row": 0,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    },
+    "walk-south": {
+      "row": 1,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    },
+    "idle-south": {
+      "row": 2,
+      "frames": 1,
+      "fps": 1,
+      "loop": true
+    }
+  },
+  "sources": [
+    {
+      "state": "walk-north",
+      "frame": 0,
+      "file": "art/pets/loot/pixellab/walk-north/0.png",
+      "sha256": "1538a801073c3270accf82c22df8873180cadcad84ee1549ccfdffeae95fa746",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 1,
+      "file": "art/pets/loot/pixellab/walk-north/1.png",
+      "sha256": "f99fadc785bd0929c12cea8cc54ed7b3d00314ac5dcc2953ce9db30be0f3c944",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 2,
+      "file": "art/pets/loot/pixellab/walk-north/2.png",
+      "sha256": "33794eba29ddbe89fe022671db7206ea1cc31cb8dd27936b35ee565e025a2830",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 3,
+      "file": "art/pets/loot/pixellab/walk-north/3.png",
+      "sha256": "b269d253410c6c2219146664e090de7f8eea3a6cedb412370374b94b741a3257",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 4,
+      "file": "art/pets/loot/pixellab/walk-north/4.png",
+      "sha256": "923f678ee2fb07ee8b0f5ae9f9aea829f0e22cbe88c47b1bf1f8dc48ef5ebd38",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 5,
+      "file": "art/pets/loot/pixellab/walk-north/5.png",
+      "sha256": "1b051927d16891f435c23327f7a9a7c0f373f82f256dafb4a666d1334244383f",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 6,
+      "file": "art/pets/loot/pixellab/walk-north/6.png",
+      "sha256": "421879a44daaf1cfcf816e3a42afaead09390d253e02510fc91cac1378946658",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 7,
+      "file": "art/pets/loot/pixellab/walk-north/7.png",
+      "sha256": "aaf1f7cafc0ffa3117eaeedde9bf291981f40cf6233496eaba4a560f5417aa42",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 0,
+      "file": "art/pets/loot/pixellab/walk-south/0.png",
+      "sha256": "2cd530ab2cbeb5bc831397993484a39da7c6a40e6274b7e380a0de6cfa7d86ec",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        3
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 1,
+      "file": "art/pets/loot/pixellab/walk-south/1.png",
+      "sha256": "9e82f372b648222eae45b2953c161cc8e6d8b77d0efb1638805875ba304b3683",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        3
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 2,
+      "file": "art/pets/loot/pixellab/walk-south/2.png",
+      "sha256": "e8511d0fbee5f16e3763d951b755f91a4c60fc936ce112fdffb627d96e0feb42",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        3
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 3,
+      "file": "art/pets/loot/pixellab/walk-south/3.png",
+      "sha256": "d5060063e43e84f92ab0d7ee4c0262ca27a62f090f7c11dade15c92209994117",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        3
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 4,
+      "file": "art/pets/loot/pixellab/walk-south/4.png",
+      "sha256": "a6c365de9b67fef585c6a28908cad64b8804ed6ca1f0c23d1babb72402383eef",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        3
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 5,
+      "file": "art/pets/loot/pixellab/walk-south/5.png",
+      "sha256": "78fe01747b4573f8c6833dc3739b79c9c2decc1901ed32bc8288e6e30414a12e",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        3
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 6,
+      "file": "art/pets/loot/pixellab/walk-south/6.png",
+      "sha256": "bc2a0c607f6554ee217c4b30eb5e49265d4bb078dde0b520377584845a391151",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        3
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 7,
+      "file": "art/pets/loot/pixellab/walk-south/7.png",
+      "sha256": "d02567f1e4d776f46459a12cd7bd17549ef40f3893265fe85b216a63a436de80",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        3
+      ]
+    },
+    {
+      "state": "idle-south",
+      "frame": 0,
+      "file": "art/pets/loot/pixellab/rotations/south.png",
+      "sha256": "cc2f600bd1f8f7da4d341675894ab571cd30f0dc9fb3c76b385845e6520ef2f3",
+      "size": [
+        56,
+        56
+      ],
+      "offset": [
+        0,
+        3
+      ]
+    }
+  ]
+}

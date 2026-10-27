@@ -1,0 +1,1 @@
+{"image":"summon-ancestor.png","cell":[80,80],"anchor":[39,67],"faces":"right","scale":1,"credit":"PixelQuest original spirit, made with PixelLab.","source":"pixellab","states":{"idle":{"row":0,"frames":9,"fps":8,"loop":true},"attack":{"row":1,"frames":9,"fps":7,"loop":false}}}

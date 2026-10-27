@@ -1,0 +1,1 @@
+{"image":"fx-hellfire.png","cell":[53,59],"anchor":[27,55],"faces":"right","scale":1,"states":{"fly":{"row":0,"frames":3,"fps":12,"loop":true},"blast":{"row":1,"frames":7,"fps":14,"loop":false}},"height":4,"shadow":[8,3],"grade":{"outline":"none"}}

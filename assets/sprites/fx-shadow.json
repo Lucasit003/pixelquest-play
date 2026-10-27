@@ -1,0 +1,1 @@
+{"image":"fx-shadow.png","cell":[30,8],"anchor":[15,8],"faces":"right","scale":1,"states":{"small":{"row":0,"frames":1,"fps":1,"loop":true},"mid":{"row":1,"frames":1,"fps":1,"loop":true}},"height":4,"shadow":[13,4],"grade":{"outline":"none"}}

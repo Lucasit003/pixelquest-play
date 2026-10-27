@@ -1,0 +1,1 @@
+{"image":"fx-slime-spawn.png","cell":[46,15],"anchor":[20,15],"faces":"right","scale":1,"states":{"rise":{"row":0,"frames":4,"fps":8,"loop":true},"break":{"row":1,"frames":4,"fps":10,"loop":false}},"height":14,"shadow":[13,4],"grade":{"outline":"none"}}

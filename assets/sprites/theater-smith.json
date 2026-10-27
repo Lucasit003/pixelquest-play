@@ -1,0 +1,1 @@
+{"image":"theater-smith.png","cell":[160,160],"anchor":[85,108],"faces":"right","scale":1,"credit":"Epic RPG World by RafaelMatos (https://rafaelmatos.itch.io), owner-bought licence.","source":"NPCs/blacksmith","states":{"idle":{"row":0,"frames":8,"fps":8,"loop":true},"work":{"row":1,"frames":18,"fps":10,"loop":true}},"height":47}

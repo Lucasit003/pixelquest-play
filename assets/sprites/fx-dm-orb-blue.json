@@ -1,0 +1,1 @@
+{"image":"fx-dm-orb-blue.png","cell":[31,10],"anchor":[22,5],"faces":"right","scale":1,"states":{"fly":{"row":0,"frames":4,"fps":10,"loop":true},"blast":{"row":1,"frames":4,"fps":12,"loop":false}},"height":2,"shadow":[8,3],"grade":{"outline":"none"}}

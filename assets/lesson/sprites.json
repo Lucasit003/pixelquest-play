@@ -1,0 +1,193 @@
+{
+ "image": "sprites.png",
+ "sources": [
+  "PixelLab (our own art, art/pixellab/gear): the 32 px icons",
+  "Epic RPG World - The Village V2.2 (RafaelMatos, owner licence): bench, noticeboard, planter",
+  "Pet Cats Pack (LuizMelo, CC0): cat",
+  "Epic RPG World - Grass Land 2.0 (RafaelMatos, owner licence): frog, bird, duck",
+  "2D Pixel Art Fox Sprites (Elthen, free licence): fox",
+  "Epic RPG World - Village (interiors) V1.3 (RafaelMatos, owner licence): dish, box, bed"
+ ],
+ "atlas": {
+  "apple": [
+   0,
+   0,
+   32,
+   32
+  ],
+  "basket": [
+   32,
+   0,
+   32,
+   32
+  ],
+  "coin": [
+   64,
+   0,
+   32,
+   32
+  ],
+  "coins": [
+   96,
+   0,
+   32,
+   32
+  ],
+  "book-blue": [
+   128,
+   0,
+   32,
+   32
+  ],
+  "book-red": [
+   160,
+   0,
+   32,
+   32
+  ],
+  "book-green": [
+   192,
+   0,
+   32,
+   32
+  ],
+  "book-orange": [
+   224,
+   0,
+   32,
+   32
+  ],
+  "book-brown": [
+   256,
+   0,
+   32,
+   32
+  ],
+  "egg": [
+   288,
+   0,
+   32,
+   32
+  ],
+  "ball": [
+   320,
+   0,
+   32,
+   32
+  ],
+  "dress": [
+   352,
+   0,
+   32,
+   32
+  ],
+  "map": [
+   384,
+   0,
+   32,
+   32
+  ],
+  "cake": [
+   416,
+   0,
+   32,
+   32
+  ],
+  "ax": [
+   448,
+   0,
+   32,
+   32
+  ],
+  "fish": [
+   480,
+   0,
+   32,
+   32
+  ],
+  "cup": [
+   512,
+   0,
+   32,
+   32
+  ],
+  "coin-silver": [
+   544,
+   0,
+   32,
+   32
+  ],
+  "coin-copper": [
+   576,
+   0,
+   32,
+   32
+  ],
+  "bench": [
+   608,
+   0,
+   35,
+   14
+  ],
+  "noticeboard": [
+   645,
+   0,
+   59,
+   46
+  ],
+  "planter": [
+   706,
+   0,
+   21,
+   40
+  ],
+  "cat": [
+   729,
+   0,
+   13,
+   16
+  ],
+  "frog": [
+   744,
+   0,
+   20,
+   15
+  ],
+  "bird": [
+   766,
+   0,
+   24,
+   16
+  ],
+  "duck": [
+   792,
+   0,
+   23,
+   23
+  ],
+  "fox": [
+   817,
+   0,
+   20,
+   15
+  ],
+  "dish": [
+   839,
+   0,
+   16,
+   10
+  ],
+  "box": [
+   857,
+   0,
+   24,
+   30
+  ],
+  "bed": [
+   883,
+   0,
+   52,
+   81
+  ]
+ }
+}

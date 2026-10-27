@@ -1,0 +1,177 @@
+{
+ "voice": "af_heart",
+ "parts": {
+  "coins/values": {
+   "key": "ju1vws",
+   "secs": 5.14
+  },
+  "coins/more": {
+   "key": "1x7h4p",
+   "secs": 7.3
+  },
+  "coins/line-up": {
+   "key": "oo958v",
+   "secs": 3.39
+  },
+  "coins/count-on": {
+   "key": "9nu764",
+   "secs": 6.38
+  },
+  "coins/quarter": {
+   "key": "1dux4ah",
+   "secs": 5.87
+  },
+  "coins/pile": {
+   "key": "1dhvjuo",
+   "secs": 4.33
+  },
+  "savings/goal": {
+   "key": "1ig1f9v",
+   "secs": 4.12
+  },
+  "savings/saved": {
+   "key": "f13i1q",
+   "secs": 1.98
+  },
+  "savings/subtract": {
+   "key": "ly1ths",
+   "secs": 4.1
+  },
+  "savings/reach": {
+   "key": "mxr73d",
+   "secs": 6.06
+  },
+  "needs/need-want": {
+   "key": "1dq0jnv",
+   "secs": 10.33
+  },
+  "needs/can-wait": {
+   "key": "efks21",
+   "secs": 7.36
+  },
+  "plurals/one": {
+   "key": "1qwb9ff",
+   "secs": 5.01
+  },
+  "plurals/add-s": {
+   "key": "gssi7o",
+   "secs": 3.78
+  },
+  "plurals/es": {
+   "key": "1n4s3zb",
+   "secs": 6.68
+  },
+  "plurals/look": {
+   "key": "1930k9q",
+   "secs": 6.31
+  },
+  "plurals/foxes": {
+   "key": "y6451b",
+   "secs": 4.18
+  },
+  "plant-cycle/cycle": {
+   "key": "1cqbv4m",
+   "secs": 7.7
+  },
+  "water-cycle/evaporation": {
+   "key": "ulev7r",
+   "secs": 9.98
+  },
+  "water-cycle/condensation": {
+   "key": "749orx",
+   "secs": 8.9
+  },
+  "water-cycle/precipitation": {
+   "key": "1bch5tf",
+   "secs": 9.77
+  },
+  "water-cycle/collection": {
+   "key": "bpn0sv",
+   "secs": 4.48
+  },
+  "water-cycle/again": {
+   "key": "1h6rek2",
+   "secs": 7.77
+  },
+  "food-chain/producer": {
+   "key": "3w1beb",
+   "secs": 8.09
+  },
+  "food-chain/consumer": {
+   "key": "4wxzs4",
+   "secs": 4.82
+  },
+  "food-chain/chain": {
+   "key": "1blpi5w",
+   "secs": 6.17
+  },
+  "food-chain/hunt": {
+   "key": "14pm7y5",
+   "secs": 4.2
+  },
+  "food-chain/energy": {
+   "key": "1kd08ap",
+   "secs": 5.33
+  },
+  "habitat/shelter": {
+   "key": "19iigsd",
+   "secs": 10.58
+  },
+  "habitat/features": {
+   "key": "1gpihfy",
+   "secs": 10.07
+  },
+  "day-night/half": {
+   "key": "1srtv0j",
+   "secs": 10.3
+  },
+  "day-night/spin": {
+   "key": "dfc12g",
+   "secs": 13.4
+  },
+  "day-night/model": {
+   "key": "p1aevx",
+   "secs": 9.64
+  },
+  "garden/grow": {
+   "key": "suuamj",
+   "secs": 3.58
+  },
+  "helpers/jobs": {
+   "key": "kgpr1m",
+   "secs": 4.78
+  },
+  "helpers/ask": {
+   "key": "zlsnk2",
+   "secs": 3.52
+  },
+  "bridge/approach": {
+   "key": "1pxoilt",
+   "secs": 9.11
+  },
+  "bridge/cross": {
+   "key": "1tjvnvi",
+   "secs": 9.02
+  },
+  "bridge/peace": {
+   "key": "k8x46t",
+   "secs": 10.47
+  },
+  "river/downhill": {
+   "key": "1eamewa",
+   "secs": 9.45
+  },
+  "weather/record": {
+   "key": "jrhqfo",
+   "secs": 14.38
+  },
+  "ratios/batch": {
+   "key": "16e00ac",
+   "secs": 10.45
+  },
+  "ratios/batches": {
+   "key": "by5gn2",
+   "secs": 12.76
+  }
+ }
+}

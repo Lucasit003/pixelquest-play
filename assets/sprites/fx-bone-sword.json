@@ -1,0 +1,1 @@
+{"image":"fx-bone-sword.png","cell":[53,41],"anchor":[30,25],"faces":"right","scale":1,"states":{"fly":{"row":0,"frames":3,"fps":14,"loop":true},"blast":{"row":1,"frames":5,"fps":14,"loop":false}},"height":12,"shadow":[7,2],"grade":{"outline":"none"}}
