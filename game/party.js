@@ -63,7 +63,14 @@ export function compLevel(xp) { const x = Math.max(0, +xp || 0); let L = 1; whil
 /* XP for one run together: a win 1 / 1.5 / 2 by tier, a loss .5 (balance-oct26, owner: half a Normal win, still no wage, so a
    win stays clearly better; was .25). Nothing else raises it. */
 export const LOSS_XP = .5;
-export const runXP = (won, tier = 'normal') => won ? ({heroic: 1.5, legendary: 2}[tier] ?? 1) : LOSS_XP;
+/* lategame-oct27 (exploit hunt): at .5 a loss, "Retry boss fight" and walking into the boss levelled Wil about twice as fast a
+   minute as winning (oct26-exploit3 measured 0.36 XP/min at .25 against 0.32-0.43 for wins). A loss now pays its share of LOSS_XP
+   by how long that attempt lasted (World.finish stats.attempt, without the time carried from earlier tries), in steps of .05:
+   the full .5 from LOSS_FULL seconds. A real try still gets the full half; an instant fall gets nothing, so losing pays at most
+   about 0.21 XP a minute. A caller that passes no time keeps the flat .5. */
+export const LOSS_FULL = 120;
+export const lossXP = time => time == null || !Number.isFinite(+time) ? LOSS_XP : Math.floor(LOSS_XP * Math.min(1, Math.max(0, +time) / LOSS_FULL) * 20 + 1e-9) / 20;
+export const runXP = (won, tier = 'normal', time) => won ? ({heroic: 1.5, legendary: 2}[tier] ?? 1) : lossXP(time);
 
 /* the reference curves at hero level L (§3.4) and the companion's own growth */
 export const refDamage = L => 20 + 1.5 * (Math.max(1, L | 0) - 1);
@@ -126,9 +133,9 @@ export const wageOf = (save, id) => (save?.party?.crew?.[id]?.trial > 0 ? 0 : CO
  * (never more than that run paid; nothing on a loss). Returns {id, won, wage, trial, left, xp, level, up} or null. Only s.party and
  * s.gold change.
  */
-export function settleRun(save, {won, tier = 'normal', gold = 0} = {}) {
+export function settleRun(save, {won, tier = 'normal', gold = 0, time} = {}) {
   const p = partyOf(save), id = p.with, m = id && p.crew[id]; if (!m) return null;
-  const before = compLevel(m.xp), x = runXP(!!won, tier);
+  const before = compLevel(m.xp), x = runXP(!!won, tier, time);
   let wage = 0; const trial = !!won && m.trial > 0;
   if (won) { wage = trial ? 0 : Math.min(COMPANIONS[id].wage, Math.max(0, Math.floor(gold))); if (trial) m.trial--; m.wins++; save.gold = Math.max(0, (save.gold || 0) - wage); }
   m.runs++; m.xp = Math.min(xpFor(COMP_MAX), m.xp + x);

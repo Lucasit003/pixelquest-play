@@ -160,7 +160,12 @@ export const KILL_XP={boss:100,elite:40,foe:12,growth:.15};
    14, 16 and 21). With tools/sim/oct26-exploit3-xp.mjs (--suicide), falling at the boss on purpose pays at most 0.87x the XP a
    minute of winning on Normal, 0.90x on Heroic and 0.58x on Legendary (it was up to 1.2x, 1.8x and 1.7x). tests/balance-oct26.test.js. */
 export const XP_TUNE={scale:.25,kill:{normal:.75,heroic:.5,legendary:.35},win:{normal:.4,heroic:1,legendary:2}};
-export const killXP=(e,k)=>Math.round((e?.boss?KILL_XP.boss:e?.elite||e?.mod?KILL_XP.elite:KILL_XP.foe)*Math.pow(1+KILL_XP.growth,Math.max(1,e?.tier||1)-1)*XP_TUNE.scale*(XP_TUNE.kill[tierKey(k)]??1));
+/* lategame-oct27 (lead brief: a late Legendary win may pay at most 1.15x its pre-26-Oct amount): on Heroic and Legendary the kill
+   XP stops growing at level tier GROWTH_CAP (Veilmoor's Veil Gate is 21 and The Deep Below 22). A late win there paid 1.20-1.40x the
+   pre-26-Oct kill XP; at tier 20 it is 1.08x on Heroic and 1.14x on Legendary. Normal (the level curve) is unchanged, and the
+   victory bonus and a fall scale the same way, so the fall/win ratio does not move. tests/lategame-oct27.test.js. */
+export const GROWTH_CAP={heroic:20,legendary:20};
+export const killXP=(e,k)=>Math.round((e?.boss?KILL_XP.boss:e?.elite||e?.mod?KILL_XP.elite:KILL_XP.foe)*Math.pow(1+KILL_XP.growth,Math.min(Math.max(1,e?.tier||1),GROWTH_CAP[tierKey(k)]||99)-1)*XP_TUNE.scale*(XP_TUNE.kill[tierKey(k)]??1));
 export const winXP=(kills,k)=>Math.round(Math.max(0,+kills||0)*(XP_TUNE.win[tierKey(k)]||0));
 /* The hero level a tier is tuned for: about one hero level per level tier on Normal (the balance sim reaches 19 by the
    Veilmoor's end), +3 on Heroic, +6 on Legendary. Advice only -- nothing is gated on it. */
