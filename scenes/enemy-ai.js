@@ -33,6 +33,7 @@ import {echoCue} from './normal-pacing.js';
 import {ENEMY_TYPES,makeEnemy} from '../game/enemies.js';
 import {makeEnemy as rosterEnemy} from '../game/roster.js';
 import {STAGE} from '../game/stage.js';
+import {flashHit,TELE_PULSE,FRAME} from '../game/feel.js';
 import {VINE_SPRITE} from '../game/entrances.js';
 import {loadSprite,spriteFrame,spriteImage,drawSprite} from '../gfx/actors/sprites.js';
 import {sfx} from '../core/audio.js';
@@ -203,7 +204,7 @@ function endAct(e,w,b){const a=b.atk;woodEnd(e,w,b);b.repeat=0;b.lastKind=a.kind
 /* A called move (a riposte, a combo's second half, a mash punish) starts now, whatever its cooldown or phase. */
 function forced(e,w,b){if(!canBeginThreat(w,e))return false;if(b.forceAtk?.name===b.force&&(w.enemyFx||[]).some(f=>f.owner===e&&f.kind==='sweep'))return false;const name=b.force;b.force=null;const a=b.forceAtk?.name===name?b.forceAtk:(e.attacks||[]).find(x=>x.name===name);b.forceAtk=null;if(!a||!w.player||w.player.hp<=0||w.level?.encounter?.veilmoor&&!a.returnPass&&a.uses&&(b.used?.[a.name]||0)>=a.uses)return false;startTele(e,w,b,a);return true;}
 /* ---------- reactions ---------- */
-function onDamaged(e,w,b){if(!(e.flash>0))e.flash=FLASH;const d=ENEMY_TYPES[e.key]||{};
+function onDamaged(e,w,b){flashHit(e,w.time||0);const d=ENEMY_TYPES[e.key]||{};
  /* a boss that punishes button-mashing (onMash: the Crystal Golem's Shard Burst) answers a run of quick hits with a burst */
  const mash=e.boss&&(e.attacks||[]).find(a=>a.onMash);if(mash&&!b.force&&!(b.cd[mash.name]>0)&&(!mash.phase||mash.phase===b.phase)){const now=w.time||0;b.mash=(b.mash||[]).filter(t=>now-t<mash.onMash.window);b.mash.push(now);if(b.mash.length>=mash.onMash.hits&&b.mode!=='act'&&b.mode!=='tele'&&b.mode!=='trans'&&!(b.mode==='hurt'&&b.hurtDur>.5)){b.mash=[];b.force=mash.name;if(b.mode==='hurt'){b.mode='move';b.freeze=false;}}}
  if(e.boss){if(b.mode==='move'&&hasState(e,'hurt')&&(b.hurtCount=(b.hurtCount||0)+1)%4===0){b.mode='hurt';b.t=0;setState(e,'hurt');b.hurtDur=Math.min(.4,stateInfo(e.sprite,'hurt').dur);}return;}
@@ -360,12 +361,13 @@ export function drawEnemy(c,e,t){if(!e.sprite)return false;const s=loadSprite(e.
  if(b?.mode==='hurt'&&b.hurtDur>.5&&e.hp>0){const top=e.y-z-m.height*k-4;for(let i=0;i<3;i++){const a=(t||0)*4+i*2.09;drawSprite(c,'fx-spark-holy','twinkle',((t||0)*.8+i*.3)%.5,Math.round(e.x+Math.cos(a)*12),Math.round(top+Math.sin(a)*3),{alpha:.85});}}
  /* Hit flash (art director round 3): the sprite's own pixels brightened (drawn over itself with 'lighter') at 0.6 for two
     frames -- never a flat cream silhouette, and never re-triggered while it shows, so a boss stays readable through combos. */
- if(e.hp>0){if(e.flash>0){c.save();c.globalCompositeOperation='lighter';drawSprite(c,e.sprite,state,st,e.x,e.y-z,{facing:e.facing||1,scale:k,alpha:.6*alpha});c.restore();}
+ if(e.hp>0){if(e.flash>0){if(e.flashWhite>0)overlay(c,e.sprite,m,state,st,e.x,e.y-z,e.facing||1,k,'#ffffff',alpha);else{c.save();c.globalCompositeOperation='lighter';drawSprite(c,e.sprite,state,st,e.x,e.y-z,{facing:e.facing||1,scale:k,alpha:.6*alpha});c.restore();}}
   else if(b?.mode==='tele'){const left=b.teleDur-b.t;if(left<.15){c.save();c.globalCompositeOperation='lighter';drawSprite(c,e.sprite,state,st,e.x,e.y-z,{facing:e.facing||1,scale:k,alpha:.55});c.restore();}
-   else{const pulse=.5+.5*Math.sin((t||0)*26);overlay(c,e.sprite,m,state,st,e.x,e.y-z,e.facing||1,k,TELE.flash,.1+.24*pulse*Math.min(1,b.t/Math.max(.01,b.teleDur)+.25));}}
+   else{const pulse=.5+.5*Math.sin((t||0)*TELE_PULSE);overlay(c,e.sprite,m,state,st,e.x,e.y-z,e.facing||1,k,TELE.flash,.1+.24*pulse*Math.min(1,b.t/Math.max(.01,b.teleDur)+.25));}}
   else if(e.tint)overlay(c,e.sprite,m,state,st,e.x,e.y-z,e.facing||1,k,e.tint,.1+.06*Math.sin((t||0)*4));
 }
  /* the killing blow lights the body up for a few frames before it falls (combat.js deathFx) */
+ else if(e.deathFlash>.12-FRAME)overlay(c,e.sprite,m,state,st,e.x,e.y-z,e.facing||1,k,'#ffffff',1);
  else if(e.deathFlash>0){c.save();c.globalCompositeOperation='lighter';drawSprite(c,e.sprite,state,st,e.x,e.y-z,{facing:e.facing||1,scale:k,alpha:Math.min(1,e.deathFlash/.12)*.85});c.restore();}
  return true;}
 /* Ground telegraph: red-orange graded Foozle ground cracks (fx-marker), tiled over the danger area, brightening as the

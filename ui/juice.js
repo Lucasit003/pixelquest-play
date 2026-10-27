@@ -8,6 +8,7 @@
    become short cross-fades and banners stop moving. */
 import {sting} from '../core/audio.js';
 import {drawPixelText} from './canvas-ui.js';
+import {NUMBER} from '../game/feel.js';
 const doc=()=>globalThis.document;
 export function motionReduced(){
  const r=doc()?.documentElement?.dataset?.motion;if(r)return r==='reduced';
@@ -103,7 +104,8 @@ function slotOf(f){
 export function drawDamageText(c,f,alpha){
  const slot=f.enemy?0:slotOf(f);if(slot>=3)return;
  const life=1-alpha,size=f.size||(f.big?16:12),crit=size>=16||!!f.big;
- const pop=life<.12&&crit&&!motionReduced();
+ /* juice-oct27: every number punches in at twice its size for its first frames (NUMBER.pop of its life), a crit for longer */
+ const pop=!motionReduced()&&/^[-+−]?\d/.test(String(f.text))&&life<(crit?NUMBER.critPop:NUMBER.pop);
  const rise=Math.round((1-(1-life)*(1-life))*(crit?26:20))+slot*7;
  const shake=crit&&life<.25&&!motionReduced()?Math.round(Math.sin(life*90)*1.5):0;
  const x=Math.round(f.x+[0,8,-8][slot]+shake),y=Math.round(f.y-rise);

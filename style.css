@@ -2568,3 +2568,11 @@ html.m-mode #modal#modal#modal:is([data-view=placement],[data-view=lesson-quiz])
 html.m-mode #modal#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question:has(#quiz-feedback:empty)>.question-reading:has(>#quiz-pic)>.edu-read{grid-column:1;grid-row:2;align-self:start;justify-self:start}
 html.m-mode #modal#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question:has(#quiz-feedback:empty)>.question-reading:has(>#quiz-pic)>h3{grid-column:2/4;grid-row:1/span 2;align-self:start}
 html.m-mode #modal#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question:has(#quiz-feedback:empty)>.question-reading:has(>#quiz-pic){align-items:start;grid-template-rows:auto 1fr}}
+/* juice-oct27: on a phone the next-unlock card was hidden; when it peeks in town (a step done, 8 s) it shows as a slim chip
+   under the hero plate: the ability's name and the one next step with its bar, nothing else */
+html.m-mode.in-town #next-unlock.peek{display:block;top:calc(env(safe-area-inset-top,0px) + 96px);bottom:auto;left:8px;width:min(230px,40vw);padding:4px 8px;margin:0;zoom:1}
+html.m-mode.in-town #next-unlock.peek .road{display:block}
+html.m-mode.in-town #next-unlock.peek :is(.road-icon,.am-goal-k,.road-count,.am-goal-meter,.am-goal-line,.road-badges){display:none}
+html.m-mode.in-town #next-unlock.peek .road strong{font-size:16px}
+html.m-mode.in-town #next-unlock.peek .road .road-pip{margin:2px 0 2px;padding-top:2px;border-top:0}
+@media(max-height:700px){dialog[data-view=unlock] .edu-unlock.edu-awakening .edu-awaken-ring{left:40px;top:32px;width:64px;height:64px;margin:-32px 0 0 -32px}}

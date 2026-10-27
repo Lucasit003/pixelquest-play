@@ -68,6 +68,8 @@ export function drawEffect(c,f){const el=elementOf(f),t=age(f),r=f.radius||16;
    put(c,`fx-hit-${el}`,'splash',t,f.x,f.y-8);return true;}
   case 'line':{const x0=f.x,y0=f.y-24,x1=f.tx??f.x,y1=(f.ty??f.y)-24,d=Math.hypot(x1-x0,y1-y0),n=Math.max(2,Math.round(d/14));
    for(let i=0;i<=n;i++)put(c,`fx-spark-${el}`,'twinkle',t+i*.04,x0+(x1-x0)*i/n,y0+(y1-y0)*i/n);put(c,`fx-hit-${el}`,'star',t,x1,y1);return true;}
+  /* juice-oct27 kill pop: the element's own spark sprites burst out of the fallen body, arc down under gravity and fade */
+  case 'killpop':{const n=f.n||6,k=Math.max(0,1-t/(f.max||.42));c.save();c.globalAlpha*=Math.min(1,k*1.6);for(let i=0;i<n;i++){const a=i/n*Math.PI*2+(f.spin||0),v=70+(i%3)*18;put(c,`fx-spark-${el}`,'twinkle',t+i*.03,f.x+Math.cos(a)*v*t,f.y-14+Math.sin(a)*v*t*.55-60*t+170*t*t);}c.restore();return true;}
   case 'particle':return true;
   case 'text':return false;}
  put(c,`fx-hit-${el}`,'splash',t,f.x,f.y-8);return true;}

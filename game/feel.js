@@ -1,10 +1,33 @@
-/* Combat feel numbers (14 Oct polish pass), pure so tests can pin them. Hitstop in seconds: a light hit freezes 60 ms, a
-   heavy hit or ability 110 ms, a crit at least 90 ms, a killing blow at least 100 ms (130 an elite), a finisher 170. The
-   longest of the reasons wins; reduced motion freezes nothing. */
-export const HITSTOP={light:.06,crit:.09,heavy:.11,kill:.1,elite:.13,finisher:.17};
+/* Combat feel numbers (14 Oct polish pass, re-tuned 27 Oct juice pass), pure so tests can pin them. Hitstop is counted in
+   60 fps frames and only lands on blows that matter: a plain light hit freezes nothing (a child mashing attack would
+   otherwise stutter on every swing), a crit 2 frames, a heavy hit, ability, combo finisher or kill 3, an elite's fall 4.
+   Never more than HITSTOP_MAX. The longest of the reasons wins; reduced motion freezes nothing. */
+export const FRAME=1/60,HITSTOP_MAX=4*FRAME;
+export const HITSTOP={light:0,crit:2*FRAME,heavy:3*FRAME,finisher:3*FRAME,kill:3*FRAME,elite:4*FRAME,hurt:4*FRAME};
 export function hitstopFor(a={},{crit=false,kill=false,elite=false,motion=true}={}){if(!motion)return 0;
- let s=a.stop||(a.heavy||(!a.basic&&!a.tick)?HITSTOP.heavy:HITSTOP.light);if(a.tick)return s;
- if(crit)s=Math.max(s,HITSTOP.crit);if(kill)s=Math.max(s,elite?HITSTOP.elite:HITSTOP.kill);return s;}
+ let s=a.stop||(a.heavy||(!a.basic&&!a.tick)?HITSTOP.heavy:HITSTOP.light);if(a.tick)return a.stop||HITSTOP.light;
+ if(crit)s=Math.max(s,HITSTOP.crit);if(kill)s=Math.max(s,elite?HITSTOP.elite:HITSTOP.kill);return Math.min(HITSTOP_MAX,s);}
+/* Shake and impact pauses are on when the Settings box "Screen shake and impact pauses" is ticked and "Reduce motion"
+   (ui/settings.js, which defaults to the OS preference) is not. */
+export const motionOn=save=>!!save?.settings?.motion&&!save?.settings?.reducedMotion;
+/* Hit flash (27 Oct): a hit lights the enemy for FLASH_T (2 frames); a heavy hit, crit or kill makes its first frame pure
+   white. An enemy re-flashes at most once every FLASH_GAP s, so no sprite ever flashes faster than 3 times a second however
+   fast the hits come (photosensitivity: nothing above 3 Hz). Returns true when a flash started. */
+export const FLASH_T=2*FRAME,FLASH_GAP=1/3,FLASH_HZ=1/FLASH_GAP;
+export function flashHit(e,now,white=false){if(now-(e.flashAt??-9)<FLASH_GAP-1e-9)return false;e.flash=FLASH_T;e.flashAt=now;e.flashWhite=white?FRAME:0;return true;}
+/* A telegraph's glow pulses at TELE_PULSE rad/s: 2.7 Hz, under the 3 Hz line (it was 26 rad/s, 4.1 Hz). */
+export const TELE_PULSE=17;
+/* Kill pop (27 Oct): the fallen body squashes wide and short for KILL_POP s, springing back as it dies. */
+export const KILL_POP=.14;
+export function killSquash(left,motion=true){if(!motion||!(left>0))return [1,1];const k=Math.min(1,left/KILL_POP),q=Math.sin(k*Math.PI)*.28;return [1+q,1-q*.8];}
+/* Combo counter (27 Oct): landed hits in a row, each within COMBO.window s of the last; the counter shows from COMBO.show
+   hits, and taking damage ends the chain. It is only a show: nothing is paid for it. */
+export const COMBO={show:5,window:1.6,fade:.5};
+export function comboStep(chain,now){const c=chain&&now-chain.t<=COMBO.window?chain:{n:0,t:now,best:0};c.n++;c.t=now;c.bump=now;c.best=Math.max(c.best||0,c.n);return c;}
+export function comboView(chain,now){if(!chain||chain.n<COMBO.show)return null;const idle=now-chain.t,gone=idle-COMBO.window;if(gone>=COMBO.fade)return null;
+ return {n:chain.n,alpha:gone>0?1-gone/COMBO.fade:1,pop:now-(chain.bump??-9)<.08,tier:chain.n>=25?3:chain.n>=15?2:chain.n>=10?1:0};}
+/* Damage numbers (27 Oct): every number pops to twice its size for its first frames; a crit is gold, bigger and pops longer. */
+export const NUMBER={size:12,crit:16,critColor:'#ffc93c',pop:.07,critPop:.2};
 /* Which shake a killing blow rings: none for a trash mob (the hitstop and the puff carry it), a small one for an elite. */
 export const killQuake=e=>e.boss?null:e.elite?'crit':null;
 /* Gold that pops out of a fallen enemy: how many coins fly (the gold itself is paid on the kill, these are the show). */

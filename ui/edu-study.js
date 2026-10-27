@@ -100,11 +100,14 @@ export const PRACTICE_WHY='Practice helps your brain keep what you learned: get 
    Four steps that light up as the child does them: Lesson, Quiz, Practice n/25 (with a bar), Test. The same
    numbers the mastery test gate uses (lessons.js testReady), so what the child sees is what the game checks. */
 import {testReady,mastered as isMastered,PRACTICE_NEEDED} from '../academics/lessons.js';
+import {topicMastery} from '../academics/study-unlock.js';
 export function topicProgressHTML(save,t,{compact=false}={}){
  const g=testReady(save,t),m=isMastered(save,t),p=m?PRACTICE_NEEDED:g.practice,pc=Math.round(p/PRACTICE_NEEDED*100);
  const step=(cls,on,label,extra='')=>`<li class="edu-pstep ${cls}${on?' on':''}"><span class="edu-pstep-name">${label}${on?' ✓':''}</span>${extra}</li>`;
  const say=`${t.title}. Lesson ${g.lesson||m?'done':'not done yet'}. Quiz ${g.quiz||m?'passed':'not passed yet'}. Practice ${p} of ${PRACTICE_NEEDED}. Test ${m?'passed':'not yet'}.`;
- return `<ol class="edu-progress${compact?' compact':''}" aria-label="${esc(say)}">${step('lesson',g.lesson||m,'Lesson')}${step('quiz',g.quiz||m,'Quiz')}${step('practice',p>=PRACTICE_NEEDED,`Practice ${p}/${PRACTICE_NEEDED}`,`<span class="edu-pbar" aria-hidden="true"><i style="width:${pc}%"></i></span>`)}${step('test',m,'Test')}</ol>`;
+ const tm=topicMastery(save,t),tp=Math.round(tm.frac*100);
+ /* juice-oct27: one bar for the whole way to mastery above the four steps (study-unlock.js topicMastery) */
+ return `<div class="edu-mastery${m?' done':''}" role="progressbar" aria-label="Toward mastery of ${esc(t.title)}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${tp}"><span class="edu-mastery-k">${m?'Mastered':'Toward mastery'}</span><span class="edu-mastery-bar" aria-hidden="true"><i style="width:${tp}%"></i></span><span class="edu-mastery-left">${m?'✓':esc(tm.left)}</span></div><ol class="edu-progress${compact?' compact':''}" aria-label="${esc(say)}">${step('lesson',g.lesson||m,'Lesson')}${step('quiz',g.quiz||m,'Quiz')}${step('practice',p>=PRACTICE_NEEDED,`Practice ${p}/${PRACTICE_NEEDED}`,`<span class="edu-pbar" aria-hidden="true"><i style="width:${pc}%"></i></span>`)}${step('test',m,'Test')}</ol>`;
 }
 
 /* ---------- A right answer deserves a moment (playtest m14) ----------

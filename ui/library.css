@@ -603,6 +603,11 @@ dialog[data-view=library] .edu-next-actions button.primary:hover:not(:disabled){
 #next-unlock .road strong{font-size:18px;color:var(--ink)}
 #next-unlock .road small{font-size:14px}
 #next-unlock .road .am-goal-meter{height:8px}
+/* juice-oct27: the next-step pip under the card ("Practice 6 more questions"), a gold bar of that one step */
+#next-unlock .road .road-pip{grid-column:1/-1;display:grid;gap:3px;margin:3px 0 6px;padding-top:4px;border-top:1px dashed #8a6a3a80}
+#next-unlock .road .road-pip-text{font-size:16px;line-height:1.2;color:var(--ink);font-weight:700}
+#next-unlock .road .road-pip-bar{display:block;height:6px;background:#3a2a1a;border:1px solid #2a1a0a}
+#next-unlock .road .road-pip-bar i{display:block;height:100%;background:#e8b84a}
 @media(max-height:600px){.am-goal.road{padding:6px 10px;gap:3px 8px}.road .am-goal-checks{display:none}.road .am-goal-line{font-size:15px}.road .road-count small{display:inline;margin-left:6px}.road-badges{font-size:15px}.road-badges i{width:24px;height:24px;background-size:24px 24px}}
 @media(prefers-reduced-motion:reduce){.road-badges.earned i{animation:none}}
 :root[data-motion=reduced] .road-badges.earned i{animation:none}
@@ -737,6 +742,26 @@ html.m-mode dialog[data-view=lesson] .lesson-footer .actions>.try-it-cue[hidden]
  html:not(.m-mode) dialog[data-view=library] .edu-next-actions>button{flex:1 1 40%;min-width:0}
  html:not(.m-mode) dialog[data-view=library] .edu-next-actions>:is([data-go-adventure],[data-find-start]){flex-basis:100%}
 }
+/* juice-oct27: a topic's way to mastery as one bar on its progress card (study-unlock.js topicMastery) */
+.edu-mastery{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:baseline;gap:3px 8px;margin:6px 0 4px;font-size:14px}
+.edu-mastery-left{text-align:right}
+.edu-mastery-k{font-weight:700;color:var(--edu-ink,#2a1a0a)}
+.edu-mastery-bar{grid-column:1/-1;grid-row:2;display:block;height:10px;background:#3a2a1a;border:2px solid var(--edu-outline,#2a1a0a)}
+.edu-mastery-bar i{display:block;height:100%;background:var(--accent,#5f8f4e)}
+.edu-mastery-left{color:var(--edu-ink-soft,#5a4632)}
+.edu-mastery.done .edu-mastery-bar i{background:#e8b84a}
+/* juice-oct27: the first-ability awakening lands harder: the icon bursts in from small and bright, one gold ring swells out
+   behind it and the ribbon drops in after; all once, nothing repeats or flashes (reduced motion: shown at rest) */
+.edu-unlock.edu-awakening .edu-unlock-icon{animation:edu-awaken-icon .7s cubic-bezier(.2,1.6,.4,1) both}
+.edu-unlock.edu-awakening .edu-awaken-ring{position:absolute!important;z-index:0!important;left:50%;top:82px;width:96px;height:96px;margin:-48px 0 0 -48px;border-radius:50%;border:6px solid #ffd96b;box-shadow:0 0 0 4px #fff3c480,inset 0 0 0 4px #fff3c480;opacity:0;animation:edu-awaken-ring .9s .12s ease-out both;pointer-events:none}
+.edu-unlock.edu-awakening .edu-unlock-ribbon{animation:edu-awaken-ribbon .45s .4s cubic-bezier(.2,1.4,.4,1) both;color:#7a4a00;background:#ffe08a}
+@keyframes edu-awaken-icon{0%{transform:scale(.3);filter:brightness(3)}55%{transform:scale(1.3);filter:brightness(1.8)}100%{transform:none;filter:none}}
+@keyframes edu-awaken-ring{0%{opacity:.95;transform:scale(.35)}100%{opacity:0;transform:scale(2.4)}}
+@keyframes edu-awaken-ribbon{from{opacity:0;transform:translateY(-10px) scale(1.2)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.edu-unlock.edu-awakening :is(.edu-unlock-icon,.edu-unlock-ribbon){animation:none}.edu-unlock.edu-awakening .edu-awaken-ring{display:none}}
+:root[data-motion=reduced] .edu-unlock.edu-awakening :is(.edu-unlock-icon,.edu-unlock-ribbon){animation:none}
+:root[data-motion=reduced] .edu-unlock.edu-awakening .edu-awaken-ring{display:none}
+
 /* oct26-phonelesson: phone lesson legibility (docs/playtest/oct26-phonelesson). The lesson sheet takes the whole screen like every other
    phone sheet (it was 92dvh, 29-31px lost). The picture column is exactly as wide as the picture (min-content): a long equation line above
    the picture used to set the column to its full length and squeeze the step's text to one word a line (AP Micro, APUSH). main.js
