@@ -145,14 +145,19 @@ export function typoLimit(expected,q={}){const a=String(expected??'').trim();if(
 const LEAD=/^(?:answer|type|choose|pick|write|enter|reply|say|select|circle|is it|was it|is this|are they)\b[:,]?\s*/i;
 const ORDERED=/(?:^|[\s.?!:;)])(?:answer|type|choose|pick|select|reply|circle):?\s+([^.?!:;()]*\bor\b[^.?!:;()]*)$/i;
 const bare=x=>x.replace(/^(?:a|an|the) /i,'');
-function listOf(tail,bounded,want){if(!/\bor\b/.test(tail))return null;if(!bounded)tail=tail.replace(/^.*,\s*(?=(?:do|does|did|is|are|was|were|will|would|can|could|should|has|have)\b)/i,'');const parts=tail.split(/\s*,\s*/),items=(parts.length>=3&&!/\bor\b/.test(parts.at(-1))?parts:tail.split(/\s*,\s*(?:or\s+)?|\s+or\s+/)).map(x=>x.trim().replace(/^['‘"“](.+)['’"”]$/,'$1')).filter(Boolean);if(items.length<2||items.length>8)return null;if(items.some(x=>/^[A-F]$/.test(x))&&!items.every(x=>/^[A-F]$/.test(x)))return null;
- if(!bounded||/^(?:is|are|was|were|does|do|did|will|can|could|would|should|has|have|which|what|who)\b/i.test(items[0])){const k=items[1].split(' ').length,w=items[0].split(' ');if(w.length>k)items[0]=w.slice(-k).join(' ');if(items.length>2&&!/^[$\d-]/.test(items[0])&&items.slice(1).every(x=>/^[$\d-]/.test(x)))items.shift();}
+function listOf(tail,bounded,want){if(!/\bor\b/.test(tail))return null;if(!bounded)tail=tail.replace(/^.*,\s*(?=(?:do|does|did|is|are|was|were|will|would|can|could|should|has|have)\b)/i,'').replace(/^(?:which|what|who)\b[^,]*,\s*(?=.*\bor\b)/i,'');const parts=tail.split(/\s*,\s*/),items=(parts.length>=3&&!/\bor\b/.test(parts.at(-1))?parts:tail.split(/\s*,\s*(?:or\s+)?|\s+or\s+/)).map(x=>x.trim().replace(/^['‘"“](.+)['’"”]$/,'$1')).filter(Boolean);if(items.length<2||items.length>8)return null;if(items.some(x=>/^[A-F]$/.test(x))&&!items.every(x=>/^[A-F]$/.test(x)))return null;
+ if(!bounded||/^(?:is|are|was|were|does|do|did|will|can|could|would|should|has|have|which|what|who|when)\b/i.test(items[0])){if(items.length>2&&/^(?:which|what|who)\b/i.test(items[0])&&items[0].split(' ').length>2&&items.slice(1).every(x=>!x.includes(' ')))items.shift();const k=items[1].split(' ').length,w=items[0].split(' ');if(w.length>k)items[0]=w.slice(-k).join(' ');if(items.length>2&&!/^[$\d-]/.test(items[0])&&items.slice(1).every(x=>/^[$\d-]/.test(x)))items.shift();}
  const last=items.at(-1).split(' '),vs=[items,items.map(bare)];if(last.length===2&&items.slice(0,-1).every(x=>!x.includes(' ')))vs.splice(1,0,[...items.slice(0,-1),last[0]]);
  const num=k=>{const m=/^\$?(\d[\d,]*(?:\.\d+)?)(?: [a-z]+)?$/.exec(k);return m?Number(m[1].replace(/,/g,'')):NaN;},wantN=want.map(Number).filter(Number.isFinite);
- for(const list of vs){const keys=list.map(answerKey),nums=keys.map(num).filter(Number.isFinite);if(new Set(keys).size===list.length&&new Set(nums).size===nums.length&&!list.some(x=>x.length>50||x.split(' ').length>7||!/[\p{L}\p{N}<>=]/u.test(x))&&keys.some(k=>want.includes(k)||wantN.includes(num(k))))return list;}return null;}
+ for(const list of vs){const keys=list.map(x=>answerKey(x)),nums=list.map(x=>num(answerKey(x,true))).filter(Number.isFinite);if(new Set(list.map(x=>answerKey(x,true))).size===list.length&&new Set(nums).size===nums.length&&!list.some(x=>x.length>50||x.split(' ').length>7||!/[\p{L}\p{N}<>=]/u.test(x))&&keys.some(k=>want.includes(k)||wantN.includes(num(k))))return list;}return null;}
+/* polish4-oct27 (mhist-oct27 engine bug): list.map(answerKey) passed the array index as `cased`, so only the first entry lost its
+   capitals and a capitalised answer in any other place got a typing box. Keys are now all uncased; the uniqueness check keeps
+   capitals (a paris / Paris choice stays) and numbers read the cased key (30 BCE / 30 CE stay two choices). A lead question
+   before a comma ("Which has greater X, N or O?") and a "when the Sun is highest or lowest" lead are trimmed. 988 items moved to
+   buttons, none back to typing, no id changed: tests/polish4-oct27.test.js and its fixture. */
 const CHOICES=new WeakMap();
 export function choicesOf(q){if(!q||typeof q!=='object')return null;if(CHOICES.has(q))return CHOICES.get(q);const c=findChoices(q);CHOICES.set(q,c);return c;}
-function findChoices(q){const want=[q.answer,...(q.accept||[])].map(answerKey);
+function findChoices(q){const want=[q.answer,...(q.accept||[])].map(x=>answerKey(x));
  if(Array.isArray(q.options)){const o=q.options.map(String);return o.length>=2&&o.length<=8&&o.some(x=>want.includes(answerKey(x)))?o.map(v=>({value:v,label:v})):null;}
  /* Every variant in this Boolean topic offers the same two choices, including 'is the statement correct?'. */
  if(q.topic==='cs-e-true-or-false'&&want.some(x=>x==='true'||x==='false'))return ['true','false'].map(value=>({value,label:value}));

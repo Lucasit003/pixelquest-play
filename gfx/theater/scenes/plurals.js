@@ -30,7 +30,8 @@ export default {
   {at:0,do:'part',name:'one'},
   {at:.4,do:'word',id:'w',base:'cat',x:320,y:10},
   {at:1.2,do:'act',who:'c1',state:'lick',dur:2.4,loop:true},
-  {at:2,do:'label',id:'sing',text:'one cat: singular',follow:'c1',dy:-96,kind:'cause'},
+  /* polish4-oct27 (new-player playtest): at dy -96 the cat's ears reached the caption while it licked and meowed; -110 keeps a gap */
+  {at:2,do:'label',id:'sing',text:'one cat: singular',follow:'c1',dy:-110,kind:'cause'},
   {at:4.4,do:'act',who:'c1',state:'meow',dur:.6},
   {at:8,do:'unlabel',id:'sing'},
 

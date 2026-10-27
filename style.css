@@ -818,7 +818,9 @@ html:not(.in-town) #hotbar .ability-slot.locked{display:none}
 .m-mode #touch .t-interact{right:6px;bottom:208px;width:44px;height:44px}
 .m-mode .hero-hud{width:124px;padding:2px 4px 2px 2px;gap:0 4px}
 .m-mode .portrait-frame{width:32px;height:36px}
-.m-mode #hero-name,.m-mode .bar small{display:none}
+.m-mode .bar small{display:none}
+/* polish4-oct27 (new-player playtest): the phone HUD showed no hero name; it fits left of LEVEL in the same row, cut with an ellipsis when long */
+.m-mode #hero-name{display:block;min-width:0;flex:1 1 auto;margin-right:8px;font-size:13px}
 .m-mode .bar{margin-right:0}
 .m-mode .name-row{justify-content:flex-end}
 .m-mode .hud-left{width:124px}
@@ -1764,6 +1766,11 @@ dialog[data-view=settings] .settings-grid>*{min-width:0}
 
 .pq-map-mark-here{box-shadow:0 0 0 2px var(--gold)}.pq-map-you-near::before{display:none}
 
+/* polish4-oct27: ui/map-you.js falls back to a label centred above or below the hero on a short stem when both sides hold markers */
+.pq-map-you.pq-map-you-above{transform:translate(-50%,calc(-100% - 18px))}.pq-map-you.pq-map-you-below{transform:translate(-50%,18px)}.pq-map-you.pq-map-you-above::before,.pq-map-you.pq-map-you-below::before{display:block;left:calc(50% - 1px);width:2px;height:6px;border:0;box-shadow:0 0 0 1px #171b2d}.pq-map-you.pq-map-you-above::before{top:100%}.pq-map-you.pq-map-you-below::before{top:-6px}
+html.m-mode .pq-map-you{font-size:12px;padding:0 4px}
+/* polish4-oct27: on a phone the town map was a 240 px stamp with ten 24 px markers crowding the You label; it now takes the width beside its key (the sheet scrolls) */
+html.m-mode dialog[data-view=village-map] .pq-village-map{width:min(100%,400px,calc((100svh - 40px)*4/3));max-width:400px}
 .pq-map-you-top{--map-label-y:0%}.pq-map-you-top::before{top:-4px}.pq-map-you-bottom{--map-label-y:-100%}.pq-map-you-bottom::before{top:calc(100% - 4px)}
 
 /* Playtest 14 Oct: companion cards show the animal; the tag clears the card's top tab. */

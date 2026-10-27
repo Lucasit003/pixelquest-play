@@ -196,6 +196,8 @@ dialog[data-view=library] .grade-count.locked{opacity:.8}
 @media (max-width:420px){.edu-next-actions{flex-direction:column}.edu-next-actions>button{width:100%}}
 .edu-goal{display:flex;align-items:center;gap:8px;margin:4px 0;font-size:15px}
 .edu-read{display:inline-flex;align-items:center;gap:6px;min-height:32px;padding:2px 10px;font-size:12px;vertical-align:middle}
+/* polish4-oct27 (new-player playtest): "Read to me" broke over two lines beside Start lesson on the Library's next-lesson card */
+.edu-read{white-space:nowrap;flex:none}
 .edu-read::before{content:'';width:32px;height:32px;margin:-6px 0;background:url(skin/uiicons/lyre.png) 0 0/32px 32px no-repeat;image-rendering:pixelated}
 /* Paired with another button (the unlock card's Continue, the Library's Next card): the same height, type size and line
    as its neighbour, never a smaller sibling. */

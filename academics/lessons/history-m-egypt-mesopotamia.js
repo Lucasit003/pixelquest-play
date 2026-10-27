@@ -90,9 +90,7 @@ const ok=(a,b)=>a!==b&&!(a.also||[]).includes(b.id)&&!(b.also||[]).includes(a.id
 const foils=(rows,row,k,key,same)=>{const pool=rot(rows,k%rows.length).filter(r=>ok(r,row)&&r[key]&&r[key]!==row[key]);
  const pick=[];for(const r of same?[...pool.filter(r=>r.side===row.side),...pool.filter(r=>r.side!==row.side)]:pool)if(pick.length<2&&!pick.some(p=>p[key]===r[key]))pick.push(r);return pick;};
 function build(add,F,ASK){
- /* accept: the answer exactly as cased. The choice finder (choicesOf in game/math.js) maps answerKey over its lists, so every
-    entry after the first is compared with its capitals kept; the cased form lets a capitalised answer match in any position. */
- const seen=new Set(),once=(skill,prompt,answer,pic,why)=>{if(seen.has(prompt))throw new Error('repeated prompt: '+prompt);seen.add(prompt);add(skill,prompt,answer,pic,cap(why),answer===answer.toLowerCase()?[]:[answer]);};
+ const seen=new Set(),once=(skill,prompt,answer,pic,why)=>{if(seen.has(prompt))throw new Error('repeated prompt: '+prompt);seen.add(prompt);add(skill,prompt,answer,pic,cap(why));};
  const ev=F.events,when=e=>`${e.label}: ${e.when}`,sorted=[...ev].sort((a,b)=>first(a)-first(b)),timeRows=es=>[...es].sort((a,b)=>first(a)-first(b)).map(e=>[e.label,e.when]);
  /* time: which of two happened first or later */
  const pairs=[];ev.forEach((a,i)=>ev.forEach((b,j)=>{if(j>i&&order(a,b,F.gap))pairs.push([a,b]);}));
