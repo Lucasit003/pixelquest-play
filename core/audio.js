@@ -196,9 +196,8 @@ export function musicFile(k,style=soundtrack){
  if(k==='town')return townTrack()+'.mp3';
  return (MEDIEVAL[k]||k)+'.mp3';}
 const url=k=>new URL('../audio/'+musicFile(k),import.meta.url).href;
-/* Loudness trims in dB so every track plays near -18 LUFS (ffmpeg ebur128, playtest 14 Oct): Exploration was mastered
-   4 dB under the rest, Sunset Plains and the mystic theme 1.5 dB over. */
-export const MUSIC_TRIM={'medieval-exploration.mp3':4,'sunset-plains.mp3':-1.5,'mystic.mp3':-1.5,'eternal-hope.mp3':-2};
+/* Loudness trims in dB so every track plays near -18 LUFS (ffmpeg ebur128, playtest 14 Oct): Sunset Plains and the mystic theme 1.5 dB over. */
+export const MUSIC_TRIM={'sunset-plains.mp3':-1.5,'mystic.mp3':-1.5,'eternal-hope.mp3':-2};
 export const musicTrim=k=>dbGain(MUSIC_TRIM[musicFile(k)]);
 export function setSoundtrack(style){style=Object.hasOwn(SOUNDTRACKS,style)?style:DEFAULT_SOUNDTRACK;if(style===soundtrack)return;const before=soundtrack;soundtrack=style;decoded.clear();if(wanted&&musicFile(wanted.key)!==musicFile(wanted.key,before)){token++;wanted.live=false;playMusic(wanted.key,{fade:2});}}
 

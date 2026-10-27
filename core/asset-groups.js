@@ -19,6 +19,7 @@ import VILLAGE from '../assets/town/oakhaven-approaches-oct13.js';
 import ROOMS from '../assets/town/interiors-reviewed-oct13.js';
 import {heroSpriteIds,allHeroSpriteIds} from '../gfx/actors/hero-directions.js';
 import {petSpriteIds} from '../gfx/actors/pet-directions.js';
+import {musicFile,musicKey} from './audio.js';
 
 export const HEROES=['warrior','mage','rogue','ranger','paladin','berserker','summoner'];
 /* combat-fx.js builds fx-<shape>-<element> ids from colours at draw time, so every level wants the set */
@@ -57,7 +58,6 @@ export const levelInfo=id=>levelById(id)||null;
 let RELEASABLE=null;
 export function releasable(){if(RELEASABLE)return RELEASABLE;const keep=new Set([...SHARED_SPRITES,...COMBAT_FX]);
  RELEASABLE=new Set([...LEVELS.flatMap(l=>levelEnemies(l).flatMap(k=>enemySprites(k))),...HEROES.flatMap(allHeroSpriteIds)].filter(id=>!keep.has(id)));return RELEASABLE;}
-export const chapterMusic=l=>({elderwood:'forest',emberkeep:'lava',veilmoor:'mystic'}[l?.chapter]||'forest');
 
 export function group(name,{hero='warrior',started=true}={}){const [kind,arg]=String(name).split(/:(.*)/);
  if(kind==='hero')return heroSpriteIds(arg).map(id=>({t:'sprite',id}));
@@ -72,7 +72,8 @@ export function group(name,{hero='warrior',started=true}={}){const [kind,arg]=St
  if(kind==='level'){const l=levelById(arg);if(!l||(l.kind!=='level'&&l.kind!=='arena'))return [];
   return uniq([{t:'biome',key:levelBiome(l)},...group('hero:'+hero),...SHARED_SPRITES.map(id=>({t:'sprite',id})),...SHARED_IMAGES.map(url=>({t:'img',url})),
    ...levelEnemies(l).flatMap(k=>enemySprites(k)).map(id=>({t:'sprite',id})),...COMBAT_FX.map(id=>({t:'sprite',id}))]);}
- if(kind==='music'){const k=arg==='level'?'forest':arg;return [{t:'audio',url:`audio/${k}.mp3`}];}
+ /* the file the current soundtrack really plays for that key (prune-oct26: was audio/<key>.mp3, which named tracks no soundtrack plays) */
+ if(kind==='music')return [{t:'audio',url:'audio/'+musicFile(musicKey(arg==='level'?'forest':arg))}];
  if(kind==='theater')return [{t:'img',url:'assets/theater/ui.png'},{t:'img',url:'assets/theater/lake.webp'},{t:'img',url:'assets/theater/lake-front.webp'},{t:'img',url:'assets/theater/bridge.webp'},{t:'img',url:'assets/theater/bridge-front.webp'}];
  return [];}
 

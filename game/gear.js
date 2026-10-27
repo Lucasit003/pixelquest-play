@@ -429,4 +429,3 @@ export function validate(){const errs=[];for(const it of ITEMS){if('grantsAbilit
  if(it.trick&&!TRICKS[it.trick])errs.push(`${it.id} unknown trick`);if(it.set&&!SETS[it.set])errs.push(`${it.id} unknown set`);
  if(it.trick&&RARITIES.indexOf(it.rarity)<2)errs.push(`${it.id} trick below Rare`);if(it.art&&it.slot!=='weapon')errs.push(`${it.id} has weapon art but is not a weapon`);}
  return errs;}
-export const HERO_FOR_FAMILY=HERO_OF;

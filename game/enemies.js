@@ -484,8 +484,6 @@ export const ENEMY_TYPES={
 };
 /* Baked bosses no level uses yet, for later chapters. */
 export const SPARE_BOSSES=[];
-/* Effect atlases every enemy fight may draw: telegraph flames, impact bursts and summoning portals. */
-export const SHARED_FX=['fx-ember','fx-explosion','fx-portal'];
 /* Every atlas an enemy type draws: its own sprite plus the fx its attacks fire. Levels can preload these at level start. */
 export function enemyAtlases(key,seen=new Set()){const d=ENEMY_TYPES[key];if(!d||seen.has(key))return[];seen.add(key);const s=new Set(d.sprite?[d.sprite]:[]);
  for(const a of d.attacks||[]){if(a.fx)s.add(a.fx);if(a.kind==='summon')for(const id of enemyAtlases(a.key,seen))s.add(id);}return [...s];}

@@ -1292,17 +1292,6 @@ export const CREDITS={
    ]
   },
   {
-   "author": "RandomMind",
-   "packs": [
-    {
-     "name": "Medieval: Exploration",
-     "licence": "CC0",
-     "url": "https://opengameart.org/content/medieval-exploration",
-     "required": false
-    }
-   ]
-  },
-  {
    "author": "Yoiyami",
    "packs": [
     {
