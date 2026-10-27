@@ -1,6 +1,6 @@
 /* Short player-facing previews from the shipped encounter rules. Reads progress, never writes it. */
 import {LEVELS,tiered,tierOpen,tierDone,tierRecord,starsOf,levelOpen,starsShort,levelReward,levelXPReward} from './levels.js';
-import {TIER_KEYS,TIERS,adviceLevel} from './tiers.js';
+import {TIER_KEYS,TIERS,adviceLevel,XP_TUNE,tierKey} from './tiers.js';
 import {overLevelXP} from './math.js';
 import {encounterFor} from './tier-encounters.js';
 import {ENEMY_TYPES} from './enemies.js';
@@ -24,5 +24,5 @@ export function ladderGoal(s,l){if(!tiered(l))return '';const g=starsShort(s,l.i
  const stars=TIER_KEYS.find(k=>starsOf(s,l.id,k)<3);if(stars)return `Earn 3 stars on ${TIERS[stars].label}.`;
  const grade=TIER_KEYS.find(k=>tierRecord(s,l.id,k)?.best?.grade!=='S+');return grade?`Try for grade S+ on ${TIERS[grade].label}.`:'All goals earned. Replay your favorite tier.';}
 /* oct24-overlevel: the first-clear XP shown is what this hero would be paid (math.js overLevelXP against the tier card's level) */
-export function rewardPreview(s,l,k){const done=tierDone(s,l.id,k),gold=levelReward(l,k),clearXP=overLevelXP(levelXPReward(l,k),s?.level||1,adviceLevel(l,k)),payout=done?`Replay: ${Math.round(gold/4)} gold. 0 clear XP.`:`First clear: ${gold} gold + kill gold. ${clearXP} XP${clearXP<levelXPReward(l,k)?' (reduced: you are well above the recommended level)':''}.`,bosses=[l.boss,l.duo].filter(Boolean),materials=bosses.map(b=>{const m=bossMat(b),extra=s?.gear?.beat?.[b]?0:firstKillBonus(m);/* oct24-progress: an Elderwood or Emberkeep boss's first kill pays FIRST_KILL_BONUS more (gear.js rollGear) */return `${TIER_COUNT[k]+extra} ${MATS[m].name}${extra?' (first kill)':''}`;}).join(' + '),grants=k==='legendary'?bosses.map(b=>legendaryReward(s,b)).filter(Boolean):[];
+export function rewardPreview(s,l,k){const done=tierDone(s,l.id,k),gold=levelReward(l,k),clearXP=overLevelXP(levelXPReward(l,k),s?.level||1,adviceLevel(l,k)),payout=done?`Replay: ${Math.round(gold/4)} gold. A win adds ${Math.round((XP_TUNE.win[tierKey(k)]||0)*100)}% bonus XP.`:`First clear: ${gold} gold + kill gold. ${clearXP} XP${clearXP<levelXPReward(l,k)?' (reduced: you are well above the recommended level)':''}.`,bosses=[l.boss,l.duo].filter(Boolean),materials=bosses.map(b=>{const m=bossMat(b),extra=s?.gear?.beat?.[b]?0:firstKillBonus(m);/* oct24-progress: an Elderwood or Emberkeep boss's first kill pays FIRST_KILL_BONUS more (gear.js rollGear) */return `${TIER_COUNT[k]+extra} ${MATS[m].name}${extra?' (first kill)':''}`;}).join(' + '),grants=k==='legendary'?bosses.map(b=>legendaryReward(s,b)).filter(Boolean):[];
  return {payout,materials,grants,first:grants.map(g=>g.item?ITEM[g.item].name:`${g.n} extra ${MATS[g.mat].name}`).join(' + ')};}

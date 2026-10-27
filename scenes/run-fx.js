@@ -9,7 +9,7 @@ import {scoreRun,gradeRank} from '../game/grade.js';
 import {openChests,ESSENCE} from '../game/chests.js';
 import {tickMeter,settleMeter,meterOf} from '../game/meter.js';
 import {awardRun,emptyDelve} from '../game/delve.js';
-import {syncTasks} from '../game/skills.js';
+import {syncTasks,adventurerLevel} from '../game/skills.js';
 import {SECRET_SPOTS} from '../game/secret-spots.js';
 import {levelParFor,levelById} from '../game/levels.js';
 import {stageKey} from '../game/stage.js';
@@ -27,7 +27,7 @@ export const SHRINE_ART='ui/skin/run/blessing-shrine.png',SEAL_ART='ui/skin/run/
 export const netLost=r=>Math.max(0,(r?.taken||0)-(r?.potionHeal||0));
 /* What a wave retry keeps from the run it retries (falls, time so far, finds), so a retried win is graded as one run. */
 export function runCarry(w,id,opts){if(!(Number.isInteger(opts?.fromWave)&&w.level?.id===id&&w.run&&w.draft))return null;const r=w.run;
- return {guaranteed:[...(r.guaranteed||[])],bossPaid:[...(r.bossPaid||[])],bossFirst:[...(r.bossFirst||[])],cacheEssence:r.cacheEssence|0,draft:w.draft,found:[...(w.found||[])],knockouts:(r.knockouts|0)+1,carry:(r.carry||0)+(r.time||0),elites:r.elites|0,lost:(r.lostCarry||0)+netLost(r)/Math.max(1,w.player?.maxHp||1),drank:!!r.drank,mimic:!!r.mimic,blessing:!!r.blessing,seal:!!r.seal,essence:r.essence|0,mimicDone:!w.mimic||w.mimic.state!=='sleep'};}
+ return {guaranteed:[...(r.guaranteed||[])],bossPaid:[...(r.bossPaid||[])],bossFirst:[...(r.bossFirst||[])],cacheEssence:r.cacheEssence|0,draft:w.draft,found:[...(w.found||[])],knockouts:(r.knockouts|0)+1,carry:(r.carry||0)+(r.time||0),killCarry:(r.killCarry||0)+(r.killXP||0),elites:r.elites|0,lost:(r.lostCarry||0)+netLost(r)/Math.max(1,w.player?.maxHp||1),drank:!!r.drank,mimic:!!r.mimic,blessing:!!r.blessing,seal:!!r.seal,essence:r.essence|0,mimicDone:!w.mimic||w.mimic.state!=='sleep'};}
 /* After the World set its level, layout and run: the draft, the live secrets, the shrine and the Mimic. */
 export function runStart(w,l,k,prev){const s=w.save;w.draft=null;w.shrine=null;w.mimic=null;w.blessing=null;w.seal=null;
  const saved=new Set(s.levels?.[l.id]?.secrets||[]);w.paid=saved;
@@ -38,7 +38,7 @@ export function runStart(w,l,k,prev){const s=w.save;w.draft=null;w.shrine=null;w
  if(w.level.encounter)d=compatibleDraft(d);w.draft=d;{const waves=draftWaves(w.level.waves||[],d,!!w.level.encounter);if(waves!==w.level.waves)w.level={...w.level,waves};}
  L.allSecrets=all;L.secrets=all.filter(x=>d.active.includes(x.id)&&x.id!==d.mimic);
  w.found=new Set(prev?.found||[]);
- Object.assign(w.run,{guaranteed:[...(prev?.guaranteed||[])],bossPaid:[...(prev?.bossPaid||[])],bossFirst:[...(prev?.bossFirst||[])],cacheEssence:prev?.cacheEssence|0,knockouts:prev?.knockouts|0,carry:prev?.carry||0,elites:prev?.elites|0,lostCarry:prev?.lost||0,drank:!!prev?.drank,mimic:!!prev?.mimic,blessing:!!prev?.blessing,seal:!!prev?.seal,essence:prev?.essence|0});
+ Object.assign(w.run,{guaranteed:[...(prev?.guaranteed||[])],bossPaid:[...(prev?.bossPaid||[])],bossFirst:[...(prev?.bossFirst||[])],cacheEssence:prev?.cacheEssence|0,knockouts:prev?.knockouts|0,carry:prev?.carry||0,killCarry:prev?.killCarry||0,elites:prev?.elites|0,lostCarry:prev?.lost||0,drank:!!prev?.drank,mimic:!!prev?.mimic,blessing:!!prev?.blessing,seal:!!prev?.seal,essence:prev?.essence|0});
  if(d.blessing){const y=L.floorTop+18;let x=(L.spawn?.x||60)+110;for(let t=0;t<30&&(L.blocked(x,y)||L.blocked(x-10,y)||L.blocked(x+10,y));t++)x+=8;
   w.shrine={x,y,key:d.blessing,used:false};if(prev?.blessing)applyBlessing(w,true);img(SHRINE_ART);}
  /* the Scholar's Seal stands in the walk after the first fight (or before it on a one-wave level), clear of collision */
@@ -99,8 +99,8 @@ export function runFinish(w,won,{time,gold}){const l=levelById(w.level?.id);if(!
  const sc=scoreRun({won,time:time+(w.run.carry||0),par:levelParFor(l,k),tier:k,waves:won?w.layout.arenas.length:Math.min(w.wave|0,w.layout.arenas.length),wavesTotal:w.layout.arenas.length,
   knockouts:w.run.knockouts|0,lost:(w.run.lostCarry||0)+netLost(w.run)/Math.max(1,w.player.maxHp),found:[...w.found].filter(id=>w.draft.active.includes(id)).length,elites:w.run.elites|0,mimic:w.run.mimic,seal:w.run.seal,blessing:w.run.blessing,potions:w.run.drank?1:0,abilities:w.run.damage>0?(w.run.abilDamage||0)/w.run.damage:null});
  const prevBest=r.best.grade||null,newBest=!!sc.grade&&gradeRank(sc.grade)>gradeRank(prevBest);if(newBest)r.best.grade=sc.grade;
- const delve=awardRun(s,l,{won,grade:sc.grade,tier:k,prevBest,progress:(w.run.waves||0)/Math.max(1,w.layout.arenas.length)});
+ const advBefore=adventurerLevel(s).level;const delve=awardRun(s,l,{won,grade:sc.grade,tier:k,prevBest,progress:(w.run.waves||0)/Math.max(1,w.layout.arenas.length)});
  let chests=[],meter=null;if(won){const n=w.run.cacheEssence|0;if(n){(s.gear.mats??={})[ESSENCE]=(s.gear.mats[ESSENCE]||0)+n;w.run.essence=(w.run.essence|0)+n;w.run.cacheEssence=0;}chests=openChests(s,{grade:sc.grade,boss:l.boss,kill:{mats:w.run.mats,items:w.run.gear},gold});settleMeter(s,l.id);const t=tickMeter(s,l.id,{total:sc.total,tier:k,double:sc.grade==='S+'});meter={...t.meter,added:t.added,paid:t.paid};}
  else meter={...meterOf(s,l.id),added:0,paid:null};
- const tasks=syncTasks(s);
- return {...sc,paidBosses:[...(w.run.bossPaid||[])],firstBosses:[...(w.run.bossFirst||[])],guaranteed:[...(w.run.guaranteed||[])],prevBest,newBest,chests,meter,delve,tasks,essence:w.run.essence|0,time:Math.round((time+(w.run.carry||0))*10)/10,draft:{blessing:w.draft.blessing,mini:w.draft.mini,mimic:!!w.draft.mimic,echo:w.draft.echo}};}
+ const tasks=syncTasks(s),adv={before:advBefore,after:adventurerLevel(s).level};
+ return {...sc,adv,paidBosses:[...(w.run.bossPaid||[])],firstBosses:[...(w.run.bossFirst||[])],guaranteed:[...(w.run.guaranteed||[])],prevBest,newBest,chests,meter,delve,tasks,essence:w.run.essence|0,time:Math.round((time+(w.run.carry||0))*10)/10,draft:{blessing:w.draft.blessing,mini:w.draft.mini,mimic:!!w.draft.mimic,echo:w.draft.echo}};}

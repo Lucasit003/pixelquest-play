@@ -2,7 +2,7 @@ import {veilPrepare,veilMarkers,veilEnd,veilOverlay,veilSafe} from './veilmoor.j
 import {emberPrepare,emberMarkers,emberEnd} from './emberkeep.js';
 import {woodEnd} from './elderwood.js';
 import {softMarker,safeLane,escapeRoute} from './tier-fx.js';
-import {applyMod} from '../game/tiers.js';
+import {applyMod,keepOf} from '../game/tiers.js';
 import {canBeginThreat} from './encounter-budget.js';
 import {echoCue} from './normal-pacing.js';
 /* Enemy and boss behaviour for v2 sprite enemies (docs/GAME_V2_PLAN.md §Enemies). Owned by the enemies agent.
@@ -229,7 +229,7 @@ const MOVERS={
  chase(e,w,dt,b){const cap=living(w).filter(o=>o!==e&&!o.boss&&isAttacking(o)).length>=MAX_ATTACKERS;approach(e,w,dt,b,cap?meleeRange(e)+34:meleeRange(e)*.6);
   const d=ENEMY_TYPES[e.key];if(d?.block&&w.player.attack>0&&Math.abs(w.player.x-e.x)<60&&b.mode==='move'&&!(b.blockCd>0)&&rnd(w)<d.block.chance){b.mode='block';b.t=0;b.blockCd=2.5;setState(e,d.block.state);e.def=b.baseDef*4;}},
  strafe(e,w,dt,b){b.orbit=(b.orbit||0)+dt;const dive=Math.sin(b.orbit*1.6+b.bob)>.2;const keep=dive?meleeRange(e)*.55:meleeRange(e)+18;b.slot=dive?0:Math.sin(b.orbit*.9+b.bob)*1.4;approach(e,w,dt,b,keep);},
- ranged(e,w,dt,b){const p=w.player,keep=e.keep||110;b.slot=0;if(Math.abs(p.x-e.x)<keep*.55)b.side=sgn(e.x-p.x);approach(e,w,dt,b,keep);},
+ ranged(e,w,dt,b){const p=w.player,keep=keepOf(e,w.tierKey);b.slot=0;if(Math.abs(p.x-e.x)<keep*.55)b.side=sgn(e.x-p.x);approach(e,w,dt,b,keep);},
  caster(e,w,dt,b){MOVERS.ranged(e,w,dt,b);},
  hopper(e,w,dt,b){b.hopT-=dt;if(b.hop){b.hop.t+=dt;const k=Math.min(1,b.hop.t/.45);e.x=b.hop.x0+(b.hop.x1-b.hop.x0)*k;e.y=b.hop.y0+(b.hop.y1-b.hop.y0)*k;e.z=Math.sin(Math.PI*k)*8;setState(e,'walk');
    if(k>=1){b.hop=null;e.z=0;b.hopT=.5+rnd(w)*.4;}return;}

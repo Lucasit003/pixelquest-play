@@ -96,7 +96,10 @@ export function finishPlacement(save,run){
  const scores=gs.map(g=>{const qs=run.items.filter(q=>rungOf(topic(q.topic))===g);return {grade:g,total:qs.length,score:qs.filter(q=>run.right[q.id]).length};});
  if(scores.some(r=>r.total!==PLACEMENT_PER_GRADE))return null;
  const before=openGrade(save,run.subject);let floor=0;
- for(const r of scores){if(r.score<PLACEMENT_PASS)break;floor=opensGrade(run.stage,r.grade);}
+ /* balance-oct26 (owner): the highest grade passed opens, even past a failed lower block (Middle 2/4, 4/4, 3/4 opens Grade 8; it
+    used to stop at the failed Grade 6 and open nothing). Every grade below a placement is open too (lessons.js gradeOpen), so a
+    later pass also opens Grade 6. Same rule for the Elementary and High checks. Still only ever raises; never masters a topic. */
+ for(const r of scores)if(r.score>=PLACEMENT_PASS)floor=Math.max(floor,opensGrade(run.stage,r.grade));
  (save.placement??={})[run.subject]=Math.max(placementGrade(save,run.subject),floor);
  run.closed=true;const current=openGrade(save,run.subject);
  return {grade:current,opened:current>before,scores,xp:run.xp};

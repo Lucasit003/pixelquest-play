@@ -46,7 +46,19 @@ export const NORMAL_RAMP={hp:1.4,atk:1.1};
    This table affects Normal boss actors only, including mini-bosses; regulars and higher tiers are unchanged. */
 /* oct25-followups2: e5 .55 -> .45 (with one fewer group in its second wave, game/levels.js). The balance sim had the Old Graveyard harder than Shaman Grove for weaker play (skill .3: 1.52 deaths and 486 damage a run against 1.04 and 403); now 1.11 and 426 against 1.27 and 421, e4 0.61. Normal only; rewards unchanged. */
 export const NORMAL_BOSS_HP={e1:.62,e2:.62,e3:.62,e4:.75,e5:.45,e6:.65,e7:.55,e8:.8,m1:.33,m2:.31,m3:.37,m4:.26,m5:.31,m6:.26,m7:.26,v1:.32,v2:.33,v3:.28,v4:.31,v5:.21,v6:.31,v7:.55,mx1:.65,vx1:.65};
-export const bossTrim=(id,k,boss)=>boss&&tierKey(k)==='normal'?NORMAL_BOSS_HP[id]||1:1;
+/* balance-oct26 (owner: Chapter 2 is a wall for a crude player): a kid who walks and mashes attack at the recommended level lost
+   the Bandit Road, Mushroom Mire and Emberkeep boss races (tools/balance-sim.mjs --bot=masher --skill=0 --abilities=3 --gear=plain
+   --retry=checkpoint). Normal boss health there takes CH2_BOSS_HP on top of the table above; Heroic and Legendary are untouched. */
+export const CH2_BOSS_HP={ex1:.7,ex2:.7,m1:.7,m2:.7,m3:.7,m4:.55,m5:.7,m6:.6,m7:.6,mx1:.55};
+/* The same crude kid takes about a fifth of its health a boss hit there and never dodges, so the race was lost at 40-50% boss
+   health even with the trim; on Normal those bosses also hit for CH2_BOSS_ATK (their own blows and shots only). */
+export const CH2_BOSS_ATK={ex1:.75,ex2:.75,m1:.75,m2:.75,m3:.75,m4:.6,m5:.75,m6:.65,m7:.65,mx1:.6};
+export const bossAtkTrim=(id,k,from)=>(from?.by?.boss||from?.boss)&&tierKey(k)==='normal'?CH2_BOSS_ATK[id]||1:1;
+/* A Grave Wraith keeps 110 px from the hero, so a kid who only walks and swings chased it round the arena (oct26-midgame). On
+   Normal it holds NORMAL_KEEP instead, close enough for a swing to reach it after a few steps; Heroic and Legendary keep 110. */
+export const NORMAL_KEEP={'skeleton-mage':70};
+export const keepOf=(e,k)=>tierKey(k)==='normal'&&NORMAL_KEEP[e?.key]||e?.keep||110;
+export const bossTrim=(id,k,boss)=>boss&&tierKey(k)==='normal'?(NORMAL_BOSS_HP[id]||1)*(CH2_BOSS_HP[id]||1):1;
 /* 17 Oct, three-seed pacing audit: ease m4's isolated spike; fill Heroic v6's boss-time trough. Normal is untouched. */
 /* oct25-tiers: with the tier step (game/tier-encounters.js READABLE_STEP) the Starfall Ruins pylon fight ran about 1.6x the
    chapter's other boss times on both tiers, and Legendary Shaman Grove and Furnace Depths about 1.3x; trim those bosses only. */
@@ -129,6 +141,21 @@ export const tierGold=(base,k)=>Math.round(base*tierOf(k).gold);
 export const KILL_GOLD={boss:60,elite:12,foe:4};
 export const killGold=(e,replay)=>{const g=e?.boss?KILL_GOLD.boss:e?.elite||e?.mod?KILL_GOLD.elite:KILL_GOLD.foe;return replay?Math.max(1,Math.round(g/2)):g;};
 export const tierXP=(base,k)=>Math.round(base*tierOf(k).xp);
+/* Level XP (balance-oct26, owner: "make xp less if its too much"; deliberate death must never out-earn winning). The one place
+   the kill XP and the win bonus are tuned (scenes/combat.js reads these; Library and lesson XP never pass through here):
+   - KILL_XP: what a kill pays before scaling (boss, elite or modified foe, ordinary foe), growing `growth` per level tier,
+     compounding (the hero's next level costs more each level, game/math.js xpFor). Before 26 Oct it grew 12% a tier, linear.
+   - XP_TUNE.scale: every kill on every tier. kill[tier]: a tier's share of that. win[tier]: the victory bonus, a share of the
+     kill XP the run earned (a wave retry counts the kills before it), paid only on a win, first clear or replay. A fall keeps
+     every point already earned; it simply never gets the bonus. */
+export const KILL_XP={boss:100,elite:40,foe:12,growth:.15};
+/* Tuned 26 Oct with tools/balance-sim.mjs --library=200 (a once-through Normal campaign plus one mastered topic per 1.25 levels):
+   the hero now ends each level about at the next level's recommended hero level (e4 7, e8 9, m4 12, m7 14, v7 20; it was 9, 12,
+   14, 16 and 21). With tools/sim/oct26-exploit3-xp.mjs (--suicide), falling at the boss on purpose pays at most 0.87x the XP a
+   minute of winning on Normal, 0.90x on Heroic and 0.58x on Legendary (it was up to 1.2x, 1.8x and 1.7x). tests/balance-oct26.test.js. */
+export const XP_TUNE={scale:.25,kill:{normal:.75,heroic:.5,legendary:.35},win:{normal:.4,heroic:1,legendary:2}};
+export const killXP=(e,k)=>Math.round((e?.boss?KILL_XP.boss:e?.elite||e?.mod?KILL_XP.elite:KILL_XP.foe)*Math.pow(1+KILL_XP.growth,Math.max(1,e?.tier||1)-1)*XP_TUNE.scale*(XP_TUNE.kill[tierKey(k)]??1));
+export const winXP=(kills,k)=>Math.round(Math.max(0,+kills||0)*(XP_TUNE.win[tierKey(k)]||0));
 /* The hero level a tier is tuned for: about one hero level per level tier on Normal (the balance sim reaches 19 by the
    Veilmoor's end), +3 on Heroic, +6 on Legendary. Advice only -- nothing is gated on it. */
 export const recLevel=(l,k)=>Math.max(1,Math.round(1+(Math.max(1,l?.tier||1)-1)*.85)+tierOf(k).rec);
@@ -141,7 +168,7 @@ export const recLevel=(l,k)=>Math.max(1,Math.round(1+(Math.max(1,l?.tier||1)-1)*
 /* oct24-overlevel: e2 and e3 said hero level 2 and 3, but every class leaves the prologue at 3 and e1 at 5 (balance sim, r3 kid,
    7 classes), so no child arrives that low; over-level XP damping (math.js overLevelXP) would have cut a brand-new kid's XP in e2.
    They now recommend the level a child really has there, less the two levels of headroom: e2 3, e3 4. */
-export const REC_NORMAL={e2:3,e3:4,e4:5,e5:7,e6:7,e7:7,e8:8,ex1:6,ex2:6};
+export const REC_NORMAL={e2:3,e3:4,e4:5,e5:7,e6:7,e7:7,e8:8,ex1:6,ex2:6,mx1:12};
 export const adviceLevel=(l,k)=>Math.max(recLevel(l,k),(REC_NORMAL[l?.id]||0)+tierOf(k).rec);
 /* The abilities a hero of that level could have opened (the ladder's hero levels 1/2/3/4/6/8/10/12), as advice. */
 export const LADDER_LEVELS=[1,2,3,4,6,8,10,12];

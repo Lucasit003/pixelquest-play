@@ -2559,3 +2559,5 @@ html:not(.m-mode) #toast.travel-hint{top:auto;bottom:calc(6px + 13*var(--u) + 11
 
 /* oct26-midgame: on a phone every panel is a full-screen sheet (.m-mode dialog); the Apothecary and the tier picker kept their desktop width (94vw, 98vw) and sat against the left edge with the HUD showing on the right */
 .m-mode dialog:is([data-view=alchemist],[data-view=tiers]){width:100vw;max-width:none}
+/* balance-oct26: the result card's hero level line (the one level counter on the card) */
+dialog[data-view=result] .level-hero-progress{display:flex;align-items:center;justify-content:center;gap:8px;margin:4px 0 0}dialog[data-view=result] .level-hero-progress .run-bar{width:120px}dialog[data-view=result] .level-hero-progress strong{color:#ffe9a8}

@@ -60,8 +60,10 @@ export const COMPANION_IDS = Object.keys(COMPANIONS);
 /* Level L -> L+1 needs L companion XP, so level 15 is 105 XP. */
 export const xpFor = L => L * (L - 1) / 2;
 export function compLevel(xp) { const x = Math.max(0, +xp || 0); let L = 1; while (L < COMP_MAX && x >= xpFor(L + 1)) L++; return L; }
-/* XP for one run together: a win 1 / 1.5 / 2 by tier, a loss .25. Nothing else raises it. */
-export const runXP = (won, tier = 'normal') => won ? ({heroic: 1.5, legendary: 2}[tier] ?? 1) : .25;
+/* XP for one run together: a win 1 / 1.5 / 2 by tier, a loss .5 (balance-oct26, owner: half a Normal win, still no wage, so a
+   win stays clearly better; was .25). Nothing else raises it. */
+export const LOSS_XP = .5;
+export const runXP = (won, tier = 'normal') => won ? ({heroic: 1.5, legendary: 2}[tier] ?? 1) : LOSS_XP;
 
 /* the reference curves at hero level L (§3.4) and the companion's own growth */
 export const refDamage = L => 20 + 1.5 * (Math.max(1, L | 0) - 1);
