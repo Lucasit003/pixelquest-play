@@ -10,7 +10,11 @@ import {HAIR_COLOURS,SKIN_TONES,EYE_COLOURS,LOOK_PARTS,lookParts,normalizeLook,i
 import {HERO_BODIES,heroArtKey,setHeroBodies} from '../gfx/actors/hero-directions.js';
 import {drawHeroFigure,drawHeroBust,setHeroColours,preloadHero} from '../gfx/actors/hero-sprites.js';
 import {heroDrawId} from '../gfx/actors/hero-looks.js';
-import {loadSprite} from '../gfx/actors/sprites.js';
+import {loadSprite,spriteReady} from '../gfx/actors/sprites.js';
+/* bust crops for the body thumbnails (lightload-oct27), one Image per art key */
+const BUSTS=new Map();
+export const bustUrl=key=>new URL('./skin/heroes/busts/'+key+'.png',import.meta.url).href;
+function bustImage(key){if(typeof Image!=='function')return null;let im=BUSTS.get(key);if(!im){im=new Image();im.decoding='async';im.src=bustUrl(key);BUSTS.set(key,im);}return im;}
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export const PART_LABEL={body:'Body',hair:'Hair colour',skin:'Skin tone',eyes:'Eye colour'};
@@ -76,8 +80,13 @@ export function wireCreator(root,opts={}){const el=root?.querySelector?.('.creat
  const sfx=n=>{try{opts.sfx?.(n);}catch{}};
  const changed=()=>{applyLooks(S());try{preloadHero(cls,0);}catch{}const look={body:bodyOf(S(),cls),...lookOf(S(),cls)};try{opts.onChange?.(look);}catch{}rerender();};
  /* the body thumbnails: the original art of each body, its idle bust */
- const paintBodies=(n=0)=>{let pending=false;el.querySelectorAll('[data-cr-bodycv]').forEach(cv=>{const id='hero-'+keyFor(cls,cv.dataset.crBodycv||null),sp=loadSprite(id),g=cv.getContext?.('2d');if(!g)return;
-  if(!sp.ready){pending=!sp.failed;return;}const m=sp.meta,[bx,by,bw,bh]=m.bust?.[2]<=40?m.bust:[Math.max(0,m.anchor[0]-14),Math.max(0,m.anchor[1]-58),28,28],k=Math.max(1,Math.floor(cv.width/Math.max(bw,bh)));
+ /* lightload-oct27: a body not yet loaded is shown from its bust crop (ui/skin/heroes/busts, tools/bake-hero-busts.py: the same
+    28 px rectangle cut unmodified from the atlas), so the look step no longer downloads a whole second atlas (438 KB for the
+    Warrior) for a thumbnail; the atlas still draws it once it is in, and stands in if a crop is missing or slow (2.4 s). */
+ const paintBodies=(n=0)=>{let pending=false;el.querySelectorAll('[data-cr-bodycv]').forEach(cv=>{const key=keyFor(cls,cv.dataset.crBodycv||null),id='hero-'+key,g=cv.getContext?.('2d');if(!g)return;
+  if(!spriteReady(id)){const im=bustImage(key);if(im&&!im.complete&&n<30){pending=true;return;}if(im?.naturalWidth){const k=Math.max(1,Math.floor(cv.width/Math.max(im.naturalWidth,im.naturalHeight)));
+   g.imageSmoothingEnabled=false;g.clearRect(0,0,cv.width,cv.height);g.drawImage(im,Math.round((cv.width-im.naturalWidth*k)/2),Math.round((cv.height-im.naturalHeight*k)/2),im.naturalWidth*k,im.naturalHeight*k);return;}}
+  const sp=loadSprite(id);if(!sp.ready){pending||=!sp.failed;return;}const m=sp.meta,[bx,by,bw,bh]=m.bust?.[2]<=40?m.bust:[Math.max(0,m.anchor[0]-14),Math.max(0,m.anchor[1]-58),28,28],k=Math.max(1,Math.floor(cv.width/Math.max(bw,bh)));
   g.imageSmoothingEnabled=false;g.clearRect(0,0,cv.width,cv.height);g.drawImage(sp.img,bx,m.states.idle.row*m.cell[1]+by,bw,bh,Math.round((cv.width-bw*k)/2),Math.round((cv.height-bh*k)/2),bw*k,bh*k);});
   if(pending&&n<60)later(()=>paintBodies(n+1),80);};
  /* The same still gameplay frame as the hero and name steps. */

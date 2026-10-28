@@ -202,11 +202,24 @@ export const musicTrim=k=>dbGain(MUSIC_TRIM[musicFile(k)]);
 export function setSoundtrack(style){style=Object.hasOwn(SOUNDTRACKS,style)?style:DEFAULT_SOUNDTRACK;if(style===soundtrack)return;const before=soundtrack;soundtrack=style;decoded.clear();if(wanted&&musicFile(wanted.key)!==musicFile(wanted.key,before)){token++;wanted.live=false;playMusic(wanted.key,{fade:2});}}
 
 const decoded=new Map();
+/* lightload-oct27: a phone's link is shared between the music and the scene being loaded. A music file waits until no
+   loading screen holds a scene (setMusicGate, set by core/loader.js; the track then starts with the scene, never under
+   the loading panel), and a track still downloading when another one is wanted is dropped (the title track used to keep
+   streaming 2.6 MB through the hero select, the village and the first level). Stings never wait. */
+const inflight=new Map();let musicGate=null;
+export function setMusicGate(fn){musicGate=typeof fn==='function'?fn:null;}
+/* A loading screen went up (core/loader.js): drop every music download; if that was the wanted track it starts again on resumeMusic(). */
+export function holdMusic(){const w=wanted&&url(wanted.key);let hit=false;for(const [src,c] of inflight){c.abort();decoded.delete(src);if(src===w)hit=true;}inflight.clear();if(hit){wanted.live=false;token++;}}
+export function resumeMusic(){if(wanted&&!wanted.live)playMusic(wanted.key,{fade:.8});}
+function dropStale(keep){for(const [src,c] of inflight)if(src!==keep){c.abort();inflight.delete(src);decoded.delete(src);}}
 function load(k){
  const source=url(k);if(decoded.has(source)){const p=decoded.get(source);decoded.delete(source);decoded.set(source,p);while(decoded.size>2)decoded.delete(decoded.keys().next().value);return p;}
- const p=fetch(source).then(r=>{if(!r.ok)throw Error(r.status);return r.arrayBuffer();})
-  .then(a=>new Promise((ok,no)=>ac.decodeAudioData(a,ok,no)))
-  .then(buf=>{const t=trim(buf);return k.startsWith('sting-')?{buf,...t}:{buf,...seam(buf,t)};}).catch(()=>{decoded.delete(source);return null;});
+ const music=!k.startsWith('sting-'),c=music&&typeof AbortController==='function'?new AbortController():null;if(c)inflight.set(source,c);
+ const p=(music&&musicGate?Promise.resolve().then(musicGate).catch(()=>{}):Promise.resolve())
+  .then(()=>{if(c?.signal.aborted)throw Error('superseded');return c?fetch(source,{signal:c.signal}):fetch(source);})
+  .then(r=>{if(!r.ok)throw Error(r.status);return r.arrayBuffer();})
+  .then(a=>{if(inflight.get(source)===c)inflight.delete(source);return new Promise((ok,no)=>ac.decodeAudioData(a,ok,no));})
+  .then(buf=>{const t=trim(buf);return k.startsWith('sting-')?{buf,...t}:{buf,...seam(buf,t)};}).catch(()=>{if(inflight.get(source)===c)inflight.delete(source);if(decoded.get(source)===p)decoded.delete(source);return null;});
  decoded.set(source,p);while(decoded.size>2)decoded.delete(decoded.keys().next().value);return p;
 }
 /* MP3 frames carry encoder delay and padding: silence at both ends that would click at the loop point. */
@@ -245,7 +258,7 @@ export function playMusic(key,{fade=1.4}={}){
  probe('music',key);
  const k=musicKey(key);if(!k)return stopMusic(fade);
  if(wanted?.live&&musicFile(wanted.key)===musicFile(k)){wanted.key=k;return;}
- wanted={key:k,live:false};
+ wanted={key:k,live:false};dropStale(url(k));
  if(!musicOn||!activated()||!ctx())return;
  wanted.live=true;resume();
  const my=++token;

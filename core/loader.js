@@ -124,21 +124,27 @@ async function onScene(scene,level){S.scene=scene;S.level=level;if(scene==='titl
 /* Use the existing screen at an explicit scene boundary; the title never waits for town art. */
 export function prepareScene(name,{hero='warrior',pet,started=false}={}){if(!LIVE)return null;return (async()=>{const g=await groups();
  const items=[...g.group(name,{hero,started}),...(name==='hub'?[...g.group('hero:'+hero),...g.group('pet:'+pet),...g.SHARED_SPRITES.map(id=>({t:'sprite',id})),...g.SHARED_IMAGES.map(url=>({t:'img',url}))]:[])];
- S.gated++;screen();paint(0,'Getting ready…',true);
- try{await loadGroup(items,{onTick:p=>paint(Math.min(99,p))});}finally{paint(100);hide();S.gated--;}})();}
+ raise();screen();paint(0,'Getting ready…',true);
+ try{await loadGroup(items,{onTick:p=>paint(Math.min(99,p))});}finally{paint(100);hide();lower();}})();}
 /* The pre-v2 env sheets (gfx/assets.js) no longer load in a live game: totems and traps, their last users, draw PixelLab
    props now (9 Oct, gfx/world.js TOTEM_SPRITE). */
 /* A scene whose art is still loading holds the world behind the loading panel: a level until its stage and atlases
    are in (enemies would otherwise fight unseen), the village until its ground is in. */
-async function hold(items,title,still){if(await groupReady(items))return;const w=C.world;S.gated++;const was=w.paused;w.paused=true;
+async function hold(items,title,still){if(await groupReady(items))return;const w=C.world;raise();const was=w.paused;w.paused=true;
  screen();el.classList.add('pq-over');el.querySelector('[data-load-title]').textContent=title;paint(0,'Getting the stage ready…',true);
- await loadGroup(items,{cap:60000,onTick:p=>paint(Math.min(99,p))});paint(100);hide();S.gated--;
+ await loadGroup(items,{cap:60000,onTick:p=>paint(Math.min(99,p))});paint(100);hide();lower();
  const modal=document.querySelector('#modal');if(still()&&!was&&!modal?.open)w.paused=false;}
 async function gate(id){const g=await groups(),l=g.levelInfo(id);return hold(g.group('level:'+id,{hero:C.hero()}),(l?.name||'The road').toUpperCase(),()=>C.world.level?.id===id);}
 let hubMod=null;
 async function gateHub(){hubMod??=await import('../scenes/town.js');if(hubMod.hubState?.().room!=='village'||S.gated)return;
  const g=await groups();return hold(g.group('hub',{started:true}),'OAKHAVEN',()=>!C.world.level);}
 
+/* lightload-oct27: a loading screen that holds a scene drops any music still downloading (core/audio.js holdMusic: the
+   art behind the panel gets the whole link) and lets the wanted track start again once the last panel is down. */
+const music=f=>import('./audio.js').then(a=>a[f]?.()).catch(()=>{});
+function raise(){S.gated++;music('holdMusic');}
+function lower(){S.gated--;if(!S.gated)music('resumeMusic');}
+export async function musicGate(cap=60000){await sleep(150);const t=performance.now();while(S.gated>0&&performance.now()-t<cap)await sleep(100);}
 /* ---------- main.js boot hook ---------- */
 /* ctx: {world, save:()=>s, hero:()=>s.hero, scene:()=>'home'|'worldmap'|'level', legacy:()=>loadAssets()} */
 export async function perfBoot(ctx){C=ctx;if(!LIVE){await ctx.legacy?.();return;}
@@ -153,6 +159,9 @@ export async function perfBoot(ctx){C=ctx;if(!LIVE){await ctx.legacy?.();return;
   const w=ctx.world,startLevel=w.startLevel.bind(w);w.startLevel=(id,o)=>{const r=startLevel(id,o);if(r){S.level=id;gate(id);}return r;};
   const title=()=>{const d=document.querySelector('#modal');return !!(d?.open&&d.dataset.view==='welcome');};
   let last='';watch=setInterval(()=>{guardWrites();const scene=title()?'title':ctx.scene(),lvl=ctx.world.level?.id||null,k=scene+':'+lvl+':'+ctx.hero();if(k!==last){last=k;onScene(scene,lvl);}if(scene==='home'&&!S.gated)gateHub();},400);
+  /* lightload-oct27: music waits while a loading screen holds a scene (core/audio.js setMusicGate). The short first wait lets a
+     scene that is about to be held (a level's gate() checks its group first) raise the panel before the check. */
+  import('./audio.js').then(a=>a.setMusicGate?.(musicGate)).catch(()=>{});
   setTimeout(registerSW,3000);
  }catch(e){console.warn('loader',e);hide();}}
 
