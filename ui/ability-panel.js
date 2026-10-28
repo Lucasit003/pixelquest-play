@@ -4,6 +4,7 @@
    Damage numbers are left out on purpose: real damage scales with the hero's stats, so a quoted base number would be wrong. */
 import {stats,abilityGuard} from '../game/math.js';
 import {CLASSES} from '../game/data.js';
+import {ABILITIES} from '../game/abilities.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const STATUS={stun:'stuns',freeze:'freezes',root:'roots',slow:'slows',poison:'poisons'};
 const sec=n=>`${+(+n).toFixed(1)} s`;
@@ -18,35 +19,53 @@ export function abilityNumbers(save,a){
  if(a.heal>0)out.heal=Math.round(abilityGuard(a.heal,hp,c.hp));
  return out;
 }
-export function abilityLine(a,nums=null){
- const st=a.status&&STATUS[a.status]?`${STATUS[a.status]}${a.statusTime>0?' '+sec(a.statusTime):''}`:'';
- const parts=[];
+/* classes-oct28 (every class played): many cards read the same ("A close-range hit." for seven different moves) and the
+   costs and catches a child must know were missing: Bloodletting takes 12% of your health, Smoke Bomb makes you untouchable,
+   Sanctuary is a circle that stays where you cast it, Rain of Arrows lands in front of you. The line now names each
+   ability's own mechanic, read from its generated fields (game/abilities.js), never from the English notes. */
+const CLASS_OF=Object.fromEntries(Object.entries(ABILITIES).flatMap(([h,l])=>l.map(a=>[a.id,h])));
+function lineParts(a,nums){
+ const st=a.status==='poison'?'poisons for 4 s':a.status&&STATUS[a.status]?`${STATUS[a.status]}${a.statusTime>0?' '+sec(a.statusTime):''}`:'';
+ const sig=CLASSES[CLASS_OF[a.id]]?.signature||'';let head;const rest=[];
  switch(a.kind){
-  case 'melee':parts.push('A close-range hit');break;
-  case 'aoe':parts.push(a.trap?'Sets a trap that hits foes in an area':'Hits every foe around you');break;
-  case 'projectile':parts.push('A shot from far away');break;
-  case 'chain':parts.push(`Strikes up to ${Math.max(2,a.count|0)} foes in a chain`);break;
-  case 'heal':parts.push(`Heals ${nums?.heal??Math.round(a.heal)} health`);break;
-  case 'mark':parts.push(`Marks a foe: +50% damage for ${sec(a.duration)}`);break;
-  case 'aura':parts.push(`An aura: you take less damage for ${sec(a.duration)}`);break;
-  case 'totem':parts.push(a.damage>0?`A totem that strikes nearby foes for ${sec(a.life)}`:`A totem that guards you for ${sec(a.life)}`);break;
-  case 'buff':{const b=[];if(a.shield>0)b.push(`a ${nums?.shield??Math.round(a.shield)} shield`);if(a.attackBuff>1)b.push(`attack ×${+a.attackBuff.toFixed(2)}`);if(a.speedBuff>1)b.push(`speed ×${+a.speedBuff.toFixed(2)}`);parts.push(b.length?`Gives you ${b.join(', ')} for ${sec(a.duration)}`:`Empowers you for ${sec(a.duration)}`);break;}
-  default:parts.push('A special ability');
+  case 'melee':head=a.finisher?'A heavy close-range finisher':a.range>=36?'A wide close-range swing':'A close-range hit';break;
+  case 'aoe':head=a.trap?'Sets a trap in front of you for 8 s':a.id==='rampage'?'Charges forward and hits every foe there':a.aheadUnits?'Hits every foe in front of you':'Hits every foe around you';break;
+  case 'projectile':head=a.cd<=1?(a.homing?'A quick, cheap homing shot from far away':'A quick, cheap shot from far away'):a.homing?'A homing shot from far away':'A shot from far away';break;
+  case 'chain':head=`Strikes up to ${Math.max(2,a.count|0)} foes in a chain${a.fromTotems?' from each totem (from you with none)':''}`;break;
+  case 'heal':head=`Heals ${nums?.heal??Math.round(a.heal)} health`;break;
+  case 'mark':head=`Marks a foe: +50% damage for ${sec(a.duration)}`;break;
+  case 'aura':head=`A circle of light on the ground: you take less damage inside it for ${sec(a.duration)}`;break;
+  case 'totem':head=a.damage>0?`A totem whose spirit wolf bites nearby foes for ${sec(a.life)}`:`A totem whose stone guardian fights beside it; you take less damage near it for ${sec(a.life)}`;break;
+  case 'buff':{const b=[];if(a.shield>0)b.push(`a ${nums?.shield??Math.round(a.shield)} shield`);if(a.attackBuff>1)b.push(`attack ×${+a.attackBuff.toFixed(2)}`);if(a.speedBuff>1)b.push(`speed ×${+a.speedBuff.toFixed(2)}`);
+   head=a.id==='vanish'?`Hides you from foes for ${sec(a.duration)}, until you strike${a.speedBuff>1?` · speed ×${+a.speedBuff.toFixed(2)}`:''}`:b.length?`Gives you ${b.join(', ')} for ${sec(a.duration)}`:`Empowers you for ${sec(a.duration)}`;break;}
+  default:head='A special ability';
  }
- if(st)parts.push(st);
- return parts.join(' · ');
+ if(st)rest.push(st);
+ if(a.id==='smoke-bomb')rest.push('you can’t be hurt for 1.2 s','speed ×1.5 for 2.5 s');
+ if(a.fromTotems)rest.push('raises an ancestor at each totem');
+ if(a.appliesExposed)rest.push('leaves the foe Exposed');
+ if(a.primesExposed)rest.push('your first strike leaves the foe Exposed');
+ if(a.consumesExposed)rest.push(`×${+a.consumesExposed} on an Exposed foe`);
+ if(a.executeBelow)rest.push(`double damage below ${Math.round(a.executeBelow*100)}% health`);
+ if(a.benefitsFromMark||CLASS_OF[a.id]==='ranger'&&a.branch==='Precision'&&a.kind!=='mark')rest.push('+50% on a marked foe');
+ if(a.momentumGain>1&&sig==='Momentum')rest.push(`builds ${a.momentumGain} Momentum`);
+ if(a.holdStacks&&sig)rest.push(`keeps your ${sig}`);
+ if(a.guardSpend)rest.push(a.guardSpend>=1?`spends all your ${sig} for a bigger hit`:`spends ${Math.round(a.guardSpend*100)}% of your ${sig} for a bigger hit`);
+ if(a.kind==='buff'&&a.shield>0&&CLASSES[CLASS_OF[a.id]]?.mechanic==='guard')rest.push(`blocked damage fills your ${sig}`);
+ if(a.selfHpCost)rest.push(`costs ${Math.round(a.selfHpCost*100)}% of your health`);
+ if(sig&&a.buildStacks>0)rest.push(`builds ${sig}`);
+ if(sig&&a.spendStacks)rest.push(a.stackBonus>0?`spends ${sig} for a bigger hit`:`spends ${sig}`);
+ return {head,rest};
 }
+export function abilityLine(a,nums=null){const {head,rest}=lineParts(a,nums);return [head,...rest].join(' · ');}
 /* oct25-followups2 (first-hour playtest: Fireball and Ember Dart side by side in the Library read as the same thing): one
    short "what it does" line for an ability card. A cheap quick shot says so, and a class resource it builds or spends is
-   named (Ember Dart builds Arcane Flow; Fireball spends it for a bigger hit). signature: the class's resource name. */
+   named (Ember Dart builds Arcane Flow; Fireball spends it for a bigger hit). signature: kept for callers; the class's
+   resource is now read from the ability's own class. */
 export function abilityWhat(a,signature='',nums=null){
  if(!a)return '';
- let line=abilityLine(a,nums);
- if(a.kind==='projectile'&&a.cd<=1)line='A quick, cheap shot from far away';
- const extra=[];
- if(signature&&a.buildStacks>0)extra.push(`builds ${signature}`);
- if(signature&&a.spendStacks)extra.push(a.stackBonus>0?`spends ${signature} for a bigger hit`:`spends ${signature}`);
- return [line,...extra].join(' · ')+'.';
+ const {head,rest}=lineParts(a,nums);
+ return [head,...rest].join(' · ')+'.';
 }
 /* list: the hero's 8 abilities; loadout: the 4 equipped ids (null for empty); ready(a): unlocked and awake;
    iconFor(a): the icon HTML; resource: the class's resource word ("Momentum", "Mana"...). */
