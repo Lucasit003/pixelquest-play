@@ -40,14 +40,14 @@ items(add){
    if(!(j===1&&n===3))add('value',`${I} What does ${call} return?`,F.f(n),pic(F,call),`The calls run on ${c.join(', ')}. Coming back up, they return ${c.slice().reverse().map(F.f).join(', ')}, so ${call} returns ${F.f(n)}.`);
    /* Calls in all, or calls waiting when the base case runs (the Try-it's steps(12) is left out). */
    if(k%2===0&&!(j===5&&n===12))add('calls',`${I} How many times is ${F.name} called in all when ${call} runs, counting the first call?`,c.length,pic(F,call),`The inputs are ${c.join(', ')}: ${c.length} calls.`);
-   else if(k%2===1)add('calls',`${I} When ${call} runs, how many calls are still waiting for an answer at the moment the base case returns?`,c.length-1,pic(F,call),`The inputs are ${c.join(', ')}. All but the last, ${c.length-1} calls, are waiting when ${F.name}(${c.at(-1)}) returns.`);
+   else if(k%2===1)add('calls',`${I} When ${call} runs, how many calls are still waiting for an answer at the moment the base case returns?`,c.length-1,pic(F,call),`The inputs are ${c.join(', ')}. All but the last, ${c.length-1===1?'1 call, is':`${c.length-1} calls, are`} waiting when ${F.name}(${c.at(-1)}) returns.`);
    /* A call partway down the chain (the Try-it's total(3) inside total(5) is left out). */
    if(c.length>=3){const mid=c[Math.floor(c.length/2)];if(!(j===0&&n===5))add('chain',`${I} When ${call} runs, it calls ${F.name}(${mid}) along the way. What does that call to ${F.name}(${mid}) return?`,F.f(mid),pic(F,call),`${F.name}(${mid}) works out its own answer, whoever calls it: ${F.f(mid)}.`);}
    /* The input of the base case reached. */
    if(j===4||k%3===0)add('chain',`${I} When ${call} runs, what is the input of the last call to start, the one that reaches the base case?`,c.at(-1),pic(F,call),`The inputs go ${c.join(', ')}, so the last call is ${F.name}(${c.at(-1)}).`);});});
  /* times(a, b) adds a to itself b times. */
  for(const [a,b] of [[3,4],[5,2],[7,3],[2,6],[4,5],[6,1],[9,2],[8,3]]){const call=`times(${a}, ${b})`,I='A function times(a, b) returns 0 when b = 0, and otherwise returns a + times(a, b - 1).',P={t:'program',title:'Function',lines:num([...MUL.lines,`print ${call}`])};
-  add('value',`${I} What does ${call} return?`,a*b,P,`It adds ${a} once for each of the ${b} calls before the base case: ${Array(b).fill(a).join(' + ')} + 0 = ${a*b}.`);
+  add('value',`${I} What does ${call} return?`,a*b,P,`It adds ${a} once for ${b===1?'the 1 call':`each of the ${b} calls`} before the base case: ${Array(b).fill(a).join(' + ')} + 0 = ${a*b}.`);
   add('calls',`${I} How many times is times called in all when ${call} runs, counting the first call?`,b+1,P,`b goes ${Array.from({length:b+1},(_,x)=>b-x).join(', ')}: ${b+1} calls.`);}
 }
 };

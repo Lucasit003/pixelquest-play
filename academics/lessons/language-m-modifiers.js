@@ -11,7 +11,7 @@ const ROWS=[
  ['Nervous before the test','Nina','checked her pencils twice','Nina’s pencils','lay in a neat row'],['Racing to the finish','Ezra','tripped over his laces','Ezra’s laces','came undone'],
  ['Singing in the shower','Lena','missed the phone call','Lena’s phone','rang three times'],['Baking all morning','Hugo','filled the house with smells','Hugo’s house','smelled of bread'],
  ['Searching for her glasses','Grandma','checked every drawer','Grandma’s glasses','sat on her head'],['Waiting for the train','Kai','read a whole chapter','Kai’s train','arrived late'],
- ['Shivering in the cold','Mateo','zipped up his coat','Mateo’s coat','hung by the door'],['Jumping off the diving board','Priya','made a huge splash','the water','splashed Priya’s friends']];
+ ['Shivering in the cold','Mateo','zipped up his coat','Mateo’s coat','hung by the door'],['Jumping off the diving board','Priya','made a huge splash','Priya’s goggles','flew off her head']];
 const cap=s=>s[0].toUpperCase()+s.slice(1);
 const clear=r=>`${r[0]}, ${r[1]} ${r[2]}.`;
 const dangle=r=>`${r[0]}, ${r[3]} ${r[4]}.`;

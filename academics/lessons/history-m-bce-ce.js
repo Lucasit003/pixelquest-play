@@ -15,7 +15,7 @@ const tl=(events,hint)=>({t:'timeline',events,...(hint?{hint:true}:{})});
 const across=(a,ea,b,eb)=>ea===eb?[D(a,ea),D(b,eb)]:[D(a,ea),'1 BCE','1 CE',D(b,eb)].filter((x,i,l)=>l.indexOf(x)===i);
 const accDate=(n,e,other)=>{const out=[`${n}${e}`.toLowerCase(),`${n} ${e==='BCE'?'B.C.E.':'C.E.'}`];if(e==='BCE')out.push(`${n} BC`,`${n}BC`);else out.push(`AD ${n}`,`${n} AD`);if(other!==n)out.push(String(n));return out;};
 const spanWhy=(a,ea,b,eb)=>{const r=pos(b,eb)-pos(a,ea);
- if(ea==='BCE'&&eb==='CE')return `From ${D(a,ea)} to 1 BCE is ${a-1} years, one more year reaches 1 CE, and ${b-1} more reach ${D(b,eb)}: ${a} + ${b} − 1 = ${r}. There is no year 0.`;
+ if(ea==='BCE'&&eb==='CE')return `${a>1?`From ${D(a,ea)} to 1 BCE is ${a-1} year${a-1===1?'':'s'}, one`:'From 1 BCE, one'} more year reaches 1 CE${b>1?`, and ${b-1} more ${b-1===1?'reaches':'reach'} ${D(b,eb)}`:''}: ${a} + ${b} − 1 = ${r}. There is no year 0.`;
  if(ea==='BCE')return `Both years are BCE and count down, so subtract: ${a} − ${b} = ${r}.`;
  return `Both years are CE and count up, so subtract: ${b} − ${a} = ${r}.`;};
 export default {

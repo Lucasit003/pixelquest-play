@@ -37,7 +37,7 @@ items(add){
  EV.forEach((_,j)=>{const E=build(j),S=said(E),P=pic(E);
   E.src.forEach((s,k)=>{
    /* Primary or secondary by the stated rule. */
-   add('classify',`${S} ${RULE} Is source ${s.L} primary or secondary?`,primary(s)?'primary':'secondary',P,primary(s)?(s.rel!=='was not there'?`Its maker ${s.rel==='saw it'?'saw the event':'took part'}, so it is primary.`:`It was made in ${s.made}, the year of the event, so it is primary.`):`Its maker was not there and it was made ${s.off} years later, so it is secondary.`);
+   add('classify',`${S} ${RULE} Is source ${s.L} primary or secondary?`,primary(s)?'primary':'secondary',P,primary(s)?(s.rel!=='was not there'?`Its maker ${s.rel==='saw it'?'saw the event':'took part'}, so it is primary.`:`It was made in ${s.made}, the year of the event, so it is primary.`):`Its maker was not there and it was made ${s.off} year${s.off===1?'':'s'} later, so it is secondary.`);
    /* Years from the event. */
    if((j+k)%2===0||s.off>0)add('time',`${S} How many years after the event was source ${s.L} made?`,s.off,P,`${s.made} - ${E.y} = ${s.off}.`);});
   /* Counts, and the source closest in time. */
@@ -49,7 +49,7 @@ items(add){
   for(let k=0;k<4;k+=2){const a=E.src[k],b=E.src[k+1],swap=(j+k)%4>=2,[x,y]=swap?[b,a]:[a,b];
    const there=s=>s.rel!=='was not there';
    if(there(x)!==there(y))add('choose',`${S} A historian wants an account by someone who was there. Which source fits: ${x.L} or ${y.L}?`,there(x)?x.L:y.L,P,`Source ${there(x)?x.L:y.L}’s maker ${there(x)?x.rel:y.rel}; source ${there(x)?y.L:x.L}’s maker was not there.`,[`source ${(there(x)?x.L:y.L).toLowerCase()}`]);
-   if(x.off!==y.off)add('choose',`${S} Which source was made closer in time to the event: ${x.L} or ${y.L}?`,x.off<y.off?x.L:y.L,P,`Source ${x.L} was made ${x.off} years after it and source ${y.L} ${y.off} years after, so ${x.off<y.off?x.L:y.L} is closer.`,[`source ${(x.off<y.off?x.L:y.L).toLowerCase()}`]);}
+   if(x.off!==y.off)add('choose',`${S} Which source was made closer in time to the event: ${x.L} or ${y.L}?`,x.off<y.off?x.L:y.L,P,`Source ${x.L} was made ${x.off} year${x.off===1?'':'s'} after it and source ${y.L} ${y.off} year${y.off===1?'':'s'} after, so ${x.off<y.off?x.L:y.L} is closer.`,[`source ${(x.off<y.off?x.L:y.L).toLowerCase()}`]);}
   const sec=E.src.filter(s=>!primary(s));
   if(sec.length===1)add('choose',`${S} ${RULE} Which one source is secondary? Answer with its letter.`,sec[0].L,P,`Every other source is primary; ${sec[0].L} was made ${sec[0].off} years later by someone who was not there.`,[`source ${sec[0].L.toLowerCase()}`]);});
 }

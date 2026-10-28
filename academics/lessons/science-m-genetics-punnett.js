@@ -50,7 +50,7 @@ items(add){
    add('traits',`${R} How many copies of the recessive allele ${g.L.toLowerCase()} does a ${g.o} with genotype ${G} carry?`,2-k,{t:'setups',title:`A fictional ${g.o}`,head:'',rows:[['genotype',G]],cols:['Value']},`${G} has ${2-k} small ${g.L.toLowerCase()}${2-k===1?'':'s'}.`);}
   /* Boxes of one genotype in a square (the Try-it's flower Rr × Rr asking about rr is left out). */
   CROSSES.forEach(([a,b],c)=>{const k=ORDER[(j+c)%3];if(j===0&&a===1&&b===1&&k===0)return;const n=count(g,a,b,k);
-   add('square',`${R} ${cross(g,a,b)} How many of the 4 boxes of the Punnett square show genotype ${gt(g,k)}?`,n,pic(g,a,b,false),`The boxes are ${square(g,a,b).flat().join(', ')}, so ${n} show ${gt(g,k)}.`);});
+   add('square',`${R} ${cross(g,a,b)} How many of the 4 boxes of the Punnett square show genotype ${gt(g,k)}?`,n,pic(g,a,b,false),`The boxes are ${square(g,a,b).flat().join(', ')}, so ${n} ${n===1?'shows':'show'} ${gt(g,k)}.`);});
   /* Percent with each trait (the Try-it's sunflower Tt × tt asking about short stems is left out). */
   CROSSES.forEach(([a,b],c)=>{const dom=(j+c)%2===0;if(j===3&&a===1&&b===0&&!dom)return;const boxes=square(g,a,b).flat(),n=boxes.filter(x=>showsDom(x)===dom).length;
    add('odds',`${R} ${cross(g,a,b)} What percent of the offspring are expected to have ${dom?g.d:g.r}?`,n*25,pic(g,a,b,false),`The boxes are ${boxes.join(', ')}. ${n} of the 4 ${dom?`hold ${an(g.L)}`:`are ${gt(g,0)}`}, and each box is 25%, so ${n} × 25 = ${n*25}%.`);});

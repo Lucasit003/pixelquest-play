@@ -23562,6 +23562,48 @@ export const QUESTION_REVISIONS=[
   "oldPrompt": "Try it: which came first, Washington being chosen to lead the army or the Battle of Bunker Hill?",
   "newPrompt": "Try it: did George Washington command the Americans at the Battle of Bunker Hill?",
   "reason": "Revfix 27 Oct (exploit4 F7): the step's narration said Washington was chosen two days before Bunker Hill, so the Try-it now asks whether being chosen meant he commanded there (he took command in early July); same step, tried state carries over."
+ },
+ {
+  "subject": "language",
+  "level": 4,
+  "oldPrompt": "Does the opening phrase dangle in \"Jumping off the diving board, the water splashed Priya’s friends.\": yes or no?",
+  "newPrompt": "Does the opening phrase dangle in \"Jumping off the diving board, Priya’s goggles flew off her head.\": yes or no?",
+  "reason": "Msfact 28 Oct (docs/research/MSFACT_OCT28.md): in the old dangling sentence Priya’s friends could also be the ones jumping, so “Who is really jumping” had two defensible answers; the row now reads “Priya’s goggles flew off her head”, so only Priya can be jumping. Same row, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 4,
+  "oldPrompt": "In \"Jumping off the diving board, the water splashed Priya’s friends.\", what is the subject right after the comma?",
+  "newPrompt": "In \"Jumping off the diving board, Priya’s goggles flew off her head.\", what is the subject right after the comma?",
+  "reason": "Msfact 28 Oct (docs/research/MSFACT_OCT28.md): in the old dangling sentence Priya’s friends could also be the ones jumping, so “Who is really jumping” had two defensible answers; the row now reads “Priya’s goggles flew off her head”, so only Priya can be jumping. Same row, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 4,
+  "oldPrompt": "Which sentence is clear: A \"Jumping off the diving board, the water splashed Priya’s friends.\" or B \"Jumping off the diving board, Priya made a huge splash.\"?",
+  "newPrompt": "Which sentence is clear: A \"Jumping off the diving board, Priya’s goggles flew off her head.\" or B \"Jumping off the diving board, Priya made a huge splash.\"?",
+  "reason": "Msfact 28 Oct (docs/research/MSFACT_OCT28.md): in the old dangling sentence Priya’s friends could also be the ones jumping, so “Who is really jumping” had two defensible answers; the row now reads “Priya’s goggles flew off her head”, so only Priya can be jumping. Same row, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 4,
+  "oldPrompt": "To fix \"Jumping off the diving board, the water splashed Priya’s friends.\", who should come right after the comma: Priya or the water?",
+  "newPrompt": "To fix \"Jumping off the diving board, Priya’s goggles flew off her head.\", who should come right after the comma: Priya or Priya’s goggles?",
+  "reason": "Msfact 28 Oct (docs/research/MSFACT_OCT28.md): in the old dangling sentence Priya’s friends could also be the ones jumping, so “Who is really jumping” had two defensible answers; the row now reads “Priya’s goggles flew off her head”, so only Priya can be jumping. Same row, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 4,
+  "oldPrompt": "Who is really jumping off the diving board in \"Jumping off the diving board, the water splashed Priya’s friends.\"?",
+  "newPrompt": "Who is really jumping off the diving board in \"Jumping off the diving board, Priya’s goggles flew off her head.\"?",
+  "reason": "Msfact 28 Oct (docs/research/MSFACT_OCT28.md): in the old dangling sentence Priya’s friends could also be the ones jumping, so “Who is really jumping” had two defensible answers; the row now reads “Priya’s goggles flew off her head”, so only Priya can be jumping. Same row, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 4,
+  "oldPrompt": "Which version fixes \"Jumping off the diving board, the water splashed Priya’s friends.\": A \"Jumping off the diving board, the water splashed Priya’s friends for Priya.\" or B \"Jumping off the diving board, Priya made a huge splash.\"?",
+  "newPrompt": "Which version fixes \"Jumping off the diving board, Priya’s goggles flew off her head.\": A \"Jumping off the diving board, Priya’s goggles flew off her head for Priya.\" or B \"Jumping off the diving board, Priya made a huge splash.\"?",
+  "reason": "Msfact 28 Oct (docs/research/MSFACT_OCT28.md): in the old dangling sentence Priya’s friends could also be the ones jumping, so “Who is really jumping” had two defensible answers; the row now reads “Priya’s goggles flew off her head”, so only Priya can be jumping. Same row, same answer."
  }
 ];
 export const ANSWER_ID_RENAMES=new Map(QUESTION_REVISIONS.map(r=>[`${r.subject}-${r.level}-${hash(r.oldPrompt)}`,`${r.subject}-${r.level}-${hash(r.newPrompt)}`]));

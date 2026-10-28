@@ -61,7 +61,7 @@ const ARGS=[
 const ORDERS=[['C','R0','E0','R1','E1','X'],['C','R0','E0','X','R1','E1'],['R0','E0','R1','E1','X','C'],['C','X','R0','E0','R1','E1'],['R0','E0','X','R1','E1','C'],['C','R0','R1','E0','E1','X'],['C','R1','E1','R0','E0','X'],['X','C','R0','E0','R1','E1'],['R1','E1','X','R0','E0','C']];
 const L='ABCDEF';
 const lineAccept=(letter,text)=>[`line ${letter}`,`(${letter})`,text,text.replace(/\.$/,'')];
-const passage=(lines,small=true)=>({t:'passages',title:'Read the passage',texts:lines,...(small?{small:true}:{})});
+const passage=(lines,small=true,title='Read the made-up passage')=>({t:'passages',title,texts:lines,...(small?{small:true}:{})});
 export default {
 id:'language-m-claims-evidence',subject:'language',level:4,grade:6,standard:'CCSS RI.6.8',
 title:'Claims, reasons and evidence',
@@ -76,7 +76,7 @@ steps:[
  {skill:'support',say:'A passage with two reasons has two pieces of evidence. Match each one to the reason it proves, not just to the line next to it.',pic:passage(['Gardening is good exercise.','A garden would give the cafeteria fresh vegetables.','The garden club at Pine School grew 300 pounds of vegetables last year.'],false),
   check:{prompt:'Try it: (A) Benches give older walkers a place to rest. (B) Benches let families eat lunch outdoors. (C) In a fictional survey, 30 of 40 older walkers said they had nowhere to rest. Which reason does line C back up: A or B?',answer:'A',options:['A','B'],hint:'Which reason talks about the same people and the same need as line C?',pic:passage(['Benches give older walkers a place to rest.','Benches let families eat lunch outdoors.','In a fictional survey, 30 of 40 older walkers said they had nowhere to rest.'],false)}},
  {skill:'relevant',say:'Some lines are about the topic but give no reason and no evidence. The school colors are green and gold says nothing about why a garden club is a good idea, so it does not support the claim.',pic:passage(['Our school should start a garden club.','The school colors are green and gold.'],false)},
- {skill:'relevant',say:'To test a line, ask whether it helps prove the claim or one of its reasons. A line can be true, and even mention the topic, and still give no support.',pic:passage(['Does it help prove the claim or a reason?','Yes: a reason or evidence.','No: it does not support the claim.'],false),
+ {skill:'relevant',say:'To test a line, ask whether it helps prove the claim or one of its reasons. A line can be true, and even mention the topic, and still give no support.',pic:passage(['Does it help prove the claim or a reason?','Yes: a reason or evidence.','No: it does not support the claim.'],false,'Test each line'),
   check:{prompt:'Try it: the claim is "Our park should get more benches." Which line does not support it: (A) Older walkers need places to rest. (B) The park gate is painted black. (C) In a fictional survey, 30 of 40 walkers said they had to stand.',answer:'B',options:['A','B','C'],hint:'Which line says nothing about why more benches would help?',pic:passage(['Older walkers need places to rest.','The park gate is painted black.','In a fictional survey, 30 of 40 walkers said they had to stand.'],false)}}],
 progression:{requires:['language-e-compare-viewpoints','language-e-text-structure'],operations:2,demand:'Trace an argument: tell the claim from its reasons, connect each piece of evidence to the reason it supports, and set aside a line that supports nothing.'},
 items(add){

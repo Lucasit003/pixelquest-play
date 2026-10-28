@@ -20,7 +20,7 @@ const SRC=['laptop','phone','tablet','game console','school computer'],DST=['web
 const route=r=>({src:SRC[r%5],dst:DST[(r+r%3)%4],R:Array.from({length:2+(r%5)},(_,j)=>`Router ${LET[(r*3+j*7)%10]}`)});
 const packetsLead=(B,P)=>`A fictional app sends a message of ${B} bytes. ${SPLIT(P)}`;
 const NEED='How many packets does it need?',LAST=(w='message')=>`How many bytes of the ${w} are in the last packet?`;
-const packetWhy=(B,P)=>{const n=ceil(B,P),r=B-(n-1)*P;return B%P?`${B} ÷ ${P} = ${Math.floor(B/P)} remainder ${B%P}: ${n-1} full packets carry ${(n-1)*P} bytes, and one more carries the last ${r}. That is ${n} packets, and the last holds ${r} bytes.`:`${B} ÷ ${P} = ${n} exactly, so ${n} full packets carry it all and the last one holds ${P} bytes like the rest.`;};
+const packetWhy=(B,P)=>{const n=ceil(B,P),r=B-(n-1)*P;return B%P?`${B} ÷ ${P} = ${Math.floor(B/P)} remainder ${B%P}: ${n-1} full packets carry ${(n-1)*P} bytes, and one more carries the last ${r}. That is ${n} packets, and the last holds ${r} byte${r===1?'':'s'}.`:`${B} ÷ ${P} = ${n} exactly, so ${n} full packets carry it all and the last one holds ${P} bytes like the rest.`;};
 /* The lesson's examples and the three Try-its (kept out of the pool). */
 const EXR={src:'laptop',R:['Router A','Router D','Router F'],dst:'web server'};
 const TA=[2100,400],TB=[{src:'phone',R:['Router B'],dst:'game server'},{src:'phone',R:['Router C','Router F','Router G'],dst:'game server'}],TC=[4,3,5,6];
