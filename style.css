@@ -2372,6 +2372,9 @@ html:not(.m-mode) #hotbar .potion-slot.free-on .potion-legend{left:calc(100% + 6
 
 /* Phone first-hour review: tutorial dismissal is a full thumb target. */
 .m-mode #controls-tutorial button{min-width:44px;min-height:44px}
+/* combatpolish-oct28: the tips card sits over the joystick zone (both z-index 4, the zone later in the DOM), so its Skip button could never be
+   tapped on a phone; the card rises above the zone and lets touches through to it everywhere but on the button */
+.m-mode #controls-tutorial{z-index:5;pointer-events:none}.m-mode #controls-tutorial button{pointer-events:auto}
 /* oct24-endgame (playtest ch3 C2): the gentle Library pointer under the result's NEXT GOAL, and the next ability's icon on the
    Library in the Oakhaven map (game/library-pointer.js) */
 dialog[data-view=result] .result-library{display:flex;align-items:center;justify-content:center;gap:8px;margin:0 0 6px;font-size:var(--fs);line-height:1.3;color:#cfe3ff}

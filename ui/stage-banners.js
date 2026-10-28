@@ -84,6 +84,13 @@ export function fitStageText({W,H,title,top,obstacles,bold=true,scale=1,pad=40,l
    padding, then concise copy with all actors/CLEAR reserved before letting those yield.
    Pixel fonts stay at their smallest crisp scale (1); never clip text to fit a panel. */
 export function shortWarning(title){return title.replace(/Step off the glowing (?:row|lane|ground)/gi,'Leave the glow').replace(/Move to the green lane/gi,'Use the green lane').replace(/Move out of the glowing circles/gi,'Leave the circles').replace(/Leave the glowing circles/gi,'Leave the circles').replace(/(Walk|Back) away from (?:the \w+|her|him)/g,'$1 away').replace(/Watch the glowing ground/gi,'Watch the glow').replace(/Hit the one with a shadow/gi,'Hit the shadowed one');}
+/* combatpolish-oct28: a wrapped warning ended on a lone word ("Flame wall! Jump over / it!" at 740x360). Keep the line count but use the
+   narrowest width that still gives it, so the lines come out even; the box only narrows about its centre, so it stays clear of
+   everything the wider box was clear of. */
+export function balanceLines(r,title,pad){if(r.lines.length<2)return r;const n=r.lines.length,full=Math.max(...r.lines.map(s=>measurePixelText(s,{bold:true})));let lo=1,hi=full;
+ while(lo<hi){const mid=(lo+hi)>>1;if(wrapBannerText(title,mid,{bold:true}).length<=n&&!wrapBannerText(title,mid,{bold:true}).some(s=>measurePixelText(s,{bold:true})>mid))hi=mid;else lo=mid+1;}
+ const lines=wrapBannerText(title,lo,{bold:true});if(lines.length!==n)return r;const width=Math.max(...lines.map(s=>measurePixelText(s,{bold:true})))+pad;if(width>=r.box.width)return r;
+ return {...r,lines,box:{...r.box,left:Math.round(r.box.cx-width/2),width,cx:r.box.cx}};}
 export function fitStageWarning({W,H,title,top,hardObstacles=[],obstacles=[]}){
  const hard=hardObstacles,all=[...hard,...obstacles],cap=Math.min(260,W-16),short=shortWarning(title);
  const variants=[{title,pad:36,lineHeight:14,baseHeight:26},{title,pad:16,lineHeight:12,baseHeight:22},{title:short,pad:16,lineHeight:12,baseHeight:22}];
@@ -93,7 +100,7 @@ export function fitStageWarning({W,H,title,top,hardObstacles=[],obstacles=[]}){
    const lines=wrapBannerText(v.title,limit-v.pad,{bold:true}),width=Math.max(...lines.map(s=>measurePixelText(s,{bold:true})))+v.pad,height=v.baseHeight+(lines.length-1)*v.lineHeight;
    const box=placeStageBanner({W,H,width,height,top,obstacles:reserveActors?[]:obstacles,hardObstacles:reserveActors?all:hard});
    if(!box)continue;
-   const result={lines,box,lineHeight:v.lineHeight,textTop:v.baseHeight===22?16:18};
+   const result=balanceLines({lines,box,lineHeight:v.lineHeight,textTop:v.baseHeight===22?16:18},v.title,v.pad);
    if(reserveActors)return result;
    if(!best||box.score<best.box.score)best=result;
   }
@@ -122,7 +129,7 @@ export function stageBanner(c,b){
  if(['wave','cleared','prompt','quote'].includes(b.kind)){
   const kind=b.kind,clear=kind==='cleared',quote=kind==='quote',bold=!quote,scale=clear&&BW(b.title)*2+40<=W-16?2:1,pad=kind==='prompt'?36:40;
   const lineHeight=clear?24:14,oldTop=clear?Y(b.y)-26:quote?(b.compact?Y(b.y):Math.max(Y(b.y),Y(80)))-16:kind==='wave'?Y(b.y)-15:Y(b.y)-16;
-  const hud=stageBannerObstacles(c.canvas,W,H,b.mobileAvoid),warning=b.step==='danger',layout=warning?fitStageWarning({W,H,title:b.title,top:oldTop,hardObstacles:[...hud,...(b.hardObstacles||[])],obstacles:b.obstacles||[]}):fitStageText({W,H,title:b.title,top:oldTop,obstacles:[...hud,...(b.obstacles||[])],bold,scale,pad,lineHeight,baseHeight:clear?36:kind==='wave'?22:26,maxWidth:b.maxWidth,compact:b.compact});
+  const hud=stageBannerObstacles(c.canvas,W,H,b.mobileAvoid),warning=b.step==='danger',phone=!!c.canvas?.ownerDocument?.documentElement?.classList.contains('m-mode'),layout=warning?fitStageWarning({W,H,title:b.title,top:oldTop,hardObstacles:[...hud,...(b.hardObstacles||[]),/* combatpolish-oct28: on a phone the warning never covers its own telegraph (gfx/stage-view.js teleRects) */...(phone?b.teleRects||[]:[])],obstacles:b.obstacles||[]}):fitStageText({W,H,title:b.title,top:oldTop,obstacles:[...hud,...(b.obstacles||[])],bold,scale,pad,lineHeight,baseHeight:clear?36:kind==='wave'?22:26,maxWidth:b.maxWidth,compact:b.compact});
   if(!layout){c.restore();return true;}
   const {lines,box}=layout;
   /* oct24-endgame (playtest ch3 minor): world labels ("SHIELDED") read where the banners were drawn last frame to stay clear of them */

@@ -96,7 +96,9 @@ const FONT='"Pixel Operator", monospace';
    next ones step ±8 px and start a little higher; at most three are shown per target at once. */
 const slots=new WeakMap(),recent=[];
 function slotOf(f){
- let s=slots.get(f);if(s!==undefined)return s;
+ /* combatpolish-oct28: a moved copy of a word (gfx/world.js clearLabel, stackWord) keeps its original's slot (src); a fresh copy each frame
+    used to count as a new number and the word vanished after three frames */
+ f=f.src||f;let s=slots.get(f);if(s!==undefined)return s;
  const now=performance.now();for(let i=recent.length-1;i>=0;i--)if(now-recent[i].t>700)recent.splice(i,1);
  const near=recent.filter(r=>Math.abs(r.x-f.x)<28&&Math.abs(r.y-f.y)<28);
  s=near.length;recent.push({x:f.x,y:f.y,t:now});slots.set(f,s);return s;

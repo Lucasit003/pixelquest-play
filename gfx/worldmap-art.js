@@ -56,7 +56,7 @@ export function slice9(c,art,name,x,y,w,h,{noCentre=false}={}){const m=art.uiMet
 /* ---------- text: the game's pixel font file ---------- */
 const widths=new Map();let probe=null;
 /* Width by rendering, because measureText is unreliable for registered fonts in some canvases. */
-export function textWidth(str,font=FONT){const key=font+'|'+str;if(widths.has(key))return widths.get(key);probe||=makeCanvas(512,24);const g=probe.getContext('2d');g.clearRect(0,0,512,24);g.font=font;g.textBaseline='top';g.fillStyle='#000';g.fillText(str,0,2);
+export function textWidth(str,font=FONT){const key=font+'|'+str;if(widths.has(key))return widths.get(key);probe||=makeCanvas(512,24);/* combatpolish-oct28: these scratch canvases are read back with getImageData (the probe on every new label width), so they ask to stay on the CPU: no willReadFrequently console warning */const g=probe.getContext('2d',{willReadFrequently:true});g.clearRect(0,0,512,24);g.font=font;g.textBaseline='top';g.fillStyle='#000';g.fillText(str,0,2);
  const d=g.getImageData(0,0,512,24).data;let r=0;for(let x=511;x>=0&&!r;x--)for(let y=0;y<24;y++)if(d[(y*512+x)*4+3]>40){r=x+1;break;}const w=r||Math.round(str.length*6);widths.set(key,w);return w;}
 export function text(c,str,x,y,{font=FONT,color='#2a1a10',align='left',shadow=null}={}){const w=textWidth(str,font);const px=Math.round(align==='center'?x-w/2:align==='right'?x-w:x);c.font=font;c.textBaseline='top';
  if(shadow){c.fillStyle=shadow;c.fillText(str,px,Math.round(y)+1);}c.fillStyle=color;c.fillText(str,px,Math.round(y));return w;}
@@ -118,7 +118,7 @@ function drawReveal(c,art,r,t){const n=r.pts.length,k=Math.floor(r.p*(n-1));for(
 function pixEllipse(c,x,y,rx,ry){x=Math.round(x);y=Math.round(y);for(let dy=-ry;dy<=ry;dy++){const h=Math.round(rx*Math.sqrt(Math.max(0,1-(dy/(ry+.5))**2)));if(h>0)c.fillRect(x-h,y+dy,h*2+1,1);}}
 const TIER_TINT={normal:null,heroic:[200,210,224],legendary:[246,196,64]};const tintCache={};
 /* the flag's blue cloth recoloured once per tier: Heroic silver, Legendary gold */
-function tintedFlag(art,tier,i){const rgb=TIER_TINT[tier];if(!rgb||!ready(art.ui))return null;const k=tier+i;if(tintCache[k])return tintCache[k];const f=cell(art,'flag',i);if(!f)return null;const [sx,sy,w,h]=f,cv=makeCanvas(w,h),g=cv.getContext('2d');g.drawImage(art.ui,sx,sy,w,h,0,0,w,h);
+function tintedFlag(art,tier,i){const rgb=TIER_TINT[tier];if(!rgb||!ready(art.ui))return null;const k=tier+i;if(tintCache[k])return tintCache[k];const f=cell(art,'flag',i);if(!f)return null;const [sx,sy,w,h]=f,cv=makeCanvas(w,h),g=cv.getContext('2d',{willReadFrequently:true});g.drawImage(art.ui,sx,sy,w,h,0,0,w,h);
  const d=g.getImageData(0,0,w,h);for(let p=0;p<d.data.length;p+=4){const r=d.data[p],gg=d.data[p+1],b=d.data[p+2];if(b>r+30&&b>gg+10){const l=(r+gg+b)/3/110;d.data[p]=Math.min(255,rgb[0]*l);d.data[p+1]=Math.min(255,rgb[1]*l);d.data[p+2]=Math.min(255,rgb[2]*l);}}g.putImageData(d,0,0);return tintCache[k]=cv;}
 /* A clean half-size token: about 24 px tall, comparable to the huts and stop flags. */
 let heroCv=null;export const HERO_K=.5;
@@ -127,7 +127,7 @@ function drawSmallHero(c,v,t){heroCv||=makeCanvas(160,128);const g=heroCv.getCon
  c.globalAlpha=.35;c.fillStyle='#1a2a14';pixEllipse(c,x,y,5,2);c.globalAlpha=1;c.drawImage(heroCv,0,0,160,128,x-80*HERO_K,y+1-112*HERO_K,160*HERO_K,128*HERO_K);c.restore();}
 /* Tint only cream road pixels near traced closed links. Scenery is never repainted. */
 export function drawLockedRoads(c,v,S){if(!ready(S.board)||!v.closed?.length)return;
- const key=JSON.stringify(v.closed);if(S.dimKey!==key){const cv=makeCanvas(VIEW_W,VIEW_H),g=cv.getContext('2d');g.drawImage(S.board,0,0);const im=g.getImageData(0,0,VIEW_W,VIEW_H),d=im.data,mask=new Uint8Array(VIEW_W*VIEW_H);
+ const key=JSON.stringify(v.closed);if(S.dimKey!==key){const cv=makeCanvas(VIEW_W,VIEW_H),g=cv.getContext('2d',{willReadFrequently:true});g.drawImage(S.board,0,0);const im=g.getImageData(0,0,VIEW_W,VIEW_H),d=im.data,mask=new Uint8Array(VIEW_W*VIEW_H);
   for(const road of v.closed)for(const [px,py] of road.pts)for(let y=Math.max(0,Math.floor(py-8));y<=Math.min(VIEW_H-1,py+8);y++)for(let x=Math.max(0,Math.floor(px-10));x<=Math.min(VIEW_W-1,px+10);x++)if((x-px)**2/100+(y-py)**2/64<=1)mask[y*VIEW_W+x]=1;
   for(let i=0;i<d.length;i+=4){const [r,bg,b]=[d[i],d[i+1],d[i+2]];if(mask[i/4]&&r>190&&bg>150&&b>65&&r-b<195&&r>=bg){const l=Math.round((r*.3+bg*.59+b*.11)*.65);d[i]=l;d[i+1]=l+3;d[i+2]=l+4;}else d[i+3]=0;}
   g.putImageData(im,0,0);S.dim=cv;S.dimKey=key;
@@ -169,7 +169,7 @@ function drawTabs(c,v,art){if(v.travelTab){const [x,y,w,h]=travelTabRect(v.touch
  if(tb.active)slice9(c,art,'parchment',x,y,w,h);else footerPanel(c,art,x,y,w,h);
  text(c,tb.name,x+w/2,ty,{font:FONT_BOLD,color:tb.active?'#2a1a10':tb.open?'#fff3ce':'#b8ab94',align:'center'});c.restore();});}
 /* the board keeps only the frame's carved rim: its dark inner panel colour is cleared once, so the picture runs up to the rim */
-let thin=null;function thinFrame(art){if(thin||!ready(art.ui)||!art.uiMeta?.frame)return thin;const [sx,sy,w,h]=art.uiMeta.frame.frames[0],cv=makeCanvas(w,h),g=cv.getContext('2d');g.drawImage(art.ui,sx,sy,w,h,0,0,w,h);
+let thin=null;function thinFrame(art){if(thin||!ready(art.ui)||!art.uiMeta?.frame)return thin;const [sx,sy,w,h]=art.uiMeta.frame.frames[0],cv=makeCanvas(w,h),g=cv.getContext('2d',{willReadFrequently:true});g.drawImage(art.ui,sx,sy,w,h,0,0,w,h);
  const d=g.getImageData(0,0,w,h);for(let i=0;i<d.data.length;i+=4)if(d.data[i]===46&&d.data[i+1]===50&&d.data[i+2]===42)d.data[i+3]=0;g.putImageData(d,0,0);return thin={ui:cv,uiMeta:{frame:{frames:[[0,0,w,h]],slice:art.uiMeta.frame.slice}}};}
 const kidText=s=>String(s||'').replace(/--+/g,'—');
 /* The chapter tabs are kept clear too when the card can go elsewhere (strict: only then); otherwise the card may cover them
