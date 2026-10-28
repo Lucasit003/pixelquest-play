@@ -26,6 +26,8 @@ steps:[
 {"skill":"between","say":"Line the three places up in column or row order first, then name the one sitting between the two outer places.","pic":pic([{i:2,at:[1,0]},{i:0,at:[1,2]},{i:1,at:[1,4]}]),"check":{"prompt":"Try-it: the well sits at grid square B3, the farm sits at grid square B5, and the school sits at grid square B1 on this village map. Which place is between the other two: the well, the farm or the school?","answer":"the well","options":["the well","the farm","the school"],"hint":"B3 sits between B1 and B5 in the same column.","pic":pic([{i:2,at:[1,0]},{i:0,at:[1,2]},{i:1,at:[1,4]}])}}],
 progression:{"requires":["geography-e-map-key"],"operations":1,"demand":"Read grid coordinates for two or three places and compare them by row or column to answer left, right, above, below, next to or between."},
 items(add){
+  /* 28 Oct (elfact): every why in this topic started with a lower-case letter ("dog is living."); each now starts with a capital. */
+  {const _a0=add;add=(s,p,a,pic,why,acc)=>_a0(s,p,a,pic,typeof why==="string"?why.charAt(0).toUpperCase()+why.slice(1):why,acc);}
  const PAIR=[[0,1],[1,2],[0,2]];
  PAIR.forEach(([i,j])=>{['row','col'].forEach(mode=>{for(let base=0;base<5;base++){
   const off=(base%4)+1;let ci,ri,cj,rj;

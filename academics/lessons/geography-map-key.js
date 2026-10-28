@@ -22,7 +22,7 @@ for(const order of orders){const key=symbols.map((symbol,i)=>({symbol,name:names
  }
  for(let n=1;n<=4;n++)for(let other=1;other<=3;other++){
   const marks=[...Array.from({length:n},(_,i)=>({at:[i,1],symbol:'triangle'})),...Array.from({length:other},(_,i)=>({at:[i,3],symbol:'circle'}))];
-  add('count','Map key: '+keyText+'. The map has '+n+(n===1?' triangle':' triangles')+' and '+other+(other===1?' circle':' circles')+'. How many '+key[0].name+'s are shown?',n,{t:'gridmap',key,marks},'Only the triangles represent '+key[0].name+' on this map.');
+  add('count','Map key: '+keyText+'. The map has '+n+(n===1?' triangle':' triangles')+' and '+other+(other===1?' circle':' circles')+'. How many '+key[0].name+'s are shown?',n,{t:'gridmap',key,marks},'On this map each triangle stands for a '+key[0].name+', so count only the triangles: '+n+'.');
  }
 }
 }

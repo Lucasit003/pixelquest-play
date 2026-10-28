@@ -1,5 +1,6 @@
 const subjects=[['child','children','near the gates','near the gate'],['person','people','beside the carts','beside the cart'],['guard','guards','by the doors','by the door'],['farmer','farmers','near the stalls','near the stall'],['helper','helpers','beside the shelves','beside the shelf'],['baker','bakers','by the windows','by the window']];
 const actions=[['carries','carry','a basket'],['checks','check','a map'],['opens','open','a parcel']];
+// 28 Oct (elfact): steps 0 and 4 in grade 3 words ("does not control the verb", "third-person present-tense" are gone).
 export default {
  "id": "language-e-subject-agreement",
  "subject": "language",
@@ -17,7 +18,7 @@ export default {
  "steps": [
   {
    "skill": "subject",
-   "say": "The subject tells who or what the sentence is about. In this sentence, the gardener waters. The phrase beside the trees adds information about the gardener; trees does not control the verb.",
+   "say": "The subject tells who or what the sentence is about. In this sentence, the gardener waters. The phrase beside the trees tells more about the gardener. Trees is not the subject, so it does not change the verb.",
    "pic": {
     "t": "passages",
     "title": "Who does the action?",
@@ -80,7 +81,7 @@ export default {
   },
   {
    "skill": "agree",
-   "say": "In these third-person present-tense sentences, a singular subject takes waits, carries, or checks. A plural subject takes wait, carry, or check. Change the verb to match the subject, not the nearby noun.",
+   "say": "In these sentences about what happens now, a singular subject takes waits, carries, or checks. A plural subject takes wait, carry, or check. Change the verb to match the subject, not the nearby noun.",
    "pic": {
     "t": "passages",
     "title": "Match the subject",

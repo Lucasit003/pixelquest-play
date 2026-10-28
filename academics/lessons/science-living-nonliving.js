@@ -17,6 +17,8 @@ export default {
  {skill:"tell",say:"Remember, living things grow, need food and water, and make more of themselves.  Non-living things do not.",pic:[{"t":"tiles","seq":["plant","animal","rock","book"]}],eq:"Living things grow, need food and water, and make more of themselves. Non-living things do not.",
   check:{"prompt":"Think about an oak tree. Is it living or non-living?","answer":"living","options":["living","non-living"],"hint":"A tree is a plant: it grows, needs water and sunlight, and makes acorns, which hold its seeds.","pic":{"t":"word","base":"an oak tree"}}}],
  items(add){
+  /* 28 Oct (elfact): every why in this topic started with a lower-case letter ("dog is living."); each now starts with a capital. */
+  {const _a0=add;add=(s,p,a,pic,why,acc)=>_a0(s,p,a,pic,typeof why==="string"?why.charAt(0).toUpperCase()+why.slice(1):why,acc);}
   const _SKIP=new Set(["Is a rock living or non-living?","Is a plant living or non-living?","Is a book living or non-living?"]),_add=add;
   add=(s,p,a,pic,why,acc)=>{if(!_SKIP.has(String(p)))_add(s,p,a,pic,why,acc);};
 {const _SK=["tell","living","nonliving"];let _q=0;/* A typed label: "mammal" for "mammals", "nonliving" for "non-living". */

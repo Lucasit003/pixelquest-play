@@ -1,6 +1,7 @@
 // Every question here is computed by a generator, answers included; nothing was asserted
 // by the model. Only the three Try-it answers and the wording need an eye.
 // Elementary topic: Count the cubes that fill a box by multiplying its three sides. Built from a slot sheet by tools/lesson-kit/build-lesson.mjs.
+// 28 Oct (elfact): step 3 said volume is "the three sides multiplied" for any solid; it now says the volume of a box.
 export default {
  id:"math-e-volume",subject:"math",level:3,grade:5,standard:"CCSS 5.MD.C.5",
  title:"Volume of a box",goal:"Count the cubes that fill a box by multiplying its three sides.",points:20,
@@ -10,7 +11,7 @@ export default {
  {skill:"layer",say:"The bottom layer is a rectangle of cubes: 4 across and 3 deep is 12 cubes.",pic:[{"t":"array","r":3,"c":4}],eq:"12 cubes in a layer",
   check:{"prompt":"A different box is 5 cubes across and 2 cubes deep. How many cubes are in its bottom layer?","answer":10,"options":[10,7,20,52],"hint":"Multiply across by deep.","pic":{"t":"array","r":2,"c":5}}},
  {skill:"stack",say:"Stack two of those layers and you have 24 cubes.",pic:[{"t":"blocks","ten":2,"one":4,"count":true}],eq:"12 x 2 = 24 cubes"},
- {skill:"stack",say:"So volume is the three sides multiplied: across, deep, and high.",pic:[{"t":"word","base":"4 x 3 x 2"}],eq:"4 x 3 x 2 = 24 cubic cm",
+ {skill:"stack",say:"So the volume of a box is its three lengths multiplied: across, deep, and high.",pic:[{"t":"word","base":"4 x 3 x 2"}],eq:"4 x 3 x 2 = 24 cubic cm",
   check:{prompt:"A box is 4 cm across, 3 cm deep and 2 cm high. What is its volume in cubic centimetres?",answer:24,options:[24,9,12,18],hint:"Multiply all three sides.",pic:{"t":"word","base":"4 x 3 x 2"}}},
  {skill:"back",say:"Backwards: a box of 24 cubes that is 4 across and 3 deep must be 2 high.",pic:[{"t":"word","base":"24 / 12"}],eq:"24 / 12 = 2",
   check:{"prompt":"Work backwards: a box holds 60 cubes, and one layer is 12 cubes. How many layers high is it?","answer":5,"options":[5,48,12,72],"hint":"Divide the total by one layer.","pic":{"t":"word","base":"60 / 12"}}},

@@ -20,6 +20,8 @@ export default {
   {skill:'map',say:'The barn is above the well, so the barn is north of the well.',pic:[{t:'compass',from:'the well',to:'the barn',dir:'north',solve:true}],
    check:{prompt:'On a map with north at the top, the pond is below the tree. Which direction is the pond from the tree?',answer:'south',options:['south','north','east'],hint:'Down on the map is south.'}}],
  items(add){
+  /* 28 Oct (elfact): every why in this topic started with a lower-case letter ("dog is living."); each now starts with a capital. */
+  {const _a0=add;add=(s,p,a,pic,why,acc)=>_a0(s,p,a,pic,typeof why==="string"?why.charAt(0).toUpperCase()+why.slice(1):why,acc);}
   D.forEach((d,i)=>{add('rose',`Which direction is opposite ${d}?`,at(i+2),{t:'compass',mark:at(i+2),hint:true},`${d} and ${at(i+2)} face each other.`);
    add('rose',`Going clockwise around a compass, which direction comes after ${d}?`,at(i+1),{t:'compass',mark:at(i+1),hint:true},`Clockwise: north, east, south, west. After ${d} comes ${at(i+1)}.`);
    for(const [turn,k,how] of [['right',1,'Turn right'],['left',-1,'Turn left'],['around',2,'Turn around']])

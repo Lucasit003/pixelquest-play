@@ -16,12 +16,14 @@ export default {
  {skill:"small",say:"Divide the top and bottom by the same number to write it with fewer parts.",pic:[{"t":"bar","parts":12,"shade":3}],eq:"3/12 = 1/4",
   check:{prompt:"Write 3/12 with as few parts as you can.",answer:"1/4",options:["1/4","3/4","1/3","2/8"],hint:"Divide the top and the bottom by 3.",pic:{"t":"bar","parts":12,"shade":3}}}],
  items(add){
+  /* 28 Oct (elfact): denominators 21 and 22 printed "21ths" and "22ths"; _ord gives 21sts and 22nds (only those prompts changed). */
+  const _ord=d=>d+(d%100>=11&&d%100<=13?"th":d%10===1?"st":d%10===2?"nd":d%10===3?"rd":"th");
   const _SKIP=new Set(["1/3 is the same as how many sixths? Give the top number.","Write 4/8 with as few parts as you can.","Write 3/12 with as few parts as you can."]),_add=add;
   add=(s,p,a,pic,why,acc)=>{if(!_SKIP.has(String(p)))_add(s,p,a,pic,why,acc);};
 {const _P=[];
 for(let b=2;b<=12;b++)for(let a=1;a<b;a++)for(let k=2;k<=4;k++){const d=b*k;if(d<=24)_P.push([a,b,a*k,d]);}
 const _n=Math.min(_P.length,150),_st=_n?Math.max(1,Math.floor(_P.length/_n)):1;for(let _i=0;_i<_P.length;_i+=_st){const [a,b,c,d]=_P[_i],r=c;
-add("make",""+(a)+"/"+(b)+" is the same as how many "+(d)+"ths? Give the top number.",r,{"t":"bars","rows":[{"parts":b,"shade":a},{"parts":d,"shade":c}]},"Each of the "+(b)+" parts splits up, so "+(a)+"/"+(b)+" = "+(c)+"/"+(d)+".");}}
+add("make",""+(a)+"/"+(b)+" is the same as how many "+(_ord(d))+"s? Give the top number.",r,{"t":"bars","rows":[{"parts":b,"shade":a},{"parts":d,"shade":c}]},"Each of the "+(b)+" parts splits up, so "+(a)+"/"+(b)+" = "+(c)+"/"+(d)+".");}}
 {const _g=(x,y)=>y?_g(y,x%y):x;const _P=[];
 for(let b=4;b<=24;b++)for(let a=1;a<b;a++)if(_g(a,b)>1)_P.push([a,b]);
 const _n=Math.min(_P.length,150),_st=_n?Math.max(1,Math.floor(_P.length/_n)):1;for(let _i=0;_i<_P.length;_i+=_st){const [a,b]=_P[_i],_k=_g(a,b),r=(a/_k)+'/'+(b/_k);

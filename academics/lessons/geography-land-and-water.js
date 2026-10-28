@@ -17,6 +17,8 @@ export default {
   check:{prompt:"Land or water: river?",answer:"water",options:["water","land"],hint:"Rivers are flowing bodies of water.",pic:{"t":"tiles","seq":["river","river","river"]}}},
  {skill:"tell",say:"Plains are land, but rivers are water.",pic:[{"t":"tiles","seq":["plain","river","plain","river"]}],eq:"Plains are land, rivers are water."}],
  items(add){
+  /* 28 Oct (elfact): every why in this topic started with a lower-case letter ("dog is living."); each now starts with a capital. */
+  {const _a0=add;add=(s,p,a,pic,why,acc)=>_a0(s,p,a,pic,typeof why==="string"?why.charAt(0).toUpperCase()+why.slice(1):why,acc);}
   const _SKIP=new Set(["Land or water: mountain?","Land or water: ocean?","Land or water: river?"]),_add=add;
   add=(s,p,a,pic,why,acc)=>{if(!_SKIP.has(String(p)))_add(s,p,a,pic,why,acc);};
 {const _SK=["tell","land","water"];let _q=0;/* A typed label: "mammal" for "mammals", "nonliving" for "non-living". */

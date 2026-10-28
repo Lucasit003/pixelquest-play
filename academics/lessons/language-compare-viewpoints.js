@@ -400,16 +400,18 @@ export default {
   "demand": "Connect two passages, distinguish shared aims from different reasons, and choose a qualified conclusion or next question."
  },
 items(add){
+/* 28 Oct (elfact): the two synthesize questions were worded far above grade 5 ("addresses both concerns without an unsupported sweeping claim"), and a choice that already ended in . or ? got a second mark ("cover?."). Both prompts are reworded (ids carried over in question-corrections.js) and _end adds a full stop only when one is missing. */
+const _end=o=>/[.?!]$/.test(o)?o:o+'.';
 
 debates.forEach(([title,a,b,aim,wrongAim,proposal,reasonA,reasonB,plan,overclaim,next,irrelevant],i)=>{
  const pic={t:'passages',title,texts:[a,b]},given='Read A: "'+a+'" Read B: "'+b+'" ';
- const ask=(skill,question,correct,wrong,why,flip)=>{const opts=flip?[wrong,correct]:[correct,wrong];add(skill,given+question+' 1: '+opts[0]+'. 2: '+opts[1]+'. Answer 1 or 2.',String(opts.indexOf(correct)+1),pic,why,[correct]);};
- ask('compare','Which aim is shared?',aim,wrongAim,'Both speakers explicitly want '+aim+'.',i%2);
+ const ask=(skill,question,correct,wrong,why,flip)=>{const opts=flip?[wrong,correct]:[correct,wrong];add(skill,given+question+' 1: '+_end(opts[0])+' 2: '+_end(opts[1])+' Answer 1 or 2.',String(opts.indexOf(correct)+1),pic,why,[correct]);};
+ ask('compare','Which aim is shared?',aim,wrongAim,'Both speakers say they want '+aim+'.',i%2);
  const order=i%2?[b,a]:[a,b],proposalPic={t:'passages',title,texts:order};add('compare','Read A: "'+order[0]+'" Read B: "'+order[1]+'" Which speaker proposes '+proposal+'? Answer A or B.',i%2?'B':'A',proposalPic,'The proposal is stated by the speaker who gives this reason: '+reasonA+'.');
  ask('evidence','Which reason does A give?',reasonA,reasonB,'A connects the proposal to this reason: '+reasonA+'.',!(i%2));
  ask('evidence','Which reason does B give?',reasonB,reasonA,'B connects the proposal to this reason: '+reasonB+'.',i%2);
- ask('synthesize','Which next step addresses both concerns without an unsupported sweeping claim?',plan,overclaim,'This plan takes account of both reasons; it still needs practical checking.',!(i%2));
- ask('synthesize','Which unanswered question would most help develop a plan for the shared aim?',next,irrelevant,'This question addresses the proposed plan or its constraints; the other detail does not resolve the concerns of the speakers.',i%2);
+ ask('synthesize',"Which next step fits both speakers' reasons without claiming too much?",plan,overclaim,"This plan fits both speakers' reasons and does not claim too much. It still has to be tried out.",!(i%2));
+ ask('synthesize','Which question would help most with a plan for what both speakers want?',next,irrelevant,'This question helps with a plan for what both speakers want. The other one does not help with what they are worried about.',i%2);
 });
 }
 };

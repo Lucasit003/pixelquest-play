@@ -16,6 +16,8 @@ export default {
   check:{"prompt":"How many sixths make one whole?","answer":6,"options":[6,3,12,1],"hint":"The bottom number tells you.","pic":{"t":"bar","parts":6,"shade":6}}},
  {skill:"like",say:"Same-size parts: add the tops and keep the bottom.",pic:[{"t":"bar","parts":10,"shade":7}],eq:"4/10 + 3/10 = 7/10"}],
  items(add){
+  /* 28 Oct (elfact): denominators 21 and 22 printed "21ths" and "22ths"; _ord gives 21sts and 22nds (only those prompts changed). */
+  const _ord=d=>d+(d%100>=11&&d%100<=13?"th":d%10===1?"st":d%10===2?"nd":d%10===3?"rd":"th");
   const _SKIP=new Set(["What is 3/8 + 2/8?","What is 5/8 - 2/8?","How many quarters make one whole?","What is 4/10 + 1/10?"]),_add=add;
   add=(s,p,a,pic,why,acc)=>{if(!_SKIP.has(String(p)))_add(s,p,a,pic,why,acc);};
 {const _P=[];
@@ -25,7 +27,7 @@ add("like","What is "+(a)+"/"+(b)+" + "+(c)+"/"+(b)+"?",r,{"t":"bar","parts":b,"
 {const _P=[];
 for(let b=2;b<=12;b++)for(let a=1;a<b;a++)for(let k=2;k<=4;k++){const d=b*k;if(d<=24)_P.push([a,b,a*k,d]);}
 const _n=Math.min(_P.length,140),_st=_n?Math.max(1,Math.floor(_P.length/_n)):1;for(let _i=0;_i<_P.length;_i+=_st){const [a,b,c,d]=_P[_i],r=c;
-add("count","How many "+(d)+"ths cover the same amount as "+(a)+"/"+(b)+"? Give the top number.",r,{"t":"bars","rows":[{"parts":b,"shade":a},{"parts":d,"shade":c}]},""+(a)+"/"+(b)+" is the same amount as "+(c)+"/"+(d)+".");}}
+add("count","How many "+(_ord(d))+"s cover the same amount as "+(a)+"/"+(b)+"? Give the top number.",r,{"t":"bars","rows":[{"parts":b,"shade":a},{"parts":d,"shade":c}]},""+(a)+"/"+(b)+" is the same amount as "+(c)+"/"+(d)+".");}}
 {const _P=[];
 for(let a=2;a<=12;a++)for(let b=1;b<=11;b++)if(a-b>0)_P.push([a,b]);
 const _n=Math.min(_P.length,140),_st=_n?Math.max(1,Math.floor(_P.length/_n)):1;for(let _i=0;_i<_P.length;_i+=_st){const [a,b]=_P[_i],_r=a-b,ta=Math.floor(a/10),tb=Math.floor(b/10),oa=a%10,ob=b%10,total=_r,r=_r;

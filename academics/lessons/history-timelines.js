@@ -23,6 +23,8 @@ export default {
   {skill:'order',say:'Our timelines run from earlier on the left to later on the right. Other timelines can run vertically; read their labels to find the direction of time.',pic:[{t:'timeline',events:SEQ.seasons.events}],
    check:{prompt:'Starting in spring, which season comes right after summer?',answer:'fall',options:['fall','winter','spring'],hint:'Spring, summer, fall, winter.',pic:{t:'timeline',events:['spring','summer',null,'winter'],fill:'fall'}}}],
  items(add){
+  /* 28 Oct (elfact): every why in this topic started with a lower-case letter ("dog is living."); each now starts with a capital. */
+  {const _a0=add;add=(s,p,a,pic,why,acc)=>_a0(s,p,a,pic,typeof why==="string"?why.charAt(0).toUpperCase()+why.slice(1):why,acc);}
   for(const [key,{name,events:ev}] of Object.entries(SEQ)){const skill=key==='travel'||key==='talk'?'past':key==='day'||key==='plant'?'read':'order',pic=x=>({t:'timeline',events:ev,...x,hint:true});
    add(skill,`On a timeline of ${name}, what comes first: ${[...ev].sort().join(', ')}?`,ev[0],pic({}),`The order is ${ev.join(', then ')}. First is ${ev[0]}.`);
    add(skill,`On a timeline of ${name}, what comes last: ${[...ev].sort().join(', ')}?`,ev.at(-1),pic({}),`The order is ${ev.join(', then ')}. Last is ${ev.at(-1)}.`);

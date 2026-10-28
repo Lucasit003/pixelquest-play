@@ -23604,6 +23604,951 @@ export const QUESTION_REVISIONS=[
   "oldPrompt": "Which version fixes \"Jumping off the diving board, the water splashed Priya’s friends.\": A \"Jumping off the diving board, the water splashed Priya’s friends for Priya.\" or B \"Jumping off the diving board, Priya made a huge splash.\"?",
   "newPrompt": "Which version fixes \"Jumping off the diving board, Priya’s goggles flew off her head.\": A \"Jumping off the diving board, Priya’s goggles flew off her head for Priya.\" or B \"Jumping off the diving board, Priya made a huge splash.\"?",
   "reason": "Msfact 28 Oct (docs/research/MSFACT_OCT28.md): in the old dangling sentence Priya’s friends could also be the ones jumping, so “Who is really jumping” had two defensible answers; the row now reads “Priya’s goggles flew off her head”, so only Priya can be jumping. Same row, same answer."
+ },
+ {
+  "subject": "math",
+  "level": 3,
+  "oldPrompt": "1/7 is the same as how many 21ths? Give the top number.",
+  "newPrompt": "1/7 is the same as how many 21sts? Give the top number.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the ordinal for 21 and 22 was printed \"21ths\"/\"22ths\"; now 21sts/22nds. Same question, same answer."
+ },
+ {
+  "subject": "math",
+  "level": 3,
+  "oldPrompt": "2/7 is the same as how many 21ths? Give the top number.",
+  "newPrompt": "2/7 is the same as how many 21sts? Give the top number.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the ordinal for 21 and 22 was printed \"21ths\"/\"22ths\"; now 21sts/22nds. Same question, same answer."
+ },
+ {
+  "subject": "math",
+  "level": 3,
+  "oldPrompt": "3/7 is the same as how many 21ths? Give the top number.",
+  "newPrompt": "3/7 is the same as how many 21sts? Give the top number.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the ordinal for 21 and 22 was printed \"21ths\"/\"22ths\"; now 21sts/22nds. Same question, same answer."
+ },
+ {
+  "subject": "math",
+  "level": 3,
+  "oldPrompt": "4/7 is the same as how many 21ths? Give the top number.",
+  "newPrompt": "4/7 is the same as how many 21sts? Give the top number.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the ordinal for 21 and 22 was printed \"21ths\"/\"22ths\"; now 21sts/22nds. Same question, same answer."
+ },
+ {
+  "subject": "math",
+  "level": 3,
+  "oldPrompt": "5/7 is the same as how many 21ths? Give the top number.",
+  "newPrompt": "5/7 is the same as how many 21sts? Give the top number.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the ordinal for 21 and 22 was printed \"21ths\"/\"22ths\"; now 21sts/22nds. Same question, same answer."
+ },
+ {
+  "subject": "math",
+  "level": 3,
+  "oldPrompt": "6/7 is the same as how many 21ths? Give the top number.",
+  "newPrompt": "6/7 is the same as how many 21sts? Give the top number.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the ordinal for 21 and 22 was printed \"21ths\"/\"22ths\"; now 21sts/22nds. Same question, same answer."
+ },
+ {
+  "subject": "math",
+  "level": 3,
+  "oldPrompt": "1/11 is the same as how many 22ths? Give the top number.",
+  "newPrompt": "1/11 is the same as how many 22nds? Give the top number.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the ordinal for 21 and 22 was printed \"21ths\"/\"22ths\"; now 21sts/22nds. Same question, same answer."
+ },
+ {
+  "subject": "math",
+  "level": 3,
+  "oldPrompt": "2/11 is the same as how many 22ths? Give the top number.",
+  "newPrompt": "2/11 is the same as how many 22nds? Give the top number.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the ordinal for 21 and 22 was printed \"21ths\"/\"22ths\"; now 21sts/22nds. Same question, same answer."
+ },
+ {
+  "subject": "math",
+  "level": 3,
+  "oldPrompt": "3/11 is the same as how many 22ths? Give the top number.",
+  "newPrompt": "3/11 is the same as how many 22nds? Give the top number.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the ordinal for 21 and 22 was printed \"21ths\"/\"22ths\"; now 21sts/22nds. Same question, same answer."
+ },
+ {
+  "subject": "math",
+  "level": 3,
+  "oldPrompt": "4/11 is the same as how many 22ths? Give the top number.",
+  "newPrompt": "4/11 is the same as how many 22nds? Give the top number.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the ordinal for 21 and 22 was printed \"21ths\"/\"22ths\"; now 21sts/22nds. Same question, same answer."
+ },
+ {
+  "subject": "math",
+  "level": 3,
+  "oldPrompt": "5/11 is the same as how many 22ths? Give the top number.",
+  "newPrompt": "5/11 is the same as how many 22nds? Give the top number.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the ordinal for 21 and 22 was printed \"21ths\"/\"22ths\"; now 21sts/22nds. Same question, same answer."
+ },
+ {
+  "subject": "math",
+  "level": 3,
+  "oldPrompt": "6/11 is the same as how many 22ths? Give the top number.",
+  "newPrompt": "6/11 is the same as how many 22nds? Give the top number.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the ordinal for 21 and 22 was printed \"21ths\"/\"22ths\"; now 21sts/22nds. Same question, same answer."
+ },
+ {
+  "subject": "math",
+  "level": 3,
+  "oldPrompt": "7/11 is the same as how many 22ths? Give the top number.",
+  "newPrompt": "7/11 is the same as how many 22nds? Give the top number.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the ordinal for 21 and 22 was printed \"21ths\"/\"22ths\"; now 21sts/22nds. Same question, same answer."
+ },
+ {
+  "subject": "math",
+  "level": 3,
+  "oldPrompt": "8/11 is the same as how many 22ths? Give the top number.",
+  "newPrompt": "8/11 is the same as how many 22nds? Give the top number.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the ordinal for 21 and 22 was printed \"21ths\"/\"22ths\"; now 21sts/22nds. Same question, same answer."
+ },
+ {
+  "subject": "math",
+  "level": 3,
+  "oldPrompt": "9/11 is the same as how many 22ths? Give the top number.",
+  "newPrompt": "9/11 is the same as how many 22nds? Give the top number.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the ordinal for 21 and 22 was printed \"21ths\"/\"22ths\"; now 21sts/22nds. Same question, same answer."
+ },
+ {
+  "subject": "math",
+  "level": 3,
+  "oldPrompt": "10/11 is the same as how many 22ths? Give the top number.",
+  "newPrompt": "10/11 is the same as how many 22nds? Give the top number.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the ordinal for 21 and 22 was printed \"21ths\"/\"22ths\"; now 21sts/22nds. Same question, same answer."
+ },
+ {
+  "subject": "math",
+  "level": 3,
+  "oldPrompt": "How many 21ths cover the same amount as 1/7? Give the top number.",
+  "newPrompt": "How many 21sts cover the same amount as 1/7? Give the top number.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the ordinal for 21 and 22 was printed \"21ths\"/\"22ths\"; now 21sts/22nds. Same question, same answer."
+ },
+ {
+  "subject": "math",
+  "level": 3,
+  "oldPrompt": "How many 21ths cover the same amount as 2/7? Give the top number.",
+  "newPrompt": "How many 21sts cover the same amount as 2/7? Give the top number.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the ordinal for 21 and 22 was printed \"21ths\"/\"22ths\"; now 21sts/22nds. Same question, same answer."
+ },
+ {
+  "subject": "math",
+  "level": 3,
+  "oldPrompt": "How many 21ths cover the same amount as 3/7? Give the top number.",
+  "newPrompt": "How many 21sts cover the same amount as 3/7? Give the top number.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the ordinal for 21 and 22 was printed \"21ths\"/\"22ths\"; now 21sts/22nds. Same question, same answer."
+ },
+ {
+  "subject": "math",
+  "level": 3,
+  "oldPrompt": "How many 21ths cover the same amount as 4/7? Give the top number.",
+  "newPrompt": "How many 21sts cover the same amount as 4/7? Give the top number.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the ordinal for 21 and 22 was printed \"21ths\"/\"22ths\"; now 21sts/22nds. Same question, same answer."
+ },
+ {
+  "subject": "math",
+  "level": 3,
+  "oldPrompt": "How many 21ths cover the same amount as 5/7? Give the top number.",
+  "newPrompt": "How many 21sts cover the same amount as 5/7? Give the top number.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the ordinal for 21 and 22 was printed \"21ths\"/\"22ths\"; now 21sts/22nds. Same question, same answer."
+ },
+ {
+  "subject": "math",
+  "level": 3,
+  "oldPrompt": "How many 21ths cover the same amount as 6/7? Give the top number.",
+  "newPrompt": "How many 21sts cover the same amount as 6/7? Give the top number.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the ordinal for 21 and 22 was printed \"21ths\"/\"22ths\"; now 21sts/22nds. Same question, same answer."
+ },
+ {
+  "subject": "math",
+  "level": 3,
+  "oldPrompt": "How many 22ths cover the same amount as 1/11? Give the top number.",
+  "newPrompt": "How many 22nds cover the same amount as 1/11? Give the top number.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the ordinal for 21 and 22 was printed \"21ths\"/\"22ths\"; now 21sts/22nds. Same question, same answer."
+ },
+ {
+  "subject": "math",
+  "level": 3,
+  "oldPrompt": "How many 22ths cover the same amount as 2/11? Give the top number.",
+  "newPrompt": "How many 22nds cover the same amount as 2/11? Give the top number.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the ordinal for 21 and 22 was printed \"21ths\"/\"22ths\"; now 21sts/22nds. Same question, same answer."
+ },
+ {
+  "subject": "math",
+  "level": 3,
+  "oldPrompt": "How many 22ths cover the same amount as 3/11? Give the top number.",
+  "newPrompt": "How many 22nds cover the same amount as 3/11? Give the top number.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the ordinal for 21 and 22 was printed \"21ths\"/\"22ths\"; now 21sts/22nds. Same question, same answer."
+ },
+ {
+  "subject": "math",
+  "level": 3,
+  "oldPrompt": "How many 22ths cover the same amount as 4/11? Give the top number.",
+  "newPrompt": "How many 22nds cover the same amount as 4/11? Give the top number.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the ordinal for 21 and 22 was printed \"21ths\"/\"22ths\"; now 21sts/22nds. Same question, same answer."
+ },
+ {
+  "subject": "math",
+  "level": 3,
+  "oldPrompt": "How many 22ths cover the same amount as 5/11? Give the top number.",
+  "newPrompt": "How many 22nds cover the same amount as 5/11? Give the top number.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the ordinal for 21 and 22 was printed \"21ths\"/\"22ths\"; now 21sts/22nds. Same question, same answer."
+ },
+ {
+  "subject": "math",
+  "level": 3,
+  "oldPrompt": "How many 22ths cover the same amount as 6/11? Give the top number.",
+  "newPrompt": "How many 22nds cover the same amount as 6/11? Give the top number.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the ordinal for 21 and 22 was printed \"21ths\"/\"22ths\"; now 21sts/22nds. Same question, same answer."
+ },
+ {
+  "subject": "math",
+  "level": 3,
+  "oldPrompt": "How many 22ths cover the same amount as 7/11? Give the top number.",
+  "newPrompt": "How many 22nds cover the same amount as 7/11? Give the top number.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the ordinal for 21 and 22 was printed \"21ths\"/\"22ths\"; now 21sts/22nds. Same question, same answer."
+ },
+ {
+  "subject": "math",
+  "level": 3,
+  "oldPrompt": "How many 22ths cover the same amount as 8/11? Give the top number.",
+  "newPrompt": "How many 22nds cover the same amount as 8/11? Give the top number.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the ordinal for 21 and 22 was printed \"21ths\"/\"22ths\"; now 21sts/22nds. Same question, same answer."
+ },
+ {
+  "subject": "math",
+  "level": 3,
+  "oldPrompt": "How many 22ths cover the same amount as 9/11? Give the top number.",
+  "newPrompt": "How many 22nds cover the same amount as 9/11? Give the top number.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the ordinal for 21 and 22 was printed \"21ths\"/\"22ths\"; now 21sts/22nds. Same question, same answer."
+ },
+ {
+  "subject": "math",
+  "level": 3,
+  "oldPrompt": "How many 22ths cover the same amount as 10/11? Give the top number.",
+  "newPrompt": "How many 22nds cover the same amount as 10/11? Give the top number.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the ordinal for 21 and 22 was printed \"21ths\"/\"22ths\"; now 21sts/22nds. Same question, same answer."
+ },
+ {
+  "subject": "geography",
+  "level": 3,
+  "oldPrompt": "Which continent is the Atlas Mountains on?",
+  "newPrompt": "Which continent are the Atlas Mountains on?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"the Mekong is on which continent?\") or a mountain range took \"is\" (\"Which continent is the Andes on?\"); now capitalised, and ranges take \"are\". Same question, same answer."
+ },
+ {
+  "subject": "geography",
+  "level": 3,
+  "oldPrompt": "Which continent is the Andes on?",
+  "newPrompt": "Which continent are the Andes on?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"the Mekong is on which continent?\") or a mountain range took \"is\" (\"Which continent is the Andes on?\"); now capitalised, and ranges take \"are\". Same question, same answer."
+ },
+ {
+  "subject": "geography",
+  "level": 3,
+  "oldPrompt": "Which continent is the Rocky Mountains on?",
+  "newPrompt": "Which continent are the Rocky Mountains on?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"the Mekong is on which continent?\") or a mountain range took \"is\" (\"Which continent is the Andes on?\"); now capitalised, and ranges take \"are\". Same question, same answer."
+ },
+ {
+  "subject": "geography",
+  "level": 3,
+  "oldPrompt": "Which continent is the Appalachian Mountains on?",
+  "newPrompt": "Which continent are the Appalachian Mountains on?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"the Mekong is on which continent?\") or a mountain range took \"is\" (\"Which continent is the Andes on?\"); now capitalised, and ranges take \"are\". Same question, same answer."
+ },
+ {
+  "subject": "geography",
+  "level": 3,
+  "oldPrompt": "Which continent is the Himalayas on?",
+  "newPrompt": "Which continent are the Himalayas on?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"the Mekong is on which continent?\") or a mountain range took \"is\" (\"Which continent is the Andes on?\"); now capitalised, and ranges take \"are\". Same question, same answer."
+ },
+ {
+  "subject": "geography",
+  "level": 3,
+  "oldPrompt": "Which continent is the Alps on?",
+  "newPrompt": "Which continent are the Alps on?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"the Mekong is on which continent?\") or a mountain range took \"is\" (\"Which continent is the Andes on?\"); now capitalised, and ranges take \"are\". Same question, same answer."
+ },
+ {
+  "subject": "geography",
+  "level": 3,
+  "oldPrompt": "Which continent is the Pyrenees on?",
+  "newPrompt": "Which continent are the Pyrenees on?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"the Mekong is on which continent?\") or a mountain range took \"is\" (\"Which continent is the Andes on?\"); now capitalised, and ranges take \"are\". Same question, same answer."
+ },
+ {
+  "subject": "geography",
+  "level": 3,
+  "oldPrompt": "the Nile is on which continent?",
+  "newPrompt": "The Nile is on which continent?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"the Mekong is on which continent?\") or a mountain range took \"is\" (\"Which continent is the Andes on?\"); now capitalised, and ranges take \"are\". Same question, same answer."
+ },
+ {
+  "subject": "geography",
+  "level": 3,
+  "oldPrompt": "the Congo River is on which continent?",
+  "newPrompt": "The Congo River is on which continent?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"the Mekong is on which continent?\") or a mountain range took \"is\" (\"Which continent is the Andes on?\"); now capitalised, and ranges take \"are\". Same question, same answer."
+ },
+ {
+  "subject": "geography",
+  "level": 3,
+  "oldPrompt": "the Niger River is on which continent?",
+  "newPrompt": "The Niger River is on which continent?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"the Mekong is on which continent?\") or a mountain range took \"is\" (\"Which continent is the Andes on?\"); now capitalised, and ranges take \"are\". Same question, same answer."
+ },
+ {
+  "subject": "geography",
+  "level": 3,
+  "oldPrompt": "the Zambezi is on which continent?",
+  "newPrompt": "The Zambezi is on which continent?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"the Mekong is on which continent?\") or a mountain range took \"is\" (\"Which continent is the Andes on?\"); now capitalised, and ranges take \"are\". Same question, same answer."
+ },
+ {
+  "subject": "geography",
+  "level": 3,
+  "oldPrompt": "the Atlas Mountains is on which continent?",
+  "newPrompt": "The Atlas Mountains are on which continent?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"the Mekong is on which continent?\") or a mountain range took \"is\" (\"Which continent is the Andes on?\"); now capitalised, and ranges take \"are\". Same question, same answer."
+ },
+ {
+  "subject": "geography",
+  "level": 3,
+  "oldPrompt": "the Amazon is on which continent?",
+  "newPrompt": "The Amazon is on which continent?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"the Mekong is on which continent?\") or a mountain range took \"is\" (\"Which continent is the Andes on?\"); now capitalised, and ranges take \"are\". Same question, same answer."
+ },
+ {
+  "subject": "geography",
+  "level": 3,
+  "oldPrompt": "the Orinoco is on which continent?",
+  "newPrompt": "The Orinoco is on which continent?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"the Mekong is on which continent?\") or a mountain range took \"is\" (\"Which continent is the Andes on?\"); now capitalised, and ranges take \"are\". Same question, same answer."
+ },
+ {
+  "subject": "geography",
+  "level": 3,
+  "oldPrompt": "the Parana River is on which continent?",
+  "newPrompt": "The Parana River is on which continent?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"the Mekong is on which continent?\") or a mountain range took \"is\" (\"Which continent is the Andes on?\"); now capitalised, and ranges take \"are\". Same question, same answer."
+ },
+ {
+  "subject": "geography",
+  "level": 3,
+  "oldPrompt": "the Andes is on which continent?",
+  "newPrompt": "The Andes are on which continent?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"the Mekong is on which continent?\") or a mountain range took \"is\" (\"Which continent is the Andes on?\"); now capitalised, and ranges take \"are\". Same question, same answer."
+ },
+ {
+  "subject": "geography",
+  "level": 3,
+  "oldPrompt": "the Mississippi is on which continent?",
+  "newPrompt": "The Mississippi is on which continent?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"the Mekong is on which continent?\") or a mountain range took \"is\" (\"Which continent is the Andes on?\"); now capitalised, and ranges take \"are\". Same question, same answer."
+ },
+ {
+  "subject": "geography",
+  "level": 3,
+  "oldPrompt": "the Missouri River is on which continent?",
+  "newPrompt": "The Missouri River is on which continent?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"the Mekong is on which continent?\") or a mountain range took \"is\" (\"Which continent is the Andes on?\"); now capitalised, and ranges take \"are\". Same question, same answer."
+ },
+ {
+  "subject": "geography",
+  "level": 3,
+  "oldPrompt": "the Colorado River is on which continent?",
+  "newPrompt": "The Colorado River is on which continent?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"the Mekong is on which continent?\") or a mountain range took \"is\" (\"Which continent is the Andes on?\"); now capitalised, and ranges take \"are\". Same question, same answer."
+ },
+ {
+  "subject": "geography",
+  "level": 3,
+  "oldPrompt": "the Yukon River is on which continent?",
+  "newPrompt": "The Yukon River is on which continent?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"the Mekong is on which continent?\") or a mountain range took \"is\" (\"Which continent is the Andes on?\"); now capitalised, and ranges take \"are\". Same question, same answer."
+ },
+ {
+  "subject": "geography",
+  "level": 3,
+  "oldPrompt": "the Rocky Mountains is on which continent?",
+  "newPrompt": "The Rocky Mountains are on which continent?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"the Mekong is on which continent?\") or a mountain range took \"is\" (\"Which continent is the Andes on?\"); now capitalised, and ranges take \"are\". Same question, same answer."
+ },
+ {
+  "subject": "geography",
+  "level": 3,
+  "oldPrompt": "the Appalachian Mountains is on which continent?",
+  "newPrompt": "The Appalachian Mountains are on which continent?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"the Mekong is on which continent?\") or a mountain range took \"is\" (\"Which continent is the Andes on?\"); now capitalised, and ranges take \"are\". Same question, same answer."
+ },
+ {
+  "subject": "geography",
+  "level": 3,
+  "oldPrompt": "the Yangtze is on which continent?",
+  "newPrompt": "The Yangtze is on which continent?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"the Mekong is on which continent?\") or a mountain range took \"is\" (\"Which continent is the Andes on?\"); now capitalised, and ranges take \"are\". Same question, same answer."
+ },
+ {
+  "subject": "geography",
+  "level": 3,
+  "oldPrompt": "the Ganges is on which continent?",
+  "newPrompt": "The Ganges is on which continent?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"the Mekong is on which continent?\") or a mountain range took \"is\" (\"Which continent is the Andes on?\"); now capitalised, and ranges take \"are\". Same question, same answer."
+ },
+ {
+  "subject": "geography",
+  "level": 3,
+  "oldPrompt": "the Mekong is on which continent?",
+  "newPrompt": "The Mekong is on which continent?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"the Mekong is on which continent?\") or a mountain range took \"is\" (\"Which continent is the Andes on?\"); now capitalised, and ranges take \"are\". Same question, same answer."
+ },
+ {
+  "subject": "geography",
+  "level": 3,
+  "oldPrompt": "the Indus is on which continent?",
+  "newPrompt": "The Indus is on which continent?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"the Mekong is on which continent?\") or a mountain range took \"is\" (\"Which continent is the Andes on?\"); now capitalised, and ranges take \"are\". Same question, same answer."
+ },
+ {
+  "subject": "geography",
+  "level": 3,
+  "oldPrompt": "the Himalayas is on which continent?",
+  "newPrompt": "The Himalayas are on which continent?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"the Mekong is on which continent?\") or a mountain range took \"is\" (\"Which continent is the Andes on?\"); now capitalised, and ranges take \"are\". Same question, same answer."
+ },
+ {
+  "subject": "geography",
+  "level": 3,
+  "oldPrompt": "the Danube is on which continent?",
+  "newPrompt": "The Danube is on which continent?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"the Mekong is on which continent?\") or a mountain range took \"is\" (\"Which continent is the Andes on?\"); now capitalised, and ranges take \"are\". Same question, same answer."
+ },
+ {
+  "subject": "geography",
+  "level": 3,
+  "oldPrompt": "the Rhine is on which continent?",
+  "newPrompt": "The Rhine is on which continent?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"the Mekong is on which continent?\") or a mountain range took \"is\" (\"Which continent is the Andes on?\"); now capitalised, and ranges take \"are\". Same question, same answer."
+ },
+ {
+  "subject": "geography",
+  "level": 3,
+  "oldPrompt": "the Thames is on which continent?",
+  "newPrompt": "The Thames is on which continent?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"the Mekong is on which continent?\") or a mountain range took \"is\" (\"Which continent is the Andes on?\"); now capitalised, and ranges take \"are\". Same question, same answer."
+ },
+ {
+  "subject": "geography",
+  "level": 3,
+  "oldPrompt": "the Volga is on which continent?",
+  "newPrompt": "The Volga is on which continent?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"the Mekong is on which continent?\") or a mountain range took \"is\" (\"Which continent is the Andes on?\"); now capitalised, and ranges take \"are\". Same question, same answer."
+ },
+ {
+  "subject": "geography",
+  "level": 3,
+  "oldPrompt": "the Seine is on which continent?",
+  "newPrompt": "The Seine is on which continent?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"the Mekong is on which continent?\") or a mountain range took \"is\" (\"Which continent is the Andes on?\"); now capitalised, and ranges take \"are\". Same question, same answer."
+ },
+ {
+  "subject": "geography",
+  "level": 3,
+  "oldPrompt": "the Alps is on which continent?",
+  "newPrompt": "The Alps are on which continent?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"the Mekong is on which continent?\") or a mountain range took \"is\" (\"Which continent is the Andes on?\"); now capitalised, and ranges take \"are\". Same question, same answer."
+ },
+ {
+  "subject": "geography",
+  "level": 3,
+  "oldPrompt": "the Pyrenees is on which continent?",
+  "newPrompt": "The Pyrenees are on which continent?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"the Mekong is on which continent?\") or a mountain range took \"is\" (\"Which continent is the Andes on?\"); now capitalised, and ranges take \"are\". Same question, same answer."
+ },
+ {
+  "subject": "geography",
+  "level": 3,
+  "oldPrompt": "the Murray River is on which continent?",
+  "newPrompt": "The Murray River is on which continent?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"the Mekong is on which continent?\") or a mountain range took \"is\" (\"Which continent is the Andes on?\"); now capitalised, and ranges take \"are\". Same question, same answer."
+ },
+ {
+  "subject": "geography",
+  "level": 3,
+  "oldPrompt": "the Great Dividing Range is on which continent?",
+  "newPrompt": "The Great Dividing Range is on which continent?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"the Mekong is on which continent?\") or a mountain range took \"is\" (\"Which continent is the Andes on?\"); now capitalised, and ranges take \"are\". Same question, same answer."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "is the biggest planet. Which planet is it?",
+  "newPrompt": "Clue: this planet is the biggest planet. Which planet is it?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt had no subject (\"is the fourth planet from the sun. Which planet is it?\"); it now starts \"Clue: this planet\". Same question, same answer."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "has the brightest rings. Which planet is it?",
+  "newPrompt": "Clue: this planet has the brightest rings. Which planet is it?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt had no subject (\"is the fourth planet from the sun. Which planet is it?\"); it now starts \"Clue: this planet\". Same question, same answer."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "is closest to the sun. Which planet is it?",
+  "newPrompt": "Clue: this planet is closest to the sun. Which planet is it?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt had no subject (\"is the fourth planet from the sun. Which planet is it?\"); it now starts \"Clue: this planet\". Same question, same answer."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "is furthest from the sun. Which planet is it?",
+  "newPrompt": "Clue: this planet is furthest from the sun. Which planet is it?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt had no subject (\"is the fourth planet from the sun. Which planet is it?\"); it now starts \"Clue: this planet\". Same question, same answer."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "is the hottest planet. Which planet is it?",
+  "newPrompt": "Clue: this planet is the hottest planet. Which planet is it?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt had no subject (\"is the fourth planet from the sun. Which planet is it?\"); it now starts \"Clue: this planet\". Same question, same answer."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "looks red because of rusty dust. Which planet is it?",
+  "newPrompt": "Clue: this planet looks red because of rusty dust. Which planet is it?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt had no subject (\"is the fourth planet from the sun. Which planet is it?\"); it now starts \"Clue: this planet\". Same question, same answer."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "is the planet we live on. Which planet is it?",
+  "newPrompt": "Clue: this planet is the planet we live on. Which planet is it?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt had no subject (\"is the fourth planet from the sun. Which planet is it?\"); it now starts \"Clue: this planet\". Same question, same answer."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "is the only planet known to have life. Which planet is it?",
+  "newPrompt": "Clue: this planet is the only planet known to have life. Which planet is it?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt had no subject (\"is the fourth planet from the sun. Which planet is it?\"); it now starts \"Clue: this planet\". Same question, same answer."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "is the smallest planet. Which planet is it?",
+  "newPrompt": "Clue: this planet is the smallest planet. Which planet is it?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt had no subject (\"is the fourth planet from the sun. Which planet is it?\"); it now starts \"Clue: this planet\". Same question, same answer."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "has a huge storm called the Great Red Spot. Which planet is it?",
+  "newPrompt": "Clue: this planet has a huge storm called the Great Red Spot. Which planet is it?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt had no subject (\"is the fourth planet from the sun. Which planet is it?\"); it now starts \"Clue: this planet\". Same question, same answer."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "spins on its side. Which planet is it?",
+  "newPrompt": "Clue: this planet spins on its side. Which planet is it?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt had no subject (\"is the fourth planet from the sun. Which planet is it?\"); it now starts \"Clue: this planet\". Same question, same answer."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "is nearly the same size as Earth. Which planet is it?",
+  "newPrompt": "Clue: this planet is nearly the same size as Earth. Which planet is it?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt had no subject (\"is the fourth planet from the sun. Which planet is it?\"); it now starts \"Clue: this planet\". Same question, same answer."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "has two small moons called Phobos and Deimos. Which planet is it?",
+  "newPrompt": "Clue: this planet has two small moons called Phobos and Deimos. Which planet is it?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt had no subject (\"is the fourth planet from the sun. Which planet is it?\"); it now starts \"Clue: this planet\". Same question, same answer."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "is the second largest planet. Which planet is it?",
+  "newPrompt": "Clue: this planet is the second largest planet. Which planet is it?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt had no subject (\"is the fourth planet from the sun. Which planet is it?\"); it now starts \"Clue: this planet\". Same question, same answer."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "takes 365 days to go around the sun. Which planet is it?",
+  "newPrompt": "Clue: this planet takes 365 days to go around the sun. Which planet is it?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt had no subject (\"is the fourth planet from the sun. Which planet is it?\"); it now starts \"Clue: this planet\". Same question, same answer."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "takes the longest of the eight to go around the sun. Which planet is it?",
+  "newPrompt": "Clue: this planet takes the longest of the eight to go around the sun. Which planet is it?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt had no subject (\"is the fourth planet from the sun. Which planet is it?\"); it now starts \"Clue: this planet\". Same question, same answer."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "is covered in thick clouds that trap the heat. Which planet is it?",
+  "newPrompt": "Clue: this planet is covered in thick clouds that trap the heat. Which planet is it?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt had no subject (\"is the fourth planet from the sun. Which planet is it?\"); it now starts \"Clue: this planet\". Same question, same answer."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "is the fourth planet from the sun. Which planet is it?",
+  "newPrompt": "Clue: this planet is the fourth planet from the sun. Which planet is it?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt had no subject (\"is the fourth planet from the sun. Which planet is it?\"); it now starts \"Clue: this planet\". Same question, same answer."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "is the third planet from the sun. Which planet is it?",
+  "newPrompt": "Clue: this planet is the third planet from the sun. Which planet is it?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt had no subject (\"is the fourth planet from the sun. Which planet is it?\"); it now starts \"Clue: this planet\". Same question, same answer."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "a slate was used long ago. What took its place?",
+  "newPrompt": "A slate was used long ago. What took its place?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"a slate was used long ago.\"); now capitalised. Same question, same answer."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "an inkwell and dipping pen was used long ago. What took its place?",
+  "newPrompt": "An inkwell and dipping pen was used long ago. What took its place?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"a slate was used long ago.\"); now capitalised. Same question, same answer."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "a blackboard was used long ago. What took its place?",
+  "newPrompt": "A blackboard was used long ago. What took its place?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"a slate was used long ago.\"); now capitalised. Same question, same answer."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "a coal stove was used long ago. What took its place?",
+  "newPrompt": "A coal stove was used long ago. What took its place?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"a slate was used long ago.\"); now capitalised. Same question, same answer."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "an oil lamp was used long ago. What took its place?",
+  "newPrompt": "An oil lamp was used long ago. What took its place?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"a slate was used long ago.\"); now capitalised. Same question, same answer."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "an abacus was used long ago. What took its place?",
+  "newPrompt": "An abacus was used long ago. What took its place?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"a slate was used long ago.\"); now capitalised. Same question, same answer."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "copying every page by hand was used long ago. What took its place?",
+  "newPrompt": "Copying every page by hand was used long ago. What took its place?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"a slate was used long ago.\"); now capitalised. Same question, same answer."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "a hand bell was used long ago. What took its place?",
+  "newPrompt": "A hand bell was used long ago. What took its place?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"a slate was used long ago.\"); now capitalised. Same question, same answer."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "walking miles to school was used long ago. What took its place?",
+  "newPrompt": "Walking miles to school was used long ago. What took its place?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"a slate was used long ago.\"); now capitalised. Same question, same answer."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "a one-room schoolhouse was used long ago. What took its place?",
+  "newPrompt": "A one-room schoolhouse was used long ago. What took its place?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"a slate was used long ago.\"); now capitalised. Same question, same answer."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "a class of every age in one room was used long ago. What took its place?",
+  "newPrompt": "A class of every age in one room was used long ago. What took its place?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"a slate was used long ago.\"); now capitalised. Same question, same answer."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "a filmstrip projector was used long ago. What took its place?",
+  "newPrompt": "A filmstrip projector was used long ago. What took its place?",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the prompt started in lower case (\"a slate was used long ago.\"); now capitalised. Same question, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 3,
+  "oldPrompt": "Read A: \"I want more people to borrow books. Open earlier so workers can visit before their shifts.\" Read B: \"I also want more people to borrow books. Open later so students can visit after class.\" Which next step addresses both concerns without an unsupported sweeping claim? 1: Only workers need library access.. 2: Test some early and late hours, then compare visits.. Answer 1 or 2.",
+  "newPrompt": "Read A: \"I want more people to borrow books. Open earlier so workers can visit before their shifts.\" Read B: \"I also want more people to borrow books. Open later so students can visit after class.\" Which next step fits both speakers' reasons without claiming too much? 1: Only workers need library access. 2: Test some early and late hours, then compare visits. Answer 1 or 2.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the synthesize prompts were worded far above grade 5 (\"addresses both concerns without an unsupported sweeping claim\") and printed a double mark (\"?.\"); reworded in grade 5 words. Same question, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 3,
+  "oldPrompt": "Read A: \"I want more people to borrow books. Open earlier so workers can visit before their shifts.\" Read B: \"I also want more people to borrow books. Open later so students can visit after class.\" Which unanswered question would most help develop a plan for the shared aim? 1: Which hours can staff cover?. 2: What color are the book covers?. Answer 1 or 2.",
+  "newPrompt": "Read A: \"I want more people to borrow books. Open earlier so workers can visit before their shifts.\" Read B: \"I also want more people to borrow books. Open later so students can visit after class.\" Which question would help most with a plan for what both speakers want? 1: Which hours can staff cover? 2: What color are the book covers? Answer 1 or 2.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the synthesize prompts were worded far above grade 5 (\"addresses both concerns without an unsupported sweeping claim\") and printed a double mark (\"?.\"); reworded in grade 5 words. Same question, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 3,
+  "oldPrompt": "Read A: \"We both want a useful garden. Plant vegetables to supply food for the kitchen.\" Read B: \"We both want a useful garden. Plant flowers to provide nectar for visiting bees.\" Which next step addresses both concerns without an unsupported sweeping claim? 1: Use separate beds for vegetables and flowers if space allows.. 2: Flowers and vegetables cannot share any garden.. Answer 1 or 2.",
+  "newPrompt": "Read A: \"We both want a useful garden. Plant vegetables to supply food for the kitchen.\" Read B: \"We both want a useful garden. Plant flowers to provide nectar for visiting bees.\" Which next step fits both speakers' reasons without claiming too much? 1: Use separate beds for vegetables and flowers if space allows. 2: Flowers and vegetables cannot share any garden. Answer 1 or 2.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the synthesize prompts were worded far above grade 5 (\"addresses both concerns without an unsupported sweeping claim\") and printed a double mark (\"?.\"); reworded in grade 5 words. Same question, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 3,
+  "oldPrompt": "Read A: \"We both want a useful garden. Plant vegetables to supply food for the kitchen.\" Read B: \"We both want a useful garden. Plant flowers to provide nectar for visiting bees.\" Which unanswered question would most help develop a plan for the shared aim? 1: Who has the longest scarf?. 2: How much planting space is available?. Answer 1 or 2.",
+  "newPrompt": "Read A: \"We both want a useful garden. Plant vegetables to supply food for the kitchen.\" Read B: \"We both want a useful garden. Plant flowers to provide nectar for visiting bees.\" Which question would help most with a plan for what both speakers want? 1: Who has the longest scarf? 2: How much planting space is available? Answer 1 or 2.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the synthesize prompts were worded far above grade 5 (\"addresses both concerns without an unsupported sweeping claim\") and printed a double mark (\"?.\"); reworded in grade 5 words. Same question, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 3,
+  "oldPrompt": "Read A: \"We need a safe bridge. Close it completely so repairs can be finished without people crossing the work area.\" Read B: \"We need a safe bridge too. Keep a separate safe crossing route available so villagers can still reach the market.\" Which next step addresses both concerns without an unsupported sweeping claim? 1: Market access proves repairs are unnecessary.. 2: Close the work area and investigate a safe alternative crossing.. Answer 1 or 2.",
+  "newPrompt": "Read A: \"We need a safe bridge. Close it completely so repairs can be finished without people crossing the work area.\" Read B: \"We need a safe bridge too. Keep a separate safe crossing route available so villagers can still reach the market.\" Which next step fits both speakers' reasons without claiming too much? 1: Market access proves repairs are unnecessary. 2: Close the work area and investigate a safe alternative crossing. Answer 1 or 2.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the synthesize prompts were worded far above grade 5 (\"addresses both concerns without an unsupported sweeping claim\") and printed a double mark (\"?.\"); reworded in grade 5 words. Same question, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 3,
+  "oldPrompt": "Read A: \"We need a safe bridge. Close it completely so repairs can be finished without people crossing the work area.\" Read B: \"We need a safe bridge too. Keep a separate safe crossing route available so villagers can still reach the market.\" Which unanswered question would most help develop a plan for the shared aim? 1: Is a safe alternative route available?. 2: Which stall sells the sweetest apples?. Answer 1 or 2.",
+  "newPrompt": "Read A: \"We need a safe bridge. Close it completely so repairs can be finished without people crossing the work area.\" Read B: \"We need a safe bridge too. Keep a separate safe crossing route available so villagers can still reach the market.\" Which question would help most with a plan for what both speakers want? 1: Is a safe alternative route available? 2: Which stall sells the sweetest apples? Answer 1 or 2.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the synthesize prompts were worded far above grade 5 (\"addresses both concerns without an unsupported sweeping claim\") and printed a double mark (\"?.\"); reworded in grade 5 words. Same question, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 3,
+  "oldPrompt": "Read A: \"I want a festival people enjoy. Put music in the square so visitors can hear performers together.\" Read B: \"I want an enjoyable festival too. Provide a quiet area so visitors who need a break can rest.\" Which next step addresses both concerns without an unsupported sweeping claim? 1: Plan a music area and a separate quiet area.. 2: Every visitor wants continuous loud music.. Answer 1 or 2.",
+  "newPrompt": "Read A: \"I want a festival people enjoy. Put music in the square so visitors can hear performers together.\" Read B: \"I want an enjoyable festival too. Provide a quiet area so visitors who need a break can rest.\" Which next step fits both speakers' reasons without claiming too much? 1: Plan a music area and a separate quiet area. 2: Every visitor wants continuous loud music. Answer 1 or 2.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the synthesize prompts were worded far above grade 5 (\"addresses both concerns without an unsupported sweeping claim\") and printed a double mark (\"?.\"); reworded in grade 5 words. Same question, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 3,
+  "oldPrompt": "Read A: \"I want a festival people enjoy. Put music in the square so visitors can hear performers together.\" Read B: \"I want an enjoyable festival too. Provide a quiet area so visitors who need a break can rest.\" Which unanswered question would most help develop a plan for the shared aim? 1: How many buttons are on the singer's coat?. 2: Is there enough space between the two areas?. Answer 1 or 2.",
+  "newPrompt": "Read A: \"I want a festival people enjoy. Put music in the square so visitors can hear performers together.\" Read B: \"I want an enjoyable festival too. Provide a quiet area so visitors who need a break can rest.\" Which question would help most with a plan for what both speakers want? 1: How many buttons are on the singer's coat? 2: Is there enough space between the two areas? Answer 1 or 2.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the synthesize prompts were worded far above grade 5 (\"addresses both concerns without an unsupported sweeping claim\") and printed a double mark (\"?.\"); reworded in grade 5 words. Same question, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 3,
+  "oldPrompt": "Read A: \"We should help visitors find stalls. Add written signs so people can read stall names.\" Read B: \"We should help visitors find stalls. Add pictures so visitors who cannot read the names can still recognize goods.\" Which next step addresses both concerns without an unsupported sweeping claim? 1: Written names always work for every visitor.. 2: Use signs with both words and recognizable pictures.. Answer 1 or 2.",
+  "newPrompt": "Read A: \"We should help visitors find stalls. Add written signs so people can read stall names.\" Read B: \"We should help visitors find stalls. Add pictures so visitors who cannot read the names can still recognize goods.\" Which next step fits both speakers' reasons without claiming too much? 1: Written names always work for every visitor. 2: Use signs with both words and recognizable pictures. Answer 1 or 2.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the synthesize prompts were worded far above grade 5 (\"addresses both concerns without an unsupported sweeping claim\") and printed a double mark (\"?.\"); reworded in grade 5 words. Same question, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 3,
+  "oldPrompt": "Read A: \"We should help visitors find stalls. Add written signs so people can read stall names.\" Read B: \"We should help visitors find stalls. Add pictures so visitors who cannot read the names can still recognize goods.\" Which unanswered question would most help develop a plan for the shared aim? 1: Can visitors recognize the proposed pictures?. 2: Which merchant has the tallest hat?. Answer 1 or 2.",
+  "newPrompt": "Read A: \"We should help visitors find stalls. Add written signs so people can read stall names.\" Read B: \"We should help visitors find stalls. Add pictures so visitors who cannot read the names can still recognize goods.\" Which question would help most with a plan for what both speakers want? 1: Can visitors recognize the proposed pictures? 2: Which merchant has the tallest hat? Answer 1 or 2.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the synthesize prompts were worded far above grade 5 (\"addresses both concerns without an unsupported sweeping claim\") and printed a double mark (\"?.\"); reworded in grade 5 words. Same question, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 3,
+  "oldPrompt": "Read A: \"We want everyone to enjoy reading. Let pupils choose books that match their interests.\" Read B: \"We want everyone to enjoy reading. Sometimes read one book together so the class can discuss shared scenes.\" Which next step addresses both concerns without an unsupported sweeping claim? 1: Include choice reading and occasional shared reading.. 2: Only one kind of reading can ever be enjoyable.. Answer 1 or 2.",
+  "newPrompt": "Read A: \"We want everyone to enjoy reading. Let pupils choose books that match their interests.\" Read B: \"We want everyone to enjoy reading. Sometimes read one book together so the class can discuss shared scenes.\" Which next step fits both speakers' reasons without claiming too much? 1: Include choice reading and occasional shared reading. 2: Only one kind of reading can ever be enjoyable. Answer 1 or 2.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the synthesize prompts were worded far above grade 5 (\"addresses both concerns without an unsupported sweeping claim\") and printed a double mark (\"?.\"); reworded in grade 5 words. Same question, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 3,
+  "oldPrompt": "Read A: \"We want everyone to enjoy reading. Let pupils choose books that match their interests.\" Read B: \"We want everyone to enjoy reading. Sometimes read one book together so the class can discuss shared scenes.\" Which unanswered question would most help develop a plan for the shared aim? 1: Which shelf is nearest the ceiling?. 2: How much time can be given to each activity?. Answer 1 or 2.",
+  "newPrompt": "Read A: \"We want everyone to enjoy reading. Let pupils choose books that match their interests.\" Read B: \"We want everyone to enjoy reading. Sometimes read one book together so the class can discuss shared scenes.\" Which question would help most with a plan for what both speakers want? 1: Which shelf is nearest the ceiling? 2: How much time can be given to each activity? Answer 1 or 2.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the synthesize prompts were worded far above grade 5 (\"addresses both concerns without an unsupported sweeping claim\") and printed a double mark (\"?.\"); reworded in grade 5 words. Same question, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 3,
+  "oldPrompt": "Read A: \"We want a useful path. Choose the shorter route so people carrying supplies walk less far.\" Read B: \"We want a useful path. Choose the gentler slope so people who find steep climbs difficult can use it.\" Which next step addresses both concerns without an unsupported sweeping claim? 1: The shortest route must suit every traveler.. 2: Compare both distance and slope before choosing a route.. Answer 1 or 2.",
+  "newPrompt": "Read A: \"We want a useful path. Choose the shorter route so people carrying supplies walk less far.\" Read B: \"We want a useful path. Choose the gentler slope so people who find steep climbs difficult can use it.\" Which next step fits both speakers' reasons without claiming too much? 1: The shortest route must suit every traveler. 2: Compare both distance and slope before choosing a route. Answer 1 or 2.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the synthesize prompts were worded far above grade 5 (\"addresses both concerns without an unsupported sweeping claim\") and printed a double mark (\"?.\"); reworded in grade 5 words. Same question, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 3,
+  "oldPrompt": "Read A: \"We want a useful path. Choose the shorter route so people carrying supplies walk less far.\" Read B: \"We want a useful path. Choose the gentler slope so people who find steep climbs difficult can use it.\" Which unanswered question would most help develop a plan for the shared aim? 1: Is there a route that is both short and gentle?. 2: What shape are the clouds today?. Answer 1 or 2.",
+  "newPrompt": "Read A: \"We want a useful path. Choose the shorter route so people carrying supplies walk less far.\" Read B: \"We want a useful path. Choose the gentler slope so people who find steep climbs difficult can use it.\" Which question would help most with a plan for what both speakers want? 1: Is there a route that is both short and gentle? 2: What shape are the clouds today? Answer 1 or 2.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the synthesize prompts were worded far above grade 5 (\"addresses both concerns without an unsupported sweeping claim\") and printed a double mark (\"?.\"); reworded in grade 5 words. Same question, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 3,
+  "oldPrompt": "Read A: \"We want pupils to learn safely. Demonstrate the tools first so pupils know the correct handling steps.\" Read B: \"We want pupils to learn safely. Allow supervised practice so pupils can try the handling steps with help.\" Which next step addresses both concerns without an unsupported sweeping claim? 1: Demonstrate the tools, then provide supervised practice.. 2: Watching a demonstration proves nobody needs practice.. Answer 1 or 2.",
+  "newPrompt": "Read A: \"We want pupils to learn safely. Demonstrate the tools first so pupils know the correct handling steps.\" Read B: \"We want pupils to learn safely. Allow supervised practice so pupils can try the handling steps with help.\" Which next step fits both speakers' reasons without claiming too much? 1: Demonstrate the tools, then provide supervised practice. 2: Watching a demonstration proves nobody needs practice. Answer 1 or 2.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the synthesize prompts were worded far above grade 5 (\"addresses both concerns without an unsupported sweeping claim\") and printed a double mark (\"?.\"); reworded in grade 5 words. Same question, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 3,
+  "oldPrompt": "Read A: \"We want pupils to learn safely. Demonstrate the tools first so pupils know the correct handling steps.\" Read B: \"We want pupils to learn safely. Allow supervised practice so pupils can try the handling steps with help.\" Which unanswered question would most help develop a plan for the shared aim? 1: Which pupil has the newest shoes?. 2: How many supervisors are available?. Answer 1 or 2.",
+  "newPrompt": "Read A: \"We want pupils to learn safely. Demonstrate the tools first so pupils know the correct handling steps.\" Read B: \"We want pupils to learn safely. Allow supervised practice so pupils can try the handling steps with help.\" Which question would help most with a plan for what both speakers want? 1: Which pupil has the newest shoes? 2: How many supervisors are available? Answer 1 or 2.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the synthesize prompts were worded far above grade 5 (\"addresses both concerns without an unsupported sweeping claim\") and printed a double mark (\"?.\"); reworded in grade 5 words. Same question, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 3,
+  "oldPrompt": "Read A: \"We want lunch that pupils can eat. Offer a choice because pupils have different food preferences.\" Read B: \"We want lunch that pupils can eat. Clearly label ingredients because some pupils must avoid particular foods.\" Which next step addresses both concerns without an unsupported sweeping claim? 1: A popular dish meets every pupil's needs.. 2: Offer choices with clear ingredient information.. Answer 1 or 2.",
+  "newPrompt": "Read A: \"We want lunch that pupils can eat. Offer a choice because pupils have different food preferences.\" Read B: \"We want lunch that pupils can eat. Clearly label ingredients because some pupils must avoid particular foods.\" Which next step fits both speakers' reasons without claiming too much? 1: A popular dish meets every pupil's needs. 2: Offer choices with clear ingredient information. Answer 1 or 2.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the synthesize prompts were worded far above grade 5 (\"addresses both concerns without an unsupported sweeping claim\") and printed a double mark (\"?.\"); reworded in grade 5 words. Same question, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 3,
+  "oldPrompt": "Read A: \"We want lunch that pupils can eat. Offer a choice because pupils have different food preferences.\" Read B: \"We want lunch that pupils can eat. Clearly label ingredients because some pupils must avoid particular foods.\" Which unanswered question would most help develop a plan for the shared aim? 1: Which ingredients need to be listed?. 2: What color is the dining-room clock?. Answer 1 or 2.",
+  "newPrompt": "Read A: \"We want lunch that pupils can eat. Offer a choice because pupils have different food preferences.\" Read B: \"We want lunch that pupils can eat. Clearly label ingredients because some pupils must avoid particular foods.\" Which question would help most with a plan for what both speakers want? 1: Which ingredients need to be listed? 2: What color is the dining-room clock? Answer 1 or 2.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the synthesize prompts were worded far above grade 5 (\"addresses both concerns without an unsupported sweeping claim\") and printed a double mark (\"?.\"); reworded in grade 5 words. Same question, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 3,
+  "oldPrompt": "Read A: \"We want visitors to understand village stories. Show original letters so visitors can examine the writers' own words.\" Read B: \"We want visitors to understand village stories. Add clear explanations so unfamiliar names and events make sense.\" Which next step addresses both concerns without an unsupported sweeping claim? 1: Display letters alongside clearly labeled explanations.. 2: Explanations should silently replace the original words.. Answer 1 or 2.",
+  "newPrompt": "Read A: \"We want visitors to understand village stories. Show original letters so visitors can examine the writers' own words.\" Read B: \"We want visitors to understand village stories. Add clear explanations so unfamiliar names and events make sense.\" Which next step fits both speakers' reasons without claiming too much? 1: Display letters alongside clearly labeled explanations. 2: Explanations should silently replace the original words. Answer 1 or 2.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the synthesize prompts were worded far above grade 5 (\"addresses both concerns without an unsupported sweeping claim\") and printed a double mark (\"?.\"); reworded in grade 5 words. Same question, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 3,
+  "oldPrompt": "Read A: \"We want visitors to understand village stories. Show original letters so visitors can examine the writers' own words.\" Read B: \"We want visitors to understand village stories. Add clear explanations so unfamiliar names and events make sense.\" Which unanswered question would most help develop a plan for the shared aim? 1: How many pockets does the guide have?. 2: Which names and events need explanation?. Answer 1 or 2.",
+  "newPrompt": "Read A: \"We want visitors to understand village stories. Show original letters so visitors can examine the writers' own words.\" Read B: \"We want visitors to understand village stories. Add clear explanations so unfamiliar names and events make sense.\" Which question would help most with a plan for what both speakers want? 1: How many pockets does the guide have? 2: Which names and events need explanation? Answer 1 or 2.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the synthesize prompts were worded far above grade 5 (\"addresses both concerns without an unsupported sweeping claim\") and printed a double mark (\"?.\"); reworded in grade 5 words. Same question, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 3,
+  "oldPrompt": "Read A: \"We want pupils to learn about the pond. Observe quietly from the bank so animals are less disturbed.\" Read B: \"We want pupils to learn about the pond. Use a close-up camera from the bank so small details can be examined later.\" Which next step addresses both concerns without an unsupported sweeping claim? 1: Learning about the pond requires entering the water.. 2: Combine quiet observation with close-up images taken from the bank.. Answer 1 or 2.",
+  "newPrompt": "Read A: \"We want pupils to learn about the pond. Observe quietly from the bank so animals are less disturbed.\" Read B: \"We want pupils to learn about the pond. Use a close-up camera from the bank so small details can be examined later.\" Which next step fits both speakers' reasons without claiming too much? 1: Learning about the pond requires entering the water. 2: Combine quiet observation with close-up images taken from the bank. Answer 1 or 2.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the synthesize prompts were worded far above grade 5 (\"addresses both concerns without an unsupported sweeping claim\") and printed a double mark (\"?.\"); reworded in grade 5 words. Same question, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 3,
+  "oldPrompt": "Read A: \"We want pupils to learn about the pond. Observe quietly from the bank so animals are less disturbed.\" Read B: \"We want pupils to learn about the pond. Use a close-up camera from the bank so small details can be examined later.\" Which unanswered question would most help develop a plan for the shared aim? 1: Can the camera capture details from the bank?. 2: What is the classroom door number?. Answer 1 or 2.",
+  "newPrompt": "Read A: \"We want pupils to learn about the pond. Observe quietly from the bank so animals are less disturbed.\" Read B: \"We want pupils to learn about the pond. Use a close-up camera from the bank so small details can be examined later.\" Which question would help most with a plan for what both speakers want? 1: Can the camera capture details from the bank? 2: What is the classroom door number? Answer 1 or 2.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the synthesize prompts were worded far above grade 5 (\"addresses both concerns without an unsupported sweeping claim\") and printed a double mark (\"?.\"); reworded in grade 5 words. Same question, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 3,
+  "oldPrompt": "Read A: \"We want a good team project. Assign clear roles so every needed task has someone responsible.\" Read B: \"We want a good team project. Let members change roles after a trial so they can use what they learn about their strengths.\" Which next step addresses both concerns without an unsupported sweeping claim? 1: Assign roles and schedule a review after a trial.. 2: Assigned roles must never be reconsidered.. Answer 1 or 2.",
+  "newPrompt": "Read A: \"We want a good team project. Assign clear roles so every needed task has someone responsible.\" Read B: \"We want a good team project. Let members change roles after a trial so they can use what they learn about their strengths.\" Which next step fits both speakers' reasons without claiming too much? 1: Assign roles and schedule a review after a trial. 2: Assigned roles must never be reconsidered. Answer 1 or 2.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the synthesize prompts were worded far above grade 5 (\"addresses both concerns without an unsupported sweeping claim\") and printed a double mark (\"?.\"); reworded in grade 5 words. Same question, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 3,
+  "oldPrompt": "Read A: \"We want a good team project. Assign clear roles so every needed task has someone responsible.\" Read B: \"We want a good team project. Let members change roles after a trial so they can use what they learn about their strengths.\" Which unanswered question would most help develop a plan for the shared aim? 1: Which desk is oldest?. 2: When should the team review its roles?. Answer 1 or 2.",
+  "newPrompt": "Read A: \"We want a good team project. Assign clear roles so every needed task has someone responsible.\" Read B: \"We want a good team project. Let members change roles after a trial so they can use what they learn about their strengths.\" Which question would help most with a plan for what both speakers want? 1: Which desk is oldest? 2: When should the team review its roles? Answer 1 or 2.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the synthesize prompts were worded far above grade 5 (\"addresses both concerns without an unsupported sweeping claim\") and printed a double mark (\"?.\"); reworded in grade 5 words. Same question, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 3,
+  "oldPrompt": "Read A: \"We want people to stay dry while waiting. Build a roof over the queue so rain cannot fall directly on people.\" Read B: \"We want people to stay dry while waiting. Add side screens because wind blows rain under an open roof.\" Which next step addresses both concerns without an unsupported sweeping claim? 1: A roof alone always blocks rain from every direction.. 2: Consider a roof with side screens for wind-driven rain.. Answer 1 or 2.",
+  "newPrompt": "Read A: \"We want people to stay dry while waiting. Build a roof over the queue so rain cannot fall directly on people.\" Read B: \"We want people to stay dry while waiting. Add side screens because wind blows rain under an open roof.\" Which next step fits both speakers' reasons without claiming too much? 1: A roof alone always blocks rain from every direction. 2: Consider a roof with side screens for wind-driven rain. Answer 1 or 2.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the synthesize prompts were worded far above grade 5 (\"addresses both concerns without an unsupported sweeping claim\") and printed a double mark (\"?.\"); reworded in grade 5 words. Same question, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 3,
+  "oldPrompt": "Read A: \"We want people to stay dry while waiting. Build a roof over the queue so rain cannot fall directly on people.\" Read B: \"We want people to stay dry while waiting. Add side screens because wind blows rain under an open roof.\" Which unanswered question would most help develop a plan for the shared aim? 1: From which directions does rain enter the waiting area?. 2: Who owns the brightest umbrella?. Answer 1 or 2.",
+  "newPrompt": "Read A: \"We want people to stay dry while waiting. Build a roof over the queue so rain cannot fall directly on people.\" Read B: \"We want people to stay dry while waiting. Add side screens because wind blows rain under an open roof.\" Which question would help most with a plan for what both speakers want? 1: From which directions does rain enter the waiting area? 2: Who owns the brightest umbrella? Answer 1 or 2.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the synthesize prompts were worded far above grade 5 (\"addresses both concerns without an unsupported sweeping claim\") and printed a double mark (\"?.\"); reworded in grade 5 words. Same question, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 3,
+  "oldPrompt": "Read A: \"We want everyone to join games. Offer running games for pupils who enjoy moving quickly.\" Read B: \"We want everyone to join games. Offer seated games too so pupils who cannot run have choices.\" Which next step addresses both concerns without an unsupported sweeping claim? 1: Offer both running and seated games.. 2: Enjoying running proves everyone can run.. Answer 1 or 2.",
+  "newPrompt": "Read A: \"We want everyone to join games. Offer running games for pupils who enjoy moving quickly.\" Read B: \"We want everyone to join games. Offer seated games too so pupils who cannot run have choices.\" Which next step fits both speakers' reasons without claiming too much? 1: Offer both running and seated games. 2: Enjoying running proves everyone can run. Answer 1 or 2.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the synthesize prompts were worded far above grade 5 (\"addresses both concerns without an unsupported sweeping claim\") and printed a double mark (\"?.\"); reworded in grade 5 words. Same question, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 3,
+  "oldPrompt": "Read A: \"We want everyone to join games. Offer running games for pupils who enjoy moving quickly.\" Read B: \"We want everyone to join games. Offer seated games too so pupils who cannot run have choices.\" Which unanswered question would most help develop a plan for the shared aim? 1: Which fence board is longest?. 2: Which games can pupils with different needs use?. Answer 1 or 2.",
+  "newPrompt": "Read A: \"We want everyone to join games. Offer running games for pupils who enjoy moving quickly.\" Read B: \"We want everyone to join games. Offer seated games too so pupils who cannot run have choices.\" Which question would help most with a plan for what both speakers want? 1: Which fence board is longest? 2: Which games can pupils with different needs use? Answer 1 or 2.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the synthesize prompts were worded far above grade 5 (\"addresses both concerns without an unsupported sweeping claim\") and printed a double mark (\"?.\"); reworded in grade 5 words. Same question, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 3,
+  "oldPrompt": "Read A: \"We want families to receive notices. Send paper copies so families without internet access can read them.\" Read B: \"We want families to receive notices. Send digital copies so families can retrieve them away from home.\" Which next step addresses both concerns without an unsupported sweeping claim? 1: Every family has reliable internet access.. 2: Provide paper and digital versions of the same notice.. Answer 1 or 2.",
+  "newPrompt": "Read A: \"We want families to receive notices. Send paper copies so families without internet access can read them.\" Read B: \"We want families to receive notices. Send digital copies so families can retrieve them away from home.\" Which next step fits both speakers' reasons without claiming too much? 1: Every family has reliable internet access. 2: Provide paper and digital versions of the same notice. Answer 1 or 2.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the synthesize prompts were worded far above grade 5 (\"addresses both concerns without an unsupported sweeping claim\") and printed a double mark (\"?.\"); reworded in grade 5 words. Same question, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 3,
+  "oldPrompt": "Read A: \"We want families to receive notices. Send paper copies so families without internet access can read them.\" Read B: \"We want families to receive notices. Send digital copies so families can retrieve them away from home.\" Which unanswered question would most help develop a plan for the shared aim? 1: How can families indicate their preferred format?. 2: What pattern is on the teacher's bag?. Answer 1 or 2.",
+  "newPrompt": "Read A: \"We want families to receive notices. Send paper copies so families without internet access can read them.\" Read B: \"We want families to receive notices. Send digital copies so families can retrieve them away from home.\" Which question would help most with a plan for what both speakers want? 1: How can families indicate their preferred format? 2: What pattern is on the teacher's bag? Answer 1 or 2.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the synthesize prompts were worded far above grade 5 (\"addresses both concerns without an unsupported sweeping claim\") and printed a double mark (\"?.\"); reworded in grade 5 words. Same question, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 3,
+  "oldPrompt": "Read A: \"We want the plants watered reliably. Make a rota so each day has an assigned helper.\" Read B: \"We want the plants watered reliably. Check the soil first so helpers do not add water when it is already wet.\" Which next step addresses both concerns without an unsupported sweeping claim? 1: Assign daily soil checks and water when needed.. 2: A rota means the soil never needs checking.. Answer 1 or 2.",
+  "newPrompt": "Read A: \"We want the plants watered reliably. Make a rota so each day has an assigned helper.\" Read B: \"We want the plants watered reliably. Check the soil first so helpers do not add water when it is already wet.\" Which next step fits both speakers' reasons without claiming too much? 1: Assign daily soil checks and water when needed. 2: A rota means the soil never needs checking. Answer 1 or 2.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the synthesize prompts were worded far above grade 5 (\"addresses both concerns without an unsupported sweeping claim\") and printed a double mark (\"?.\"); reworded in grade 5 words. Same question, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 3,
+  "oldPrompt": "Read A: \"We want the plants watered reliably. Make a rota so each day has an assigned helper.\" Read B: \"We want the plants watered reliably. Check the soil first so helpers do not add water when it is already wet.\" Which unanswered question would most help develop a plan for the shared aim? 1: Which helper has the neatest handwriting?. 2: How will helpers record the soil checks?. Answer 1 or 2.",
+  "newPrompt": "Read A: \"We want the plants watered reliably. Make a rota so each day has an assigned helper.\" Read B: \"We want the plants watered reliably. Check the soil first so helpers do not add water when it is already wet.\" Which question would help most with a plan for what both speakers want? 1: Which helper has the neatest handwriting? 2: How will helpers record the soil checks? Answer 1 or 2.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the synthesize prompts were worded far above grade 5 (\"addresses both concerns without an unsupported sweeping claim\") and printed a double mark (\"?.\"); reworded in grade 5 words. Same question, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 3,
+  "oldPrompt": "Read A: \"We want visitors to understand the exhibits. Offer a guided tour so visitors can ask questions.\" Read B: \"We want visitors to understand the exhibits. Offer a self-guided route so visitors can move at their own pace.\" Which next step addresses both concerns without an unsupported sweeping claim? 1: All visitors prefer exactly the same pace.. 2: Offer a guided tour and a self-guided route.. Answer 1 or 2.",
+  "newPrompt": "Read A: \"We want visitors to understand the exhibits. Offer a guided tour so visitors can ask questions.\" Read B: \"We want visitors to understand the exhibits. Offer a self-guided route so visitors can move at their own pace.\" Which next step fits both speakers' reasons without claiming too much? 1: All visitors prefer exactly the same pace. 2: Offer a guided tour and a self-guided route. Answer 1 or 2.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the synthesize prompts were worded far above grade 5 (\"addresses both concerns without an unsupported sweeping claim\") and printed a double mark (\"?.\"); reworded in grade 5 words. Same question, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 3,
+  "oldPrompt": "Read A: \"We want visitors to understand the exhibits. Offer a guided tour so visitors can ask questions.\" Read B: \"We want visitors to understand the exhibits. Offer a self-guided route so visitors can move at their own pace.\" Which unanswered question would most help develop a plan for the shared aim? 1: Can staff support both options?. 2: Which exhibit case has the shiniest handle?. Answer 1 or 2.",
+  "newPrompt": "Read A: \"We want visitors to understand the exhibits. Offer a guided tour so visitors can ask questions.\" Read B: \"We want visitors to understand the exhibits. Offer a self-guided route so visitors can move at their own pace.\" Which question would help most with a plan for what both speakers want? 1: Can staff support both options? 2: Which exhibit case has the shiniest handle? Answer 1 or 2.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the synthesize prompts were worded far above grade 5 (\"addresses both concerns without an unsupported sweeping claim\") and printed a double mark (\"?.\"); reworded in grade 5 words. Same question, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 3,
+  "oldPrompt": "Read A: \"We want writers to improve their stories. Discuss ideas first so writers know which scenes need more development.\" Read B: \"We want writers to improve their stories. Check punctuation before sharing so readers can follow the sentences.\" Which next step addresses both concerns without an unsupported sweeping claim? 1: Review ideas, then check punctuation before sharing.. 2: Correct punctuation guarantees well-developed ideas.. Answer 1 or 2.",
+  "newPrompt": "Read A: \"We want writers to improve their stories. Discuss ideas first so writers know which scenes need more development.\" Read B: \"We want writers to improve their stories. Check punctuation before sharing so readers can follow the sentences.\" Which next step fits both speakers' reasons without claiming too much? 1: Review ideas, then check punctuation before sharing. 2: Correct punctuation guarantees well-developed ideas. Answer 1 or 2.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the synthesize prompts were worded far above grade 5 (\"addresses both concerns without an unsupported sweeping claim\") and printed a double mark (\"?.\"); reworded in grade 5 words. Same question, same answer."
+ },
+ {
+  "subject": "language",
+  "level": 3,
+  "oldPrompt": "Read A: \"We want writers to improve their stories. Discuss ideas first so writers know which scenes need more development.\" Read B: \"We want writers to improve their stories. Check punctuation before sharing so readers can follow the sentences.\" Which unanswered question would most help develop a plan for the shared aim? 1: What color is the writer's pencil?. 2: Which scenes need clearer development?. Answer 1 or 2.",
+  "newPrompt": "Read A: \"We want writers to improve their stories. Discuss ideas first so writers know which scenes need more development.\" Read B: \"We want writers to improve their stories. Check punctuation before sharing so readers can follow the sentences.\" Which question would help most with a plan for what both speakers want? 1: What color is the writer's pencil? 2: Which scenes need clearer development? Answer 1 or 2.",
+  "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the synthesize prompts were worded far above grade 5 (\"addresses both concerns without an unsupported sweeping claim\") and printed a double mark (\"?.\"); reworded in grade 5 words. Same question, same answer."
  }
 ];
 export const ANSWER_ID_RENAMES=new Map(QUESTION_REVISIONS.map(r=>[`${r.subject}-${r.level}-${hash(r.oldPrompt)}`,`${r.subject}-${r.level}-${hash(r.newPrompt)}`]));

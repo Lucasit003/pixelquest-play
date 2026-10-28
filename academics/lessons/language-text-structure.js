@@ -36,7 +36,7 @@ items(add){
  COMP.forEach(p=>COMPW.forEach(f=>passages.push(['compare',f(...p)])));
  PROB.forEach(([p,s])=>PROBW.forEach(f=>passages.push(['problem and solution',f(p,s)])));
  for(const [kind,text] of passages){const pic={t:'passages',title:'Read the passage',texts:[text]},words=text.toLowerCase().replace(/[.,:]/g,' '),found=SIGNALS[kind].filter(w=>new RegExp(`(^| )${w}( |$)`).test(words));
-  add('structure',`"${text}" ${ASK}`,kind,pic,`The signal words ${found.join(', ')} show ${kind}.`,ALSO[kind]);
+  add('structure',`"${text}" ${ASK}`,kind,pic,/* 28 Oct (elfact): one signal word read "The signal words so show"; the count now sets the wording and the words are quoted */(found.length===1?`The signal word '${found[0]}' shows ${kind}.`:`The signal words ${found.map(w=>`'${w}'`).join(', ')} show ${kind}.`),ALSO[kind]);
   /* Any short run of words from one clause of the passage that holds a signal word counts: "to solve it" and "as a result" as well as "solve". */
   const spans=new Set();for(const clause of text.toLowerCase().split(/[.,:;"]+/)){const w=clause.trim().split(/\s+/).filter(Boolean);for(let a=0;a<w.length;a++)for(let b=a+1;b<=Math.min(w.length,a+4);b++){const span=w.slice(a,b).join(' ');if(found.some(f=>new RegExp(`(^| )${f}( |$)`).test(span)))spans.add(span);}}
   add('signal',`"${text}" Write one signal word or phrase in this passage that shows its structure.`,found[0],pic,`Any of these signals it: ${found.join(', ')}.`,[...spans].filter(x=>x!==found[0]));}

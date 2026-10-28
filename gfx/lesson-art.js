@@ -196,10 +196,10 @@ const matter=(ctx,{jars,change,solve},p)=>{const list=jars||[{state:NEXT[change]
   const word=j.label||(pair?(t<.5?pair[0]:pair[1]):j.state);if(!j.hide||solve)label(ctx,word,x+w/2,y+h+22,15);});};
 /* Timeline: events as numbered stops along an arrow, labels alternating above and below so long
    ones never collide; they appear in order as p runs. A null event is a '?' stop that solve fills. */
-const timeline=(ctx,{events,fill,solve},p)=>{const n=events.length,x0=50,x1=PIC_W-50,y=150,X=i=>n<2?PIC_W/2:lerp(x0+20,x1-40,i/(n-1)),shown=p*n;
+const timeline=(ctx,{events,fill,solve,ends},p)=>{const n=events.length,x0=50,x1=PIC_W-50,y=150,X=i=>n<2?PIC_W/2:lerp(x0+20,x1-40,i/(n-1)),shown=p*n;
  ctx.strokeStyle=INK;ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(x0,y);ctx.lineTo(x1,y);ctx.stroke();
  ctx.fillStyle=INK;ctx.beginPath();ctx.moveTo(x1+14,y);ctx.lineTo(x1-4,y-10);ctx.lineTo(x1-4,y+10);ctx.closePath();ctx.fill();
- ctx.font='13px sans-serif';ctx.textBaseline='middle';ctx.textAlign='left';ctx.fillText('← earlier',x0,y+95);ctx.textAlign='right';ctx.fillText('later →',x1+14,y+95);
+ ctx.font='13px sans-serif';ctx.textBaseline='middle';ctx.textAlign='left';ctx.fillText(ends?.[0]??'← earlier',x0,y+95);ctx.textAlign='right';ctx.fillText(ends?.[1]??'later →',x1+14,y+95);
  events.forEach((e,i)=>{const t=clamp(shown-i);if(t<=0)return;const x=X(i),up=i%2===0;ctx.globalAlpha=t;
   ctx.fillStyle=e==null?PAPER:DOT;ctx.strokeStyle=INK;ctx.lineWidth=2;ctx.beginPath();ctx.arc(x,y,11,0,Math.PI*2);ctx.fill();ctx.stroke();
   ctx.fillStyle=e==null?INK:PAPER;ctx.font='bold 12px sans-serif';ctx.textAlign='center';ctx.fillText(e==null?'?':String(i+1),x,y);
@@ -406,7 +406,7 @@ export function describe(pic){const list=Array.isArray(pic)?pic:[pic];return lis
  q.t==='ruler'?describeRuler(q):
  q.t==='world'?describeWorld(q):
  q.t==='coins'?coinWords(q.coins):
- q.t==='timeline'?`a timeline, earlier to later: ${q.events.map(e=>e==null?'a blank':e).join(', ')}`:
+ q.t==='timeline'?`${q.ends?`a chain, ${q.ends[0].replace(/[←→]/g,'').trim()} first`:'a timeline, earlier to later'}: ${q.events.map(e=>e==null?'a blank':e).join(', ')}`:
  q.t==='matter'?(q.jars?q.jars.map(j=>`a jar of ${j.hide?'something':j.state}`).join(', '):`a jar where a ${NEXT[q.change]?.[0]} changes`):
  q.t==='word'?`the word ${q.base}${q.suffix&&q.solve?` with ${q.suffix} added`:''}${q.n&&(NOUN_ART[q.base]||NOUN_ANIM[q.base])?`, and ${q.n} of them`:''}`:
  q.t==='compass'?(q.from?`a compass rose, and ${q.to} beside ${q.from} on a map with north at the top`:q.face?`a compass rose with an arrow facing ${q.face}${q.turn?`, turning ${q.turn}`:''}`:'a compass rose'):
