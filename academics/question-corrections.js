@@ -23548,6 +23548,20 @@ export const QUESTION_REVISIONS=[
   "oldPrompt": "A practice survey shows a bench. Does that alone establish that everyone liked it: yes or no?",
   "newPrompt": "A practice survey shows a bench. Does that alone prove that everyone liked it: yes or no?",
   "reason": "Histwords 26 Oct (sweep): reading-records Try-it wording rewritten in grade 3 words (no \"establish\", \"presence or absence\"); same survey and answer."
+ },
+ {
+  "subject": "history",
+  "level": 4,
+  "oldPrompt": "Try it: after the Stamp Act, colonists stopped buying British goods. What did Parliament do in 1766?",
+  "newPrompt": "Try it: why did many colonists say Parliament had no right to tax them with the Stamp Act?",
+  "reason": "Revfix 27 Oct (exploit4 F7 sweep): the step's own narration said Parliament repealed the act in March 1766, so the Try-it now asks the idea (no representation in Parliament) instead; same step, tried state carries over."
+ },
+ {
+  "subject": "history",
+  "level": 4,
+  "oldPrompt": "Try it: which came first, Washington being chosen to lead the army or the Battle of Bunker Hill?",
+  "newPrompt": "Try it: did George Washington command the Americans at the Battle of Bunker Hill?",
+  "reason": "Revfix 27 Oct (exploit4 F7): the step's narration said Washington was chosen two days before Bunker Hill, so the Try-it now asks whether being chosen meant he commanded there (he took command in early July); same step, tried state carries over."
  }
 ];
 export const ANSWER_ID_RENAMES=new Map(QUESTION_REVISIONS.map(r=>[`${r.subject}-${r.level}-${hash(r.oldPrompt)}`,`${r.subject}-${r.level}-${hash(r.newPrompt)}`]));
