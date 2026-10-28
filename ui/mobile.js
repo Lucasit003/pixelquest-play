@@ -113,20 +113,27 @@ export function initMobile({world}={}){
  const prompt=doc().querySelector('#prompt'),act=doc().querySelector('#touch [data-key="interact"]');
  if(prompt&&act&&globalThis.MutationObserver)new MutationObserver(()=>{const t=promptVerb(prompt.textContent.replace(prompt.querySelector('kbd')?.textContent||'',''));act.classList.toggle('ready',!!t);if(t){act.dataset.label=t;act.setAttribute('aria-label',t);}}).observe(prompt,{childList:true,subtree:true,characterData:true});
  /* pads are re-measured when the layout can change (no polling timer: it would keep a test's event loop alive) */
- {const again=()=>measurePads();w.addEventListener('pq:scale',again);w.addEventListener('resize',again);const bar=doc().querySelector('#hotbar');if(bar&&globalThis.MutationObserver)new MutationObserver(again).observe(bar,{childList:true,attributes:true,subtree:true,attributeFilter:['class','hidden']});w.requestAnimationFrame?.(again);measurePads();}
+ {const again=()=>measurePads();w.addEventListener('pq:scale',again);w.addEventListener('resize',again);const bar=doc().querySelector('#hotbar');if(bar&&globalThis.MutationObserver)new MutationObserver(again).observe(bar,{childList:true,attributes:true,subtree:true,attributeFilter:['class','hidden']});const hud=doc().querySelector('#hud');if(hud&&globalThis.MutationObserver)new MutationObserver(again).observe(hud,{attributes:true,attributeFilter:['class','hidden']});w.requestAnimationFrame?.(again);measurePads();}
  return true;
 }
 /* 25 Oct (phone camera): how far the touch controls reach into the view, in world units, for the level camera
    (scenes/combat.js follow). Left: the joystick ghost (only matters when the hero's feet are level with it, padLTop). Right: the leftmost button of the action arc (attack, dodge,
    jump, potion, ability slots). A hero half-width is added so the whole sprite stays clear. Desktop never sets them. */
+const PHONE_FLOOR_GAP=20;
 export function measurePads(d=doc()){
- const cv=d?.querySelector('#world');if(!on||!cv?.width){STAGE.padL=STAGE.padR=STAGE.padLTop=0;return {l:0,r:0};}
+ const cv=d?.querySelector('#world');if(!on||!cv?.width){STAGE.padL=STAGE.padR=STAGE.padLTop=0;STAGE.hudTL=STAGE.hudTR=null;STAGE.padB=null;return {l:0,r:0};}
  const box=cv.getBoundingClientRect();if(!box.width)return {l:STAGE.padL|0,r:STAGE.padR|0};
  const k=box.width/cv.width,vis=el=>{const r=el.getBoundingClientRect();return r.width>0&&r.height>0&&getComputedStyle(el).visibility!=='hidden'&&getComputedStyle(el).display!=='none'?r:null;};
  const ghost=d.querySelector('#joy-ghost'),g=ghost&&vis(ghost);
  let minL=box.right;for(const el of d.querySelectorAll('#touch button,#hotbar button,#hud-potion')){const r=vis(el);if(r&&r.top>box.top+box.height*.3&&r.left>box.left+box.width/2)minL=Math.min(minL,r.left);}
  const HALF=20,cap=STAGE.camW*.35;
  STAGE.padL=g?Math.min(cap,Math.round((g.right-box.left)/k)+HALF):0;STAGE.padLTop=g?Math.round((g.top-box.top)/k):0;STAGE.padR=minL<box.right?Math.min(cap,Math.round((box.right-minL)/k)+HALF):0;
+ /* camface-oct28 (the phone camera's safe zone): the top-left hero panel (portrait, bars, gold) and the top-right Map/Journal/Menu
+    buttons, each as [how far the hero must stand from that side, the obstacle's bottom], world units. follow() keeps the hero clear of
+    one only while his head is level with it. padB: the floor band sits this far above the bottom edge (desktop keeps hudBottom, the
+    hotbar's 34 px; a phone has no bottom hotbar, so the band moves down and the hero's head comes out from under the panel). */
+ const top=(q,left)=>{const o=[];for(const el of d.querySelectorAll(q)){const r=vis(el);if(!r||r.top>box.top+box.height*.3||(r.left<box.left+box.width/2)!==left)continue;o.push([Math.min(cap,Math.round((left?r.right-box.left:box.right-r.left)/k)+HALF),Math.round((r.bottom-box.top)/k)]);}return o;};
+ STAGE.hudTL=top('#hud .hero-hud,#hud .hud-sub',true);STAGE.hudTR=top('#m-menu button',false);STAGE.padB=PHONE_FLOOR_GAP;
  return {l:STAGE.padL,r:STAGE.padR};
 }
 /* oct25-phone2: where a toast goes on a phone during a fight -- one compact strip at the bottom, between the joystick ghost

@@ -102,5 +102,5 @@ export function levelGeometry(level){
  return geo;}
 /* The camera's top edge: a band that fits above the hotbar is framed once; a taller one follows the hero. */
 /* v2:ui-mobile */export function setView(w=480,h=270){STAGE.camW=Math.max(64,Math.min(480,Math.round(w)));STAGE.camH=Math.max(64,Math.min(270,Math.round(h)));return {w:STAGE.camW,h:STAGE.camH};}
-export function camTopFor(geo,y){const H=/* v2:ui-mobile */STAGE.camH,maxTop=Math.max(0,(geo?.height||H)-H),vis=H-STAGE.hudBottom;if(!geo)return 0;
+export function camTopFor(geo,y){const H=/* v2:ui-mobile */STAGE.camH,maxTop=Math.max(0,(geo?.height||H)-H),vis=H-(/* camface-oct28: phones (ui/mobile.js measurePads) */STAGE.padB??STAGE.hudBottom);if(!geo)return 0;
  const fixed=geo.floorBottom-geo.floorTop<=vis-20;return Math.max(0,Math.min(maxTop,Math.round(fixed?geo.floorBottom-vis:y-vis/2)));}
