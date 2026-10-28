@@ -353,8 +353,8 @@ for(let i=0;i<13;i++){
 }
 for(let k=1;k<=13;k++){
  add('cs',2,k%3,'trees',`A perfect binary tree has height ${k}, counting the root as height 0. How many nodes does it contain?`,2**(k+1)-1,'Each level holds twice the nodes of the one above, and those powers of two sum to 2^(h+1) − 1.');
- add('cs',2,k%3,'graphs',`A tree — a connected undirected graph with no cycles — has ${k+5} vertices. How many edges does it have?`,k+4,'Every vertex but the root is reached by exactly one edge, so a tree on n vertices has n − 1 edges.');
- add('cs',2,k%3,'analysis',`Merge sort makes about n log₂ n comparisons. What is that value for n = ${2**k}?`,k*2**k,'Take log₂ of n first, then multiply that exponent back by n.');
+ add('cs',2,k%3,'graphs',`A tree — a connected undirected graph with no cycles — has ${k+5} vertices. How many edges does it have?`,k+4,'Pick any vertex as the root: every other vertex joins its parent by exactly one edge, so a tree on n vertices has n\u00a0−\u00a01 edges.');
+ add('cs',2,k%3,'analysis',`Merge sort makes about n log₂ n comparisons. What is that value for n = ${2**k}?`,k*2**k,'Take log₂ of n first, then multiply that exponent back by n. This is the usual estimate and an upper bound: for n a power of two, merge sort’s worst case is n log₂ n − n + 1 comparisons.');
 }
 for(let i=0;i<13;i++){
  const n=i+1;
