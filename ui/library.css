@@ -752,6 +752,8 @@ html.m-mode dialog[data-view=lesson] .lesson-footer .actions>.try-it-cue[hidden]
 .edu-mastery-bar i{display:block;height:100%;background:var(--accent,#5f8f4e)}
 .edu-mastery-left{color:var(--edu-ink-soft,#5a4632)}
 .edu-mastery.done .edu-mastery-bar i{background:#e8b84a}
+/* exploit4-oct27: the mastery label used parchment ink and vanished on the dark Lesson complete and Quiz result screens; match the dark-screen step colours */
+.lesson .edu-mastery-k,.result .edu-mastery-k{color:var(--gold-2,#f0d48a)}.lesson .edu-mastery-left,.result .edu-mastery-left{color:var(--muted,#c9b98f)}
 /* juice-oct27: the first-ability awakening lands harder: the icon bursts in from small and bright, one gold ring swells out
    behind it and the ribbon drops in after; all once, nothing repeats or flashes (reduced motion: shown at rest) */
 .edu-unlock.edu-awakening .edu-unlock-icon{animation:edu-awaken-icon .7s cubic-bezier(.2,1.6,.4,1) both}

@@ -19,7 +19,7 @@ import {abilityIconName,SUBJECT_ICON,ownIconURL} from './icons.js';
 
 export const CARD_W=1200,CARD_H=630,PLAY_URL='https://lucasit003.github.io/pixelquest-play/',GAME_TITLE='PixelQuest',GAME_SUB='The Thorn Kingdom';
 export const SHARE_NOTE='Only share with people you know.';
-const FONT='"Pixel Operator", monospace',INK='#3a2614',INK2='#6e4b28',CREAM='#f1e6cc',SHADOW='#1a0f0b';
+export const STAR_GAP=12;const FONT='"Pixel Operator", monospace',INK='#3a2614',INK2='#6e4b28',CREAM='#f1e6cc',SHADOW='#1a0f0b';
 
 export function heroCardModel(s={}){
  const hero=CLASSES[s.hero]?s.hero:'warrior',c=CLASSES[hero],typed=String(s.heroNames?.[hero]??'').trim().slice(0,24);
@@ -68,7 +68,7 @@ export function drawHeroCard(cv,m,art={},hero=null){if(cv.width!==CARD_W||cv.hei
  const dv=art['skin/divider.png'];if(dv)blit(c,dv,0,0,dv.width,dv.height,Math.round(R.x+R.w/2-dv.width),R.y+152,dv.width*2,dv.height*2);
  /* stars and furthest level */
  let y=R.y+186;const st=art['skin/star-gold.png'];if(st)blit(c,st,0,0,32,32,X,y,48,48);
- text(c,`${m.stars}`,X+58,y+38,{size:48,bold:true});text(c,`of ${m.maxStars} stars`,X+60+c.measureText(`${m.stars}`).width,y+38,{size:32,color:INK2});
+ text(c,`${m.stars}`,X+58,y+38,{size:48,bold:true});/* exploit4-oct27: a word space after the count (it read "9of 234 stars") */{const sx=X+58+c.measureText(`${m.stars}`).width+STAR_GAP,room=X+IW/2-16-sx,of=`of ${m.maxStars} stars`;c.font=`32px ${FONT}`;const sz=c.measureText(of).width<=room?32:24;text(c,of,sx,y+38,{size:sz,color:INK2,max:room});}
  icon(c,art,{name:'swords'},X+IW/2-8,y,48);text(c,'FURTHEST LEVEL BEATEN',X+IW/2+48,y+14,{size:16,bold:true,color:INK2});
  text(c,m.furthest?m.furthest.name:'Just setting out',X+IW/2+48,y+44,{size:32,bold:true,max:IW/2-52});
  if(m.furthest)text(c,m.furthest.chapter,X+IW/2+48,y+64,{size:16,color:INK2});

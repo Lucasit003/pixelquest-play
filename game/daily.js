@@ -36,17 +36,28 @@ const hash=str=>{let h=2166136261;for(const c of String(str)){h^=c.charCodeAt(0)
 /* the day's goals: one per kind, from the date only */
 export function goalsFor(day){const h=hash('daily:'+day);return KINDS.map((k,i)=>{const pool=GOALS.filter(g=>g.kind===k);return GOAL[pool[(h>>>(i*8))%pool.length].id];});}
 export const emptyDaily=()=>({day:null,n:{},done:[]});
+/* exploit4-oct27 (playtest: the device clock moved back and forth between two dates re-paid both days' goals every switch, 174
+   gold in three switches): s.daily.paid = {'YYYY-MM-DD':[goalId]} remembers which goals each of the last PAID_DAYS days already
+   paid, so a day that comes back (a clock set back, then forward again) shows its goals as done and pays nothing twice. It is
+   only that record: never shown, never counted, no streak, and a real new day still starts fresh. A date earlier than every
+   remembered day while the record is full counts as paid out (a cycle through many dates cannot push a day out and back in).
+   Only present once a goal has paid, so a save that never finished one keeps the {day,n,done} shape. */
+export const PAID_DAYS=14;
+const cleanIds=a=>Array.isArray(a)?[...new Set(a.filter(id=>GOAL[id]))].slice(0,KINDS.length):[];
+function trimPaid(p){const out={};for(const k of Object.keys(p||{}).filter(k=>DAY.test(k)).sort().reverse().slice(0,PAID_DAYS)){const ids=cleanIds(p[k]);if(ids.length)out[k]=ids;}return out;}
 export function cleanDaily(v){const d=emptyDaily();if(!v||typeof v!=='object'||Array.isArray(v))return d;if(typeof v.day==='string'&&DAY.test(v.day))d.day=v.day;
  if(v.n&&typeof v.n==='object')for(const [id,c] of Object.entries(v.n))if(GOAL[id]&&Number.isFinite(+c))d.n[id]=Math.max(0,Math.min(GOAL[id].need,Math.floor(+c)));
- if(Array.isArray(v.done))d.done=[...new Set(v.done.filter(id=>GOAL[id]))].slice(0,KINDS.length);return d;}
-/* a new day replaces the record: nothing carries over, nothing is lost but the unfinished goals */
-export function syncDay(s,now=Date.now()){const day=dayKey(now);if(!s.daily||s.daily.day!==day)s.daily={day,n:{},done:[]};return s.daily;}
+ d.done=cleanIds(v.done);if(v.paid&&typeof v.paid==='object'&&!Array.isArray(v.paid)){const p=trimPaid(v.paid);if(Object.keys(p).length)d.paid=p;}return d;}
+/* a new day replaces the record: nothing carries over, nothing is lost but the unfinished goals (a remembered day comes back as it was paid) */
+export function syncDay(s,now=Date.now()){const day=dayKey(now);if(!s.daily||s.daily.day!==day){const old=s.daily,paid={...(old?.paid||{})};if(old?.day&&old.done?.length)paid[old.day]=cleanIds([...(paid[old.day]||[]),...old.done]);
+  const kept=trimPaid(paid),keys=Object.keys(kept).sort(),full=keys.length>=PAID_DAYS&&day<keys[0],done=full?goalsFor(day).map(g=>g.id):cleanIds(kept[day]);
+  s.daily={day,n:{},done};if(keys.length)s.daily.paid=kept;}return s.daily;}
 export const rewardText=g=>g.gold?`+${g.gold} gold`:`+${g.n||1} ${g.matName||'material'}`;
 export function dailyView(s,now=Date.now()){const d=syncDay(s,now);return goalsFor(d.day).map(g=>{const done=d.done.includes(g.id);return {...g,have:done?g.need:Math.min(g.need,d.n[g.id]|0),done,reward:rewardText(g)};});}
 /* An event from EVENTS ('visit' with arg = the room; 'foes', 'secret', 'star' with arg = how many). Returns the goals it finished, already paid. */
 export function dailyEvent(s,on,arg,now=Date.now()){if(!EVENTS.includes(on))return [];const by=on==='foes'||on==='secret'||on==='star'?Math.max(0,Math.floor(+arg||0)):1;if(!by)return [];const d=syncDay(s,now),out=[];
  for(const g of goalsFor(d.day)){if(g.on!==on||d.done.includes(g.id)||(g.room&&g.room!==arg))continue;d.n[g.id]=Math.min(g.need,(d.n[g.id]|0)+by);
   if(d.n[g.id]>=g.need){d.done.push(g.id);if(g.gold)s.gold=(s.gold|0)+g.gold;else if(g.mat){s.gear??={};s.gear.mats??={};s.gear.mats[g.mat]=(s.gear.mats[g.mat]|0)+(g.n||1);}out.push({...g,line:`Daily goal done: ${rewardText(g)}`});}}
- return out;}
+ if(out.length)d.paid=trimPaid({...(d.paid||{}),[d.day]:d.done});return out;}
 /* the most gold any one day's three goals can pay (the balance pin) */
 export const maxDailyGold=()=>KINDS.reduce((t,k)=>t+Math.max(...GOALS.filter(g=>g.kind===k).map(g=>g.gold||0)),0);

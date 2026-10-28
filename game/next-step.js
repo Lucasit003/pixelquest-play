@@ -84,7 +84,7 @@ export function nextStep(save,{room}={}){
  if(!levelDone(save,'e1'))return {id:'goblin-camp',text:'Take the south gate to Goblin Camp.',target:{kind:'pad',id:'e1'}};
  if(!earned(save)&&a){
   const t=inProgress(save,a.subject);
-  if(!t)return {id:'start-lesson',text:`Start a ${subject} lesson at the Library.`,target:{kind:'library'}};
+  if(!t)return {id:'start-lesson',text:`Start ${/^[aeiou]/i.test(subject||'')?'an':'a'} ${subject} lesson at the Library.`/* exploit4-oct27: it read "Start a English lesson" */,target:{kind:'library'}};
   const r=testReady(save,t);
   if(!r.quiz)return {id:'quiz',text:`Take the quiz on “${t.title}” at the Library.`,target:{kind:'library'}};
   if(r.practice<PRACTICE_FIRST)return {id:'practice',text:(n=>`Practice ${n} more question${n===1?'':'s'} at the Library, then try the next level.`)(PRACTICE_FIRST-r.practice)/* first-hour playtest 24 Oct: "(8/25). After 10" read as two goals */,target:{kind:'library'}};

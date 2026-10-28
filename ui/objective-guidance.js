@@ -30,7 +30,12 @@ export function guidancePlacement({player,target,camera,viewport,obstacles=[],wi
   /* Slide along the edge until the chip clears the HUD (playtest 14 Oct: with the goal behind the minimap and
      hotbar corner, four fixed offsets all collided and the arrow vanished). */
   const spots=[base];for(let step=36;step<=720;step+=36)for(const delta of [-step,step]){spots.push(fit({x:base.x+delta,y:base.y}));spots.push(fit({x:base.x,y:base.y+delta}));}
-  const spot=spots.find(v=>!obstacles.some(o=>intersects(box(v),o)));
+  const free=v=>!obstacles.some(o=>intersects(box(v),o));
+  /* exploit4-oct27: on a phone the dialogue box (bottom middle) and the action buttons (right) block every straight slide,
+     so the chip vanished during Home's opening line; only then try diagonal steps too, nearest first */
+  let spot=spots.find(free);
+  if(!spot){const diag=[];for(let dy=36;dy<=360;dy+=36)for(let dx=36;dx<=720;dx+=36)for(const [a,b] of [[-dx,-dy],[dx,-dy],[-dx,dy],[dx,dy]])diag.push(fit({x:base.x+a,y:base.y+b}));
+   spot=diag.sort((p,q)=>Math.hypot(p.x-base.x,p.y-base.y)-Math.hypot(q.x-base.x,q.y-base.y)).find(free);}
   if(!spot)return null;
   return{left:Math.round(spot.x-size/2),top:Math.round(spot.y-size/2),width:size,height:size,angle:Math.atan2(goal.y-spot.y,goal.x-spot.x)*180/Math.PI+90,edge:true,labelAbove:!below};
  }
@@ -70,7 +75,8 @@ const CSS=`
 :root[data-motion="reduced"] .objective-guide{animation:none}
 `;
 /* first-hour playtest 24 Oct: the keyboard bar along the bottom was missing, so an edge arrow sat on top of its keycaps */
-const HUD='.hero-hud,.hud-sub,#objective,#map-btn,#hotbar,#next-unlock,#prompt span,.dpad,.touch-actions,#toast.show,#keyboard-actions';
+const HUD='.hero-hud,.hud-sub,#objective,#map-btn,#hotbar,#next-unlock,#prompt span,.dpad,.touch-actions,#toast.show,#keyboard-actions,#ui-dialogue.show';
+/* exploit4-oct27: the open dialogue box is an obstacle too (the edge chip and its name sat under Home's opening line and Wil's Barracks line) */
 
 /** Call update after drawWorld so world.camera is current; hide before the map's
  * early-return branch. Layout and objective work are capped at 10 Hz, never per frame. */

@@ -213,7 +213,12 @@ function dodgeRing(c,p){const v=cooldownView(p.dodgeCd,DODGE_CD,p.ringWas||0);p.
 /* juice-oct27 combo counter (game/feel.js comboView): from 5 hits in a row, "N HITS" on the right of the stage, under the boss
    bar; the number hops up 2 px on each hit (never flashes) and warms from cream to gold to orange as the chain grows. */
 const COMBO_COL=['#f4ead2','#ffd96b','#ffb547','#ff8a3d'];
-function drawCombo(c,s){const v=comboView(s.hitChain,s.time||0);if(!v)return;const W=STAGE.camW,x=W-14,y=Math.round(STAGE.camH*.3),pop=v.pop&&s.motion!==false;c.save();c.globalAlpha*=v.alpha;
+/* exploit4-oct27: on a phone the right edge holds the interact and Defend buttons, which hid the combo; there it sits on the left, below the hero panel and gold, above the stick */
+export function comboAnchor(phone,W=STAGE.camW,H=STAGE.camH){return phone?{x:14,y:Math.round(H*.42),align:'left'}:{x:W-14,y:Math.round(H*.3),align:'right'};}
+const phoneView=c=>!!c?.canvas?.ownerDocument?.documentElement?.classList?.contains('m-mode');
+function drawCombo(c,s){const v=comboView(s.hitChain,s.time||0);if(!v)return;const A=comboAnchor(phoneView(c)),y=A.y,pop=v.pop&&s.motion!==false;c.save();c.globalAlpha*=v.alpha;
+ if(A.align==='left'){const nw=measurePixelText(String(v.n),{scale:1,bold:true})||String(v.n).length*7;drawPixelText(c,String(v.n),A.x,y-(pop?2:0),{scale:1,color:COMBO_COL[v.tier],outline:'#1a0f0b',bold:true,align:'left'});drawPixelText(c,'HITS',A.x+nw+4,y,{scale:1,color:'#f4ead2',outline:'#1a0f0b',bold:false,align:'left'});c.restore();return;}
+ const x=A.x;
  drawPixelText(c,String(v.n),x-(measurePixelText('HITS',{scale:1})||28)-4,y-(pop?2:0),{scale:1,color:COMBO_COL[v.tier],outline:'#1a0f0b',bold:true,align:'right'});
  drawPixelText(c,'HITS',x,y,{scale:1,color:'#f4ead2',outline:'#1a0f0b',bold:false,align:'right'});c.restore();}
 function hurtVignette(c,s,t){const p=s.player;if(!p||!(p.hp>0)||!p.maxHp)return;const low=p.hp/p.maxHp<.3?.28+(s.motion?.08*Math.sin(t*5.5):0):0,a=Math.max(low,(s.hurtFlash||0)/.3*.34);if(a<=.01)return;
