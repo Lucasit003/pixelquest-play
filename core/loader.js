@@ -88,7 +88,11 @@ if(LIVE){
 }
 
 /* ---------- loading items through the game's own loaders ---------- */
-async function lib(){const [sp,bi]=await Promise.all([import('../gfx/actors/sprites.js'),import('../gfx/biomes/index.js')]);return {sp,bi};}
+let Lc=null;async function lib(){if(Lc)return Lc;const [sp,bi]=await Promise.all([import('../gfx/actors/sprites.js'),import('../gfx/biomes/index.js')]);return Lc={sp,bi};}
+/* townchunk-oct28: one Image per plain image url, shared with scenes/town.js (its village streamer and rooms load through this), so
+   a chunk the town has streamed counts as loaded here and a chunk the loader holds a scene for is the one the town draws. */
+export function heldImage(url){let im=held.get(url);if(im||typeof Image==='undefined')return im||null;im=new Image();im.decoding='async';im.onerror=()=>{im._failed=true;};im.src=new URL(url,BASE).href;held.set(url,im);return im;}
+export const dropImage=url=>{held.delete(url);};
 function itemPaths(i){if(i.t==='sprite')return [`assets/sprites/${i.id}.json`,`assets/sprites/${i.id}.png`];
  if(i.t==='biome'){const d=`assets/biomes/${i.key}/`;return M?Object.keys(M.FILES[d]||{}).filter(n=>!/-(map|overview)\.webp$/.test(n)).map(n=>d+n):[];}
  return [i.url];}
@@ -100,7 +104,7 @@ function settled(i,L){if(i.t==='sprite'){const s=L.sp.loadSprite(i.id);return s.
 function start(i,L){if(i.t==='sprite'){L.sp.loadSprite(i.id);return;}
  if(i.t==='biome'){L.bi.preloadBiome(i.key);return;}
  if(held.has(i.url))return;
- if(i.t==='img'){const im=new Image();im.decoding='async';im.onerror=()=>{im._failed=true;};im.src=new URL(i.url,BASE).href;held.set(i.url,im);return;}
+ if(i.t==='img'){heldImage(i.url);return;}
  const rec={settled:false};held.set(i.url,rec);
  const p=i.t==='mod'?import(new URL(i.url,BASE).href):fetch(new URL(i.url,BASE)).then(r=>r.ok?r.arrayBuffer():null);
  p.catch(()=>null).then(()=>{rec.settled=true;});}
@@ -119,7 +123,8 @@ async function groups(){return G||(G=await import('./asset-groups.js'));}
 async function keepOnly(names){const g=await groups(),L=await lib(),hero=C.hero(),free=g.releasable();
  const keepS=new Set([...g.SHARED_SPRITES,...g.COMBAT_FX,...g.group('hero:'+hero).map(i=>i.id)]),keepB=new Set(),keepI=new Set();
  /* the village is drawn again on every return home: its images are never let go */
- for(const n of ['hub',...names])for(const i of g.group(n,{hero,started:true})){if(i.t==='sprite')keepS.add(i.id);else if(i.t==='biome')keepB.add(i.key);else keepI.add(i.url);}
+ /* townchunk-oct28: and Begin's own set (a new game's Home room), so a scene change never forgets what Begin already holds */
+ for(const n of ['hub','hubstart',...names])for(const i of g.group(n,{hero,started:n!=='hubstart'})){if(i.t==='sprite')keepS.add(i.id);else if(i.t==='biome')keepB.add(i.key);else keepI.add(i.url);}
  for(const k of L.bi.loadedBiomes?.()||[])if(!keepB.has(k)&&L.bi.releaseBiome(k))S.released.biomes++;
  for(const id of L.sp.loadedSprites?.()||[])if(free.has(id)&&!keepS.has(id)&&L.sp.releaseSprite(id))S.released.sprites++;
  for(const u of [...held.keys()])if(!keepI.has(u))held.delete(u);}
@@ -127,21 +132,28 @@ async function onScene(scene,level){S.scene=scene;S.level=level;if(scene==='titl
  await keepOnly(scene==='level'?['level:'+level]:scene==='worldmap'?['worldmap']:[]);}
 /* Use the existing screen at an explicit scene boundary; the title never waits for town art. */
 export function prepareScene(name,{hero='warrior',pet,started=false}={}){if(!LIVE)return null;return (async()=>{const g=await groups();
- const items=[...g.group(name,{hero,started}),...(name==='hub'?[...g.group('hero:'+hero),...g.group('pet:'+pet),...g.SHARED_SPRITES.map(id=>({t:'sprite',id})),...g.SHARED_IMAGES.map(url=>({t:'img',url}))]:[])];
+ /* townchunk-oct28: Begin waits for the arrival view only (core/asset-groups.js hubstart); the rest of the village streams in behind it */
+ const items=[...g.group(name==='hub'?'hubstart':name,{hero,started}),...(name==='hub'?[...g.group('hero:'+hero),...g.group('pet:'+pet),...g.SHARED_SPRITES.map(id=>({t:'sprite',id})),...g.SHARED_IMAGES.map(url=>({t:'img',url}))]:[])];
  raise();screen();paint(0,'Getting ready…',true);
  try{await loadGroup(items,{onTick:p=>paint(Math.min(99,p))});}finally{paint(100);hide();lower();}})();}
 /* The pre-v2 env sheets (gfx/assets.js) no longer load in a live game: totems and traps, their last users, draw PixelLab
    props now (9 Oct, gfx/world.js TOTEM_SPRITE). */
 /* A scene whose art is still loading holds the world behind the loading panel: a level until its stage and atlases
    are in (enemies would otherwise fight unseen), the village until its ground is in. */
-async function hold(items,title,still){if(await groupReady(items))return;const w=C.world;raise();const was=w.paused;w.paused=true;
+async function hold(items,title,still,raised=false){if(!raised&&await groupReady(items))return;const w=C.world;if(!raised)raise();const was=w.paused;w.paused=true;
  screen();el.classList.add('pq-over');el.querySelector('[data-load-title]').textContent=title;paint(0,'Getting the stage ready…',true);
  await loadGroup(items,{cap:60000,onTick:p=>paint(Math.min(99,p))});paint(100);hide();lower();
  const modal=document.querySelector('#modal');if(still()&&!was&&!modal?.open)w.paused=false;}
 async function gate(id){const g=await groups(),l=g.levelInfo(id);return hold(g.group('level:'+id,{hero:C.hero()}),(l?.name||'The road').toUpperCase(),()=>C.world.level?.id===id);}
 let hubMod=null;
+/* townchunk-oct28: an arrival in the village (scenes/town.js hubArrival: spawn, home from a level, a room's door, fast travel) is
+   held only until its view is in (core/asset-groups.js hubat); a walk beyond it is never held: the town draws the overview over a
+   chunk still on its way and streams the rest. arrived() runs inside the arrival itself, so the panel is up before the next frame. */
+const arrivalItems=a=>G&&a?G.group('hubat:'+Math.round(a.x)+','+Math.round(a.y)):null;
 async function gateHub(){hubMod??=await import('../scenes/town.js');if(hubMod.hubState?.().room!=='village'||S.gated)return;
- const g=await groups();return hold(g.group('hub',{started:true}),'OAKHAVEN',()=>!C.world.level);}
+ const g=await groups(),a=hubMod.hubArrival?.();return hold(a?g.group('hubat:'+Math.round(a.x)+','+Math.round(a.y)):g.group('hub',{started:true}),'OAKHAVEN',()=>!C.world.level);}
+function arrived(a){if(!C||S.gated||document.querySelector('#modal[open][data-view=welcome]')||C.world.level)return;const items=arrivalItems(a);
+ if(!items||!Lc){gateHub();return;}if(items.every(i=>settled(i,Lc)))return;raise();hold(items,'OAKHAVEN',()=>!C.world.level,true);}
 
 /* lightload-oct27: a loading screen that holds a scene drops any music still downloading (core/audio.js holdMusic: the
    art behind the panel gets the whole link) and lets the wanted track start again once the last panel is down. */
@@ -166,6 +178,7 @@ export async function perfBoot(ctx){C=ctx;if(!LIVE){await ctx.legacy?.();return;
   /* lightload-oct27: music waits while a loading screen holds a scene (core/audio.js setMusicGate). The short first wait lets a
      scene that is about to be held (a level's gate() checks its group first) raise the panel before the check. */
   import('./audio.js').then(a=>a.setMusicGate?.(musicGate)).catch(()=>{});
+  import('../scenes/town.js').then(m=>{hubMod=m;m.hubOnArrive?.(arrived);}).catch(()=>{});lib();groups();
   setTimeout(registerSW,3000);
  }catch(e){console.warn('loader',e);hide();}}
 

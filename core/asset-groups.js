@@ -20,6 +20,7 @@ import ROOMS from '../assets/town/interiors-reviewed-oct13.js';
 import {heroSpriteIds,allHeroSpriteIds} from '../gfx/actors/hero-directions.js';
 import {petSpriteIds} from '../gfx/actors/pet-directions.js';
 import {musicFile,musicKey} from './audio.js';
+import {townViewChunks} from './town-view.js';
 
 export const HEROES=['warrior','mage','rogue','ranger','paladin','berserker','summoner'];
 /* combat-fx.js builds fx-<shape>-<element> ids from colours at draw time, so every level wants the set */
@@ -35,6 +36,14 @@ const sceneImages=(D,dir)=>[...D.chunks.map(c=>c[4]),...D.pages.map(p=>p[0]),D.a
 export const TITLE_VIEW={x:1440,y:1000,w:480+256,h:270+256};
 function backdrop(){const {x,y,w,h}=TITLE_VIEW,x0=x-w/2,x1=x+w/2,y0=y-h/2,y1=y+h/2;
  return [...VILLAGE.chunks.filter(([cx,cy,cw,ch])=>cx<x1&&cx+cw>x0&&cy<y1&&cy+ch>y0).map(c=>c[4]),...VILLAGE.pages.map(p=>p[0]),VILLAGE.anim?.tiles,VILLAGE.anim?.cellsImage].filter(Boolean).map(f=>({t:'img',url:TOWN+f}));}
+/* townchunk-oct28: the village streams (core/town-view.js). hubcore is what any village view needs besides its ground
+   (sprite pages, water, the overview that stands in for a chunk still loading, effects, markers, shadow); hubat:<x>,<y>
+   adds the ground chunks under the arrival view at that point; hubstart is what Begin waits for: a new game wakes at
+   Home (scenes/town.js beatDue('new-game')), so the Home room alone, anyone else the market-lane spawn view. 'hub' stays
+   the whole village (kept in memory on every scene change, streamed in the background by scenes/town.js). */
+const TOWN_BITS=[{t:'img',url:TOWN+'fx.webp'},{t:'img',url:'ui/skin/packicons3/town-markers.png'},{t:'img',url:TOWN+'shadow.png'}];
+export const townSpawn=(D=VILLAGE)=>{const p=D.points.find(q=>q.type==='spawn');return p?[...(p.stand||[p.x,p.y])]:[D.w/2,D.h/2];};
+export const TOWN_STREAMS=true;
 const uniq=list=>{const seen=new Set();return list.filter(i=>{const k=i.t+':'+(i.id||i.key||i.url);if(seen.has(k))return false;seen.add(k);return true;});};
 
 /* Every sprite an enemy type can show: its own atlas, any fx-* sheet its definition names (projectiles, impacts,
@@ -61,6 +70,9 @@ export function group(name,{hero='warrior',started=true}={}){const [kind,arg]=St
  if(kind==='hero')return heroSpriteIds(arg).map(id=>({t:'sprite',id}));
  if(kind==='pet')return arg?petSpriteIds({key:arg}).map(id=>({t:'sprite',id})):[];
  if(kind==='room'){const D=ROOMS[arg];return D?sceneImages(D,TOWN):[];}
+ if(kind==='hubcore')return uniq([...[...VILLAGE.pages.map(p=>p[0]),VILLAGE.anim?.tiles,VILLAGE.anim?.cellsImage,VILLAGE.overview].filter(Boolean).map(f=>({t:'img',url:TOWN+f})),...TOWN_BITS]);
+ if(kind==='hubat'){const [x,y]=String(arg||'').split(',').map(Number);if(!Number.isFinite(x)||!Number.isFinite(y))return group('hub',{started:true});return uniq([...group('hubcore'),...townViewChunks(x,y,VILLAGE).map(i=>({t:'img',url:TOWN+VILLAGE.chunks[i][4]}))]);}
+ if(kind==='hubstart')return started?group('hubat:'+townSpawn().join(',')):uniq([...TOWN_BITS,...group('room:home')]);
  if(kind==='hub')return uniq([...sceneImages(VILLAGE,TOWN),{t:'img',url:TOWN+'fx.webp'},{t:'img',url:'ui/skin/packicons3/town-markers.png'},{t:'img',url:TOWN+'shadow.png'},
   /* a new game wakes at Home (scenes/town.js beatDue('new-game')) */...(started?[]:group('room:home'))]);
  /* The title uses key art; class selection streams small previews and only its selected hero. */

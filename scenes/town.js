@@ -23,6 +23,8 @@ import {questLive, currentStep, questState} from '../game/quests.js';
 import {loadSprite as loadActor, drawSprite as drawActor} from '../gfx/actors/sprites.js';
 import {swayTable, drawSwayed, stepCritters, critterDraws, leafDraws} from '../gfx/motion.js';
 import {TOWN_SPOTS, townPlace, visitPlace, FARM_NAME} from '../game/fasttravel.js';
+import {heldImage, dropImage} from '../core/loader.js';
+import {townViewChunks, chunkDist} from '../core/town-view.js';
 
 const BASE = new URL('../assets/town/', import.meta.url).href;
 /* v2:ui-mobile -- the hub camera follows the rendered view (STAGE.camW x camH): 480x270 on desktop, smaller on phones */
@@ -139,13 +141,52 @@ function scene(key) {
   scenes.set(key, S);
   return S;
 }
-const load = f => { if (typeof Image === 'undefined') return null; const im = new Image(); im.decoding = 'async'; im.src = BASE + f; return im; };
+/* townchunk-oct28: images come from core/loader.js heldImage, so the loader's holds and the town share one Image per file */
+const load = f => typeof Image === 'undefined' ? null : heldImage('assets/town/' + f);
+/* townchunk-oct28: in a live browser the village's ground chunks stream (streamVillage); Node tools and jsdom keep loading them all at once */
+let STREAM = typeof window !== 'undefined' && typeof document !== 'undefined' && !/jsdom/i.test(globalThis.navigator?.userAgent ?? '');
+/** Tests: turn streaming on or off (before the village's images are first asked for). */
+export function hubStreaming(on) { STREAM = !!on; const V = scenes.get('village'); if (V) V.images = null; }
 function images(S) {
   if (S.images) return S.images;
-  const D = S.D;
-  S.images = {chunks: D.chunks.map(c => load(c[4])), pages: D.pages.map(p => load(p[0])),
-    tiles: D.anim.tiles ? load(D.anim.tiles) : null, cells: D.anim.cellsImage ? load(D.anim.cellsImage) : null, overview: load(D.overview)};
+  const D = S.D, lazy = STREAM && S.key === 'village';
+  S.images = {chunks: D.chunks.map(c => lazy ? null : load(c[4])), pages: D.pages.map(p => load(p[0])),
+    tiles: D.anim.tiles ? load(D.anim.tiles) : null, cells: D.anim.cellsImage ? load(D.anim.cellsImage) : null, overview: load(D.overview), lazy, order: [], failedAt: []};
   return S.images;
+}
+/* townchunk-oct28: the village's ground streams. Each frame (drawHub) the chunks under the view are asked for at once, and the
+   rest one or two at a time, nearest first to where the camera is heading (its velocity 1.2 s ahead), so a walk finds its ground
+   already in and the far side of town loads last. In a room, the village view outside its door comes first. A chunk still on its
+   way is drawn from the overview (drawHub); a failed one is asked for again 4 s later. */
+const STREAM_MAX = 2, STREAM_AHEAD = 1.2;
+function streamVillage(cx, cy, vx = 0, vy = 0) {
+  const V = scene('village'), I = images(V), D = V.D;
+  if (!I.lazy || I.all) return;
+  const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
+  let busy = 0, done = 0;
+  I.chunks.forEach((im, i) => {
+    if (!im) return;
+    if (im._failed || (im.complete && im.naturalWidth === 0)) { if (!I.failedAt[i]) I.failedAt[i] = now; else if (now - I.failedAt[i] > 4000) { dropImage('assets/town/' + D.chunks[i][4]); I.chunks[i] = null; I.failedAt[i] = 0; } }
+    else if (!im.complete) busy++; else done++;
+  });
+  if (done === D.chunks.length) { I.all = true; return; }
+  const ask = i => { I.chunks[i] = load(D.chunks[i][4]); I.order.push(i); busy++; };
+  for (const i of townViewChunks(cx, cy, D)) if (!I.chunks[i]) ask(i);
+  if (busy >= STREAM_MAX) return;
+  const px = cx + vx * STREAM_AHEAD, py = cy + vy * STREAM_AHEAD;
+  const rest = D.chunks.map((c, i) => [i, chunkDist(c, px, py)]).filter(([i]) => !I.chunks[i]).sort((a, b) => a[1] - b[1]);
+  for (const [i] of rest) { if (busy >= STREAM_MAX) break; ask(i); }
+}
+/** townchunk-oct28: the streamer's state, for the tests and the measurement tools. */
+export function hubStream() { const V = scene('village'), I = V.images; return {lazy: !!I?.lazy, total: V.D.chunks.length, requested: I ? I.chunks.filter(Boolean).length : 0, loaded: I ? I.chunks.filter(im => ready(im)).length : 0, order: I ? [...I.order] : [], all: !!I?.all}; }
+/** townchunk-oct28: one streaming step as the frame would take it (tests; drawHub calls the same), optionally with the camera's velocity. */
+export function hubStreamStep(v) { if (v) { H.vx = v.vx ?? 0; H.vy = v.vy ?? 0; } pumpStream(); return hubStream(); }
+function pumpStream() {
+  if (!STREAM) return;
+  const S = current();
+  if (S.key === 'village') return streamVillage(H.cam.x, H.cam.y + 10, H.vx ?? 0, H.vy ?? 0);
+  const door = returnDoor(S), [x, y] = door ? [door.sx, door.sy] : spawnPoint();
+  streamVillage(x, y);
 }
 const ready = im => im && im.complete !== false && (im.naturalWidth ?? 1) > 0;
 
@@ -260,7 +301,12 @@ const footBlocked = (S, x, y) => blockedAt(S, x - FOOT.hw, y - FOOT.up) || block
 const H = {S: null, player: null, cam: {x: 0, y: 0}, fade: null, near: null, time: 0, from: null, save: null, events: [], drawT: 0};
 const current = () => H.S ?? (H.S = scene('village'));
 
-function placeAt(p, S, x, y) { H.S = S; p.x = x; p.y = y; H.cam.x = x; H.cam.y = y; H.snap = true; }
+function placeAt(p, S, x, y) { H.S = S; p.x = x; p.y = y; H.cam.x = x; H.cam.y = y; H.snap = true; H.vx = H.vy = 0;
+  /* townchunk-oct28: every arrival in the village goes through here; core/loader.js holds it until the arrival view is in */
+  if (S.key === 'village') { H.arrival = {x, y}; H.onArrive?.(H.arrival); } }
+/** townchunk-oct28: the last arrival point in the village (core/loader.js gates it), and the loader's hook for arrivals. */
+export const hubArrival = () => H.arrival ? {...H.arrival} : null;
+export function hubOnArrive(fn) { H.onArrive = fn; }
 function spawnPoint() { const S = scene('village'), sp = S.points.find(p => p.type === 'spawn'); return [sp.sx, sp.sy]; }
 
 /** Which room a village door leads to, or null. */
@@ -454,7 +500,10 @@ export function hubUpdate(world, dt, input) {
   /* Camera: ease toward the player, clamped to the map; a new room snaps. */
   const k = H.snap ? 1 : 1 - Math.exp(-dt * 10);
   H.snap = false;
+  const cx0 = H.cam.x, cy0 = H.cam.y;
   H.cam.x += (p.x - H.cam.x) * k; H.cam.y += (p.y - 20 - H.cam.y) * k;
+  /* townchunk-oct28: where the camera is heading, for the streamer's look-ahead */
+  if (k < 1 && dt > 0) { const a = Math.min(1, dt * 6); H.vx = (H.vx ?? 0) * (1 - a) + (H.cam.x - cx0) / dt * a; H.vy = (H.vy ?? 0) * (1 - a) + (H.cam.y - cy0) / dt * a; }
   H.near = H.fade ? null : nearest(S, p);
   /* only narration with nobody to walk up to plays by itself; a person's beat waits for the talk key (personBeat) */
   if (!H.fade) { const b = beatDue('near', current(), p) ?? beatDue('enter', current()); if (b && !isPerson(b.speaker)) fire(b); }
@@ -702,6 +751,7 @@ let xray = null;
  */
 export function drawHub(c, state, t, kit) {
   syncView(); /* v2:ui-mobile */
+  pumpStream(); /* townchunk-oct28 */
   const S = current(), D = S.D, I = images(S), p = state.player;
   H.drawT = t;
   /* 1:1 and whole pixels. A room smaller than the view is centred on a dark floor. */
@@ -716,7 +766,12 @@ export function drawHub(c, state, t, kit) {
   c.translate(-ox + shake, -oy);
   const vx0 = ox, vy0 = oy, vx1 = ox + VIEW_W, vy1 = oy + VIEW_H;
   /* ground */
-  D.chunks.forEach(([x, y, w, h], i) => { if (x < vx1 && x + w > vx0 && y < vy1 && y + h > vy0 && ready(I.chunks[i])) c.drawImage(I.chunks[i], x, y); });
+  /* townchunk-oct28: a chunk still streaming is drawn from the overview (the same baked village at 1/8 scale, nearest-neighbour), never a hole */
+  const os = D.overviewScale ?? .125;
+  D.chunks.forEach(([x, y, w, h], i) => { if (!(x < vx1 && x + w > vx0 && y < vy1 && y + h > vy0)) return;
+    if (ready(I.chunks[i])) c.drawImage(I.chunks[i], x, y);
+    else if (ready(I.overview)) c.drawImage(I.overview, x * os, y * os, w * os, h * os, x, y, w, h);
+    else if (!S.room) H.onArrive?.(H.arrival ?? {x: p.x, y: p.y}); });
   /* animated water: gap crop, frame, gap crop... per visible cell */
   const A = D.anim, T = D.tile, ms = state.motion === false ? 0 : t * 1000;
   if (A.cells.length && ready(I.tiles) && ready(I.cells)) {
