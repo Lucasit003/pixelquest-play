@@ -39,7 +39,8 @@ export function stageBannerObstacles(canvas,W,H,mobileAvoid=false){
  const size=`${W},${H}`,key=mobileAvoid?1:0,hit=state.by[key];
  if(!hit||hit.gen!==state.gen||hit.size!==size){
   const rects=[];
-  for(const el of d.querySelectorAll('.hero-hud,.hud-sub,#boss-hud,.map-panel,#hotbar button,#xp-track,#touch button'+(mobileAvoid?',#m-menu button,#joy-ghost,#joy-zone .nipple .back,#toast.compact.show':''))){
+  /* latechap-oct27: a showing toast on desktop too (the armour tip sat over "ARMOUR CRACKED!" on the Void Knight) */
+  for(const el of d.querySelectorAll('.hero-hud,.hud-sub,#boss-hud,.map-panel,#hotbar button,#xp-track,#touch button,#toast.show'+(mobileAvoid?',#m-menu button,#joy-ghost,#joy-zone .nipple .back':''))){
    state.resize?.observe(el);
    if(el.hidden)continue;
    const r=el.getBoundingClientRect();if(!r.width||!r.height)continue;

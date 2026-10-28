@@ -300,6 +300,8 @@ export class World{
   const [dx,dy]=beat.shot||[0,-16];
   this.cinematicTarget={x:king.x+dx,y:king.y+dy};
   if(!this.cinematicShot)this.cinematicShot={...this.cinematicTarget};
+  /* latechap-oct27: the epilogue freezes everyone where the fight ended, and Wil stood on the hero (m7, Moltar's kneel); he steps a pace back first, never into a wall */
+  {const p=this.player,c=this.party?.[0];if(c&&p&&Math.hypot(c.x-p.x,c.y-p.y)<30){const side=king.x>=p.x?-1:1;for(const [ox,oy] of [[36*side,6],[36*side,-6],[26*side,14]]){const x=p.x+ox,y=p.y+oy;if(!this.layout?.blocked?.(x,y)){c.x=x;c.y=y;c.facing=-side;break;}}}}
   if(beat.pose)this.animate(king,beat.pose);
   /* oct24-polish2: the king's atlas is drawn from state/stateT (scenes/enemy-ai.js drawEnemy), so `pose` alone never showed and
      "The king falls to his knees" played over a frozen lunge; a beat's still holds one frame of his own art while the world is paused */

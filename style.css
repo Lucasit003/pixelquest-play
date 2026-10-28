@@ -2169,6 +2169,10 @@ dialog[data-view=result] .level-highlights .level-chapter-clear strong{text-alig
 /* the actions (Details, Return) stay in a footer that is always on screen, however long the rewards are */
 dialog[data-view=result] #modal-content .level-result>.modal-actions{position:sticky;bottom:0;z-index:3;display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin:8px -8px 0;padding:8px;background:#1a1d3c;box-shadow:0 40px 0 #1a1d3c;border-top:1px solid #e3b85a44}
 dialog[data-view=result] .level-result>.modal-actions #result-details{order:-1}
+/* latechap-oct27: the game's last card has four buttons (Roll the credits); on desktop they wrapped to two rows and the sticky row hid the NEXT GOAL line, so four buttons sit on one row a little tighter */
+html:not(.m-mode) dialog[data-view=result] #modal-content .level-result>.modal-actions:has(>button:nth-of-type(4)){flex-wrap:nowrap;gap:6px}html:not(.m-mode) dialog[data-view=result] .level-result>.modal-actions:has(>button:nth-of-type(4))>button{padding-left:12px;padding-right:12px;font-size:14px;white-space:nowrap}
+/* latechap-oct27: the same on a phone: the wrapped fourth button pushed the sticky row up over NEXT GOAL on the finale card */
+.m-mode dialog[data-view=result] #modal-content .level-result>.modal-actions:has(>button:nth-of-type(4)){flex-wrap:nowrap;gap:6px}.m-mode dialog[data-view=result] .level-result>.modal-actions:has(>button:nth-of-type(4))>button{padding-left:10px;padding-right:10px;white-space:nowrap}
 dialog[data-view=result] .level-result .level-loot{justify-content:center}
 dialog[data-view=result] .result-goal{font-size:19px;line-height:1.3;margin:8px 0 4px}
 dialog[data-view=result] .run-foot{align-items:start}
