@@ -132,7 +132,9 @@ export function measurePads(d=doc()){
     buttons, each as [how far the hero must stand from that side, the obstacle's bottom], world units. follow() keeps the hero clear of
     one only while his head is level with it. padB: the floor band sits this far above the bottom edge (desktop keeps hudBottom, the
     hotbar's 34 px; a phone has no bottom hotbar, so the band moves down and the hero's head comes out from under the panel). */
- const top=(q,left)=>{const o=[];for(const el of d.querySelectorAll(q)){const r=vis(el);if(!r||r.top>box.top+box.height*.3||(r.left<box.left+box.width/2)!==left)continue;o.push([Math.min(cap,Math.round((left?r.right-box.left:box.right-r.left)/k)+HALF),Math.round((r.bottom-box.top)/k)]);}return o;};
+ /* campad-oct28: the top obstacles' pads are the panel's own measured width (+HALF), so the hero clears it at any phone size; at 740x360
+    the 35% cap (129.5) was under the 139 the hero panel needs. capTop only stops a freak layout from leaving no room for the hero */
+ const capTop=STAGE.camW*.45,top=(q,left)=>{const o=[];for(const el of d.querySelectorAll(q)){const r=vis(el);if(!r||r.top>box.top+box.height*.3||(r.left<box.left+box.width/2)!==left)continue;o.push([Math.min(capTop,Math.round((left?r.right-box.left:box.right-r.left)/k)+HALF),Math.round((r.bottom-box.top)/k)]);}return o;};
  STAGE.hudTL=top('#hud .hero-hud,#hud .hud-sub',true);STAGE.hudTR=top('#m-menu button',false);STAGE.padB=PHONE_FLOOR_GAP;
  return {l:STAGE.padL,r:STAGE.padR};
 }
