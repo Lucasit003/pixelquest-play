@@ -16,6 +16,10 @@ const rel=u=>{try{const x=new URL(u,BASE);if(x.origin!==BASE.origin||!x.pathname
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 /* hook-oct27: precached for offline play, but never preloaded with the boot set: the lesson pools and the country outlines load after the title (academics/lessons.js loadPools, gfx/lesson-geography.js loadCountryAtlas) */
 export const AFTER_TITLE=Object.freeze(['academics/lesson-catalog.js','gfx/country-atlas.js']);
+/* lightload2-oct27: precached too, but preloaded only when a stored save holds answers or tried checks (core/save.js storedNeedsCorrections
+   decides; this cheap text test only starts the download beside the boot set) */
+export const ON_DEMAND=Object.freeze(['academics/question-corrections.js']);
+const savedIds=()=>{try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(/^pixelquest\.save\.v\d+$/.test(k||'')&&/"answers":\{"|"tried":\["/.test(localStorage.getItem(k)||''))return true;}}catch{}return false;};
 /* exposed for tools/perf-measure.mjs and the tests */
 export const loaderState={done:new Set(),expect:new Map(),pct:0,shownAt:0,hiddenAt:0,titleReady:false,scene:null,level:null,gated:0,released:{biomes:0,sprites:0},sw:null};
 const S=loaderState;let M=null,G=null,C=null,el=null,watch=null;
@@ -70,7 +74,7 @@ if(LIVE){
  const start=()=>{screen();paint(0);};
  if(document.body)start();else document.addEventListener('DOMContentLoaded',start,{once:true});
  manifest.then(m=>{if(!m)return;
-  const mods=m.PRECACHE.filter(p=>/\.js$/.test(p)&&!/^assets\/(worldmap|biomes)\//.test(p)&&p!=='core/asset-manifest.js'&&!AFTER_TITLE.includes(p));
+  const mods=m.PRECACHE.filter(p=>/\.js$/.test(p)&&!/^assets\/(worldmap|biomes)\//.test(p)&&p!=='core/asset-manifest.js'&&!AFTER_TITLE.includes(p)&&(!ON_DEMAND.includes(p)||savedIds()));
   /* the whole boot set up front, so the bar only ever moves forward: modules, styles, fonts, the UI skin and the
      title's art (every hero for class select, the part of the hub behind the menu); perfBoot adds the exact group */
   const boot=[...m.PRECACHE.filter(p=>/^(fonts\/.*\.ttf|ui\/(skin|font)\/[^/]*\.png)$/.test(p)),...(m.TITLE||[])];
@@ -191,4 +195,4 @@ export async function registerSW(){if(!LIVE||!swWanted())return null;
  catch(e){S.sw='failed: '+e.message;return null;}}
 
 /* Keep the same skinned loading screen while a requested lesson arrives. */
-export async function prepareWork(work){if(!LIVE)return work();S.gated++;screen();paint(0,'Opening the lesson…',true);try{return await work();}finally{paint(100);hide();S.gated--;}}
+export async function prepareWork(work,label='Opening the lesson…'){if(!LIVE)return work();S.gated++;screen();paint(0,label,true);try{return await work();}finally{paint(100);hide();S.gated--;}}

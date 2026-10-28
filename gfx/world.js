@@ -1,6 +1,5 @@
 import {drawTownGround,drawTownDetail,TOWN_DETAILS,townHeight} from './town-art.js';
 import {actor,portrait as spritePortrait} from './actors/render.js';
-import {drawAsset,ASSETS} from './assets.js';
 import {BUILDINGS,TOWN,MAP,REGIONS,regionAt,pathX,ENCOUNTERS} from '../game/maps.js';
 import {drawDamageText} from '../ui/juice.js';/* v2:ui */
 import {drawPixelText,measurePixelText} from '../ui/canvas-ui.js';import {labelObstacles,stageBannerObstacles} from '../ui/stage-banners.js';
@@ -136,38 +135,7 @@ const ATMOSPHERE={
  castle:{tint:'#c2d2e6',tintA:.30,vig:.60,mote:'#d8e0e4',moteA:.32,drift:4,n:14,ray:.035},
  hall:{tint:'#a4dcc6',tintA:.38,vig:.70,mote:'#a6ecce',moteA:.46,drift:3,n:20,ray:0},
  chamber:{tint:'#8fdcc4',tintA:.46,vig:.80,mote:'#aef5d8',moteA:.55,drift:3,n:26,ray:0}};
-// Foreground occlusion. Drawn in screen space after every entity so the camera
-// genuinely passes beneath it, and flipped vertically so the leaf mass hangs from
-// the top edge with the trunk off-frame. Each cluster owns a stretch of road: it
-// grows into the frame as you walk under it and withdraws again, which reads as
-// depth without ever parking foliage over the middle where the fighting happens.
-// It composites through a scratch layer so the whole thing can be tinted down in
-// one pass -- foliage this close to the lens is out of the light.
-const canopyCache=new Map();let fgLayer=null,fgShade=null;
-function canopy(region){if(canopyCache.has(region))return canopyCache.get(region);
- const cfg=region==='forest'?{step:74,y0:-60,y1:1180,a:.92,px:.34,tall:1}:{step:150,y0:600,y1:1190,a:.66,px:.22,tall:.82};
- const list=[];
- for(let i=0,y=cfg.y0;y<cfg.y1;i++,y+=cfg.step){const s=i*13+(region==='forest'?11:701),lane=i%3;
-  list.push({y:y+(rand(s+5)-.5)*cfg.step*.6,r:cfg.step*1.5,px:cfg.px,
-   x:lane===0?-52+rand(s+3)*78:lane===1?408+rand(s+3)*78:70+rand(s+3)*340,
-   h:Math.round((lane===2?236+rand(s+17)*96:296+rand(s+17)*128)*cfg.tall/24)*24,
-   drop:lane===2?26+rand(s+23)*30:104+rand(s+23)*86,
-   art:[0,0,3,2][Math.floor(rand(s+41)*4)],a:cfg.a*(.72+rand(s+53)*.28)});}
- canopyCache.set(region,list);return list;}
-function overhang(c,state,cx,cy,t){if(state.zone==='town')return;const id=regionAt(cy).id;if(id!=='forest'&&id!=='castle')return;
- if(!fgLayer){fgLayer=document.createElement('canvas');fgShade=document.createElement('canvas');fgLayer.width=fgShade.width=480;fgLayer.height=fgShade.height=270;}
- const g=fgLayer.getContext('2d');g.clearRect(0,0,480,270);g.imageSmoothingEnabled=false;let any=false;
- for(const k of canopy(id)){const u=(cy-k.y)/k.r;if(u<=-1||u>=1)continue;const w=Math.cos(u*Math.PI/2)**.7;
-  const sw=state.motion?Math.sin(t*.42+k.y*.09)*4+Math.sin(t*.19+k.x)*2:0;
-  g.save();g.scale(1,-1);drawAsset(g,'props',k.art,k.x-(cx-350)*k.px+sw,k.h-k.drop*w,k.h,k.a*w);g.restore();any=true;}
- if(!any)return;
- // A silhouette of the same layer, dropped a few pixels, is what separates the
- // overhang from the identically-green trees behind it. Without it the canopy
- // simply vanishes into the mid-ground.
- const sh=fgShade.getContext('2d');sh.clearRect(0,0,480,270);sh.imageSmoothingEnabled=false;sh.drawImage(fgLayer,0,0);
- sh.save();sh.globalCompositeOperation='source-atop';sh.fillStyle='#050f10';sh.fillRect(0,0,480,270);sh.restore();
- g.save();g.globalCompositeOperation='source-atop';g.fillStyle='rgba(8,19,20,.62)';g.fillRect(0,0,480,270);g.restore();
- c.save();c.globalAlpha=.34;c.drawImage(fgShade,0,11);c.globalAlpha=.2;c.drawImage(fgShade,0,20);c.restore();c.drawImage(fgLayer,0,0);}
+/* lightload2-oct27: the canopy overhang drew from the pre-v2 woodland-props sheet, which a live game never loaded, so it drew nothing; removed with the sheet */
 const atmosphereAt=(state,p)=>state.level?(ATMOSPHERE[{forest:'forest',lava:'castle',mystic:'hall'}[chapterBiome(stageKey(state.level))]]||ATMOSPHERE.forest):state.zone==='town'?ATMOSPHERE.town:(ATMOSPHERE[regionAt(p.y).id]||ATMOSPHERE.forest);
 function grade(c,atm,t,motion,cam=null){
  /* v2:ui-mobile -- the grade covers the camera view (480x270 on desktop, smaller on phones) */const VW=STAGE.camW,VH=STAGE.camH,VK=VW/480;
@@ -243,17 +211,9 @@ export function drawWorld(c,state,t){LABELS=[];HUDW=null;BODIES=(state.enemies||
  /* v2:hub */ if(town&&hubReady()){state.camera=drawHub(c,state,t,{actor,companion,effect});grade(c,hubGrade(state.motion),t,state.motion,state.camera);return;}
 let cx=Math.max(150,Math.min(550,p.x)),cy=Math.max(85,Math.min(height-85,p.y));/* v2:ui-mobile -- a stage renders through the camera view (STAGE.camW x camH; 480x270 on desktop) */if(stage){cx=Math.round(state.camX||0)+STAGE.camW/2;cy=Math.round(state.camTop||0)+STAGE.camH/2;}if(state.cinematicShot){cx=state.cinematicShot.x;cy=state.cinematicShot.y;if(stage){const top=Math.round(state.camTop||0),lw=state.layout?.width;/* playtest ch2: a cutscene beat framed off the scrolling camera showed a black strip (the stage was drawn for camX only); stageOpts now draws the shot's own view, kept inside the level */cx=Math.round(lw>STAGE.camW?Math.max(STAGE.camW/2,Math.min(lw-STAGE.camW/2,cx)):cx);cy=Math.round(Math.max(top+STAGE.camH/2-40,Math.min(cy,top+STAGE.camH/2)));}}state.camera={x:cx,y:cy,width:stage?STAGE.camW:300,height:stage?STAGE.camH:169};c.save();c.clearRect(0,0,480,270);const [shake,shakeY]=shakeOffset(state.shake,state.shakeTime,state.shakeMax,t,state.motion);c.translate(Math.round((stage?STAGE.camW/2:240)-cx*zoom+shake),Math.round((stage?STAGE.camH/2:142)-cy*zoom+shakeY));c.scale(zoom,zoom);c.imageSmoothingEnabled=false;if(stage)stageBackdrop(c,state,t);else c.drawImage(terrain(town),0,0);const entities=[],lights=[];const vx=stage?STAGE.camW/2+60:230,vy=stage?STAGE.camH/2+40:95,visible=(x,y,h=100)=>x>cx-vx&&x<cx+vx&&y>cy-vy&&y-h<cy+vy;
  for(const prop of stage?[]:props(town)){if(!visible(prop.x,prop.y,prop.h))continue;
-  // Sway used to be a rounded +-0.5px translate, i.e. nothing. Foliage now shears
-  // about its own base -- the trunk stays planted, the crown leans -- with the
-  // amplitude, phase and rate all keyed off the prop so no two move together.
-  if(prop.sway&&prop.ph===undefined){prop.ph=rand(prop.x*3.1+prop.y*1.7)*6.28;prop.fr=.46+rand(prop.x*1.9+prop.y*5.3)*.5;prop.amp=prop.h*.036+.4;}
   entities.push({y:prop.y,draw:()=>{ellipse(c,prop.x,prop.y,prop.h*.3,prop.h*.065,'#172c2444');
-   const lean=prop.sway&&state.motion?(Math.sin(t*prop.fr+prop.ph)*.66+Math.sin(t*prop.fr*2.37+prop.ph*1.7)*.34)*prop.amp:0;
-   const hide=p.y<prop.y&&p.y>prop.y-prop.h&&Math.abs(p.x-prop.x)<prop.h*.35;
-   if(lean){const k=lean/prop.h;c.save();c.transform(1,0,k,1,-k*prop.y,0);}
-   drawAsset(c,prop.building===undefined?'props':'buildings',prop.building??prop.art,prop.x,prop.y,prop.h,hide?.5:1);
-   if(lean)c.restore();}});if(prop.light)lights.push([prop.x,prop.y-prop.h+6,30,prop.y]);}
- if(town){for(const detail of TOWN_DETAILS)if(visible(detail.x,detail.y,detail.h))entities.push({y:detail.y,draw:()=>drawTownDetail(c,detail)});for(const b of BUILDINGS)if(visible(b.x,b.y,townHeight(b))){entities.push({y:b.y,draw:()=>{ellipse(c,b.x+4,b.y,b.w*.48,12,'#14292155');drawAsset(c,'buildings',b.art,b.x,b.y,townHeight(b),p.y<b.y&&p.y>b.y-townHeight(b)&&Math.abs(p.x-b.x)<b.w*.4?.45:1);label(c,b.sign,b.x,b.y+13,'#e7d8ab',6);}});lights.push([b.x,b.y-24,26,b.y]);}for(const npc of [{x:257,y:239,appearance:'mage',weapon:'staff'},{x:418,y:255,appearance:'ranger',weapon:'bow'},{x:499,y:375,appearance:'summoner',weapon:'focus'}])if(visible(npc.x,npc.y,50))entities.push({y:npc.y,draw:()=>actor(c,{...npc,hp:1,plain:true,scale:.87,direction:'down',facing:npc.x>335?-1:1},t)});const f=TOWN.fountain;for(let i=0;i<5;i++)rect(c,f.x-9+i*4,f.y-9+((t*15+i*3)%7),1,2,'#d3e4bd99');}
+   /* lightload2-oct27: the prop itself (and its sway) came from the pre-v2 env sheets (gfx/assets.js drawAsset), never loaded in a live game; removed with them */}});if(prop.light)lights.push([prop.x,prop.y-prop.h+6,30,prop.y]);}
+ if(town){for(const detail of TOWN_DETAILS)if(visible(detail.x,detail.y,detail.h))entities.push({y:detail.y,draw:()=>drawTownDetail(c,detail)});for(const b of BUILDINGS)if(visible(b.x,b.y,townHeight(b))){entities.push({y:b.y,draw:()=>{ellipse(c,b.x+4,b.y,b.w*.48,12,'#14292155');label(c,b.sign,b.x,b.y+13,'#e7d8ab',6);}});lights.push([b.x,b.y-24,26,b.y]);}for(const npc of [{x:257,y:239,appearance:'mage',weapon:'staff'},{x:418,y:255,appearance:'ranger',weapon:'bow'},{x:499,y:375,appearance:'summoner',weapon:'focus'}])if(visible(npc.x,npc.y,50))entities.push({y:npc.y,draw:()=>actor(c,{...npc,hp:1,plain:true,scale:.87,direction:'down',facing:npc.x>335?-1:1},t)});const f=TOWN.fountain;for(let i=0;i<5;i++)rect(c,f.x-9+i*4,f.y-9+((t*15+i*3)%7),1,2,'#d3e4bd99');}
  for(const f of fx.filter(f=>f.ground))effect(c,f);
  if(!town&&state.travel){const target=state.travel;label(c,'THE PATH CONTINUES',target.x,target.y-5,'#e2c487',7);for(let i=0;i<3;i++){stroke(c,[[target.x-5,target.y+10+i*7],[target.x,target.y+14+i*7],[target.x+5,target.y+10+i*7]],'#d7c78b',1);}}
  if(stage)for(const m of state.party||[])entities.push(companionEntity(c,m,t,groundShadow));
@@ -271,5 +231,5 @@ let cx=Math.max(150,Math.min(550,p.x)),cy=Math.max(85,Math.min(height-85,p.y));/
  // Shots fly at the height they were launched from - the weapon tip - while x/y stay
  // on the ground plane for collision.
  for(const s of shots)drawShot(c,s);/* oct24-balance2: on a tall boss its label ("ARMOUR CRACKED!") rose under the rally banner ("GUARD DOWN, ATTACK!", scenes stage-view y 54); while that banner is up an enemy's label starts low enough that its 26 px rise ends below it */const rb=state.rally&&state.run&&state.flow==='boss'&&(state.rally.ended==null||state.run.time-state.rally.ended<1.5)?(state.camTop||0)+100:-1e9;/* oct24-endgame (playtest ch3 minor): "SHIELDED" and "ARMOUR CRACKED!" rose under the move warning or the HUD portrait (both draw over the world); a label whose rise would meet one starts below it */const obs=stage?labelObstacles(c.canvas,STAGE.camW,STAGE.camH):[];for(const f of fx)if(!f.ground&&f.type==='text'){const g=f.enemy?{...f,x:f.enemy.x,y:Math.max(rb,floatY(f.enemy,t))}:f;effect(c,obs.length?clearLabel(g,obs,cx-STAGE.camW/2,cy-STAGE.camH/2):g);}const atm=atmosphereAt(state,p);for(const [x,y,r,gy]of lights){glow(c,x,y,r*1.3,'#f7d38a4d','#eec27722');if(gy!==undefined)ellipse(c,x,gy,r*.8,r*.28,'#f0c67a26');}if(atm.ray&&!stage)for(let i=0;i<6;i++){const off=i*104+(state.motion?Math.sin(t*.05+i)*14:0);c.fillStyle=`rgba(228,238,186,${atm.ray})`;c.beginPath();c.moveTo(cx-250+off,cy-100);c.lineTo(cx-196+off,cy-100);c.lineTo(cx-272+off,cy+100);c.lineTo(cx-292+off,cy+100);c.closePath();c.fill();}
- if(stage)stageFront(c,state,t);c.restore();if(stage)drawAmbience(c,{chapter:chapterBiome(stageKey(state.level)),t,camX:state.camX||0,W:STAGE.camW,H:STAGE.camH,motion:state.motion!==false});if(stage){hurtVignette(c,state,t);drawCombo(c,state);}if(!stage){overhang(c,state,cx,cy,t);grade(c,atm,t,state.motion);}}
-export function drawMap(canvas,state,full=false){/* v2:hub */if(state.zone==='town'&&hubReady())return drawHubMap(canvas,state,full);const c=canvas.getContext('2d'),town=state.zone==='town';const w=canvas.width,h=canvas.height;c.clearRect(0,0,w,h);rect(c,0,0,w,h,'#142a2b');const totalH=town?TOWN.height:MAP.height;const scale=full?Math.min((w-30)/700,(h-30)/totalH):.19;const ox=full?(w-700*scale)/2:w/2-state.player.x*scale,oy=full?15:h/2-state.player.y*scale;c.save();c.beginPath();c.rect(4,4,w-8,h-8);c.clip();c.translate(ox,oy);c.scale(scale,scale);c.imageSmoothingEnabled=false;c.drawImage(terrain(town),0,0);for(const prop of props(town)){drawAsset(c,prop.building===undefined?'props':'buildings',prop.building??prop.art,prop.x,prop.y,prop.h);}if(town){for(const detail of TOWN_DETAILS)drawTownDetail(c,detail);for(const b of BUILDINGS){drawAsset(c,'buildings',b.art,b.x,b.y,townHeight(b));if(full)label(c,b.sign,b.x,b.y+20,'#fff0cc',14);}}else if(full){for(const [i,y]of [[0,170],[1,780],[2,1300],[3,1940]]){ellipse(c,pathX(y),y,11,11,'#debb74');label(c,['ELDERWOOD','BROKEN GATE','ROOTBOUND HALLS','KING’S CHAMBER'][i],pathX(y)+22,y+6,'#f2dfae',22,'left');}}for(const e of state.enemies.filter(e=>e.hp>0))ellipse(c,e.x,e.y,8,8,'#e99677');ellipse(c,state.player.x,state.player.y,14,14,'#f4deb0');ellipse(c,state.player.x,state.player.y,6,6,'#fff8d8');if(state.camera){c.strokeStyle='#f7e8bd55';c.lineWidth=3;c.strokeRect(state.camera.x-150,state.camera.y-85,300,169);}c.restore();if(!full){label(c,'N',w/2,12,'#b8c4b2',8);c.strokeStyle='#8d8667';c.lineWidth=1;c.strokeRect(.5,.5,w-1,h-1);}}
+ if(stage)stageFront(c,state,t);c.restore();if(stage)drawAmbience(c,{chapter:chapterBiome(stageKey(state.level)),t,camX:state.camX||0,W:STAGE.camW,H:STAGE.camH,motion:state.motion!==false});if(stage){hurtVignette(c,state,t);drawCombo(c,state);}if(!stage){grade(c,atm,t,state.motion);}}
+export function drawMap(canvas,state,full=false){/* v2:hub */if(state.zone==='town'&&hubReady())return drawHubMap(canvas,state,full);const c=canvas.getContext('2d'),town=state.zone==='town';const w=canvas.width,h=canvas.height;c.clearRect(0,0,w,h);rect(c,0,0,w,h,'#142a2b');const totalH=town?TOWN.height:MAP.height;const scale=full?Math.min((w-30)/700,(h-30)/totalH):.19;const ox=full?(w-700*scale)/2:w/2-state.player.x*scale,oy=full?15:h/2-state.player.y*scale;c.save();c.beginPath();c.rect(4,4,w-8,h-8);c.clip();c.translate(ox,oy);c.scale(scale,scale);c.imageSmoothingEnabled=false;c.drawImage(terrain(town),0,0);if(town){for(const detail of TOWN_DETAILS)drawTownDetail(c,detail);for(const b of BUILDINGS){if(full)label(c,b.sign,b.x,b.y+20,'#fff0cc',14);}}else if(full){for(const [i,y]of [[0,170],[1,780],[2,1300],[3,1940]]){ellipse(c,pathX(y),y,11,11,'#debb74');label(c,['ELDERWOOD','BROKEN GATE','ROOTBOUND HALLS','KING’S CHAMBER'][i],pathX(y)+22,y+6,'#f2dfae',22,'left');}}for(const e of state.enemies.filter(e=>e.hp>0))ellipse(c,e.x,e.y,8,8,'#e99677');ellipse(c,state.player.x,state.player.y,14,14,'#f4deb0');ellipse(c,state.player.x,state.player.y,6,6,'#fff8d8');if(state.camera){c.strokeStyle='#f7e8bd55';c.lineWidth=3;c.strokeRect(state.camera.x-150,state.camera.y-85,300,169);}c.restore();if(!full){label(c,'N',w/2,12,'#b8c4b2',8);c.strokeStyle='#8d8667';c.lineWidth=1;c.strokeRect(.5,.5,w-1,h-1);}}

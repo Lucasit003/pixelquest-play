@@ -4,7 +4,18 @@ import {cleanDaily,emptyDaily} from '../game/daily.js';
 import {JEWEL} from '../game/jewels.js';
 import {cleanHouse} from '../game/furniture.js';
 import {LEGACY} from '../academics/bank.js';
-import {ANSWER_ID_RENAMES,latestId} from '../academics/question-corrections.js';
+/* lightload2-oct27: the answer-id corrections (academics/question-corrections.js, about 84 KB gzipped) are only needed to map ids a
+   save already holds. A browser imports them before load() only when a stored save holds answers or tried checks
+   (storedNeedsCorrections, main.js), and before an import; a new player never fetches them. Node and jsdom load them here.
+   A save with no ids has nothing to rename, so normalize() gives the same result with or without them. */
+let ANSWER_ID_RENAMES=new Map(),latestId=id=>id,fixesTask=null,fixesIn=false;
+export const correctionsLoaded=()=>fixesIn;
+export function loadCorrections(){return fixesTask??=import('../academics/question-corrections.js').then(m=>{ANSWER_ID_RENAMES=m.ANSWER_ID_RENAMES;latestId=m.latestId;fixesIn=true;}).catch(e=>{fixesTask=null;throw e;});}
+if(typeof window==='undefined'||/jsdom/i.test(globalThis.navigator?.userAgent||''))await loadCorrections();
+const holdsIds=v=>{if(!v||typeof v!=='object')return false;if(v.answers&&typeof v.answers==='object'&&Object.keys(v.answers).length)return true;
+ return !!v.lessons&&typeof v.lessons==='object'&&Object.values(v.lessons).some(l=>Array.isArray(l?.tried)&&l.tried.length>0);};
+/* true when normalize(value) could rename something and the corrections are not in yet */
+export const correctionsNeeded=value=>!fixesIn&&holdsIds(value);
 import {ABILITIES} from '../game/abilities.js';
 import {mastery,unlocked,gainXP,XP} from '../game/math.js';
 import {CONTRACT_LEVELS,LEVELS,levelById,levelParFor,levelDone,starGate} from '../game/levels.js';
@@ -191,6 +202,9 @@ const frac=(v,a,b)=>Math.max(a,Math.min(b,Number(v)||0));
  return s;
 }
 
+/* lightload2-oct27: whether any stored save (every key load() can fall back to) holds ids to rename; unreadable text counts as yes */
+export function storedNeedsCorrections(){if(fixesIn)return false;for(const key of [KEY,V8_KEY,V7_KEY,V6_KEY,V5_KEY,V4_KEY,PREVIOUS_KEY,OLD_KEY]){let raw;try{raw=localStorage.getItem(key);}catch{return false;}
+ if(raw==null)continue;try{if(holdsIds(JSON.parse(raw)))return true;}catch{return true;}}return false;}
 export function load(){
  // A value that fails to load is copied to BROKEN_KEY first, so a bug can never silently wipe progress.
  // A v2 build still wrote the v1 key, so there is no v2 key to read; v2 payloads arrive through OLD_KEY.

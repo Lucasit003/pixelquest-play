@@ -20,7 +20,7 @@ export const stageName=t=>STAGES[stageOf(t)].name;
 /* hook-oct27 (lighter first load): topic metadata boots (lesson-meta.js); the retirement ids of every pool (lesson-catalog.js,
    about 450 KB gzipped) load after the title: loadPools(), which Begin awaits (main.js) and every lesson load awaits. Until then
    POOL holds an empty frozen list per topic, so nothing reads undefined. Node and jsdom load them before this module finishes. */
-import {META,LESSON_PATHS} from './lesson-meta.js';
+import {META,LESSON_PATHS,POOL_SIZES} from './lesson-meta.js';
 const EAGER=typeof window==='undefined'||/jsdom/i.test(globalThis.navigator?.userAgent||'');
 export const TOPICS=META.map(t=>({...t}));
 const items={},pool={},checks={};
@@ -32,6 +32,14 @@ const NONE=Object.freeze([]);for(const t of META)pool[t.id]=NONE;
 export const ITEMS=items,POOL=pool,CHECKS=checks;
 let poolsTask=null,poolsIn=false;
 export const poolsLoaded=()=>poolsIn;
+/* lightload2-oct27: what the town needs before the pools. A pool's counts (left, practised) depend only on the save's answers whose
+   ids carry the topic's subject and level (idOf). A save with none of those, such as a new player's, reads them from POOL_SIZES; any
+   other save, and any save with a lesson record (the Seal and the knowledge check read pools for those), waits for the pools at Begin
+   (poolsNeeded), as before. Every lesson, quiz, test and placement still awaits loadPools. */
+const LESSON_PREFIX=[...new Set(META.map(t=>`${t.subject}-${t.level}-`))];
+const touches=(save,pre)=>{for(const id in save?.answers||{})if(pre.some(p=>id.startsWith(p)))return true;return false;};
+const untouched=(save,t)=>!poolsIn&&!touches(save,[`${t.subject}-${t.level}-`]);
+export const poolsNeeded=save=>!poolsIn&&(touches(save,LESSON_PREFIX)||Object.keys(save?.lessons||{}).length>0);
 export function loadPools(){return poolsTask??=import('./lesson-catalog.js').then(m=>{for(const t of META)pool[t.id]=Object.freeze(m.POOLS[t.id]);Object.freeze(pool);poolsIn=true;}).catch(e=>{poolsTask=null;throw e;});}
 const pending=new Map(),loaded=new Set();
 export const lessonLoaded=id=>loaded.has(id);
@@ -97,14 +105,14 @@ export const rec=(save,t)=>(save.lessons??={})[t.id]??={at:0,done:false,quiz:0,t
 export const mastered=(save,t)=>(save.lessons?.[t.id]?.pts||0)>0;
 /* Move a lesson's cursor. `reached` only ever grows, so the work a step shows is never forgotten. */
 export const setStep=(save,t,i)=>{const r=rec(save,t);r.reached=Math.max(r.reached||0,r.at||0,i);r.at=i;return r;};
-export const left=(save,t)=>POOL[t.id].filter(id=>(save.answers[id]||0)<2).length;
+export const left=(save,t)=>untouched(save,t)?POOL_SIZES[t.id]:POOL[t.id].filter(id=>(save.answers[id]||0)<2).length;
 // A topic used to be masterable in about three minutes: skip the lesson, sit the ten-question
 // test, done. The test is the last step now, not the only one. Before it opens, a child has to
 // have watched the lesson, passed the quiz, and answered PRACTICE_NEEDED different questions from
 // the topic's own pool correctly. Nothing here is a timer or a penalty: everything that counts
 // toward it is work already done, and a wrong answer only means that question is not counted yet.
 export const PRACTICE_NEEDED=25;
-export const practised=(save,t)=>POOL[t.id].filter(id=>(save.answers[id]||0)>0).length;
+export const practised=(save,t)=>untouched(save,t)?0:POOL[t.id].filter(id=>(save.answers[id]||0)>0).length;
 // The quiz half of the gate: 4 of 5, or the pool has too few unretired questions left to ask 4,
 // in which case a quiz can never reach it and the practice already done stands in for it.
 export const testReady=(save,t)=>{const r=save.lessons?.[t.id]||{},done=r.done===true,need=Math.ceil(PASS*QUIZ_SIZE-1e-9),quiz=(r.quiz||0)>=need||left(save,t)<need,p=practised(save,t);

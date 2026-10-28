@@ -51,8 +51,6 @@ export function levelEnemies(l){if(!l)return [];const keys=new Set();
  return [...keys];}
 export const levelBiome=l=>biomeKey(stageKey(l));
 export const levelInfo=id=>levelById(id)||null;
-/* Totems and traps still draw from the pre-v2 env sheets (gfx/assets.js drawAsset 'props'): only a loadout that
-   can place one needs those 4.5 MB. */
 /* Atlases the loader may let go of between scenes: enemies (and what they throw) and the other classes' heroes.
    Effects shared by every fight, lesson sprites and theater actors are never released. */
 let RELEASABLE=null;
