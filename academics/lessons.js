@@ -132,11 +132,13 @@ export const testReady=(save,t)=>{const r=save.lessons?.[t.id]||{},done=r.done==
    test still needed). Before the test opens: what is still needed, between 5 and size; after that, size. Never a limit on practice. */
 export const practiceSitting=(save,t,size=10)=>{const r=testReady(save,t);return r.practice>=r.needed?size:Math.max(5,Math.min(size,r.needed-r.practice));};
 export const exact=(input,q)=>accepts(input,q) && (q.numeric?numberIn(input,q)===Number(q.answer):true);
-export function pickItems(save,t,n,random=Math.random){
+/* quizfun-oct29: `avoid` (a Set of ids) is only ever a preference: those items go last and skip the per-skill quota, and are
+   served only when the rest of the pool cannot fill the sitting. Retirement, misses-last and the size of a sitting are unchanged. */
+export function pickItems(save,t,n,random=Math.random,avoid=null){
     const candidates=POOL[t.id].filter(id=>(save.answers[id]||0)<2);
     if(!candidates.length)return [];
     const miss=save.lessons?.[t.id]?.miss||[];
-    const rank=id=>miss.includes(id)?2:(save.answers[id]||0);
+    const rank=id=>(avoid?.has(id)?10:0)+(miss.includes(id)?2:(save.answers[id]||0));
     for(let i=candidates.length-1;i>0;i--){
         const j=Math.floor(random()*(i+1));
         [candidates[i],candidates[j]]=[candidates[j],candidates[i]];
@@ -149,7 +151,7 @@ export function pickItems(save,t,n,random=Math.random){
         let got=0;
         for(const id of candidates){
             if(taken.length>=n||got>=quota)break;
-            if(ITEMS[id].skill===k){
+            if(ITEMS[id].skill===k&&!avoid?.has(id)){
                 taken.push(id);
                 got++;
             }
@@ -161,6 +163,23 @@ export function pickItems(save,t,n,random=Math.random){
     }
     return taken.map(id=>ITEMS[id]);
 }
+/* quizfun-oct29 (readiness #4): the quiz asked "What is the plural of lunch?" right after the lesson's own Try-it about Leo's two
+   lunches. A pool item echoes a Try-it when it has the same written answer as one of the topic's Try-its (an answer with letters,
+   shared by at most three items, so "-es" or "yes" never counts) or when its word card's word (letters only) is a word of a Try-it.
+   The quiz prefers the other items (pickQuiz); practice, the mastery test, the pool, ids and retirement are untouched. */
+const echoNorm=s=>String(s).toLowerCase().replace(/[\u201c\u201d"\u2018\u2019'`]/g,'').replace(/[^a-z0-9-]+/g,' ').trim();
+const echoCache=new WeakMap();
+export function tryItEchoes(t){
+ if(!t?.steps)return new Set();if(echoCache.has(t))return echoCache.get(t);
+ const cs=t.steps.filter(s=>s.check).map(s=>s.check),out=new Set();
+ if(cs.length){const words=new Set(cs.flatMap(c=>echoNorm(`${c.prompt} ${c.answer}`).split(' ')).filter(Boolean)),
+   ans=new Set(cs.filter(c=>typeof c.answer==='string'&&/[a-z]{3}/i.test(c.answer)).map(c=>echoNorm(c.answer))),cnt={};
+  for(const id of POOL[t.id]){const a=echoNorm(ITEMS[id].answer);cnt[a]=(cnt[a]||0)+1;}
+  for(const id of POOL[t.id]){const q=ITEMS[id],a=echoNorm(q.answer),bases=[].concat(q.pic||[]).filter(p=>p?.t==='word'&&typeof p.base==='string'&&/^[a-z][a-z' -]{2,}$/i.test(p.base)).map(p=>echoNorm(p.base));
+   if((ans.has(a)&&cnt[a]<=3)||bases.some(b=>words.has(b)))out.add(id);}}
+ if(POOL[t.id].length)echoCache.set(t,out);return out;
+}
+export const pickQuiz=(save,t,n=QUIZ_SIZE,random=Math.random)=>pickItems(save,t,n,random,tryItEchoes(t));
 /* A mastery sitting covers every skill with unretired work. Large units need more than ten
    questions; exhausted skills already have two correct answers on every item and stay retired.
    Snapshot both coverage and readiness before any answers in this sitting are credited. */

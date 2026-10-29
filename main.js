@@ -29,7 +29,7 @@ import {mastery,unlocked,gainXP,xpFor,stats,XP,xpLevel,levelXP,totalXP,abilityMa
 import {enable,enableMusic,sfx,fanfare,victory,sting,musicNote} from './core/audio.js';
 /* v2:ui */
 import {initUI,titleScreen,wireTitle,uiSettingsHTML,wireUiSettings,applySettings,abilityIcon,icon,levelUpBanner,celebrate,setMusicOverride,settingsFromTitle,pauseExtrasHTML,wirePauseExtras,say,portraitFor} from './ui/index.js';
-import {loadLesson,loadPools,poolsLoaded,poolsNeeded,lessonLoaded,stageOf,TOPICS,CHECKS,POOL,QUIZ_SIZE,TEST_SIZE,PASS,topic as lessonTopic,rungOf,rec,left,pickItems,beginMasteryTest,grade,creditCheck,recordCheckAttempt,finishLesson,recordQuiz,finishTest,grades,gradeTopics,gradeOpen,gradeDone,mastered,topicOpen,openGrade,testReady,practiceSitting,checksLeft,PRACTICE_NEEDED,stageName,topicPoints,setStep,masterExhausted,pickReview,pickPracticeExam,ITEMS} from './academics/lessons.js';import {drawPic,describe,crispCtx} from './gfx/lesson-art.js';import {loadCountryAtlas,countryAtlasReady} from './gfx/lesson-geography.js';
+import {loadLesson,loadPools,poolsLoaded,poolsNeeded,lessonLoaded,stageOf,TOPICS,CHECKS,POOL,QUIZ_SIZE,TEST_SIZE,PASS,topic as lessonTopic,rungOf,rec,left,pickItems,pickQuiz,beginMasteryTest,grade,creditCheck,recordCheckAttempt,finishLesson,recordQuiz,finishTest,grades,gradeTopics,gradeOpen,gradeDone,mastered,topicOpen,openGrade,testReady,practiceSitting,checksLeft,PRACTICE_NEEDED,stageName,topicPoints,setStep,masterExhausted,pickReview,pickPracticeExam,ITEMS} from './academics/lessons.js';import {drawPic,describe,crispCtx} from './gfx/lesson-art.js';import {loadCountryAtlas,countryAtlasReady} from './gfx/lesson-geography.js';
 import {coursesFor,courseOf,builtUnits,AP_NOTE,EXAMS,examPracticeGroups,HIGH_COURSE_LEVEL,course as courseById} from './academics/courses.js';
 /* v2:edu */import {painter} from './gfx/lesson-stage.js';
 /* v2:edu */import {asleep,sleepLoadouts,awaken,activeLoadout,starterOf} from './academics/awakening.js';
@@ -80,6 +80,7 @@ import {setTarget} from './game/meter.js';
 import {choiceFormHTML,wireChoices,focusAnswers} from './ui/answer-choices.js';import {matchAnswer} from './game/math.js';
 /* a typed answer accepted with a small typo still shows the right spelling (learning-flow fix, 17 Oct) */
 const spellNote=(input,q)=>{const m=matchAnswer(input,q);return m.ok&&m.typo?`<p class="subtle am-spell">Watch the spelling: <strong>${esc(m.expected)}</strong></p>`:'';};
+/* quizfun-oct29 */import {quizPic,quizPicHTML,quizGuideHTML,quizCheer,quizMoment} from './ui/quiz-fun.js';
 /* lessons polish 14 Oct */import {answerMomentHTML,sittingPipsHTML,abilityProgressHTML,nextStepId} from './ui/answer-moment.js';
 import {topicStage} from './academics/study-unlock.js';
 import {clearOfCard} from './ui/prompt-place.js';
@@ -534,7 +535,8 @@ function startSitting(id, kind) {
     const t = lessonTopic(id);
     if (!t) return;
     const test = kind === 'test' ? beginMasteryTest(s, t) : null;
-    const items = test ? test.items : pickItems(s, t, kind === 'practice' ? /* v2:edu */practiceSize(s, t) : QUIZ_SIZE);
+    /* quizfun-oct29: the quiz prefers questions that do not repeat the lesson's own Try-its (pickQuiz) */
+    const items = test ? test.items : kind === 'practice' ? pickItems(s, t, /* v2:edu */practiceSize(s, t)) : pickQuiz(s, t, QUIZ_SIZE);
     if (!items.length) {
         sitting = null;
         /* v2:edu an exhausted pool masters the topic (the exhaustion rule), even when placement retired its last questions */
@@ -555,19 +557,21 @@ function startSitting(id, kind) {
         $('#lesson-library').onclick = ()=>library({subject:t.subject});
         return;
     }
-    sitting = { id, kind, items, i: 0, right: {}, xp: 0, mastered: false, beforeAbilities: readyAbilitiesForRoad(), ready: test ? test.ready : ready.ready, requiredSkills: test?.requiredSkills };
+    /* quizfun-oct29: `cheer` starts this sitting's praise lines at a random place, so the first right answer is not always "Yes!" */
+    sitting = { id, kind, items, i: 0, right: {}, xp: 0, cheer: Math.floor(Math.random() * 7), mastered: false, beforeAbilities: readyAbilitiesForRoad(), ready: test ? test.ready : ready.ready, requiredSkills: test?.requiredSkills };
     sittingQuestion();
 }
 
 function sittingQuestion() {
-    const t = lessonTopic(sitting.id), q = sitting.items[sitting.i], n = sitting.items.length;
+    const t = lessonTopic(sitting.id), q = sitting.items[sitting.i], n = sitting.items.length, qp = quizPic(q);
     let done = false;
     show('lesson-quiz', header(`${esc(SUBJECTS[t.subject].name)} · ${stageName(t)}`, esc(t.title)) +
-        `<div class="question" data-q="${q.id}" data-kind="${sitting.kind}"><div class="question-reading" role="region" aria-label="Question and diagram" tabindex="0"><span class="tag">${sitting.kind === 'test' ? 'MASTERY TEST' : sitting.kind === 'practice' ? /* v2:edu */'PRACTICE' : 'QUIZ'} · ${sitting.i + 1} of ${n}</span>${sittingPipsHTML(n, sitting.i, sitting.items.map(x => sitting.right[x.id]))}` +
-        (questionPictureHTML(askedPic(q))) +
+        `<div class="question qf" data-q="${q.id}" data-kind="${sitting.kind}"><div class="question-reading" role="region" aria-label="Question and diagram" tabindex="0"><div class="qf-top"><span class="tag">${sitting.kind === 'test' ? 'MASTERY TEST' : sitting.kind === 'practice' ? /* v2:edu */'PRACTICE' : 'QUIZ'} · ${sitting.i + 1} of ${n}</span>${sittingPipsHTML(n, sitting.i, sitting.items.map(x => sitting.right[x.id]))}</div>${quizGuideHTML()}` +
+        /* quizfun-oct29: the guide asks; the question's picture (or a word item's board without its answer) sits beside him */
+        quizPicHTML(qp) +
         `<h3${q.prompt.length <= 40 ? ' class="big"' : ''}>${esc(q.prompt)}</h3>${readButtonHTML(q.prompt)}</div>${choiceFormHTML(q) || `<form id="quiz-form"><input id="quiz-answer" aria-label="Your answer" placeholder="Type your answer…" autocomplete="off" ${/* v2:edu decimals need a point key on phones */q.numeric ? 'inputmode="decimal"' : ''} required><div class="modal-actions"><button type="submit" id="quiz-check" class="primary">Check</button></div></form>`}<div id="quiz-feedback" aria-live="polite"></div><div class="modal-actions"><button id="quiz-end">Stop</button><button id="quiz-next" class="primary" hidden>${sitting.i + 1 < n ? 'Next question' : 'See results'}</button></div></div>`);
-    const askedSpec = askPic(askedPic(q));
-    if ($('#quiz-pic')) drawPic(crispCtx($('#quiz-pic')), askedSpec, 1);
+    const askedSpec = qp?.derived ? qp.spec : askPic(askedPic(q));
+    if ($('#quiz-pic')) { if (qp?.derived) picStart(qp.spec, .01, $('#quiz-pic')); else drawPic(crispCtx($('#quiz-pic')), askedSpec, 1); }
     quizZoom(askedSpec);
     $('#quiz-form').onsubmit = e => {
         e.preventDefault();
@@ -598,7 +602,7 @@ function submitSitting(q, input) {
     if (r.mastered) sitting.mastered = true;
     $('#quiz-answer').disabled = true;
     $('#quiz-check').disabled = true;
-    $('#quiz-feedback').innerHTML = `<div class="feedback">` + answerMomentHTML({ok: r.ok, xp: r.xp, nth: Object.values(sitting.right).filter(Boolean).length - 1, answer: q.answer, level: lv, mastered: r.mastered}) + spellNote(input, q) + (r.ok ? '' : `<p>${esc(q.explanation)}</p>${readButtonHTML(`The answer is ${q.answer}. ${q.explanation||''}`)}` + (shownPic(q) && !$('#quiz-pic') ? `<canvas id="lesson-pic" width="640" height="280" role="img" aria-label="${esc(describe(shownPic(q)))}"></canvas>` : '')) + `</div>`;
+    $('#quiz-feedback').innerHTML = `<div class="feedback">` + answerMomentHTML({ok: r.ok, xp: r.xp, nth: Object.values(sitting.right).filter(Boolean).length - 1 + (sitting.cheer || 0), answer: q.answer, level: lv, mastered: r.mastered}) + (r.ok && sitting.kind === 'quiz' ? (c => c ? `<p class="qf-cheer">${esc(c)}</p>` : '')(quizCheer({right: Object.values(sitting.right).filter(Boolean).length, answered: Object.keys(sitting.right).length, n: sitting.items.length, need: testReady(s, lessonTopic(sitting.id)).quizNeed})) : '') + spellNote(input, q) + (r.ok ? '' : `<p>${esc(q.explanation)}</p>${readButtonHTML(`The answer is ${q.answer}. ${q.explanation||''}`)}` + (shownPic(q) && !$('#quiz-pic') ? `<canvas id="lesson-pic" width="640" height="280" role="img" aria-label="${esc(describe(shownPic(q)))}"></canvas>` : '')) + `</div>`;
     /* 25 Oct (first-hour playtest): "Try it again" sits right under the explanation, above the worked picture, so it shows without scrolling */
     if(!r.ok){mountAnswerReview($('#quiz-feedback'),q,{stage:s.schoolMode});const rv=$('#quiz-feedback .answer-review'),pc=$('#quiz-feedback #lesson-pic');if(rv&&pc)pc.before(rv);rv?.addEventListener('toggle',()=>{if(rv.open)rv.scrollIntoView?.({block:'nearest'});});}
     { const pips = $('.question .am-pips'); if (pips) pips.outerHTML = sittingPipsHTML(sitting.items.length, sitting.i, sitting.items.map(x => sitting.right[x.id])); }
@@ -606,6 +610,8 @@ function submitSitting(q, input) {
     /* oct25-quizpolish: when the question already shows its picture, the worked picture plays there instead of a second copy in the card */
     if (!r.ok && shownPic(q)) picStart({ ...shownPic(q), solve: true }, 2.5, $('#lesson-pic') || $('#quiz-pic'));
     questionInView();
+    /* quizfun-oct29: the star lights with the pack burst and, as it lands, a coin chime; the guide cheers, or thinks on a miss */
+    quizMoment(document, sitting.i, r.ok, {onLand: () => sfx('coin')});
     sfx(r.ok ? 'correct' : 'wrong');
     $('#quiz-next').hidden = false;
     $('#quiz-next').focus();
