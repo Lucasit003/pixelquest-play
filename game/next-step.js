@@ -6,8 +6,9 @@
 // the south gate, then the world map).
 //
 // Study and play alternate (playtest S3: 11 minutes of study before Slime Bog was too long). Until the hero's first
-// earned power, the order suggested is: prologue -> first lesson -> Goblin Camp -> practise 10 questions -> Slime Bog ->
-// finish practice and take the test. Only the SUGGESTED order changes: every gate in academics/lessons.js and
+// earned power, the order suggested is: prologue -> first lesson -> Goblin Camp -> practise 10 questions -> the mastery
+// test once the topic is test-ready (a save's first topic is, at 10: follow6-oct29) -> otherwise Slime Bog -> finish
+// practice and take the test. Only the SUGGESTED order changes: every gate in academics/lessons.js and
 // game/math.js stays exactly as it is. The study steps name the subject of the hero's own next power, so a hero who
 // switched class is pointed at their own lesson (S3-11). Step ids are read by game/npcs.js -- keep them stable.
 import {LEVELS,CHAPTERS,levelById,levelDone,levelOpen,levelFogged,tierOpen,tierDone,starsOf,starsShort,gameFinale,ARENA_GOAL} from './levels.js';
@@ -88,9 +89,12 @@ export function nextStep(save,{room}={}){
   const r=testReady(save,t);
   /* polish-oct29 (#10): once a quiz was sat but not passed the goal says what passing takes (it kept saying "Take the quiz") */
   if(!r.quiz){const best=save.lessons?.[t.id]?.quiz|0,need=Math.ceil(PASS*QUIZ_SIZE-1e-9);return {id:'quiz',text:best>0?`Pass the quiz on “${t.title}” at the Library (${need} of ${QUIZ_SIZE} right).`:`Take the quiz on “${t.title}” at the Library.`,target:{kind:'library'}};}
-  if(r.practice<PRACTICE_FIRST)return {id:'practice',text:(n=>`Practice ${n} more question${n===1?'':'s'} at the Library, then try the next level.`)(PRACTICE_FIRST-r.practice)/* first-hour playtest 24 Oct: "(8/25). After 10" read as two goals */,target:{kind:'library'}};
+  if(r.practice<PRACTICE_FIRST)return {id:'practice',text:(n=>`Practice ${n} more question${n===1?'':'s'} at the Library, then ${r.needed<=PRACTICE_FIRST?'take the mastery test':'try the next level'}.`)(PRACTICE_FIRST-r.practice)/* first-hour playtest 24 Oct: "(8/25). After 10" read as two goals; follow6-oct29: a first topic is test-ready at 10, so the test comes next */,target:{kind:'library'}};
+  /* follow6-oct29 (lead, under the owner's 26 Oct delegation and 29 Oct "first topic only"): once the topic is test-ready the
+     goal is the mastery test (ability 2 is the big reward), before Slime Bog; the result card already said so */
+  if(r.ready)return {id:'earn-power',text:`Take the mastery test on “${t.title}” at the Library.`,target:{kind:'library'}};
   const e2=levelById('e2');if(e2&&!levelDone(save,'e2')&&levelOpen(save,'e2')&&!levelFogged(e2))return pad(e2);
-  return {id:'earn-power',text:r.ready?`Take the mastery test on “${t.title}” at the Library.`/* owner 29 Oct: a first topic is test-ready at 10 practice */:'Finish practice and take the test at the Library.',target:{kind:'library'}};}
+  return {id:'earn-power',text:'Finish practice and take the test at the Library.',target:{kind:'library'}};}
  const n=adventure(save);if(n)return n;
  return endGoal(save);}
 function endGoal(save){

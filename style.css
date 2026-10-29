@@ -2720,3 +2720,11 @@ dialog[data-view=result] .victory-tag:is([data-tag=first],[data-tag=record],[dat
 @media(max-height:600px){.field-mission:has(.field-right)>p.subtle{display:none}.field-mission #field-feedback:has(.field-right){margin:4px 0}}
 /* polish2-oct29: the star's burst reached back over the last letters of "QUIZ · 1 OF 5"; the label draws above the burst */
 #modal#modal[data-view=lesson-quiz] .question.qf .qf-top .tag,.field-mission .field-top .tag{position:relative;z-index:4}
+/* follow6-oct29 (exploit6 E): the next upgrade's own Buy button on the smith's Buy tab, so buying never needs a scroll */
+.gear-next .gear-next-buy{margin-left:auto;min-height:32px;padding:4px 14px;font-size:16px}
+.m-mode .gear-next .gear-next-buy{min-height:40px}
+/* follow6-oct29 (exploit6 C): on a short screen an answered typed question shrank its picture to 48px, so a word label in it (the
+   "bed" card) turned to unreadable dots, and the magnifier badge hung over the frame's corner. Answered, the picture steps aside as
+   it already does for a choice question (the card and the corrected answer need the room); unanswered, the picture sits at the top
+   of its cell and the badge stays inside its frame. */
+@media(max-height:500px){#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-feedback:not(:empty))>.question-reading>:is(#quiz-pic,.question-text-card,.quiz-zoom){display:none}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-feedback:not(:empty))>.question-reading{grid-template-areas:"guide top read" "guide say say"}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf>.question-reading>:is(#quiz-pic,.question-text-card){align-self:start}html.m-mode #modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf>.question-reading>.quiz-zoom{margin:4px 4px 0 0}}

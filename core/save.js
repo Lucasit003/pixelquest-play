@@ -122,6 +122,8 @@ const frac=(v,a,b)=>Math.max(a,Math.min(b,Number(v)||0));
   const grade=GRADE_KEYS.includes(l.best?.grade)?l.best.grade:null;
   return {done,best:{time,score:n(l.best?.score,0,1e9),...(grade?{grade}:{})},plays:n(l.plays,0,1e6),...(star&&done?{stars}:{})};};
  for(const [id,l] of Object.entries(s.lessons)){if(!l||typeof l!=='object'||Array.isArray(l)){delete s.lessons[id];continue;}/* v2:edu `reached` (additive): the furthest step ever shown; an older save starts it at its cursor. */const reached=Math.max(n(l.reached,0,1e6),n(l.at,0,1e6));s.lessons[id]={at:n(l.at,0,1e6),...(reached>0?{reached}:{}),done:l.done===true,...(Array.isArray(l.tried)?{tried:[...new Set(l.tried.filter(x=>typeof x==='string').map(latestId))]}:{}),quiz:n(l.quiz,0,99),test:n(l.test,0,99),pts:frac(l.pts,0,100),...(l.first===true?{first:true}:{})/* owner 29 Oct: the first topic's lower practice count (lessons.js settleFirst) */,miss:Array.isArray(l.miss)?l.miss.filter(x=>typeof x==='string').map(latestId).slice(0,10):[]};}
+ /* follow6-oct29: a `first` on a topic that is not mastered is honoured only while no topic is mastered yet (lessons.js firstTopic); a save from before keeps it on its mastered topic(s) only */
+ if(Object.values(s.lessons).some(l=>l.pts>0))for(const l of Object.values(s.lessons))if(l.first&&!(l.pts>0))delete l.first;
 
  // A placement is a grade a child has already shown they are past, so it is only ever read back,
  // never inferred for an older save: everyone who played before starts where they left off.

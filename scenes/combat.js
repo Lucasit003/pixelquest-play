@@ -14,7 +14,7 @@ import {ABILITY_FX,FX_ELEMENT} from '../game/ability-fx.js';
 import {entranceFor,ENTRANCE_TIME,TENT_SPRITE} from '../game/entrances.js';
 import {clamp,damage,stats,unlocked,mastery,abilityPower,abilityGuard,overLevelXP} from '../game/math.js';
 import {TOWN} from '../game/maps.js';
-import {levelById,levelDone,recordLevel,levelScore,levelReward,levelXPReward,arenaWave,arenaTier,difficultyOf,resolveOf,tiered,tierDone} from '../game/levels.js';
+import {levelById,levelDone,recordLevel,levelScore,levelReward,levelXPReward,arenaWave,arenaTier,difficultyOf,resolveOf,tiered,tierDone,tierRecord} from '../game/levels.js';
 import {TIER_KEYS,tierKey,tierOf,tierLevel,tierScale,applyBossTier,tierBossTrim,rallyPoints,vampHeal,checkEnrage,splitParts,MODS,killGold,adviceLevel,killXP,winXP,bossAtkTrim} from '../game/tiers.js';
 import {STAGE,BEATS,REBIRTH,levelGeometry,camTopFor,waveGroups,waveSide,stageKey} from '../game/stage.js';
 import {baseDef,makeEnemy,entryEnemy} from '../game/roster.js';
@@ -112,7 +112,7 @@ export class World{
   this.town();this.tierKey=k;this.tierMul=tierScale(l,k);this.level=normalLevel(composeEncounter(l,k,tierLevel(l,k)),k);if(this.level.encounter){this.tierMul.hp*=this.level.encounter.hp/tierOf(k).hp;if(this.level.encounter.atk)this.tierMul.atk*=this.level.encounter.atk/tierOf(k).atk;else if(this.level.encounter.atkStep)this.tierMul.atk*=this.level.encounter.atkStep;}this.layout=levelGeometry(this.level);this.found=new Set(this.save.levels?.[id]?.secrets||[]);this.zone=ZONE[l.chapter]||'forest';this.arena=l.kind==='arena';
   /* a replay of a cleared tier, or the arena, pays half kill gold (game/tiers.js killGold) */
   this.replayGold=this.arena||tierDone(this.save,id,k);
-  this.runGold=0;this.kills=0;this.wave=0;this.group=0;this.addsSpawned=false;this.run={time:0,damage:0,taken:0,xp:0,waves:0,bestiary:[],secrets:[],rec:l.kind==='level'?adviceLevel(l,k):0,hero:this.save.level||1};this.lastResult=null;this.rally=null;this.rallies=0;this.resolve=resolveOf(this.save,id);this.halfSaid=false;this.potHint=null;this.quote=null;
+  this.runGold=0;this.runGoldHalf=0;this.kills=0;this.wave=0;this.group=0;this.addsSpawned=false;this.run={time:0,damage:0,taken:0,xp:0,waves:0,bestiary:[],secrets:[],rec:l.kind==='level'?adviceLevel(l,k):0,hero:this.save.level||1};this.lastResult=null;this.rally=null;this.rallies=0;this.resolve=resolveOf(this.save,id);this.halfSaid=false;this.potHint=null;this.quote=null;
   runStart(this,l,k,prevRun);
   this.tut=l.tutorial?(learned||{done:new Set(),moved:0}):null;this.controlsTutorial=controls;if(this.controlsTutorial)this.events.persist?.();
   for(const key of new Set([...(this.level.waves||[]).flatMap(w=>waveGroups(w).flat().map(e=>typeof e==='string'?e:e.type)),l.boss].filter(Boolean))){const sp=baseDef(key).sprite;if(sp)loadSprite(sp);}
@@ -260,9 +260,15 @@ export class World{
     never touches XP, mastery or unlocks. An arena always ends in a fall and pays its run gold in full. */
  finish(won){if(this.ended||!this.level)return null;this.ended=true;clearThreats(this);clearHazards(this);const l=this.level,time=Math.round(this.run.time*10)/10;
   const k=this.tierKey||'normal',score=levelScore(l,{kills:this.kills,damage:this.run.damage,taken:this.run.taken,time,won,waves:this.run.waves,tier:k});
+  /* follow6-oct29 (lead, under the owner's 26 Oct balance delegation): losing on purpose farmed full kill gold on a tier not yet
+     cleared (Heroic e1 lost at the boss: 120 gold in 2:57). The first failed try of an uncleared tier keeps full kill gold; every
+     failed try after it (the tier's earlier plays, all losses while it is not cleared) pays the replay's half-rate kill gold
+     (game/tiers.js killGold). Heroic and Legendary only (lead review): on Normal and the prologue every failed try keeps full kill
+     gold, since a struggling kid needs it for potions. A win always pays full kill gold and the clear reward; a replay was already half rate. */
+  const failedAgain=!won&&!this.arena&&!this.replayGold&&k!=='normal'&&(tierRecord(this.save,l.id,k)?.plays|0)>0;
   const rec=recordLevel(this.save,l.id,{won,time:Math.round((this.run.time+(this.run.carry||0))*10)/10,score,tier:k,knockouts:this.run.knockouts|0});if(won)this.save.petBond[this.save.pet]=((this.save.petBond??={})[this.save.pet]||0)+1;
   /* Kind failure (owner, 8 Oct): a fall keeps every coin earned so far. */
-  let gold=this.arena||!won?this.runGold:this.runGold+(rec.first?levelReward(l,k):Math.round(levelReward(l,k)/4));
+  let gold=this.arena||!won?(failedAgain?this.runGoldHalf:this.runGold):this.runGold+(rec.first?levelReward(l,k):Math.round(levelReward(l,k)/4));
   if(!this.arena){const lv=this.save.levels[l.id];lv.resolve=won?0:(lv.resolve|0)+1;}
   if(this.save.pet==='loot')gold=Math.round(gold*(1+petPower(this.save)));this.save.gold+=gold;
   /* the run layer: grade, best grade, Delver XP, Victory Chests, the Boss Meter (scenes/run-fx.js); null on arenas and the prologue */
@@ -416,7 +422,7 @@ export class World{
  runXP(x){const rec=this.level&&this.run?.rec;if(!rec||!(x>0))return x;const y=overLevelXP(x,this.run.hero||1,rec);if(y<x)this.run.damped=true;return y;}
  /* A defeated boss pays once across checkpoint retries; a fresh full run gets a fresh reward ledger. */
  kill(e){this.animate(e,'death');e.deathTime=.7;if(e.boss&&e.rebirth&&!e.reborn&&!e.elite){e.deathTime=0;this.rebirth(e);return;}
-  if(e.boss&&e.partner&&e.partner.hp>0)this.absorb(e.partner,e);if(e.boss&&e.phase===1&&e.cinematic){if(this.level?.encounter?.elderwood)clearHazards(this);e.hp=1;e.inv=999;this.shots=[];/* oct24-polish2: his ground effects froze through the three cards, then fired at a player who could not see them start */if(this.enemyFx)this.enemyFx=this.enemyFx.filter(f=>f.owner!==e);/* oct24-polish3: a tell he was winding up (the thorn line's ground markers live on his brain, not in enemyFx) stayed drawn through the cards; he starts phase two from a plain step */if(e.brain)Object.assign(e.brain,{mode:'move',t:0,markers:[],decoys:null,safeLane:null,freeze:false});this.events.cinematic?.();return;}if(e.boss&&!e.elite&&this.run){const paid=this.run.bossPaid??=[];if(paid.includes(e.key)){this.deathFx(e);return;}paid.push(e.key);if(!this.save.gear?.beat?.[e.key])(this.run.bossFirst??=[]).push(e.key);}this.runGold+=killGold(e,this.replayGold);if(e.split)this.splitEnemy(e);this.kills++;runKill(this,e);this.deathFx(e);{const jw=rollJewel(this.save,e,Math.random);if(jw)this.jewelFound(e,jw);}gearKill(this,e);if(this.note(e.key,'defeated')&&this.run)this.run.bestiary.push(e.key);
+  if(e.boss&&e.partner&&e.partner.hp>0)this.absorb(e.partner,e);if(e.boss&&e.phase===1&&e.cinematic){if(this.level?.encounter?.elderwood)clearHazards(this);e.hp=1;e.inv=999;this.shots=[];/* oct24-polish2: his ground effects froze through the three cards, then fired at a player who could not see them start */if(this.enemyFx)this.enemyFx=this.enemyFx.filter(f=>f.owner!==e);/* oct24-polish3: a tell he was winding up (the thorn line's ground markers live on his brain, not in enemyFx) stayed drawn through the cards; he starts phase two from a plain step */if(e.brain)Object.assign(e.brain,{mode:'move',t:0,markers:[],decoys:null,safeLane:null,freeze:false});this.events.cinematic?.();return;}if(e.boss&&!e.elite&&this.run){const paid=this.run.bossPaid??=[];if(paid.includes(e.key)){this.deathFx(e);return;}paid.push(e.key);if(!this.save.gear?.beat?.[e.key])(this.run.bossFirst??=[]).push(e.key);}this.runGold+=killGold(e,this.replayGold);this.runGoldHalf=(this.runGoldHalf||0)+killGold(e,true);if(e.split)this.splitEnemy(e);this.kills++;runKill(this,e);this.deathFx(e);{const jw=rollJewel(this.save,e,Math.random);if(jw)this.jewelFound(e,jw);}gearKill(this,e);if(this.note(e.key,'defeated')&&this.run)this.run.bestiary.push(e.key);
  /* Arena kills pay gold only: the arena never feeds XP, so it can never be the step that completes an unlock. */
  if(!this.arena){/* kill XP grows 12% a tier, so hero levels keep pace into Veilmoor (balance sim, 9 Oct); scaled per tier in game/tiers.js killXP (balance-oct26) */const x=this.runXP(killXP(e,this.tierKey));if(this.run){this.run.xp+=x;this.run.killXP=(this.run.killXP||0)+x;}this.events.xp?.(x);}this.player.mp=Math.min(this.player.maxMp,this.player.mp+4);sfx('kill');}
  /* Vampiric (game/tiers.js MODS): a hit that lands heals the biter. */

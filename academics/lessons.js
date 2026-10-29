@@ -115,15 +115,17 @@ export const PRACTICE_NEEDED=25;
 export const practised=(save,t)=>untouched(save,t)?0:POOL[t.id].filter(id=>(save.answers[id]||0)>0).length;
 /* Owner, 29 Oct 2026 (docs/reference/SPEC_DECISIONS.md): a save's FIRST topic needs only FIRST_PRACTICE_NEEDED practised
    questions before its test; every later topic keeps PRACTICE_NEEDED. The first topic is any topic worked on while the save
-   has no mastered topic (any subject or level, placement included, since placement never masters). The topic that gets
-   mastered first, and any other topic that already had its 10, keep the lower count for good (`first` on their lesson
-   record, written by settleFirst when the first topic is mastered), so mastering one topic never takes readiness from
-   another. Only the practice count before the test changes: topicPoints, retirement and weighted mastery do not. */
+   has no mastered topic (any subject or level, placement included, since placement never masters). Only the topic that gets
+   mastered first keeps the lower count (`first` on its lesson record, written by settleFirst; it is already mastered, so the
+   mark is for display). follow6-oct29 (lead, under the owner's "first topic only"): every other topic follows
+   PRACTICE_NEEDED from then on, even one that already had its 10, so practising 10 in many topics first skips nothing; a
+   `first` on a topic that is not mastered counts only while no topic is mastered (core/save.js normalize drops it otherwise).
+   Only the practice count before the test changes: topicPoints, retirement and weighted mastery do not. */
 export const FIRST_PRACTICE_NEEDED=10;
 const anyMastered=(save,except)=>Object.entries(save.lessons||{}).some(([id,r])=>id!==except&&(r?.pts||0)>0);
-export const firstTopic=(save,t)=>save.lessons?.[t.id]?.first===true||!anyMastered(save,t.id);
+export const firstTopic=(save,t)=>{const r=save.lessons?.[t.id];return (r?.first===true&&(r.pts||0)>0)||!anyMastered(save,t.id);};
 export const practiceNeeded=(save,t)=>firstTopic(save,t)?FIRST_PRACTICE_NEEDED:PRACTICE_NEEDED;
-const settleFirst=(save,t)=>{if(anyMastered(save))return;for(const x of TOPICS){const r=save.lessons?.[x.id];if(r&&(x.id===t.id||practised(save,x)>=FIRST_PRACTICE_NEEDED))r.first=true;}};
+const settleFirst=(save,t)=>{if(!anyMastered(save))rec(save,t).first=true;};
 // The quiz half of the gate: 4 of 5, or the pool has too few unretired questions left to ask 4,
 // in which case a quiz can never reach it and the practice already done stands in for it.
 export const testReady=(save,t)=>{const r=save.lessons?.[t.id]||{},done=r.done===true,need=Math.ceil(PASS*QUIZ_SIZE-1e-9),quiz=(r.quiz||0)>=need||left(save,t)<need,p=practised(save,t),n=practiceNeeded(save,t);
