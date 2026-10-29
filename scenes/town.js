@@ -242,7 +242,31 @@ function placingOk(S, f, x, y) {
   for (let gy = Math.floor(r.y0 / c.cell); gy < Math.ceil(r.y1 / c.cell); gy++) for (let gx = Math.floor(r.x0 / c.cell); gx < Math.ceil(r.x1 / c.cell); gx++) {
     const i = gy * c.w + gx; if (mine.has(i) || (S.bits[i >> 3] >> (i & 7) & 1) === 1) return false; }
   if (p && p.x > r.x0 - 8 && p.x < r.x1 + 8 && p.y > r.y0 - 4 && p.y < r.y1 + 12) return false;
-  return !S.points.some(q => q.x > r.x0 - 22 && q.x < r.x1 + 22 && q.y > r.y0 - 22 && q.y < r.y1 + 22);
+  if (S.points.some(q => q.x > r.x0 - 22 && q.x < r.x1 + 22 && q.y > r.y0 - 22 && q.y < r.y1 + 22)) return false;
+  return keepsWays(S, r, p);
+}
+/* exploit6-oct29: a row of barrels or benches could wall the door off from the study desk ("Lay out abilities", the only way to the
+   Home panel and so to picking furniture up again), the bed and the fire. An item may go down only if every spot the hero could
+   walk to from the door (each E spot, the exit and the hero himself) is still reachable once it stands there. Spots already cut
+   off by an older layout never block a placement. Flood fill over the room's collision cells; nothing else changes. */
+function wayReach(S, extra) {
+  const c = S.D.collision, e = S.points.find(q => q.type === 'entry'), seen = new Uint8Array(c.w * c.h);
+  if (!e) return null;
+  const open = i => !extra.has(i) && !blockedAt(S, (i % c.w + .5) * c.cell, (Math.floor(i / c.w) + .5) * c.cell), q = [Math.floor(e.y / c.cell) * c.w + Math.floor(e.x / c.cell)];
+  seen[q[0]] = 1;
+  while (q.length) { const i = q.pop(), x = i % c.w, y = (i / c.w) | 0;
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const nx = x + dx, ny = y + dy, j = ny * c.w + nx; if (nx < 0 || ny < 0 || nx >= c.w || ny >= c.h || seen[j] || !open(j)) continue; seen[j] = 1; q.push(j); } }
+  return seen;
+}
+function keepsWays(S, r, p) {
+  const c = S.D.collision, extra = new Set();
+  for (let gy = Math.floor(r.y0 / c.cell); gy < Math.ceil(r.y1 / c.cell); gy++) for (let gx = Math.floor(r.x0 / c.cell); gx < Math.ceil(r.x1 / c.cell); gx++) extra.add(gy * c.w + gx);
+  const before = wayReach(S, new Set()), after = before && wayReach(S, extra);
+  if (!before) return true;
+  const near = (seen, x, y) => { const gx = Math.floor(x / c.cell), gy = Math.floor(y / c.cell); for (let dy = -3; dy <= 3; dy++) for (let dx = -3; dx <= 3; dx++) { const X = gx + dx, Y = gy + dy; if (X >= 0 && Y >= 0 && X < c.w && Y < c.h && seen[Y * c.w + X]) return true; } return false; };
+  const spots = S.points.filter(q => q.type !== 'entry' && q.type !== 'npc-spot').map(q => q.stand ?? [q.x, q.y]);
+  if (p) spots.push([p.x, p.y]);
+  return spots.every(([x, y]) => !near(before, x, y) || near(after, x, y));
 }
 /** Placing furniture in the Home: start with an owned item's id, then confirm (E) or cancel (Escape). */
 export function hubStartPlacing(id) { H.placing = FURN[id] && H.save && spare(H.save, id) > 0 ? id : null; return !!H.placing; }
@@ -1009,9 +1033,11 @@ let iconImage = null;
 /* packicons3-oct25: the markers are our PixelLab icons, one 32 px cell each in ui/skin/packicons3/town-markers.png
    (tools/bake-packicons3-oct25.py; was assets/town/icons.png, Shikashi): a speech bubble, the open book, the gold coin, the up
    arrow, the key, an ale mug, the scroll and the XP sparkle, in this order. */
-const MARK = {talk: 0, library: 1, shop: 2, exit: 3, door: 4, inn: 5, read: 6, other: 7};
+export const MARK = {talk: 0, library: 1, shop: 2, exit: 3, door: 4, inn: 5, read: 6, other: 7};
 const loadMarkers = () => { if (typeof Image === 'undefined') return null; const im = new Image(); im.decoding = 'async'; im.src = new URL('../ui/skin/packicons3/town-markers.png', import.meta.url).href; return im; };
-function markerIcon(o) { return o.talk ? MARK.talk : o.panel === 'library' ? MARK.library : o.shop || o.panel ? MARK.shop : o.worldmap ? MARK.exit : o.inn ? MARK.inn : o.run ? MARK.door : o.say ? MARK.read : MARK.other; }
+/* exploit6-oct29: the Home's study desk ("Lay out abilities") and the noticeboard showed the shop's gold coin, as if something were
+   for sale there; they get the scroll. Shops and the other panels keep the coin. */
+export function markerIcon(o) { return o.talk ? MARK.talk : o.panel === 'library' ? MARK.library : o.panel === 'home' || o.panel === 'community' ? MARK.read : o.shop || o.panel ? MARK.shop : o.worldmap ? MARK.exit : o.inn ? MARK.inn : o.run ? MARK.door : o.say ? MARK.read : MARK.other; }
 /* The hero drawn again, faint, over whatever hides them. Rendered off-screen first so the
    limbs do not show through each other. */
 /* Only the part of the hero that is really hidden: his own pixels, tinted one flat colour, cut to the
