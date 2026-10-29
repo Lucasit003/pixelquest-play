@@ -14,7 +14,7 @@ import {LEVELS,CHAPTERS,levelById,levelDone,levelOpen,levelFogged,tierOpen,tierD
 import {ABILITIES} from './abilities.js';
 import {SUBJECTS} from './data.js';
 import {unlocked,abilityMastery,xpLevel} from './math.js';
-import {TOPICS,testReady,mastered,topicOpen} from '../academics/lessons.js';
+import {TOPICS,testReady,mastered,topicOpen,PASS,QUIZ_SIZE} from '../academics/lessons.js';
 import {topicInSchoolMode} from '../academics/study-unlock.js';
 import {TIER_KEYS,TIERS} from './tiers.js';
 import {nextTask} from './skills.js';
@@ -86,7 +86,8 @@ export function nextStep(save,{room}={}){
   const t=inProgress(save,a.subject);
   if(!t)return {id:'start-lesson',text:`Start ${/^[aeiou]/i.test(subject||'')?'an':'a'} ${subject} lesson at the Library.`/* exploit4-oct27: it read "Start a English lesson" */,target:{kind:'library'}};
   const r=testReady(save,t);
-  if(!r.quiz)return {id:'quiz',text:`Take the quiz on “${t.title}” at the Library.`,target:{kind:'library'}};
+  /* polish-oct29 (#10): once a quiz was sat but not passed the goal says what passing takes (it kept saying "Take the quiz") */
+  if(!r.quiz){const best=save.lessons?.[t.id]?.quiz|0,need=Math.ceil(PASS*QUIZ_SIZE-1e-9);return {id:'quiz',text:best>0?`Pass the quiz on “${t.title}” at the Library (${need} of ${QUIZ_SIZE} right).`:`Take the quiz on “${t.title}” at the Library.`,target:{kind:'library'}};}
   if(r.practice<PRACTICE_FIRST)return {id:'practice',text:(n=>`Practice ${n} more question${n===1?'':'s'} at the Library, then try the next level.`)(PRACTICE_FIRST-r.practice)/* first-hour playtest 24 Oct: "(8/25). After 10" read as two goals */,target:{kind:'library'}};
   const e2=levelById('e2');if(e2&&!levelDone(save,'e2')&&levelOpen(save,'e2')&&!levelFogged(e2))return pad(e2);
   return {id:'earn-power',text:'Finish practice and take the test at the Library.',target:{kind:'library'}};}

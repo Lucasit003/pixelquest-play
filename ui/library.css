@@ -766,6 +766,15 @@ html.m-mode dialog[data-view=lesson] .lesson-footer .actions>.try-it-cue[hidden]
 :root[data-motion=reduced] .edu-unlock.edu-awakening :is(.edu-unlock-icon,.edu-unlock-ribbon){animation:none}
 :root[data-motion=reduced] .edu-unlock.edu-awakening .edu-awaken-ring{display:none}
 
+/* polish-oct29 #5: after a wrong answer the question strip keeps its full height (its Read to me was cut in half at 1280x720) and
+   the worked picture sits beside the explanation instead of under it, so the whole card fits without scrolling at 1280x720 and 844x390 */
+dialog#modal:is([data-view=placement],[data-view=lesson-quiz]) .question.question:has(#quiz-feedback:not(:empty) .feedback>p):has(#quiz-form:not(.choice-form))>.question-reading{flex-shrink:0}
+dialog#modal:is([data-view=placement],[data-view=lesson-quiz]) #quiz-feedback .feedback.feedback:has(>#lesson-pic){position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:14px;align-items:start;align-content:start}
+dialog#modal:is([data-view=placement],[data-view=lesson-quiz]) #quiz-feedback .feedback.feedback:has(>#lesson-pic)>*{grid-column:1}
+dialog#modal:is([data-view=placement],[data-view=lesson-quiz]) #quiz-feedback .feedback.feedback:has(>#lesson-pic)>#lesson-pic{grid-column:2;grid-row:1/span 9;width:auto;height:min(132px,24vh);max-width:none;max-height:none;margin:2px 0}
+dialog#modal:is([data-view=placement],[data-view=lesson-quiz]) #quiz-feedback .feedback.feedback:has(>#lesson-pic)>.edu-read{grid-column:1/2;grid-row:1/2;position:absolute;top:0;right:0;margin:0}
+dialog#modal:is([data-view=placement],[data-view=lesson-quiz]) #quiz-feedback .feedback.feedback:has(>#lesson-pic)>.am{padding-right:156px}
+@media(max-height:500px){dialog#modal:is([data-view=placement],[data-view=lesson-quiz]) #quiz-feedback .feedback.feedback:has(>#lesson-pic)>#lesson-pic{height:min(120px,30vh)}}
 /* oct26-phonelesson: phone lesson legibility (docs/playtest/oct26-phonelesson). The lesson sheet takes the whole screen like every other
    phone sheet (it was 92dvh, 29-31px lost). The picture column is exactly as wide as the picture (min-content): a long equation line above
    the picture used to set the column to its full length and squeeze the step's text to one word a line (AP Micro, APUSH). main.js

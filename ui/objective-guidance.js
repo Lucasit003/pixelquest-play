@@ -17,7 +17,7 @@ export function guidancePlacement({player,target,camera,viewport,obstacles=[],wi
  if(!player||!target||target.arrived||!camera?.width||!camera?.height||!viewport?.width||!viewport?.height)return null;
  const sx=viewport.width/camera.width,sy=viewport.height/camera.height;
  const project=p=>({x:viewport.left+(p.x-camera.x+camera.width/2)*sx,y:viewport.top+(p.y-camera.y+camera.height/2)*sy});
- const p=project(player),goal=project(target),dx=goal.x-p.x,dy=goal.y-p.y,d=Math.hypot(dx,dy);
+ const p=project(player),goal=project(target.aim||target),dx=goal.x-p.x,dy=goal.y-p.y,d=Math.hypot(dx,dy);
  if(!Number.isFinite(d)||d<1)return null;
  const edge={left:viewport.left+inset,right:viewport.left+viewport.width-inset,top:viewport.top+inset,bottom:viewport.top+viewport.height-inset};
  const offscreen=goal.x<edge.left||goal.x>edge.right||goal.y<edge.top||goal.y>edge.bottom;

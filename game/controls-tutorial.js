@@ -8,7 +8,12 @@ export function advanceControls(t,action){if(t&&t.steps[t.index]===action)t.inde
 /* A hint stays until the player does the thing (r3 playtest: 8 s was gone before a child read it). HINT_WAIT is only a
    safety net for a player who never tries; age counts on-screen time only, so a hint never runs out behind a panel. */
 export const HINT_WAIT=90;
-export function tickControls(t,age,inLevel=false){const step=t?.steps[t.index];return t&&(age>HINT_WAIT||inLevel&&step==='interact')?advanceControls(t,step):t;}
+/* polish-oct29 (#9): "Getting started 5/5: press K for a Power Swing" sat over the whole prologue boss when K was never pressed, and
+   "Travel tips 1/2" sat over the Library for minutes. In a level a Getting started step has a 30 s safety net (the fight is short; the
+   ability hint already gives itself 15 s a level), and the card is done once a boss fight starts (as Interact is done on entering
+   combat): the boss and its health bar stay clear. Travel tips are optional extras and get 30 s each anywhere. */
+export const LEVEL_HINT_WAIT=30,TIP_WAIT=30;
+export function tickControls(t,age,inLevel=false,bossFight=false){const step=t?.steps[t.index],tips=t?.steps[0]==='run';if(t&&bossFight&&!tips)return null;return t&&(age>(tips?TIP_WAIT:inLevel?LEVEL_HINT_WAIT:HINT_WAIT)||inLevel&&step==='interact')?advanceControls(t,step):t;}
 
 /* One quiet reminder per living boss encounter, three per save. Only successful casts reset the clock;
    a busy toast channel retries with current readiness instead of queuing a stale combat instruction. */

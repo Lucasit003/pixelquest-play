@@ -62,6 +62,10 @@ export const ROOM_ALIAS = {south_cottage: 'barracks'};
    His spot gets a second stand point (front) on the customer side of the counter, which nearest() also measures to; the one beside him still works. */
 export const COUNTER_STAND = {farmhouse: {farmer_hob: [372, 300]}};
 const ROOM_KEYS = () => [...new Set(Object.keys(ROOMS).map(k => ROOM_ALIAS[k] ?? k))];
+/* polish-oct29 (#13): the round table and its four benches (one baked sprite, 116x94) stood right in front of the Library door: the hero
+   snagged on the table walking up to the door and the top bench sat under him at the door. The set is taken out (pack art, only hidden,
+   found by its baked place and size like the Barracks lot) and its footprint in the collision grid is opened. */
+export const LIBRARY_YARD = {hide: s => s[3] === 116 && s[4] === 94 && Math.abs(s[1] - 937) < 4 && Math.abs(s[2] - 1179) < 4, open: [[936, 1228, 1064, 1272]]};
 export const BARRACKS = {door: 6972, img: 'barracks.png', x: 1205, y: 1950, base: 2170,
   swap: s => s[3] === 174 && s[4] === 248 && Math.abs(s[1] - 1226) < 4 && Math.abs(s[2] - 1912) < 4,
   step: s => s[5] === 2163 && (Math.abs(s[1] - 1227) < 2 || Math.abs(s[1] - 1373) < 2),
@@ -198,6 +202,7 @@ export function blockedAt(S, x, y) {
   if (gx < 0 || gy < 0 || gx >= c.w || gy >= c.h) return true;
   const i = gy * c.w + gx;
   if (restoreOf(S).block.has(i)) return true;
+  if (S.key === 'village' && LIBRARY_YARD.open.some(([x0, y0, x1, y1]) => x >= x0 && x < x1 && y >= y0 && y < y1)) return false;
   if (S.key === 'barracks') { const inR = r => x >= r[0] && x < r[2] && y >= r[1] && y < r[3]; if (BARRACKS.roomBlock.some(inR)) return true; }
   if (S.key === 'village' && BARRACKS.block.some(([x0, y0, x1, y1]) => x >= x0 && x < x1 && y >= y0 && y < y1)) return true;
   if (S.key === 'home' && houseBlock(S).has(i)) return true;
@@ -272,7 +277,9 @@ export function restoreSets(R, levels) {
 function restoreOf(S) {
   if (S.rs) return S.rs;
   const R = S.D.restore ?? {}, all = Object.fromEntries([...Object.keys(R.show ?? {}), ...Object.keys(R.hide ?? {}), ...Object.keys(R.block ?? {})].map(k => [k, {done: true}]));
-  return S.rs = restoreSets(S.D.restore, all);
+  S.rs = restoreSets(S.D.restore, all);
+  if (S.key === 'village') S.D.sprites.forEach((s, i) => { if (LIBRARY_YARD.hide(s)) S.rs.hidden.add(i); });
+  return S.rs;
 }
 /* Corner assist (playtest 14 Oct): walking straight into a wall a few pixels beside a doorway or a gap slides the hero
    toward the opening instead of stopping dead. (px, py) is the hero, (fx, fy) the blocked step, (ax, ay) the sideways
@@ -405,9 +412,9 @@ function nearest(S, p) {
     /* the road out is wide: any of the last few steps toward the edge offers the World Map */
     /* the road out offers the World Map a few steps before the map's edge, so the hero is never under the prompt (playtest m3) */
     const out = !S.room && worldExit(q), qx = q.x, qy = out ? q.sy : q.y;
-    const raw = out ? Math.hypot(p.x - qx, (p.y - qy) * .8) * .6 : Math.min(Math.hypot(p.x - q.sx, p.y - q.sy) * 1.25, Math.hypot(p.x - q.x, (p.y - q.y) * 1.3), q.front ? Math.hypot(p.x - q.front[0], p.y - q.front[1]) * 1.25 : Infinity);
+    const raw = out ? Math.hypot(p.x - qx, (p.y - qy) * .8) * .6 : doorReach(q, p.x, p.y);
     const d = raw - (out ? 0 : facingBonus(p, q.x, q.y));
-    if (raw < 30 && (!best || d < best.d)) { const o = optionFor(S, q); if (o) best = {d, q, o}; }
+    if (raw < DOOR_REACH && (!best || d < best.d)) { const o = optionFor(S, q); if (o) best = {d, q, o}; }
   }
   return best;
 }
@@ -423,6 +430,18 @@ function enter(room, door) {
     H.player.direction = 'up'; H.player.lastDirection = 'up';
   });
 }
+/* polish-oct29 (#8): walking out of a building used to put the hero on the door's own stand spot, inside its "Go home" / "Enter ..."
+   reach, so the E the tutorial asked for next took him straight back in. He now comes out a few steps straight down from the door (beside it, or along the lane, only if that is blocked), the first
+   free spot whose distance to the door (scored as nearest() scores it) is clear of the 30 px reach; failing that, the stand spot. */
+export const DOOR_REACH = 30;
+export function doorReach(q, x, y) { return Math.min(Math.hypot(x - q.sx, y - q.sy) * 1.25, Math.hypot(x - q.x, (y - q.y) * 1.3), q.front ? Math.hypot(x - q.front[0], y - q.front[1]) * 1.25 : Infinity); }
+export function outsideDoor(V, q) {
+  const ok = (x, y) => !footBlocked(V, x, y) && doorReach(q, x, y) >= DOOR_REACH + 4;
+  for (const dx of [0, -8, 8, -16, 16]) for (let dy = 26; dy <= 64; dy += 2) if (ok(q.sx + dx, q.sy + dy)) return [q.sx + dx, q.sy + dy];
+  /* a door onto a narrow lane (the farmhouse): a step along it instead */
+  for (let dx = 26; dx <= 64; dx += 2) for (const dy of [4, 8, 0]) for (const sx of [1, -1]) if (ok(q.sx + sx * dx, q.sy + dy)) return [q.sx + sx * dx, q.sy + dy];
+  return [q.sx, q.sy];
+}
 /* Prefer the door actually used. Old interior bakes can name another room's entrance. */
 function returnDoor(S) {
   const doors = scene('village').points.filter(q => q.type === 'entrance' && roomFor(q) === S.key);
@@ -433,7 +452,7 @@ function leave() {
   H.placing = null;
   fadeTo(() => {
     const V = scene('village'), door = returnDoor(H.S);
-    const [x, y] = door ? [door.sx, door.sy] : spawnPoint();
+    const [x, y] = door ? outsideDoor(V, door) : spawnPoint();
     H.from = null;
     placeAt(H.player, V, x, y);
     H.player.direction = 'down'; H.player.lastDirection = 'down';
@@ -673,7 +692,10 @@ export function hubGuidanceTarget(target, subject) {
   if (!q) return null;
   const x = !S.room && kind === 'gate' ? q.x : q.sx;
   const y = !S.room && kind === 'gate' ? q.sy : q.sy;
-  return {room: S.key, x, y, label, arrived: H.near?.q === q || !!H.player && Math.hypot(H.player.x - x, H.player.y - y) <= 12};
+  /* polish-oct29 (#13): a building's arrow aims at the door itself (its stand spot is at the doorstep, level with a hero walking up,
+     so near the door the arrow pointed sideways) */
+  const aim = !S.room && q.type === 'entrance' ? {x: q.x, y: q.y - 32} : null;
+  return {room: S.key, x, y, label, ...(aim ? {aim} : {}), arrived: H.near?.q === q || !!H.player && Math.hypot(H.player.x - x, H.player.y - y) <= 12};
 }
 /* a villager quest's town target (game/quests.js stepTarget): a person in a room ({kind:'npc', key, room}) or a building's door
    ({kind:'building', id}); from another room the arrow points at its way out first */
