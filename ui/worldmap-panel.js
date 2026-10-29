@@ -32,6 +32,7 @@ export function updateMapPanel(v,canvas){if(!globalThis.document?.body||!canvas?
  /* a card the player opened may cover other stops for a moment, never the hero, the selected stop or the tabs */
  /* polish2-oct29 (readiness #12): on a phone the full card covered the middle of the map. A touch screen takes the full card only in a
     corner clear of the hero, the selected stop and its road; otherwise the one-line card in a corner (a tap opens it) */
- const open=expanded===key,hit=(v.touch&&!open?fit(sizes,true,true,true)||fit(compactSizes,true,true,true)||fit(compactSizes,true):null)||fit(sizes,true)||(open&&fit(sizes,true,false))||fit(compactSizes,true)||fit(compactSizes,false)||fit(sizes,false);
+ /* stargate-oct29: a phone's compact card hid the map's notice (the locked chapter tab's stars hint), so a notice opens the card while it shows */
+ const open=expanded===key||!!(v.touch&&v.toast),hit=(v.touch&&!open?fit(sizes,true,true,true)||fit(compactSizes,true,true,true)||fit(compactSizes,true):null)||fit(sizes,true)||(open&&fit(sizes,true,false))||fit(compactSizes,true)||fit(compactSizes,false)||fit(sizes,false);
  if(!hit){el.hidden=true;return false;}const [q,size]=hit;el.hidden=false;el.classList.toggle('wm-compact',size.compact);el.classList.toggle('wm-bare',!!size.bare);el.classList.toggle('wm-open',open&&!size.compact);el.style.width=size.compact?'max-content':size.width+'px';el.style.maxWidth=size.compact?size.width+'px':'';el.style.left=Math.round(b.left+q.x*scale)+'px';el.style.top=Math.round(b.top+q.y*scale)+'px';el.style.opacity=String(1-(v.fade||0));return true;
 }

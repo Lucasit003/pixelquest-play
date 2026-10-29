@@ -1,7 +1,8 @@
 /* Short player-facing previews from the shipped encounter rules. Reads progress, never writes it. */
-import {LEVELS,tiered,tierOpen,tierDone,tierRecord,starsOf,levelOpen,starsShort,levelReward,levelXPReward} from './levels.js';
+import {LEVELS,tiered,tierOpen,tierDone,tierRecord,starsOf,levelOpen,starsShort,levelReward,levelById,CHAPTERS,levelXPReward} from './levels.js';
 import {TIER_KEYS,TIERS,adviceLevel,XP_TUNE,tierKey} from './tiers.js';
 import {overLevelXP} from './math.js';
+import {MAPS,PADS} from './worldmap-layout.js';
 import {encounterFor} from './tier-encounters.js';
 import {ENEMY_TYPES} from './enemies.js';
 import {NORMAL_SEQUENCES} from '../scenes/normal-pacing.js';
@@ -15,10 +16,19 @@ const sentence=s=>plain(s.charAt(0).toUpperCase()+s.slice(1))+'.';
 export function mechanicPreview(l,k){const r=encounterFor(l,k);if(!r){/* playtest ch2: a paced Normal boss (chapters 2-3) opens with and teaches its signature move, so the card names that one, not the first move in its list */const move=(k==='normal'&&NORMAL_SEQUENCES[l.id]?.[0])||ENEMY_TYPES[l.boss]?.attacks?.[0]?.name;return {changes:move?`Watch for the ${plain(move)}.`:'Meet the enemies and boss.',answer:'Move out of the warnings. Attack in the gaps.',goal:move?`watch for the ${plain(move)}`:'watch the boss warnings'};}
  const [name,answer]=HAZARDS[r.hazard.kind],moves=r.sequence?`${sentence(r.sequence.call)} Then ${plain(r.sequence.then)}.`:l.id==='e1'?'Grubnak calls guards.':"The Bog King jumps at you.";
  return {changes:`${name}. ${k==='legendary'?'Shorter warnings. ':''}${moves}`,answer:sentence(answer),goal:answer};}
+/* stargate-oct29 (midgame-oct29 finding 2): where to earn the stars a star gate still needs. An uncleared open tier (up to 3 new
+   stars) comes before a replay for par; then the most stars still available, the easier tier, and the pad nearest the gate: the
+   nearest chapter, then the shortest map distance to that chapter's road toward the gate (its edge gate, or the gate pad itself).
+   -> {level,tier,done,gain} or null. Reads the save only. */
+export function starSource(s,gateId){const gl=levelById(gateId);if(!gl)return null;const ci=id=>CHAPTERS.findIndex(c=>c.id===id),gc=ci(gl.chapter),c=[];
+ const anchor=ch=>{if(ch===gl.chapter)return PADS[gateId]||null;const to=CHAPTERS[ci(ch)+(gc>ci(ch)?1:-1)]?.id;return MAPS[ch]?.gates?.find(g=>g.to===to)||null;};
+ for(const l of LEVELS){if(!tiered(l)||l.id===gateId)continue;const a=anchor(l.chapter),p=PADS[l.id],far=Math.abs(gc-ci(l.chapter))*1e4+(a&&p?Math.hypot(a.x-p.x,a.y-p.y):5e3);
+  TIER_KEYS.forEach((k,ti)=>{if(!tierOpen(s,l.id,k))return;const have=starsOf(s,l.id,k);if(have>=3)return;const done=tierDone(s,l.id,k);c.push({level:l,tier:k,done,gain:done?3-have:3,ti,far});});}
+ c.sort((a,b)=>a.done-b.done||b.gain-a.gain||a.ti-b.ti||a.far-b.far);const b=c[0];return b?{level:b.level,tier:b.tier,done:b.done,gain:b.gain}:null;}
 const nextTier=(s,l)=>TIER_KEYS.find(k=>tierOpen(s,l.id,k)&&!tierDone(s,l.id,k));
 /* oct25-phone2: the tactic for the tier NEXT GOAL names ("Tip: leave the arrow row."), or '' when the goal is not a tier clear; never part of the goal text */
 export function ladderTip(s,l){if(!tiered(l)||starsShort(s,l.id)||!levelOpen(s,l.id))return '';const k=nextTier(s,l);return k?`Tip: ${mechanicPreview(l,k).goal}.`:'';}
-export function ladderGoal(s,l){if(!tiered(l))return '';const g=starsShort(s,l.id);if(g){const pad=LEVELS.find(p=>tiered(p)&&levelOpen(s,p.id)&&TIER_KEYS.some(k=>tierOpen(s,p.id,k)&&starsOf(s,p.id,k)<3));return `${g.have}/${g.need} stars. ${pad?`Earn stars at ${pad.name}.`:'Earn stars on earlier levels.'}`;}
+export function ladderGoal(s,l){if(!tiered(l))return '';const g=starsShort(s,l.id);if(g){const src=starSource(s,l.id)/* stargate-oct29: an uncleared pad before a replay for par */;return `${g.have}/${g.need} stars. ${src?`Earn stars at ${src.level.name}${src.tier==='normal'?'':` on ${TIERS[src.tier].label}`}.`:'Earn stars on earlier levels.'}`;}
  if(!levelOpen(s,l.id)){const p=l.requires.map(id=>LEVELS.find(x=>x.id===id)).find(Boolean);return p?`Clear ${p.name}.`:'';}
  const next=nextTier(s,l);/* polish4-oct27 (new-player playtest): "Beat Goblin Camp on Normal." read oddly (a place is cleared, not beaten, and Normal is the default); it is now "Clear Goblin Camp.", then "Clear Goblin Camp on Heroic." */if(next)return `Clear ${l.name.replace(/^The /,"the ")}${next==='normal'?'':` on ${TIERS[next].label}`}.`;/* oct25-phone2: NEXT GOAL is one goal; it used to read "Legendary open: leave the arrow row.", a goal glued to a tactic. The tactic is ladderTip, shown on its own line */
  const stars=TIER_KEYS.find(k=>starsOf(s,l.id,k)<3);if(stars)return `Earn 3 stars on ${TIERS[stars].label}.`;

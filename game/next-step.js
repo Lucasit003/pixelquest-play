@@ -22,6 +22,7 @@ import {nextTask} from './skills.js';
 import {potionCount,potionKind,POTIONS} from './potions.js';
 import {nextQuestStep,questLive,QUESTS} from './quests.js';
 import {COMPANIONS,hireable} from './party.js';
+import {starSource} from './ladder-guide.js';
 /* How much practice to suggest before the next adventure. The test still needs practiceNeeded (lessons.js: 10 on a save's first topic, 25 after). */
 export const PRACTICE_FIRST=10;
 const lessonDone=save=>Object.values(save?.lessons||{}).some(l=>l?.done);
@@ -62,10 +63,12 @@ function adventure(save){
  const h=hireStep(save);if(h)return h;
  const q=nextQuestStep(save,questLive);if(q?.rank==='handin')return questStep(q);
  const road=nextLevel(save);if(road)return pad(road);
- if(q)return questStep(q);
- if(gameCleared(save))return postGame(save);
  const gate=playable().find(l=>!l.optional&&starsShort(save,l.id));
- if(gate){const g=starsShort(save,gate.id);for(const k of TIER_KEYS)for(const l of playable())if(tierOpen(save,l.id,k)&&starsOf(save,l.id,k)<3){const n=tierPad(l,k);return {...n,id:'stars-'+gate.id,text:`${gate.name} needs ${g.need} stars (you have ${g.have}). ${tierDone(save,l.id,k)?'Beat the 3-star time in':'Clear'} ${l.name} on ${TIERS[k].label} for more.`};}}
+ /* stargate-oct29 (midgame-oct29 finding 2): the quest step still comes first at a star wall (guide-oct26), but it now says the
+    main road is held by stars, so a kid on 14 of 15 is not left wondering why the road stopped */
+ if(q){const n=questStep(q);if(!gate)return n;const g=starsShort(save,gate.id);return {...n,text:`${n.text.replace(/[.!]\s*$/,'')} (${gate.name} needs ${g.need}★: ${g.need-g.have} more).`,starGate:gate.id};}
+ if(gameCleared(save))return postGame(save);
+ if(gate){const g=starsShort(save,gate.id),src=starSource(save,gate.id);if(src){const l=src.level,k=src.tier,n=tierPad(l,k);return {...n,id:'stars-'+gate.id,text:`${gate.name} needs ${g.need} stars (you have ${g.have}). ${src.done?'Beat the 3-star time in':'Clear'} ${l.name} on ${TIERS[k].label} for more.`};}}
  for(const optional of [false,true])for(const k of TIER_KEYS)for(const l of playable().filter(l=>!!l.optional===optional))if(tierOpen(save,l.id,k)&&!tierDone(save,l.id,k))return tierPad(l,k);
  for(const k of TIER_KEYS)for(const l of playable())if(tierOpen(save,l.id,k)&&starsOf(save,l.id,k)<3)return {...tierPad(l,k),text:`Try for 3 stars in ${l.name} on ${TIERS[k].label}: beat its par time on the map card.`};
  return null;
