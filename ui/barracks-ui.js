@@ -111,6 +111,21 @@ export function resultCompanionHTML(save, party, found, scroll = '') {
   return out;
 }
 
+/* endfollow-oct29 (endgame-oct29 open item 1): a kid on the main road never met Wil's quest as a goal until after THE END,
+   because the next goal ranks an open quest below the main road (next-step.js). A chapter's first Normal clear card names that
+   chapter's live quest once, as one side line under "Chapter clear!"; the NEXT GOAL stays the main road. Nothing when the quest
+   is done, still locked, or already the next goal (skip). */
+export function chapterQuestHTML(save, chapter, scroll = '', skip = null) {
+  for (const id of live()) {
+    const Q = QUESTS[id], st = questState(save, id); if (Q.chapter !== chapter || id === skip || (st !== 'open' && st !== 'active')) continue;
+    const step = currentStep(save, id); if (!step) continue;
+    const c = COMPANIONS[Q.companion], what = st === 'open' ? `${Q.blurb} ${step.text}` : `${Q.title}. ${step.text}`;
+    const text = `Side quest: ${what.replace(/[.!]\s*$/, '')}${step.who === Q.companion ? '.' : `, and ${c.short} can join you.`}`;
+    return `<p class="level-record level-quest level-quest-pointer" data-quest="${id}">${scroll}<span>${esc(text)}</span></p>`;
+  }
+  return '';
+}
+
 /** The Journal's Quests tab. */
 export function questsJournalHTML(save) {
   const groups = {active: [], open: [], locked: [], done: []};

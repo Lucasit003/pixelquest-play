@@ -74,7 +74,7 @@ export const EPILOGUES={m7:[
  {id:'SLEEPER_SPEECH_02',text:'“You win, little one. Let me sleep again. This time I will dream kinder dreams.”',pose:'hurt',still:['death',.65],hold:true,shot:[0,-18]},
  {id:'SLEEPER_SINKS',text:'It sinks back into the deep, and its violet glow fades away.',pose:'hurt',still:['death',1],fade:[1,0],dur:3,shot:[0,-12],shake:.3},
  {id:'DEEP_QUIET',text:'For the first time in a thousand years, the deep is quiet.',pose:'hurt',still:['death',1],fade:[0,0],dur:2.6,shot:[0,-20]},
- {id:'LOOK_ELDERWOOD',view:'elderwood',at:'e8',text:'In the Elderwood, the roads are safe and the forest is bright.',dur:3.6},
+ {id:'LOOK_ELDERWOOD',view:'elderwood',at:'e8',text:'In the Elderwood, the roads are safe and the Thorn King’s keep is silent.',dur:3.6},
  {id:'LOOK_EMBERKEEP',view:'emberkeep',at:'m7',text:'In Emberkeep, the lava has cooled and the forges rest.',dur:3.6},
  {id:'LOOK_VEILMOOR',view:'veilmoor',at:'v7',text:'And over the Veilmoor, the violet mist lifts at last.',dur:3.6}]};
 /* the card that closes the whole adventure (after the last level's epilogue), held over the Veilmoor's board */

@@ -147,42 +147,6 @@ export const CREDITS={
      "required": true
     },
     {
-     "name": "Elementals: Water Priestess",
-     "licence": "CC BY 4.0",
-     "url": "https://chierit.itch.io/elementals-water-priestess",
-     "required": true
-    },
-    {
-     "name": "Elementals: Wind Hashashin",
-     "licence": "CC BY 4.0",
-     "url": "https://chierit.itch.io/elementals-wind-hashashin",
-     "required": true
-    },
-    {
-     "name": "Elementals: Leaf Ranger",
-     "licence": "CC BY 4.0",
-     "url": "https://chierit.itch.io/elementals-leaf-ranger",
-     "required": true
-    },
-    {
-     "name": "Elementals: Crystal Mauler",
-     "licence": "CC BY 4.0",
-     "url": "https://chierit.itch.io/elementals-crystal-mauler",
-     "required": true
-    },
-    {
-     "name": "Elementals: Metal Bladekeeper",
-     "licence": "CC BY 4.0",
-     "url": "https://chierit.itch.io/elementals-metal-bladekeeper",
-     "required": true
-    },
-    {
-     "name": "Elementals: Ground Monk",
-     "licence": "CC BY 4.0",
-     "url": "https://chierit.itch.io/elementals-ground-monk",
-     "required": true
-    },
-    {
      "name": "Boss: Minotaur (free tier: idle, walk, atk_1)",
      "licence": "CC BY 4.0",
      "url": "",
@@ -1358,9 +1322,7 @@ export const CREDITS={
   }
  ],
  "attribution": [
-  "Demon Slime and Cthulhu sprites by chierit (https://chierit.itch.io), CC BY 4.0.",
-  "Demon Slime, Cthulhu and Frost Guardian sprites by chierit (https://chierit.itch.io), licensed CC BY 4.0.",
-  "Hero sprites: Elementals series by chierit (https://chierit.itch.io), CC BY 4.0. Recoloured for PixelQuest.",
+  "Demon Slime, Cthulhu, Frost Guardian (Crystal Golem) and Minotaur sprites by chierit (https://chierit.itch.io), licensed CC BY 4.0. Shadow Twin recoloured from chierit's Elementals: Fire Knight, CC BY 4.0.",
   "“Village Consort” Kevin MacLeod (incompetech.com). Licensed under Creative Commons: By Attribution 4.0. http://creativecommons.org/licenses/by/4.0/",
   "“Lord of the Land” Kevin MacLeod (incompetech.com). Licensed under Creative Commons: By Attribution 4.0. http://creativecommons.org/licenses/by/4.0/",
   "“Eternal Hope” Kevin MacLeod (incompetech.com). Licensed under Creative Commons: By Attribution 4.0. http://creativecommons.org/licenses/by/4.0/",

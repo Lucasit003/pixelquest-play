@@ -443,6 +443,7 @@ li.done .pip-mark{background-image:url(ui/skin/pip.png)}
 .credits-crest{height:calc(24*var(--u));background:url(ui/skin/crest.png) center/contain no-repeat;image-rendering:pixelated}
 .credits-title{font-size:var(--fs-2);font-weight:700;color:var(--gold);margin:4px 0 16px;text-transform:uppercase;letter-spacing:2px}
 .credits-title span{display:block;font-size:var(--fs);color:var(--ink-2);letter-spacing:3px}
+.credits-thanks{margin:0 auto 12px;max-width:52ch;color:var(--ink);line-height:1.35}
 .credits section{margin:16px 0}
 .credits ul{list-style:none;margin:0;padding:0}
 .credit-list{display:grid;grid-template-columns:1fr 1fr;gap:6px 24px}
@@ -2161,6 +2162,17 @@ dialog[data-view=result] .level-highlights .level-record>img{width:24px;height:2
 dialog[data-view=result] .level-highlights .level-record>img.levelup-emblem{width:32px;height:32px}/* first-hour playtest 24 Oct: 32px is an exact half of the 64px emblem, so its pixels stay square */
 dialog[data-view=result] .level-highlights .level-levelup>span{flex-direction:row;align-items:baseline;gap:8px}
 dialog[data-view=result] .level-highlights .level-levelup small{color:#9fd36b;font-size:16px}
+/* endfollow-oct29: the side-quest pointer on a chapter-clear card, and "Your adventure" after THE END */
+dialog[data-view=result] .level-highlights .level-quest-pointer{font-size:16px;max-width:52ch;text-align:left}
+dialog[data-view=result] .level-highlights .level-quest-pointer>span{color:#f1e6cc}
+dialog[data-view=result] .level-adventure{display:flex;flex-direction:column;align-items:center;gap:2px;margin:6px 0 2px;padding:6px 14px;border-top:1px solid #e3b85a55;width:100%;text-align:center}
+dialog[data-view=result] .level-adventure .adv-eyebrow{color:#e3b85a;letter-spacing:2px;font-size:14px}
+dialog[data-view=result] .level-adventure .adv-hero{font-size:18px}
+dialog[data-view=result] .level-adventure .adv-stats{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 16px;font-size:16px;color:#f1e6cc}
+dialog[data-view=result] .level-adventure .adv-title{margin:2px 0 0;display:flex;align-items:center;gap:8px;font-size:17px;color:#f1e6cc}
+dialog[data-view=result] .level-adventure .adv-title>img{width:24px;height:24px}
+dialog[data-view=result] .level-adventure .adv-title-note{color:#cdbb98;font-size:14px}
+.pause-hero .pause-title{color:var(--gold,#e7c77e);font-weight:700;letter-spacing:.5px}
 dialog[data-view=result] .level-highlights .level-levelup strong{font-size:24px}
 dialog[data-view=result] .level-highlights .level-finale-note{font-size:15px}
 /* oct24-progress (playtest r3 D4): the chapter-clear line keeps its star beside the words */

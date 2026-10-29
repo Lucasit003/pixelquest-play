@@ -29,6 +29,7 @@ import {normalizeLook} from '../gfx/actors/hero-palette.js';
 import {emptyParty,cleanParty} from '../game/party.js';
 import {emptyQuests,cleanQuests} from '../game/quests.js';
 import {cleanTravel} from '../game/fasttravel.js';
+import {cleanTitles,earnTitles} from '../game/titles.js';
 
 // v7 writes a new key (v6 did the same). Older keys are never written again: they stay behind as rollback copies (a v5 build still finds
 // its own save under V5_KEY), and load() still reads every one of them, newest first.
@@ -52,7 +53,7 @@ export const VERSION=9;
    docs/reference/SPEC_DECISIONS.md). An additive field, not a format change: a save without it is from before the re-curve. */
 export const LADDER=2;
 
-export function fresh(){return {version:VERSION,hero:'warrior',delve:emptyDelve(),skills:{crafting:0},adventurer:{tasks:{}},heroNames:{},fieldMission:cleanFieldMission(),level:1,xp:0,gold:30,mastery:{},answers:{},loadouts:{},equipment:{},potions:3,regenPotions:0,potionKind:'health',pet:'study',jewels:{owned:{},worn:{necklace:null,ring:null},pity:{}},gear:emptyGear(),house:{owned:{},items:[]},petBond:{},cleared:[],bossPhase2:false,cinematicSeen:false,schoolMode:null,settings:{sound:true,music:true,motion:!globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches,bindings:{...DEFAULT_BINDINGS}},started:false,lessons:{},kept:[],placement:{},levels:{},starPass:[],bestiary:{},/* v2:hub */boons:{pending:[],bounty:null},hub:{seen:[]},party:emptyParty(),quests:emptyQuests(),town:{seen:[]},/* fast travel (25 Oct, additive within v9) */travel:{places:[],hinted:false},/* daily goals (herocard-oct27, additive within v9, no streaks) */daily:emptyDaily(),/* v2:edu */awakened:false,/* v2:gamedesign */ladder:LADDER};}
+export function fresh(){return {version:VERSION,hero:'warrior',delve:emptyDelve(),skills:{crafting:0},adventurer:{tasks:{}},heroNames:{},fieldMission:cleanFieldMission(),level:1,xp:0,gold:30,mastery:{},answers:{},loadouts:{},equipment:{},potions:3,regenPotions:0,potionKind:'health',pet:'study',jewels:{owned:{},worn:{necklace:null,ring:null},pity:{}},gear:emptyGear(),house:{owned:{},items:[]},petBond:{},cleared:[],bossPhase2:false,cinematicSeen:false,schoolMode:null,settings:{sound:true,music:true,motion:!globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches,bindings:{...DEFAULT_BINDINGS}},started:false,lessons:{},kept:[],placement:{},levels:{},starPass:[],bestiary:{},/* v2:hub */boons:{pending:[],bounty:null},hub:{seen:[]},party:emptyParty(),quests:emptyQuests(),town:{seen:[]},/* fast travel (25 Oct, additive within v9) */travel:{places:[],hinted:false},/* daily goals (herocard-oct27, additive within v9, no streaks) */daily:emptyDaily(),/* titles (endfollow-oct29, additive within v9, cosmetic) */titles:[],/* v2:edu */awakened:false,/* v2:gamedesign */ladder:LADDER};}
 
 const obj=v=>!!v&&typeof v==='object'&&!Array.isArray(v);
 const HEROES=['warrior','mage','rogue','ranger','paladin','berserker','summoner'];
@@ -198,6 +199,10 @@ const frac=(v,a,b)=>Math.max(a,Math.min(b,Number(v)||0));
 
  /* daily goals (herocard-oct27, game/daily.js): additive within v9; a save without them starts empty, and nothing counts days */
  s.daily=cleanDaily(value.daily);
+
+ /* titles (endfollow-oct29, game/titles.js): cosmetic keepsakes, additive within v9; unknown ids drop, and a save that already
+    won what a title asks (e.g. the last level, from before titles existed) has it back, since it was earned by play */
+ s.titles=cleanTitles(value.titles);earnTitles(s);
 
  syncTasks(s);
  s.version=VERSION;

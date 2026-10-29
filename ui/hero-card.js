@@ -16,6 +16,7 @@ import {LEVELS,CHAPTERS,levelDone,totalStars,maxStars} from '../game/levels.js';
 import {ICON_NAMES} from './icon-names.js';
 import {ABILITY_ICON_IDS} from './ability-icon-names.js';
 import {abilityIconName,SUBJECT_ICON,ownIconURL} from './icons.js';
+import {heroTitle} from '../game/titles.js';
 
 export const CARD_W=1200,CARD_H=630,PLAY_URL='https://lucasit003.github.io/pixelquest-play/',GAME_TITLE='PixelQuest',GAME_SUB='The Thorn Kingdom';
 export const SHARE_NOTE='Only share with people you know.';
@@ -28,7 +29,7 @@ export function heroCardModel(s={}){
  const subjects=Object.entries(SUBJECTS).map(([id,v])=>({id,name:v.name,color:v.color,icon:SUBJECT_ICON[id]||'book-open',count:TOPICS.filter(t=>t.subject===id&&mastered(s,t)).length}));
  return {hero,name:typed||c.name,className:c.name,level:Math.max(1,s.level|0),stars:totalStars(s),maxStars:maxStars(),
   furthest:last?{id:last.id,name:last.name,chapter:CHAPTERS.find(ch=>ch.id===last.chapter)?.name||''}:null,
-  abilities,awake:abilities.filter(a=>a.on).length,subjects,topics:subjects.reduce((t,x)=>t+x.count,0),url:PLAY_URL,title:GAME_TITLE,subtitle:GAME_SUB};}
+  abilities,awake:abilities.filter(a=>a.on).length,subjects,topics:subjects.reduce((t,x)=>t+x.count,0),url:PLAY_URL,title:GAME_TITLE,subtitle:GAME_SUB,honour:heroTitle(s)};}
 const ICON_AB=Object.fromEntries(ABILITY_ICON_IDS.map((n,i)=>[n,i]));
 const ICON_IX=Object.fromEntries(ICON_NAMES.map((n,i)=>[n,i]));
 
@@ -65,7 +66,8 @@ export function drawHeroCard(cv,m,art={},hero=null){if(cv.width!==CARD_W||cv.hei
  const R={x:476,y:34,w:690,h:562},X=R.x+52,IW=R.w-104;nine(c,art['skin/pl-parchment.png'],R.x,R.y,R.w,R.h,[20,21,20,21],2,true);
  text(c,`${m.title.toUpperCase()} · ${m.subtitle.toUpperCase()}`,R.x+R.w/2,R.y+66,{size:16,bold:true,color:INK2,align:'center'});
  text(c,m.name,R.x+R.w/2,R.y+112,{size:48,bold:true,color:INK,align:'center',max:IW});text(c,`Level ${m.level} ${m.className}`,R.x+R.w/2,R.y+144,{size:32,color:INK2,align:'center',max:IW});
- const dv=art['skin/divider.png'];if(dv)blit(c,dv,0,0,dv.width,dv.height,Math.round(R.x+R.w/2-dv.width),R.y+152,dv.width*2,dv.height*2);
+ /* endfollow-oct29: a keepsake title (game/titles.js) takes the divider's place, under the class line */
+ const dv=art['skin/divider.png'];if(m.honour)text(c,m.honour.toUpperCase(),R.x+R.w/2,R.y+174,{size:16,bold:true,color:'#8a4b12',align:'center',max:IW});else if(dv)blit(c,dv,0,0,dv.width,dv.height,Math.round(R.x+R.w/2-dv.width),R.y+152,dv.width*2,dv.height*2);
  /* stars and furthest level */
  let y=R.y+186;const st=art['skin/star-gold.png'];if(st)blit(c,st,0,0,32,32,X,y,48,48);
  text(c,`${m.stars}`,X+58,y+38,{size:48,bold:true});/* exploit4-oct27: a word space after the count (it read "9of 234 stars") */{const sx=X+58+c.measureText(`${m.stars}`).width+STAR_GAP,room=X+IW/2-16-sx,of=`of ${m.maxStars} stars`;c.font=`32px ${FONT}`;const sz=c.measureText(of).width<=room?32:24;text(c,of,sx,y+38,{size:sz,color:INK2,max:room});}
