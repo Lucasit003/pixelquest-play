@@ -2764,3 +2764,50 @@ dialog[data-view=result] .victory-tag:is([data-tag=first],[data-tag=record],[dat
 /* the town greeting ("Welcome to Oakhaven.") at 24% slid over the hero's head on a 360-390 px high phone; it sits higher, between
    the goal plate and the hero (fight toasts stay the compact bottom strip, the armour tip keeps its own place) */
 @media (max-height:420px){.m-mode #toast{top:20%}}
+/* polish3-oct29 size sweep (667x375 and 932x430 phones, 1024x768 and 1366x1024 tablets, 1280x1024, 1440x900 and 1920x1080 desktops) */
+/* 667x375 (small iPhone): the victory card's right column (rewards, highlights, Your adventure) ran past the sheet's right edge; both
+   columns may now shrink, the rewards wrap, the banner and the hero's pose give up room */
+@media(max-height:500px) and (min-width:600px) and (max-width:720px){
+ .m-mode dialog[data-view=result] .level-result{grid-template-columns:minmax(0,.8fr) minmax(0,1.5fr)}
+ .m-mode dialog[data-view=result] .level-result[data-outcome=won] .victory-title{width:208px;background-size:208px 52px;background-position:center -5px}
+ .m-mode dialog[data-view=result] .level-result[data-outcome=won] .level-hero{display:none}
+ .m-mode dialog[data-view=result] .level-rewards{flex-wrap:wrap}
+ .m-mode dialog[data-view=result] .level-result-detail{min-width:0}
+}
+@media(max-height:500px) and (min-width:600px){
+ /* lead review (667x375, also 740x360 and 844x390): the sheet scrolled under the sticky NEXT GOAL bar, which then sat over the left column's stars and cut "YOUR
+    ADVENTURE" in half; the right column scrolls in its own box above the bar, so the sheet itself no longer scrolls */
+ .m-mode dialog[data-view=result] .level-result-body{max-height:calc(100dvh - 168px);overflow-y:auto;align-items:flex-start;overscroll-behavior:contain;align-self:start;scrollbar-width:thin;scrollbar-color:var(--gold-deep) transparent}
+ .m-mode dialog[data-view=result] .level-result{align-content:start;min-height:0}
+}
+/* short phones: the stats, credits and Apothecary sheets spent ~140 px of 375 on their heading; the eyebrow and the repeated subtitle
+   go, so the content starts in view */
+@media(max-height:420px){
+ .m-mode #ui-sheet .sheet-head,.m-mode dialog[data-view=alchemist] .modal-head{padding:2px 0 8px;margin-bottom:8px}
+ .m-mode #ui-sheet .sheet-head :is(.eyebrow,.subtle),.m-mode dialog[data-view=alchemist] .modal-head .eyebrow{display:none}
+ .m-mode #ui-sheet .sheet-head h2,.m-mode dialog[data-view=alchemist] .modal-head h2{margin:0}
+}
+/* tall desktops and big tablets (1920x1080, 1280x1024, 1366x1024): the hero list stretched each of its 7 rows to ~125 px around a
+   38 px face; rows stop at 88 px and the face grows */
+@media(min-height:900px){
+ .select-pane .hero-select.er .er-list{grid-template-rows:repeat(7,minmax(0,88px))}
+ .select-pane .hero-select.er .er-list .hero-card canvas{width:56px!important;height:56px!important}
+}
+/* tall desktops: the lesson's words sat at 16 px over a 580 px picture with the bottom half of the sheet empty */
+@media(min-width:1100px) and (min-height:901px){
+ html:not([data-text="125"]):not([data-text="150"]) dialog[data-view=lesson] .edu-speech .lesson-say{font-size:24px;line-height:1.3}
+ dialog[data-view=lesson] .lesson-visual #lesson-pic{max-width:860px}
+ html:not([data-text="125"]):not([data-text="150"]) dialog:is([data-view=placement],[data-view=lesson-quiz]) .question-reading h3{font-size:24px}
+}
+/* desktops 800 px and taller: a short lesson step left the bottom half of a 830-940 px sheet empty; the sheet fits its step (never
+   under 600 px, so the buttons barely move between steps) */
+@media(min-width:1100px) and (min-height:800px){dialog#modal[data-view=lesson]{height:fit-content;min-height:min(600px,92dvh)}}
+/* big tablets in touch mode (iPad Pro 1366x1024, now in touch mode: ui/mobile.js): full-screen sheets left the lesson, quiz, victory
+   card and Apothecary as small islands on a 1366 px sheet; from 1200x900 up they are centred panels as on a desktop */
+@media(min-width:1200px) and (min-height:900px){
+ .m-mode dialog:not([data-view=welcome]):not([data-view=cinematic]),html.m-mode #ui-sheet{width:min(1040px,94vw);height:fit-content;max-height:92dvh;margin:auto;inset:0}
+ .m-mode dialog#modal:is([data-view=placement],[data-view=lesson-quiz]){height:min(820px,92dvh)}
+}
+/* tablets in touch mode: the next-ability chip that peeks under the hero plate in town sat under the gold counter (1024x768, 1366x1024:
+   the plate and the gold are taller there) */
+@media(min-height:600px){html.m-mode.in-town #next-unlock.peek{top:calc(env(safe-area-inset-top,0px) + 160px)}}

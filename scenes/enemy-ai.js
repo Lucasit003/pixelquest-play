@@ -251,7 +251,7 @@ function step(e,w,dt,mover){_world=w;const b=brain(e,w);
  if(w._enemyFxT!==w.time){w._enemyFxT=w.time;updateFx(w,dt);}
  /* combat.js's World (it has the enemyAI seam) already ticks these timers, knockback and poison before calling in */
  const ext=typeof w.enemyAI==='function';
- if(!ext)for(const k of ['flash','inv','statusTime','exposed','marked'])e[k]=Math.max(0,(e[k]||0)-dt);
+ if(!ext)for(const k of ['flash','inv','statusTime','exposed','marked','ccGuard'])e[k]=Math.max(0,(e[k]||0)-dt);
  e.stateT=(e.stateT||0)+(b.freeze?0:dt*(b.mode==='move'||b.mode==='recover'?b.rate||1:1));b.t+=dt;
  /* a shadow copy pops when its maker falls */
  if(e.decoy&&e.hp>0&&!(e.summoner?.hp>0))e.hp=0;

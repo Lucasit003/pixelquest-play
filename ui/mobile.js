@@ -17,7 +17,10 @@ export function wantsMobile(w=win()){
  try{if(/[?&]mobile=1\b/.test(w.location?.search||''))return true;if(/[?&]mobile=0\b/.test(w.location?.search||''))return false;}catch{}
  const coarse=!!w.matchMedia?.('(pointer: coarse)').matches,touch=coarse||('ontouchstart' in w)||(w.navigator?.maxTouchPoints>0&&coarse);
  const small=Math.min(w.innerWidth||0,w.innerHeight||0)<=820;
- return touch&&small;
+ /* polish3-oct29: a big tablet (iPad Pro 1366x1024) is too tall for "small" and got the desktop layout with no joystick or buttons,
+    so a touch-only player could not move. A device whose only pointer is coarse (no mouse or trackpad) plays in touch mode at any size */
+ const touchOnly=coarse&&!w.matchMedia?.('(any-pointer: fine)').matches;
+ return touch&&(small||touchOnly);
 }
 function key(k,down){
  const w=win();if(!w)return;

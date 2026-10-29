@@ -2,7 +2,8 @@
    the save. save.levels arrives with save v5 (levels agent); a v4 save without it shows the old
    contracts instead, and every field is optional so a fresh or partial save cannot throw. */
 import {CLASSES,SUBJECTS,WEAPONS,PETS,CONTRACTS,armorName} from '../game/data.js';
-import {mastery,abilityMastery,xpFor} from '../game/math.js';
+import {mastery,abilityMastery,xpFor,unlocked} from '../game/math.js';
+import {asleep} from '../academics/awakening.js';
 import {ABILITIES} from '../game/abilities.js';
 import {LEVELS,CHAPTERS} from '../game/levels.js';
 import {portrait} from '../gfx/world.js';
@@ -33,6 +34,9 @@ export function statsModel(save={}){
  /* uiicons-oct25 review: count only kept ids that are in the total (gated abilities of any class); a kept list carried from an older
     build, or an id since renamed or made free, never reads "56 of 49" */
  const gated=new Set(Object.values(ABILITIES).flat().filter(a=>a.gate>0).map(a=>a.id)),kept=Array.isArray(save.kept)?new Set(save.kept.filter(id=>gated.has(id))).size:0,total=gated.size;
+ /* polish3-oct29 (exploit7 finding): the chip said "5 of 49 abilities" (every class) while the hero card said "3 of 8". It now counts
+    this hero's eight the way the hero card does (learned and awake); the all-heroes count stays in the model as abilities.all */
+ const own=ABILITIES[hero]||[],on=own.filter(a=>{try{return unlocked(save,a)&&!asleep(save,a);}catch{return false;}}).length;
  const lessons=save.lessons&&typeof save.lessons==='object'?Object.values(save.lessons):[];
  /* Bestiary: save.bestiary when the levels agent writes it ({id:entry} or [ids]); until then, what the
     cleared levels' waves and bosses imply. The total is every enemy and boss in the level graph. */
@@ -41,7 +45,7 @@ export function statsModel(save={}){
  return {hero,name:c.name,color:c.color,level,xp,need,gold:num(save.gold),potions:bagCount(save),
   weapon:{name:wi?.name||WEAPONS[c.weapon]?.[0]||'—',tier:wt,icon:hasIcon(`${c.weapon}-${wt+1}`)?`${c.weapon}-${wt+1}`:WEAPON_ICON[c.weapon]||'sword',img:wi?.icon||`${c.weapon||'sword'}-0`},armor:{name:ci?.name||'No chest armour',tier:at,icon:`armor-${at+1}`,img:ci?.icon||`armor-${hero}-0`},
   pet:PETS.find(p=>p.key===save.pet)?.name||'—',subjects,chapters,hasLevels:!!levels,cleared:cleared.map(i=>CONTRACTS[i].name),
-  levelsDone:playable.filter(l=>done(l.id)).length,levelsTotal:playable.length,bosses,abilities:{kept,total},
+  levelsDone:playable.filter(l=>done(l.id)).length,levelsTotal:playable.length,bosses,abilities:{on,total:own.length,all:{kept,total}},
   lessonsDone:lessons.filter(r=>r&&r.done).length,topicsMastered:lessons.filter(r=>r&&num(r.pts)>0).length,
   bestiary:{seen:[...seen].filter(k=>all.has(k)||save.bestiary).length,total:all.size}};
 }
@@ -55,7 +59,7 @@ export function statsHTML(m){
  return `<div class="stats">
 <section class="stat-hero" style="--accent:${m.color}"><div class="portrait-frame"><canvas data-stats-portrait width="160" height="180" aria-hidden="true"></canvas></div>
 <div class="stat-hero-main"><h3>${esc(m.name)}</h3><span class="lvl">Level ${m.level}</span>${bar(m.xp/Math.max(1,m.need)*100,'xp')}<small>${m.xp} / ${m.need} XP to level ${m.level+1}</small>
-<ul class="stat-chips"><li>${icon('coin',{size:32})}<b>${m.gold}</b><span>gold</span></li><li>${icon('potion',{size:32})}<b>${m.potions}</b><span>potions</span></li><li>${icon('sparkle',{size:32})}<b>${m.abilities.kept}</b><span>of ${m.abilities.total} abilities</span></li><li>${icon('book-open',{size:32})}<b>${m.topicsMastered}</b><span>topics mastered</span></li><li>${icon('book-arcane',{size:32})}<b>${m.bestiary.seen}</b><span>of ${m.bestiary.total} in the Bestiary</span></li></ul></div></section>
+<ul class="stat-chips"><li>${icon('coin',{size:32})}<b>${m.gold}</b><span>gold</span></li><li>${icon('potion',{size:32})}<b>${m.potions}</b><span>potions</span></li><li>${icon('sparkle',{size:32})}<b>${m.abilities.on}</b><span>of ${m.abilities.total} abilities</span></li><li>${icon('book-open',{size:32})}<b>${m.topicsMastered}</b><span>topics mastered</span></li><li>${icon('book-arcane',{size:32})}<b>${m.bestiary.seen}</b><span>of ${m.bestiary.total} in the Bestiary</span></li></ul></div></section>
 <section class="stat-gear"><h3>Gear</h3><ul><li>${m.weapon.img?gearImgIcon(m.weapon.img):icon(m.weapon.icon,{size:32})}<span><strong>${esc(m.weapon.name)}</strong><small>Weapon</small></span></li><li>${m.armor.img?gearImgIcon(m.armor.img):icon(m.armor.icon||'armor',{size:32})}<span><strong>${esc(m.armor.name)}</strong><small>Chest armour</small></span></li><li>${icon('leaf',{size:32})}<span><strong>${esc(m.pet)}</strong><small>Pet</small></span></li></ul></section>
 <section class="stat-mastery"><h3>Mastery</h3><ul>${subj}</ul></section>
 <section class="stat-levels"><h3>Levels cleared <span>${m.levelsDone} / ${m.levelsTotal}</span></h3>${lv}</section>
