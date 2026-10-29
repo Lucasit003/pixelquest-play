@@ -4,6 +4,7 @@ import {emberBoss,emberTick} from './emberkeep.js';
 import {woodBoss,woodTick} from './elderwood.js';
 import {sfx} from '../core/audio.js';
 import {tierAttacks} from './boss-moves.js';
+import {recoverFloor} from '../game/tier-encounters.js';
 /* Main-road signature remixes. Changes belong to this spawned boss only, never the roster; Normal has its own spawn-local pacing. */
 export function pilotBoss(w,e){if(!w.level?.encounter)return normalBoss(w,e);e.recoveryGate=true;if(w.level.encounter.sequence)return elderBoss(w,e);if(!['e1','e2'].includes(w.level.id))return e;const legendary=w.tierKey==='legendary';e.pilot=true;e.phaseShift={...e.phaseShift,at:.5};
  e.attacks=e.attacks.filter(a=>!['bomb barrage','double leap'].includes(a.name)).map(a=>({...a,fullTell:true,windup:Math.max(legendary?.8:1,Math.min(1.3,a.windup)),cd:a.cd*.55,dmg:(a.dmg||1)*1.5,recover:1.1}));
@@ -11,7 +12,7 @@ export function pilotBoss(w,e){if(!w.level?.encounter)return normalBoss(w,e);e.r
   e.attacks.push({name:'camp sweep',label:'STEP PAST THE CLUB!',state:'attack2',kind:'sweep',range:260,len:96,band:12,dur:1.1,windup:1.4,fullTell:true,dmg:1,cd:8,forced:true,fx:'fx-dust',fxs:'rise',recover:1.2});
  }else{e.attacks=e.attacks.map(a=>w.level.id==='e2'&&a.kind==='leap'?{...a,repeat:1,puddle:true,windup:1.3,...(legendary&&a.name==='double flop'?{then:'bog ripple'}:{})}:a.name==='spawn slimes'?{...a,count:2,max:2,cd:10,visibleTell:true}:a);
   e.attacks.push({name:'bog ripple',label:'STEP BACK FROM THE RIPPLE!',state:'attack2',kind:'wave',shape:'ring',previewReach:true,range:180,reach:90,r0:12,speed:75,band:8,windup:1.4,fullTell:true,dmg:.9,cd:8,forced:true,fx:'fx-slime-spawn',fxs:'rise',recover:1.2});}
- e.attacks=e.attacks.map(a=>['club smash','ground pound'].includes(a.name)?{...a,then:'camp sweep'}:w.level.id==='e2'&&a.kind==='leap'?{...a,then:'bog ripple'}:a);e.attacks=e.attacks.map(a=>({...a,recover:Math.max(legendary?3:3.8,a.recover||0)}));return e;}
+ e.attacks=e.attacks.map(a=>['club smash','ground pound'].includes(a.name)?{...a,then:'camp sweep'}:w.level.id==='e2'&&a.kind==='leap'?{...a,then:'bog ripple'}:a);e.attacks=e.attacks.map(a=>({...a,recover:Math.max(recoverFloor(w.tierKey),a.recover||0)}));return e;}
 /* After the phase animation, a single marked call introduces the Chief's new rule. */
 export function pilotTick(e,w){normalTick(w,e);if(w?.level?.encounter?.veilmoor)veilTick(e,w);if(w?.level?.encounter?.emberkeep)emberTick(e,w);if(w?.level?.encounter?.elderwood)woodTick(e,w);if(e.pilotGuard&&w&&!(e.pilotTurn>w.time)){e.pilotFacing=e.facing;e.pilotTurn=w.time+.7;}if(e.pilotCall&&!e.pilotCalled&&e.brain?.phase===2&&['move','recover'].includes(e.brain.mode)){e.pilotCalled=true;e.brain.force=e.pilotCall;}}
 /* Roots and the drill are supporting hazards, not a second boss hit: keep the full warning and cadence. */
@@ -33,7 +34,7 @@ export function blockedHint(w){const t=w.time,h=w.blockHint??={hits:[],next:-Inf
 /* Resolve tier overrides before the authored contract, so they cannot replace its one-time call or warning floor.
    Keep transformed bodies and inherited duo moves on that same contract; never mutate nested roster data. */
 function elderBoss(w,e){const r=w.level.encounter,l=w.tierKey==='legendary',floor=l?1:1.1;
- const moves=as=>tierAttacks(as,w.tierKey).map(({heroic,legendary,tiers,...a})=>({...a,fullTell:true,windup:Math.max(floor,a.windup||0),recover:Math.max(l?3:3.8,a.recover||0),...(a.kind==='summon'?{count:Math.min(2,a.count||1),max:2,visibleTell:true,spots:'pilot-side',pilotGuards:true}:{})}));
+ const moves=as=>tierAttacks(as,w.tierKey).map(({heroic,legendary,tiers,...a})=>({...a,fullTell:true,windup:Math.max(floor,a.windup||0),recover:Math.max(recoverFloor(w.tierKey),a.recover||0),...(a.kind==='summon'?{count:Math.min(2,a.count||1),max:2,visibleTell:true,spots:'pilot-side',pilotGuards:true}:{})}));
  e.pilot=true;e.attacks=moves(e.attacks);if(e.phaseShift)e.phaseShift={...e.phaseShift,at:r.phaseAt,...(e.phaseShift.trail&&!e.phaseShift.trail.burn&&!e.phaseShift.trail.dmg?{trail:{...e.phaseShift.trail,dmg:0}}:{})};
  if(e.key===r.boss){e.pilotCall=r.sequence.call;e.attacks=e.attacks.map(a=>a.name===r.sequence.call?{...a,forced:true,uses:1,windup:Math.max(1.4,a.windup),then:r.sequence.then,...(r.sequence.count?{count:r.sequence.count,max:r.sequence.count}:{})}:a);}
- if(e.rebirth)e.rebirth={...e.rebirth,attacks:moves(e.rebirth.attacks)};if(e.duoPower)e.duoPower={...e.duoPower,attacks:moves(e.duoPower.attacks)};const tuned=r.veilmoor?veilBoss(w,e):r.emberkeep?emberBoss(w,e):r.elderwood?woodBoss(w,e):e;tuned.attacks=tuned.attacks.map(a=>({...a,recover:Math.max(l?3:3.8,a.recover||0)}));return tuned;}
+ if(e.rebirth)e.rebirth={...e.rebirth,attacks:moves(e.rebirth.attacks)};if(e.duoPower)e.duoPower={...e.duoPower,attacks:moves(e.duoPower.attacks)};const tuned=r.veilmoor?veilBoss(w,e):r.emberkeep?emberBoss(w,e):r.elderwood?woodBoss(w,e):e;tuned.attacks=tuned.attacks.map(a=>({...a,recover:Math.max(recoverFloor(w.tierKey),a.recover||0)}));return tuned;}

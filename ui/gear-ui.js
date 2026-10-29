@@ -130,7 +130,7 @@ export const SMITH_TAB_HELP={buy:'Buy: new gear for your hero. It goes in your b
 /* guide-oct26 (oct26-midgame): a defeat said "Kept +8 gold" beside a Loot line of "20 gold" with nothing saying which was which; a
    secret spot's gold is paid on the spot, apart from the run's gold, and its line now says so. Amounts unchanged. */
 export function resultLoot(st){const pots=(st?.loot||[]).filter(x=>/^health potion$/i.test(x)).length+(st?.secrets||[]).filter(x=>x.kind==='potion').reduce((n,x)=>n+(x.n|0||1),0),
- rest=[...(st?.loot||[]).filter(x=>!/^health potion$/i.test(x)).map(x=>({icon:'potion',label:x})),...(st?.secrets||[]).filter(x=>x.kind!=='potion').map(x=>({icon:'chest',label:x.kind==='gold'?`+${x.n} extra gold from a secret spot`:x.label}))];
+ rest=[...(st?.loot||[]).filter(x=>!/^health potion$/i.test(x)).map(x=>({icon:'potion',label:x})),...(st?.secrets||[]).filter(x=>x.kind!=='potion').map(x=>x.kind==='bagfull'?{icon:'potion',label:`Secret potion: bag full, +${x.n} gold instead`}:{icon:'chest',label:x.kind==='gold'?`+${x.n} extra gold from a secret spot`:x.label})];
  return [...(pots?[{icon:'potion',label:`${pots} health potion${pots>1?'s':''}`}]:[]),...rest];}
 export function lootHTML(gear=[],mats={},s=null){const items=gear.map(id=>ITEM[id]).filter(Boolean),m=Object.entries(mats||{}).filter(([,n])=>n>0);if(!items.length&&!m.length)return '';
  /* with the save, a set piece says how far its set has come: "Bog King's set 3/3" */

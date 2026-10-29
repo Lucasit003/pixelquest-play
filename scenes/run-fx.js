@@ -19,6 +19,7 @@ import {sfx} from '../core/audio.js';
 /* the sleeping Mimic is drawn at the size it fights at, so it does not shrink when it wakes */
 import {enemyRenderScale} from './enemy-ai.js';
 import {sealReady} from '../game/seal.js';
+import {addPotions} from '../game/potions.js';
 const IMG={};
 const img=src=>{if(typeof Image==='undefined')return null;if(!IMG[src]){const i=new Image();i.src=new URL(`../${src}`,import.meta.url).href;IMG[src]=i;}return IMG[src].complete&&IMG[src].naturalWidth?IMG[src]:null;};
 export const SHRINE_ART='ui/skin/run/blessing-shrine.png',SEAL_ART='ui/skin/run/seal-stone.png';
@@ -64,7 +65,7 @@ export function breakSeal(w){const z=w.seal;if(!z||z.broken||!w.run)return false
 export function runSecret(w,s){if(!w.level||w.found.has(s.id))return null;w.found.add(s.id);const S=w.save;
  const r=S.levels[w.level.id]??={done:false,best:{time:null,score:0},plays:0};let loot;
  if(!w.paid.has(s.id)||!w.draft){w.paid.add(s.id);(r.secrets??=[]).push(s.id);const [kind,amt]=String(s.loot).split(':'),n=Math.max(1,Math.floor(+amt||(kind==='gold'?25:1)));
-  loot=kind==='potion'?{kind,n,label:`${n} health potion${n>1?'s':''}`}:{kind:'gold',n,label:`${n} gold`};if(loot.kind==='potion')S.potions+=n;else S.gold+=n;}
+  if(kind==='potion'){/* ownerbal-oct29: a potion that does not fit the bag is sold on the spot (game/potions.js addPotions) */const pb=addPotions(S,n);loot=pb.added?{kind,n:pb.added,label:`${pb.added} health potion${pb.added>1?'s':''}`}:{kind:'bagfull',n:pb.gold,label:`${pb.gold} gold (potion bag full)`};}else{loot={kind:'gold',n,label:`${n} gold`};S.gold+=n;}}
  else{const n=w.tierKey==='normal'?1:2;w.run.cacheEssence=(w.run.cacheEssence|0)+n;loot={kind:'essence',n,label:`${n} Essence on victory`};}
  if(w.draft){loot.count=[...w.found].filter(id=>w.draft.active.includes(id)).length;loot.of=w.draft.active.length;}
  w.run?.secrets.push({id:s.id,...loot});return loot;}

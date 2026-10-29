@@ -12,7 +12,7 @@
 // - stars: a star gate -- the pad also needs that many stars in total, from any level and tier (see starGate).
 // Map positions live in game/worldmap-layout.js (worldmap agent), keyed by these ids.
 import {stageWidth} from './stage.js';
-import {TIER_KEYS,tierOf,tierKey,tierPar,tierGold,tierXP,starsFor} from './tiers.js';
+import {TIER_KEYS,tierOf,tierKey,tierPar,tierGold,tierXP,starsFor,STAR_PAR,STAR_CLEAN} from './tiers.js';
 export const CHAPTERS=[
  {id:'elderwood',name:'Elderwood',biome:'forest',blurb:'Goblins, orcs and old things in the wood.',
   pool:['goblin','slime','orc','orc-rogue','skeleton'],elites:['goblin-king','orc-warlord','minotaur']},
@@ -178,7 +178,10 @@ export const levelParFor=(l,k)=>tiered(l)?tierPar(levelPar(l),k,l.id):levelPar(l
 /* First-clear rewards per tier: Heroic pays 1.75x gold and 1.5x XP, Legendary 2.5x and 2x. */
 export const levelReward=(l,k)=>l.kind==='level'?tierGold(40+l.tier*20,tiered(l)?k:'normal'):0;
 export const levelXPReward=(l,k)=>l.kind==='level'?tierXP(30+l.tier*10,tiered(l)?k:'normal'):0;
-export const levelStarsFor=(l,k,time)=>starsFor(time,levelParFor(l,k));
+/* ownerbal-oct29: the 3-star time (Legendary's is tighter than its par, game/tiers.js STAR_PAR) and whether a fall caps the run at 2 */
+export const levelStarPar=(l,k)=>tiered(l)?Math.round(levelParFor(l,k)*(STAR_PAR[tierKey(k)]??1)):levelParFor(l,k);
+export const cleanStars=(l,k)=>tiered(l)&&!!STAR_CLEAN[tierKey(k)];
+export const levelStarsFor=(l,k,time)=>starsFor(time,levelStarPar(l,k));
 /* Points for a run: kills and damage, plus a bonus for beating par, minus a little per hit taken. */
 export const levelScore=(l,{kills=0,damage=0,taken=0,time=0,won=true,waves=0,tier='normal'})=>l.kind==='arena'?waves:
  Math.max(0,Math.round(kills*100+damage+(won?Math.max(0,levelParFor(l,tier)-time)*20:0)-taken*2));

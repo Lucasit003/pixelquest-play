@@ -5,7 +5,7 @@ import {composeEncounter,encounterHp} from '../game/tier-encounters.js';
 import {pilotBoss,pilotTick,pilotHitCap,pilotEnemy,pilotBlock} from './tier-pilot.js';
 import {admitEnemy,pumpEnemies,clearThreats,canBeginThreat} from './encounter-budget.js';
 import {clearHazards,tierTick,tierLayer,clearLabelLayer} from './tier-fx.js';
-import {usePotion,tickPotion,tickPotionWait,POTION_CAP,FREE_POTIONS} from '../game/potions.js';
+import {usePotion,tickPotion,tickPotionWait,POTION_CAP,FREE_POTIONS,addPotions,BAG} from '../game/potions.js';
 import {CLASSES,BOSS,PETS,phase2Hp} from '../game/data.js';
 export const PHASE2_HEAL=.6;
 import {ABILITIES} from '../game/abilities.js';
@@ -275,10 +275,10 @@ export class World{
   const runR=this.arena?null:runFinish(this,won,{time,gold});
   /* balance-oct26: the victory bonus (game/tiers.js winXP), a share of the run's kill XP, only on a win; a fall keeps what it earned */
   let winBonus=0;if(won&&!this.arena&&l.kind==='level'){winBonus=winXP((this.run.killXP||0)+(this.run.killCarry||0),k);if(winBonus){this.run.xp+=winBonus;this.events.xp?.(winBonus);}}
-  const loot=[];let clearXP=0;if(rec.first){this.save.potions++;loot.push('Health potion');const x=clearXP=this.runXP(levelXPReward(l,k));if(x){this.run.xp+=x;this.events.xp?.(x);}}
+  const loot=[];let clearXP=0;if(rec.first){const pb=addPotions(this.save,1);loot.push(pb.added?'Health potion':`Potion bag full (${BAG.cap} of ${BAG.cap}): +${pb.gold} gold instead`);const x=clearXP=this.runXP(levelXPReward(l,k));if(x){this.run.xp+=x;this.events.xp?.(x);}}
   this.events.persist?.();
   const top=this.save.levels[l.id],r=k==='normal'?top:top.tiers[k];this.lastResult={id:l.id,won,tier:k,tierLabel:tierOf(k).label,boss:l.boss?this.enemies.find(e=>e.boss)||null:null,stats:{levelUp:this.run.levelUp||null,reducedXP:this.run.damped?this.run.rec:0,clearXP,winXP:winBonus,retryWave:won?null:Math.min(this.wave,this.layout.arenas.length),resolve:resolveOf(this.save,l.id),bestiary:[...this.run.bestiary],secrets:[...this.run.secrets],gear:[...(this.run.gear||[])],mats:{...(this.run.mats||{})},/* late playtest 24 Oct: after "Retry boss fight" the result showed only the retry (0:13) beside stars and a record
-   worked out on the whole run (4:52); it shows the whole run now */time:Math.round((time+(this.run.carry||0))*10)/10,/* lategame-oct27: this attempt alone (game/party.js lossXP) */attempt:time,damage:Math.round(this.run.damage),taken:Math.round(this.run.taken),kills:this.kills,gold,xp:this.run.xp,loot,score,waves:this.run.waves,first:rec.first,recordTime:rec.recordTime,recordScore:rec.recordScore,stars:rec.stars,newStars:rec.newStars,best:{...r.best},plays:r.plays,run:runR}};
+   worked out on the whole run (4:52); it shows the whole run now */time:Math.round((time+(this.run.carry||0))*10)/10,/* lategame-oct27: this attempt alone (game/party.js lossXP) */attempt:time,damage:Math.round(this.run.damage),taken:Math.round(this.run.taken),kills:this.kills,gold,xp:this.run.xp,loot,score,waves:this.run.waves,first:rec.first,recordTime:rec.recordTime,recordScore:rec.recordScore,stars:rec.stars,newStars:rec.newStars,knockouts:this.run.knockouts|0,best:{...r.best},plays:r.plays,run:runR}};
   this.events.levelEnd?.(this.lastResult);return this.lastResult;}
  /* v2:enemies -- seam. Return true when ENEMY_AI[e.ai] (scenes/enemy-ai.js) drove this enemy this frame;
     the built-in AI below then skips it. Helpers an AI can use: this.player, this.bounds(), this.hurt(base,from),

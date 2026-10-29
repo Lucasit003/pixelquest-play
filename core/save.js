@@ -4,6 +4,7 @@ import {cleanDaily,emptyDaily} from '../game/daily.js';
 import {JEWEL} from '../game/jewels.js';
 import {cleanHouse} from '../game/furniture.js';
 import {LEGACY} from '../academics/bank.js';
+import {bagMigrate} from '../game/potions.js';
 /* lightload2-oct27: the answer-id corrections (academics/question-corrections.js, about 84 KB gzipped) are only needed to map ids a
    save already holds. A browser imports them before load() only when a stored save holds answers or tried checks
    (storedNeedsCorrections, main.js), and before an import; a new player never fetches them. Node and jsdom load them here.
@@ -50,8 +51,12 @@ export const KEY='pixelquest.save.v9',V8_KEY='pixelquest.save.v8',V7_KEY='pixelq
    never completed for it. Unknown companion and quest ids are dropped and numbers clamped. Nothing else changes. */
 export const VERSION=9;
 /* v2:gamedesign -- the ability ladder a save was last normalised under. 2 = the owner's re-curve of 8 Oct 2026 (abilities.js gate + lvl,
-   docs/reference/SPEC_DECISIONS.md). An additive field, not a format change: a save without it is from before the re-curve. */
-export const LADDER=2;
+   docs/reference/SPEC_DECISIONS.md). An additive field, not a format change: a save without it is from before the re-curve.
+   3 = the owner's Paladin swap of 29 Oct 2026 (rungs 3 and 4: Hammer of Light gate 3 / level 3, Divine Shield gate 6 / level 4).
+   A save last normalised under ladder 2 keeps, once, every ability those moved rungs had opened under ladder 2 (LADDER2_RUNGS),
+   so Divine Shield never re-locks for a Paladin who had it; Hammer of Light only gets easier. */
+export const LADDER=3;
+export const LADDER2_RUNGS={'divine-shield':{gate:3,lvl:3},'hammer-of-light':{gate:6,lvl:4}};
 
 export function fresh(){return {version:VERSION,hero:'warrior',delve:emptyDelve(),skills:{crafting:0},adventurer:{tasks:{}},heroNames:{},fieldMission:cleanFieldMission(),level:1,xp:0,gold:30,mastery:{},answers:{},loadouts:{},equipment:{},potions:3,regenPotions:0,potionKind:'health',pet:'study',jewels:{owned:{},worn:{necklace:null,ring:null},pity:{}},gear:emptyGear(),house:{owned:{},items:[]},petBond:{},cleared:[],bossPhase2:false,cinematicSeen:false,schoolMode:null,settings:{sound:true,music:true,motion:!globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches,bindings:{...DEFAULT_BINDINGS}},started:false,lessons:{},kept:[],placement:{},levels:{},starPass:[],bestiary:{},/* v2:hub */boons:{pending:[],bounty:null},hub:{seen:[]},party:emptyParty(),quests:emptyQuests(),town:{seen:[]},/* fast travel (25 Oct, additive within v9) */travel:{places:[],hinted:false},/* daily goals (herocard-oct27, additive within v9, no streaks) */daily:emptyDaily(),/* titles (endfollow-oct29, additive within v9, cosmetic) */titles:[],/* v2:edu */awakened:false,/* v2:gamedesign */ladder:LADDER};}
 
@@ -96,6 +101,9 @@ export function normalize(value){
 
  if(!['warrior','mage','rogue','ranger','paladin','berserker','summoner'].includes(s.hero))s.hero='warrior';
  for(const k of ['level','xp','gold','potions'])s[k]=Math.max(k==='level'?1:0,Number(s[k])||0);
+ /* ownerbal-oct29: the potion bag (game/potions.js BAG). Potions over the cap are bought back once at the full shop price; the town shows
+    s.bagNote once and clears it (additive within v9). */
+ s.potions=Math.floor(s.potions);{const was=obj(value.bagNote)&&Number(value.bagNote.sold)>0?{sold:Math.min(1e6,Math.floor(+value.bagNote.sold)),gold:Math.max(0,Math.min(1e8,Math.floor(+value.bagNote.gold||0)))}:null,b=bagMigrate(s);if(b||was)s.bagNote={sold:(was?.sold||0)+(b?.sold||0),gold:(was?.gold||0)+(b?.gold||0)};}
  if(!Array.isArray(s.cleared))s.cleared=[];
  s.cleared=s.cleared.filter(n=>Number.isInteger(n)&&n>=0&&n<3);
 
@@ -170,7 +178,9 @@ const frac=(v,a,b)=>Math.max(a,Math.min(b,Number(v)||0));
     of the marks v6+ builds write (a level's stars, Heroic/Legendary tiers or run grade, a star-gate pass list): deleting ladder, or also
     lowering the version on a newer save, brings back nothing. Unlocks already recorded in kept stay either way. */
  const later=Object.values(obj(value.levels)?value.levels:{}).some(l=>obj(l)&&(l.stars!==undefined||l.tiers!==undefined||obj(l.best)&&l.best.grade!==undefined))||Array.isArray(value.starPass)&&value.starPass.length>0;
- if(!(Number(value.ladder)>=LADDER)&&from<6&&!later)for(const a of gated)if(!s.kept.includes(a.id)&&unlocked(s,{...a,gate:a.legacyGate??a.gate,lvl:undefined}))s.kept.push(a.id);
+ if(!(Number(value.ladder)>=2)&&from<6&&!later)for(const a of gated)if(!s.kept.includes(a.id)&&unlocked(s,{...a,gate:a.legacyGate??a.gate,lvl:undefined}))s.kept.push(a.id);
+ /* ownerbal-oct29: a save from before ladder 3 keeps whatever the moved rungs opened under ladder 2 (and so does a pre-re-curve save, which the pass above already judged by the bible's gates). */
+ if(!(Number(value.ladder)>=LADDER))for(const a of gated)if(LADDER2_RUNGS[a.id]&&!s.kept.includes(a.id)&&unlocked(s,{...a,...LADDER2_RUNGS[a.id]}))s.kept.push(a.id);
  s.ladder=LADDER;
 
  /* v2:hub -- additive v5 fields with defaults: boons packed for the next level (game/shops.js) and the

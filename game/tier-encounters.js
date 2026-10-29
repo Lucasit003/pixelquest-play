@@ -55,10 +55,27 @@ export function composeEncounter(base,k,fallback=base,active=ACTIVE_ENCOUNTERS){
    (regular foes below Normal health, 0 sim falls). One step per tier on top of every row, never Normal: foeHp is regular foes' and summons' health
    as a multiple of Normal's (the row's hp no longer shrinks them), bossHp multiplies the row's boss health (mini and echo bosses too),
    atk what enemies and arena hazards deal (the 20/28% Heroic and 25/33% Legendary hit caps in scenes/tier-pilot.js still bind). Tells, warning times and recovery windows are untouched. */
-export const READABLE_STEP={heroic:{foeHp:1.5,bossHp:1.4,atk:1.3},legendary:{foeHp:1.75,bossHp:1.7,atk:1.5}};
+/* ownerbal-oct29 (owner 29 Oct 2026): Heroic atk 1.3 -> 1.5 (Legendary's step), with READABLE_RULES below. A boss hit was already at
+   the 28% cap, so the step mostly lands on regular foes and hazards; Legendary still hits harder (its rows' 1.4 against 1.3, and 1.9
+   against 1.8 on the pilot levels), and its 25/33% caps stay above Heroic's 20/28%. */
+export const READABLE_STEP={heroic:{foeHp:1.5,bossHp:1.4,atk:1.5},legendary:{foeHp:1.75,bossHp:1.7,atk:1.5}};
 export const STEP_LIMITS={foeHp:[1,2.5],bossHp:[1,2],atk:[1,2]};
+/* ownerbal-oct29 (owner 29 Oct 2026: Heroic must be clearly harder than Normal). The readability rules each tier's bosses keep, in one
+   place (scenes/tier-pilot.js reads them): recover = the least rest, in seconds, after every boss attack (the window to hit back);
+   hazardRest = the arena hazard's rest between warnings, as a share of the row's. Tells (wind-up floors, warning times, the one-threat
+   budget, the hit caps) are not here and do not change: a hit is always told and never takes more than the cap. */
+/* Before 29 Oct the floors were 3.8 s (Heroic) and 3 s (Legendary) with the rows' full hazard rest: a boss stood still so long after
+   each attack that Heroic took about as little damage as Normal and nobody fell (simfix-oct29). Heroic is now 2.4 s and 70% of the rest
+   (never under 2 s): more attacks and hazards a minute, each still told exactly as before. Legendary is unchanged: shortening its rest
+   too made a recommended-level hero in shop gear fall 3-4 times a level (the windows are where a hero hits back), and it already
+   stays well above the new Heroic (docs/playtest/ownerbal-oct29/tiers.md). Measured with tools/balance-sim.mjs
+   (kid, set gear) and tools/sim/ownerbal-oct29-sum.mjs: docs/playtest/ownerbal-oct29/tiers.md. */
+export const READABLE_RULES={heroic:{recover:2.4,hazardRest:.7},legendary:{recover:3,hazardRest:1}};
+export const RULE_LIMITS={recover:[1.8,4],hazardRest:[.5,1]};
+export function validateRules(rules=READABLE_RULES){for(const k of ['heroic','legendary'])for(const [f,[lo,hi]] of Object.entries(RULE_LIMITS)){const v=rules[k]?.[f];if(!(Number.isFinite(v)&&v>=lo&&v<=hi))throw Error('Unsafe tier rule');}return true;}
+export const recoverFloor=k=>READABLE_RULES[k]?.recover??3.8;
 export function validateStep(step=READABLE_STEP){for(const k of ['heroic','legendary'])for(const [f,[lo,hi]] of Object.entries(STEP_LIMITS)){const v=step[k]?.[f];if(!(Number.isFinite(v)&&v>=lo&&v<=hi))throw Error('Unsafe tier step');}return true;}
-export function stepEncounter(r,k,step=READABLE_STEP){const e=structuredClone(r),t=step[k];if(!t)return e;validateStep(step);e.foeHp=Math.round(t.foeHp/e.hp*1000)/1000;e.bossHp=t.bossHp;if(e.atk)e.atk=Math.round(e.atk*t.atk*1000)/1000;else e.atkStep=t.atk;return e;}
+export function stepEncounter(r,k,step=READABLE_STEP){const e=structuredClone(r),t=step[k];if(!t)return e;validateStep(step);validateRules();if(e.hazard)e.hazard.rest=Math.max(2,Math.round(e.hazard.rest*READABLE_RULES[k].hazardRest*100)/100);e.foeHp=Math.round(t.foeHp/e.hp*1000)/1000;e.bossHp=t.bossHp;if(e.atk)e.atk=Math.round(e.atk*t.atk*1000)/1000;else e.atkStep=t.atk;return e;}
 /* Spawn health factor for an actor of a stepped encounter (1 outside encounters). */
 export const encounterHp=(enc,boss)=>enc?(boss?enc.bossHp:enc.foeHp)||1:1;
 export const encounterInventory=()=>Object.entries(ENCOUNTERS).flatMap(([id,ts])=>Object.keys(ts).map(tier=>({id,tier,active:ACTIVE_ENCOUNTERS.includes(id)})));

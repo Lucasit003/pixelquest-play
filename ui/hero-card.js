@@ -25,7 +25,7 @@ export const STAR_GAP=12;const FONT='"Pixel Operator", monospace',INK='#3a2614',
 export function heroCardModel(s={}){
  const hero=CLASSES[s.hero]?s.hero:'warrior',c=CLASSES[hero],typed=String(s.heroNames?.[hero]??'').trim().slice(0,24);
  const main=LEVELS.filter(l=>l.kind==='level'&&!l.hidden&&!l.optional),beaten=main.filter(l=>levelDone(s,l.id)),last=beaten[beaten.length-1]||null;
- const abilities=(ABILITIES[hero]||[]).map(a=>({id:a.id,name:a.name,on:!!(unlocked(s,a)&&!asleep(s,a)),icon:a.id in ICON_AB?{strip:'ability',i:ICON_AB[a.id]}:{name:abilityIconName(a,hero)}}));
+ const abilities=[...(ABILITIES[hero]||[])].sort((a,b)=>a.gate-b.gate).map(a=>({id:a.id,name:a.name,on:!!(unlocked(s,a)&&!asleep(s,a)),icon:a.id in ICON_AB?{strip:'ability',i:ICON_AB[a.id]}:{name:abilityIconName(a,hero)}}));
  const subjects=Object.entries(SUBJECTS).map(([id,v])=>({id,name:v.name,color:v.color,icon:SUBJECT_ICON[id]||'book-open',count:TOPICS.filter(t=>t.subject===id&&mastered(s,t)).length}));
  return {hero,name:typed||c.name,className:c.name,level:Math.max(1,s.level|0),stars:totalStars(s),maxStars:maxStars(),
   furthest:last?{id:last.id,name:last.name,chapter:CHAPTERS.find(ch=>ch.id===last.chapter)?.name||''}:null,

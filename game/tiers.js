@@ -68,8 +68,13 @@ export const bossTrim=(id,k,boss)=>boss&&tierKey(k)==='normal'?(NORMAL_BOSS_HP[i
 /* 17 Oct, three-seed pacing audit: ease m4's isolated spike; fill Heroic v6's boss-time trough. Normal is untouched. */
 /* oct25-tiers: with the tier step (game/tier-encounters.js READABLE_STEP) the Starfall Ruins pylon fight ran about 1.6x the
    chapter's other boss times on both tiers, and Legendary Shaman Grove and Furnace Depths about 1.3x; trim those bosses only. */
-export const HEROIC_BOSS_HP={m4:.8,v6:1.3,v4:.7};
-export const LEGENDARY_BOSS_HP={m4:.8,v4:.7,e6:.8,m5:.85};
+/* ownerbal-oct29: with Heroic's shorter boss rest (game/tier-encounters.js READABLE_RULES) the Starfall Ruins golem raises its prism
+   pylons more often and a recommended-level Mage's boss fight went 142 -> 245 s (others 0-15 s longer); v4 .7 -> .5 brings it back. */
+export const HEROIC_BOSS_HP={m4:.8,v6:1.3,v4:.5};
+/* ownerbal-oct29: with the 6-potion bag (game/potions.js BAG) a post-game Mage at its own level (tests/lategame-oct27.test.js 4) could no
+   longer drink through the Shadow Twin and Cthulhu Legendary fights (mana-starved boss fights of 4-13 minutes, 9-15 potions, 2-5 falls,
+   against 2-3 minutes for the chapter's other bosses); v3 and v7 .75 bring them to 2-4 minutes (Warrior 70 and 94 s). */
+export const LEGENDARY_BOSS_HP={m4:.8,v4:.7,e6:.8,m5:.85,v3:.75,v7:.75};
 export const tierBossTrim=(id,k,boss)=>!boss?1:tierKey(k)==='normal'?bossTrim(id,k,boss):(tierKey(k)==='heroic'?HEROIC_BOSS_HP:LEGENDARY_BOSS_HP)[id]||1;
 export const rampOf=l=>l&&l.kind==='level'&&!l.gentle?NORMAL_RAMP:{hp:1,atk:1};
 /* What a level's enemies carry on a tier, before the Settings assist: {hp, atk}. Arenas and towns are never tiered. */
@@ -138,6 +143,16 @@ export const starsFor=(time,par)=>!(par>0)||!Number.isFinite(time)?1:time<=par?3
 /* Oct24 certification: [Normal, Heroic, Legendary] seconds. Measured practiced clears include 15 s per secret;
    retain every previous par, allow all classes three stars, and a clean learned-ability S+ on both assists. */
 export const AUTHORED_PARS={e1:[270,224,299],e2:[300,278,363],e3:[360,331,428],e4:[345,275,360],e5:[450,335,432],e6:[345,329,425],e7:[360,333,429],e8:[390,336,434],ex1:[270,195,248],ex2:[300,225,300],m1:[225,228,303],m2:[220,275,360],m3:[240,234,311],m4:[315,330,426],m5:[255,226,302],m6:[255,283,369],m7:[240,284,371],mx1:[360,195,249],v1:[225,228,303],v2:[210,230,306],v3:[182,228,303],v4:[255,285,371],v5:[255,279,365],v6:[270,283,369],v7:[285,285,372],vx1:[210,180,242]};
+/* ownerbal-oct29 (owner 29 Oct 2026: Legendary 3 stars should mean mastery). Before, the endgame playtest earned Legendary's 3 stars
+   at 64-67% of par (that run's fall was the play tool standing the hero up in place, which the game never does). Now the 3-star time
+   on a tier is its par x STAR_PAR (Legendary .65, so that playtest's runs sit on the line and the kid bot with the capstone set
+   earns it on 99 / 75 / 57% of its clean Elderwood / Emberkeep / Veilmoor runs, from 99 / 84 / 86%; the run grade and score keep the
+   full par). No fall: a fall ends the attempt, and any
+   retry of it ("Try this wave again", "Retry boss fight") carries the knockout, so game/levels.js recordLevel gives it 2 stars at most
+   (on every tier, as before); STAR_CLEAN marks the tiers whose card and result say so. Stars already earned are never taken away
+   (recordLevel only ever raises them). */
+export const STAR_PAR={normal:1,heroic:1,legendary:.65};
+export const STAR_CLEAN={legendary:true};
 export const tierPar=(basePar,k,id)=>AUTHORED_PARS[id]?.[tierOf(k).rank]??Math.round(basePar*tierOf(k).par+(tierOf(k).extraWave?30:0));
 export const tierGold=(base,k)=>Math.round(base*tierOf(k).gold);
 /* Kill gold (24 Oct economy retune, docs/playtest/oct24-polish/ECONOMY.md): the Oct 24 playtest banked about 1300 gold
