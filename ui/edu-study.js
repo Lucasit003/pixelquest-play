@@ -85,7 +85,7 @@ export function nextLessonHTML(save,{hero=save.hero,subject=null}={}){
  if(lv){act[0]=g.stage==='practice'?`Practice paused: ${lv.name} awaits!`:`${lv.name} awaits!`;}
  const keep=lv?(g.stage==='practice'?'You can keep practising.':'You can keep studying.'):'';
  const say=lv?`${act[0]} ${step.text} ${keep}`:`${act[0]}: ${t.title}. ${n.goal}`;
- return `<section class="edu-next${lv?' edu-next-adventure':''}" style="--accent:${sub.color}" aria-label="${esc(act[0])}" data-stage="${g.stage}" data-next-subject="${esc(t.subject)}"${lv?` data-next-level="${esc(lv.id)}"`:''}>${subjectIcon(t.subject)}<div class="edu-next-text"><span class="edu-next-k">${esc(act[0])}</span>${lv?`<strong>${esc(step.text)}</strong><small>${esc(keep)} <span class="edu-next-title">“${esc(t.title)}”</span> · <span class="edu-nw">${esc(sub.name)}</span> · <span class="edu-nw">${esc(lessonGradeLabel(t))}</span></small>`:`<strong>${esc(t.title)}</strong><small>${esc(sub.name)} · ${esc(lessonGradeLabel(t))}</small>${n.goal?`<span class="edu-next-goal">${esc(n.goal)}</span>`:''}${g.stage==='practice'?`<span class="edu-next-why">${esc(PRACTICE_WHY)}</span>`:''}`}${nudge?`<span class="edu-next-away edu-place-nudge-row">${nudge}</span>`:away?`<span class="edu-next-away" data-away="${esc(all.topic.subject)}">${awayHTML}${go}</span>`:''}</div><div class="edu-next-actions">${/* the primary button does what the headline says (polish, 19 Oct): go to the adventure */lv?`<button type="button" class="primary" data-go-adventure="${esc(lv.id)}">Go to ${esc(lv.name)}</button>`:''}<button type="button"${lv?'':' class="primary"'} ${act[1]}="${esc(t.id)}">${esc(act[2])}</button>${readButtonHTML(say)}</div></section>`;
+ return `<section class="edu-next${lv?' edu-next-adventure':''}" style="--accent:${sub.color}" aria-label="${esc(act[0])}" data-stage="${g.stage}" data-next-subject="${esc(t.subject)}"${lv?` data-next-level="${esc(lv.id)}"`:''}>${subjectIcon(t.subject)}<div class="edu-next-text"><span class="edu-next-k">${esc(act[0])}</span>${lv?`<strong>${esc(step.text)}</strong><small>${esc(keep)} <span class="edu-next-title">“${esc(t.title)}”</span> · <span class="edu-nw">${esc(sub.name)}</span> · <span class="edu-nw">${esc(lessonGradeLabel(t))}</span></small>`:`<strong>${esc(t.title)}</strong><small>${esc(sub.name)} · ${esc(lessonGradeLabel(t))}</small>${n.goal?`<span class="edu-next-goal">${esc(n.goal)}</span>`:''}${g.stage==='practice'?`<span class="edu-next-why">${esc(practiceWhy(g.needed))}</span>`:''}`}${nudge?`<span class="edu-next-away edu-place-nudge-row">${nudge}</span>`:away?`<span class="edu-next-away" data-away="${esc(all.topic.subject)}">${awayHTML}${go}</span>`:''}</div><div class="edu-next-actions">${/* the primary button does what the headline says (polish, 19 Oct): go to the adventure */lv?`<button type="button" class="primary" data-go-adventure="${esc(lv.id)}">Go to ${esc(lv.name)}</button>`:''}<button type="button"${lv?'':' class="primary"'} ${act[1]}="${esc(t.id)}">${esc(act[2])}</button>${readButtonHTML(say)}</div></section>`;
 }
 /* The P1 line: "Nearer: Quick Shot, about 1 Computer Science topic away. [Find your level in Computer Science]", or '' when no
    unplaced subject is nearer (study-unlock.js placementNudge). The button is wired once in main.js (data-find-level). */
@@ -93,21 +93,23 @@ export function placementNudgeHTML(save,{hero=save.hero}={}){
  const p=placementNudge(save,{hero});if(!p)return '';const sub=SUBJECTS[p.subject]?.name||p.subject;
  return `<span class="edu-place-nudge"><b class="edu-away-k">Nearer:</b> ${esc(p.ability.name)}, about ${p.lessons} ${esc(sub)} topic${p.lessons===1?'':'s'} away. <button type="button" class="edu-next-go" data-find-level="${esc(p.subject)}">Find your level in ${esc(sub)}</button></span>`;
 }
-/* Why practice is needed, in one line a child can read (playtest S2-3). */
-export const PRACTICE_WHY='Practice helps your brain keep what you learned: get 25 different questions right, and the mastery test opens.';
+/* Why practice is needed, in one line a child can read (playtest S2-3). The number is the topic's own (owner 29 Oct: 10 on a
+   save's first topic, 25 after; lessons.js practiceNeeded); PRACTICE_WHY is the 25 line. */
+export const practiceWhy=(n=25)=>`Practice helps your brain keep what you learned: get ${n} different questions right, and the mastery test opens.`;
+export const PRACTICE_WHY=practiceWhy(25);
 
 /* ---------- A topic's progress, visible from the first step (playtest m15) ----------
-   Four steps that light up as the child does them: Lesson, Quiz, Practice n/25 (with a bar), Test. The same
+   Four steps that light up as the child does them: Lesson, Quiz, Practice n/25 (n/10 on a first topic, with a bar), Test. The same
    numbers the mastery test gate uses (lessons.js testReady), so what the child sees is what the game checks. */
-import {testReady,mastered as isMastered,PRACTICE_NEEDED} from '../academics/lessons.js';
+import {testReady,mastered as isMastered} from '../academics/lessons.js';
 import {topicMastery} from '../academics/study-unlock.js';
 export function topicProgressHTML(save,t,{compact=false}={}){
- const g=testReady(save,t),m=isMastered(save,t),p=m?PRACTICE_NEEDED:g.practice,pc=Math.round(p/PRACTICE_NEEDED*100);
+ const g=testReady(save,t),m=isMastered(save,t),N=g.needed,p=m?N:g.practice,pc=Math.round(p/N*100);
  const step=(cls,on,label,extra='')=>`<li class="edu-pstep ${cls}${on?' on':''}"><span class="edu-pstep-name">${label}${on?' ✓':''}</span>${extra}</li>`;
- const say=`${t.title}. Lesson ${g.lesson||m?'done':'not done yet'}. Quiz ${g.quiz||m?'passed':'not passed yet'}. Practice ${p} of ${PRACTICE_NEEDED}. Test ${m?'passed':'not yet'}.`;
+ const say=`${t.title}. Lesson ${g.lesson||m?'done':'not done yet'}. Quiz ${g.quiz||m?'passed':'not passed yet'}. Practice ${p} of ${N}. Test ${m?'passed':'not yet'}.`;
  const tm=topicMastery(save,t),tp=Math.round(tm.frac*100);
  /* juice-oct27: one bar for the whole way to mastery above the four steps (study-unlock.js topicMastery) */
- return `<div class="edu-mastery${m?' done':''}" role="progressbar" aria-label="Toward mastery of ${esc(t.title)}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${tp}"><span class="edu-mastery-k">${m?'Mastered':'Toward mastery'}</span><span class="edu-mastery-bar" aria-hidden="true"><i style="width:${tp}%"></i></span><span class="edu-mastery-left">${m?'✓':esc(tm.left)}</span></div><ol class="edu-progress${compact?' compact':''}" aria-label="${esc(say)}">${step('lesson',g.lesson||m,'Lesson')}${step('quiz',g.quiz||m,'Quiz')}${step('practice',p>=PRACTICE_NEEDED,`Practice ${p}/${PRACTICE_NEEDED}`,`<span class="edu-pbar" aria-hidden="true"><i style="width:${pc}%"></i></span>`)}${step('test',m,'Test')}</ol>`;
+ return `<div class="edu-mastery${m?' done':''}" role="progressbar" aria-label="Toward mastery of ${esc(t.title)}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${tp}"><span class="edu-mastery-k">${m?'Mastered':'Toward mastery'}</span><span class="edu-mastery-bar" aria-hidden="true"><i style="width:${tp}%"></i></span><span class="edu-mastery-left">${m?'✓':esc(tm.left)}</span></div><ol class="edu-progress${compact?' compact':''}" aria-label="${esc(say)}">${step('lesson',g.lesson||m,'Lesson')}${step('quiz',g.quiz||m,'Quiz')}${step('practice',p>=N,`Practice ${p}/${N}`,`<span class="edu-pbar" aria-hidden="true"><i style="width:${pc}%"></i></span>`)}${step('test',m,'Test')}</ol>`;
 }
 
 /* ---------- A right answer deserves a moment (playtest m14) ----------

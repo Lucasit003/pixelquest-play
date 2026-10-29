@@ -7,6 +7,9 @@ export const potionCount=(s,p)=>Math.max(0,Number(s[potionKind(s)==='regen'?'reg
    short drink delay between potions, and at most POTION_CAP drunk in one level attempt (the free one counts). p.drunk is
    reset when a level starts; town and the menus pass no cap. */
 export const POTION_WAIT=3,POTION_CAP=5;
+/* owner 29 Oct: the free potion(s) every level attempt starts with, a fresh start and every retry ("Retry boss fight", "Try this
+   wave again") alike. World.startLevel SETS p.freePotion to this, never adds, and it never reaches s.potions, so retries cannot farm it. */
+export const FREE_POTIONS=1;
 export const potionsLeftInLevel=p=>Math.max(0,POTION_CAP-(p?.drunk|0));
 export function usePotion(s,p,{cap=0}={}){const free=p.freePotion>0,kind=free?'health':potionKind(s),a=POTIONS[kind],key=kind==='regen'?'regenPotions':'potions';
  if(p.hp<=0)return {ok:false,message:'You cannot drink a potion after falling.'};

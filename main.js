@@ -75,7 +75,7 @@ import {runResultHTML,runRevealTick,CHEST_AT,meterHTML,meterPickerHTML,tierRunHT
 import {nearShrine,nearSeal,breakSeal} from './scenes/run-fx.js';
 import {newSeal,sealQuestion,sealAnswer,sealTopics,SEAL_RIGHT} from './game/seal.js';
 import {setTarget} from './game/meter.js';
-/* v2:edu */import {loadLessonSprites,mountLessonVoice,narrationOn,narrationSettingHTML,wireNarrationSetting,emitAbilityUnlocked,unlockBannerHTML,nextLessonHTML,readButtonHTML,topicProgressHTML,praise,burstHTML,feedbackLines,feedbackHTML,PRACTICE_WHY,autoEquip,grownupsButtonHTML,wireGrownupsButton} from './ui/edu.js';
+/* v2:edu */import {loadLessonSprites,mountLessonVoice,narrationOn,narrationSettingHTML,wireNarrationSetting,emitAbilityUnlocked,unlockBannerHTML,nextLessonHTML,readButtonHTML,topicProgressHTML,praise,burstHTML,feedbackLines,feedbackHTML,practiceWhy,autoEquip,grownupsButtonHTML,wireGrownupsButton} from './ui/edu.js';
 /* v2:edu */import {goalLine,lessonsToUnlock,nextLesson} from './academics/study-unlock.js';
 import {choiceFormHTML,wireChoices,focusAnswers} from './ui/answer-choices.js';import {matchAnswer} from './game/math.js';
 /* a typed answer accepted with a small typo still shows the right spelling (learning-flow fix, 17 Oct) */
@@ -110,7 +110,7 @@ function fitToast(){const t=$('#toast'),b=t.classList.contains('show')&&(toastCo
 function toast(message,now,queued){if(!queued)toastScene.set(message,sceneNow());if(!now&&(holdToasts()||$('#toast').classList.contains('show')||toastQueue.length)||now&&!queued&&heldUp({shown:$('#toast').classList.contains('show'),text:$('#toast').textContent,message,hold:toastHold,now:performance.now(),free:toastFree})){if(!toastQueue.includes(message)&&$('#toast.show')?.textContent!==message){toastQueue.push(message);if(toastQueue.length>3)toastQueue.shift();}return;}$('#toast').classList.remove('armour-hint');$('#toast').classList.remove('travel-hint');$('#toast').textContent=message;$('#toast').classList.add('show');fitToast();const ms=toastMs(message,toastHold);toastFree=performance.now()+ms;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#toast').classList.remove('show'),ms);}
 /* oct24-r3 playtest: a lost run said only "Try again"; it also names the nearest way to get stronger (the next ability's road, or potions when the bag is empty). Read-only. */
 /* oct26-midgame: the goal names the subject ("6 more Coding topics", as the Ability tree does) and the Apothecary, the potion shop's name on its door, the map and fast travel. */
-function defeatGoal(sv){const r=learningRoad(sv),tips=[];if(r?.sleeping)tips.push(`Finish a Library lesson to awaken ${r.ability.name}.`);else if(r&&r.reachable&&r.remaining>0&&r.level)tips.push(`Master ${r.remaining} more ${SUBJECTS[r.ability.subject]?.name?SUBJECTS[r.ability.subject].name+' ':''}topic${r.remaining===1?'':'s'} in the Library to unlock ${r.ability.name}.`);if(!potionCount(sv))tips.unshift('You have no potions left: buy some from the Apothecary in Oakhaven.');return ['Try again when you are ready.',...tips].join(' ');}
+function defeatGoal(sv){const r=learningRoad(sv),tips=[];if(r?.sleeping)tips.push(`Finish a Library lesson to awaken ${r.ability.name}.`);else if(r&&r.reachable&&r.remaining>0&&r.level)tips.push(`Master ${r.remaining} more ${SUBJECTS[r.ability.subject]?.name?SUBJECTS[r.ability.subject].name+' ':''}topic${r.remaining===1?'':'s'} in the Library to unlock ${r.ability.name}.`);if(!potionCount(sv))tips.unshift('Your potion bag is empty, but every try starts with 1 free potion. Buy more from the Apothecary in Oakhaven.')/* owner 29 Oct: "no potions left" read as a Retry with none (readiness audit #3); a retry does get FREE_POTIONS */;return ['Try again when you are ready.',...tips].join(' ');}
 /* oct24-r3 playtest: a potion message from the last attempt ("No healing potions") waited behind the result screen and showed at the retry, which has a fresh free potion; a new attempt drops stale potion messages. */
 function playLevel(...a){for(let i=toastQueue.length-1;i>=0;i--)if(/potion|Your health is full|Wait a moment/i.test(toastQueue[i]))toastQueue.splice(i,1);const ok=world.startLevel(...a);sweepSceneToasts();return ok;}
 /* v2:levels -- levelEnd replaces the contract result/checkpoint callbacks. */
@@ -480,7 +480,7 @@ function leavePlacement(){
 
 /* v2:edu Practice (playtest S2-3): a sitting of PRACTICE_SIZE questions from the topic pool, unpractised ones first. */
 const PRACTICE_SIZE=10,practiceSize=(s,t)=>practiceSitting(s,t,PRACTICE_SIZE);
-function practiceButton(t){if(mastered(s,t))return '';const g=testReady(s,t);return g.practice>=g.needed?'':`<button data-practice="${t.id}" title="${esc(PRACTICE_WHY)}">Practice (${g.practice}/${g.needed})</button>`;}
+function practiceButton(t){if(mastered(s,t))return '';const g=testReady(s,t);return g.practice>=g.needed?'':`<button data-practice="${t.id}" title="${esc(practiceWhy(g.needed))}">Practice (${g.practice}/${g.needed})</button>`;}
 function lessonCard(t,open=true){
   const r=s.lessons[t.id]||{},co=t.grade>=9?courseOf(t.id):null,tag=co?`${esc(co.course.name)} · Unit ${co.index+1}`:`${esc(SUBJECTS[t.subject].name)} · ${esc(lessonGradeLabel(t))}`;
   if(!open)return `<div class="lesson-card shut" style="--accent:${SUBJECTS[t.subject].color}"><span class="tag">${tag}</span><strong>${esc(t.title)}</strong><span class="subtle">${esc(t.goal)}</span><span class="lesson-track">${co?'Opens when Grade 8 is mastered, or after a High School placement.':`Opens when Grade ${t.grade-1} is mastered.`}</span></div>`;
@@ -602,7 +602,7 @@ function submitSitting(q, input) {
     /* 25 Oct (first-hour playtest): "Try it again" sits right under the explanation, above the worked picture, so it shows without scrolling */
     if(!r.ok){mountAnswerReview($('#quiz-feedback'),q,{stage:s.schoolMode});const rv=$('#quiz-feedback .answer-review'),pc=$('#quiz-feedback #lesson-pic');if(rv&&pc)pc.before(rv);rv?.addEventListener('toggle',()=>{if(rv.open)rv.scrollIntoView?.({block:'nearest'});});}
     { const pips = $('.question .am-pips'); if (pips) pips.outerHTML = sittingPipsHTML(sitting.items.length, sitting.i, sitting.items.map(x => sitting.right[x.id])); }
-    if (!wasReady && testReady(s, tTopic).ready) { $('#quiz-feedback .feedback')?.insertAdjacentHTML('beforeend', `<p class="test-open-note"><b>Practice ${PRACTICE_NEEDED}/${PRACTICE_NEEDED}: the mastery test is open!</b> ${sitting.i + 1 < sitting.items.length ? 'Stop here to take it, or keep practising.' : 'See results to take it.'}</p>`); if (sitting.i + 1 < sitting.items.length) $('#quiz-end').textContent = 'Stop here'; }
+    if (!wasReady && testReady(s, tTopic).ready) { $('#quiz-feedback .feedback')?.insertAdjacentHTML('beforeend', `<p class="test-open-note"><b>Practice ${testReady(s, tTopic).needed}/${testReady(s, tTopic).needed}: the mastery test is open!</b> ${sitting.i + 1 < sitting.items.length ? 'Stop here to take it, or keep practising.' : 'See results to take it.'}</p>`); if (sitting.i + 1 < sitting.items.length) $('#quiz-end').textContent = 'Stop here'; }
     /* oct25-quizpolish: when the question already shows its picture, the worked picture plays there instead of a second copy in the card */
     if (!r.ok && shownPic(q)) picStart({ ...shownPic(q), solve: true }, 2.5, $('#lesson-pic') || $('#quiz-pic'));
     questionInView();
@@ -615,7 +615,7 @@ function sittingSummary(){
   /* one square per question answered, so the squares agree with the score beside them (polish, 19 Oct) */const done=sitting.items.filter(x=>x.id in sitting.right),pips=answered?sittingPipsHTML(done.length,-1,done.map(x=>sitting.right[x.id]),`${score} of ${answered} right`):'';
   if(k==='practice'){
     /* v2:edu practice records nothing but the answers themselves, which is what the practice count reads */persist();const g=testReady(s,t);
-    body = `<h2 class="am-score">${score} / ${answered}</h2>${pips}<p>${answered?`Practice ${g.practice}/${g.needed}.${g.ready?' The mastery test is open!':g.practice>=g.needed?' Practice complete. Finish the lesson and quiz to open the mastery test.':''}`:'You stopped before answering. Nothing is lost.'}</p><p class="subtle">${esc(PRACTICE_WHY)}</p>`;
+    body = `<h2 class="am-score">${score} / ${answered}</h2>${pips}<p>${answered?`Practice ${g.practice}/${g.needed}.${g.ready?' The mastery test is open!':g.practice>=g.needed?' Practice complete. Finish the lesson and quiz to open the mastery test.':''}`:'You stopped before answering. Nothing is lost.'}</p><p class="subtle">${esc(practiceWhy(g.needed))}</p>`;
   } else if(k==='quiz'){
     const r=recordQuiz(s,t,score);persist();
     /* a quiz left part-way says so as its headline, not "First try done." (polish, 19 Oct) */const passed=testReady(s,t).quiz,early=answered&&answered<sitting.items.length,stopped=`You stopped after ${answered} of ${sitting.items.length} questions.`;

@@ -21,7 +21,7 @@ import {nextTask} from './skills.js';
 import {potionCount,potionKind,POTIONS} from './potions.js';
 import {nextQuestStep,questLive,QUESTS} from './quests.js';
 import {COMPANIONS,hireable} from './party.js';
-/* How much practice to suggest before the next adventure. The test still needs PRACTICE_NEEDED (lessons.js). */
+/* How much practice to suggest before the next adventure. The test still needs practiceNeeded (lessons.js: 10 on a save's first topic, 25 after). */
 export const PRACTICE_FIRST=10;
 const lessonDone=save=>Object.values(save?.lessons||{}).some(l=>l?.done);
 /* An ability the hero earned (gate above zero): the slice's payoff. */
@@ -90,7 +90,7 @@ export function nextStep(save,{room}={}){
   if(!r.quiz){const best=save.lessons?.[t.id]?.quiz|0,need=Math.ceil(PASS*QUIZ_SIZE-1e-9);return {id:'quiz',text:best>0?`Pass the quiz on “${t.title}” at the Library (${need} of ${QUIZ_SIZE} right).`:`Take the quiz on “${t.title}” at the Library.`,target:{kind:'library'}};}
   if(r.practice<PRACTICE_FIRST)return {id:'practice',text:(n=>`Practice ${n} more question${n===1?'':'s'} at the Library, then try the next level.`)(PRACTICE_FIRST-r.practice)/* first-hour playtest 24 Oct: "(8/25). After 10" read as two goals */,target:{kind:'library'}};
   const e2=levelById('e2');if(e2&&!levelDone(save,'e2')&&levelOpen(save,'e2')&&!levelFogged(e2))return pad(e2);
-  return {id:'earn-power',text:'Finish practice and take the test at the Library.',target:{kind:'library'}};}
+  return {id:'earn-power',text:r.ready?`Take the mastery test on “${t.title}” at the Library.`/* owner 29 Oct: a first topic is test-ready at 10 practice */:'Finish practice and take the test at the Library.',target:{kind:'library'}};}
  const n=adventure(save);if(n)return n;
  return endGoal(save);}
 function endGoal(save){

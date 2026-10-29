@@ -5,7 +5,7 @@ import {composeEncounter,encounterHp} from '../game/tier-encounters.js';
 import {pilotBoss,pilotTick,pilotHitCap,pilotEnemy,pilotBlock} from './tier-pilot.js';
 import {admitEnemy,pumpEnemies,clearThreats,canBeginThreat} from './encounter-budget.js';
 import {clearHazards,tierTick,tierLayer,clearLabelLayer} from './tier-fx.js';
-import {usePotion,tickPotion,tickPotionWait,POTION_CAP} from '../game/potions.js';
+import {usePotion,tickPotion,tickPotionWait,POTION_CAP,FREE_POTIONS} from '../game/potions.js';
 import {CLASSES,BOSS,PETS,phase2Hp} from '../game/data.js';
 export const PHASE2_HEAL=.6;
 import {ABILITIES} from '../game/abilities.js';
@@ -116,7 +116,7 @@ export class World{
   runStart(this,l,k,prevRun);
   this.tut=l.tutorial?(learned||{done:new Set(),moved:0}):null;this.controlsTutorial=controls;if(this.controlsTutorial)this.events.persist?.();
   for(const key of new Set([...(this.level.waves||[]).flatMap(w=>waveGroups(w).flat().map(e=>typeof e==='string'?e:e.type)),l.boss].filter(Boolean))){const sp=baseDef(key).sprite;if(sp)loadSprite(sp);}
-  const p=this.player;p.freePotion=1;p.drunk=0;p.potionWait=0;p.x=this.layout.spawn.x;p.y=this.layout.spawn.y;p.facing=1;this.camTop=camTopFor(this.layout,p.y);this.setFlow('intro');
+  const p=this.player;p.freePotion=FREE_POTIONS;p.drunk=0;p.potionWait=0;p.x=this.layout.spawn.x;p.y=this.layout.spawn.y;p.facing=1;this.camTop=camTopFor(this.layout,p.y);this.setFlow('intro');
   if(this.arena){this.lockTo(this.layout.arena);this.camX=this.camFloor=this.layout.arena.x0;}
   /* The Thorn King's phase-two checkpoint: until Thorn Keep is won, a retry starts at the transformed king. */
   else if(thornRetry||this.save.bossPhase2&&baseDef(l.boss).cinematic&&!levelDone(this.save,id)){const a=this.layout.boss;this.wave=this.layout.arenas.length;p.x=a.x0+60;this.camX=this.camFloor=a.x0;this.lockTo(a);const resumed=this.spawnBoss(a.x1-70);resumed.entered=true;if(thornRetry)this.boss=resumed;this.phase2();this.setFlow('boss');}

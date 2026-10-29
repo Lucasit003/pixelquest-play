@@ -113,10 +113,21 @@ export const left=(save,t)=>untouched(save,t)?POOL_SIZES[t.id]:POOL[t.id].filter
 // toward it is work already done, and a wrong answer only means that question is not counted yet.
 export const PRACTICE_NEEDED=25;
 export const practised=(save,t)=>untouched(save,t)?0:POOL[t.id].filter(id=>(save.answers[id]||0)>0).length;
+/* Owner, 29 Oct 2026 (docs/reference/SPEC_DECISIONS.md): a save's FIRST topic needs only FIRST_PRACTICE_NEEDED practised
+   questions before its test; every later topic keeps PRACTICE_NEEDED. The first topic is any topic worked on while the save
+   has no mastered topic (any subject or level, placement included, since placement never masters). The topic that gets
+   mastered first, and any other topic that already had its 10, keep the lower count for good (`first` on their lesson
+   record, written by settleFirst when the first topic is mastered), so mastering one topic never takes readiness from
+   another. Only the practice count before the test changes: topicPoints, retirement and weighted mastery do not. */
+export const FIRST_PRACTICE_NEEDED=10;
+const anyMastered=(save,except)=>Object.entries(save.lessons||{}).some(([id,r])=>id!==except&&(r?.pts||0)>0);
+export const firstTopic=(save,t)=>save.lessons?.[t.id]?.first===true||!anyMastered(save,t.id);
+export const practiceNeeded=(save,t)=>firstTopic(save,t)?FIRST_PRACTICE_NEEDED:PRACTICE_NEEDED;
+const settleFirst=(save,t)=>{if(anyMastered(save))return;for(const x of TOPICS){const r=save.lessons?.[x.id];if(r&&(x.id===t.id||practised(save,x)>=FIRST_PRACTICE_NEEDED))r.first=true;}};
 // The quiz half of the gate: 4 of 5, or the pool has too few unretired questions left to ask 4,
 // in which case a quiz can never reach it and the practice already done stands in for it.
-export const testReady=(save,t)=>{const r=save.lessons?.[t.id]||{},done=r.done===true,need=Math.ceil(PASS*QUIZ_SIZE-1e-9),quiz=(r.quiz||0)>=need||left(save,t)<need,p=practised(save,t);
- return {ready:done&&quiz&&p>=PRACTICE_NEEDED,lesson:done,quiz,quizNeed:need,quizSize:QUIZ_SIZE,practice:Math.min(p,PRACTICE_NEEDED),needed:PRACTICE_NEEDED};};
+export const testReady=(save,t)=>{const r=save.lessons?.[t.id]||{},done=r.done===true,need=Math.ceil(PASS*QUIZ_SIZE-1e-9),quiz=(r.quiz||0)>=need||left(save,t)<need,p=practised(save,t),n=practiceNeeded(save,t);
+ return {ready:done&&quiz&&p>=n,lesson:done,quiz,quizNeed:need,quizSize:QUIZ_SIZE,practice:Math.min(p,n),needed:n};};
 /* How many questions a practice sitting asks (late playtest 24 Oct: at 24 of 25 a child sat a full ten for the one answer the
    test still needed). Before the test opens: what is still needed, between 5 and size; after that, size. Never a limit on practice. */
 export const practiceSitting=(save,t,size=10)=>{const r=testReady(save,t);return r.practice>=r.needed?size:Math.max(5,Math.min(size,r.needed-r.practice));};
@@ -195,7 +206,7 @@ export function grade(save,item,input,{master=true}={}){
 // that nothing can ever master (Codex invariant review, 8 Oct). Placement itself never calls this.
 export function masterExhausted(save,t){
     if(!t||left(save,t)>0||mastered(save,t))return {mastered:false,xp:0};
-    rec(save,t).pts=topicPoints(t);keepOpen(save,t);
+    settleFirst(save,t);rec(save,t).pts=topicPoints(t);keepOpen(save,t);
     return {mastered:true,xp:XP.mastered};
 }
 export function creditCheck(save,id,credited){
@@ -250,6 +261,6 @@ export function finishTest(save,t,sitting){
     r.test=Math.max(r.test||0,Math.min(99,score));
     r.miss=sitting.items.filter(item=>!sitting.right[item.id]).map(item=>item.id).slice(0,10);
     const first=passed && !(r.pts>0);
-    if(first){r.pts=topicPoints(t);keepOpen(save,t);}
+    if(first){settleFirst(save,t);r.pts=topicPoints(t);keepOpen(save,t);}
     return {graded:true,passed,first,xp:first?XP.mastered:0,score,total,missed};
 }

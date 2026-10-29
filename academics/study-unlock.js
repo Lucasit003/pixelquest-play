@@ -14,7 +14,7 @@
 import {ABILITIES} from '../game/abilities.js';
 import {LEVELS,SUBJECTS} from '../game/data.js';
 import {mastery,elementary,abilityMastery,unlocked,xpLevel,clamp} from '../game/math.js';
-import {TOPICS,ELEMENTARY_RUNGS,MIDDLE_RUNGS,HIGH_RUNGS,rungOf,topicPoints,mastered,topicOpen,openGrade,testReady,PRACTICE_NEEDED} from './lessons.js';
+import {TOPICS,ELEMENTARY_RUNGS,MIDDLE_RUNGS,HIGH_RUNGS,rungOf,topicPoints,mastered,topicOpen,openGrade,testReady,practiceNeeded} from './lessons.js';
 import {middleLadder,highLadder} from '../game/math.js';
 import {placementGrades} from './placement.js';
 
@@ -113,19 +113,19 @@ export function lessonsToUnlock(save,a){
 /* Where a topic stands on its way to mastery (playtest S2-3): the four steps a child really does, the same
    numbers the mastery test gate uses (lessons.js testReady). stage is the next thing to do. */
 export function topicStage(save,t){
- if(mastered(save,t))return {stage:'done',lesson:true,quiz:true,practice:PRACTICE_NEEDED,needed:PRACTICE_NEEDED};
+ if(mastered(save,t)){const n=practiceNeeded(save,t);return {stage:'done',lesson:true,quiz:true,practice:n,needed:n};}
  const g=testReady(save,t),stage=!g.lesson?'lesson':!g.quiz?'quiz':g.practice<g.needed?'practice':'test';
  return {stage,lesson:g.lesson,quiz:g.quiz,practice:g.practice,needed:g.needed};
 }
 /* juice-oct27: how far a topic is toward mastery, 0..1, for the Library's bar: the lesson and the quiz are 15% each, the
-   PRACTICE_NEEDED practised questions 55% (one share per question), the mastery test the last 15%. The same steps the gate
+   practised questions (practiceNeeded: 10 on the first topic, 25 after) 55% (one share per question), the mastery test the last 15%. The same steps the gate
    checks (topicStage), only weighted for a bar; nothing here is a rule. `left` names what is still to do. */
 export const MASTERY_SHARE={lesson:.15,quiz:.15,practice:.55,test:.15};
 export function topicMastery(save,t){const g=topicStage(save,t),S=MASTERY_SHARE;if(g.stage==='done')return {frac:1,left:'Mastered',stage:'done'};
  const frac=(g.lesson?S.lesson:0)+(g.quiz?S.quiz:0)+S.practice*Math.min(1,g.practice/g.needed),k=g.needed-g.practice;
  const left={lesson:'Start with the lesson',quiz:'Next: pass the quiz',practice:`Practice ${k} more question${k===1?'':'s'}`,test:'Next: the mastery test'}[g.stage];
  return {frac:Math.round(frac*1000)/1000,left,stage:g.stage};}
-/* "Lesson ✓ · Quiz · Practice 0/25 · Test": the steps left in one topic, for a goal line or a card. */
+/* "Lesson ✓ · Quiz · Practice 0/25 · Test" (0/10 on a save's first topic): the steps left in one topic, for a goal line or a card. */
 export function stepsLine(save,t){
  const g=topicStage(save,t);
  return `Lesson${g.lesson?' ✓':''} · Quiz${g.quiz?' ✓':''} · Practice ${g.practice}/${g.needed}${g.practice>=g.needed?' ✓':''} · Test${g.stage==='done'?' ✓':''}`;
