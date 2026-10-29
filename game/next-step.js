@@ -46,7 +46,8 @@ const arenaPad=l=>({id:'arena-'+l.id,text:`Next adventure: the ${l.name} arena. 
 function postGame(save){const ch=[...CHAPTERS].reverse().map(c=>c.id),of=c=>playable().filter(l=>l.chapter===c).sort((a,b)=>!!a.optional-!!b.optional);
  for(const c of ch){for(const k of ['heroic','legendary']){for(const l of of(c))if(tierOpen(save,l.id,k)&&!tierDone(save,l.id,k))return tierPad(l,k);
   if(k==='heroic')for(const l of LEVELS.filter(l=>l.kind==='arena'&&l.chapter===c))if(levelOpen(save,l.id)&&!levelDone(save,l.id))return arenaPad(l);}}
- for(const c of ch)for(const k of TIER_KEYS)for(const l of of(c))if(tierOpen(save,l.id,k)&&starsOf(save,l.id,k)<3)return {...tierPad(l,k),text:`Try for 3 stars in ${l.name} on ${TIERS[k].label}: beat its par time on the map card.`};
+ /* endgame-oct29: a side path never cleared on Normal (vx1, mx1, ex1, ex2 are off the main road) was offered as "Try for 3 stars in Bandit Road on Normal"; it is a new adventure, so it says so */
+ for(const c of ch)for(const k of TIER_KEYS)for(const l of of(c))if(tierOpen(save,l.id,k)&&starsOf(save,l.id,k)<3)return !tierDone(save,l.id,k)?(k==='normal'?pad(l):tierPad(l,k)):{...tierPad(l,k),text:`Try for 3 stars in ${l.name} on ${TIERS[k].label}: beat its par time on the map card.`};
  return null;}
 /* Villager quests (docs/design/COMPANIONS_AND_OAKHAVEN.md §5.5), live chains only (today Wil's): a hand-in waiting in town comes
    before the next main-road pad; an active quest's clear step and then a newly opened quest come once the main road is done or

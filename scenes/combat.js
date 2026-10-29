@@ -312,6 +312,9 @@ export class World{
   this.cinematicTarget={x:king.x+dx,y:king.y+dy};
   if(!this.cinematicShot)this.cinematicShot={...this.cinematicTarget};
   /* latechap-oct27: the epilogue freezes everyone where the fight ended, and Wil stood on the hero (m7, Moltar's kneel); he steps a pace back first, never into a wall */
+  /* endgame-oct29: the hero was frozen as the fight ended too, standing inside the Sleeper (v7) or with its back to it; the hero
+     turns to the boss and, when inside its body, steps clear first (never into a wall); Wil then steps off the hero as before */
+  {const p=this.player;if(p&&p.hp>0){const side=king.x>=p.x?-1:1,hw=24*Math.max(1,king.scale||1);if(Math.abs(p.x-king.x)<hw+12&&Math.abs(p.y-king.y)<26)for(const g of [hw+28,hw+16,hw+40,-(hw+28),-(hw+16)]){const x=king.x+side*g;if(!this.layout?.blocked?.(x,p.y)&&(!this.lock||x>this.lock.x0+12&&x<this.lock.x1-12)){p.x=x;break;}}p.facing=king.x>=p.x?1:-1;}}
   {const p=this.player,c=this.party?.[0];if(c&&p&&Math.hypot(c.x-p.x,c.y-p.y)<30){const side=king.x>=p.x?-1:1;for(const [ox,oy] of [[36*side,6],[36*side,-6],[26*side,14]]){const x=p.x+ox,y=p.y+oy;if(!this.layout?.blocked?.(x,y)){c.x=x;c.y=y;c.facing=-side;break;}}}}
   if(beat.pose)this.animate(king,beat.pose);
   /* oct24-polish2: the king's atlas is drawn from state/stateT (scenes/enemy-ai.js drawEnemy), so `pose` alone never showed and
