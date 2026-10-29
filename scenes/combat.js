@@ -188,7 +188,7 @@ export class World{
  enter(e,kind,delay=0,boss=false,site=null){if(!e)return e;const T=ENTRANCE_TIME[kind]*(boss?1.4:1)+delay;e.entrance=kind;e.entering=e.enterMax=T;e.entered=true;e.facing=this.player.x>=e.x?1:-1;
   if(kind==='rise'){this.fx.push({type:'mark',sprite:'fx-wr-crack',x:e.x,y:e.y,life:T+1.6,max:T+1.6,ground:true,reveal:.25,upto:boss?.8:.45,flip:1});this.schedule(delay,()=>this.fx.push({type:'debris',sprite:'fx-wr-rocks',x:e.x,y:e.y,life:.6,max:.6,flip:1}),()=>true);}
   else if(kind==='tent'){const at=site||{x:e.x,y:e.y-2},had=this.fx.find(f=>f.type==='prop'&&f.tent&&Math.abs(f.x-at.x)<30&&Math.abs(f.y-at.y)<30);
-   if(had)had.life=had.max=Math.max(had.life,40);else this.fx.push({type:'prop',tent:true,scale:['e1','e3'].includes(this.level?.id)?0.5:1,sprite:TENT_SPRITE(boss,this.fx.filter(f=>f.tent).length),x:at.x,y:at.y,life:40,max:40,flip:1});}
+   if(had)had.life=had.max=Math.max(had.life,40);else this.fx.push({type:'prop',tent:true,scale:this.level?.id==='e3'?0.6:this.level?.id==='e1'?0.5:1,sprite:TENT_SPRITE(boss,this.fx.filter(f=>f.tent).length,this.level?.biome),x:at.x,y:at.y,life:40,max:40,flip:1});}
   /* a vine swing (owner, 9 Oct): from behind, on the side away from the hero, out of the treeline; it lets go near the
      bottom of the arc and lands where its shadow already waits (enemy-ai.js draws the swing) */
   else if(kind==='vine'){e.vine={side:e.facing};this.schedule(T*.86,()=>{this.fx.push({type:'debris',sprite:'fx-dust',x:e.x,y:e.y,life:.5,max:.5,flip:e.facing});sfx('land');},()=>e.hp>0);}

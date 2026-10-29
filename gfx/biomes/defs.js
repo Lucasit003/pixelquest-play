@@ -21,7 +21,7 @@ export const BIOMES = {
   'lava-gate': {chapter: 'emberkeep', name: 'Ashen Gate', time: 'ash dusk', grade: g('#ff6a3a', .16), vignette: .40, fallback: '#3a2a26'},
   'lava-forge': {chapter: 'emberkeep', name: 'Cinder Forge', time: 'forge glow', grade: g('#ff8040', .18), vignette: .44, fallback: '#33262a'},
   'lava-bridge': {chapter: 'emberkeep', name: 'Magma Bridges', time: 'eruption', grade: g('#ff5a2a', .18), vignette: .42, fallback: '#3a2420'},
-  'lava-barracks': {chapter: 'emberkeep', name: 'Ember Barracks', time: 'torchlit', grade: g('#d06038', .20), vignette: .44, fallback: '#302624'},
+  'lava-barracks': {chapter: 'emberkeep', name: 'Ember Barracks', time: 'forge glow', grade: g('#ffc890', .30), vignette: .26, fallback: '#302624'},
   'lava-furnace': {chapter: 'emberkeep', name: 'Furnace Depths', time: 'cavern', grade: g('#ff5a2a', .22), vignette: .48, fallback: '#2a1e1e'},
   'lava-halls': {chapter: 'emberkeep', name: 'Obsidian Halls', time: 'cold fire', grade: g('#8a4a8a', .20), vignette: .48, fallback: '#2a2228'},
   'lava-throne': {chapter: 'emberkeep', name: 'Molten Throne', time: 'throne room', grade: g('#ff7040', .18), vignette: .46, fallback: '#2e2020'},

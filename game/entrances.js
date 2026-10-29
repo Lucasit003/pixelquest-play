@@ -16,5 +16,6 @@ const VINE_KEYS=new Set(['goblin','orc-rogue']);
 export const entranceFor=(key,biome='',i=0)=>{const k=ENTRANCES[key];if(k==='tent'&&!TENT_BIOMES.test(biome))return null;return k==='tent'&&VINE_KEYS.has(key)&&i%3===1?'vine':k||null;};
 /* the tent an entrance stands at the back of the arena: the camp's own Epic RPG World tents (tools/bake-camp-props.mjs),
    so they match the stage around them (owner, review board 01 and 09: the old ones didn't); the chief gets the red one */
-export const TENT_SPRITE=(boss,i=0)=>boss?'prop-camp-tent-a':['prop-camp-tent-b','prop-camp-tent-a'][i%2];
+/* the Orc Warcamp has its own hide tents (looks-oct29, PixelLab, tools/bake-level-identity.mjs) so it never reads as Goblin Camp again */
+export const TENT_SPRITE=(boss,i=0,biome='')=>/warcamp/.test(biome)?(boss?'prop-orc-tent-b':['prop-orc-tent-a','prop-orc-tent-b'][i%2]):boss?'prop-camp-tent-a':['prop-camp-tent-b','prop-camp-tent-a'][i%2];
 export const VINE_SPRITE='fx-vine';
