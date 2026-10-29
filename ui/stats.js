@@ -9,6 +9,8 @@ import {portrait} from '../gfx/world.js';
 import {wornOf,ITEM,RARITIES} from '../game/gear.js';
 import {icon,gearImgIcon,hasIcon,SUBJECT_ICON,WEAPON_ICON} from './icons.js';
 import {openSheet,sheetHeader} from './sheet.js';
+/* exploit7-oct29: the potions chip counts the whole bag (both kinds, game/potions.js), not only healing potions */
+import {bagCount} from '../game/potions.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const title=k=>String(k||'').split(/[-_]/).filter(Boolean).map(w=>w[0].toUpperCase()+w.slice(1)).join(' ');
 const num=(v,d=0)=>Number.isFinite(Number(v))?Number(v):d;
@@ -36,7 +38,7 @@ export function statsModel(save={}){
     cleared levels' waves and bosses imply. The total is every enemy and boss in the level graph. */
  const all=new Set(playable.flatMap(l=>[...(l.waves||[]).flat(),l.boss].filter(Boolean)));
  const seen=save.bestiary?new Set(Array.isArray(save.bestiary)?save.bestiary:Object.keys(save.bestiary)):new Set(playable.filter(l=>done(l.id)).flatMap(l=>[...(l.waves||[]).flat(),l.boss].filter(Boolean)));
- return {hero,name:c.name,color:c.color,level,xp,need,gold:num(save.gold),potions:num(save.potions),
+ return {hero,name:c.name,color:c.color,level,xp,need,gold:num(save.gold),potions:bagCount(save),
   weapon:{name:wi?.name||WEAPONS[c.weapon]?.[0]||'—',tier:wt,icon:hasIcon(`${c.weapon}-${wt+1}`)?`${c.weapon}-${wt+1}`:WEAPON_ICON[c.weapon]||'sword',img:wi?.icon||`${c.weapon||'sword'}-0`},armor:{name:ci?.name||'No chest armour',tier:at,icon:`armor-${at+1}`,img:ci?.icon||`armor-${hero}-0`},
   pet:PETS.find(p=>p.key===save.pet)?.name||'—',subjects,chapters,hasLevels:!!levels,cleared:cleared.map(i=>CONTRACTS[i].name),
   levelsDone:playable.filter(l=>done(l.id)).length,levelsTotal:playable.length,bosses,abilities:{kept,total},

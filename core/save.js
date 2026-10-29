@@ -30,7 +30,7 @@ import {normalizeLook} from '../gfx/actors/hero-palette.js';
 import {emptyParty,cleanParty} from '../game/party.js';
 import {emptyQuests,cleanQuests} from '../game/quests.js';
 import {cleanTravel} from '../game/fasttravel.js';
-import {cleanTitles,earnTitles} from '../game/titles.js';
+import {cleanTitles,earnTitles,TITLES} from '../game/titles.js';
 
 // v7 writes a new key (v6 did the same). Older keys are never written again: they stay behind as rollback copies (a v5 build still finds
 // its own save under V5_KEY), and load() still reads every one of them, newest first.
@@ -212,7 +212,9 @@ const frac=(v,a,b)=>Math.max(a,Math.min(b,Number(v)||0));
 
  /* titles (endfollow-oct29, game/titles.js): cosmetic keepsakes, additive within v9; unknown ids drop, and a save that already
     won what a title asks (e.g. the last level, from before titles existed) has it back, since it was earned by play */
- s.titles=cleanTitles(value.titles);earnTitles(s);
+ /* exploit7-oct29: a title the save does not meet is dropped (a hand-edited or hand-made save code carrying "thorn-hero" with v7 unbeaten);
+    every rule reads a record that never goes back (a won level), so an earned title can never be lost this way */
+ s.titles=cleanTitles(value.titles).filter(id=>TITLES[id].earned(s));earnTitles(s);
 
  syncTasks(s);
  s.version=VERSION;
