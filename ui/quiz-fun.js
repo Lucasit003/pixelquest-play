@@ -46,13 +46,22 @@ export function quizCheer({right=0,answered=0,n=5,need=4}={}){
    motion), and the guide cheers on a right answer or tilts his head, thinking, on any other. No timers (learning runs none,
    tests/ui.test.js): the burst removes itself when its animation ends, and onLand (the caller's coin chime) plays when the star
    has popped in; with reduced motion there is no pop, so no chime either. */
-export function quizMoment(root,i,ok,{reduced=motionReduced(),onLand=null}={}){
+/* pips: which row of stars lights (polish2-oct29: the field mission's three task stars use the same moment) */
+export function quizMoment(root,i,ok,{reduced=motionReduced(),onLand=null,pips='.question .am-pips i'}={}){
  const g=root?.querySelector?.('.qf-guide .edu-guide');if(g){g.classList.toggle('cheer',!!ok);g.classList.toggle('think',!ok);}
  if(!ok)return null;
- const pip=root?.querySelectorAll?.('.question .am-pips i')?.[i];if(!pip)return null;
+ const pip=root?.querySelectorAll?.(pips)?.[i];if(!pip)return null;
  pip.classList.add('lit');if(reduced)return pip;
  const fx=(root.ownerDocument||root).createElement('span');fx.className='qf-pop';fx.setAttribute('aria-hidden','true');pip.append(fx);
  fx.addEventListener('animationend',()=>fx.remove(),{once:true});
  if(onLand){let landed=false;pip.addEventListener('animationend',e=>{if(e.target!==pip||landed)return;landed=true;onLand();});}
  return pip;
+}
+
+/* polish2-oct29 (readiness #15): a right field-mission answer was a plain line, "Correct! 4 + 4 + 3 = 11 apples.". It is now the quiz's
+   answer moment: the task's star lights (quizMoment with FIELD_PIPS), the check badge and a praise line with a small burst behind it,
+   the working, and the gold chip when the delivery pays. Words and markup only: answerFieldMission still decides and pays, once. */
+export const FIELD_PIPS='.field-mission .field-stars .am-pips i';
+export function fieldRightHTML({moment='',explanation='',gold=0,goldIcon=''}={}){
+ return `<div class="feedback field-right">${moment}<p class="field-working">${esc(explanation)}</p>${gold>0?`<p class="field-gold">${goldIcon}<strong>Delivery complete! +${esc(gold)} gold</strong></p>`:''}</div>`;
 }

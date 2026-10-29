@@ -209,7 +209,9 @@ function info(){const id=S.walk?.to||S.at,n=nodeAt(id),st=stateOf(id);if(!n)retu
  if(n.kind==='arena')return{title:l.name,subtitle:st==='locked'?'Locked':'Endless waves',blurb:st==='locked'?lockLine(l):'Endless waves. How long can you last?'};
  /* v2:levels -- the map plate is narrow: a long boss name keeps its first part ("Grubnak, Goblin Chief" -> "Grubnak"); levels.js `plate` overrides */
  const full=l.bossName||S.ctx.bossName?.(l.boss)||BOSS_NAMES[l.boss]||(l.boss?titleCase(l.boss):''),boss=l.plate||shortName(full);
- return{title:l.name,boss:st==='locked'?'':boss,subtitle:st==='locked'?'Locked':'',blurb:ladderGoal(S.save,l),tiers:st==='locked'||!tiered(l)?[]:TIER_KEYS.map(k=>({key:k,label:TIERS[k].label,open:tierOpen(S.save,l.id,k),stars:starsOf(S.save,l.id,k),crest:tierCrests(S.save,l.id).includes(k)})),tierLine:st==='locked'?'':tierLine(S.save,l),side:!!l.optional};}
+ /* polish2-oct29 (readiness #12): every card read only "Clear Goblin Camp."; it now says what is inside (the level's own blurb and its
+    boss, from levels.js) above the goal. A locked stop keeps its secrets: no boss and no blurb until it opens. */
+ return{title:l.name,boss:st==='locked'?'':boss,inside:st==='locked'?'':String(l.blurb||''),bossLine:st==='locked'||!full?'':`Boss: ${full}`,subtitle:st==='locked'?'Locked':'',blurb:ladderGoal(S.save,l),tiers:st==='locked'||!tiered(l)?[]:TIER_KEYS.map(k=>({key:k,label:TIERS[k].label,open:tierOpen(S.save,l.id,k),stars:starsOf(S.save,l.id,k),crest:tierCrests(S.save,l.id).includes(k)})),tierLine:st==='locked'?'':tierLine(S.save,l),side:!!l.optional};}
 const lockLine=l=>{const g=starsShort(S.save,l.id);if(g)return ladderGoal(S.save,l);const req=l.requires.map(r=>levelById(r)?.name).filter(Boolean);return req.length?'Clear '+req.join(' or ')+' to open this.':'Locked.';};
 const isFinale=id=>{const l=levelById(id);return!!l&&l.kind==='level'&&!l.optional&&!LEVELS.some(o=>o.chapter===l.chapter&&o.kind==='level'&&o.requires.includes(id));};
 /* Painted board state: per pad the stars and the best tier cleared (the flag's tint), and the road links still closed (greyed). */

@@ -2657,3 +2657,66 @@ html.m-mode .daily-goals{margin-top:8px;padding:6px 10px;scroll-margin-top:2px}h
 @media(max-height:500px){#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-form.choice-form):has(#quiz-feedback:not(:empty))>.question-reading{display:grid;grid-template-areas:"guide top read";grid-template-columns:auto minmax(0,1fr) auto}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-form.choice-form):has(#quiz-feedback:not(:empty))>.question-reading>:is(h3,#quiz-pic,.question-text-card,.quiz-zoom){display:none}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-form.choice-form):has(#quiz-feedback:not(:empty)) .qf-guide .edu-guide{width:40px;height:40px}}
 /* answered with a typed answer on a short screen, the card takes the room: the band slims to the 40px guide and a one-line plate */
 @media(max-height:500px){#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-feedback:not(:empty)) .qf-guide .edu-guide{width:40px;height:40px}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-feedback:not(:empty))>.question-reading>h3{font-size:15px;line-height:1.25;padding:4px 10px}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-feedback:not(:empty))>.question-reading>#quiz-pic{height:48px}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-feedback:not(:empty))>.question-reading{row-gap:2px;padding-bottom:2px}html:not(.m-mode) #modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf>.question-reading>h3{font-size:15px;padding:4px 10px}html:not(.m-mode) #modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf>.question-reading>#quiz-pic{height:48px}html:not(.m-mode) #modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf .qf-guide .edu-guide{width:40px;height:40px}html:not(.m-mode) #modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-feedback:not(:empty)) .qf-guide{display:none}html:not(.m-mode) #modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-feedback:not(:empty))>.question-reading{grid-template-columns:minmax(0,1fr) auto auto auto;grid-template-areas:"say top pic read"}html:not(.m-mode) #modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-feedback:not(:empty))>.question-reading>#quiz-pic{height:40px}html:not(.m-mode) #modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-feedback:not(:empty))>.question-reading>.qf-top .tag{display:none}}
+/* polish2-oct29 (readiness #10): the victory card's own cheer under the level name, and one tag beside the time (first clear, new
+   best time, all three stars, or the best time to beat on a replay; ui/victory-lines.js) */
+dialog[data-view=result] .victory-cheer{margin:0 auto 2px;font:700 var(--fs)/1.2 var(--ui);letter-spacing:.5px;color:#ffe9a8;text-shadow:0 2px 0 #1e0603}
+dialog[data-view=result] .result-time{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
+dialog[data-view=result] .victory-tag{display:inline-block;padding:2px 8px 3px;font:700 calc(var(--fs) - 2px)/1.2 var(--ui);letter-spacing:1px;text-transform:uppercase;color:#cfe3ff;background:#142036;border:2px solid #4b5f86;box-shadow:0 2px 0 #0b1220}
+dialog[data-view=result] .victory-tag:is([data-tag=first],[data-tag=record],[data-tag=stars]){color:#2a1206;background:#f0c860;border-color:#7a4d00;box-shadow:0 2px 0 #3d2400}
+dialog[data-view=result] .victory-tag:is([data-tag=first],[data-tag=record],[data-tag=stars]){animation:am-pop .4s steps(5) .5s both}
+@media (prefers-reduced-motion:reduce){dialog[data-view=result] .victory-tag{animation:none!important}}
+:root[data-motion=reduced] dialog[data-view=result] .victory-tag{animation:none!important}
+/* polish2-oct29 (readiness #15): the phone victory card had no banner and an empty bottom half. It fills the sheet: the banner, the
+   name, the cheer, stars and time on the left, the hero's victory pose beside the rewards on the right, the goal and the buttons
+   along the bottom, the spare height shared out between the rows instead of left under the buttons. */
+@media(max-height:500px) and (min-width:600px){
+ .m-mode dialog[data-view=result] .level-result{min-height:100%;max-width:none;box-sizing:border-box;align-content:space-evenly;grid-template-columns:minmax(264px,.8fr) 1.6fr}
+ .m-mode dialog[data-view=result] .level-result-detail{flex:1}
+ .m-mode dialog[data-view=result] .level-result[data-outcome=won] .victory-title{display:grid;place-items:center;width:256px;max-width:100%;height:52px;margin:0 auto;padding-bottom:4px;font-size:22px;line-height:1;letter-spacing:2px;background:url(ui/skin/pl-icons/victory-banner.png) center -6px/256px 64px no-repeat;image-rendering:pixelated;text-shadow:0 2px 0 #4a0d06,0 4px 0 #1e0603;color:#ffd96a}
+ .m-mode dialog[data-view=result] .victory-cheer{grid-column:1;grid-row:3;margin:0}
+ .m-mode dialog[data-view=result] .level-tier{grid-row:4}
+ .m-mode dialog[data-view=result] .level-starline{grid-row:5}
+ .m-mode dialog[data-view=result] .result-time{grid-row:6}
+ .m-mode dialog[data-view=result] .level-result>.level-line{grid-column:1;grid-row:7;margin:0}
+ .m-mode dialog[data-view=result] .level-result-body{grid-row:1 / 8;display:flex;align-items:center;gap:6px;align-self:center}
+ .m-mode dialog[data-view=result] .level-result[data-outcome=won] .level-hero{display:block;width:96px;height:64px;flex:none}
+ .m-mode dialog[data-view=result] .result-goal{grid-row:8}
+ .m-mode dialog[data-view=result] #result-extra{grid-row:9}
+ .m-mode dialog[data-view=result] .level-result>.modal-actions{grid-row:10}
+}
+/* polish2-oct29 (readiness #12): the world map card says what is inside a stop (its blurb and boss) above the goal */
+.worldmap-info .wm-inside{text-wrap:pretty;font:400 16px/18px var(--ui);margin:0 0 4px;color:#f1e6cc;letter-spacing:0}
+.worldmap-info .wm-boss{font:700 16px/18px var(--ui);margin:0 0 4px;color:#f0a878;letter-spacing:0}
+.worldmap-info .wm-description.wm-goal{color:#b5df9b}
+.worldmap-info .wm-description.wm-goal::before{content:'Goal: ';color:var(--gold)}
+.worldmap-info.wm-compact :is(.wm-inside,.wm-boss){display:none}
+/* on a phone the chapter name is already on the lit tab above, so the card drops it and its title is smaller */
+.m-mode .worldmap-info:not(.wm-compact) .wm-chapter{display:none}
+.m-mode .worldmap-info:not(.wm-compact) .wm-title{font-size:24px;line-height:24px}
+/* the phone card keeps the boss and the goal and drops the longer blurb; the tier chips are their icons and stars on one row */
+.m-mode .worldmap-info:not(.wm-compact) .wm-inside{display:none}
+.m-mode .worldmap-info:not(.wm-compact) .wm-tier-name{display:none}
+.m-mode .worldmap-info:not(.wm-compact) .wm-tiers{flex-wrap:nowrap}
+/* polish2-oct29 (readiness #15): the field mission's three tasks are a row of stars beside the task's tag, as in the quiz, and a right
+   answer is the quiz's answer moment on a parchment card (ui/quiz-fun.js fieldRightHTML); reduced motion drops the pop and the burst */
+.field-mission .field-top{display:flex;align-items:center;flex-wrap:wrap;gap:6px 14px}
+.field-mission .field-top .tag{margin:0}
+.field-mission .field-stars .am-pips{display:inline-flex;margin:0;gap:6px}
+.field-mission .field-stars .am-pips i{position:relative;display:inline-block;width:24px;height:24px;border:0;box-sizing:border-box;background:url(ui/skin/star-empty.png) 0 0/24px 24px no-repeat;image-rendering:pixelated;opacity:.55}
+.field-mission .field-stars .am-pips i.now{opacity:1;filter:drop-shadow(0 0 3px #f0d48a)}
+.field-mission .field-stars .am-pips i:is(.right,.lit){opacity:1;background-image:url(ui/skin/star-gold.png)}
+.field-mission .field-stars .am-pips i.lit{animation:qf-star .5s steps(5) both}
+.field-mission .field-stars .qf-pop{position:absolute;left:50%;top:50%;width:64px;height:64px;margin:-32px 0 0 -32px;background:url(ui/skin/fx-burst.png) 0 0/448px 64px no-repeat;image-rendering:pixelated;pointer-events:none;z-index:3;animation:qf-burst .7s steps(7) 1 forwards}
+.field-mission #field-feedback:has(.field-right){margin:8px 0}
+.field-mission .field-right{margin:0;display:flex;align-items:center;flex-wrap:wrap;gap:4px 14px;padding:6px 14px}
+.field-mission .field-right p{margin:0;color:var(--parch-ink,#4a1f0c)}
+.field-mission .field-right .field-gold{flex-basis:100%}
+.field-mission .field-gold{display:flex;align-items:center;gap:6px}
+.field-mission .field-gold strong{color:#7a4d00}
+@media (prefers-reduced-motion:reduce){.field-mission .field-stars .am-pips i.lit{animation:none}.field-mission .field-stars .qf-pop{display:none}}
+:root[data-motion=reduced] .field-mission .field-stars .am-pips i.lit{animation:none}
+:root[data-motion=reduced] .field-mission .field-stars .qf-pop{display:none}
+/* a short screen keeps the title in view once answered: the "No timer" reassurance is for answering, so it steps aside */
+@media(max-height:600px){.field-mission:has(.field-right)>p.subtle{display:none}.field-mission #field-feedback:has(.field-right){margin:4px 0}}
+/* polish2-oct29: the star's burst reached back over the last letters of "QUIZ · 1 OF 5"; the label draws above the burst */
+#modal#modal[data-view=lesson-quiz] .question.qf .qf-top .tag,.field-mission .field-top .tag{position:relative;z-index:4}

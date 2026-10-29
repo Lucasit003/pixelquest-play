@@ -355,6 +355,11 @@ dialog:is([data-view=placement],[data-view=lesson-quiz]) #quiz-feedback #lesson-
 .am-right .am-say{color:#2f5a25}
 .am-xp{display:inline-block;padding:2px 8px;font:700 var(--fs)/1.2 var(--edu-font);color:#fff3c4;background:#3d6b2c;border:2px solid #20351a;box-shadow:0 2px 0 #20351a;animation:am-pop .4s steps(5) .08s both}
 .am-spark{position:absolute;left:16px;top:16px;width:128px;height:128px;margin:-64px 0 0 -64px;background:url(skin/fx-burst.png) 0 0/896px 128px no-repeat;image-rendering:pixelated;pointer-events:none;animation:edu-burst2 .7s steps(7) 1 forwards,edu-burst-out 1ms linear .7s forwards}
+/* polish2-oct29 (quizfun-oct29 left open): the 128px burst covered the first letter of the praise ("Yes!") mid-animation. It is a
+   64px burst round the badge, drawn behind the card's words (the moment is its own stacking layer), so it never covers the text. */
+.am{isolation:isolate}
+.am .am-spark{z-index:-1;width:64px;height:64px;margin:-32px 0 0 -32px;background-size:448px 64px;animation-name:am-burst,edu-burst-out}
+@keyframes am-burst{from{background-position:0 0}to{background-position:-448px 0}}
 .am-note{color:var(--parch-ink,#5a3a1c)}
 .am-level{font-weight:700;color:#7a4d00}
 @keyframes am-pop{0%{transform:scale(0)}60%{transform:scale(1.25)}100%{transform:scale(1)}}

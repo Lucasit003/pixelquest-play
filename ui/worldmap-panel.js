@@ -14,8 +14,10 @@ export function updateMapPanel(v,canvas){if(!globalThis.document?.body||!canvas?
  if(!el){el=make('aside','worldmap-info');el.id='worldmap-info';el.setAttribute('aria-label','Selected stop');
   /* a compact card opens to the full card on a tap, and closes again on the next */
   el.addEventListener('click',e=>{if(!el.classList.contains('wm-compact')&&expanded!==contentKey)return;e.stopPropagation();expanded=expanded===contentKey?'':contentKey;layoutKey='';});document.body.append(el);}
- const key=JSON.stringify([v.chapterName,v.title,v.blurb,v.tiers,v.toast,v.chapterBorder,v.notice]);
- if(key!==contentKey){contentKey=key;el.classList.toggle('chapter-complete',!!v.chapterBorder);layoutKey='';recycle(el);const children=[make('div','wm-chapter',v.chapterName),make('h2','wm-title',v.title),make('p','wm-description',String(v.blurb||'').replace(/--+/g,'—'))];
+ const key=JSON.stringify([v.chapterName,v.title,v.inside,v.bossLine,v.blurb,v.tiers,v.toast,v.chapterBorder,v.notice]);
+ if(key!==contentKey){contentKey=key;el.classList.toggle('chapter-complete',!!v.chapterBorder);layoutKey='';recycle(el);const dash=t=>String(t||'').replace(/--+/g,'—'),children=[make('div','wm-chapter',v.chapterName),make('h2','wm-title',v.title)];
+  /* polish2-oct29: what is inside (the level's blurb and boss), then the goal; a stop with no blurb shows the goal alone, as before */
+  if(v.inside)children.push(make('p','wm-inside',dash(v.inside)));if(v.bossLine)children.push(make('p','wm-boss',v.bossLine));children.push(make('p','wm-description'+(v.inside?' wm-goal':''),dash(v.blurb)));
   if(v.tiers?.length){const chips=make('div','wm-tiers');for(const t of v.tiers){const chip=make('span','wm-tier');chip.setAttribute('aria-label',t.label+': '+(t.open?t.stars+' of 3 stars':'clear '+(t.key==='heroic'?'Normal':'Heroic')+' here'));if(t.crest){chip.classList.add('earned');chip.title=t.label+' crest earned';}chip.append(icon(t.key,t.crest?t.label+' crest earned':''),make('span','wm-tier-name',t.label));if(t.open)chip.append(make('span','wm-count',t.stars+'/3'),icon('star','stars'));else chip.append(icon('lock','Locked'));chips.append(chip);}children.push(chips);}
   if(v.chapterBorder)children.push(make('p','wm-notice','Chapter Legendary clears complete.'));
   if(v.toast)children.push(make('p','wm-notice',v.toast));
@@ -23,11 +25,13 @@ export function updateMapPanel(v,canvas){if(!globalThis.document?.body||!canvas?
   if(v.notice)children.push(make('p','wm-notice wm-paused',v.notice));el.replaceChildren(...children);
  }
  const lk=key+'|'+b.width+'|'+b.height+'|'+v.touch+'|'+document.fonts?.status+'|'+(expanded===key);if(lk!==layoutKey){layoutKey=lk;el.hidden=false;sizes=[];compactSizes=[];const measure=(list,compact,widths,bare=false)=>{el.classList.toggle('wm-compact',compact);el.classList.toggle('wm-bare',bare);for(const width of widths){el.style.left=el.style.top='0px';el.style.width=compact?'max-content':width+'px';el.style.maxWidth=compact?width+'px':'';const r=el.getBoundingClientRect();const t=el.querySelector('.wm-title');if(compact&&t&&t.scrollWidth>t.clientWidth+1)continue;list.push({width,compact,bare,w:Math.ceil(r.width/scale),h:Math.ceil(r.height/scale)});}};
-  measure(sizes,false,v.touch?[332,308,284,260,236,212]:[356,332,308,284,260,236,212]);measure(compactSizes,true,[332,260]);measure(compactSizes,true,[260,200,160],true);el.classList.remove('wm-bare');}
+  measure(sizes,false,v.touch?[332,308,284,260,236,212]:[356,332,308,284,260,236,212]);measure(compactSizes,true,[332,260]);/* polish2-oct29: a phone tries the smallest card first (least map covered) */if(v.touch)sizes.sort((p,q)=>p.w*p.h-q.w*q.h);measure(compactSizes,true,[260,200,160],true);el.classList.remove('wm-bare');}
  /* Polish 24 Oct: the full card never covers the hero, the selected stop or a stop the player can walk to next; when it
     cannot fit clear of those and the chapter tabs it shrinks to a one-line card (title and tier chips) that opens on a tap. */
- const fit=(list,strict,next=true)=>{for(const c of list){const q=placeBoardCard(v,c.w,c.h,strict,next);if(q)return [q,c];}return null;};
+ const fit=(list,strict,next=true,corners=false)=>{for(const c of list){const q=placeBoardCard(v,c.w,c.h,strict,next,corners);if(q)return [q,c];}return null;};
  /* a card the player opened may cover other stops for a moment, never the hero, the selected stop or the tabs */
- const open=expanded===key,hit=fit(sizes,true)||(open&&fit(sizes,true,false))||fit(compactSizes,true)||fit(compactSizes,false)||fit(sizes,false);
+ /* polish2-oct29 (readiness #12): on a phone the full card covered the middle of the map. A touch screen takes the full card only in a
+    corner clear of the hero, the selected stop and its road; otherwise the one-line card in a corner (a tap opens it) */
+ const open=expanded===key,hit=(v.touch&&!open?fit(sizes,true,true,true)||fit(compactSizes,true,true,true)||fit(compactSizes,true):null)||fit(sizes,true)||(open&&fit(sizes,true,false))||fit(compactSizes,true)||fit(compactSizes,false)||fit(sizes,false);
  if(!hit){el.hidden=true;return false;}const [q,size]=hit;el.hidden=false;el.classList.toggle('wm-compact',size.compact);el.classList.toggle('wm-bare',!!size.bare);el.classList.toggle('wm-open',open&&!size.compact);el.style.width=size.compact?'max-content':size.width+'px';el.style.maxWidth=size.compact?size.width+'px':'';el.style.left=Math.round(b.left+q.x*scale)+'px';el.style.top=Math.round(b.top+q.y*scale)+'px';el.style.opacity=String(1-(v.fade||0));return true;
 }

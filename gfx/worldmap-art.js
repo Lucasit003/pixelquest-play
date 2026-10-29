@@ -165,20 +165,26 @@ export function tabHit(x,y,tabs,touch){const n=tabs?.length||0;for(let i=0;i<n;i
    (none in view mode or the ending's look back). Touch: 31 native px tall, at least 44 CSS px. */
 export const travelTabRect=touch=>{const h=touch?31:20,y=touch?0:3;return [UI_SAFE_INSET+4,y,116,h];};
 export function travelTabHit(x,y,v,touch){if(!v)return false;const [rx,ry,rw,rh]=travelTabRect(touch);return x>=rx&&x<rx+rw&&y>=ry&&y<ry+rh;}
-function drawTabs(c,v,art){if(v.travelTab){const [x,y,w,h]=travelTabRect(v.touch);c.save();footerPanel(c,art,x,y,w,h);text(c,v.travelTab,x+w/2,y+(h-16)/2,{font:FONT_BOLD,color:'#fff3ce',align:'center'});c.restore();}const tabs=v.tabs||[];tabs.forEach((tb,i)=>{const [x,y,w,h]=tabRect(i,tabs.length,v.touch),ty=y+(h-16)/2;c.save();if(!tb.open)c.globalAlpha=.6;
- if(tb.active)slice9(c,art,'parchment',x,y,w,h);else footerPanel(c,art,x,y,w,h);
- text(c,tb.name,x+w/2,ty,{font:FONT_BOLD,color:tb.active?'#2a1a10':tb.open?'#fff3ce':'#b8ab94',align:'center'});c.restore();});}
+function drawTabs(c,v,art){if(v.travelTab){const [x,y,w,h]=travelTabRect(v.touch);c.save();footerPanel(c,art,x,y,w,h);text(c,v.travelTab,x+w/2,y+(h-16)/2,{font:FONT_BOLD,color:'#fff3ce',align:'center'});c.restore();}const tabs=v.tabs||[];/* polish2-oct29 (readiness #12): a closed chapter's tab was the whole tab at 60% alpha, so its name read as faded mush. The plate dims
+   a little; the name stays solid in a muted parchment colour (regular weight, so it fits beside the lock) behind a lock, so it reads clearly and clearly as locked. An open tab
+   is drawn at full strength. */
+ tabs.forEach((tb,i)=>{const [x,y,w,h]=tabRect(i,tabs.length,v.touch),ty=y+(h-16)/2;c.save();if(!tb.open)c.globalAlpha=.8;
+ if(tb.active)slice9(c,art,'parchment',x,y,w,h);else footerPanel(c,art,x,y,w,h);c.globalAlpha=1;
+ if(!tb.open&&ready(art.lock)){const tw=textWidth(tb.name,FONT),lx=Math.round(x+w/2-(tw+12)/2);c.drawImage(art.lock,lx,Math.round(y+(h-10)/2),10,10);text(c,tb.name,lx+12,ty,{font:FONT,color:'#d8c9a8'});}
+ else text(c,tb.name,x+w/2,ty,{font:FONT_BOLD,color:tb.active?'#2a1a10':tb.open?'#fff3ce':'#d8c9a8',align:'center'});c.restore();});}
 /* the board keeps only the frame's carved rim: its dark inner panel colour is cleared once, so the picture runs up to the rim */
 let thin=null;function thinFrame(art){if(thin||!ready(art.ui)||!art.uiMeta?.frame)return thin;const [sx,sy,w,h]=art.uiMeta.frame.frames[0],cv=makeCanvas(w,h),g=cv.getContext('2d',{willReadFrequently:true});g.drawImage(art.ui,sx,sy,w,h,0,0,w,h);
  const d=g.getImageData(0,0,w,h);for(let i=0;i<d.data.length;i+=4)if(d.data[i]===46&&d.data[i+1]===50&&d.data[i+2]===42)d.data[i+3]=0;g.putImageData(d,0,0);return thin={ui:cv,uiMeta:{frame:{frames:[[0,0,w,h]],slice:art.uiMeta.frame.slice}}};}
 const kidText=s=>String(s||'').replace(/--+/g,'—');
 /* The chapter tabs are kept clear too when the card can go elsewhere (strict: only then); otherwise the card may cover them
    rather than vanish (it takes no pointer events, so the tabs still answer taps under it). */
-export function placeBoardCard(v,w,h,strict=false,next=true){const bottom=signHit(v.touch).home[1],focus=[...boardFocusRects(v),...(next?boardNextRects(v):[])],tabs=[...(v.tabs||[]).map((_,i,a)=>{const [x,y,ww,hh]=tabRect(i,a.length,v.touch);return {x,y,w:ww,h:hh+4};}),...(v.travelTab?[(([x,y,ww,hh])=>({x,y,w:ww,h:hh+4}))(travelTabRect(v.touch))]:[])],spots=[[16,16],[VIEW_W-w-16,16],[16,bottom-h-8],[VIEW_W-w-16,bottom-h-8]];
+/* polish2-oct29 (readiness #12): corners=true tries the four corners only (a phone's card never lands in the middle of the map) */
+export function placeBoardCard(v,w,h,strict=false,next=true,corners=false){const bottom=signHit(v.touch).home[1],focus=[...boardFocusRects(v),...(next?boardNextRects(v):[])],tabs=[...(v.tabs||[]).map((_,i,a)=>{const [x,y,ww,hh]=tabRect(i,a.length,v.touch);return {x,y,w:ww,h:hh+4};}),...(v.travelTab?[(([x,y,ww,hh])=>({x,y,w:ww,h:hh+4}))(travelTabRect(v.touch))]:[])],spots=[[16,16],[VIEW_W-w-16,16],[16,bottom-h-8],[VIEW_W-w-16,bottom-h-8]];
  const overlaps=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
  for(const protectedRects of strict||!tabs.length?[[...focus,...tabs]]:[[...focus,...tabs],focus]){
   const clear=a=>a.x>=12&&a.y>=12&&a.x+a.w<=468&&a.y+a.h<=bottom-4&&protectedRects.every(b=>!overlaps(a,b));
   for(const [x,y] of spots){const q={x,y,w,h};if(clear(q))return q;}
+  if(corners)continue;
   for(let y=12;y+h<=bottom-4;y+=4)for(let x=12;x+w<=468;x+=4){const q={x,y,w,h};if(clear(q))return q;}}return null;}
 /* Polish 24 Oct: every stop the player can walk to next is protected too. A tap or click walks the road to any open stop,
    so that is every open stop on the board, not only the focused stop's road neighbours. */
