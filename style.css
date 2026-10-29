@@ -2575,6 +2575,8 @@ html:not(.m-mode) #toast.travel-hint{top:auto;bottom:calc(6px + 13*var(--u) + 11
 .m-mode dialog:is([data-view=alchemist],[data-view=tiers]){width:100vw;max-width:none}
 /* balance-oct26: the result card's hero level line (the one level counter on the card) */
 dialog[data-view=result] .level-hero-progress{display:flex;align-items:center;justify-content:center;gap:8px;margin:4px 0 0}dialog[data-view=result] .level-hero-progress .run-bar{width:120px}dialog[data-view=result] .level-hero-progress strong{color:#ffe9a8}
+/* phone-oct29 (740x360 sweep): in the victory card's narrow right column "Hero level" and "28% to level 5" each broke onto two lines; the words stay whole and the bar gives way */
+.m-mode dialog[data-view=result] .level-hero-progress small{white-space:nowrap}.m-mode dialog[data-view=result] .level-hero-progress .run-bar{width:auto;flex:1 1 72px;min-width:40px;max-width:120px}
 
 /* newplayer-oct27: on a phone a placement or quiz reading with two answers no longer hides its own question: the answer row stops reserving a second line, the reading takes the room, and Read to me sits under the picture so the text runs wide */
 @media(max-height:500px){html.m-mode #modal#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question:has(#quiz-feedback:empty)>#quiz-form.choice-form:not(:has(.choice-answers>:nth-child(3))){min-height:0;flex:0 0 auto}

@@ -1,7 +1,7 @@
 // A quiet direction cue for the opening study/adventure loop. nextStep remains the
 // objective source of truth; this draws no route, changes no gates, and writes no save.
 import {nextStep,nextPower} from '../game/next-step.js?v=room-context-2';
-import {hubReady,hubState,hubGuidanceTarget,hubPlacing} from '../scenes/town.js';
+import {hubReady,hubState,hubGuidanceTarget,hubPlacing,hubPlates} from '../scenes/town.js';
 import {icon} from './icons.js';
 
 const EARLY_STEPS=new Set(['prologue','first-lesson','goblin-camp','start-lesson','quiz','practice','level-e2','level-up','earn-power']);
@@ -75,12 +75,13 @@ const CSS=`
 :root[data-motion="reduced"] .objective-guide{animation:none}
 `;
 /* first-hour playtest 24 Oct: the keyboard bar along the bottom was missing, so an edge arrow sat on top of its keycaps */
-const HUD='.hero-hud,.hud-sub,#objective,#map-btn,#hotbar,#next-unlock,#prompt span,.dpad,.touch-actions,#toast.show,#keyboard-actions,#ui-dialogue.show';
+const HUD='.hero-hud,.hud-sub,#objective,#map-btn,#hotbar,#next-unlock,#prompt span,.dpad,.touch-actions,#toast.show,#keyboard-actions,#ui-dialogue.show,#joy-ghost,#m-menu button,#hud-potion,#touch button';
+/* phone-oct29 (740x360 sweep): on a phone the chip and its name sat on the joystick ghost; the ghost, the Map/Journal/Menu buttons, the potion and the action arc are obstacles too */
 /* exploit4-oct27: the open dialogue box is an obstacle too (the edge chip and its name sat under Home's opening line and Wil's Barracks line) */
 
 /** Call update after drawWorld so world.camera is current; hide before the map's
  * early-return branch. Layout and objective work are capped at 10 Hz, never per frame. */
-export function createObjectiveGuidance({stage,canvas,getStep=nextStep,getTarget=hubGuidanceTarget,ready=hubReady,isPlacing=hubPlacing}={}){
+export function createObjectiveGuidance({stage,canvas,getStep=nextStep,getTarget=hubGuidanceTarget,ready=hubReady,isPlacing=hubPlacing,getPlates=hubPlates}={}){
  const doc=stage?.ownerDocument;
  if(!doc||!canvas)return {update(){},hide(){},destroy(){}};
  let style=doc.getElementById('objective-guide-style');
@@ -107,6 +108,11 @@ export function createObjectiveGuidance({stage,canvas,getStep=nextStep,getTarget
   const viewport={left:r.left-offset.x,top:r.top-offset.y,width:r.width,height:r.height};
   const obstacles=[...stage.querySelectorAll(HUD)].filter(n=>!n.hidden).map(n=>n.getBoundingClientRect()).filter(r=>r.width&&r.height)
    .map(r=>({left:r.left-offset.x,top:r.top-offset.y,right:r.right-offset.x,bottom:r.bottom-offset.y}));
+  /* phone-oct29: the canvas-drawn name plates (WEAPONSMITH, LIBRARY, a teacher's subject) are obstacles too, so the chip never hides one */
+  {const c=world.camera;if(c?.width){const kx=viewport.width/c.width,ky=viewport.height/c.height,L=c.x-c.width/2,T=c.y-c.height/2;
+   for(const q of getPlates()||[])obstacles.push({left:viewport.left+(q.x-L)*kx,top:viewport.top+(q.y-T)*ky,right:viewport.left+(q.x+q.w-L)*kx,bottom:viewport.top+(q.y+q.h-T)*ky});
+   /* and the hero himself (at 740x360 the plates left only the spot on his head) */
+   const p=world.player;if(p)obstacles.push({left:viewport.left+(p.x-12-L)*kx,top:viewport.top+(p.y-50-T)*ky,right:viewport.left+(p.x+12-L)*kx,bottom:viewport.top+(p.y-T)*ky});}}
   /* The ornate frame covers 13*u inside the canvas; keep the whole label inside the visible world. */
   const unit=parseFloat(doc.defaultView?.getComputedStyle(stage).getPropertyValue('--u'))||1;
   const inset=doc.documentElement.classList.contains('m-mode')?14:Math.max(14,13*unit+4);

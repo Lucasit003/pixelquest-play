@@ -800,6 +800,7 @@ export function drawHub(c, state, t, kit) {
   pumpStream(); /* townchunk-oct28 */
   const S = current(), D = S.D, I = images(S), p = state.player;
   H.drawT = t;
+  H.plates = []; /* phone-oct29: the name plates drawn this frame (hubPlates) */
   /* 1:1 and whole pixels. A room smaller than the view is centred on a dark floor. */
   /* the camera keeps to the room's own walls (its baked bounds), never the black void around them */
   const [bx0, by0, bx1, by1] = D.bounds ?? [0, 0, D.w, D.h], fit = (lo, hi, view, at) => hi - lo <= view ? Math.round((lo + hi - view) / 2) : Math.round(Math.max(lo, Math.min(hi - view, at - view / 2)));
@@ -966,7 +967,11 @@ function subjectPlate(c, text, x, y, size = 16) {
   const w = tw + 10, h = size + 4, X = Math.round(x - w / 2), Y = Math.round(y - h / 2);
   c.fillStyle = 'rgba(20,12,8,.82)'; c.fillRect(X, Y, w, h); c.fillStyle = '#a5773c'; c.fillRect(X, Y, w, 1); c.fillRect(X, Y + h - 1, w, 1);
   c.fillStyle = '#ffe2a0'; let cx = X + 5; [...text].forEach((ch, i) => { c.fillText(ch, cx, Y + h / 2); cx += adv[i]; }); c.restore();
+  (H.plates ??= []).push({x: X, y: Y, w, h});
 }
+/** phone-oct29 (town-844 shot: the "This way" chip sat on the WEAPONSMITH plate): the name plates drawn in the last frame
+    (doorway names, the Library's teacher subjects), world units, so the objective arrow can keep clear of them. */
+export const hubPlates = () => [...(H.plates || [])];
 
 /* Ambient life at the rooms' `ambient` points and a soft flicker at their `light` points, from the
    downloaded effect strips baked into fx.webp (tools/bake-town.mjs bakeFx). Nothing is drawn in code. */
