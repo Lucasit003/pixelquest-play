@@ -70,10 +70,21 @@ export function drawEffect(c,f){const el=elementOf(f),t=age(f),r=f.radius||16;
    for(let i=0;i<=n;i++)put(c,`fx-spark-${el}`,'twinkle',t+i*.04,x0+(x1-x0)*i/n,y0+(y1-y0)*i/n);put(c,`fx-hit-${el}`,'star',t,x1,y1);return true;}
   /* juice-oct27 kill pop: the element's own spark sprites burst out of the fallen body, arc down under gravity and fade */
   case 'killpop':{const n=f.n||6,k=Math.max(0,1-t/(f.max||.42));c.save();c.globalAlpha*=Math.min(1,k*1.6);for(let i=0;i<n;i++){const a=i/n*Math.PI*2+(f.spin||0),v=70+(i%3)*18;put(c,`fx-spark-${el}`,'twinkle',t+i*.03,f.x+Math.cos(a)*v*t,f.y-14+Math.sin(a)*v*t*.55-60*t+170*t*t);}c.restore();return true;}
+  /* kidfix-b-oct31 Ability Runes (scenes/rune-fx.js), code-drawn on purpose (no new art): rank I a rune-coloured glow and ground
+     ring, rank II bigger (the radius comes in 1.4x) and brighter, rank III one more ring rippling out and four sparks round it */
+  case 'rune':{const rk=f.rank|0,k=Math.max(0,Math.min(1,(f.life||0)/(f.max||.45))),g=Math.min(1,t/.08),R0=r*(.55+.45*g),lift=f.lift??18;c.save();c.globalCompositeOperation='lighter';c.fillStyle=c.strokeStyle=f.color||'#7ff0ff';
+   c.globalAlpha*=k*(rk>=2?.75:.5);c.beginPath();c.ellipse(Math.round(f.x),Math.round(f.y-lift),R0*.7,R0*.6,0,0,Math.PI*2);c.fill();
+   c.globalAlpha=k;c.lineWidth=rk>=2?3:2;c.beginPath();c.ellipse(Math.round(f.x),Math.round(f.y),R0,R0*.42,0,0,Math.PI*2);c.stroke();
+   if(rk>=3){const q=Math.min(1,t/(f.max||.45)),R1=R0*(1.15+.6*q);c.globalAlpha=k*.85;c.lineWidth=2;c.beginPath();c.ellipse(Math.round(f.x),Math.round(f.y),R1,R1*.42,0,0,Math.PI*2);c.stroke();
+    c.globalAlpha=k;for(let i=0;i<4;i++){const a=i/4*Math.PI*2+t*7;c.fillRect(Math.round(f.x+Math.cos(a)*R0*.9)-1,Math.round(f.y-lift*.6+Math.sin(a)*R0*.45)-1,3,3);}}
+   c.restore();return true;}
   case 'particle':return true;
   case 'text':return false;}
  put(c,`fx-hit-${el}`,'splash',t,f.x,f.y-8);return true;}
 /* A projectile ({x,y,h,vx,vy,color|element}): the element's bolt, flying the way it moves. */
-export function drawShot(c,s,t=0){if(s.sprite)return put(c,s.sprite,'fly',(s.age||0)+t*0,s.x,s.y-(s.h??24),{facing:s.vx<0?-1:1});const el=s.element||elementOf(s);return put(c,`fx-bolt-${el}`,'fly',(s.age||0)+t*0,s.x,s.y-(s.h??24),{facing:s.vx<0?-1:1});}
+/* kidfix-b-oct31: a shot from a runed ability carries a code-drawn rune glow (bigger at rank II, with a trailing echo at rank III) */
+function runeShot(c,s){const rk=s.rune|0;if(!(rk>0))return;const x=Math.round(s.x),y=Math.round(s.y-(s.h??24)),rr=rk>=2?7:5;c.save();c.globalCompositeOperation='lighter';c.fillStyle='#7ff0ff';c.globalAlpha*=rk>=2?.5:.35;c.beginPath();c.arc(x,y,rr,0,Math.PI*2);c.fill();
+ if(rk>=3){const d=Math.hypot(s.vx||0,s.vy||0)||1;c.globalAlpha=.3;c.beginPath();c.arc(Math.round(x-(s.vx||0)/d*10),Math.round(y-(s.vy||0)/d*10),rr*.7,0,Math.PI*2);c.fill();}c.restore();}
+export function drawShot(c,s,t=0){runeShot(c,s);if(s.sprite)return put(c,s.sprite,'fly',(s.age||0)+t*0,s.x,s.y-(s.h??24),{facing:s.vx<0?-1:1});const el=s.element||elementOf(s);return put(c,`fx-bolt-${el}`,'fly',(s.age||0)+t*0,s.x,s.y-(s.h??24),{facing:s.vx<0?-1:1});}
 /* Depth key for an effect, so the hero (same y) draws over its own slash and casts, and hit stars sit on their target. */
 export function effectDepth(f){return f.type==='burst'||f.type==='line'||((f.type==='plates'||f.type==='orbit-of')&&f.half==='front')?f.y+1:f.y-.5;}

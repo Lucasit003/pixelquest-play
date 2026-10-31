@@ -32,6 +32,15 @@ export const abilityPower=(dmg,stat)=>(+dmg||0)*Math.max(1+stat*.018,stat*ABILIT
 export const BASIC_GROWTH=.5;
 export const basicStat=(x,c)=>{const stat=Math.max(+x?.atk||0,c?.ranged?+x?.mag||0:0),base=Math.max(+c?.atk||0,c?.ranged?+c?.mag||0:0);return stat<=base?stat:base+(stat-base)*BASIC_GROWTH;};
 export const abilityGuard=(n,maxHp,baseHp)=>(+n||0)*(baseHp>0?Math.max(1,(+maxHp||0)/baseHp):1);
+/* Ability Runes (kidfix-b-oct31, docs/playtest/kidfix-b-oct31/REPORT.md): each mastered topic is one rune point, placed in an
+   ability the hero already owns, up to RUNE_MAX ranks. A rank multiplies the ability's main effect (damage, heal, shield, summon
+   power) by runeMul and rank III also shortens its cooldown by RUNE_CDR. Runes never unlock anything: unlocked() never reads them.
+   RUNE_STEP was designed at about 10%; the balance sim (docs/playtest/kidfix-b-oct31/REPORT.md) had Heroic and Legendary Veilmoor
+   about 25% easier with 9 ranks, so it is 5% (within about 20%). Pure: rank in, numbers out. */
+export const RUNE_MAX=3,RUNE_STEP=.05,RUNE_CDR=.1;
+export const runeRank=(save,id)=>{const n=Math.floor(Number(save?.runes?.[id])||0);return n>0?Math.min(RUNE_MAX,n):0;};
+export const runeMul=rank=>1+RUNE_STEP*clamp(Math.floor(+rank||0),0,RUNE_MAX);
+export const runeCd=rank=>(+rank||0)>=RUNE_MAX?1-RUNE_CDR:1;
 /* Over-level damping (oct24-overlevel; docs/playtest/oct24-exploit-b C3): kill and first-clear XP from a level is paid in full
    up to two hero levels over the level's recommended hero level, then 75% at +3, 50% at +4 and 25% from +5. Lesson, quiz, test
    and practice XP never pass through this, and nothing about mastery or unlocked() changes. Pure: the caller supplies both levels. */

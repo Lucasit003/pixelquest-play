@@ -2,7 +2,7 @@
    ability of the current hero with its icon, its hotbar key when equipped, what it does in plain words, its cost and
    cooldown. Pure: main.js passes the ability list, the loadout, the readiness test and the icon renderer.
    Damage numbers are left out on purpose: real damage scales with the hero's stats, so a quoted base number would be wrong. */
-import {stats,abilityGuard} from '../game/math.js';
+import {stats,abilityGuard,runeMul,runeRank} from '../game/math.js';
 import {CLASSES} from '../game/data.js';
 import {ABILITIES} from '../game/abilities.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -14,9 +14,9 @@ const sec=n=>`${+(+n).toFixed(1)} s`;
    heal rounds like combat's "+N". Returns {} without a save (the raw base numbers are then never quoted). */
 export function abilityNumbers(save,a){
  const c=CLASSES[save?.hero];if(!save||!c||!a)return {};
- const hp=stats(save,c).hp,out={};
- if(a.shield>0)out.shield=Math.ceil(abilityGuard(a.shield,hp,c.hp));
- if(a.heal>0)out.heal=Math.round(abilityGuard(a.heal,hp,c.hp));
+ /* kidfix-b-oct31: with the ability's rune rank, as combat gives it */const hp=stats(save,c).hp,out={},rm=runeMul(runeRank(save,a.id));
+ if(a.shield>0)out.shield=Math.ceil(abilityGuard(a.shield,hp,c.hp)*rm);
+ if(a.heal>0)out.heal=Math.round(abilityGuard(a.heal,hp,c.hp)*rm);
  return out;
 }
 /* classes-oct28 (every class played): many cards read the same ("A close-range hit." for seven different moves) and the

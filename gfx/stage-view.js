@@ -13,6 +13,7 @@ import {STAGE,BEATS,REBIRTH} from '../game/stage.js';
 import {drawPixelText} from '../ui/canvas-ui.js';
 import {potionCount} from '../game/potions.js';
 import {clearLabelAt} from '../scenes/tier-fx.js';
+import {firstFlashAlpha,FIRST_BANNER} from '../scenes/rune-fx.js';
 const R=Math.round;
 /* ---- the swap point ------------------------------------------------------------------------------------- */
 let UI=null;
@@ -80,6 +81,8 @@ export function stageBanners(w){if(!w?.level)return [];const f=w.flow,k=w.flowT|
  if(f==='rebirth'){const e=w.boss,rb=e?.rebirth,kk=k-REBIRTH.fall-.25;if(e&&rb&&kk>=0)out.push({kind:'boss',title:String(e.name).toUpperCase(),sub:String(rb.title||'SECOND LIFE').toUpperCase(),line:rb.line||'',
   slide:Math.min(1,Math.max(0,kk/.35)),open:Math.min(1,kk/.3),alpha:Math.min(1,(REBIRTH.card-k)/.3),enemy:e.key});}
  if(f==='victory'&&!w.cinematicTarget)out.push({kind:'victory',title:'VICTORY',alpha:Math.min(1,k/.3)});
+ /* kidfix-b-oct31: the first-cast moment's one line, "<ABILITY>!", through the banner queue (scenes/rune-fx.js) */
+ if(w.firstCast&&w.run&&f!=='victory'){const t=(w.run.time??0)-w.firstCast.at;if(t>=0&&t<FIRST_BANNER)out.push({kind:'wave',title:`${String(w.firstCast.name).toUpperCase()}!`,y:54,alpha:Math.min(1,t/.12,(FIRST_BANNER-t)/.3),prio:3,dur:FIRST_BANNER});}
  return queueBanners(w,out);}
 /* kidfix-a-oct31 (kid-appeal playtest shot 02: the boss quote, "CALLS FOR BACKUP!" and "DEFEAT THE GUARDS!" stacked at the prologue boss):
    the top-of-screen announcements (wave, cleared, quote: the banners with a prio) show ONE at a time. The one up keeps its own timing; one that
@@ -119,6 +122,7 @@ export function drawStageHud(c,w,t){if(!w.level)return;const f=w.flow,k=w.flowT|
  if(f==='rebirth'){const dim=k<REBIRTH.fall?Math.min(.5,k/REBIRTH.fall*.5):Math.max(0,.5-(k-REBIRTH.fall)*.8);c.fillStyle='#0d0906';c.globalAlpha=dim;c.fillRect(0,0,VW,VH);
   const fl=k>=REBIRTH.fall?Math.max(0,.85-(k-REBIRTH.fall)/.4):0;if(fl>0&&w.motion!==false){c.fillStyle='#fff6e0';c.globalAlpha=fl;c.fillRect(0,0,VW,VH);}c.globalAlpha=1;const bar=R(14*Math.min(1,k/.35));c.fillStyle='#0d0906';c.fillRect(0,0,VW,bar);c.fillRect(0,VH-bar,VW,bar);}
  if(f==='bossintro'||(f==='boss'&&k<.5)){/* v2:ui -- 14 px bars: 26 cropped the tallest landmarks (war tent, willow) */const bar=R(14*(f==='bossintro'?Math.min(1,k/.35):Math.max(0,1-k/.5)));c.fillStyle='#0d0906';c.fillRect(0,0,VW,bar);c.fillRect(0,VH-bar,VW,bar);}
+ /* kidfix-b-oct31: the first-cast moment's low white flash (none with Reduce motion) */{const fa=firstFlashAlpha(w);if(fa>0){c.fillStyle='#ffffff';c.globalAlpha=fa;c.fillRect(0,0,VW,VH);c.globalAlpha=1;}}
  for(const b of stageBanners(w))drawBanner(c,b);
  /* the Thorn King's fall (CINEMATIC_END) plays over the throne room, not over the fade to the result *//* oct24-endgame (playtest ch3 minor): nor after an epilogue, so its result sits over the arena it played in */if(f==='victory'&&!w.cinematicTarget&&!w.afterEpilogue){c.globalAlpha=Math.min(1,k/.3)*Math.max(0,(k-1.1)/.5);c.fillStyle='#0d0906';c.fillRect(0,0,VW,VH);c.globalAlpha=1;}
  c.restore();}
