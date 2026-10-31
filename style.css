@@ -1793,6 +1793,14 @@ html.m-mode dialog[data-view=village-map] .pq-village-map{width:min(100%,400px,c
 /* Playtest 14 Oct: companion cards show the animal; the tag clears the card's top tab. */
 .pet-card .pet-portrait{float:right;width:128px;height:96px;margin:-6px -6px 0 6px;image-rendering:pixelated}
 dialog[data-view=pets] .card.pet-card{padding-top:20px}
+/* kidfix-a-oct31: pl-card.png's plaque rim sits below its 8 px slice, so "round" repeated it as a line through the card's fill, right
+   across the bond text (the Library cards use the 12 px slice for the same reason). Bond is a row of hearts on its own line under the portrait */
+dialog[data-view=pets] .card.pet-card{border-image-slice:12 fill;border-image-width:calc(12*var(--u));border-image-repeat:stretch}
+.pet-card .pet-bond{clear:both;display:flex;flex-direction:column;gap:2px;margin:6px 0 8px}
+.pet-card .pet-hearts{display:flex;gap:3px;line-height:1}
+.pet-card .heart{display:inline-block;width:16px;height:14px;font-style:normal;background:#4a3b48;clip-path:path('M8 14 L1.5 7.5 A3.6 3.6 0 0 1 8 2.6 A3.6 3.6 0 0 1 14.5 7.5 Z')}
+.pet-card .heart.full{background:#e8566e}.pet-card .heart.half{background:linear-gradient(90deg,#e8566e 50%,#4a3b48 50%)}
+
 /* Playtest 14 Oct: on the name step the smaller hero no longer hides the wall sword, which floated over his head. */
 .title-screen[data-step=setup] .select-pane .armory-sword{display:none}
 /* Playtest 14 Oct: the Alchemist's cards ran under the frame's bottom corner ornaments. */
@@ -2031,6 +2039,8 @@ html:not(.m-mode) #prompt{bottom:150px}
 @keyframes pq-hint-bob{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,-4px)}}
 #hotbar.hint-pulse .ability-slot:not(.locked){animation:pq-slot-pulse 1.2s steps(4) infinite}
 #hotbar .ability-slot.nudge-pulse{animation:pq-slot-pulse 1.2s steps(4) infinite}
+/* kidfix-a-oct31: "Drink a potion!" pulses the potion slot (desktop hotbar and the touch button) */
+#hud-potion.potion-help,#touch .t-potion.potion-help{animation:pq-slot-pulse .8s steps(4) infinite;outline:2px solid #e8c47a;outline-offset:2px}
 @keyframes pq-slot-pulse{0%,100%{filter:none}50%{filter:brightness(1.35) drop-shadow(0 0 6px #e8c47a)}}
 .m-mode #ability-hint{bottom:auto;top:30%;zoom:1}
 /* Pause: every unlocked ability, what it does and where it sits on the bar */
@@ -2852,3 +2862,21 @@ html.m-mode dialog[data-view=alchemist] .potion-shop .card h3{font-size:20px}}
 /* ready2fix-oct30 #7: no "·" between Wil's progress and his wage; on one line a wider gap and the quieter colour keep them apart */
 .level-record.level-companion{flex-wrap:wrap;column-gap:22px}
 .level-record.level-companion .comp-wage-note{color:#d9c9a0!important}
+
+/* kidfix-a-oct31: the one-time Pets pointer at Home */
+.tabs button.pointer-pulse{animation:pq-slot-pulse 1s steps(4) infinite;outline:2px solid #e8c47a;outline-offset:2px;position:relative}
+.tabs button .pointer-badge{position:absolute;top:-14px;right:-6px;padding:1px 5px;font-size:11px;line-height:14px;background:#e8566e;color:#fff;border-radius:3px;white-space:nowrap;pointer-events:none}
+
+/* kidfix-a-oct31: the optional "What grade are you in?" row under the school stage (Elementary only) */
+.school-grade{display:flex;flex-direction:column;gap:4px;margin:6px 0 2px}.school-grade[hidden]{display:none}
+.school-grade-q{font-size:14px;color:var(--ink)}.school-grade-q small{color:var(--muted)}
+.school-grade-opts{display:flex;flex-wrap:wrap;gap:4px}.school-grade-opts button{padding:3px 8px;font-size:13px;min-height:28px}
+.school-grade-opts button.picked{outline:2px solid #e8c47a;outline-offset:1px;color:#ffe9a8}
+
+/* kidfix-a-oct31: the first-open placement offer for a child who gave a grade above 2 */
+.grade-offer{display:flex;align-items:center;gap:12px;margin:8px 0;padding:10px 12px;border:2px solid #e8c47a;border-radius:4px;background:rgba(232,196,122,.12)}
+.grade-offer p{flex:1;margin:0;display:flex;flex-direction:column;gap:2px}.grade-offer strong{color:#ffe9a8}
+
+/* kidfix-a-oct31: the hero walked under the hotbar at the near edge of the floor band; the bottom HUD fades while he is behind it (main.js heroUnder) */
+#hotbar,#xp-track,#keyboard-actions,#ability-hint{transition:opacity .18s ease-out}
+#hotbar.hero-under,#xp-track.hero-under,#keyboard-actions.hero-under,#ability-hint.hero-under{opacity:.35}

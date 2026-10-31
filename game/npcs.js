@@ -103,7 +103,7 @@ export const VILLAGERS = {
     {say: ['Welcome, adventurer! Goblins have taken the camp past the south gate.', 'Read the contract board, then head out through the south gate.']}]},
   innkeeper_odell: {name: 'Innkeeper Odell', lines: [{say: ['All of Oakhaven’s food is cooked here now: Hob’s apples, Netta’s fish, the mill’s flour. A hot meal keeps you strong for one whole adventure. Ask at the counter!']}]},
   innkeeper: {name: 'Innkeeper Odell', lines: [{say: ['All of Oakhaven’s food is cooked here now: Hob’s apples, Netta’s fish, the mill’s flour. A hot meal keeps you strong for one whole adventure. Ask at the counter!']}]},
-  brannoc_the_smith: {name: 'Brannoc the smith', lines: [{say: ['To buy stronger gear, use the counter on the right: Order weapons and armour.', 'Choose a stronger weapon or armour and pay with gold. Abilities unlock through learning and hero levels.']}]},
+  brannoc_the_smith: {name: 'Brannoc the smith', lines: [{say: ['Welcome! Have a look at my weapons and armour.', 'Choose a stronger weapon or armour and pay with gold. Abilities unlock through learning and hero levels.']}]},
   master_coll: {name: 'Master Coll', lines: [{say: ['Measure twice. Drink once. Potions at the counter.']}]},
   goodwife_enid: {name: 'Goodwife Enid', lines: [{say: ['Woundwort for cuts, swiftroot for tired legs. Find my remedies at the Apothecary, beside Master Coll.']}]},
   chaplain_aurel: {name: 'Chaplain Aurel', lines: [{say: ['A blessing for the road? It lasts one journey, and that is enough.']}]},

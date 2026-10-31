@@ -3,6 +3,7 @@
    the same downloaded ground shadow (Mixel's, unmodified) as the heroes and stages. Replaces the code-drawn
    companion. Under reduced motion it keeps to its spot, walks only while the hero walks and holds its first
    idle frame. */
+import {drawHearts} from '../pet-hearts.js';
 import {loadSprite,drawSprite} from './sprites.js';
 import {petDirectionAtlas} from './pet-directions.js';
 
@@ -44,8 +45,16 @@ export function petRenderPose(f,base,directional,t,still=false){
  return {id:directional.id,meta:directional.meta,state,t:idle&&still?0:age,facing:1};
 }
 
+/* kidfix-a-oct31: "Pet <name>" in Home and town (scenes/town.js). petThePet() asks for a PET_TIME s pat: the pet plays its own sit
+   animation from its atlas (no new art) while small hearts rise over it (an effect drawn in code, gfx/pet-hearts.js). -1 = asked, started at the next draw */
+export const PET_TIME=1.6;const PETTED=new Map();
+export function petThePet(pet){if(pet?.key)PETTED.set(pet.key,-1);}
+export const pettingNow=pet=>PETTED.has(pet?.key);
+
 /* Same signature as the old companion(): (c, pet, x, y, t, moving, facing, motion), x,y = its spot by the hero. */
 export function drawPet(c,pet,x,y,t,moving,facing,motion){const id=petSpriteId(pet);if(!id)return false;const s=loadSprite(id),still=motion===false;
  const f=petFollow(pet,x,y,t,facing,!still,!!moving);drawShadow(c,f.x,f.y);if(!s.ready)return true;
+ let pt=PETTED.get(pet.key);if(pt===-1){pt=t+PET_TIME;PETTED.set(pet.key,pt);}const petting=pt!=null&&t<pt&&!moving;if(pt!=null&&!petting)PETTED.delete(pet.key);
+ if(petting&&s.meta?.states?.sit){drawSprite(c,id,'sit',still?0:t-(pt-PET_TIME),Math.round(f.x),Math.round(f.y),{facing:f.facing,scale:.8});drawHearts(c,f.x,f.y-20,t-(pt-PET_TIME),still);return true;}
  const did=petDirectionAtlas(pet),d=did?loadSprite(did):null,pose=petRenderPose(f,s,d?.ready?d:null,t,still);
- drawSprite(c,pose.id,pose.state,pose.t,Math.round(f.x),Math.round(f.y),{facing:pose.facing,scale:.8});return true;}
+ drawSprite(c,pose.id,pose.state,pose.t,Math.round(f.x),Math.round(f.y),{facing:pose.facing,scale:.8});if(petting)drawHearts(c,f.x,f.y-20,t-(pt-PET_TIME),still);return true;}

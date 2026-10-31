@@ -1,3 +1,4 @@
+import {emptyHints,cleanHints,cleanSchoolGrade} from '../game/hints.js';
 import {DEFAULT_BINDINGS,normalizeBindings} from '../game/bindings.js';
 import {cleanFieldMission} from '../game/field-mission.js';
 import {cleanDaily,emptyDaily} from '../game/daily.js';
@@ -58,7 +59,7 @@ export const VERSION=9;
 export const LADDER=3;
 export const LADDER2_RUNGS={'divine-shield':{gate:3,lvl:3},'hammer-of-light':{gate:6,lvl:4}};
 
-export function fresh(){return {version:VERSION,hero:'warrior',delve:emptyDelve(),skills:{crafting:0},adventurer:{tasks:{}},heroNames:{},fieldMission:cleanFieldMission(),level:1,xp:0,gold:30,mastery:{},answers:{},loadouts:{},equipment:{},potions:3,regenPotions:0,potionKind:'health',pet:'study',jewels:{owned:{},worn:{necklace:null,ring:null},pity:{}},gear:emptyGear(),house:{owned:{},items:[]},petBond:{},cleared:[],bossPhase2:false,cinematicSeen:false,schoolMode:null,settings:{sound:true,music:true,motion:!globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches,bindings:{...DEFAULT_BINDINGS}},started:false,lessons:{},kept:[],placement:{},levels:{},starPass:[],bestiary:{},/* v2:hub */boons:{pending:[],bounty:null},hub:{seen:[]},party:emptyParty(),quests:emptyQuests(),town:{seen:[]},/* fast travel (25 Oct, additive within v9) */travel:{places:[],hinted:false},/* daily goals (herocard-oct27, additive within v9, no streaks) */daily:emptyDaily(),/* titles (endfollow-oct29, additive within v9, cosmetic) */titles:[],/* v2:edu */awakened:false,/* v2:gamedesign */ladder:LADDER};}
+export function fresh(){return {version:VERSION,hero:'warrior',delve:emptyDelve(),skills:{crafting:0},adventurer:{tasks:{}},heroNames:{},fieldMission:cleanFieldMission(),level:1,xp:0,gold:30,mastery:{},answers:{},loadouts:{},equipment:{},potions:3,regenPotions:0,potionKind:'health',pet:'study',jewels:{owned:{},worn:{necklace:null,ring:null},pity:{}},gear:emptyGear(),house:{owned:{},items:[]},petBond:{},cleared:[],bossPhase2:false,cinematicSeen:false,schoolMode:null,settings:{sound:true,music:true,motion:!globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches,bindings:{...DEFAULT_BINDINGS}},started:false,lessons:{},kept:[],placement:{},levels:{},starPass:[],bestiary:{},/* v2:hub */boons:{pending:[],bounty:null},hub:{seen:[]},party:emptyParty(),quests:emptyQuests(),town:{seen:[]},/* fast travel (25 Oct, additive within v9) */travel:{places:[],hinted:false},/* daily goals (herocard-oct27, additive within v9, no streaks) */daily:emptyDaily(),/* titles (endfollow-oct29, additive within v9, cosmetic) */titles:[],/* kid-appeal help and the optional school grade (kidfix-a-oct31, additive within v9, game/hints.js) */hints:emptyHints(),schoolGrade:null,/* v2:edu */awakened:false,/* v2:gamedesign */ladder:LADDER};}
 
 const obj=v=>!!v&&typeof v==='object'&&!Array.isArray(v);
 const HEROES=['warrior','mage','rogue','ranger','paladin','berserker','summoner'];
@@ -216,6 +217,8 @@ const frac=(v,a,b)=>Math.max(a,Math.min(b,Number(v)||0));
     every rule reads a record that never goes back (a won level), so an earned title can never be lost this way */
  s.titles=cleanTitles(value.titles).filter(id=>TITLES[id].earned(s));earnTitles(s);
 
+ /* kid-appeal help (kidfix-a-oct31, game/hints.js): additive within v9; a save without it starts empty, and the school grade is a hint only */
+ s.hints=cleanHints(value.hints);s.schoolGrade=cleanSchoolGrade(value.schoolGrade);
  syncTasks(s);
  s.version=VERSION;
  return s;

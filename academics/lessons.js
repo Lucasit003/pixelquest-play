@@ -136,6 +136,19 @@ export const practiceSitting=(save,t,size=10)=>{const r=testReady(save,t);return
 export const exact=(input,q)=>accepts(input,q) && (q.numeric?numberIn(input,q)===Number(q.answer):true);
 /* quizfun-oct29: `avoid` (a Set of ids) is only ever a preference: those items go last and skip the per-skill quota, and are
    served only when the rest of the pool cannot fill the sitting. Retirement, misses-last and the size of a sitting are unchanged. */
+/* kidfix-a-oct31 (kid-appeal playtest: "boat" and "ball" twice each in a five-question quiz, and "In the plan for X, which is done first"
+   again and again): a sitting prefers items that share no answer word and no template with an item already in it. An item's words are its
+   word card's word and its written answer (letters only, 3+ letters, so "-s" or a number never counts); its template is its prompt with
+   quoted parts, digits, small words (in, the, a...) and the words of its picture's title, its word and its answer taken out. This is only a preference, in three
+   steps: no shared word or template, then no shared word, then anything, so a small pool still fills the sitting; each skill still gets its
+   quota, and a skill whose items all clash still gets one. Ids, prompts, retirement and misses-last are untouched. */
+const vNorm=x=>String(x??'').toLowerCase().replace(/[\u2018\u2019`]/g,"'").replace(/[^a-z' -]+/g,' ').replace(/\s+/g,' ').trim();
+const vCache=new Map(),V_STOP=new Set(['in','the','a','an','for','of','to','on','at']);
+export function varietyKeys(q){if(vCache.has(q.id))return vCache.get(q.id);const pics=[].concat(q.pic||[]).filter(p=>p&&typeof p==='object'),
+  bases=pics.map(p=>p.t==='word'&&typeof p.base==='string'?vNorm(p.base):'').filter(b=>/[a-z]{3}/.test(b)),ans=typeof q.answer==='string'&&/[a-z]{3}/i.test(q.answer)&&!q.numeric?vNorm(q.answer):'',
+  words=[...new Set([...bases,...(ans?[ans]:[])])],strip=new Set([...pics.flatMap(p=>[p.title,p.base].filter(x=>typeof x==='string')),String(q.answer??'')].flatMap(x=>vNorm(x).split(' ')).filter(Boolean)),
+  t=String(q.prompt||'').toLowerCase().replace(/'[^']*'|"[^"]*"|\u2018[^\u2019]*\u2019|\u201c[^\u201d]*\u201d/g,' ').replace(/[0-9]+/g,' ').split(/[^a-z_]+/).filter(w=>w&&!strip.has(w)&&!V_STOP.has(w)).join(' '),
+  k={words,t};vCache.set(q.id,k);return k;}
 export function pickItems(save,t,n,random=Math.random,avoid=null){
     const candidates=POOL[t.id].filter(id=>(save.answers[id]||0)<2);
     if(!candidates.length)return [];
@@ -148,20 +161,25 @@ export function pickItems(save,t,n,random=Math.random,avoid=null){
     candidates.sort((a,b)=>rank(a)-rank(b));
     const skills=Object.keys(t.skills);
     const quota=Math.max(1,Math.floor(n/skills.length));
-    const taken=[];
+    const taken=[],usedW=new Set(),usedT=new Set();
+    const clash=(id,lvl)=>{const k=varietyKeys(ITEMS[id]);return (lvl<2&&k.words.some(w=>usedW.has(w)))||(lvl<1&&usedT.has(k.t));};
+    const take=id=>{const k=varietyKeys(ITEMS[id]);taken.push(id);k.words.forEach(w=>usedW.add(w));usedT.add(k.t);};
     for(const k of skills){
         let got=0;
-        for(const id of candidates){
-            if(taken.length>=n||got>=quota)break;
-            if(ITEMS[id].skill===k&&!avoid?.has(id)){
-                taken.push(id);
-                got++;
+        for(const lvl of [0,1,2]){
+            for(const id of candidates){
+                if(taken.length>=n||got>=quota||(lvl===2&&got>0))break;
+                if(ITEMS[id].skill===k&&!avoid?.has(id)&&!taken.includes(id)&&!clash(id,lvl)){
+                    take(id);
+                    got++;
+                }
             }
+            if(got>=quota)break;
         }
     }
-    for(const id of candidates){
+    for(const lvl of [0,1,2])for(const id of candidates){
         if(taken.length>=n)break;
-        if(!taken.includes(id))taken.push(id);
+        if(!taken.includes(id)&&!clash(id,lvl))take(id);
     }
     return taken.map(id=>ITEMS[id]);
 }

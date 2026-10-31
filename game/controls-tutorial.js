@@ -1,3 +1,4 @@
+import {nudgeTier,nudgeWanted} from './hints.js';
 import {ABILITIES} from './abilities.js';
 import {unlocked} from './math.js';
 import {activeLoadout} from '../academics/awakening.js';
@@ -17,7 +18,7 @@ export function tickControls(t,age,inLevel=false,bossFight=false){const step=t?.
 
 /* One quiet reminder per living boss encounter, three per save. Only successful casts reset the clock;
    a busy toast channel retries with current readiness instead of queuing a stale combat instruction. */
-export function tickAbilityNudge(w,dt,show){const boss=w.enemies.find(e=>e.boss&&e.hp>0);if(!boss){w.abilityNudge=null;return false;}let h=w.abilityNudge;if(!h||!w.enemies.includes(h.boss)||h.boss.hp<=0)h=w.abilityNudge={boss,age:0,said:false,cast:w.lastCast};if(w.paused||w.player.hp<=0||['bossintro','rebirth','victory'].includes(w.flow))return false;if(h.cast!==w.lastCast){h.cast=w.lastCast;h.age=0;}else h.age+=dt;const count=Math.max(0,Math.floor(Number(w.save.settings.abilityNudges)||0));if(h.said||count>=3||h.age<20)return false;const ids=activeLoadout(w.save),slot=ids.findIndex(id=>{const a=ABILITIES[w.save.hero].find(a=>a.id===id);return a&&unlocked(w.save,a)&&!(w.player.cooldowns[id]>0)&&w.player.mp>=a.cost;});if(slot<0)return false;const a=ABILITIES[w.save.hero].find(a=>a.id===ids[slot]);if(!show(a,slot))return false;h.said=true;w.save.settings.abilityNudges=count+1;w.events.persist?.();return true;}
+export function tickAbilityNudge(w,dt,show){const boss=w.enemies.find(e=>e.boss&&e.hp>0);if(!boss){w.abilityNudge=null;return false;}let h=w.abilityNudge;if(!h||!w.enemies.includes(h.boss)||h.boss.hp<=0)h=w.abilityNudge={boss,age:0,said:false,cast:w.lastCast};if(w.paused||w.player.hp<=0||['bossintro','rebirth','victory'].includes(w.flow))return false;if(h.cast!==w.lastCast){h.cast=w.lastCast;h.age=0;}else h.age+=dt;const count=Math.max(0,Math.floor(Number(w.save.settings.abilityNudges)||0));if(h.said||count>=3||h.age<20||!nudgeTier(w.save))return false;const ids=activeLoadout(w.save),slot=ids.findIndex(id=>{const a=ABILITIES[w.save.hero].find(a=>a.id===id);return a&&nudgeWanted(w.save,id)&&unlocked(w.save,a)&&!(w.player.cooldowns[id]>0)&&w.player.mp>=a.cost;});if(slot<0)return false;const a=ABILITIES[w.save.hero].find(a=>a.id===ids[slot]);if(!show(a,slot))return false;h.said=true;w.save.settings.abilityNudges=count+1;w.events.persist?.();return true;}
 
 /* Once, when the player begins travelling after the introductory controls. */
 export function beginTraversal(s,input){if(s.settings.traversalSeen||!['up','down','left','right'].some(k=>input[k]))return null;s.settings.traversalSeen=true;return {steps:['run','jump'],index:0};}

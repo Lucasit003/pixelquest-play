@@ -3,7 +3,8 @@
    level and one town visit, picked from the date alone (the same three for everyone on that day).
    Pillar 4 (no pressure): no streaks, no counters across days, no loss for a missed day, no timers or countdowns. On a new
    day the record is simply replaced; unfinished goals go away quietly. Rewards are a little gold or one crafting material,
-   never XP, and gold never unlocks anything. The three together pay at most about a quarter of a typical replay's gold
+   never XP, and gold never unlocks anything. The three together pay at most about a quarter of a typical replay's gold at the
+   hero's level (kidfix-a-oct31: goalGold scales with it)
    (tests/herocard-oct27.test.js pins it).
    Save: s.daily = {day:'YYYY-MM-DD', n:{[goalId]:count}, done:[goalId]} -- additive within save v9, so no version bump;
    normalize() runs cleanDaily(), and a save without it starts empty. Pure: callers pass the save and the time. */
@@ -59,12 +60,22 @@ export function cleanDaily(v){const d=emptyDaily();if(!v||typeof v!=='object'||A
 export function syncDay(s,now=Date.now()){const day=dayKey(now);if(!s.daily||s.daily.day!==day){const old=s.daily,paid={...(old?.paid||{})};if(old?.day&&old.done?.length)paid[old.day]=cleanIds([...(paid[old.day]||[]),...old.done]);
   const kept=trimPaid(paid),keys=Object.keys(kept).sort(),full=keys.length>=PAID_DAYS&&day<keys[0],done=full?goalsFor(day).map(g=>g.id):cleanIds(kept[day]);
   s.daily={day,n:{},done};if(keys.length)s.daily.paid=kept;}return s.daily;}
-export const rewardText=g=>g.gold?`+${g.gold} gold`:`+${g.n||1} ${g.matName||'material'}`;
-export function dailyView(s,now=Date.now()){const d=syncDay(s,now);return goalsFor(d.day).map(g=>{const done=d.done.includes(g.id);return {...g,have:done?g.need:Math.min(g.need,d.n[g.id]|0),done,reward:rewardText(g)};});}
+/* kidfix-a-oct31 (kid-appeal playtest: +8 to +12 gold to a level-9 hero holding 391): gold goals scale with the hero level and keep
+   the header's ratio. REPLAY_GOLD[L-1] is the most Normal replay gold any level a level-L hero can replay pays (the richest level of
+   tier <= L), measured with the herocard-oct27 replay simulation (tests/kidfix-a-oct31.test.js re-measures it). ELDERWOOD_REPLAY is the
+   "typical replay" the base amounts were pinned against (the median Elderwood e1-e8 replay); a hero's goals pay
+   base x REPLAY_GOLD/ELDERWOOD_REPLAY, never less than the base, so the three still pay at most about a quarter of that replay. */
+export const ELDERWOOD_REPLAY=138;
+export const REPLAY_GOLD=[97,116,123,126,145,180,180,180,180,180,180,180,180,180,180,180,180,180,197,202,213,213];
+export const replayGoldAt=level=>REPLAY_GOLD[Math.max(1,Math.min(REPLAY_GOLD.length,Math.floor(+level)||1))-1];
+export const goldScale=level=>Math.max(1,replayGoldAt(level)/ELDERWOOD_REPLAY);
+export const goalGold=(g,level=1)=>g.gold?Math.round(g.gold*goldScale(level)):0;
+export const rewardText=(g,level=1)=>g.gold?`+${goalGold(g,level)} gold`:`+${g.n||1} ${g.matName||'material'}`;
+export function dailyView(s,now=Date.now()){const d=syncDay(s,now);return goalsFor(d.day).map(g=>{const done=d.done.includes(g.id);return {...g,gold:goalGold(g,s.level),have:done?g.need:Math.min(g.need,d.n[g.id]|0),done,reward:rewardText(g,s.level)};});}
 /* An event from EVENTS ('visit' with arg = the room; 'foes', 'secret', 'star' with arg = how many). Returns the goals it finished, already paid. */
 export function dailyEvent(s,on,arg,now=Date.now()){if(!EVENTS.includes(on))return [];const by=on==='foes'||on==='secret'||on==='star'?Math.max(0,Math.floor(+arg||0)):1;if(!by)return [];const d=syncDay(s,now),out=[];
  for(const g of goalsFor(d.day)){if(g.on!==on||d.done.includes(g.id)||(g.room&&g.room!==arg))continue;d.n[g.id]=Math.min(g.need,(d.n[g.id]|0)+by);
-  if(d.n[g.id]>=g.need){d.done.push(g.id);if(g.gold)s.gold=(s.gold|0)+g.gold;else if(g.mat){s.gear??={};s.gear.mats??={};s.gear.mats[g.mat]=(s.gear.mats[g.mat]|0)+(g.n||1);}out.push({...g,line:`Daily goal done: ${rewardText(g)}`});}}
+  if(d.n[g.id]>=g.need){d.done.push(g.id);if(g.gold)s.gold=(s.gold|0)+goalGold(g,s.level);else if(g.mat){s.gear??={};s.gear.mats??={};s.gear.mats[g.mat]=(s.gear.mats[g.mat]|0)+(g.n||1);}out.push({...g,gold:goalGold(g,s.level),line:`Daily goal done: ${rewardText(g,s.level)}`});}}
  if(out.length)d.paid=trimPaid({...(d.paid||{}),[d.day]:d.done});return out;}
 /* the most gold any one day's three goals can pay (the balance pin) */
-export const maxDailyGold=()=>KINDS.reduce((t,k)=>t+Math.max(...GOALS.filter(g=>g.kind===k).map(g=>g.gold||0)),0);
+export const maxDailyGold=(level=1)=>KINDS.reduce((t,k)=>t+Math.max(...GOALS.filter(g=>g.kind===k).map(g=>goalGold(g,level))),0);

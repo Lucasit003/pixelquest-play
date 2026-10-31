@@ -37,10 +37,10 @@ export function stageBanners(w){if(!w?.level)return [];const f=w.flow,k=w.flowT|
  if(f==='intro')out.push({kind:'intro',title:w.level.name.toUpperCase(),sub:w.arena?'SURVIVE AS LONG AS YOU CAN':w.tierKey&&w.tierKey!=='normal'?`${w.tierKey.toUpperCase()} · WALK RIGHT`:'WALK RIGHT',tier:w.tierKey||'normal',alpha:Math.min(1,k/.25)});
  /* browser check 14 Oct: the intro runs under the loading curtain, so on Heroic and Legendary the tier stays up for the first steps */
  if(f==='walk'&&w.wave===0&&!w.arena&&w.tierKey&&w.tierKey!=='normal'&&k<2.4)out.push({kind:'intro',title:w.level.name.toUpperCase(),sub:`${w.tierKey.toUpperCase()} · WALK RIGHT`,tier:w.tierKey,alpha:Math.min(1,(2.4-k)/.6)});
- if(f==='wave'&&k<1.4&&w.group===0&&!step)out.push({kind:'wave',title:w.arena?`WAVE ${w.wave+1}`:w.waveDef?.()?.extra?'LAST STAND!':w.waveDef?.()?.ambush?'AMBUSH!':`WAVE ${w.wave+1} / ${w.level.waves.length}`,y:54,alpha:Math.min(1,k/.2,(1.4-k)/.3)});
+ if(f==='wave'&&k<1.4&&w.group===0&&!step)out.push({kind:'wave',title:w.arena?`WAVE ${w.wave+1}`:w.waveDef?.()?.extra?'LAST STAND!':w.waveDef?.()?.ambush?'AMBUSH!':`WAVE ${w.wave+1} / ${w.level.waves.length}`,y:54,alpha:Math.min(1,k/.2,(1.4-k)/.3),prio:1,dur:1.4});
  /* the boss's rally: call to arms, then the opening */
- if(f==='boss'&&w.rally&&w.run){const t=w.run.time-w.rally.at,e=w.rally.ended!=null?w.run.time-w.rally.ended:null;if(e==null&&t<2)out.push({kind:'wave',title:`${(w.level.bossName||'THE BOSS').split(',')[0].toUpperCase()} CALLS FOR BACKUP!`,y:54,alpha:Math.min(1,t/.2,(2-t)/.3)});else if(e==null)out.push({kind:'wave',title:'DEFEAT THE BACKUP FIRST',y:54,alpha:1});else if(e<1.5)out.push({kind:'wave',title:'GUARD DOWN, ATTACK!',y:54,alpha:Math.min(1,e/.2,(1.5-e)/.3)});}
- if((f==='go'||f==='arenabreak'||f==='regroup')&&k<BEATS.clear+.9)out.push({kind:'cleared',title:'WAVE CLEARED',y:70,alpha:Math.min(1,k/.15,(BEATS.clear+.9-k)/.3)});
+ if(f==='boss'&&w.rally&&w.run){const t=w.run.time-w.rally.at,e=w.rally.ended!=null?w.run.time-w.rally.ended:null;if(e==null&&t<2)out.push({kind:'wave',title:`${(w.level.bossName||'THE BOSS').split(',')[0].toUpperCase()} CALLS FOR BACKUP!`,y:54,alpha:Math.min(1,t/.2,(2-t)/.3),prio:3,dur:2});else if(e==null)out.push({kind:'wave',title:'DEFEAT THE BACKUP FIRST',y:54,alpha:1,sticky:true});else if(e<1.5)out.push({kind:'wave',title:'GUARD DOWN, ATTACK!',y:54,alpha:Math.min(1,e/.2,(1.5-e)/.3),prio:3,dur:1.5});}
+ if((f==='go'||f==='arenabreak'||f==='regroup')&&k<BEATS.clear+.9)out.push({kind:'cleared',title:'WAVE CLEARED',y:70,alpha:Math.min(1,k/.15,(BEATS.clear+.9-k)/.3),prio:1,dur:BEATS.clear+.9});
  /* the prologue's one prompt at a time, keyed to the player's own bindings */
  if(step){const kb=w.save?.settings?.bindings||{},K=v=>v===' '?'SPACE':String(v||'').toUpperCase();
   const text={move:`MOVE: ${[kb.up,kb.left,kb.down,kb.right].map(K).join(' ')}`,attack:`TAP ${K(kb.attack)} TO ATTACK`,walk:'WALK RIGHT →',dodge:`DODGE: ${K(kb.dodge)}`,power:'USE YOUR POWER: 1',finish:'DEFEAT THE SCOUTS!'}[step];
@@ -68,7 +68,7 @@ export function stageBanners(w){if(!w?.level)return [];const f=w.flow,k=w.flowT|
  /* ready2fix-oct30 #8: on a phone (m-mode) the quote is a short wide card (one or two lines, high in the frame) for 2 s instead of a
     tall four-line box over the joystick side for 2.5 s */
  const phoneQ=!!globalThis.document?.documentElement?.classList?.contains('m-mode'),qFor=phoneQ?2:2.5;
- if(!step&&!danger&&q&&w.run&&w.run.time-q.at<qFor)out.push({kind:'quote',title:`“${q.text}”`,y:wood?60:44,alpha:Math.min(1,(qFor-(w.run.time-q.at))/.3),...(phoneQ?{phone:true}:{})});
+ if(!step&&!danger&&q&&w.run&&w.run.time-q.at<qFor)out.push({kind:'quote',title:`“${q.text}”`,y:wood?60:44,alpha:Math.min(1,(qFor-(w.run.time-q.at))/.3),prio:2,dur:qFor,...(phoneQ?{phone:true}:{})});
  /* Early Normal bosses also speak while the thumb arc is up. */
  if(wood||out.some(b=>b.kind==='quote'||b.step==='potion')){const obstacles=(w.enemies||[]).filter(e=>e.hp>0).map(e=>({left:e.x-(w.camX||0)-48,right:e.x-(w.camX||0)+48,top:enemyTop(e)-(w.camTop||0)-12,bottom:e.y-(w.camTop||0)+6}));for(const r of [...(w.tierFx?.current?.islands||[w.tierFx?.current?.safe]),...(w.enemies||[]).filter(e=>e.hp>0&&['tele','act'].includes(e.brain?.mode)).map(e=>e.brain.safeLane)].filter(Boolean)){/* the CLEAR word, where it is drawn (tier-fx.js clearLabelAt) */const at=clearLabelAt(w,r),x=at.x-(w.camX||0),y=at.y-3-(w.camTop||0);obstacles.push({left:x-20,right:x+20,top:y-8,bottom:y+8});}if(pl)obstacles.push({left:pl.x-(w.camX||0)-22,right:pl.x-(w.camX||0)+22,top:pl.y-(w.camTop||0)-54-(pl.z||0),bottom:pl.y-(w.camTop||0)+6});if(STAGE.camH>=240)obstacles.push({left:0,right:STAGE.camW,top:(w.layout?.floorTop??144)-(w.camTop||0),bottom:STAGE.camH});for(const b of out)if(b.kind==='quote'||b.step==='danger'||b.step==='potion'){b.obstacles=obstacles;if(b.step==='danger'&&pl)b.hardObstacles=[{left:pl.x-(w.camX||0)-22,right:pl.x-(w.camX||0)+22,top:pl.y-(w.camTop||0)-54-(pl.z||0),bottom:pl.y-(w.camTop||0)+6}];if(b.step==='danger')b.teleRects=teleRects(w);b.maxWidth=260;b.compact=true;b.mobileAvoid=true;if(b.phone&&b.kind==='quote'){b.maxWidth=STAGE.camW-16;b.limits=[300,240];b.y=30;}}}
 
@@ -80,7 +80,27 @@ export function stageBanners(w){if(!w?.level)return [];const f=w.flow,k=w.flowT|
  if(f==='rebirth'){const e=w.boss,rb=e?.rebirth,kk=k-REBIRTH.fall-.25;if(e&&rb&&kk>=0)out.push({kind:'boss',title:String(e.name).toUpperCase(),sub:String(rb.title||'SECOND LIFE').toUpperCase(),line:rb.line||'',
   slide:Math.min(1,Math.max(0,kk/.35)),open:Math.min(1,kk/.3),alpha:Math.min(1,(REBIRTH.card-k)/.3),enemy:e.key});}
  if(f==='victory'&&!w.cinematicTarget)out.push({kind:'victory',title:'VICTORY',alpha:Math.min(1,k/.3)});
- return out;}
+ return queueBanners(w,out);}
+/* kidfix-a-oct31 (kid-appeal playtest shot 02: the boss quote, "CALLS FOR BACKUP!" and "DEFEAT THE GUARDS!" stacked at the prologue boss):
+   the top-of-screen announcements (wave, cleared, quote: the banners with a prio) show ONE at a time. The one up keeps its own timing; one that
+   arrives meanwhile waits, highest prio first (the boss's rally 3, its quote 2, wave and cleared 1), and when its turn comes it plays on the
+   queue's clock for QUEUED_SHARE of its own time (total time stays close to before). One that has waited BANNER_STALE s is dropped. A sticky
+   instruction ("DEFEAT THE BACKUP FIRST") shows only while nothing else is up, and a danger warning (which already hides them) pauses all.
+   Pure over w.bannerQ; the same frame asked twice gives the same answer. */
+export const BANNER_STALE=3,QUEUED_SHARE=.8;
+export function queueBanners(w,out){const now=w.run?.time??w.time??0,Q=w.bannerQ&&w.bannerQ.level===w.level?.id?w.bannerQ:(w.bannerQ={level:w.level?.id,cur:null,wait:[],seen:new Map()});
+ const isA=b=>b.prio>0||b.sticky,cand=out.filter(b=>b.prio>0),sticky=out.filter(b=>b.sticky),id=b=>b.kind+':'+b.title,rest=out.filter(b=>!isA(b));
+ if(now<(Q.now??-1)-1e-9){Q.cur=null;Q.wait=[];Q.seen.clear();}Q.now=now;
+ for(const [k,t] of Q.seen)if(now-t>1&&!cand.some(b=>id(b)===k))Q.seen.delete(k);
+ for(const b of cand.filter(b=>!Q.seen.has(id(b))).sort((x,y)=>y.prio-x.prio)){const k=id(b);if(!Q.cur)Q.cur={id:k,start:now,live:true};else if(Q.cur.id!==k&&!Q.wait.some(x=>x.id===k))Q.wait.push({id:k,b,first:now});}
+ for(const b of cand)Q.seen.set(id(b),now);
+ if(rest.some(b=>b.step==='danger'))return rest;
+ const live=b=>cand.find(x=>id(x)===b);
+ if(Q.cur){const c=Q.cur;if(c.live){const b=live(c.id);if(!b)Q.cur=null;}else if(now-c.start>=c.dur)Q.cur=null;}
+ if(!Q.cur){Q.wait=Q.wait.filter(x=>now-x.first<=BANNER_STALE).sort((a,b)=>b.b.prio-a.b.prio||a.first-b.first);const n=Q.wait.shift();if(n){const b=live(n.id);Q.cur=b&&now-n.first<.05?{id:n.id,start:now,live:true}:{id:n.id,start:now,live:false,b:n.b,dur:(n.b.dur||2)*QUEUED_SHARE};}}
+ const c=Q.cur;if(!c)return [...rest,...sticky];
+ if(c.live)return [...rest,live(c.id)];
+ const a=now-c.start,b={...c.b,alpha:Math.max(0,Math.min(1,c.b.kind==='quote'?1:a/.2,(c.dur-a)/.3))};return [...rest,b];}
 /* combatpolish-oct28: the ground a telegraph covers this frame, in camera pixels (the boss's markers, as scenes/tier-fx.js softMarker
    draws them: a box's band grows by sqrt 2, a circle is an ellipse of r by .55 r; plus a hazard waiting to land and a tier hazard's zone).
    On a phone the danger banner treats them as hard obstacles, so a warning never sits on the thing it warns about. */

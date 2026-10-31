@@ -11,7 +11,8 @@
 // hero's 46 px matches the village's own figures, and nothing is resampled.
 import VILLAGE from '../assets/town/oakhaven-approaches-oct13.js';
 import {STAGE} from '../game/stage.js'; /* v2:ui-mobile */
-import {SUBJECTS} from '../game/data.js';
+import {SUBJECTS, PETS} from '../game/data.js';
+import {petThePet} from '../gfx/actors/pet-sprites.js';
 import ROOMS from '../assets/town/interiors-reviewed-oct13.js';
 import FX from '../assets/town/fx.js';
 import {shopById} from '../game/shops.js';
@@ -407,6 +408,7 @@ function optionFor(S, p) {
   if (act === 'library' && pr.subject) return {label: SUBJECT_LABEL[pr.subject] || pr.label || `Study ${pr.subject}`, panel: 'library', subject: pr.subject};
   if (act === 'library') return {label: `${pr.label || p.name || 'Study'}: the whole Library`, panel: 'library'};
   if (isShop(p)) return shopOption(S, p);
+  if (p.type === 'npc-spot' && TALK_PANEL[p.props?.key]) { const key = p.props.key, who = nameOf(key, p.name), panel = TALK_PANEL[key]; return {label: `${who}: ${PANEL_LABEL[panel]}`, panel, keeper: who, talk: {key, name: who}}; }
   if (act) return {label: act === 'guild' || act === 'alchemist' ? PANEL_LABEL[act] : pr.label || p.name || PANEL_LABEL[act], panel: act};
   if (p.type === 'npc-spot') { const key = p.props?.key, who = nameOf(key, p.name); return {label: `Talk to ${who}`, talk: {key, name: who, fallback: p.props?.talk}}; }
   if (p.type === 'interact') return {label: pr.label || p.name, say: pr.text ?? flavor(p.name)};
@@ -420,6 +422,9 @@ function facingBonus(p, x, y) {
   const dx = x - p.x, dy = y - (p.y - 12), len = Math.hypot(dx, dy) || 1;
   return (dx * dir[0] + dy * dir[1]) / len > .45 ? 8 : 0;
 }
+/* kidfix-a-oct31 (kid-appeal playtest: the smith said "use the counter on the right"): talking to a shopkeeper whose counter opens a
+   panel opens it (news he has still comes first, hubInteract) */
+export const TALK_PANEL = {brannoc_the_smith: 'smith'};
 function nearest(S, p) {
   let best = null;
   /* people: figures on the map and walkers on their routes (where they are right now). Every target is
@@ -440,8 +445,13 @@ function nearest(S, p) {
     const d = raw - (out ? 0 : facingBonus(p, q.x, q.y));
     if (raw < DOOR_REACH && (!best || d < best.d)) { const o = optionFor(S, q); if (o) best = {d, q, o}; }
   }
+  /* kidfix-a-oct31: with nothing else in reach and the hero standing still, E pets the companion at his side (gfx/actors/pet-sprites.js
+     petThePet: its own sit animation and code-drawn hearts). Lowest priority, so it never takes a door, a person or a shop */
+  const pet = !best && (H.still ?? 0) > PET_STILL && PETS.find(x => x.key === H.save?.pet);
+  if (pet) { const px = p.x - 22 * p.facing, py = p.y + 9; best = {d: 99, q: {x: px, y: py, sx: px, sy: py, mark: [px, py - 30], pet: true}, o: {label: `Pet ${pet.name}`, run: () => { petThePet(pet); H.petted = (H.petted | 0) + 1; }}}; }
   return best;
 }
+export const PET_STILL = 1;
 
 function fadeTo(mid) { if (!H.fade) H.fade = {t: 0, mid, done: false}; }
 function enter(room, door) {
@@ -547,6 +557,7 @@ export function hubUpdate(world, dt, input) {
   H.cam.x += (p.x - H.cam.x) * k; H.cam.y += (p.y - 20 - H.cam.y) * k;
   /* townchunk-oct28: where the camera is heading, for the streamer's look-ahead */
   if (k < 1 && dt > 0) { const a = Math.min(1, dt * 6); H.vx = (H.vx ?? 0) * (1 - a) + (H.cam.x - cx0) / dt * a; H.vy = (H.vy ?? 0) * (1 - a) + (H.cam.y - cy0) / dt * a; }
+  H.still = mx || my ? 0 : (H.still ?? 0) + dt;
   H.near = H.fade ? null : nearest(S, p);
   /* only narration with nobody to walk up to plays by itself; a person's beat waits for the talk key (personBeat) */
   if (!H.fade) { const b = beatDue('near', current(), p) ?? beatDue('enter', current()); if (b && !isPerson(b.speaker)) fire(b); }
@@ -751,7 +762,7 @@ export function hubNearestUsable() {
   return best;
 }
 /** Put the player at a spot in a room ('village' or a room key). */
-export function hubPlace(world, room, x, y) { H.player = world.player; H.fade = null; H.from = null; placeAt(world.player, scene(room), x, y); H.near = nearest(current(), world.player); }
+export function hubPlace(world, room, x, y) { H.player = world.player; H.fade = null; H.from = null; H.still = 0; placeAt(world.player, scene(room), x, y); H.near = nearest(current(), world.player); }
 
 /* ---------------------------------------------------------------------------------- */
 function prepWalker(m) {

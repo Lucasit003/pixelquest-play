@@ -1,6 +1,11 @@
 /* Applied arithmetic, independently derived in tests/field-mission.test.js.
    Optional field work awards gold once; it never changes academic mastery or retirement. */
+import {addPotions} from './potions.js';
 export const FIELD_REWARD=10;
+/* kidfix-a-oct31 (kid-appeal playtest: "+10 gold" felt like nothing): the delivery also packs FIELD_POTION health potion, through the
+   potion bag (game/potions.js addPotions: a full bag sells it for BAG.overflow gold). record.potion = 'added' | 'sold' says which, for the
+   delivery screen; a save rewarded before this keeps its record as it was (nothing is paid twice or back-paid) */
+export const FIELD_POTION=1;
 export const FIELD_TASKS={
  elementary:[
   {title:'Pack the supplies',prompt:'Two crates hold 4 apples each. Add 3 loose apples. How many apples can you send to the south gate?',hint:'Count both crates first: 4 + 4. Then add the 3 loose apples.',answer:11,explanation:'4 + 4 + 3 = 11 apples.',visual:[4,4,3]},
@@ -18,6 +23,6 @@ export const FIELD_TASKS={
   {title:'Plan within a budget',prompt:'A repair order has x planks at 3 gold each and (x + 4) nails at 2 gold each. With a budget of 48 gold, what is the largest whole-number value of x?',hint:'Use 3x + 2(x + 4) ≤ 48 and collect the x terms.',answer:8,explanation:'3x + 2x + 8 ≤ 48 gives 5x ≤ 40, so x ≤ 8. At x = 8, the cost is 24 + 24 = 48 gold.'}
  ]};
 export const fieldStage=s=>['middle','high'].includes(s.schoolMode)?s.schoolMode:'elementary';
-export function cleanFieldMission(value){return {at:Object.fromEntries(Object.keys(FIELD_TASKS).map(k=>[k,Math.max(0,Math.min(3,Math.floor(Number(value?.at?.[k])||0)))])),rewarded:value?.rewarded===true};}
-export function fieldMission(save){const stage=fieldStage(save),record=cleanFieldMission(save.fieldMission),at=record.at[stage];return {stage,at,task:FIELD_TASKS[stage][at]||null,done:at===3,rewarded:record.rewarded};}
-export function answerFieldMission(save,input){const state=fieldMission(save),text=String(input).trim();if(!state.task||!text||!/^[-+]?\d+(\.\d+)?$/.test(text)||Number(text)!==state.task.answer)return {ok:false,gold:0};const record=cleanFieldMission(save.fieldMission);record.at[state.stage]++;const gold=record.at[state.stage]===3&&!record.rewarded?FIELD_REWARD:0;if(gold){record.rewarded=true;save.gold=(Number(save.gold)||0)+gold;}save.fieldMission=record;return {ok:true,gold,done:record.at[state.stage]===3};}
+export function cleanFieldMission(value){return {at:Object.fromEntries(Object.keys(FIELD_TASKS).map(k=>[k,Math.max(0,Math.min(3,Math.floor(Number(value?.at?.[k])||0)))])),rewarded:value?.rewarded===true,...(value?.rewarded===true&&['added','sold'].includes(value?.potion)?{potion:value.potion}:{})};}
+export function fieldMission(save){const stage=fieldStage(save),record=cleanFieldMission(save.fieldMission),at=record.at[stage];return {stage,at,task:FIELD_TASKS[stage][at]||null,done:at===3,rewarded:record.rewarded,potion:record.potion||null};}
+export function answerFieldMission(save,input){const state=fieldMission(save),text=String(input).trim();if(!state.task||!text||!/^[-+]?\d+(\.\d+)?$/.test(text)||Number(text)!==state.task.answer)return {ok:false,gold:0};const record=cleanFieldMission(save.fieldMission);record.at[state.stage]++;const gold=record.at[state.stage]===3&&!record.rewarded?FIELD_REWARD:0;let potion=null;if(gold){record.rewarded=true;save.gold=(Number(save.gold)||0)+gold;potion=addPotions(save,FIELD_POTION);record.potion=potion.added?'added':'sold';}save.fieldMission=record;return {ok:true,gold,potion,done:record.at[state.stage]===3};}
