@@ -27,8 +27,12 @@ export const SHRINE_ART='ui/skin/run/blessing-shrine.png',SEAL_ART='ui/skin/run/
    (scenes/combat.js run.potionHeal), so drinking never costs Skill points (VISION: potions are never penalised). */
 export const netLost=r=>Math.max(0,(r?.taken||0)-(r?.potionHeal||0));
 /* What a wave retry keeps from the run it retries (falls, time so far, finds), so a retried win is graded as one run. */
-export function runCarry(w,id,opts){if(!(Number.isInteger(opts?.fromWave)&&w.level?.id===id&&w.run&&w.draft))return null;const r=w.run;
- return {guaranteed:[...(r.guaranteed||[])],bossPaid:[...(r.bossPaid||[])],bossFirst:[...(r.bossFirst||[])],cacheEssence:r.cacheEssence|0,draft:w.draft,found:[...(w.found||[])],knockouts:(r.knockouts|0)+1,carry:(r.carry||0)+(r.time||0),killCarry:(r.killCarry||0)+(r.killXP||0),elites:r.elites|0,lost:(r.lostCarry||0)+netLost(r)/Math.max(1,w.player?.maxHp||1),drank:!!r.drank,mimic:!!r.mimic,blessing:!!r.blessing,seal:!!r.seal,essence:r.essence|0,mimicDone:!w.mimic||w.mimic.state!=='sleep'};}
+/* owner decision 31 Oct (GAME_READINESS_OCT30 #4): a retry is timed and graded from the fight it retries. runTick marks the run's time
+   and damage when each fight starts; the retry carries the run up to that mark, so the cleared waves still count but the lost try at
+   this fight does not (the fall itself still costs KO_COST and blocks S+ and Legendary's third star). No mark: the whole try, as before. */
+export function runMark(w){const r=w.run;if(!r||w.ended||w.arena||!['wave','bossintro','boss'].includes(w.flow)||r.mark?.wave===(w.wave|0))return;r.mark={wave:w.wave|0,time:r.time||0,taken:r.taken||0,potionHeal:r.potionHeal||0};}
+export function runCarry(w,id,opts){if(!(Number.isInteger(opts?.fromWave)&&w.level?.id===id&&w.run&&w.draft))return null;const r=w.run,mk=r.mark&&r.mark.wave===Math.min(w.wave|0,w.layout?.arenas?.length??0)?r.mark:null;
+ return {guaranteed:[...(r.guaranteed||[])],bossPaid:[...(r.bossPaid||[])],bossFirst:[...(r.bossFirst||[])],cacheEssence:r.cacheEssence|0,draft:w.draft,found:[...(w.found||[])],knockouts:(r.knockouts|0)+1,carry:(r.carry||0)+(mk?mk.time:(r.time||0)),killCarry:(r.killCarry||0)+(r.killXP||0),elites:r.elites|0,lost:(r.lostCarry||0)+netLost(mk||r)/Math.max(1,w.player?.maxHp||1),drank:!!r.drank,mimic:!!r.mimic,blessing:!!r.blessing,seal:!!r.seal,essence:r.essence|0,mimicDone:!w.mimic||w.mimic.state!=='sleep'};}
 /* After the World set its level, layout and run: the draft, the live secrets, the shrine and the Mimic. */
 export function runStart(w,l,k,prev){const s=w.save;w.draft=null;w.shrine=null;w.mimic=null;w.blessing=null;w.seal=null;
  const saved=new Set(s.levels?.[l.id]?.secrets||[]);w.paid=saved;
@@ -76,7 +80,7 @@ export function runKill(w,e){if(!w.run||!w.draft)return;if(e.elite||e.mod)w.run.
   w.run.secrets.push({id:m.id,kind:'essence',n:3,label:'Mimic beaten: 3 Essence'});w.events.toast?.('Chest monster beaten! +3 Essence for gear upgrades.');}}
 /* ---- each frame: the Mimic wakes with a clear warning (a "!", a shake, a second before it moves), never by surprise ---- */
 export const MIMIC_WAKE=1.2,MIMIC_RANGE=46;
-export function runTick(w,dt){const m=w.mimic;if(!m||w.ended||!w.level)return;const p=w.player;
+export function runTick(w,dt){runMark(w);const m=w.mimic;if(!m||w.ended||!w.level)return;const p=w.player;
  if(m.state==='sleep'){if(Math.hypot(p.x-m.x,(p.y-m.y)*1.5)<MIMIC_RANGE&&(w.flow==='walk'||w.flow==='go')){m.state='wake';m.t=0;w.text?.('!',m.x,m.y-44,'#ffd27a',true);w.events.toast?.('Mimic! This chest is a monster.');sfx('hurt');}}
  else if(m.state==='wake'){m.t+=dt;if(m.t>=MIMIC_WAKE){const e=makeEnemy('mimic',{tier:w.tier?.()||1});e.mimic=true;const at=w.spawn(e,m.x,m.y);if(at){at.facing=p.x<m.x?-1:1;at.cool=1.4;}m.state='fight';}}}
 /* ---- drawing: depth-sorted with the actors (World.enemyLayer) ---- */

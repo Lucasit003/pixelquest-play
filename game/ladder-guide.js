@@ -15,7 +15,7 @@ const plain=s=>s.replaceAll('-',' ');
 const sentence=s=>plain(s.charAt(0).toUpperCase()+s.slice(1))+'.';
 export function mechanicPreview(l,k){const r=encounterFor(l,k);if(!r){/* playtest ch2: a paced Normal boss (chapters 2-3) opens with and teaches its signature move, so the card names that one, not the first move in its list */const move=(k==='normal'&&NORMAL_SEQUENCES[l.id]?.[0])||ENEMY_TYPES[l.boss]?.attacks?.[0]?.name;return {changes:move?`Watch for the ${plain(move)}.`:'Meet the enemies and boss.',answer:'Move out of the warnings. Attack in the gaps.',goal:move?`watch for the ${plain(move)}`:'watch the boss warnings'};}
  const [name,answer]=HAZARDS[r.hazard.kind],moves=r.sequence?`${sentence(r.sequence.call)} Then ${plain(r.sequence.then)}.`:l.id==='e1'?'Grubnak calls guards.':"The Bog King jumps at you.";
- return {changes:`${name}. ${k==='legendary'?'Shorter warnings. ':''}${moves}`,answer:sentence(answer),goal:answer};}
+ return {changes:`${name}. ${k==='legendary'?'Shorter warnings. Enemies grow to match your level. ':''}${moves}`,answer:sentence(answer),goal:answer};}
 /* stargate-oct29 (midgame-oct29 finding 2): where to earn the stars a star gate still needs. An uncleared open tier (up to 3 new
    stars) comes before a replay for par; then the most stars still available, the easier tier, and the pad nearest the gate: the
    nearest chapter, then the shortest map distance to that chapter's road toward the gate (its edge gate, or the gate pad itself).

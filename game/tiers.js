@@ -78,7 +78,15 @@ export const LEGENDARY_BOSS_HP={m4:.8,v4:.7,e6:.8,m5:.85,v3:.75,v7:.75};
 export const tierBossTrim=(id,k,boss)=>!boss?1:tierKey(k)==='normal'?bossTrim(id,k,boss):(tierKey(k)==='heroic'?HEROIC_BOSS_HP:LEGENDARY_BOSS_HP)[id]||1;
 export const rampOf=l=>l&&l.kind==='level'&&!l.gentle?NORMAL_RAMP:{hp:1,atk:1};
 /* What a level's enemies carry on a tier, before the Settings assist: {hp, atk}. Arenas and towns are never tiered. */
-export const tierScale=(l,k)=>{if(!l||l.kind!=='level')return {hp:1,atk:1};const t=tierOf(k),r=rampOf(l);return {hp:r.hp*t.hp,atk:r.atk*t.atk};};
+/* owner decision 31 Oct (GAME_READINESS_OCT30 #12, Legendary soft when over-levelled): on Legendary, foes grow with a hero above the
+   level's advice level by more than `grace`, +5% health and +4% damage a level, up to 10 levels. The grace is the band the game already
+   calls "near the recommended level" (tests/lategame-oct27.test.js: the post-game Veilmoor route sits up to 4 above; with grace 0 or 2
+   a smart Mage fell 4 times on Legendary v2 or v5 there), so only a hero who has clearly outgrown a level (an Elderwood revisit at 20+)
+   meets bigger foes. Rewards and kill XP keep the level's own
+   tier, so an over-levelled replay pays no more. */
+export const OVER_LEVEL={legendary:{hp:.05,atk:.04,grace:4,cap:10}};
+export const overLevels=(l,k,hero)=>{const o=OVER_LEVEL[tierKey(k)];return o&&l?.kind==='level'?Math.min(o.cap,Math.max(0,(hero|0)-adviceLevel(l,k)-o.grace)):0;};
+export const tierScale=(l,k,hero=0)=>{if(!l||l.kind!=='level')return {hp:1,atk:1};const t=tierOf(k),r=rampOf(l),o=OVER_LEVEL[tierKey(k)],d=overLevels(l,k,hero);return {hp:r.hp*t.hp*(1+(o?.hp||0)*d),atk:r.atk*t.atk*(1+(o?.atk||0)*d)};};
 /* ---- modifiers: one per elite, shown by a tinted aura and a name prefix ("Swift Goblin") ---------------------------- */
 export const MODS={
  shielded:{key:'shielded',label:'Shielded',color:'#7fc4ff',wards:2,text:'The first hits are absorbed.'},
