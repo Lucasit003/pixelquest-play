@@ -59,7 +59,8 @@ function setState(e,s){if(!hasState(e,s))s=hasState(e,'idle')?'idle':s;if(e.stat
 /* ---------- world helpers ---------- */
 export function bounds(w){if(w.bounds)return w.bounds();
  if(typeof w.encounter==='function'&&w.zone!=='town'){const y=w.encounter().y;return {x0:50,x1:650,y0:y-100,y1:y+130};}
- return {x0:20,x1:(w.stageW||STAGE.segment*3)-20,y0:STAGE.floorTop+4,y1:STAGE.floorBottom-2};}
+ /* tallfields-oct31: the level's own band (w.layout), STAGE's only without one */
+ const L=w.layout;return {x0:20,x1:(w.stageW||STAGE.segment*3)-20,y0:(L?.floorTop??STAGE.floorTop)+4,y1:(L?.floorBottom??STAGE.floorBottom)-2};}
 function fxList(w){return w.enemyFx||(w.enemyFx=[]);}
 const living=w=>w.enemies.filter(o=>o.hp>0);
 const isAttacking=o=>o.brain&&(o.brain.mode==='tele'||o.brain.mode==='act');
@@ -283,7 +284,7 @@ function step(e,w,dt,mover){_world=w;const b=brain(e,w);
  const B=bounds(w);e.x=clampN(e.x,B.x0,B.x1);e.y=clampN(e.y,B.y0,B.y1);
  /* On a belt-scroll stage the camera shows y from viewTop down. A tall boss walking to the far edge of the floor would lose
     its head off the top of the view, so tall actors keep to the near part of the band (their own top stays on screen). */
- if(w.viewTop!==undefined||typeof w.encounter!=='function'){const top=w.viewTop??(STAGE.height-STAGE.viewH),h=(metaOf(e.sprite)?.height||40)*(e.scale||1)+(e.z||0);e.y=Math.max(e.y,Math.min(B.y1,top+h*.92));}}
+ if(w.viewTop!==undefined||typeof w.encounter!=='function'){const top=w.viewTop??(w.layout?Math.max(0,w.layout.floorBottom-(STAGE.viewH-STAGE.hudBottom)):STAGE.height-STAGE.viewH),h=(metaOf(e.sprite)?.height||40)*(e.scale||1)+(e.z||0);e.y=Math.max(e.y,Math.min(B.y1,top+h*.92));}}
 export const ENEMY_AI=Object.fromEntries(Object.entries(MOVERS).map(([k,m])=>[k,(e,w,dt)=>step(e,w,dt,m)]));
 /* combat.js's World.enemyAI seam: drive a sprite enemy once its atlas has loaded (until then, and in node tests without
    atlases, the built-in AI keeps it moving). Returns true when this module handled the enemy. */

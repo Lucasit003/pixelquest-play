@@ -103,4 +103,11 @@ export function levelGeometry(level){
 /* The camera's top edge: a band that fits above the hotbar is framed once; a taller one follows the hero. */
 /* v2:ui-mobile */export function setView(w=480,h=270){STAGE.camW=Math.max(64,Math.min(480,Math.round(w)));STAGE.camH=Math.max(64,Math.min(270,Math.round(h)));return {w:STAGE.camW,h:STAGE.camH};}
 export function camTopFor(geo,y){const H=/* v2:ui-mobile */STAGE.camH,maxTop=Math.max(0,(geo?.height||H)-H),vis=H-(/* camface-oct28: phones (ui/mobile.js measurePads) */STAGE.padB??STAGE.hudBottom);if(!geo)return 0;
- const fixed=geo.floorBottom-geo.floorTop<=vis-20;return Math.max(0,Math.min(maxTop,Math.round(fixed?geo.floorBottom-vis:y-vis/2)));}
+ const fixed=geo.floorBottom-geo.floorTop<=vis-20;if(!fixed)return Math.max(0,Math.min(maxTop,Math.round(y-vis/2)));
+ /* tallfields-oct31: a fixed frame puts the band's near edge at the bottom of the visible strip. A taller band on a phone camera
+    then leaves a hero at the far edge with his head (46 px) under the top HUD. Such a frame moves up by half that shortfall (head
+    room wanted: 30 px), never so far that the near edge leaves the screen: both edges stay in view, the frame stays fixed (a frame
+    that slid with the hero's depth stepped against the camface/campad pads when it rounded). Desktop views and 96-unit bands keep
+    the fixed frame exactly (tests/campad-oct28 and camface-oct28 pin those). */
+ let top=geo.floorBottom-vis;const room=geo.floorTop-46-top;if(geo.floorBottom-geo.floorTop>STAGE.floorBottom-STAGE.floorTop&&room<30)top-=Math.max(0,Math.min(top-(geo.floorBottom-H),Math.round((30-room)/2)));
+ return Math.max(0,Math.min(maxTop,Math.round(top)));}

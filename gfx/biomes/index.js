@@ -50,6 +50,8 @@ export function preloadBiome(key) {
 }
 export const biomeReady = key => !!MAPS[biomeKey(key)];
 export const biomeMap = key => MAPS[biomeKey(key)] || null;
+/* [floorTop, floorBottom] of a loaded biome map (STAGE's band when it is not loaded or predates per-map bands) */
+export const biomeBand = key => bandOf(MAPS[biomeKey(key)]);
 
 /* ---------- view ---------- */
 export function stageView(o = {}, c = null) {
@@ -62,7 +64,7 @@ function begin(c, o) {
   c.save();
   const m = c.getTransform ? c.getTransform() : null;
   /* an identity transform means the caller has not applied the camera (a camera at camX 0, zoom 1, top 0 is identity too) */
-  if (m && m.a === 1 && m.b === 0 && m.c === 0 && m.d === 1 && m.e === 0 && m.f === 0 && (o.camX || (STAGE.zoom || 1) !== 1 || STAGE.camTop)) applyStageTransform(c, o);
+  if (m && m.a === 1 && m.b === 0 && m.c === 0 && m.d === 1 && m.e === 0 && m.f === 0 && (o.camX || o.camTop || (STAGE.zoom || 1) !== 1 || STAGE.camTop)) applyStageTransform(c, o);
   c.imageSmoothingEnabled = false; c.globalAlpha = 1; c.globalCompositeOperation = 'source-over';
   return stageView(o, c);
 }
@@ -99,7 +101,9 @@ function drawSprite(c, D, I, s, ms, motion, top) {
   if (fl & 3) { c.save(); c.translate(rx + (fl & 1 ? rw : 0), ry + (fl & 2 ? rh : 0)); c.scale(fl & 1 ? -1 : 1, fl & 2 ? -1 : 1); c.drawImage(page, sx, sy, e[3], e[4], 0, 0, rw, rh); c.restore(); }
   else c.drawImage(page, sx, sy, e[3], e[4], rx, ry, rw, rh);
 }
-const inBand = s => s[5] > STAGE.floorTop + 2 && s[5] <= STAGE.floorBottom;
+/* tallfields-oct31: the drawn map's own walkable band (baked from its TMX properties), STAGE's for an older bake */
+const bandOf = D => [+D?.props?.floorTop || STAGE.floorTop, +D?.props?.floorBottom || STAGE.floorBottom];
+const inBandOf = D => { const [ft, fb] = bandOf(D); return s => s[5] > ft + 2 && s[5] <= fb; };
 /* 25 Oct (phone, followups2): the phone camera may look past an arena's end so the hero stays clear of the touch
    buttons. Past the map's edge the view used to show the flat fallback colour as a strip; instead the edge of the map is
    mirrored outward (the same baked art, reflected at the edge) and fades softly into shade, so the end reads as the
@@ -119,6 +123,7 @@ export function drawStage(c, o = {}) {
   const v = begin(c, o), ms = (o.motion === false ? 0 : o.t || 0) * 1000;
   c.fillStyle = def?.fallback || '#253d32'; c.fillRect(v.camX - 2, v.top - 2, v.W + 4, v.H + 4);
   if (D && I) {
+    const FB = bandOf(D)[1], inBand = inBandOf(D);
     drawGround(c, D, I, v, ms, o.motion);
     /* critters live on the far verge (above the band), so they sort in among the far-edge sprites; a bird that takes
        off is drawn after them, still behind every actor */
@@ -126,10 +131,10 @@ export function drawStage(c, o = {}) {
     const still = o.motion === false, crit = o.critters === false ? [] : (stepCritters(key, o.hero, o.t || 0, !still), critterDraws(c, key, o.t || 0, !still, [v.camX, v.top, v.camX + v.W, v.top + v.H]));
     const ground = crit.filter(k => !k.air).sort((a, b) => a.y - b.y);
     let gi = 0;
-    for (const i of visibleSprites(D, v)) { const s = D.sprites[i]; if (s[5] > STAGE.floorBottom) continue; if (o.interleave && inBand(s)) continue; while (gi < ground.length && ground[gi].y < s[5]) ground[gi++].draw(); drawSprite(c, D, I, s, ms, o.motion, v.top); }
+    for (const i of visibleSprites(D, v)) { const s = D.sprites[i]; if (s[5] > FB) continue; if (o.interleave && inBand(s)) continue; while (gi < ground.length && ground[gi].y < s[5]) ground[gi++].draw(); drawSprite(c, D, I, s, ms, o.motion, v.top); }
     while (gi < ground.length) ground[gi++].draw();
     for (const k of crit) if (k.air) k.draw();
-    for (const g of edgeGaps(v, o.width || D.width)) mirrored(c, g, mv => { drawGround(c, D, I, mv, ms, o.motion); for (const i of visibleSprites(D, mv)) { const sp = D.sprites[i]; if (sp[5] <= STAGE.floorBottom && !(o.interleave && inBand(sp))) drawSprite(c, D, I, sp, ms, o.motion, mv.top); } });
+    for (const g of edgeGaps(v, o.width || D.width)) mirrored(c, g, mv => { drawGround(c, D, I, mv, ms, o.motion); for (const i of visibleSprites(D, mv)) { const sp = D.sprites[i]; if (sp[5] <= FB && !(o.interleave && inBand(sp))) drawSprite(c, D, I, sp, ms, o.motion, mv.top); } });
   }
   c.restore();
 }
@@ -138,15 +143,15 @@ export function stageEntities(c, o = {}) {
   const key = biomeKey(o.biome || o.level?.biome), D = MAPS[key], I = IMG[key];
   if (!D || !I) return [];
   const v = stageView(o, c), ms = (o.motion === false ? 0 : o.t || 0) * 1000;
-  return visibleSprites(D, v).map(i => D.sprites[i]).filter(inBand).map(s => ({y: s[5], draw: () => drawSprite(c, D, I, s, ms, o.motion, v.top)}));
+  return visibleSprites(D, v).map(i => D.sprites[i]).filter(inBandOf(D)).map(s => ({y: s[5], draw: () => drawSprite(c, D, I, s, ms, o.motion, v.top)}));
 }
 export function drawStageForeground(c, o = {}) {
   const key = biomeKey(o.biome || o.level?.biome), def = BIOMES[key], D = MAPS[key], I = IMG[key];
-  const v = begin(c, o), ms = (o.motion === false ? 0 : o.t || 0) * 1000;
-  if (D && I) for (const i of visibleSprites(D, v)) { const s = D.sprites[i]; if (s[5] > STAGE.floorBottom) drawSprite(c, D, I, s, ms, o.motion, v.top); }
+  const v = begin(c, o), ms = (o.motion === false ? 0 : o.t || 0) * 1000, FB = bandOf(D)[1];
+  if (D && I) for (const i of visibleSprites(D, v)) { const s = D.sprites[i]; if (s[5] > FB) drawSprite(c, D, I, s, ms, o.motion, v.top); }
   /* past the map's edge: the mirrored near-verge sprites, then a soft fade into shade toward the screen's side */
   for (const g of edgeGaps(v, o.width || D?.width)) {
-    if (D && I) mirrored(c, g, mv => { for (const i of visibleSprites(D, mv)) { const sp = D.sprites[i]; if (sp[5] > STAGE.floorBottom) drawSprite(c, D, I, sp, ms, o.motion, mv.top); } });
+    if (D && I) mirrored(c, g, mv => { for (const i of visibleSprites(D, mv)) { const sp = D.sprites[i]; if (sp[5] > FB) drawSprite(c, D, I, sp, ms, o.motion, mv.top); } });
     const x0 = g.a, x1 = g.a + g.side * g.gap;
     if (c.createLinearGradient) { const f = c.createLinearGradient(x0, 0, x1, 0); f.addColorStop(0, 'rgba(8,12,10,0)'); f.addColorStop(1, 'rgba(8,12,10,.62)'); c.fillStyle = f; c.fillRect(Math.min(x0, x1), v.top, g.gap, v.H); }
   }

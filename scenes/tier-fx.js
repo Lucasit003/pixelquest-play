@@ -21,7 +21,10 @@ export function escapeRoute(w,m,warning){m={...m,x0:Math.min(m.x0,m.x1),x1:Math.
   if(clear)return {x0:m.x0,x1:m.x1,y0:y-24,y1:y+24};}
  /* A central patch can also be walked past horizontally. Check a full 48-unit lane and the approach segment. */
  const xs=[];for(let x=Math.max(B.x0+(w.lock?78:24),(w.camX||0)+24);x<=Math.min(B.x1-(w.lock?78:24),(w.camX||0)+STAGE.camW-24);x+=2)if(x+24<m.x0||x-24>m.x1)xs.push(x);xs.sort((a,b)=>Math.abs(a-p.x)-Math.abs(b-p.x));for(const x of xs){if(Math.abs(x-p.x)>speed*Math.max(0,warning-REACTION)+1e-9)continue;let clear=true;for(let xx=x-24;xx<=x+24;xx+=4)for(let y=B.y0;y<=B.y1;y+=4)if(blocked(xx,y))clear=false;const n=Math.ceil(Math.abs(x-p.x)/4);for(let i=0;i<=n;i++)if(blocked(p.x+(x-p.x)*i/Math.max(1,n),p.y))clear=false;if(clear)return {x0:x-24,x1:x+24,y0:B.y0,y1:B.y1};}return null;}
-export function hazardMarker(w,h,side=0){const B=w.bounds(),cam=w.camX||0,x0=Math.max(B.x0+54,cam+24),x1=Math.min(B.x1-54,cam+STAGE.camW-24),y=w.level?.encounter?Math.max(B.y0+h.band,Math.min(B.y1-h.band,w.player.y+(w.level.encounter.readable&&!['stones','roots'].includes(h.kind)?(side%2?4:-4):0))):(side?B.y1-h.band:B.y0+h.band);
+export function hazardMarker(w,h,side=0){const B=w.bounds(),cam=w.camX||0,x0=Math.max(B.x0+54,cam+24),x1=Math.min(B.x1-54,cam+STAGE.camW-24);let y=w.level?.encounter?Math.max(B.y0+h.band,Math.min(B.y1-h.band,w.player.y+(w.level.encounter.readable&&!['stones','roots'].includes(h.kind)?(side%2?4:-4):0))):(side?B.y1-h.band:B.y0+h.band);
+ /* tallfields-oct31: on a band taller than STAGE's a small camera may not show both edges at once; an edge marker then sits at the
+    edge of the visible strip instead of being skipped (96-unit bands keep their placement exactly) */
+ if(!w.level?.encounter&&w.layout&&w.layout.floorBottom-w.layout.floorTop>STAGE.floorBottom-STAGE.floorTop)y=side?Math.min(y,(w.camTop||0)+STAGE.camH-STAGE.hudBottom-h.band):Math.max(y,(w.camTop||0)+h.band);
  if(x1-x0<120||y-h.band<(w.camTop||0)||y+h.band>(w.camTop||0)+STAGE.camH-STAGE.hudBottom)return null;
  if(w.level?.encounter?.veilmoor)return veilMarker(w,h,side,{x0,x1,y,B});
  if(w.level?.encounter?.emberkeep)return emberMarker(w,h,side,{x0,x1,y,B});

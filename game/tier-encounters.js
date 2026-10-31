@@ -11,7 +11,10 @@ const woodRow=(pair,mod,kind,boss,hp,call,then,legendary=false)=>({...pilotRow(p
 /* Emberkeep shares the checked warning vocabulary, but owns its terrain and boss scripts. */
 const emberRow=(pair,mod,kind,boss,hp,call,then,legendary=false)=>({...woodRow(pair,mod,kind,boss,hp,call,then,legendary),elderwood:false,emberkeep:true,hazard:{kind,warning:kind==='islands'?2.4:legendary?1.8:2,active:.65,rest:kind==='hammers'?7:legendary?3.5:4.5,alternate:true,band:kind==='hammers'?16:8,width:kind==='hammers'?56:88}});
 /* Veilmoor uses delayed positions and visible target order, with the same walking escape contract. */
-const veilRow=(pair,mod,kind,boss,hp,call,then,legendary=false)=>({...woodRow(pair,mod,kind,boss,hp,call,then,legendary),elderwood:false,veilmoor:true,hazard:{kind,warning:legendary?1.8:2,active:.65,rest:legendary?4:5,alternate:true,band:kind==='tide'?8:14,width:56,...(kind==='tide'?{slow:.25,damage:0}:{})}});
+/* tallfields-oct31: the band is 128 tall now (was 96) and Legendary Veilmoor got easier on it (sim, same seeds: deaths -22/-32%,
+   damage -6/-13%, mostly v3's echoes). Its patch telegraphs are sized to the taller band, 64 wide and 16 deep (were 56 and 14),
+   and come round a little sooner (rest 3.5 s, was 4). Tides, warnings and Heroic are unchanged. */
+const veilRow=(pair,mod,kind,boss,hp,call,then,legendary=false)=>({...woodRow(pair,mod,kind,boss,hp,call,then,legendary),elderwood:false,veilmoor:true,hazard:{kind,warning:legendary?1.8:2,active:.65,rest:legendary?3.5:5,alternate:true,band:kind==='tide'?8:legendary?16:14,width:kind!=='tide'&&legendary?64:56,...(kind==='tide'?{slow:.25,damage:0}:{})}});
 export const ENCOUNTERS=freeze({
  e1:{heroic:pilotRow(['goblin','orc-rogue'],'shielded','ambush','goblin-king'),legendary:pilotRow(['goblin','orc-rogue'],'shielded','ambush','goblin-king',true)},
  e2:{heroic:pilotRow(['slime','flying-eye'],'splitting','bubble','slime-king'),legendary:pilotRow(['slime','flying-eye'],'splitting','bubble','slime-king',true)},
