@@ -29,7 +29,7 @@ export {openCredits} from './credits-screen.js';
 export {abilityIcon,icon} from './icons.js';
 export {levelUpBanner,areaTitle,banner,transition,fadeIn,fadeOut,irisOpen,irisClose,drawDamageText,celebrate} from './juice.js';
 export {openSheet,closeSheet,sheetOpen} from './sheet.js';
-export {say,dialogueOpen,PORTRAITS,portraitFor} from './dialogue.js';
+export {say,dialogueOpen,talkPress,talkJustClosed,PORTRAITS,portraitFor} from './dialogue.js';
 export {stageBanner,installStageBanners} from './stage-banners.js';
 export {loadCanvasUI,drawPixelText,measurePixelText,drawPanel,drawSkin} from './canvas-ui.js';
 

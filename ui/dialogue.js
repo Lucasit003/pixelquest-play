@@ -23,8 +23,15 @@ export const PORTRAITS=['archivist','quartermaster','smith','trader','fishmonger
 const BY_NAME=[[/archivist/i,'archivist'],[/quartermaster/i,'quartermaster'],[/brannoc|smith/i,'smith'],[/netta/i,'fishmonger'],[/old deri|fisher/i,'fisher'],[/trader|vendor/i,'trader']];
 export function portraitFor(name,hint){if(hint&&(PORTRAITS.includes(hint)||CLASSES[hint]||/[/.]/.test(hint)))return hint;for(const [re,id] of BY_NAME)if(re.test(String(name||'')))return id;return null;}
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let world=null,queue=Promise.resolve(),open=false;
+let world=null,queue=Promise.resolve(),open=false,talking=null,talkClosedAt=-1e9;
 export const dialogueOpen=()=>open;
+/* ready2fix-oct30 #1: a conversation the player started (E at a villager, {talk:true}) owns E / Enter / Space until it ends, even with
+   the villager still in reach, and the press that closes it never reaches the game: main.js interact() asks talkPress() first (the
+   touch Interact button advances the box) and ignores interact for a moment after talkJustClosed(), so the closing press never
+   starts the same talk again. */
+const clock=()=>globalThis.performance?.now?.()??Date.now();
+export const talkPress=()=>{if(!talking)return false;talking();return true;};
+export const talkJustClosed=(ms=400)=>clock()-talkClosedAt<ms;
 export function setDialogueWorld(w){world=w;}
 const later=(f,ms)=>{const t=setTimeout(f,ms);t?.unref?.();return t;};
 function box(){
@@ -41,7 +48,7 @@ function setPortrait(el,p){
  const img=d.createElement('img');img.alt='';img.src=PORTRAITS.includes(p)?new URL(`./portraits/${p}.png`,import.meta.url).href:p;host.dataset.kind='pixel';host.appendChild(img);
 }
 function normal(lines,o){return (Array.isArray(lines)?lines:[lines]).map(l=>typeof l==='string'?{text:l,speaker:o.speaker,portrait:o.portrait}:{speaker:o.speaker,portrait:o.portrait,...l});}
-function run(lines,passive=false){
+function run(lines,passive=false,talk=false){
  return new Promise(resolve=>{
   const d=globalThis.document;if(!d){resolve();return;}
   const el=box(),text=el.querySelector('.dlg-text'),name=el.querySelector('.dlg-name');
@@ -68,11 +75,11 @@ function run(lines,passive=false){
   /* passive lines take E / Enter / Space (and never pass them on to the game); every other key, movement
      included, stays with the game */
   /* ...unless a door, sign or villager is in reach: then E is the game's, and the ambient line steps aside */
-  const onPassiveKey=e=>{const k=e.key;/* Escape closes the line first; a second Escape pauses (playtest 14 Oct pass 2) */if(k==='Escape'){e.preventDefault();e.stopImmediatePropagation();close();return;}if(!(k==='e'||k==='E'||k==='Enter'||k===' '))return;if(d.querySelector('#prompt')?.textContent.trim()){close();return;}e.preventDefault();e.stopImmediatePropagation();if(!e.repeat)press();};
+  const onPassiveKey=e=>{const k=e.key;if(talk&&(k==='e'||k==='E'||k==='Enter'||k===' ')){e.preventDefault();e.stopImmediatePropagation();if(!e.repeat)press();return;}/* Escape closes the line first; a second Escape pauses (playtest 14 Oct pass 2) */if(k==='Escape'){e.preventDefault();e.stopImmediatePropagation();close();return;}if(!(k==='e'||k==='E'||k==='Enter'||k===' '))return;if(d.querySelector('#prompt')?.textContent.trim()){close();return;}e.preventDefault();e.stopImmediatePropagation();if(!e.repeat)press();};
   const onPointer=e=>{e.preventDefault();e.stopPropagation();press();};
   let close=()=>{clearTimeout(timer);clearTimeout(auto);(globalThis.window||globalThis).removeEventListener?.('keydown',onKey,true);(globalThis.window||globalThis).removeEventListener?.('keydown',onPassiveKey,true);el.removeEventListener('pointerdown',onPointer);
-   el.classList.remove('show','done');el.hidden=true;open=false;d.querySelector('#toast.held')?.classList.remove('held');if(!passive)d.documentElement.classList.remove('dlg-blocking');if(world&&prevPaused!==undefined)world.paused=prevPaused;resolve();};
-  (globalThis.window||globalThis).addEventListener?.('keydown',passive?onPassiveKey:onKey,true);el.addEventListener('pointerdown',onPointer);
+   el.classList.remove('show','done');el.hidden=true;open=false;if(talk){talking=null;talkClosedAt=clock();}d.querySelector('#toast.held')?.classList.remove('held');if(!passive)d.documentElement.classList.remove('dlg-blocking');if(world&&prevPaused!==undefined)world.paused=prevPaused;resolve();};
+  if(talk)talking=press;(globalThis.window||globalThis).addEventListener?.('keydown',passive?onPassiveKey:onKey,true);el.addEventListener('pointerdown',onPointer);
   if(passive){let live=true;const watch=()=>{if(!live)return;/* gone into a level, or the world map opened (main.js hides #hud for it): the chatter ends */const mapUp=globalThis.document?.querySelector('#hud')?.style.visibility==='hidden';if(mapUp||world?.level||(world?.zone&&world.zone!=='town')){live=false;close();return;}
    /* walking away closes a line the player has seen in full (never a clock: standing still, it waits) */
    const p=world?.player;if(p&&shown>=full.length){if(!moved)moved={x:p.x,y:p.y};else if(Math.hypot(p.x-moved.x,p.y-moved.y)>40){live=false;close();return;}}
@@ -81,4 +88,4 @@ function run(lines,passive=false){
  });
 }
 /* Queues behind any box already open, so two callers never talk over each other. */
-export function say(lines,opts={}){const ls=normal(lines,opts);queue=queue.then(()=>run(ls,!!opts.passive));return queue;}
+export function say(lines,opts={}){const ls=normal(lines,opts);queue=queue.then(()=>run(ls,!!opts.passive,!!opts.talk));return queue;}

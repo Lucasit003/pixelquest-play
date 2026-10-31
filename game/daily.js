@@ -16,14 +16,21 @@ export const GOALS=[
  {id:'foes-20',kind:'feat',on:'foes',need:20,text:'Defeat 20 foes',gold:10},
  {id:'secret-1',kind:'feat',on:'secret',need:1,text:'Find a secret spot in a level',gold:10},
  {id:'star-1',kind:'feat',on:'star',need:1,text:'Earn a new star',gold:10},
- /* town: walk through a building's door (scenes/town.js visits) */
- {id:'visit-apothecary',kind:'town',on:'visit',room:'apothecary',text:'Visit the Apothecary',gold:8},
- {id:'visit-home',kind:'town',on:'visit',room:'home',text:'Stop by your Home',gold:8},
- {id:'visit-weaponsmith',kind:'town',on:'visit',room:'weaponsmith',text:'Visit the Weaponsmith',mat:'elite-shard',matName:'Essence',n:1},
- {id:'visit-inn',kind:'town',on:'visit',room:'inn',text:'Visit the Lantern Inn',gold:8},
- {id:'visit-chapel',kind:'town',on:'visit',room:'chapel',text:'Visit the Starlight Chapel',gold:8},
- {id:'visit-guild',kind:'town',on:'visit',room:'guild_shop',text:'Visit the Adventurers’ Guild',gold:8},
- {id:'visit-herbalist',kind:'town',on:'visit',room:'herbalist',text:'Visit the Herbalist',mat:'elite-shard',matName:'Essence',n:1}];
+ /* town: walk through a building's door (scenes/town.js visits). Every one is open and on the town map and fast travel: `spot` is
+    its game/fasttravel.js TOWN_SPOTS id (tests/ready2fix-oct30.test.js checks the door leads to `room`). ready2fix-oct30 #2: the
+    Herbalist closed in the Inn merge (24 Oct), so its goal became Hob's Farm in the same slot (every other day keeps its goals) */
+ {id:'visit-apothecary',kind:'town',on:'visit',room:'apothecary',spot:'alchemist',text:'Visit the Apothecary',gold:8},
+ {id:'visit-home',kind:'town',on:'visit',room:'home',spot:'home',text:'Stop by your Home',gold:8},
+ {id:'visit-weaponsmith',kind:'town',on:'visit',room:'weaponsmith',spot:'smith',text:'Visit the Weaponsmith',mat:'elite-shard',matName:'Essence',n:1},
+ {id:'visit-inn',kind:'town',on:'visit',room:'inn',spot:'inn',text:'Visit the Lantern Inn',gold:8},
+ {id:'visit-chapel',kind:'town',on:'visit',room:'chapel',spot:'chapel',text:'Visit the Starlight Chapel',gold:8},
+ {id:'visit-guild',kind:'town',on:'visit',room:'guild_shop',spot:'guild',text:'Visit the Adventurers’ Guild',gold:8},
+ {id:'visit-farm',kind:'town',on:'visit',room:'farmhouse',spot:'farm',text:'Visit Hob’s Farm',mat:'elite-shard',matName:'Essence',n:1}];
+/* rooms whose door is shut (scenes/town.js says "(closed)"): no daily goal may ever send a child there */
+export const CLOSED_ROOMS=['herbalist'];
+/* a retired goal id and the goal that took its slot: a save from before keeps its count and its paid record (cleanDaily) */
+export const RETIRED={'visit-herbalist':'visit-farm'};
+const live=id=>RETIRED[id]??id;
 export const GOAL=Object.fromEntries(GOALS.map(g=>[g.id,{need:1,...g}]));
 export const KINDS=['adventure','feat','town'];
 /* the only events a daily goal can count: adventure and town, never answers, lessons or mastery */
@@ -34,7 +41,7 @@ export const dayKey=(now=Date.now())=>{const d=new Date(now);return `${d.getFull
 const DAY=/^\d{4}-\d\d-\d\d$/;
 const hash=str=>{let h=2166136261;for(const c of String(str)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)>>>0;}return h>>>0;};
 /* the day's goals: one per kind, from the date only */
-export function goalsFor(day){const h=hash('daily:'+day);return KINDS.map((k,i)=>{const pool=GOALS.filter(g=>g.kind===k);return GOAL[pool[(h>>>(i*8))%pool.length].id];});}
+export function goalsFor(day){const h=hash('daily:'+day);return KINDS.map((k,i)=>{const pool=GOALS.filter(g=>g.kind===k&&!CLOSED_ROOMS.includes(g.room));return GOAL[pool[(h>>>(i*8))%pool.length].id];});}
 export const emptyDaily=()=>({day:null,n:{},done:[]});
 /* exploit4-oct27 (playtest: the device clock moved back and forth between two dates re-paid both days' goals every switch, 174
    gold in three switches): s.daily.paid = {'YYYY-MM-DD':[goalId]} remembers which goals each of the last PAID_DAYS days already
@@ -43,10 +50,10 @@ export const emptyDaily=()=>({day:null,n:{},done:[]});
    remembered day while the record is full counts as paid out (a cycle through many dates cannot push a day out and back in).
    Only present once a goal has paid, so a save that never finished one keeps the {day,n,done} shape. */
 export const PAID_DAYS=14;
-const cleanIds=a=>Array.isArray(a)?[...new Set(a.filter(id=>GOAL[id]))].slice(0,KINDS.length):[];
+const cleanIds=a=>Array.isArray(a)?[...new Set(a.map(live).filter(id=>GOAL[id]))].slice(0,KINDS.length):[];
 function trimPaid(p){const out={};for(const k of Object.keys(p||{}).filter(k=>DAY.test(k)).sort().reverse().slice(0,PAID_DAYS)){const ids=cleanIds(p[k]);if(ids.length)out[k]=ids;}return out;}
 export function cleanDaily(v){const d=emptyDaily();if(!v||typeof v!=='object'||Array.isArray(v))return d;if(typeof v.day==='string'&&DAY.test(v.day))d.day=v.day;
- if(v.n&&typeof v.n==='object')for(const [id,c] of Object.entries(v.n))if(GOAL[id]&&Number.isFinite(+c))d.n[id]=Math.max(0,Math.min(GOAL[id].need,Math.floor(+c)));
+ if(v.n&&typeof v.n==='object')for(const [old,c] of Object.entries(v.n)){const id=live(old);if(GOAL[id]&&Number.isFinite(+c))d.n[id]=Math.max(d.n[id]|0,Math.min(GOAL[id].need,Math.floor(+c)));}
  d.done=cleanIds(v.done);if(v.paid&&typeof v.paid==='object'&&!Array.isArray(v.paid)){const p=trimPaid(v.paid);if(Object.keys(p).length)d.paid=p;}return d;}
 /* a new day replaces the record: nothing carries over, nothing is lost but the unfinished goals (a remembered day comes back as it was paid) */
 export function syncDay(s,now=Date.now()){const day=dayKey(now);if(!s.daily||s.daily.day!==day){const old=s.daily,paid={...(old?.paid||{})};if(old?.day&&old.done?.length)paid[old.day]=cleanIds([...(paid[old.day]||[]),...old.done]);

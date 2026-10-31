@@ -11,6 +11,7 @@
    Fires `pq:scale` on window with {scale, integer, width, height, hud} for scenes that care. */
 import {setView} from '../game/stage.js';
 const BASE_W=480,BASE_H=270;
+export const DESK_NARROW=1.55,DESK_MIN_W=320;
 let saveRef=()=>null,last='';
 export function initScale(getSave){
  saveRef=getSave||saveRef;
@@ -40,6 +41,8 @@ export function desktopFit(vw,vh,{pixelPerfect:pp=false,dpr=1}={}){
  const width=Math.min(vw,Math.round(BASE_W*scale)),height=Math.min(vh,Math.round(BASE_H*scale));
  return {scale,integer,width,height,hud:hudZoom(height,dpr)};
 }
+/* ready2fix-oct30 #13: the narrow-view fit for a squarer desktop window, or null for 16:10 and wider (see rescale) */
+export function deskNarrowFit(vw,vh,dpr=1){if(!(vw>0&&vh>0)||vw/vh>=DESK_NARROW)return null;let sc=vh/BASE_H;const w=Math.max(DESK_MIN_W,Math.min(BASE_W,Math.floor(vw/sc)));if(w*sc>vw)sc=vw/w;const height=Math.round(BASE_H*sc);return {scale:sc,integer:false,view:[w,BASE_H],width:Math.min(vw,Math.round(w*sc)),height,hud:hudZoom(height,dpr)};}
 export function rescale(){
  const d=globalThis.document,w=globalThis.window;if(!d||!w)return;
  const stage=d.querySelector('#stage'),cv=d.querySelector('#world');if(!stage||!cv)return;
@@ -53,6 +56,11 @@ export function rescale(){
  const root=d.documentElement,mapOpen=root.classList.contains('map-open');
  let fitted=null;
  if(mobile&&pp&&!mapOpen){const k=Math.max(2,Math.ceil(vw/BASE_W),Math.ceil(vh/BASE_H)),w=Math.min(BASE_W,Math.floor(vw/k)),h=Math.min(BASE_H,Math.floor(vh/k));fitted={scale:k,integer:true,view:[w,h],width:w*k,height:h*k};}
+ /* ready2fix-oct30 #13: a squarer desktop window (4:3, 5:4, 3:2; not 16:10) letterboxed the 16:9 stage with bars of up to a quarter of
+    the screen. Like a touch tablet, the VIEW narrows instead: the full 270 rows fill the window height and the canvas is as many
+    columns as fit (never under DESK_MIN_W, so a near-square window keeps a small bar). One uniform scale, so pixels never stretch;
+    pixel-perfect mode and the world map keep the whole 480x270 view. */
+ if(!mobile&&!pp&&!mapOpen)fitted=deskNarrowFit(vw,vh,dpr);
  const want=fitted?fitted.view:[BASE_W,BASE_H];
  if(cv.width!==want[0]||cv.height!==want[1]){cv.width=want[0];cv.height=want[1];}
  setView(want[0],want[1]);

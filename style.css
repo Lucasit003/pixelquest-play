@@ -1724,6 +1724,12 @@ dialog[data-view=alchemist] .potion-bag{display:flex;align-items:center;gap:10px
 dialog[data-view=alchemist] .potion-bag b{color:#f3d98a}
 dialog[data-view=alchemist] .potion-bag.is-full{border-color:#c9893a}
 dialog[data-view=alchemist] .potion-bag.is-full b{color:#ffb35c}
+/* ready2fix-oct30 #3: the purse sits once under the bag, labelled; each card shows its own price (never the purse) */
+dialog[data-view=alchemist] .potion-purse{margin:0 0 12px;text-align:right;color:#e8dcc0}
+dialog[data-view=alchemist] .potion-purse b{color:#f3d98a}
+dialog[data-view=alchemist] .potion-shop .card p.potion-line{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 12px}
+dialog[data-view=alchemist] .potion-price b{color:#f3d98a}
+@media(max-height:600px){dialog[data-view=alchemist] .potion-purse{margin:-2px 0 6px}}
 /* ownerbal-oct29: the Legendary star rule on the result card keeps its star beside the text */
 dialog[data-view=result] .level-starrule{flex-wrap:nowrap;align-items:center;letter-spacing:.5px}
 dialog[data-view=result] .level-starrule strong{min-width:0}
@@ -1933,6 +1939,11 @@ html:not(.m-mode) dialog[data-view=result] :is(.level-reward strong,.level-stat 
 .gear-cost .short{color:#ff9b85}
 .gear-cost .short::after{content:' ✗';font-size:.8em}
 .smith-tabs{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+/* ready2fix-oct30 #11: a plain-words line under each smith tab, and what the comparison words mean */
+.smith-tabs button{display:inline-flex;flex-direction:column;align-items:center;line-height:1.1}
+.smith-tabs button .tab-sub{display:block;font-size:16px;letter-spacing:0;text-transform:none;opacity:.8;font-weight:400}
+dialog[data-view=smith] .gear-words{margin:2px 0 8px;font-size:16px}
+.m-mode dialog[data-view=smith] .gear-words{margin:0 0 4px}
 .smith-hero{margin:0 0 4px}
 .gear-grid .card{position:relative}
 .gear-card .smith-ico{border-color:var(--rar,#4a4858)}
@@ -2162,6 +2173,10 @@ dialog:is([data-view=placement],[data-view=lesson-quiz]) .question:has(#quiz-for
 dialog[data-view=result] .level-starline{gap:14px;min-height:40px}
 dialog[data-view=result] .level-rating-sep{width:2px;height:30px;background:#e3b85a55;flex:none}
 dialog[data-view=result] .level-grade{display:flex;align-items:center;gap:8px}
+/* the pixel font is only crisp at its own sizes: a quiet line is dimmer, not smaller */
+dialog[data-view=result] .level-loot-item.loot-quiet{opacity:.5}
+dialog[data-view=result] .level-loot-item.loot-quiet img,dialog[data-view=result] .level-loot-item.loot-quiet svg{filter:grayscale(.6)}
+dialog[data-view=result] .retry-note{position:relative;margin:-2px 0 4px;font-size:16px;color:#bfb38f;text-align:center}
 dialog[data-view=result] .level-grade>small{font-size:14px;letter-spacing:2px;color:var(--gold-2)}
 dialog[data-view=result] .level-grade .run-grade-icon{width:36px;height:36px}
 dialog[data-view=result] .level-grade .run-grade strong{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
@@ -2431,6 +2446,13 @@ html:not(.map-open) .worldmap-info.wm-compact,.m-portrait .worldmap-info.wm-comp
 /* 25 Oct: Settings uses the existing cog (ui/skin/touch/menu.png), not the hammer that read as the smith */
 .menu-buttons .settings-cog{width:32px;height:32px;image-rendering:pixelated;display:block}
 .menu-buttons #settings-btn{width:56px}
+/* ready2fix-oct30 #10: the key as a keycap in a plain sans font (the pixel font draws O and 0 alike); a look-alike letter also names its panel */
+.menu-buttons kbd{display:inline-flex!important;align-items:center;gap:3px;white-space:nowrap}
+.menu-buttons kbd .kb-cap{font:700 13px/14px Arial,Helvetica,sans-serif;color:#fff1c8}
+.menu-buttons kbd .kb-name{color:#e8d9b0}
+.menu-buttons kbd .kb-name+.kb-cap{padding:0 3px;border:1px solid #a99159;border-radius:2px;background:#1b2236}
+html:not(.m-mode) .menu-buttons #settings-btn:has(.kb-name){width:92px}
+html:not(.m-mode) .menu-buttons #settings-btn kbd:has(.kb-name){right:auto;left:50%;transform:translateX(-50%)}
 /* oct25-followups2 (phone result with a level-up box): NEXT GOAL started below the fold at 740x360. On phones it now rides just above the sticky buttons, like desktop, and the level-up box and the guaranteed-rewards note are tighter so in the usual case nothing hides behind it (pillar 2: always a next goal). */
 .m-mode dialog[data-view=result] #modal-content .level-result>.result-goal{position:sticky;bottom:60px;z-index:2;margin:0;padding:4px 0 2px;border-top:1px solid #e3b85a44;background:#1a1d3c;flex-direction:row;flex-wrap:wrap;justify-content:center;align-items:baseline;gap:0 8px}
 .m-mode dialog[data-view=result] #modal-content .level-result>.result-goal::after{content:'';position:absolute;left:0;right:0;top:100%;height:60px;background:#1a1d3c;pointer-events:none}
@@ -2811,3 +2833,22 @@ dialog[data-view=result] .victory-tag:is([data-tag=first],[data-tag=record],[dat
 /* tablets in touch mode: the next-ability chip that peeks under the hero plate in town sat under the gold counter (1024x768, 1366x1024:
    the plate and the gold are taller there) */
 @media(min-height:600px){html.m-mode.in-town #next-unlock.peek{top:calc(env(safe-area-inset-top,0px) + 160px)}}
+/* ready2fix-oct30 #5: on a large desktop screen the quiz's lower 40% sat empty until an answer was checked. The space where the
+   Archivist's notes will appear holds a quiet note about it (no timer); it shrinks away first when a question needs the room. */
+@media(min-height:640px){html:not(.m-mode) dialog#modal[data-view=lesson-quiz] .question:has(#quiz-form)>#quiz-feedback:empty{display:block;flex:0 1 auto;min-height:0;overflow:hidden;margin-top:14px}
+html:not(.m-mode) dialog#modal[data-view=lesson-quiz] .question:has(#quiz-form)>#quiz-feedback:empty::before{content:'Take your time: there is no timer. When you answer, the Archivist’s notes appear here.';display:block;padding:30px 18px;border:2px dashed #6b5a3a99;border-radius:8px;color:#bfb08ccc;font-size:16px;text-align:center}}
+/* ready2fix-oct30 #5: "More below" at the foot of a shop sheet's scrolling box (main.js scrollCues), gone once the end is in view */
+dialog:is([data-view=smith],[data-view=alchemist]) .more-below::after{content:'More below ▾';position:sticky;bottom:0;display:block;margin-top:-34px;height:34px;line-height:40px;text-align:center;font-size:16px;letter-spacing:1px;color:var(--gold-2,#f0d48a);background:linear-gradient(#1a1f3a00,#1a1f3aee 70%);pointer-events:none;z-index:2}
+dialog[data-view=smith] .gear-words{margin:6px 0 0}
+@media(max-height:600px){dialog[data-view=smith] .smith-preview.is-idle{display:none}dialog[data-view=smith] .smith-tabs button .tab-sub{display:none}dialog[data-view=smith] .smith-tabs button{min-height:34px}}
+/* ready2fix-oct30 #5: a tall touch sheet (1024x768 tablet) left the Apothecary's lower half empty; the bag, purse and potions sit in
+   the middle of the sheet, a little larger */
+@media(min-height:600px){html.m-mode dialog[data-view=alchemist] #modal-content{display:flex;flex-direction:column;min-height:100%;box-sizing:border-box}
+html.m-mode dialog[data-view=alchemist] .modal-head{flex:none}
+html.m-mode dialog[data-view=alchemist] .potion-bag{margin-top:auto}
+html.m-mode dialog[data-view=alchemist] .potion-shop{margin-bottom:auto;gap:20px}
+html.m-mode dialog[data-view=alchemist] .potion-shop .card{padding:22px}
+html.m-mode dialog[data-view=alchemist] .potion-shop .card h3{font-size:20px}}
+/* ready2fix-oct30 #7: no "·" between Wil's progress and his wage; on one line a wider gap and the quieter colour keep them apart */
+.level-record.level-companion{flex-wrap:wrap;column-gap:22px}
+.level-record.level-companion .comp-wage-note{color:#d9c9a0!important}

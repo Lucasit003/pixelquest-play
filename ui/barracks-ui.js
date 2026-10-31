@@ -58,11 +58,12 @@ export function barracksHTML(save) {
       const how = st === 'locked' ? opensText(q) : st === 'open' ? `Talk to ${QUESTS[q].giver.name} to begin.` : step ? `Quest step: ${step.text}` : '';
       return `<div class="card comp-card locked" data-companion="${id}"><div class="comp-top"><canvas class="comp-portrait" data-comp-sprite="${id}" width="96" height="96" aria-hidden="true"></canvas><div><span class="tag">${esc(role.toUpperCase())} · NOT YET JOINED</span><h3>${esc(c.name)}</h3></div></div><p>Joins after the quest <strong>${esc(QUESTS[q].title)}</strong>. ${esc(how)}</p></div>`;
     }
+    /* ready2fix-oct30 #11: the level line says what fills the bar in plain words (game/party.js runXP, numbers unchanged) */
     const bar = levelBar(m.xp), L = bar.level, nt = nextTrait(id, L), have = traitsAt(id, L), hired = withId === id;
     return `<div class="card comp-card${hired ? ' selected' : ''}" data-companion="${id}"><div class="comp-top"><canvas class="comp-portrait" data-comp-sprite="${id}" width="96" height="96" aria-hidden="true"></canvas><div><span class="tag">${esc(role.toUpperCase())} · LEVEL ${L}</span><h3>${esc(c.name)}</h3><small class="subtle">${esc(c.line)}</small></div></div>`
       + `<p class="comp-wage">${esc(wageText(save, id))}</p><button data-hire="${id}" class="${hired ? '' : 'primary'}">${hired ? `Leave ${esc(c.short)} at the Barracks` : `Hire ${esc(c.short)}`}</button>${hired ? `<small class="subtle">${esc(c.short)} travels with you until you change it.</small>` : ''}`
       + `<div class="comp-bar" role="progressbar" aria-label="${esc(c.short)}’s level" aria-valuemin="0" aria-valuemax="${bar.need || 1}" aria-valuenow="${bar.need ? bar.have : 1}"><span style="width:${Math.round(bar.share * 100)}%"></span></div>`
-      + `<ul class="comp-facts"><li>${bar.need ? `Level ${L}: ${num(bar.have)} / ${bar.need} toward level ${L + 1} (a win together gives 1, Heroic 1.5, Legendary 2)` : `Level ${L}: the top level`}</li>`
+      + `<ul class="comp-facts"><li>${bar.need ? `Level ${L}: ${num(bar.have)} / ${bar.need} toward level ${L + 1}. Adventures together fill this bar: a win adds 1 (a Heroic win 1.5, a Legendary win 2) and a lost try adds a little.` : `Level ${L}: the top level`}</li>`
       + `<li>${nt ? `Next trait at level ${nt.at}: <strong>${esc(nt.name)}</strong> (${esc(nt.text)})` : 'Every trait learned'}${have.length ? ` · Has: ${esc(have.join(', '))}` : ''}</li>`
       + `<li>${esc(c.skill.name)}: ${esc(c.skill.text)}</li>`
       + `<li>Runs together: ${m.runs} · Wins: ${m.wins}</li>`
@@ -103,10 +104,11 @@ export function resultCompanionHTML(save, party, found, scroll = '') {
     /* guide-oct26 (oct26-midgame proposal 5): "+0.25 XP" beside the hero's "+48 XP" read as broken; a companion's XP is on its own
        small scale (party.js xpFor), so the card shows how far he is toward his next level instead, as a bar and a share. The numbers
        are levelBar's own; nothing here changes them. The "·" before the wage ends the item before it, so a wrapped wage never starts
-       its line with the dot (oct26-midgame: on a phone "· TRIAL RUN" wrapped that way). */
+       its line with the dot (oct26-midgame: on a phone "· TRIAL RUN" wrapped that way). ready2fix-oct30 #7: the wage usually wraps to a line
+       of its own, which left "LEVEL 3 ·" with a stray dot; there is no dot now, the wage is its own small item. */
     const bar = levelBar(save?.party?.crew?.[party.id]?.xp), pct = Math.round(bar.share * 100);
     const prog = (party.up ? `Level ${bar.level}! ` : '') + (bar.need ? `${pct}% to level ${bar.level + 1}` : 'top level');
-    out += `<p class="level-record level-companion" data-companion="${party.id}"><strong>${esc(c.short)}</strong><span class="comp-bar comp-result-bar" role="progressbar" aria-label="${esc(c.short)}’s progress to his next level" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${bar.need ? pct : 100}"><span style="width:${bar.need ? pct : 100}%"></span></span><strong class="comp-prog">${esc(prog)}<span class="subtle"> ·</span></strong><span class="subtle comp-wage-note">${esc(wage)}</span></p>`;
+    out += `<p class="level-record level-companion" data-companion="${party.id}"><strong>${esc(c.short)}</strong><span class="comp-bar comp-result-bar" role="progressbar" aria-label="${esc(c.short)}’s progress to his next level" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${bar.need ? pct : 100}"><span style="width:${bar.need ? pct : 100}%"></span></span><strong class="comp-prog">${esc(prog)}</strong><span class="subtle comp-wage-note">${esc(wage)}</span></p>`;
   }
   return out;
 }

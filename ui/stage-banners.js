@@ -79,7 +79,7 @@ export function wrapBannerText(value,width,{bold=false,scale=1}={}){
  if(line)lines.push(line);return lines.length?lines:[''];
 }
 /* Narrow and wrap a combat panel before allowing it to overlap a tall actor. */
-export function fitStageText({W,H,title,top,obstacles,bold=true,scale=1,pad=40,lineHeight=14,baseHeight=26,maxWidth,compact=false}){const cap=Math.min(W-16,maxWidth||W);let best;for(const limit of [cap,...(compact?[220,180,140].filter(n=>n<cap):[])]){const lines=wrapBannerText(title,Math.max(1,limit-pad),{bold,scale}),width=Math.min(W-16,Math.max(...lines.map(s=>measurePixelText(s,{bold,scale})))+pad),height=baseHeight+(lines.length-1)*lineHeight,box=placeStageBanner({W,H,width,height,top,obstacles});if(!best||box.overlap<best.box.overlap)best={lines,box};if(!box.overlap)break;}return best;}
+export function fitStageText({W,H,title,top,obstacles,bold=true,scale=1,pad=40,lineHeight=14,baseHeight=26,maxWidth,compact=false,limits=null}){const cap=Math.min(W-16,maxWidth||W);let best;for(const limit of [cap,...(compact?(limits||[220,180,140]).filter(n=>n<cap):[])]){const lines=wrapBannerText(title,Math.max(1,limit-pad),{bold,scale}),width=Math.min(W-16,Math.max(...lines.map(s=>measurePixelText(s,{bold,scale})))+pad),height=baseHeight+(lines.length-1)*lineHeight,box=placeStageBanner({W,H,width,height,top,obstacles});if(!best||box.overlap<best.box.overlap)best={lines,box};if(!box.overlap)break;}return best;}
 /* Warning priority: HUD/controls and hero are hard exclusions. Try full copy, tighter
    padding, then concise copy with all actors/CLEAR reserved before letting those yield.
    Pixel fonts stay at their smallest crisp scale (1); never clip text to fit a panel. */
@@ -126,10 +126,15 @@ export function stageBanner(c,b){
  const W=STAGE.camW||480,H=STAGE.camH||270,cx=Math.round(W/2),Y=y=>Math.round(y*H/270),fitW=w=>Math.min(W-8,w);
  c.save();c.globalAlpha*=b.alpha??1;let ok=true;
  const BW=s=>measurePixelText(s,{bold:true});
+ /* ready2fix-oct30 #8: on a phone a boss quote is outlined text in one or two wide lines just under the top HUD, with no parchment
+    card: at 844x390 the card took about a quarter of the play area above the joystick. It keeps clear of the HUD plates only. */
+ if(b.kind==='quote'&&b.phone){const hud=stageBannerObstacles(c.canvas,W,H,true),lay=fitStageText({W,H,title:b.title,top:Y(b.y)-16,obstacles:hud,bold:false,scale:1,pad:16,lineHeight:12,baseHeight:22,maxWidth:W-8});
+  if(lay){const {lines,box}=lay;drawnBanners.push({left:box.cx-box.width/2,top:box.top,right:box.cx+box.width/2,bottom:box.top+box.height,at:clock()});if(drawnBanners.length>8)drawnBanners.shift();for(let i=0;i<lines.length;i++)ok=text(c,lines[i],box.cx,box.top+14+i*12,{color:PARCH,outline:DARK})&&ok;}
+  c.restore();return ok;}
  if(['wave','cleared','prompt','quote'].includes(b.kind)){
   const kind=b.kind,clear=kind==='cleared',quote=kind==='quote',bold=!quote,scale=clear&&BW(b.title)*2+40<=W-16?2:1,pad=kind==='prompt'?36:40;
   const lineHeight=clear?24:14,oldTop=clear?Y(b.y)-26:quote?(b.compact?Y(b.y):Math.max(Y(b.y),Y(80)))-16:kind==='wave'?Y(b.y)-15:Y(b.y)-16;
-  const hud=stageBannerObstacles(c.canvas,W,H,b.mobileAvoid),warning=b.step==='danger',phone=!!c.canvas?.ownerDocument?.documentElement?.classList.contains('m-mode'),layout=warning?fitStageWarning({W,H,title:b.title,top:oldTop,hardObstacles:[...hud,...(b.hardObstacles||[]),/* combatpolish-oct28: on a phone the warning never covers its own telegraph (gfx/stage-view.js teleRects) */...(phone?b.teleRects||[]:[])],obstacles:b.obstacles||[]}):fitStageText({W,H,title:b.title,top:oldTop,obstacles:[...hud,...(b.obstacles||[])],bold,scale,pad,lineHeight,baseHeight:clear?36:kind==='wave'?22:26,maxWidth:b.maxWidth,compact:b.compact});
+  const hud=stageBannerObstacles(c.canvas,W,H,b.mobileAvoid),warning=b.step==='danger',phone=!!c.canvas?.ownerDocument?.documentElement?.classList.contains('m-mode'),layout=warning?fitStageWarning({W,H,title:b.title,top:oldTop,hardObstacles:[...hud,...(b.hardObstacles||[]),/* combatpolish-oct28: on a phone the warning never covers its own telegraph (gfx/stage-view.js teleRects) */...(phone?b.teleRects||[]:[])],obstacles:b.obstacles||[]}):fitStageText({W,H,title:b.title,top:oldTop,obstacles:[...hud,...(b.obstacles||[])],bold,scale,pad,lineHeight,baseHeight:clear?36:kind==='wave'?22:26,maxWidth:b.maxWidth,compact:b.compact,limits:b.limits});
   if(!layout){c.restore();return true;}
   const {lines,box}=layout;
   /* oct24-endgame (playtest ch3 minor): world labels ("SHIELDED") read where the banners were drawn last frame to stay clear of them */
