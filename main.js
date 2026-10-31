@@ -81,9 +81,10 @@ import {newSeal,sealQuestion,sealAnswer,sealTopics,SEAL_RIGHT} from './game/seal
 import {setTarget} from './game/meter.js';
 /* v2:edu */import {loadLessonSprites,mountLessonVoice,narrationOn,narrationSettingHTML,wireNarrationSetting,emitAbilityUnlocked,unlockBannerHTML,nextLessonHTML,readButtonHTML,topicProgressHTML,praise,burstHTML,feedbackLines,feedbackHTML,practiceWhy,autoEquip,grownupsButtonHTML,wireGrownupsButton} from './ui/edu.js';
 /* v2:edu */import {goalLine,lessonsToUnlock,nextLesson} from './academics/study-unlock.js';
-import {choiceFormHTML,wireChoices,focusAnswers} from './ui/answer-choices.js';import {matchAnswer} from './game/math.js';
+import {choiceFormHTML,wireChoices,focusAnswers,tileFormHTML} from './ui/answer-choices.js';import {matchAnswer} from './game/math.js';
 /* a typed answer accepted with a small typo still shows the right spelling (learning-flow fix, 17 Oct) */
 const spellNote=(input,q)=>{const m=matchAnswer(input,q);return m.ok&&m.typo?`<p class="subtle am-spell">Watch the spelling: <strong>${esc(m.expected)}</strong></p>`:'';};
+/* kidfix-c-oct31 */import {tileChoices,youngFor} from './academics/tile-choices.js';import {topicArt,topicArtHTML,mountTopicArt,topicArtReact} from './ui/topic-art.js';import {dummyHealth,dummySceneHTML,mountDummyScene,DUMMY_SRC} from './ui/practice-dummy.js';
 /* quizfun-oct29 */import {quizPic,quizPicHTML,quizGuideHTML,quizCheer,quizMoment,fieldRightHTML,FIELD_PIPS} from './ui/quiz-fun.js';
 /* polish2-oct29 */import {victoryCheer,victoryTag} from './ui/victory-lines.js';
 /* lessons polish 14 Oct */import {answerMomentHTML,sittingPipsHTML,abilityProgressHTML,nextStepId} from './ui/answer-moment.js';
@@ -536,7 +537,7 @@ function panelKey(key){
   return false;
 }
 
-const BACK={appearance:()=>home(),course:()=>library(),review:()=>reviewSummary(),'review-summary':()=>library(),placement:()=>leavePlacement(),'placement-summary':()=>library(),training:()=>trainingSummary(),'checkpoint-loadout':()=>pause(true),abandon:()=>pause(true),'import-confirm':()=>settings(),lesson:()=>library(),'lesson-quiz':()=>leaveSitting()};/* oct24-progress (playtest r3): a lesson result has no Back target, so one Escape closes it (it took two: result, then the Library) */
+const BACK={appearance:()=>home(),course:()=>library(),review:()=>reviewSummary(),'review-summary':()=>library(),placement:()=>leavePlacement(),'placement-summary':()=>library(),training:()=>trainingSummary(),'checkpoint-loadout':()=>pause(true),abandon:()=>pause(true),'import-confirm':()=>settings(),lesson:()=>library(),'lesson-quiz':()=>leaveSitting(),'lesson-cheer':()=>cheerNext?.()};/* oct24-progress (playtest r3): a lesson result has no Back target, so one Escape closes it (it took two: result, then the Library) */
 let sitting = null;
 
 const readyAbilitiesForRoad=()=>ready();
@@ -546,7 +547,10 @@ function startSitting(id, kind) {
     if (!t) return;
     const test = kind === 'test' ? beginMasteryTest(s, t) : null;
     /* quizfun-oct29: the quiz prefers questions that do not repeat the lesson's own Try-its (pickQuiz) */
-    const items = test ? test.items : kind === 'practice' ? pickItems(s, t, /* v2:edu */practiceSize(s, t)) : pickQuiz(s, t, QUIZ_SIZE);
+    /* kidfix-c-oct31: practice is one continuous run at the training dummy, sized to the practice still needed (testReady(...).needed);
+       once it is met, extra practice keeps the old round of PRACTICE_SIZE */
+    const pg = kind === 'practice' ? testReady(s, t) : null, extra = !!pg && pg.practice >= pg.needed;
+    const items = test ? test.items : kind === 'practice' ? pickItems(s, t, extra ? practiceSize(s, t) : Math.max(1, pg.needed - pg.practice)) : pickQuiz(s, t, QUIZ_SIZE);
     if (!items.length) {
         sitting = null;
         /* v2:edu an exhausted pool masters the topic (the exhaustion rule), even when placement retired its last questions */
@@ -568,34 +572,45 @@ function startSitting(id, kind) {
         return;
     }
     /* quizfun-oct29: `cheer` starts this sitting's praise lines at a random place, so the first right answer is not always "Yes!" */
-    sitting = { id, kind, items, i: 0, right: {}, xp: 0, cheer: Math.floor(Math.random() * 7), mastered: false, beforeAbilities: readyAbilitiesForRoad(), ready: test ? test.ready : ready.ready, requiredSkills: test?.requiredSkills };
+    sitting = { id, kind, items, extra, i: 0, right: {}, xp: 0, cheer: Math.floor(Math.random() * 7), mastered: false, beforeAbilities: readyAbilitiesForRoad(), ready: test ? test.ready : ready.ready, requiredSkills: test?.requiredSkills };
     sittingQuestion();
 }
 
 function sittingQuestion() {
-    const t = lessonTopic(sitting.id), q = sitting.items[sitting.i], n = sitting.items.length, qp = quizPic(q);
+    const t = lessonTopic(sitting.id), q = sitting.items[sitting.i], n = sitting.items.length, qp = quizPic(q), practice = sitting.kind === 'practice';
+    /* kidfix-c-oct31: the topic's lesson art beside the question; tap tiles for young players; the training dummy during practice */
+    const art = topicArt(t), tiles = youngFor(s, t) ? tileChoices(q) : null;
+    const typedForm = () => `<form id="quiz-form"><input id="quiz-answer" aria-label="Your answer" placeholder="Type your answer…" autocomplete="off" ${/* v2:edu decimals need a point key on phones */q.numeric ? 'inputmode="decimal"' : ''} required><div class="modal-actions"><button type="submit" id="quiz-check" class="primary">Check</button></div></form>`;
     let done = false;
     show('lesson-quiz', header(`${esc(SUBJECTS[t.subject].name)} · ${stageName(t)}`, esc(t.title)) +
-        `<div class="question qf" data-q="${q.id}" data-kind="${sitting.kind}"><div class="question-reading" role="region" aria-label="Question and diagram" tabindex="0"><div class="qf-top"><span class="tag">${sitting.kind === 'test' ? 'MASTERY TEST' : sitting.kind === 'practice' ? /* v2:edu */'PRACTICE' : 'QUIZ'} · ${sitting.i + 1} of ${n}</span>${sittingPipsHTML(n, sitting.i, sitting.items.map(x => sitting.right[x.id]))}</div>${quizGuideHTML()}` +
+        `<div class="question qf" data-q="${q.id}" data-kind="${sitting.kind}"><div class="question-reading" role="region" aria-label="Question and diagram" tabindex="0"><div class="qf-top"><span class="tag">${sitting.kind === 'test' ? 'MASTERY TEST' : practice ? /* v2:edu */'PRACTICE' : 'QUIZ'} · ${practice && !sitting.extra ? `question ${sitting.i + 1}` : `${sitting.i + 1} of ${n}`}</span>${practice && !sitting.extra ? '' : sittingPipsHTML(n, sitting.i, sitting.items.map(x => sitting.right[x.id]))}</div>${practice ? dummySceneHTML(dummyHealth(testReady(s, t)), {extra: sitting.extra}) : quizGuideHTML()}` +
         /* quizfun-oct29: the guide asks; the question's picture (or a word item's board without its answer) sits beside him */
         quizPicHTML(qp) +
-        `<h3${q.prompt.length <= 40 ? ' class="big"' : ''}>${esc(q.prompt)}</h3>${readButtonHTML(q.prompt)}</div>${choiceFormHTML(q) || `<form id="quiz-form"><input id="quiz-answer" aria-label="Your answer" placeholder="Type your answer…" autocomplete="off" ${/* v2:edu decimals need a point key on phones */q.numeric ? 'inputmode="decimal"' : ''} required><div class="modal-actions"><button type="submit" id="quiz-check" class="primary">Check</button></div></form>`}<div id="quiz-feedback" aria-live="polite"></div><div class="modal-actions"><button id="quiz-end">Stop</button><button id="quiz-next" class="primary" hidden>${sitting.i + 1 < n ? 'Next question' : 'See results'}</button></div></div>`);
+        `<h3 class="${q.prompt.length <= 40 ? 'big' : ''}${art ? ' has-topic-art' : ''}">${esc(q.prompt)}${topicArtHTML(art)}</h3>${readButtonHTML(q.prompt)}</div>${choiceFormHTML(q) || (tiles ? tileFormHTML(q, tiles) : typedForm())}<div id="quiz-feedback" aria-live="polite"></div><div class="modal-actions"><button id="quiz-end">${practice ? 'Take a break' : 'Stop'}</button><button id="quiz-next" class="primary" hidden>${sitting.i + 1 < n ? 'Next question' : 'See results'}</button></div></div>`);
+    mountTopicArt($('.question'), art);
+    sitting.scene = practice ? mountDummyScene($('.question'), {hero: s.hero, health: dummyHealth(testReady(s, t)), extra: sitting.extra}) : null;
     const askedSpec = qp?.derived ? qp.spec : askPic(askedPic(q));
     if ($('#quiz-pic')) { if (qp?.derived) picStart(qp.spec, .01, $('#quiz-pic')); else drawPic(crispCtx($('#quiz-pic')), askedSpec, 1); }
     quizZoom(askedSpec);
-    $('#quiz-form').onsubmit = e => {
-        e.preventDefault();
-        if (done || !$('#quiz-answer').value.trim()) return;
-        done = true;
-        submitSitting(q, $('#quiz-answer').value);
+    const bindForm = () => {
+        $('#quiz-form').onsubmit = e => {
+            e.preventDefault();
+            if (done || !$('#quiz-answer').value.trim()) return;
+            done = true;
+            submitSitting(q, $('#quiz-answer').value);
+        };
+        wireChoices($('#quiz-form'), q);
+        /* kidfix-c-oct31: "Type it instead" swaps the tiles for the typing box; the answer is graded the same either way */
+        const ti = $('#quiz-form [data-type-instead]');
+        if (ti) ti.onclick = () => { $('#quiz-form').outerHTML = typedForm(); bindForm(); $('#quiz-answer').focus({preventScroll:true}); };
     };
+    bindForm();
     $('#quiz-next').onclick = () => unlockCard(() => {
         sitting.i++;
-        sitting.i < n ? sittingQuestion() : sittingSummary();
+        sitting.i < sitting.items.length ? sittingQuestion() : sittingSummary();
     }, {tryIt: false});
     $('#quiz-end').onclick = leaveSitting;
     $('[data-close]').onclick = leaveSitting;
-    wireChoices($('#quiz-form'), q);
     focusAnswers($('#quiz-form')) || $('#quiz-answer').focus({preventScroll:true});
 }
 
@@ -616,6 +631,16 @@ function submitSitting(q, input) {
     /* 25 Oct (first-hour playtest): "Try it again" sits right under the explanation, above the worked picture, so it shows without scrolling */
     if(!r.ok){mountAnswerReview($('#quiz-feedback'),q,{stage:s.schoolMode});const rv=$('#quiz-feedback .answer-review'),pc=$('#quiz-feedback #lesson-pic');if(rv&&pc)pc.before(rv);rv?.addEventListener('toggle',()=>{if(rv.open)rv.scrollIntoView?.({block:'nearest'});});}
     { const pips = $('.question .am-pips'); if (pips) pips.outerHTML = sittingPipsHTML(sitting.items.length, sitting.i, sitting.items.map(x => sitting.right[x.id])); }
+    /* kidfix-c-oct31: the topic's art hops (right) or tilts its head (wrong); at the dummy, a right answer lands a hit and a wrong
+       one only wobbles it. The run tops itself up until the dummy's health (the practice still needed) is gone, then ends there. */
+    topicArtReact($('.question'), r.ok);
+    if (tTopic && !sitting.extra) {
+        const g = testReady(s, tTopic), h = dummyHealth(g);
+        if (r.ok) sitting.scene?.hit(h); else sitting.scene?.miss();
+        if (h.done) sitting.items.length = sitting.i + 1;
+        else if (sitting.i + 1 >= sitting.items.length) { const have = new Set(sitting.items.map(x => x.id)); sitting.items.push(...pickItems(s, tTopic, h.left, Math.random, have).filter(x => !have.has(x.id))); }
+        $('#quiz-next').textContent = sitting.i + 1 < sitting.items.length ? 'Next question' : 'See results';
+    } else if (tTopic) { if (r.ok) sitting.scene?.hit(dummyHealth(testReady(s, tTopic))); else sitting.scene?.miss(); }
     if (!wasReady && testReady(s, tTopic).ready) { $('#quiz-feedback .feedback')?.insertAdjacentHTML('beforeend', `<p class="test-open-note"><b>Practice ${testReady(s, tTopic).needed}/${testReady(s, tTopic).needed}: the mastery test is open!</b> ${sitting.i + 1 < sitting.items.length ? 'Stop here to take it, or keep practising.' : 'See results to take it.'}</p>`); if (sitting.i + 1 < sitting.items.length) $('#quiz-end').textContent = 'Stop here'; }
     /* oct25-quizpolish: when the question already shows its picture, the worked picture plays there instead of a second copy in the card */
     if (!r.ok && shownPic(q)) picStart({ ...shownPic(q), solve: true }, 2.5, $('#lesson-pic') || $('#quiz-pic'));
@@ -627,7 +652,7 @@ function submitSitting(q, input) {
     $('#quiz-next').focus();
 }
 function sittingSummary(){
-  const t=lessonTopic(sitting.id),k=sitting.kind,answered=Object.keys(sitting.right).length,score=Object.values(sitting.right).filter(Boolean).length;let body='',lv=0;
+  const t=lessonTopic(sitting.id),k=sitting.kind,answered=Object.keys(sitting.right).length,score=Object.values(sitting.right).filter(Boolean).length;let body='',lv=0,passCheer=false;
   /* one square per question answered, so the squares agree with the score beside them (polish, 19 Oct) */const done=sitting.items.filter(x=>x.id in sitting.right),pips=answered?sittingPipsHTML(done.length,-1,done.map(x=>sitting.right[x.id]),`${score} of ${answered} right`):'';
   if(k==='practice'){
     /* v2:edu practice records nothing but the answers themselves, which is what the practice count reads */persist();const g=testReady(s,t);
@@ -637,7 +662,7 @@ function sittingSummary(){
     /* a quiz left part-way says so as its headline, not "First try done." (polish, 19 Oct) */const passed=testReady(s,t).quiz,early=answered&&answered<sitting.items.length,stopped=`You stopped after ${answered} of ${sitting.items.length} questions.`;
     body = `<h2 class="am-score">${score} / ${answered}</h2>${pips}<p>${!answered?'You stopped before answering. Nothing is lost.':early&&!passed?`${stopped} Nothing is lost.`:(r.improved&&!r.first?(passed&&(r.before||0)<Math.ceil(PASS*QUIZ_SIZE-1e-9)?'Quiz passed! A new best score.'/* 25 Oct: a retake that first passes says so */:'A new best score!'):r.first?(passed?'Quiz passed!':'First try done.')/* playtest 14 Oct pass 2: a first 2/5 read "A new best score!" */:`Your best: ${r.best} / ${QUIZ_SIZE}`)}</p>${(()=>{const g=testReady(s,t);return (early&&passed?`<p class="subtle">${stopped}</p>`:'')+(answered&&!g.quiz?`<p>${g.quizNeed} of ${g.quizSize} right passes the quiz. Try again whenever you like.</p>`:'');})()}`;
   } else {
-    const before=ready(),r=finishTest(s,t,{items:sitting.items,right:sitting.right,ready:sitting.ready,requiredSkills:sitting.requiredSkills});lv=earn(r.xp,before);sitting.xp+=r.xp;
+    const before=ready(),r=finishTest(s,t,{items:sitting.items,right:sitting.right,ready:sitting.ready,requiredSkills:sitting.requiredSkills});lv=earn(r.xp,before);sitting.xp+=r.xp;passCheer=r.passed||r.first;
     body = `${r.first?'<span class="am-seal" aria-hidden="true"></span>':''}<h2 class="am-score">${r.score} / ${r.total}</h2>${/* the test is scored out of every question, so it shows every square */answered?sittingPipsHTML(sitting.items.length,-1,sitting.items.map(x=>sitting.right[x.id]),`${r.score} of ${r.total} right`):''}`;
     if(r.first){
       sitting.mastered=true;
@@ -656,11 +681,21 @@ function sittingSummary(){
     }
   }
   const x=sitting.xp,celebrate=sitting.mastered,newAbility=ready().some(id=>!sitting.beforeAbilities.includes(id));sitting=null;
-  unlockCard(()=>{
+  /* kidfix-c-oct31: a passed test first lets the topic's creature (or the training dummy) celebrate, then the existing celebration */
+  (passCheer?go=>testCheer(t,go):go=>go())(()=>unlockCard(()=>{
     show('lesson-summary',header(k==='test'?'Mastery test':k==='practice'?'Practice':'Quiz',esc(t.title))+`<div class="result" data-kind="${k}">${body}${rewardChips(x,lv)}${/* v2:edu */topicProgressHTML(s,t)}${abilityProgressHTML(s,t.subject,{celebrate})}${(()=>{const g=testReady(s,t);return mastered(s,t)||g.ready?'':`<p class="subtle test-gate">Mastery test opens after: ${g.lesson?'lesson ✓':'the lesson'} · ${g.quiz?'quiz ✓':`quiz ${g.quizNeed} of ${g.quizSize} right`} · practice ${g.practice}/${g.needed}</p>`;})()}<div class="modal-actions">${mastered(s,t)?'':`<button id="start-quiz">${k==='quiz'?'Retake quiz':'Quiz'}</button>`}${/* v2:edu */practiceButton(t)}${(()=>{const g=testReady(s,t);return !mastered(s,t)&&g.ready?'<button id="start-test">Mastery test</button>':'';})()}<button id="lesson-library" class="primary">Back to the Library</button></div></div>`);
     $$('[data-replay-step]').forEach(b=>b.onclick=()=>startLesson(t.id,+b.dataset.replayStep));
     {const sq=$('#start-quiz');if(sq)sq.onclick=()=>startSitting(t.id,'quiz');}{const st=$('#start-test');if(st)st.onclick=()=>startSitting(t.id,'test');}$('#lesson-library').onclick=()=>library({subject:t.subject});wireLessons();primaryNext(t);wireRoadPreview(newAbility);{const rg=$('#rune-go');if(rg)rg.onclick=()=>home();}
-  });
+  }));
+}
+/* kidfix-c-oct31: the pass moment before the mastery card. The topic's lesson art (or, with none, the training dummy) hops with
+   sparkles beside "You passed!"; Continue (or a moment later, on its own) goes on to the existing celebration. Presentation only. */
+let cheerNext=null;
+function testCheer(t,go){
+  let gone=false;const next=()=>{if(gone)return;gone=true;cheerNext=null;go();};cheerNext=next;const art=topicArt(t);
+  show('lesson-cheer',header('Mastery test',esc(t.title))+`<div class="result test-cheer" data-kind="test"><div class="cheer-stage">${art?topicArtHTML(art):`<span class="topic-art" data-art-kind="dummy" aria-hidden="true"><span class="ta-body"><img src="${DUMMY_SRC}" alt="" width="47" height="58"></span><span class="ta-spark" aria-hidden="true"><i></i><i></i><i></i><i></i></span></span>`}</div><h2 class="am-score">You passed!</h2><div class="modal-actions"><button id="cheer-next" class="primary">Continue</button></div></div>`);
+  mountTopicArt($('.test-cheer'),art);$('.test-cheer .topic-art')?.classList.add('ta-cheer');sfx('correct');
+  $('#cheer-next').onclick=next;$('[data-close]')&&($('[data-close]').onclick=next);$('#cheer-next').focus({preventScroll:true});{const el=$('.test-cheer');setTimeout(()=>{if(el?.isConnected&&modalView==='lesson-cheer')next();},2600);}
 }
 
 /* A preview only draws the existing hero animation. It never casts or changes a save. */

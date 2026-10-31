@@ -39,3 +39,11 @@ export function wireChoices(form,q){
    (or a second, quick Enter) picked answer 1 and marked it wrong. Focus goes to the answer group instead: number keys,
    taps and Tab still answer, Enter alone never does. Returns the focused group, or null when there are no answers. */
 export function focusAnswers(root){const b=root?.querySelector?.('[data-answer]:not(:disabled)'),g=b?.parentElement;if(!g)return null;if(!g.hasAttribute('tabindex'))g.tabIndex=-1;g.focus({preventScroll:true});return g;}
+
+/* kidfix-c-oct31: tap tiles for a young player's short typed answer (academics/tile-choices.js builds them). The same form,
+   ids and hidden input as a choice question, so the screen's own submit handler grades a tap exactly as it grades typing;
+   "Type it instead" swaps in the typing box (the screen re-binds it). */
+export function tileFormHTML(q,tiles,{form='quiz-form',input='quiz-answer',check='quiz-check'}={}){
+ if(!tiles?.length)return '';
+ return `<form id="${form}" class="choice-form tile-form" data-choice-form data-tiles><input type="hidden" id="${input}" value=""><div class="answers choice-answers tile-answers" role="group" aria-label="Answer tiles">${tiles.map((x,i)=>`<button type="button" data-answer="${esc(x.value)}"><span class="tag" aria-hidden="true">${i+1}</span><span class="choice-text">${esc(x.label)}</span></button>`).join('')}</div><p class="subtle choice-keys">Tap an answer, or press 1-${tiles.length}.</p><p class="tile-alt"><button type="button" class="tile-type" data-type-instead>Type it instead</button></p><button type="submit" id="${check}" hidden>Check</button></form>`;
+}

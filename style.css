@@ -2901,3 +2901,55 @@ html[data-motion=reduced] button.rune-slot.open{animation:none}
 #next-unlock .road .road-rune{font-size:16px}
 .rune-earned{margin:6px 0 0;color:#1f6676;font-weight:700}.rune-earned button{margin-left:8px}
 .adv-rune{color:#7ff0ff}
+/* kidfix-c-oct31 (kid-appeal playtest problem 2; ui/topic-art.js, ui/practice-dummy.js, academics/tile-choices.js): the lesson's
+   art beside every quiz, practice and test question (a hop with sparkles when right, a head-tilt when wrong; code effects only),
+   tap tiles for young players, and practice at the training dummy in place of the guide. */
+#modal#modal[data-view=lesson-quiz] .question.qf>.question-reading>h3.has-topic-art{padding-right:44px!important}
+.topic-art{position:absolute;right:-14px;top:-30px;width:64px;height:64px;pointer-events:none;z-index:2}
+.topic-art .ta-body{display:block;width:64px;height:64px;transform-origin:50% 100%}
+.topic-art canvas,.topic-art img{display:block;width:64px;height:64px;object-fit:contain;image-rendering:pixelated}
+.topic-art .ta-spark{position:absolute;inset:-14px;pointer-events:none}
+.topic-art .ta-spark i{position:absolute;width:10px;height:10px;background:#ffe27a;clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%);opacity:0;filter:drop-shadow(0 0 2px #fff6c8)}
+.topic-art .ta-spark i:nth-child(1){left:4px;top:10px}.topic-art .ta-spark i:nth-child(2){right:2px;top:4px;width:12px;height:12px}
+.topic-art .ta-spark i:nth-child(3){left:12px;bottom:20px;width:8px;height:8px}.topic-art .ta-spark i:nth-child(4){right:8px;bottom:28px}
+.topic-art.ta-right .ta-body{animation:ta-hop .55s cubic-bezier(.3,.7,.4,1) 1}
+.topic-art.ta-right .ta-spark i{animation:ta-spark .7s ease-out 1 both}
+.topic-art.ta-right .ta-spark i:nth-child(2){animation-delay:.08s}.topic-art.ta-right .ta-spark i:nth-child(3){animation-delay:.16s}.topic-art.ta-right .ta-spark i:nth-child(4){animation-delay:.24s}
+.topic-art.ta-wrong .ta-body{animation:ta-tilt .9s ease-in-out 1}
+.topic-art.ta-cheer .ta-body{animation:ta-hop .6s cubic-bezier(.3,.7,.4,1) infinite}
+.topic-art.ta-cheer .ta-spark i{animation:ta-spark .9s ease-out infinite both}
+.topic-art.ta-cheer .ta-spark i:nth-child(2){animation-delay:.2s}.topic-art.ta-cheer .ta-spark i:nth-child(3){animation-delay:.4s}.topic-art.ta-cheer .ta-spark i:nth-child(4){animation-delay:.6s}
+@keyframes ta-hop{0%{transform:translateY(0) scale(1,1)}18%{transform:translateY(0) scale(1.08,.9)}45%{transform:translateY(-14px) scale(.96,1.05)}75%{transform:translateY(0) scale(1.05,.94)}100%{transform:translateY(0) scale(1,1)}}
+@keyframes ta-spark{0%{opacity:0;transform:scale(.2) rotate(0)}30%{opacity:1;transform:scale(1.2) rotate(30deg)}100%{opacity:0;transform:scale(.4) rotate(90deg) translateY(-8px)}}
+@keyframes ta-tilt{0%,100%{transform:rotate(0)}30%,65%{transform:rotate(-11deg)}}
+/* the pass moment: the art at twice the size */
+#modal[data-view=lesson-cheer] .test-cheer{text-align:center}
+#modal[data-view=lesson-cheer] .cheer-stage{position:relative;display:flex;justify-content:center;margin:18px auto 6px;height:140px}
+#modal[data-view=lesson-cheer] .cheer-stage .topic-art{position:relative;right:auto;top:auto;margin:0;width:128px;height:128px}
+#modal[data-view=lesson-cheer] .cheer-stage .ta-body,#modal[data-view=lesson-cheer] .cheer-stage canvas,#modal[data-view=lesson-cheer] .cheer-stage img{width:128px;height:128px}
+#modal[data-view=lesson-cheer] .cheer-stage .ta-spark i{transform-origin:center;width:16px;height:16px}
+/* tap tiles: big, friendly, one row */
+#modal#modal .tile-form .tile-answers{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+#modal#modal .tile-form .tile-answers button{min-width:110px;min-height:56px;font-size:22px;justify-content:center}
+#modal#modal .tile-form .tile-type{background:none;border:0;padding:2px 4px;margin-left:8px;color:var(--gold-2,#f0d48a);text-decoration:underline;font:inherit;cursor:pointer;min-height:0;box-shadow:none}
+/* the training dummy scene, where the guide sits; the canvas at 2x on desktop, 1x on short screens */
+#modal#modal[data-view=lesson-quiz] .question.qf .pd-scene{display:flex;flex-direction:column;align-items:stretch;gap:4px}
+#modal#modal[data-view=lesson-quiz] .question.qf .pd-canvas{display:block;width:264px;height:150px;image-rendering:pixelated;border:3px solid #6a4a2a;border-radius:4px;background:#3d6a2e;box-sizing:content-box}
+.pd-hud{display:flex;align-items:center;gap:8px}
+.pd-bar{position:relative;flex:1;height:12px;border:2px solid #2a1a10;background:#4a2a20;border-radius:3px;overflow:hidden}
+.pd-bar i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(#f2c45a,#c9862e);transition:width .35s ease-out}
+.pd-bar.extra i{background:linear-gradient(#a8d36a,#5f9a3a)}
+.pd-label{white-space:nowrap;font:700 11px/1.2 var(--edu-body);letter-spacing:1px;text-transform:uppercase;color:var(--gold-2,#f0d48a)}
+@media(max-height:500px){#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf .pd-canvas{width:132px;height:75px;border-width:2px}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf .pd-bar{height:8px}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf .pd-label{font-size:9px}
+ #modal#modal#modal#modal[data-view=lesson-quiz] .question.qf>.question-reading>h3.has-topic-art{padding-right:30px!important}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf .topic-art,#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf .topic-art .ta-body,#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf .topic-art canvas,#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf .topic-art img{width:48px;height:48px}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf .topic-art{top:-24px;right:-12px}
+ #modal#modal .tile-form .tile-answers button{min-width:80px;min-height:44px;font-size:18px}}
+@media (prefers-reduced-motion:reduce){.topic-art .ta-body,.topic-art .ta-spark i{animation:none!important}.pd-bar i{transition:none}}
+:root[data-motion=reduced] .topic-art .ta-body,:root[data-motion=reduced] .topic-art .ta-spark i{animation:none!important}
+/* kidfix-c-oct31: with a question picture beside it, the dummy scene drops to 1x so the question keeps its width */
+#modal#modal[data-view=lesson-quiz] .question.qf>.question-reading:has(>:is(#quiz-pic,.question-text-card)) .pd-canvas{width:176px;height:100px}
+#modal#modal .tile-form .tile-alt{margin:4px 0 0;text-align:center}
+dialog[data-view=lesson-quiz] .question:has(#quiz-feedback:not(:empty)) .tile-alt{display:none}
+@media(max-height:500px){#modal#modal .tile-form .tile-alt{margin:2px 0 0}#modal#modal .tile-form .tile-type{font-size:15px}
+ #modal[data-view=lesson-cheer] .cheer-stage{height:84px;margin:6px auto 0}#modal[data-view=lesson-cheer] .cheer-stage .topic-art,#modal[data-view=lesson-cheer] .cheer-stage .ta-body,#modal[data-view=lesson-cheer] .cheer-stage canvas,#modal[data-view=lesson-cheer] .cheer-stage img{width:80px;height:80px}#modal[data-view=lesson-cheer] .test-cheer .am-score{margin:4px 0}}
+/* once answered (the card's compact state), the scene steps down like the guide does, so the question keeps more width */
+#modal#modal[data-view=lesson-quiz] .question.qf:has(#quiz-feedback:not(:empty)) .pd-canvas{width:132px;height:75px}
