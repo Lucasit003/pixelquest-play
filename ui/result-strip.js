@@ -24,11 +24,13 @@ export function runDrops(st){const out=[],seen=new Set(),add=(kind,id)=>{if(!id|
 export const COMPACT_AT=4;
 /** The strip. won: "You got" or, on a defeat, "You kept". loot: resultLoot's list ({icon,label,quiet?}); gear: [{name,img}]; starsAll: the save's stars in all.
  * icon(name) gives an <img>; starIcon is the star's <img>. */
-export function youGotHTML({won=true,gold=0,xp=0,loot=[],gear=[],stars=0,starsAll=0,icon,starIcon=''}){
+/* improve20-x-nov1 #20c (audit4 #11): riftBonus is the Rift's first-win gold, already inside `gold`, named in the gold chip so gold is not shown
+   twice; shard (an <img>) adds the week's Rift Shard as its own chip */
+export function youGotHTML({won=true,gold=0,xp=0,riftBonus=0,shard='',loot=[],gear=[],stars=0,starsAll=0,icon,starIcon=''}){
  /* improve20-h-nov1: every chip carries its full words as a title, so a compact chip (below) still names itself */
  const item=(kind,img,n,what,cls='')=>`<span class="you-got-item${cls}" title="${esc((n!==''?n+' ':'')+what)}" data-reward="${kind}">${img}<span class="you-got-text">${n!==''?`<strong>${esc(n)}</strong>`:''}<small>${esc(what)}</small></span></span>`;
  /* a defeat shows only what the run did bring home: no "+0" chips, and no strip at all when there is nothing */
- const parts=[...(won||gold>0?[item('gold',icon('gold'),`+${gold}`,'gold',' level-reward')]:[]),...(xp>0?[item('xp',icon('xp'),`+${xp}`,'XP',' level-reward')]:[]),
+ const parts=[...(won||gold>0?[item('gold',icon('gold'),`+${gold}`,riftBonus>0?'gold (Rift bonus)':'gold',' level-reward')]:[]),...(shard?[item('shard',shard,'+1','Rift Shard',' level-reward')]:[]),...(xp>0?[item('xp',icon('xp'),`+${xp}`,'XP',' level-reward')]:[]),
   ...loot.map(x=>{const {n,what}=splitCount(x.label);return item('item',icon(x.icon),n,what,` level-loot-item${x.quiet?' loot-quiet':''}`);}),
   ...gear.map(g=>item('gear',g.img||icon('chest'),'',g.name,' level-loot-item')),
   ...(stars>0?[item('stars',starIcon,`+${stars}`,`${stars>1?'stars':'star'}${starsAll?` · ${starsAll} in all`:''}`)]:[])];

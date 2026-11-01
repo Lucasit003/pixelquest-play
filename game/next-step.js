@@ -11,7 +11,7 @@
 // practice and take the test. Only the SUGGESTED order changes: every gate in academics/lessons.js and
 // game/math.js stays exactly as it is. The study steps name the subject of the hero's own next power, so a hero who
 // switched class is pointed at their own lesson (S3-11). Step ids are read by game/npcs.js -- keep them stable.
-import {LEVELS,CHAPTERS,levelById,levelDone,levelOpen,levelFogged,tierOpen,tierDone,starsOf,starsShort,gameFinale,ARENA_GOAL} from './levels.js';
+import {LEVELS,CHAPTERS,levelById,levelDone,levelOpen,levelFogged,tierOpen,tierDone,starsOf,starsShort,gameFinale,ARENA_GOAL,tiered} from './levels.js';
 import {ABILITIES} from './abilities.js';
 import {SUBJECTS} from './data.js';
 import {unlocked,abilityMastery,xpLevel} from './math.js';
@@ -23,6 +23,9 @@ import {potionCount,potionKind,POTIONS} from './potions.js';
 import {nextQuestStep,questLive,QUESTS} from './quests.js';
 import {COMPANIONS,hireable} from './party.js';
 import {starSource} from './ladder-guide.js';
+import {nextShowpiece} from './furniture.js';
+import {gearAtCap} from '../ui/gear-guidance.js';
+import {adviceLevel} from './tiers.js';
 /* How much practice to suggest before the next adventure. The test still needs practiceNeeded (lessons.js: 10 on a save's first topic, 25 after). */
 export const PRACTICE_FIRST=10;
 const lessonDone=save=>Object.values(save?.lessons||{}).some(l=>l?.done);
@@ -37,7 +40,9 @@ const nextLevel=save=>LEVELS.find(l=>l.kind==='level'&&!l.hidden&&!l.optional&&!
 const pad=l=>({id:'level-'+l.id,text:l.id==='e2'?'Take the south gate to Slime Bog.':`Next adventure: ${l.name}.`,target:{kind:'pad',id:l.id}});
 /* Prefer the main road, then reachable stars, higher main-road tiers and side paths. */
 const playable=()=>LEVELS.filter(l=>l.kind==='level'&&!l.hidden&&!levelFogged(l));
-const tierPad=(l,k)=>({...pad(l),id:`tier-${k}-${l.id}`,text:`Next adventure: ${l.name}. Select ${TIERS[k].label} on its map card.`,target:{kind:'pad',id:l.id,tier:k}});
+const tierPad0=(l,k)=>({...pad(l),id:`tier-${k}-${l.id}`,text:`Next adventure: ${l.name}. Select ${TIERS[k].label} on its map card.`,target:{kind:'pad',id:l.id,tier:k}});
+/* improve20-x-nov1 #20d: an overlevelled hero's Heroic goal says why (same id and target) */
+let goalSave=null;const tierPad=(l,k)=>{const n=tierPad0(l,k);return k==='heroic'&&goalSave&&overlevelled(goalSave,l.id)?{...n,text:`You are strong for ${l.name} now: select Heroic on its map card for a real fight.`}:n;};
 /* oct24-endgame (playtest ch3 C5): once the last level is won the goal fell through to the first open tier in level order, so the
    game's ending pointed back to "Goblin Camp, Heroic". After the ending the newest chapter comes first: its Heroic levels, then its
    arena, then its Legendary levels, then the chapter before it the same way; 3-star tries after that, newest first too. */
@@ -60,6 +65,17 @@ export function hireStep(save){const p=save?.party;if(!p?.crew||p.with)return nu
  const id=Object.keys(p.crew).find(k=>COMPANIONS[k]&&hireable(k));if(!id||Object.values(p.crew).some(m=>(m?.runs|0)>0))return null;
  const quest=Object.keys(QUESTS).find(q=>QUESTS[q].companion===id)||null,c=COMPANIONS[id];
  return {id:`quest-${quest||id}-hire`,text:`New companion: go to the Barracks and hire ${c.short} at the roster board.`,target:{kind:'building',id:'barracks',point:'roster'},quest};}
+/* improve20-x-nov1 #20a (audit4 #4): with the smithy's gear at the cap and SHOW_GOLD gold or more, the goal is the cheapest Showpiece not
+   yet owned (game/furniture.js), bought at Home -> Decorate. It never outranks learning, the main road, a star gate or a quest under way;
+   once it can be bought it comes before tier and star replays (the post-game road too: a quick stop at Home, then back to Heroic);
+   "save up" only replaces the last fallbacks (Adventurer tasks, "every goal is complete"). Cosmetic only: it changes nothing in a fight. */
+export const SHOW_GOLD=600;
+export function showpieceStep(save){const g=save?.gold|0;if(g<SHOW_GOLD)return null;const f=nextShowpiece(save);if(!f||!gearAtCap(save))return null;
+ return {id:'showpiece-'+f.id,text:g>=f.price?`Your gear is at its limit: buy a Showpiece at Home, the ${f.name} (${f.price} gold).`:`Save up for a Showpiece at Home: the ${f.name} costs ${f.price} gold (you have ${g}).`,target:{kind:'building',id:'home'},showpiece:f.id,buy:g>=f.price};}
+/* improve20-x-nov1 #20d (audit4 #18): a hero OVER_BAND or more levels above a level's Normal band (tiers.js adviceLevel) breezes through it;
+   when Heroic is open there and not yet won, Heroic is the replay to suggest. */
+export const OVER_BAND=4;
+export const overlevelled=(save,id)=>{const l=levelById(id);return !!l&&tiered(l)&&(save?.level|0)>=adviceLevel(l,'normal')+OVER_BAND&&tierOpen(save,id,'heroic')&&!tierDone(save,id,'heroic');};
 function adventure(save){
  const h=hireStep(save);if(h)return h;
  const q=nextQuestStep(save,questLive);if(q?.rank==='handin')return questStep(q);
@@ -70,6 +86,7 @@ function adventure(save){
  /* improve20-t-oct31 #17 (audit2 #8): after the ending a quest nobody has taken yet ("Talk to Farmer Hob at his farm") no longer
     outranks the post-game road (Heroic, the arenas, Legendary, newest chapter first); the finale card and the Journal still name it.
     A quest already under way keeps its place. */
+ if((!gate||gameCleared(save))&&!(q&&q.rank!=='open')){const sp=showpieceStep(save);if(sp?.buy)return sp;}
  if(q&&q.rank==='open'&&gameCleared(save)){const p=postGame(save);if(p)return p;}
  if(q){const n=questStep(q);if(!gate)return n;const g=starsShort(save,gate.id);return {...n,text:`${n.text.replace(/[.!]\s*$/,'')} (${gate.name} needs ${g.need}★: ${g.need-g.have} more).`,starGate:gate.id};}
  if(gameCleared(save))return postGame(save);
@@ -78,7 +95,7 @@ function adventure(save){
  for(const k of TIER_KEYS)for(const l of playable())if(tierOpen(save,l.id,k)&&starsOf(save,l.id,k)<3)return {...tierPad(l,k),text:`Try for 3 stars in ${l.name} on ${TIERS[k].label}: ${k==='legendary'?'beat its 3-star time with no fall':'beat its par time'} on the map card.`};
  return null;
 }
-export function nextStep(save,{room}={}){
+export function nextStep(save,{room}={}){goalSave=save;
  /* newplayer-oct27: after a lost first fight the HUD no longer reads as if the child had never been to the gate; it offers the Library too, as the defeat card does */
  if(!levelDone(save,'prologue'))return {id:'prologue',text:save?.levels?.prologue?.plays>0?'Goblins still hold the south gate. Try again, or awaken an ability at the Library first.':'Goblins at the south gate! Go and see.',target:{kind:'gate'}};
  /* 25 Oct (first-hour playtest): after a defeat with an empty bag the goal points at the Alchemist first, when the hero can afford a
@@ -106,6 +123,8 @@ export function nextStep(save,{room}={}){
  const n=adventure(save);if(n)return n;
  return endGoal(save);}
 function endGoal(save){
+ /* improve20-x-nov1 #20a: saving up for a Showpiece is the goal once nothing else is left */
+ const sp=showpieceStep(save);if(sp)return sp;
  /* the run layer's Adventurer tasks (game/skills.js): once the road is walked, the next task is the next goal */
  const t=nextTask(save);if(t)return {id:'task-'+t.id,text:`Adventurer task: ${t.text}`,target:t.group==='Learning'?{kind:'library'}:t.pad&&levelOpen(save,t.pad)?{kind:'pad',id:t.pad}:{kind:'guild'}};
  /* oct24-endgame: the last word points at the last level, not back to the first */const last=LEVELS.find(l=>gameFinale(l.id))||levelById('e1');

@@ -3396,3 +3396,9 @@ html.m-mode .rift-card{row-gap:3px}
    the fight; on phones it keeps this place instead of the compact bottom strip (main.js toastCompactWanted) */
 #toast.armour-banner{border-width:calc(14*var(--u));border-image:url(ui/skin/pl-window.png) 19 19 19 19 fill/calc(24.0*var(--u)) calc(24.0*var(--u)) round;padding:calc(8*var(--u) + 2px) calc(12*var(--u) + 16px) calc(10*var(--u) + 4px);text-align:center;font-size:max(18px,var(--fs));font-weight:bold;line-height:1.25;color:var(--gold);text-shadow:0 2px 0 #2a1408;letter-spacing:1px;z-index:12}
 .m-mode #toast.armour-banner{top:18%;border-width:calc(10*var(--u));padding:calc(10*var(--u) + 1px) calc(16*var(--u) + 8px) calc(12*var(--u) + 3px);max-width:70%;text-align:center}
+/* Showpiece shelf: a shorter picture box so a whole row, price and Buy included, shows at 1280x720 without scrolling */
+.deco-show .deco-pic{min-height:84px}
+.deco-show .deco-pic img{max-height:88px}
+.deco-show{gap:2px}
+.m-mode .deco-show .deco-pic{min-height:56px}
+.m-mode .deco-show .deco-pic img{max-height:60px}

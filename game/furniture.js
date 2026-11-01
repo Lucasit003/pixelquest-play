@@ -33,19 +33,37 @@ const T=[
  ['rug-meadow','Meadow rug',120,'rug',60,30,'carpet_8.png'],
  ['barrel','Barrel',50,'barrel',30,37,'prop-barrels3_5.png'],
  ['barrels-stack','Stack of barrels',120,'barrel',55,60,'prop-barrels3_0.png'],
- ['candelabra','Tall candelabra',180,'light',26,60,'prop-lit_candlesticks_10.png']];
+ ['candelabra','Tall candelabra',180,'light',26,60,'prop-lit_candlesticks_10.png'],
+/* improve20-x-nov1 #20a (audit4 #4: a level-18 save held 1,359 gold with nothing to buy): the Showpiece shelf, big pieces to save up
+   for, one of each. The interiors pack's own biggest props that the catalogue did not use yet, margins cropped like the rest. Cosmetic
+   only, like every piece here: no stat, ability or learning reads them. Owning all of them hangs a Trophies entry (ui/trophy-hall.js). */
+ ['show-banner','Purple hall banner',600,'show',30,61,'prop-banner_4.png'],
+ ['show-shields','Shield and axes trophy',700,'show',53,38,'prop-decor_shields_5.png'],
+ ['show-weapons','Weapon rack',800,'show',58,40,'prop-decors_weapon2_8.png'],
+ ['show-armour','Armour display',900,'show',51,35,'prop-decors_armor_8.png'],
+ ['show-feast','Round feast table',1000,'show',53,47,'prop-big_round_table_0.png'],
+ ['show-bookcase','Grand bookcase',1400,'show',75,71,'prop-cabinet_27.png'],
+ ['show-alchemy','Alchemist\'s cabinet',2000,'show',85,77,'prop-cabinet_2.png'],
+ ['show-hearth','Great stone hearth',3000,'show',89,108,'prop-fireplace_1.png']];
 export const FURNITURE=Object.freeze(T.map(([id,name,price,kind,w,h,src])=>Object.freeze({id,name,price,kind,w,h,src,flat:kind==='rug',img:`assets/town/furniture/${id}.png`})));
 export const FURN=Object.freeze(Object.fromEntries(FURNITURE.map(f=>[f.id,f])));
 export const MAX_PLACED=40;
+/* the Showpiece shelf, cheapest first; one of each can be owned */
+export const SHOWPIECES=Object.freeze(FURNITURE.filter(f=>f.kind==='show').sort((a,b)=>a.price-b.price));
+export const isShowpiece=id=>FURN[id]?.kind==='show';
+export const showpiecesOwned=s=>SHOWPIECES.filter(f=>(s?.house?.owned?.[f.id]|0)>0).length;
+export const allShowpieces=s=>showpiecesOwned(s)===SHOWPIECES.length;
+/* the cheapest Showpiece this save does not own yet, or null */
+export const nextShowpiece=s=>SHOWPIECES.find(f=>!((s?.house?.owned?.[f.id]|0)>0))||null;
 /* the strip an item stands on, in room pixels: its full width, and its bottom third (at least 8 px, at most 24) */
 export const footprint=(f,x,y)=>{const h=Math.max(8,Math.min(24,Math.round(f.h/3)));return {x0:Math.round(x-f.w/2),x1:Math.round(x+f.w/2),y0:Math.round(y-h),y1:Math.round(y)};};
 export const placedCount=(s,id)=>s.house.items.filter(i=>i.id===id).length;
 export const spare=(s,id)=>(s.house.owned[id]||0)-placedCount(s,id);
-export function buyFurniture(s,id){const f=FURN[id];if(!f||(s.gold||0)<f.price)return false;s.gold-=f.price;s.house.owned[id]=(s.house.owned[id]||0)+1;return true;}
+export function buyFurniture(s,id){const f=FURN[id];if(!f||(s.gold||0)<f.price||f.kind==='show'&&(s.house.owned[id]|0)>0)return false;s.gold-=f.price;s.house.owned[id]=(s.house.owned[id]||0)+1;return true;}
 export function placeFurniture(s,id,x,y){if(!FURN[id]||spare(s,id)<1||s.house.items.length>=MAX_PLACED)return false;s.house.items.push({id,x:Math.round(x),y:Math.round(y)});return true;}
 export function pickUp(s,i){if(i<0||i>=s.house.items.length)return false;s.house.items.splice(i,1);return true;}
 /* a save's house, cleaned: known items only, whole counts, and never more placed than owned (save.js normalize) */
 export function cleanHouse(h){const owned={},items=[];
- for(const [id,n] of Object.entries(h?.owned&&typeof h.owned==='object'?h.owned:{}))if(FURN[id]&&Math.floor(Number(n))>0)owned[id]=Math.floor(Number(n));
+ for(const [id,n] of Object.entries(h?.owned&&typeof h.owned==='object'?h.owned:{}))if(FURN[id]&&Math.floor(Number(n))>0)owned[id]=FURN[id].kind==='show'?1:Math.floor(Number(n));
  for(const it of Array.isArray(h?.items)?h.items:[])if(it&&FURN[it.id]&&Number.isFinite(+it.x)&&Number.isFinite(+it.y)&&items.filter(o=>o.id===it.id).length<(owned[it.id]||0)&&items.length<MAX_PLACED)items.push({id:it.id,x:Math.round(+it.x),y:Math.round(+it.y)});
  return {owned,items};}
