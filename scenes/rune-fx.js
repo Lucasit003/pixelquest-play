@@ -21,7 +21,9 @@ export function firstCastMoment(w,a){const s=w?.save;if(!s||!w.level||!a?.id||!f
  w.castSlow=tier==='normal'&&w.motion!==false?FIRST_SLOW:0;w.events?.persist?.();return true;}
 /* the white flash's alpha this frame (real time since the cast), 0 when Reduce motion is on */
 export const firstFlashAlpha=w=>w?.firstCast&&w.motion!==false&&w.firstCast.real<FIRST_FLASH?FIRST_FLASH_ALPHA*(1-w.firstCast.real/FIRST_FLASH):0;
-export const bigNumber=(w,a)=>!!a?.id&&!a.basic&&!a.ally&&!!w?.bigFor&&w.bigFor.id===a.id&&w.time<w.bigFor.until;
+/* owner-polish-nov1: only the FIRST number of the first cast is big. Two goblins hit together each drew a big number 8 px apart, and
+   "96" over "101" read as "969" on a level-1 hero; asking spends the big number, so every later hit draws at the normal size. */
+export const bigNumber=(w,a)=>{if(!a?.id||a.basic||a.ally||!w?.bigFor||w.bigFor.id!==a.id||!(w.time<w.bigFor.until)||w.bigFor.shown)return false;w.bigFor.shown=true;return true;};
 /* main.js's frame loop (not World.update, which stays deterministic): counts the real time since the first cast and returns the
    dt to step the world by, FIRST_SPEED of it while the slow motion lasts */
 export function slowCast(w,dt){if(w?.firstCast)w.firstCast.real+=dt;if(w?.castSlow>0){w.castSlow-=dt;return dt*FIRST_SPEED;}return dt;}

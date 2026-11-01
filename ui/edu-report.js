@@ -68,10 +68,15 @@ export function openReportCard(save,doc=globalThis.document){
 export const grownupsButtonHTML=()=>`<button type="button" id="edu-grownups" class="edu-grownups" aria-describedby="edu-grownups-help">Grown-ups</button><small id="edu-grownups-help" class="subtle">Hold for two seconds to open the learning record.</small>`;
 export function wireGrownupsButton(root,save,{onOpen}={}){
  const b=root?.querySelector?.('#edu-grownups');if(!b)return false;
+ return wireHold(b,()=>{const el=openReportCard(save,root.ownerDocument);onOpen?.(el);});
+}
+/* The two-second hold on any button with class edu-grownups (accounts-nov1: the account block uses the same door). */
+export function wireHold(b,done){
+ if(!b)return false;
  const start=e=>{e.preventDefault?.();b.classList.add('holding');},stop=()=>b.classList.remove('holding');
  b.addEventListener('pointerdown',start);for(const ev of ['pointerup','pointerleave','pointercancel','blur'])b.addEventListener(ev,stop);
  /* Keyboard: hold Space or Enter the same way. */
  b.addEventListener('keydown',e=>{if((e.key===' '||e.key==='Enter')&&!e.repeat){e.preventDefault();start(e);}});b.addEventListener('keyup',e=>{if(e.key===' '||e.key==='Enter')stop();});
- b.addEventListener('animationend',e=>{if(!b.classList.contains('holding'))return;stop();const el=openReportCard(save,root.ownerDocument);onOpen?.(el);});
+ b.addEventListener('animationend',()=>{if(!b.classList.contains('holding'))return;stop();done();});
  return true;
 }

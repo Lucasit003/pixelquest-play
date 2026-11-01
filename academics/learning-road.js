@@ -6,6 +6,7 @@ import {TOPICS,mastered} from './lessons.js';
 import {lessonsToUnlock,topicStage,topicMastery} from './study-unlock.js';
 import {SUBJECTS} from '../game/data.js';
 import {asleep} from './awakening.js';
+import {awakenOffer} from './starter-lesson.js';
 export const scholarBadges=save=>Object.values(save.lessons||{}).filter(l=>l?.pts>0).length;
 export function learningRoad(save,subject){
  const own=[...(ABILITIES[save.hero]||[])].sort((a,b)=>a.gate-b.gate),sleeping=own.find(a=>asleep(save,a)),locked=own.filter(a=>!unlocked(save,a));
@@ -22,7 +23,7 @@ export function learningRoad(save,subject){
    Returns {kind,text,have,need} (have/need fill the pip's bar), or null when every ability is unlocked. */
 export function nextUnlockStep(save,road=learningRoad(save)){
  if(!road)return null;const a=road.ability,lvNeed=road.levelNeed,lv=save.level||1,plural=(n,w)=>`${n} more ${w}${n===1?'':'s'}`,also=road.level?'':` + hero level ${lvNeed}`;
- if(road.sleeping)return {kind:'awaken',text:'Finish 1 Library lesson to awaken it',have:0,need:1};
+ if(road.sleeping)return {kind:'awaken',text:/* libraryfirst-nov1: where the short starter lesson is on offer, the line names it */awakenOffer(save)?'Wake it with a short lesson at the Library':'Finish 1 Library lesson to awaken it',have:0,need:1};
  if(road.knowledge)return {kind:'level',text:`Reach hero level ${lvNeed}`,have:Math.min(lv,lvNeed),need:lvNeed};
  if(!road.reachable)return {kind:'study',text:`Keep studying ${SUBJECTS[a.subject]?.name||a.subject}${also}`,have:road.done,need:Math.max(1,road.total)};
  const t=road.topics.map(id=>TOPICS.find(x=>x.id===id)).find(t=>t&&topicStage(save,t).stage!=='lesson'),g=t&&topicStage(save,t);

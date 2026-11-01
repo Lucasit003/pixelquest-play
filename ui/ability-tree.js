@@ -10,6 +10,7 @@ import {SUBJECTS,CLASSES} from '../game/data.js';
 import {lessonsToUnlock} from '../academics/study-unlock.js';
 import {learningRoad} from '../academics/learning-road.js';
 import {asleep} from '../academics/awakening.js';
+import {awakenOffer} from '../academics/starter-lesson.js';
 import {abilityIcon} from './icons.js';
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const EPS=1e-8;
@@ -22,7 +23,7 @@ export function rungNeeds(save,a){
 }
 /** The goal line of a rung that is not lit yet: "2 more Coding topics and hero level 4", "Hero level 6", "1 more Math topic". */
 export function rungGoal(save,a){
- if(asleep(save,a))return 'Finish 1 Library lesson to awaken it';
+ if(asleep(save,a))return /* libraryfirst-nov1 */awakenOffer(save)?'Wake it with a short lesson at the Library':'Finish 1 Library lesson to awaken it';
  const n=rungNeeds(save,a),sub=SUBJECTS[a.subject]?.name||a.subject,parts=[];
  if(!n.knowledge)parts.push(n.reachable?`${n.topics} more ${sub} topic${n.topics===1?'':'s'}`:`Keep studying ${sub}`);
  if(!n.level)parts.push(`${parts.length?'hero':'Hero'} level ${n.levelNeed}`);

@@ -18,6 +18,7 @@ import {setDialogueWorld} from './dialogue.js';
 import {nextStep} from '../game/next-step.js';
 import {installStageBanners} from './stage-banners.js';
 import {setProfilePersist} from './profiles-screen.js';
+import {initAccount} from './account.js';
 export {readProfiles,activeProfile,switchProfile} from './profiles.js';
 export {openProfiles} from './profiles-screen.js';
 export {encodeSave,decodeSave} from './savecode.js';
@@ -42,7 +43,7 @@ export function initUI(c){
  {const R=globalThis.document?.documentElement,w=globalThis.window;if(R&&w?.addEventListener){w.addEventListener('mousemove',e=>{if(e.movementX||e.movementY)R.dataset.pointer='moved';},{passive:true});w.addEventListener('keydown',()=>{delete R.dataset.pointer;},{passive:true});}}
  ctx=c;const d=globalThis.document,w=globalThis.window;if(!d||!w)return;
  const s=c.save();
- applySettings(s);setSheetWorld(c.world);setDialogueWorld(c.world);setProfilePersist(c.persist);installSheetKeys(w);unlockAudio(w);setDirected(true);
+ applySettings(s);setSheetWorld(c.world);setDialogueWorld(c.world);setProfilePersist(c.persist);initAccount({persist:c.persist});installSheetKeys(w);unlockAudio(w);setDirected(true);
  initMobile({world:c.world});initScale(c.save,{town:()=>c.world?.zone==='town'&&!c.world?.level}/* ownernotes-b-nov1 #2: the town's own view */);armStartFullscreen(c.save);
  fillIcons(d);installToastHold();loadCanvasUI();installStageBanners();
  /* Settings opened from the title screen come back to the title when they close. */

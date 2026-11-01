@@ -7,9 +7,11 @@
 // Each has a display name and `lines`: a list of {when, say:[...]}. The FIRST entry whose `when`
 // holds is spoken, so put the most advanced progress first and an unconditional entry last.
 //   when: {done:'e1'} a level is cleared   {notDone:'e1'}   {seen:'library'} {notSeen:'plaza'} story beats
+//         {library:true|false} the save is (or is not) on the Library-first opening (academics/starter-lesson.js, libraryfirst-nov1)
+//         {seen:['a','b']} any one of those beats was seen
 //         {step:'first-lesson'} / {stepNot:'prologue'}: what game/next-step.js says the player should do
 //         next, so nobody sends the kid somewhere they have already been (playtest 3, S3-5). The slice's
-//         steps, in order: prologue, first-lesson, goblin-camp, start-lesson/quiz/practice, level-e2
+//         steps, in order: (Library-first saves: awaken), prologue, first-lesson, goblin-camp, start-lesson/quiz/practice, level-e2
 //         (Slime Bog), earn-power (finish practice and take the test), then level-<id> and study.
 //   also: true -> say this AND keep looking for the next line that holds (a restoration remark, then
 //         what to do next)
@@ -21,6 +23,7 @@
 //            'enter' (stepping into a room), 'return' (back in town with `when` true)
 
 import {nextStep} from './next-step.js';
+import {libraryOpening} from '../academics/starter-lesson.js';
 import {questState, currentStep, onTalk, questLive, QUESTS} from './quests.js';
 
 /* Town restoration (docs/review/v2/map/RESTORATION.md): after each Elderwood level part of Oakhaven is
@@ -44,10 +47,12 @@ const restoredLines = key => STAGES.filter(id => RESTORED_BY[id].includes(key))
   .map(id => ({when: {done: id, notDone: STAGES[STAGES.indexOf(id) - 1]}, say: [RESTORED[id]], also: true}));
 
 export const VILLAGERS = {
-  v52030: {name: 'Gran Mabel', lines: [{say: ['I am keeping an eye on the house. Take the south road when you are ready, and come home safely.']}]},
+  v52030: {name: 'Gran Mabel', lines: [{when: {step: 'awaken'}, say: ['Aldous left you a note. Go to the Library first, and come home safely.']}, {say: ['I am keeping an eye on the house. Take the south road when you are ready, and come home safely.']}]},
   scholar_ansel: {name: 'Scholar Ansel', lines: [{say: ['I copy old maps at this desk. The Library is north of here, beside the town square.', 'I like to read a lesson twice before trying its questions.']}]},
   /* --- in the village --- */
   v6946: {name: 'Bess', lines: [
+    {when: {step: 'awaken'}, say: ['Morning! Aldous at the Library is looking for you.', 'The Library is the big timber building west of the fountain.']},
+    {when: {step: 'first-lesson', library: true}, say: ['You chased the goblins off the gate! Aldous has your next lesson ready.', 'The Library is west of the fountain. Everyone learns there.']},
     {when: {step: 'first-lesson'}, say: ['You chased the goblins off the gate! Now see Aldous at the Library.', 'The Library is west of the fountain. Everyone learns there.']},
     {when: {step: 'goblin-camp'}, say: ['The Archivist says you tried a lesson! Grubnak’s camp is past the south gate.', 'The world map opens from the gate. Good luck!']},
     {when: {step: 'start-lesson'}, say: ['You beat Grubnak? The whole market is talking about it!', 'The Archivist has your next lesson ready. Learning is what makes you stronger.']},
@@ -84,6 +89,9 @@ export const VILLAGERS = {
   'w:Riverside fisherman': {name: 'Ewan', lines: [{say: ['The river runs downhill to the lakes. Always downhill, always.']}]},
   /* --- in the rooms --- */
   archivist_aldous: {name: 'Archivist Aldous', lines: [
+    {when: {step: 'awaken'}, say: ['Your first power is waiting! Open the glowing card and start the short lesson.']},
+    {when: {step: 'prologue', library: true}, say: ['Your power is awake! Goblins are at the south gate. Go and try it on them.']},
+    {when: {step: 'first-lesson', library: true}, say: ['Well fought at the gate! Your next power’s lesson is on the Next lesson card.']},
     {when: {step: 'start-lesson'}, say: ['Welcome back! Your next power comes from the subject on the Next lesson card. Start that lesson when you’re ready.']},
     {when: {step: 'quiz'}, say: ['You watched the lesson. Now the quiz: five questions, no timer, and you can try again.']},
     {when: {step: 'practice'}, say: ['Practise ten questions on your topic, then go and stretch your legs at Slime Bog. Every right answer counts toward your test.']},
@@ -93,6 +101,7 @@ export const VILLAGERS = {
   student: {name: 'Lina the student', lines: [{say: ['I just passed my fractions test! The Archivist gave me a stamp.']}]},
   reader: {name: 'Tomas the reader', lines: [{say: ['Shh... I’m at the best part. The hero is about to read the map.']}]},
   quartermaster_ilsa: {name: 'Quartermaster Ilsa', lines: [
+    {when: {step: 'awaken'}, say: ['Every hero learns a power first. Visit the Library, then come back for the board.']},
     {when: {step: 'prologue'}, say: ['Goblins at the gate first, adventurer! Then come back to me for a real contract.']},
     {when: {step: 'start-lesson'}, say: ['Good work at the camp! Try Slime Bog next, or visit the Library for a lesson.']},
     {when: {step: 'quiz'}, say: ['Take your quiz at the Library, then come and see the board.']},
@@ -131,24 +140,32 @@ export const VILLAGERS = {
 for (const key of new Set(Object.values(RESTORED_BY).flat())) if (VILLAGERS[key]) VILLAGERS[key].lines.unshift(...restoredLines(key));
 
 export const STORY = [
-  {id: 'wake', trigger: 'new-game', room: 'home', at: 'Sleep', speaker: 'Home',
+  /* libraryfirst-nov1: a Library-first game wakes to a note from Aldous instead of shouts at the gate; main.js then takes the hero to
+     the Library door (a short scene change), and Aldous's tour starts inside. The older opening keeps its own beat. */
+  {id: 'wake-library', trigger: 'new-game', room: 'home', at: 'Sleep', speaker: 'Home', when: {library: true},
+    say: ['Morning light. The bells of Oakhaven are ringing.', 'From the window you see thorns curling along the edge of the Elderwood. The Thorn King is stirring.', 'A note on your bed: “Come to the Library and learn your first power! — Aldous”']},
+  {id: 'wake', trigger: 'new-game', room: 'home', at: 'Sleep', speaker: 'Home', when: {library: false},
     say: ['Morning light. The bells of Oakhaven are ringing.', 'From the window you see thorns curling along the edge of the Elderwood. The Thorn King is stirring.', 'Shouts from the south gate. Goblins! Go and see.']},
   /* improve20-f-nov1 #11 (audit5 #12): the "why" before "Goblins at the south gate!": two captions over the town the first time a new
      game steps out of Home (cine: played on the cinematic plate by main.js townCine, not as a dialogue box). Only after 'wake', so an
      older save never sees it. */
-  {id: 'arrival', trigger: 'enter', room: 'village', speaker: 'Oakhaven', cine: true, when: {step: 'prologue', seen: 'wake'},
+  {id: 'arrival', trigger: 'enter', room: 'village', speaker: 'Oakhaven', cine: true, when: {step: 'prologue', seen: ['wake', 'wake-library']},
     say: ['Every night the Thorn King’s brambles creep closer to Oakhaven.', 'This morning, goblins reached the south gate. Oakhaven needs a hero!']},
   {id: 'plaza', trigger: 'near', room: 'village', x: 1478, y: 1150, r: 150, speaker: 'Bess', when: {step: 'prologue', notSeen: 'plaza-2'},
     say: ['Morning! You’re the new adventurer? Goblins are at the south gate!', 'Down the road past the fountain. The guards need help.']},
   /* the same corner of the plaza once the gate is done: point at the Library instead (S3-5) */
-  {id: 'plaza-2', trigger: 'near', room: 'village', x: 1478, y: 1150, r: 150, speaker: 'Bess', when: {step: 'first-lesson', notSeen: 'plaza'},
+  {id: 'plaza-2', trigger: 'near', room: 'village', x: 1478, y: 1150, r: 150, speaker: 'Bess', when: {step: 'first-lesson', notSeen: 'plaza', library: false},
     say: ['You’re the one who chased the goblins off the gate! The Archivist wants to meet you.', 'The Library is the big timber building west of the fountain.']},
+  /* a Library-first save meets Aldous in his tour instead (main.js marks this beat seen when the tour opens) */
   {id: 'library', trigger: 'enter', room: 'library', speaker: 'Archivist Aldous',
     say: ['Welcome to the Library! I am Aldous, the Archivist. I look after the books. Every shelf is a subject.', 'Your first lesson waits on the Next lesson card. What you learn here is your power out there.']},
   {id: 'guild', trigger: 'enter', room: 'guild_shop', speaker: 'Quartermaster Ilsa', when: {notDone: 'e1'},
     say: ['Welcome, adventurer! Goblins have taken the camp past the south gate.', 'Read the contract board, then leave by the south gate. The world map opens from there.']},
-  {id: 'after-prologue', trigger: 'return', when: {done: 'prologue', step: 'first-lesson'}, speaker: 'Bess',
+  {id: 'after-prologue', trigger: 'return', when: {done: 'prologue', step: 'first-lesson', library: false}, speaker: 'Bess',
     say: ['You chased them off the gate! The Archivist wants to meet you now.', 'The Library is the big timber building west of the fountain.']},
+  /* libraryfirst-nov1: back from the gate with the first power awake, Bess sends the hero to the next power's lesson */
+  {id: 'after-prologue-library', trigger: 'return', when: {done: 'prologue', step: 'first-lesson', library: true}, speaker: 'Bess',
+    say: ['You chased them off the gate! What a power!', 'Aldous has your next lesson ready. The Library is west of the fountain.']},
   {id: 'goblin-return', trigger: 'return', when: {done: 'e1', notDone: 'e2'}, speaker: 'Bess',
     say: ['You’re back! Is it true you beat Grubnak the Goblin Chief?', 'Wait until the whole market hears about this!', RESTORED.e1]},
   /* coming home after each later Elderwood level: Bess in the plaza has the news of what was restored (talk to her) */
@@ -168,7 +185,8 @@ export function holds(when, save, step = null) {
   const done = id => !!save?.levels?.[id]?.done, seen = id => !!save?.hub?.seen?.includes(id);
   if (when.done && !done(when.done)) return false;
   if (when.notDone && done(when.notDone)) return false;
-  if (when.seen && !seen(when.seen)) return false;
+  if (when.seen && ![].concat(when.seen).some(seen)) return false;
+  if (when.library !== undefined && libraryOpening(save) !== when.library) return false;
   if (when.notSeen && seen(when.notSeen)) return false;
   /* {quest:{id, state?, step?}}: a quest's state ('locked'|'open'|'active'|'done') and/or its current step index */
   if (when.quest) { const q = when.quest; if (!questLive(q.id)) return false; if (q.state && questState(save ?? {}, q.id) !== q.state) return false; if (q.step !== undefined) { const st = questState(save ?? {}, q.id), c = st === 'active' ? currentStep(save, q.id) : null; if (c?.index !== q.step) return false; } }

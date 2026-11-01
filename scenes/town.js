@@ -17,6 +17,7 @@ import ROOMS from '../assets/town/interiors-reviewed-oct13.js';
 import FX from '../assets/town/fx.js';
 import {shopById} from '../game/shops.js';
 import {levelDone} from '../game/levels.js';
+import {gateShut, GATE_LINE, GATE_WHERE} from '../academics/starter-lesson.js';
 import {drawTrail} from '../gfx/hero-trail.js';
 import {trailOf} from '../game/prizes.js';
 import {FURN, footprint, placeFurniture, spare, wallSpot, wallFits, WALL} from '../game/furniture.js';
@@ -437,7 +438,8 @@ function optionFor(S, p) {
     }
     /* The map marks the way out with to="worldmap" (the south gate); the other roads are closed for now.
        A map from before that property treats every exit as the way out. */
-    if (p.type === 'exit') return worldExit(p) ? {label: southGateLabels(H.save).action, worldmap: true} : {label: p.name, say: `The ${p.name.toLowerCase()} is closed for now. The road out of Oakhaven leaves by the south gate.`};
+    /* libraryfirst-nov1: a Library-first game's gate stays shut, with a friendly line, until its first power is awake (academics/starter-lesson.js) */
+    if (p.type === 'exit') return worldExit(p) ? (gateShut(H.save) ? {label: 'The south gate (learn a power first)', say: GATE_LINE, lines: [GATE_LINE, GATE_WHERE], speaker: 'Gate guard'} : {label: southGateLabels(H.save).action, worldmap: true}) : {label: p.name, say: `The ${p.name.toLowerCase()} is closed for now. The road out of Oakhaven leaves by the south gate.`};
     if (p.type === 'board') return {label: act === 'community' ? 'Village noticeboard' : p.name, panel: act ?? 'guild'};
     if (p.type === 'shop-counter') {
       if (shopById(pr.shop)) return shopOption(S, p);
@@ -761,7 +763,7 @@ export function hubInteract() {
   if (o.worldmap) return {worldmap: true};
   /* speaking may move a villager quest on (npcs.js talkAndAdvance); main.js saves and announces `quest` */
   if (o.talk) { const t = talkAndAdvance(o.talk.key, o.talk.name, H.save, o.talk.fallback); return {say: t.lines.join(' '), speaker: t.speaker, lines: t.lines, quest: t.moved}; }
-  if (o.say) return {say: o.say, speaker: o.speaker, lines: [o.say]};
+  if (o.say) return {say: o.say, speaker: o.speaker, lines: o.lines ?? [o.say]};
   return null;
 }
 

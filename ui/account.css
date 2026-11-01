@@ -1,0 +1,29 @@
+/* Grown-ups account block and the newer-cloud card (accounts-nov1, ui/account.js). Same fonts, frames and spacing as Settings. */
+.acct{display:grid;gap:10px;min-width:0}
+.acct[hidden]{display:none}
+.acct-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-width:0}
+.acct-row label{color:var(--ink-2,#d9cba3);font-size:var(--fs,18px);flex:none}
+.acct-row input{flex:1 1 200px;min-width:0;min-height:40px;padding:6px 12px;color:var(--parch-ink);background:none;border-style:solid;border-width:calc(4*var(--u));border-color:transparent;border-image:url(skin/pl-parchment.png) 20 21 20 21 fill/calc(9.52*var(--u)) calc(10.0*var(--u)) round;image-rendering:pixelated;font:400 var(--fs)/1.3 var(--ui);border-radius:0}
+.acct-row input#acct-code{flex:0 1 150px;letter-spacing:.3em;font-variant-numeric:tabular-nums}
+.acct-row input#acct-del-text{flex:0 1 140px}
+.acct-row button{flex:none}
+.acct-msg{margin:0;color:var(--gold);line-height:1.35}
+.acct-msg:empty{display:none}
+.acct-msg.is-error{color:#ffc2b0}
+.acct-who{margin:0;line-height:1.35}
+.acct-privacy{font-size:calc(var(--fs,18px)*.85);opacity:.9}
+.acct-soon{padding:10px 12px;border:1px solid #b89b5966;background:#161c2a80}
+.acct-soon p{margin:4px 0 0}
+.acct-del-open{justify-self:start}
+.acct-delete{display:grid;gap:8px;padding:10px 12px;border:1px solid #d0604aaa;background:#2b1a2480}
+.acct-delete p{margin:0}
+.acct-danger:not(:disabled){color:#ffd9cc;outline:2px solid #d0604a;outline-offset:-2px}
+.settings-sections #acct-open[hidden],.settings-sections #acct-open-help[hidden]{display:none}
+dialog[data-view=cloud-card] .acct-card{display:grid;gap:12px;font-size:var(--fs,18px)}
+dialog[data-view=cloud-card] .acct-card p{margin:0;line-height:1.4}
+@media (max-height:430px){.acct{gap:6px}.acct-row{gap:6px}.acct-row input{min-height:36px}}
+#ui-sheet[data-view=cloud-card]{width:min(640px,94vw)}
+/* inline field labels: no row chain underline or row padding from .settings-grid label */
+.settings-grid .acct-row label{display:inline;min-height:0;padding:0;cursor:default}
+.settings-grid .acct-row label::after{content:none}
+html.m-mode #ui-sheet[data-view=cloud-card]{width:min(640px,94vw);height:fit-content;max-height:92dvh;margin:auto;inset:0}

@@ -47,9 +47,11 @@ export function switchProfile(id,{persist}={}){
  try{persist?.();const cur=L.getItem(KEY);if(cur)L.setItem(SLOT(idx.active),cur);}catch{}
  S.setItem(PENDING,id);globalThis.location?.reload();return true;
 }
-export function addProfile(name){
+/* id: only for a learner brought down from the grown-up's cloud saves (ui/account-sync.js), which keeps its id from the device that made it. */
+export function addProfile(name,id){
  const idx=readProfiles(),clean=String(name||'').trim().slice(0,20)||`Player ${idx.list.length+1}`;
- const p={id:uid(),name:clean};idx.list.push(p);writeProfiles(idx);return p;
+ if(id&&idx.list.some(p=>p.id===id))return idx.list.find(p=>p.id===id);
+ const p={id:id&&/^[\w-]{1,64}$/.test(id)?id:uid(),name:clean};idx.list.push(p);writeProfiles(idx);return p;
 }
 export function renameProfile(id,name){const idx=readProfiles(),p=idx.list.find(p=>p.id===id);if(!p)return false;p.name=String(name||'').trim().slice(0,20)||p.name;writeProfiles(idx);return true;}
 /* Never deletes the active learner (switch first), and never the last one. */

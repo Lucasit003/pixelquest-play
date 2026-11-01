@@ -5,7 +5,9 @@ import {activeLoadout} from '../academics/awakening.js';
 /* settings is field-tolerant in v8. Mark on entry, so skipping, leaving and reloading never replay it.
    improve20-f-nov1 #11 (audit5 #12): "Tap J for a basic blast" showed in town with nothing to hit. Town teaches moving and using things;
    attack, dodge and heavy wait (TIP_WHEN: fight) until the first wave is on, and Interact is done on entering a level (tickControls). */
-export function beginControls(s,id,tier,ability=false){if(id!=='home'||s.settings.controlsSeen)return null;s.settings.controlsSeen=true;if(s.levels?.e1?.done)return null;return {steps:['move','interact','attack','dodge','heavy',...(ability?['ability']:[])],index:0};}
+/* libraryfirst-nov1: a Library-first game (its first power wakes at the Library before the prologue) passes ability=true, and the ability step
+   comes right after the first attack, so the power's key is taught on the prologue's first goblins, before the boss closes the card */
+export function beginControls(s,id,tier,ability=false){if(id!=='home'||s.settings.controlsSeen)return null;s.settings.controlsSeen=true;if(s.levels?.e1?.done)return null;return {steps:['move','interact','attack',...(ability?['ability']:[]),'dodge','heavy'],index:0};}
 export function advanceControls(t,action){if(t&&t.steps[t.index]===action)t.index++;return t&&t.index<t.steps.length?t:null;}
 
 /* A hint stays until the player does the thing (r3 playtest: 8 s was gone before a child read it). HINT_WAIT is only a
@@ -31,6 +33,9 @@ export function tickAbilityNudge(w,dt,show){const boss=w.enemies.find(e=>e.boss&
    prologue's open path between two fights, so they wait for town now. Interact needs no rule: in a level it is done on entering
    combat (tickControls). */
 const hasAbility=s=>!!s&&activeLoadout(s).some(id=>{const a=id&&(ABILITIES[s.hero]||[]).find(x=>x.id===id);return !!a&&unlocked(s,a);});
+/* libraryfirst-nov1: the first awake ability on the bar and its slot, so the ability step can name it ("Press 1 to use Fireball") and light its
+   button; null when none is equipped */
+export function firstPower(s){if(!s)return null;const ids=activeLoadout(s);for(let i=0;i<ids.length;i++){const a=ids[i]&&(ABILITIES[s.hero]||[]).find(x=>x.id===ids[i]);if(a&&unlocked(s,a))return {a,slot:i};}return null;}
 export const tipContext=(w,s)=>{const level=!!w?.level;return {town:w?.zone==='town'&&!level,level,fight:level&&!['walk','go'].includes(w?.flow),ability:hasAbility(s)};};
 export const TIP_WHEN=Object.freeze({move:()=>true,attack:c=>c.fight,dodge:c=>c.fight,heavy:c=>c.fight,interact:()=>true,ability:c=>c.ability,run:c=>c.town,jump:c=>c.town});
 export const TIP_LOCKED=Object.freeze({ability:c=>!c.ability});

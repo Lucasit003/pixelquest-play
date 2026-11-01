@@ -29,6 +29,8 @@ import {ITEM} from './gear.js';
 import {adviceLevel} from './tiers.js';
 import {learningRoad,nextUnlockStep} from '../academics/learning-road.js';
 import {startGrade,STAGE_FLOOR} from '../academics/placement.js';
+import {gateShut,libraryOpening,nextPowerLine} from '../academics/starter-lesson.js';
+import {starterOf,awakened} from '../academics/awakening.js';
 /* How much practice to suggest before the next adventure. The test still needs practiceNeeded (lessons.js: 10 on a save's first topic, 25 after). */
 export const PRACTICE_FIRST=10;
 const lessonDone=save=>Object.values(save?.lessons||{}).some(l=>l?.done);
@@ -133,9 +135,16 @@ export function firstUpgrade(save){if((save?.gold|0)<FIRST_UPGRADE_GOLD||!save?.
  if(Object.keys(save.gear.owned).some(id=>ITEM[id]&&!ITEM[id].scholar&&ITEM[id].shop>0))return null;
  let u=null;try{u=affordableUpgrade(save);}catch{u=null;}if(!u||u.kind==='craft'||!ITEM[u.id])return null;return {id:u.id,name:ITEM[u.id].name,cost:u.cost};}
 const upgradeFirst=(save,n)=>{const u=n&&firstUpgrade(save);return u?{id:'first-upgrade',text:`Visit the Weaponsmith: your first upgrade, the ${u.name} (${u.cost} gold).`,target:{kind:'smith'},item:u.id,then:n}:n;};
+/* libraryfirst-nov1 (owner, 1 Nov: "start by bringing the character to the Library ... and have them learn an ability first"): a new game on the
+   Library-first opening (academics/starter-lesson.js) is pointed at the Library until its starter power is awake; the south gate is shut till
+   then. Then the prologue names the power to try, and after the prologue the first lesson step names the NEXT power and the topic that wakes
+   it. Step ids: 'awaken' is new (npcs.js reads it); the rest keep theirs. An older save never sees any of this (no save.opening). */
+const starterName=save=>starterOf(save?.hero)?.name||'your first power';
+export function awakenStep(save,room){const n=starterName(save);return {id:'awaken',text:room==='library'?`Learn your first power, ${n}: start the short lesson.`:`Go to the Library: learn your first power, ${n}!`,target:{kind:'library'}};}
 export function nextStep(save,{room}={}){goalSave=save;
+ if(gateShut(save))return awakenStep(save,room);
  /* newplayer-oct27: after a lost first fight the HUD no longer reads as if the child had never been to the gate; it offers the Library too, as the defeat card does */
- if(!levelDone(save,'prologue'))return {id:'prologue',text:save?.levels?.prologue?.plays>0?'Goblins still hold the south gate. Try again, or awaken an ability at the Library first.':'Goblins at the south gate! Go and see.',target:{kind:'gate'}};
+ if(!levelDone(save,'prologue')){const lib=libraryOpening(save)&&awakened(save),n=starterName(save);return {id:'prologue',text:save?.levels?.prologue?.plays>0?(lib?`Goblins still hold the south gate. Try again, and use ${n}!`:'Goblins still hold the south gate. Try again, or awaken an ability at the Library first.'):lib?`Goblins at the south gate! Go and try ${n} on them.`:'Goblins at the south gate! Go and see.',target:{kind:'gate'}};}
  /* 25 Oct (first-hour playtest): after a defeat with an empty bag the goal points at the Alchemist first, when the hero can afford a
     potion. It clears as soon as one is bought, or once that level is won (levels[id].resolve counts defeats since the last win).
     oct26-midgame: it names the Apothecary, the shop's name on its door, the map and fast travel. */
@@ -148,7 +157,10 @@ export function nextStep(save,{room}={}){goalSave=save;
  if(levelDone(save,'e3')||!openInMode(save).length)return upgradeFirst(save,tryNew(save,adventure(save))||endGoal(save));
  /* improve20-z-nov1 #1: the first lesson names a subject that has an open lesson (a placed Middle School learner may have opened another subject than the next power's) */
  const fsub=(o=>o.some(t=>t.subject===a?.subject)?subject:SUBJECTS[(o.find(t=>save.lessons?.[t.id]?.reached>0)||o[0])?.subject]?.name||subject)(openInMode(save));
- if(!lessonDone(save)&&!earned(save))return {id:'first-lesson',text:room==='library'?(fsub?`Start your first ${fsub} lesson.`:'Choose a study area to start your first lesson.'):(fsub?`Visit the Library for your first ${fsub} lesson.`:'Visit the Library for your first lesson.'),target:{kind:'library'}};
+ if(!lessonDone(save)&&!earned(save)){
+  /* libraryfirst-nov1: after the prologue a Library-first save is told what its next power is and which topic wakes it (the victory card says the same) */
+  const np=libraryOpening(save)&&nextPowerLine(save);if(np)return {id:'first-lesson',text:np.topic?(room==='library'?`Next power: ${np.a.name}. Start “${np.topic.title}”.`:`Next power: ${np.a.name}. Learn “${np.topic.title}” at the Library.`):`Next power: ${np.a.name}. Start ${/^[aeiou]/i.test(SUBJECTS[np.a.subject]?.name||'')?'an':'a'} ${SUBJECTS[np.a.subject]?.name||np.a.subject} lesson at the Library.`,target:{kind:'library'},power:np.a.id};
+  return {id:'first-lesson',text:room==='library'?(fsub?`Start your first ${fsub} lesson.`:'Choose a study area to start your first lesson.'):(fsub?`Visit the Library for your first ${fsub} lesson.`:'Visit the Library for your first lesson.'),target:{kind:'library'}};}
  /* improve20-f-nov1 #9 (audit5 #1): a fight comes right after the first lesson AND its quiz (it came after the lesson alone, and the quiz
     card then pointed at practice, so a new kid met about 30 answers before a second fight). Until the first quiz is sat the goal is that
     quiz; then Goblin Camp; then practice (the practice step names the power it awakens). Only the suggested order changes: mastery, the

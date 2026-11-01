@@ -48,7 +48,9 @@ self.addEventListener('activate',e=>{e.waitUntil((async()=>{const c=await caches
 self.addEventListener('message',e=>{if(e.data?.type!=='cache'||!Array.isArray(e.data.paths))return;
  e.waitUntil((async()=>{const c=await caches.open(CACHE),k=await caches.open(CLIPS);await pool(e.data.paths.filter(p=>typeof p==='string'&&p!=='sw.js'),4,p=>fill(isClip(p)?k:c,p));})());});
 
-self.addEventListener('fetch',e=>{const req=e.request;if(req.method!=='GET')return;
+/* accounts-nov1: sign-in and cloud-save calls (Supabase /auth/v1 and /rest/v1) always go to the network, never the cache */
+export const isCloudCall=url=>{try{return /\/(auth|rest)\/v1(\/|$)/.test(new URL(url).pathname);}catch{return false;}};
+self.addEventListener('fetch',e=>{const req=e.request;if(req.method!=='GET'||isCloudCall(req.url))return;
  const p=req.mode==='navigate'?'index.html':pathOf(req.url);if(!p||p==='sw.js')return;
  e.respondWith(respond(req,p));});
 async function respond(req,p){const c=await caches.open(isClip(p)?CLIPS:CACHE),key=keyOf(p);let hit=await c.match(key);

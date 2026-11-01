@@ -18,7 +18,11 @@ const playable=save=>LEVELS.filter(l=>l.kind==='level'&&!l.hidden&&!levelFogged(
 const byTier=(a,b)=>(b.tier|0)-(a.tier|0)||(a.optional?1:0)-(b.optional?1:0);
 
 /* -> {id, name, replay, why} or null when no level can be played. */
+/* libraryfirst-nov1: a Library-first hero (academics/starter-lesson.js), whose first power wakes before the prologue, tries it there, on the
+   goblins at the south gate (the prologue is hidden from the map, so it is named here). An older save keeps its old pick. */
+export const PROLOGUE_TRY=Object.freeze({id:'prologue',name:'the south gate',replay:false,why:'prologue'});
 export function tryItLevel(save){
+ if(save?.opening==='library'&&!levelDone(save,'prologue'))return PROLOGUE_TRY;
  const lv=save?.level||1,open=playable(save),fits=l=>adviceLevel(l,'normal')<=lv;
  const won=open.filter(l=>levelDone(save,l.id));
  const pick=(l,replay,why)=>l?{id:l.id,name:l.name,replay,why}:null;

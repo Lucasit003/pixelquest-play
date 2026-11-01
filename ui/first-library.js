@@ -13,9 +13,11 @@ import {nextLesson,placementNudge} from '../academics/study-unlock.js';
 import {placementGrades,PLACEMENT_PER_GRADE,startGrade} from '../academics/placement.js';
 import {placementGrade,gradeOpen,grades,topicOpen,TOPICS} from '../academics/lessons.js';
 import {coursesFor,builtUnits,HIGH_COURSE_LEVEL} from '../academics/courses.js';
+import {awakenOffer,starterSubject} from '../academics/starter-lesson.js';
 export const STAGE_NAME=Object.freeze({elementary:'Elementary',middle:'Middle School',high:'High School'});
 const STAGE_OF=g=>g>=9?'high':g>=6?'middle':'elementary';
-export function firstShelf(save,fallback='math'){return nextLesson(save)?.topic.subject||placementNudge(save)?.subject||fallback;}
+/* libraryfirst-nov1: while the short awakening is on offer (academics/starter-lesson.js awakenOffer), the starter subject's shelf comes first */
+export function firstShelf(save,fallback='math'){return (awakenOffer(save)&&starterSubject(save))||nextLesson(save)?.topic.subject||placementNudge(save)?.subject||fallback;}
 export function firstCheck(save,subject,name=subject){
  const stage=save?.schoolMode;if(stage!=='middle'&&stage!=='high')return null;
  const gs=placementGrades(subject,stage);if(!gs.length)return null;const n=gs.length*PLACEMENT_PER_GRADE;
