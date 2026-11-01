@@ -12,6 +12,14 @@ export const fitTitle=(c,s,y=34,max=600,color=INK)=>{s=String(s);const w=z=>{c.f
  if(w(16)<=max){text(c,s,320,y,16,{bold:true,align:'center',color});return;}if(w(15)<=max){text(c,s,320,y,15,{bold:true,align:'center',color});return;}
  const words=s.split(' ');let k=1,best=1,bw=1e9;for(;k<words.length;k++){const a=words.slice(0,k).join(' '),b2=words.slice(k).join(' ');c.font='bold 15px sans-serif';const m=Math.max(c.measureText(a).width,c.measureText(b2).width);if(m<bw){bw=m;best=k;}}
  text(c,words.slice(0,best).join(' '),320,y-9,15,{bold:true,align:'center',color});text(c,words.slice(best).join(' '),320,y+9,15,{bold:true,align:'center',color});};
+/* improve20-j-nov1 #3 (audit3 #20: "what we want to prove" read as 11 px grey on parchment): a reason beside a line is drawn in ink at
+   HELP_PX CSS px. The picture is shown at c.pqCss CSS px per picture unit (gfx/lesson-art.js crispCtx; about 0.7 on a desktop), and the
+   label font is 16 picture units, so it grows by HELP_PX / (16 x pqCss) (at most 1.6x, beyond any phone boost the text layer already
+   gives), only as far as it stays inside the card; never smaller than before. */
+export const HELP_PX=14,HELP_INK=INK;
+export const helpBoost=(css,phone=1,w=0,x=0)=>{if(!(css>0))return 1;let b=Math.min(1.6,Math.max(1,HELP_PX/(16*css*phone)));if(w>0&&x+w*b>628)b=Math.max(1,(628-x)/w);return b;};
+const helpLabel=(c,s,x,y)=>{c.font='14px sans-serif';const phone=c.pqUnit>0&&16*c.pqUnit<12?Math.min(1.6,12/(16*c.pqUnit)):1,b=helpBoost(c.pqCss,phone,c.measureText(String(s)).width,x);
+ if(b===1){text(c,s,x,y,14,{color:HELP_INK});return;}c.save();c.translate(x,y);c.scale(b,b);text(c,s,0,0,14,{color:HELP_INK});c.restore();};
 export const board=(c,{title,lines=[],why=[],box=false},p)=>{
  if(title)fitTitle(c,title,34);
  const T=title?62:40,B=248,n=Math.max(1,lines.length),gap=Math.min(36,(B-T)/n),top=T+((B-T)-gap*n)/2+gap/2;
@@ -36,7 +44,7 @@ export const board=(c,{title,lines=[],why=[],box=false},p)=>{
   c.font=`${last?'bold ':''}${size}px sans-serif`;const x=bare?(i===0?x0:col):eq?col-left(l):col;
   text(c,l,x,y,size,{bold:last,color:last?ACCENT:INK});
   if(last){const w=c.measureText(l).width;c.strokeStyle=ACCENT;c.lineWidth=2;c.strokeRect(x-8,y-gap*0.42,w+16,gap*0.84);}
-  if(why[i])text(c,why[i],Math.max(x+c.measureText(l).width+28,bare?x0+widest+24:eq?430:col+widest+28),y,13,{color:SOFT});
+  if(why[i])helpLabel(c,why[i],Math.max(x+c.measureText(l).width+28,bare?x0+widest+24:eq?430:col+widest+28),y);
   c.globalAlpha=1;});
  /* a soft rule under the title, like the line at the top of a board */
  if(title){c.strokeStyle='rgba(106,90,70,0.35)';c.lineWidth=1;c.beginPath();c.moveTo(150,50);c.lineTo(490,50);c.stroke();}

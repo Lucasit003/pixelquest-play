@@ -18,8 +18,8 @@ export function usePotion(s,p,{cap=0}={}){const free=p.freePotion>0,kind=free?'h
  if(p.hp>=p.maxHp)return {ok:false,message:'Your health is full.'};
  if(p.potionWait>0)return {ok:false,wait:true,message:'Wait a moment before the next potion.'};
  if(kind==='regen'&&p.potionRegen>0)return {ok:false,message:'Your regeneration potion is still working.'};
- if(free)p.freePotion--;else s[key]--;p.drunk=(p.drunk|0)+1;p.potionWait=POTION_WAIT;if(kind==='regen'){p.potionRegen=a.seconds;return {ok:true,message:'Regenerating'};}
- const healed=Math.min(a.heal,p.maxHp-p.hp);p.hp+=healed;return {ok:true,message:`+${Math.ceil(healed)}`};}
+ if(free)p.freePotion--;else s[key]--;p.drunk=(p.drunk|0)+1;p.potionWait=POTION_WAIT;if(kind==='regen'){p.potionRegen=a.seconds;return {ok:true,...(free?{free}:{}),message:'Regenerating'};}
+ const healed=Math.min(a.heal,p.maxHp-p.hp);p.hp+=healed;return {ok:true,...(free?{free}:{}),message:`+${Math.ceil(healed)}`};}
 /* the drink delay counts real time (World.update, before hitstop and slow motion), so the slot's 3 s means 3 s */
 export const tickPotionWait=(p,dt)=>{if(p.potionWait>0)p.potionWait=Math.max(0,p.potionWait-Math.max(0,dt));};
 export function tickPotion(p,dt){if(!(p.potionRegen>0)||p.hp<=0)return;const step=Math.min(Math.max(0,dt),p.potionRegen);p.hp=Math.min(p.maxHp,p.hp+POTIONS.regen.rate*step);p.potionRegen=Math.max(0,p.potionRegen-step);}

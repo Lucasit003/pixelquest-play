@@ -335,7 +335,9 @@ export function crispCtx(el){const dpr=globalThis.devicePixelRatio||1,live=!!(el
  if(fit){el.style.width=`${PIC_W*k/dpr+extra}px`;el.classList?.add('pixel-fit');}else el.classList?.remove('pixel-fit');
  if(el.width!==PIC_W*k){el.width=PIC_W*k;el.height=PIC_H*k;}const ctx=el.getContext('2d');ctx.setTransform?.(k,0,0,k,0,0);
  /* oct25-quizpolish (P7): labels grow to LABEL_MIN CSS px on a phone (pixelText) */
- if(ctx)ctx.pqUnit=live&&el.ownerDocument?.documentElement?.classList?.contains('m-mode')?room/PIC_W:0;return ctx;}
+ if(ctx)ctx.pqUnit=live&&el.ownerDocument?.documentElement?.classList?.contains('m-mode')?room/PIC_W:0;
+ /* improve20-j-nov1 #3: CSS px per picture unit on every screen (0 off the page), for labels that ask for a size in CSS px (lesson-board.js helper labels) */
+ if(ctx)ctx.pqCss=live?(fit?k/dpr:room/PIC_W):0;return ctx;}
 /* How long a step's picture runs, and whether it keeps drawing after that (theater idle loops). */
 export const picLength=(pic,dur=2.5)=>{const one=[].concat(pic)[0];return one?.t==='theater'?theaterLength(one):dur;};
 export const picLive=pic=>[].concat(pic).some(one=>one?.t==='theater'&&theaterLive(one));

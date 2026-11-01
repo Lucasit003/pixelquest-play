@@ -68,8 +68,8 @@ export function initUI(c){
   el.addEventListener('click',()=>{if(!phone())return;clearTimeout(t);if(el.classList.toggle('open'))t=later(shut,8000);});}
  /* Hotbar cost and potion count become number badges: copy the leading number into data-n. */
  const bar=d.querySelector('#hotbar');
- /* 25 Oct: on a phone the potion badge reads the bag count only ("4", not "4+1"); the free one shows as its own "+1 free" tag above the slot (style.css). */
- const badge=()=>bar.querySelectorAll('.slot-cost').forEach(el=>{const phone=el.id==='potion-count'&&d.documentElement.classList.contains('m-mode'),n=(el.textContent.match(phone?/^\d+/:/^\d+(\+\d+)?/)||[''])[0];if(el.dataset.n!==n)el.dataset.n=n;});
+ /* improve20-j-nov1 #4: one number everywhere: an ability's cost, or the potions this hero can drink now (the free one included; its sparkle on the slot says so) */
+ const badge=()=>bar.querySelectorAll('.slot-cost').forEach(el=>{const n=(el.textContent.match(/^\d+/)||[''])[0];if(el.dataset.n!==n)el.dataset.n=n;});
  if(bar&&globalThis.MutationObserver){new MutationObserver(badge).observe(bar,{childList:true,subtree:true,characterData:true});badge();}
  /* Celebrations on main.js's own panels: an ability unlock card and a won level (their stings already play). */
  const modal=d.querySelector('#modal'),content=d.querySelector('#modal-content');

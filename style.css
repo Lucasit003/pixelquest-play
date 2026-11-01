@@ -3164,8 +3164,9 @@ dialog[data-view=result] .level-stars[data-burst]::before{opacity:.62}
 /* narrow phones (740 and 667 wide): four rewards (the finale: gold, XP, a potion, stars) wrap the strip onto two rows, so it spans the
    name, the cheer and the tier too, and the reward column below it scrolls in what is left; the stars and time stay in view */
 @media(max-height:500px) and (min-width:600px) and (max-width:760px){
- .m-mode dialog[data-view=result] #modal-content .level-result>.you-got:has(.you-got-item:nth-child(4)){grid-row:1 / 5}
- .m-mode dialog[data-view=result] #modal-content .level-result:has(>.you-got .you-got-item:nth-child(4))>.level-result-body{grid-row:5 / 8}
+/* improve20-j-nov1: a compact strip (COMPACT_AT chips, ui/result-strip.js) never wraps, so it keeps rows 1-2 and the reward column gets the room */
+ .m-mode dialog[data-view=result] #modal-content .level-result>.you-got:not(.you-got-compact):has(.you-got-item:nth-child(4)){grid-row:1 / 5}
+ .m-mode dialog[data-view=result] #modal-content .level-result:has(>.you-got:not(.you-got-compact) .you-got-item:nth-child(4))>.level-result-body{grid-row:5 / 8}
 }
 /* short phones (740x360, 667x375): the buttons' bar gives up a little padding so the rating clears the NEXT GOAL bar */
 @media(max-height:380px) and (min-width:600px){
@@ -3293,6 +3294,20 @@ dialog[data-view=result] .level-result.result-tight .level-line{display:none}
 html:not(.m-mode) dialog[data-view=result] .level-result.result-tight[data-outcome=won] .victory-title{height:46px;background-size:256px 64px;background-position:center -8px;font-size:24px}
 html dialog[data-view=result] #modal-content .level-result.goal-flow>.result-goal{position:static}
 html dialog[data-view=result] #modal-content .level-result.goal-flow>.result-goal::after{display:none}
+/* improve20-j-nov1 #4: an ability's cost is its resource's colour with the resource's small skin icon (ui/resource-look.js); the hero panel's
+   resource bar wears the same colour (existing skin fills); the potion slot's one free sign is the skin strip's sparkle, shown while this
+   level's free potion waits (its tip and the first free drink explain it) */
+#hotbar .ability-slot .slot-cost{display:flex;align-items:center;gap:1px}#hotbar .ability-slot .slot-cost::after{color:var(--res,#b9d6ee)}#hotbar .ability-slot .slot-cost>.ico{filter:drop-shadow(0 1px 0 #0d0806) drop-shadow(1px 0 0 #0d0806) drop-shadow(-1px 0 0 #0d0806)}
+#hotbar .potion-free{display:none;position:absolute;top:2px;right:2px;z-index:3;pointer-events:none}#hotbar .potion-slot.free-on .potion-free{display:block;animation:pq-free-twinkle 1.6s ease-in-out infinite}
+@keyframes pq-free-twinkle{50%{opacity:.55;transform:scale(.85)}}html[data-motion=reduced] #hotbar .potion-free{animation:none}@media (prefers-reduced-motion:reduce){#hotbar .potion-free{animation:none}}
+.m-mode #hotbar .potion-free{top:-2px;right:-2px}.m-mode #hotbar .ability-slot .slot-cost>.ico{--s:12px!important}
+#hud[data-res=stamina] .bar.mp i,#hud[data-res=energy] .bar.mp i{background-image:url(ui/skin/fill-gold.png)}#hud[data-res=fury] .bar.mp i{background-image:url(ui/skin/fill-red.png);filter:hue-rotate(52deg) saturate(1.5) brightness(1.8)}#hud[data-res=focus] .bar.mp i{background-image:url(ui/skin/fill-green.png)}
+#hud[data-res] .bar.mp small{color:var(--res,#b9d6ee)}
+/* improve20-j-nov1 #3: the halfway checkpoint of a lesson longer than 12 steps: a short marker over the step, a gap and a notch on the dots */
+.lesson-checkpoint{flex:none;display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;margin:0;padding:6px 10px;border:2px solid var(--gold-deep,#b8862b);border-radius:4px;background:#2a3050;color:#f1e6cc;font-size:16px;line-height:1.3}
+.lesson-checkpoint strong{color:var(--gold-2,#f0d48a)}.lesson-checkpoint button{margin-left:auto;min-height:34px;padding:2px 12px;font-size:14px}
+.lesson-footer .lesson-dots i.half{margin-left:6px;box-shadow:-5px 0 0 -3px var(--gold-2,#f0d48a)}
+html.m-mode .lesson-checkpoint{font-size:14px;padding:3px 8px;margin:0 0 4px}html.m-mode .lesson-checkpoint button{min-height:30px}
 /* improve20-v-nov1 #18: Text size 125/150% reached panels, dialogue and toasts, but not the quiz question, the HUD, the goal plate or
    the controls strip. They grow too, by less than the panels where the frame is fixed art (the HUD) or the screen is short (phones). The
    quiz rules below only set font-size, and only at 125/150, so the 100% card is exactly as lane M leaves it. */

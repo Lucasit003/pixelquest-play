@@ -24,6 +24,8 @@ export function icon(name,{size=32,label=''}={}){
  const i=IDX[name]??IDX.sparkle,own=ownIconURL(IDX[name]===undefined?'sparkle':name);
  return `<i class="ico" style="--i:${own?0:i};--s:${size}px${own?`;background-image:url(${own})`:''}"${label?` role="img" aria-label="${String(label).replace(/"/g,'&quot;')}"`:' aria-hidden="true"'}></i>`;
 }
+/* improve20-j-nov1 #4: a cell of the skin strip itself (ui/skin/icons.png), even where OWN has a redrawn file (the strip's sparkle is twinkles; OWN's is the XP star) */
+export function stripIcon(name,{size=32}={}){return `<i class="ico" style="--i:${IDX[name]??IDX.sparkle};--s:${size}px" aria-hidden="true"></i>`;}
 /* An ability's icon follows what it does (kind), then its element, then the class's fighting style. */
 const ELEMENT={fire:'flame-skull',ice:'snow',storm:'lightning',poison:'poison',holy:'skill-sun',nature:'leaf'};
 const KIND={buff:'skill-aura',aoe:'skill-ring',chain:'lightning',mark:'skill-portal',heal:'heart',aura:'skill-sun',totem:'skill-ward'};
