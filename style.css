@@ -210,7 +210,7 @@ dialog::backdrop{background:#0d0806b8}
 
 /* ---------- cards and grids ---------- */
 .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.card{display:flow-root;min-width:0;padding:10px 12px;color:var(--ink);background:none;border-style:solid;border-width:calc(4*var(--u));border-color:transparent;border-image:url(ui/skin/pl-card.png) 8 8 8 8 fill/calc(12.0*var(--u)) calc(12.0*var(--u)) round;image-rendering:pixelated;text-align:left}
+.card{display:flow-root;min-width:0;padding:10px 12px;color:var(--ink);background:none;border-style:solid;border-width:calc(4*var(--u));border-color:transparent;border-image:url(ui/skin/pl-card-plain.png) 8 8 8 8 fill/calc(12.0*var(--u)) calc(12.0*var(--u)) round;image-rendering:pixelated;text-align:left}
 .card p{margin:6px 0 10px;color:var(--ink-2)}
 .card button{width:100%;margin-top:6px}
 .card.selected{border-image-source:url(ui/skin/pl-plate.png);position:relative}
@@ -328,11 +328,48 @@ html.cine-on #worldmap-info{visibility:hidden!important}
 #overlay .cine-card .cine-eyebrow{display:block;letter-spacing:6px;font-size:calc(var(--fs-2)*1.1);color:var(--gold);text-shadow:0 2px 0 #0d0806,2px 0 0 #0d0806,-2px 0 0 #0d0806,0 -2px 0 #0d0806}
 #overlay .cine-card p{font-size:calc(var(--fs-2)*1.6);color:#fff1c8;margin:6px auto}
 #overlay .cine-card .cine-sub{display:block;font-size:var(--fs-2);color:var(--ink);text-shadow:0 2px 0 #0d0806,2px 0 0 #0d0806,-2px 0 0 #0d0806,0 -2px 0 #0d0806}
+/* improve20-t-oct31 #18 (audit2 #10): the caption rides the UI's plate (pl-plate.png, as the HUD's plates), sized to its words, over the
+   bottom letterbox bar; it moves to the top while a face is under it (main.js cinePlace, ui/cine-plate.js). A spoken line carries its
+   speaker on a name tab (the primary button's red plate). THE END and the chapter cards sit on the same plate, centred. */
+#overlay .cine-caption{left:50%;right:auto;bottom:3%;width:min(860px,88%);transform:translateX(-50%);box-sizing:border-box;padding:8px 22px 6px;background:none;border-style:solid;border-width:calc(5*var(--u));border-color:transparent;border-image:url(ui/skin/pl-plate.png) 8 8 8 8 fill/calc(12.0*var(--u)) calc(12.0*var(--u)) round;image-rendering:pixelated;filter:drop-shadow(0 6px 14px #000a)}
+#overlay .cine-caption.cine-top{bottom:auto;top:3%}
+#overlay .cine-caption p{max-width:none}
+#overlay .cine-caption:has(.cine-who){padding-top:14px}
+#overlay .cine-who{position:absolute;left:18px;top:0;transform:translateY(-62%);padding:3px 14px 4px;font-size:var(--fs);letter-spacing:1px;color:#fff2d0;text-shadow:0 2px 0 #3a0a06;border-style:solid;border-width:calc(2*var(--u)) calc(6*var(--u));border-color:transparent;border-image:url(ui/skin/pl-button-primary.png) 12 22 12 18 fill/calc(4.91*var(--u)) calc(9.0*var(--u)) stretch;image-rendering:pixelated}
+#overlay .cine-caption.cine-card{top:50%;bottom:auto;left:50%;right:auto;width:min(780px,84%);transform:translate(-50%,-50%);padding:18px 26px 12px;background:none}
+#overlay .cine-caption .cine-step{margin-top:4px}
+@media(max-height:500px){#overlay .cine-caption{padding:4px 16px 3px;width:min(760px,82%)}#overlay .cine-caption p{font-size:var(--fs);line-height:1.25}#overlay .cine-caption .cine-step{display:inline;margin:0 10px 0 0}#overlay .cine-caption .cine-cue{display:inline;margin:0}#overlay .cine-caption::after{margin-top:3px}#overlay .cine-caption.cine-card{padding:10px 18px 8px}#overlay .cine-card p{font-size:calc(var(--fs-2)*1.2)}}
+/* improve20-t-oct31 #17 (audit2 #8): the finale card. The result card's own victory banner (PixelLab) reads CHAMPION!, over the hero
+   standing before the key art (the hero card's), then the totals, trophies and what's next on a plate. */
+dialog[data-view=finale]{width:min(900px,94vw)}
+dialog[data-view=finale] .modal-head{display:none}
+.finale{display:grid;grid-template-columns:minmax(0,9fr) minmax(0,11fr);grid-template-areas:"banner banner" "scene story" "next next" "actions actions";align-items:center;gap:4px 18px;text-align:center;padding-top:0}
+.finale-banner{grid-area:banner;justify-self:center;display:grid;place-items:center;width:384px;max-width:100%;height:78px;padding-bottom:6px;font-size:32px;line-height:1;letter-spacing:3px;color:#ffd96a;background:url(ui/skin/pl-icons/victory-banner.png) center -6px/384px 96px no-repeat;image-rendering:pixelated;text-shadow:0 2px 0 #4a0d06,0 4px 0 #1e0603;animation:pq-victory-drop .45s steps(6) both}
+.finale-scene{grid-area:scene;position:relative;width:100%;height:190px;background:url(ui/skin/keyart.webp) center 30%/cover no-repeat;image-rendering:pixelated;border-style:solid;border-width:calc(4*var(--u));border-color:transparent;border-image:url(ui/skin/pl-card-plain.png) 12/calc(12*var(--u)) stretch;box-sizing:border-box}
+.finale-hero{position:absolute;left:50%;bottom:0;width:192px;height:192px;transform:translateX(-50%);image-rendering:pixelated}
+.finale-story{grid-area:story;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}
+dialog[data-view=finale] .finale h2{margin:0;font-size:var(--fs-2);line-height:1.15;color:#fff1c8;text-transform:none;letter-spacing:1px}
+.finale-sub{margin:0;color:var(--ink-2)}
+dialog[data-view=finale] .level-adventure{margin:2px 0;padding:4px 6px}
+dialog[data-view=finale] .level-adventure .adv-title-note{display:none}
+.finale-trophies{display:flex;align-items:center;justify-content:center;gap:8px;margin:2px 0}
+.finale-next{grid-area:next;width:100%;box-sizing:border-box;margin:0;padding:4px 16px 6px;text-align:left;border-style:solid;border-width:calc(4*var(--u));border-color:transparent;border-image:url(ui/skin/pl-plate.png) 8 8 8 8 fill/calc(12.0*var(--u)) calc(12.0*var(--u)) round;image-rendering:pixelated}
+.finale-eyebrow{display:block;letter-spacing:3px;color:var(--gold)}
+.finale-goal{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;margin:4px 0}
+.finale-goal small{letter-spacing:2px;color:var(--muted)}
+.finale-goal strong{color:#fff1c8}
+.finale-next ul{margin:2px 0;padding-left:20px;line-height:1.3}
+.finale-next .level-quest{margin:4px 0 0;justify-content:flex-start;align-items:center;gap:8px;text-transform:none;letter-spacing:0;color:#f1e6cc;animation:none}
+.finale-next .level-quest>img{width:24px;height:24px}
+.finale .modal-actions{grid-area:actions;justify-content:center;margin-top:0;position:sticky;bottom:0;z-index:3;padding:6px 8px;background:#1a1d3c;box-shadow:0 40px 0 #1a1d3c}
+@media(prefers-reduced-motion:reduce){.finale-banner{animation:none}}
+@media(max-width:700px){.finale{grid-template-columns:1fr;grid-template-areas:"banner" "scene" "story" "next" "actions"}}
+@media(max-height:500px){.finale{gap:4px 14px}.finale-scene{height:170px}.finale-hero{width:144px;height:144px}.finale-banner{height:60px;font-size:24px;background-size:288px 72px;background-position:center -4px}dialog[data-view=finale] .level-adventure .adv-title-note{display:none}}
 
 /* ---------- Elementary lessons and the Library (restyle only) ---------- */
 .lesson-strip{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin:0 0 14px}
 .lesson-strip h3,.lesson-strip>p{grid-column:1/-1;margin:0}
-.lesson-card{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;padding:6px 8px;border-style:solid;border-width:calc(4*var(--u));border-color:transparent;border-image:url(ui/skin/pl-card.png) 8 8 8 8 fill/calc(12.0*var(--u)) calc(12.0*var(--u)) round;image-rendering:pixelated}
+.lesson-card{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;padding:6px 8px;border-style:solid;border-width:calc(4*var(--u));border-color:transparent;border-image:url(ui/skin/pl-card-plain.png) 8 8 8 8 fill/calc(12.0*var(--u)) calc(12.0*var(--u)) round;image-rendering:pixelated}
 .lesson-card strong{color:var(--ink)}
 .lesson-card.shut{opacity:.6}
 .lesson-track{color:var(--muted);line-height:1.35}
@@ -344,7 +381,7 @@ html.cine-on #worldmap-info{visibility:hidden!important}
 /* Lesson pictures are drawn for parchment; they keep their light ground inside a gold frame. */
 #lesson-pic,#quiz-pic,.feedback #lesson-pic{display:block;width:min(100%,calc(42vh*640/280));height:auto;margin:6px auto;image-rendering:auto;background:#f6f1e4;border-style:solid;border-width:calc(3*var(--u));border-color:transparent;border-image:url(ui/skin/pl-slot.png) 5 5 5 5/calc(6.0*var(--u)) calc(6.0*var(--u)) stretch}
 /* The card's title tab is stretched once across the top (a repeating 8px slice drew five empty tabs over "Try it"). */
-.lesson-check{padding:calc(8px + 6*var(--u)) 12px 8px;border-style:solid;border-width:calc(4*var(--u));border-color:transparent;border-image:url(ui/skin/pl-card.png) 12 fill/calc(12*var(--u)) stretch;image-rendering:pixelated}
+.lesson-check{padding:calc(8px + 6*var(--u)) 12px 8px;border-style:solid;border-width:calc(4*var(--u));border-color:transparent;border-image:url(ui/skin/pl-card-plain.png) 12 fill/calc(12*var(--u)) stretch;image-rendering:pixelated}
 .lesson-check h3{margin:0 0 4px}
 .lesson-answers{display:flex;flex-wrap:wrap;gap:8px}
 .lesson-answers button{min-width:64px;justify-content:center}
@@ -409,7 +446,7 @@ dialog[data-view=welcome] #modal-content{padding:0;overflow:hidden;height:100%}
 /* ---------- the stacked sheet (stats, credits) ---------- */
 #ui-sheet{width:min(980px,94vw)}
 .stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-/* Oct 25: the plain card. pl-card.png's header plaque sits inside its 8 px slice, so "round" tiled it as four empty plaques
+/* Oct 25: the plain card (improve20-t-oct31 #16: now every card frame uses it). pl-card.png's header plaque sits inside its 8 px slice, so "round" tiled it as four empty plaques
    along the top edge and its bottom rim repeated as lines through the fill (across the History row and the Levels header). */
 .stats section{padding:10px 12px;border-style:solid;border-width:calc(4*var(--u));border-color:transparent;border-image:url(ui/skin/pl-card-plain.png) 8 8 8 8 fill/calc(12.0*var(--u)) calc(12.0*var(--u)) round;image-rendering:pixelated;min-width:0}
 .stats h3{display:flex;justify-content:space-between;margin:0 0 8px}
@@ -629,7 +666,7 @@ dialog[data-view=library] :is([data-lesson],[data-test]:not(:disabled)),.edu-kc 
 dialog[data-view=library] button:hover:not(:disabled):not(.close){border-image-source:url(ui/skin/pl-button-hover.png)!important}
 dialog[data-view=library] :is([data-lesson],[data-test]):hover:not(:disabled){border-image-source:url(ui/skin/pl-button-primary-hover.png)!important}
 dialog[data-view=library] :is(.lesson-card,.grid .card),.edu-plan,.edu-kc-buff{background:none!important;box-shadow:none!important;border-style:solid!important;border-width:calc(4*var(--u))!important;border-color:transparent!important;border-image:url(ui/skin/pl-parchment.png) 20 21 20 21 fill/calc(9.52*var(--u)) calc(10.0*var(--u)) round!important;image-rendering:pixelated;border-radius:0!important}
-dialog[data-view=library] .grid .card{border-image-source:url(ui/skin/pl-card.png)!important;border-image-slice:12 fill!important;border-image-width:calc(12*var(--u))!important}
+dialog[data-view=library] .grid .card{border-image-source:url(ui/skin/pl-card-plain.png)!important;border-image-slice:12 fill!important;border-image-width:calc(12*var(--u))!important}
 dialog[data-view=library] .lesson-card::before,dialog[data-view=library] .grade-ladder>h3::before{display:none!important}
 dialog[data-view=library] .lesson-card.shut::after{content:''!important;top:6px!important;right:6px!important;width:calc(13*var(--u))!important;height:calc(12*var(--u))!important;background:url(ui/skin/pip-off.png) center/100% 100% no-repeat!important;box-shadow:none!important}
 dialog[data-view=library] .lesson-card:has([data-test]:not(:disabled))::after{background:none!important;box-shadow:none!important;border:calc(2*var(--u)) solid transparent;border-image:url(ui/skin/pl-button-primary.png) 12 22 12 18 fill/calc(4.91*var(--u)) calc(9.0*var(--u)) stretch;padding:4px 12px!important;color:#fff2d0!important;font:700 var(--fs)/1 var(--ui)!important}
@@ -778,7 +815,7 @@ html[data-text="150"] :is(dialog,#ui-dialogue,#toast,#prompt,.ui-banner){--fs:24
 .seg{display:flex;gap:2px}
 .seg button{min-height:34px;padding:4px 14px 5px}
 .learners ul{list-style:none;margin:8px 0;padding:0;display:grid;gap:6px}
-.learner-row{display:flex;align-items:center;gap:10px;padding:6px 10px;border-style:solid;border-width:calc(4*var(--u));border-color:transparent;border-image:url(ui/skin/pl-card.png) 8 8 8 8 fill/calc(12.0*var(--u)) calc(12.0*var(--u)) round;image-rendering:pixelated}
+.learner-row{display:flex;align-items:center;gap:10px;padding:6px 10px;border-style:solid;border-width:calc(4*var(--u));border-color:transparent;border-image:url(ui/skin/pl-card-plain.png) 8 8 8 8 fill/calc(12.0*var(--u)) calc(12.0*var(--u)) round;image-rendering:pixelated}
 .learner-row.active{border-image-source:url(ui/skin/pl-plate.png)}
 .learner-row>div{flex:1;min-width:0}
 .learner-row small{display:block;color:var(--muted)}
@@ -1115,7 +1152,7 @@ dialog[data-view=pause]::backdrop{background:#0d080699;-webkit-backdrop-filter:b
 dialog[data-view=pause] #modal-content{padding:6px 10px 10px;overflow:auto}
 .pause-wrap{display:grid;grid-template-columns:minmax(120px,38%) 1fr;gap:18px;align-items:center}
 .pause-hero{display:grid;justify-items:center;gap:3px;text-align:center}
-.pause-hero canvas{width:112px;height:126px;image-rendering:pixelated;border:calc(4*var(--u)) solid transparent;border-image:url(ui/skin/pl-card.png) 12 fill/calc(12*var(--u)) stretch}
+.pause-hero canvas{width:112px;height:126px;image-rendering:pixelated;border:calc(4*var(--u)) solid transparent;border-image:url(ui/skin/pl-card-plain.png) 12 fill/calc(12*var(--u)) stretch}
 .pause-hero strong{font:700 var(--fs-2,16px)/1.1 var(--ui);color:var(--ink);margin-top:4px}
 .pause-hero .pause-lv{font:700 var(--fs)/1 var(--ui);color:var(--gold,#e7c77e);letter-spacing:1px;text-transform:uppercase}
 .pause-hero small{color:var(--ink-2);line-height:1.2}
@@ -1146,7 +1183,7 @@ dialog[data-view=pause] #modal-content{padding:6px 10px 10px;overflow:auto}
 /* ---------- inventory, review round 2 (B7): a paper doll beside the bag (Stardew, Diablo); rarity is a coloured border on
    a muted slot (Diablo IV) ---------- */
 .inv{display:grid;grid-template-columns:minmax(270px,44%) 1fr;gap:16px;align-items:start;margin-top:8px}
-.inv-doll{display:grid;grid-template-columns:76px 1fr 76px;gap:8px 8px;align-items:center;justify-items:center;padding:12px 8px;border:calc(4*var(--u)) solid transparent;border-image:url(ui/skin/pl-card.png) 12 fill/calc(12*var(--u)) stretch}
+.inv-doll{display:grid;grid-template-columns:76px 1fr 76px;gap:8px 8px;align-items:center;justify-items:center;padding:12px 8px;border:calc(4*var(--u)) solid transparent;border-image:url(ui/skin/pl-card-plain.png) 12 fill/calc(12*var(--u)) stretch}
 .inv-doll .inv-weapon{grid-column:1;grid-row:1}.inv-doll .inv-armor{grid-column:1;grid-row:2}
 .inv-doll .inv-necklace{grid-column:3;grid-row:1}.inv-doll .inv-ring{grid-column:3;grid-row:2}
 .inv-doll .inv-pet{grid-column:2;grid-row:3}
@@ -1164,7 +1201,7 @@ dialog[data-view=pause] #modal-content{padding:6px 10px 10px;overflow:auto}
 .inv-stats dt{font-size:calc(var(--fs) * .8);color:var(--ink-2)}
 .inv-stats dd{margin:0;font:700 var(--fs-2,16px)/1.1 var(--ui);color:var(--ink)}
 .inv-side{display:flex;flex-direction:column;gap:10px;min-width:0}
-.inv-detail{display:grid;grid-template-columns:72px 1fr;gap:12px;align-items:start;min-height:150px;padding:12px;border:calc(4*var(--u)) solid transparent;border-image:url(ui/skin/pl-card.png) 12 fill/calc(12*var(--u)) stretch}
+.inv-detail{display:grid;grid-template-columns:72px 1fr;gap:12px;align-items:start;min-height:150px;padding:12px;border:calc(4*var(--u)) solid transparent;border-image:url(ui/skin/pl-card-plain.png) 12 fill/calc(12*var(--u)) stretch}
 .inv-detail h3{margin:0 0 2px}
 .inv-detail p{margin:4px 0}
 .inv-detail button{margin-top:6px}
@@ -1554,14 +1591,17 @@ dialog[data-view=journal] .bestiary-entry[data-state=unknown]::before{content:'?
 @media(max-height:600px){dialog[data-view=journal] .modal-head p{display:none}dialog[data-view=journal] .modal-head h2{font-size:24px}dialog[data-view=journal] .tabs button{min-height:32px;padding:4px 8px}dialog[data-view=journal] .notes{font-size:14px;margin:2px 0 6px}dialog[data-view=journal] .journal-row{min-height:40px;padding:4px 8px}}
 
 /* Home review: keep navigation visible while the ability collection scrolls. */
-dialog[data-view=home]{height:min(780px,92dvh)}
-dialog[data-view=home] #modal-content{display:flex;flex-direction:column;overflow:hidden;padding-bottom:10px}
-dialog[data-view=home] .modal-head{flex:none;margin-bottom:6px;padding:4px 0 10px}
-dialog[data-view=home] .modal-head .eyebrow{display:none}
-dialog[data-view=home] .modal-head h2{font-size:32px}
-dialog[data-view=home] .modal-head p{font-size:16px;line-height:1.25}
-dialog[data-view=home] .tabs{flex:none;gap:6px;margin:4px 0 8px}
-dialog[data-view=home] .tabs button{min-height:36px;padding:5px 12px;font-size:16px}
+dialog[data-home]{height:min(780px,92dvh)}
+dialog[data-home] #modal-content{display:flex;flex-direction:column;overflow:hidden;padding-bottom:10px}
+dialog[data-home] .modal-head{flex:none;margin-bottom:6px;padding:4px 0 10px}
+dialog[data-home] .modal-head .eyebrow{display:none}
+dialog[data-home] .modal-head h2{font-size:32px}
+dialog[data-home] .modal-head p{font-size:16px;line-height:1.25}
+dialog[data-home] .home-tabs{flex:none;gap:6px;margin:4px 0 8px}
+dialog[data-home] .home-tabs button{min-height:36px;padding:5px 12px;font-size:16px}
+/* improve20-t-oct31 #15: one Home shell. Head and tab row stay put; the open tab's view scrolls under them (Abilities keeps its own inner scroll) */
+dialog[data-home] .home-body{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:0 6px 4px 0;scrollbar-width:thin;scrollbar-color:var(--gold-deep) transparent}
+dialog[data-view=home] .home-body{display:flex;flex-direction:column;overflow:hidden;padding:0}
 dialog[data-view=home] .notes{flex:none;margin:0 0 10px;padding:4px 12px;font-size:16px;line-height:1.2}
 dialog[data-view=home] .home-abilities{flex:1;min-height:0;overflow:auto;align-content:start;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));padding:2px 8px 8px 0;scrollbar-gutter:stable;scrollbar-color:var(--gold-deep) #1b2034}
 dialog[data-view=home] .ability-card{padding:12px;border-image-repeat:stretch;line-height:1.25;font-size:16px}
@@ -1571,8 +1611,8 @@ dialog[data-view=home] .ability-card .tag{font-size:16px}
 dialog[data-view=home] .ability-card .gate{font-weight:400;color:var(--ink-2)}
 dialog[data-view=home] .ability-card:not(.locked) .gate{color:#acd69b}
 dialog[data-view=home] .ability-card p{margin:8px 0;line-height:1.25}
-@media(max-height:600px){dialog[data-view=home] .modal-head p{display:none}dialog[data-view=home] .notes{margin-bottom:6px}dialog[data-view=home] .tabs{margin:2px 0 6px}dialog[data-view=home] .modal-head h2{font-size:24px}}
-@media(max-width:520px){dialog[data-view=home] .home-abilities{grid-template-columns:1fr}dialog[data-view=home] .tabs{flex-wrap:nowrap;overflow-x:auto}dialog[data-view=home] .tabs button{flex:none}dialog[data-view=home] .notes{flex-wrap:wrap;gap:4px 10px}}
+@media(max-height:600px){dialog[data-home] .modal-head p{display:none}dialog[data-view=home] .notes{margin-bottom:6px}dialog[data-home] .home-tabs{margin:2px 0 6px}dialog[data-home] .modal-head h2{font-size:24px}}
+@media(max-width:520px){dialog[data-view=home] .home-abilities{grid-template-columns:1fr}dialog[data-home] .home-tabs{flex-wrap:nowrap;overflow-x:auto}dialog[data-home] .home-tabs button{flex:none}dialog[data-view=home] .notes{flex-wrap:wrap;gap:4px 10px}}
 dialog[data-view=home] .ability-requirements{display:grid;grid-template-columns:1fr 1fr;column-gap:10px;margin-top:8px}
 dialog[data-view=home] .ability-requirements .gate-bar-label{grid-row:1;margin:0}
 dialog[data-view=home] .ability-requirements .progress{grid-row:2;margin:4px 0 0;min-width:0}
@@ -1611,7 +1651,7 @@ dialog[data-view=library] .library-content .lesson-strip{margin-top:10px}
 @media(max-width:520px){dialog[data-view=library] .library-browser{gap:4px;align-items:stretch;flex-direction:column}}
 
 /* Compact headings clear the inward curl of the ornate frame. */
-dialog:is([data-view=home],[data-view=smith],[data-view=library]) .modal-head{padding-left:14px}
+dialog:is([data-home],[data-view=home],[data-view=smith],[data-view=library]) .modal-head{padding-left:14px}
 /* Playtest 14 Oct: every framed panel (the village map's eyebrow was under the curl), not only those three. */
 html:not(.m-mode) dialog .modal-head{padding-left:14px}
 
@@ -1957,6 +1997,17 @@ dialog[data-view=smith] .gear-words{margin:2px 0 8px;font-size:16px}
 .gear-card .smith-ico{border-color:var(--rar,#4a4858)}
 .gear-card .gear-cost{margin:4px 0}
 .gear-card.locked h3{color:var(--ink-2)}
+/* improve20-t-oct31 #14: the smith's Buy tab leads with what helps this hero; the best one is marked, the no-better rest folds away */
+.gear-card .gear-up-badge{margin:2px 0 4px;color:#8fe07a;font-weight:700;letter-spacing:.02em}
+.gear-card .gear-up-badge span{display:inline-block;margin-right:2px}
+.gear-card.gear-best{box-shadow:0 0 0 2px #8fe07a88,0 0 14px #8fe07a44}
+.smith-no-better{margin:10px 0 2px}
+.smith-no-better>summary{cursor:pointer;min-height:40px;display:flex;align-items:center;gap:8px;font-weight:700;color:var(--gold);list-style:none}
+.smith-no-better>summary::-webkit-details-marker{display:none}
+.smith-no-better>summary::before{content:'▸';color:var(--gold)}.smith-no-better[open]>summary::before{content:'▾'}
+.smith-no-better[open]>summary{margin-bottom:6px}
+.smith-no-better .gear-card{opacity:.88}
+.smith-all-worn{margin:4px 0 8px}
 .gear-silhouette .gear-ico{filter:brightness(0) opacity(.55)}
 .gear-pick{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
 .gear-pick .inv-cell{width:46px;position:relative;display:grid;place-items:center;background:#171622;border:2px solid var(--rar);min-height:0;padding:0}
@@ -2200,13 +2251,13 @@ dialog[data-view=result] .level-highlights .level-levelup small{color:#9fd36b;fo
 /* endfollow-oct29: the side-quest pointer on a chapter-clear card, and "Your adventure" after THE END */
 dialog[data-view=result] .level-highlights .level-quest-pointer{font-size:16px;max-width:52ch;text-align:left}
 dialog[data-view=result] .level-highlights .level-quest-pointer>span{color:#f1e6cc}
-dialog[data-view=result] .level-adventure{display:flex;flex-direction:column;align-items:center;gap:2px;margin:6px 0 2px;padding:6px 14px;border-top:1px solid #e3b85a55;width:100%;text-align:center}
-dialog[data-view=result] .level-adventure .adv-eyebrow{color:#e3b85a;letter-spacing:2px;font-size:14px}
-dialog[data-view=result] .level-adventure .adv-hero{font-size:18px}
-dialog[data-view=result] .level-adventure .adv-stats{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 16px;font-size:16px;color:#f1e6cc}
-dialog[data-view=result] .level-adventure .adv-title{margin:2px 0 0;display:flex;align-items:center;gap:8px;font-size:17px;color:#f1e6cc}
-dialog[data-view=result] .level-adventure .adv-title>img{width:24px;height:24px}
-dialog[data-view=result] .level-adventure .adv-title-note{color:#cdbb98;font-size:14px}
+dialog:is([data-view=result],[data-view=finale]) .level-adventure{display:flex;flex-direction:column;align-items:center;gap:2px;margin:6px 0 2px;padding:6px 14px;border-top:1px solid #e3b85a55;width:100%;text-align:center}
+dialog:is([data-view=result],[data-view=finale]) .level-adventure .adv-eyebrow{color:#e3b85a;letter-spacing:2px;font-size:14px}
+dialog:is([data-view=result],[data-view=finale]) .level-adventure .adv-hero{font-size:18px}
+dialog:is([data-view=result],[data-view=finale]) .level-adventure .adv-stats{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 16px;font-size:16px;color:#f1e6cc}
+dialog:is([data-view=result],[data-view=finale]) .level-adventure .adv-title{margin:2px 0 0;display:flex;align-items:center;gap:8px;font-size:17px;color:#f1e6cc}
+dialog:is([data-view=result],[data-view=finale]) .level-adventure .adv-title>img{width:24px;height:24px}
+dialog:is([data-view=result],[data-view=finale]) .level-adventure .adv-title-note{color:#cdbb98;font-size:14px}
 .pause-hero .pause-title{color:var(--gold,#e7c77e);font-weight:700;letter-spacing:.5px}
 dialog[data-view=result] .level-highlights .level-levelup strong{font-size:24px}
 dialog[data-view=result] .level-highlights .level-finale-note{font-size:15px}
@@ -2756,6 +2807,9 @@ dialog[data-view=result] .victory-tag:is([data-tag=first],[data-tag=record],[dat
 /* polish2-oct29 (readiness #15): the field mission's three tasks are a row of stars beside the task's tag, as in the quiz, and a right
    answer is the quiz's answer moment on a parchment card (ui/quiz-fun.js fieldRightHTML); reduced motion drops the pop and the burst */
 .field-mission .field-top{display:flex;align-items:center;flex-wrap:wrap;gap:6px 14px}
+/* improve20-t-oct31 #19: the reward, before the first task */
+.field-mission .field-offer{display:flex;align-items:center;gap:8px;margin:6px 0 0;color:#ffe9a8}
+.field-mission .field-offer strong{color:#ffd96a}
 .field-mission .field-top .tag{margin:0}
 .field-mission .field-stars .am-pips{display:inline-flex;margin:0;gap:6px}
 .field-mission .field-stars .am-pips i{position:relative;display:inline-block;width:24px;height:24px;border:0;box-sizing:border-box;background:url(ui/skin/star-empty.png) 0 0/24px 24px no-repeat;image-rendering:pixelated;opacity:.55}
@@ -3021,12 +3075,12 @@ html.m-mode .pet-moment{top:10%}
    Home header, tabs, hero line and rune bar shrink so the first row of ability cards shows at 844x390 and 667x375. Tabs stay on one
    row and scroll sideways. Desktop is unchanged (phone mode only). */
 @media(max-height:500px){
- html.m-mode dialog[data-view=home] .modal-head{margin-bottom:2px;padding:0 0 4px}
- html.m-mode dialog[data-view=home] .modal-head h2{font-size:20px;line-height:1.1;margin:0}
- html.m-mode dialog[data-view=home] .modal-head .close{width:36px;height:36px;min-height:36px}
- html.m-mode dialog[data-view=home] .tabs{flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;gap:4px;margin:0 0 4px;scrollbar-width:none}
- html.m-mode dialog[data-view=home] .tabs::-webkit-scrollbar{display:none}
- html.m-mode dialog[data-view=home] .tabs button{flex:none;min-height:34px;padding:2px 10px;font-size:14px}
+ html.m-mode dialog[data-home] .modal-head{margin-bottom:2px;padding:0 0 4px}
+ html.m-mode dialog[data-home] .modal-head h2{font-size:20px;line-height:1.1;margin:0}
+ html.m-mode dialog[data-home] .modal-head .close{width:36px;height:36px;min-height:36px}
+ html.m-mode dialog[data-home] .home-tabs{flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;gap:4px;margin:0 0 4px;scrollbar-width:none}
+ html.m-mode dialog[data-home] .home-tabs::-webkit-scrollbar{display:none}
+ html.m-mode dialog[data-home] .home-tabs button{flex:none;min-height:34px;padding:2px 10px;font-size:14px}
  html.m-mode dialog[data-view=home] .notes{margin:0 0 4px;padding:0 10px;font-size:16px;line-height:1.3}
  html.m-mode dialog[data-view=home] .rune-bar{margin:0 0 4px;padding:0 10px;font-size:16px;line-height:1.3;min-height:0}
  html.m-mode dialog[data-view=home] .home-abilities{padding-top:0}

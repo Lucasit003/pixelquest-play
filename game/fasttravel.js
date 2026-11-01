@@ -7,6 +7,7 @@
    reached -- its played or cleared levels' stops, and the town spots once it has been out of the gate. Pure; no DOM. */
 import {LEVELS,CHAPTERS,levelById,levelDone,levelOpen} from './levels.js';
 import {PADS} from './worldmap-layout.js';
+import {ITEM} from './gear.js';
 
 /* guide-oct26: Farmer Hob's farmhouse, where Wil's quest starts, under one name on the town map, here and in the Journal */
 export const FARM_NAME='Hob’s Farm';
@@ -26,16 +27,35 @@ const played=(s,id)=>levelDone(s,id)||(s?.levels?.[id]?.plays|0)>0;
 export function travelOf(s){if(!obj(s.travel))s.travel={places:[],hinted:false};if(!Array.isArray(s.travel.places))s.travel.places=[];return s.travel;}
 /* stops a save has clearly reached: every level it has cleared or played */
 export function syncTravel(s){const t=travelOf(s);let added=false;for(const l of LEVELS)if(isStop(l.id)&&played(s,l.id)&&!t.places.includes(l.id)&&t.places.length<MAX_PLACES){t.places.push(l.id);added=true;}return added;}
+/* improve20-t-oct31 #20 (audit2 #24): a save that already had s.travel kept only the spots it had walked since, so a level-9 save
+   that had bought gear and stepped quests still read "Visit it once to unlock" on the Weaponsmith. On every load, the town spots the
+   save has clearly used are marked visited too (additive; nothing is ever removed): Home once the game has started; the south gate
+   once out of it; the Library once a lesson or question was done; the Guild once a map level was played (the Guild opens the same
+   map of adventures); the Weaponsmith for gear bought there (a shop piece past the starter kit, no boss drop), a star or a finish,
+   or a crafting task; the Apothecary for a regeneration potion (sold only there); the Barracks for a companion or a bounty; Hob's
+   Farm once his quest was stepped; the Inn and the Chapel for a meal or a blessing still packed. Stops come from syncTravel. */
+const INN_FOOD=new Set(['basket-apples','honey-bun','spiced-cider','roast-fowl','hunters-steak','fish-stew']);
+export function usedSpots(s){const out=[],owned=obj(s?.gear?.owned)?s.gear.owned:{},tasks=obj(s?.adventurer?.tasks)?Object.keys(s.adventurer.tasks):[],pend=Array.isArray(s?.boons?.pending)?s.boons.pending:[];
+ const outside=played(s,'prologue')||LEVELS.some(l=>l.kind!=='home'&&played(s,l.id)),onMap=LEVELS.some(l=>l.kind==='level'&&!l.hidden&&played(s,l.id));
+ const studied=Object.values(obj(s?.lessons)?s.lessons:{}).some(l=>l?.done||l?.quiz>0)||Object.keys(obj(s?.answers)?s.answers:{}).length>0;
+ if(s?.started||outside||studied)out.push('home');if(outside)out.push('gate');if(studied)out.push('library');if(onMap)out.push('guild');
+ if(Object.entries(owned).some(([id,o])=>{const it=ITEM[id];return (o?.stars|0)>0||!!o?.finish||!!it&&it.shop>0&&it.shopTier!==0&&!it.boss&&!it.scholar;})||tasks.some(k=>/^craft-/.test(k)))out.push('smith');
+ if((s?.regenPotions|0)>0||s?.potionKind==='regen')out.push('alchemist');
+ if(obj(s?.party?.crew)&&Object.keys(s.party.crew).length||s?.party?.with||s?.boons?.bounty)out.push('barracks');
+ if(obj(s?.quests?.q)&&s.quests.q['hobs-purse'])out.push('farm');
+ if(pend.some(id=>INN_FOOD.has(id)))out.push('inn');if(pend.some(id=>/^blessing-/.test(id)))out.push('chapel');
+ return out.map(townPlace);}
+function syncUsed(s){const t=travelOf(s);for(const id of usedSpots(s))if(!t.places.includes(id)&&t.places.length<MAX_PLACES)t.places.push(id);}
 /* normalize(): value is the raw saved field (or undefined on an older save); s is the save being built, levels already cleaned */
 export function cleanTravel(value,s){
- if(obj(value)){s.travel={places:[...new Set((Array.isArray(value.places)?value.places:[]).filter(validPlace))].slice(0,MAX_PLACES),hinted:value.hinted===true};syncTravel(s);return s.travel;}
+ if(obj(value)){s.travel={places:[...new Set((Array.isArray(value.places)?value.places:[]).filter(validPlace))].slice(0,MAX_PLACES),hinted:value.hinted===true};syncUsed(s);syncTravel(s);return s.travel;}
  /* a save from before fast travel: out of the gate once (the prologue or any level) means the whole village was walked; a save
     that has only studied knows Home (where the first morning starts) and the Library */
  s.travel={places:[],hinted:false};const t=s.travel;
  const out=played(s,'prologue')||LEVELS.some(l=>l.kind!=='home'&&played(s,l.id));
  const studied=Object.values(obj(s.lessons)?s.lessons:{}).some(l=>l?.done||l?.quiz>0)||Object.keys(obj(s.answers)?s.answers:{}).length>0;
  if(out)t.places.push(...LEGACY_SPOTS.map(x=>townPlace(x.id)));else if(studied)t.places.push(townPlace('home'),townPlace('library'));
- syncTravel(s);return t;}
+ syncUsed(s);syncTravel(s);return t;}
 
 /* The hero reached a place: true when it is new. */
 export function visitPlace(s,id){if(!validPlace(id))return false;const t=travelOf(s);if(t.places.includes(id)||t.places.length>=MAX_PLACES)return false;t.places.push(id);return true;}

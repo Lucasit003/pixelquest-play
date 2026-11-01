@@ -67,6 +67,10 @@ function adventure(save){
  const gate=playable().find(l=>!l.optional&&starsShort(save,l.id));
  /* stargate-oct29 (midgame-oct29 finding 2): the quest step still comes first at a star wall (guide-oct26), but it now says the
     main road is held by stars, so a kid on 14 of 15 is not left wondering why the road stopped */
+ /* improve20-t-oct31 #17 (audit2 #8): after the ending a quest nobody has taken yet ("Talk to Farmer Hob at his farm") no longer
+    outranks the post-game road (Heroic, the arenas, Legendary, newest chapter first); the finale card and the Journal still name it.
+    A quest already under way keeps its place. */
+ if(q&&q.rank==='open'&&gameCleared(save)){const p=postGame(save);if(p)return p;}
  if(q){const n=questStep(q);if(!gate)return n;const g=starsShort(save,gate.id);return {...n,text:`${n.text.replace(/[.!]\s*$/,'')} (${gate.name} needs ${g.need}★: ${g.need-g.have} more).`,starGate:gate.id};}
  if(gameCleared(save))return postGame(save);
  if(gate){const g=starsShort(save,gate.id),src=starSource(save,gate.id);if(src){const l=src.level,k=src.tier,n=tierPad(l,k);return {...n,id:'stars-'+gate.id,text:`${gate.name} needs ${g.need} stars (you have ${g.have}). ${src.done?'Beat the 3-star time in':'Clear'} ${l.name} on ${TIERS[k].label} for more.`};}}

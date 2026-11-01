@@ -408,6 +408,11 @@ function optionFor(S, p) {
   if (act === 'library' && pr.subject) return {label: SUBJECT_LABEL[pr.subject] || pr.label || `Study ${pr.subject}`, panel: 'library', subject: pr.subject};
   if (act === 'library') return {label: `${pr.label || p.name || 'Study'}: the whole Library`, panel: 'library'};
   if (isShop(p)) return shopOption(S, p);
+  /* improve20-t-oct31 #13 (audit2 #4): every Library teacher stands behind their own table, so a child who walked up to the table from
+     the teacher's side got "Talk to Tinker Pip" and could not study there. Talking to a subject's teacher opens that subject (news
+     still comes first, as with the smith); the table's own spot in front works as before. */
+  const tutor = tutorSubject(S, p);
+  if (tutor) { const who = nameOf(p.props.key, p.name); return {label: `${who}: ${SUBJECT_LABEL[tutor]}`, panel: 'library', subject: tutor, keeper: who, talk: {key: p.props.key, name: who}}; }
   if (p.type === 'npc-spot' && TALK_PANEL[p.props?.key]) { const key = p.props.key, who = nameOf(key, p.name), panel = TALK_PANEL[key]; return {label: `${who}: ${PANEL_LABEL[panel]}`, panel, keeper: who, talk: {key, name: who}}; }
   if (act) return {label: act === 'guild' || act === 'alchemist' ? PANEL_LABEL[act] : pr.label || p.name || PANEL_LABEL[act], panel: act};
   if (p.type === 'npc-spot') { const key = p.props?.key, who = nameOf(key, p.name); return {label: `Talk to ${who}`, talk: {key, name: who, fallback: p.props?.talk}}; }
@@ -425,6 +430,8 @@ function facingBonus(p, x, y) {
 /* kidfix-a-oct31 (kid-appeal playtest: the smith said "use the counter on the right"): talking to a shopkeeper whose counter opens a
    panel opens it (news he has still comes first, hubInteract) */
 export const TALK_PANEL = {brannoc_the_smith: 'smith'};
+/* a Library teacher's subject when that subject has a study station in this room, else null */
+export function tutorSubject(S, p) { const sub = p?.type === 'npc-spot' && p.props?.role === 'tutor' && p.props.subject; return sub && SUBJECT_LABEL[sub] && S.points.some(q => actionOf(q) === 'library' && q.props?.subject === sub) ? sub : null; }
 function nearest(S, p) {
   let best = null, close = false;
   /* people: figures on the map and walkers on their routes (where they are right now). Every target is
@@ -435,7 +442,8 @@ function nearest(S, p) {
     /* owner, 8 Oct (packet #15): you walk up to someone to talk to them -- close by and facing them, never across the square */
     const raw = Math.hypot(p.x - f.x, (p.y - f.y) * 1.4) + 4, face = facingBonus(p, f.x, f.y - 20), d = raw - face;
     if (raw < PET_CLEAR) close = true;
-    if (raw < 28 && face > 0 && (!best || d < best.d)) best = {d, q: {x: f.x, y: f.y, sx: f.x, sy: f.y + 8, mark: [f.x, f.y - 50]}, o: {label: `Talk to ${f.name}`, talk: {key: f.key, name: f.name}}};
+    if (raw < 28 && face > 0 && (!best || d < best.d)) { const spot = S.room && S.points.find(q => tutorSubject(S, q) && nameOf(q.props.key, q.name) === f.name);
+      best = {d, q: spot || {x: f.x, y: f.y, sx: f.x, sy: f.y + 8, mark: [f.x, f.y - 50]}, o: spot ? optionFor(S, spot) : {label: `Talk to ${f.name}`, talk: {key: f.key, name: f.name}}}; }
   }
   for (const q of S.points) {
     if (q.type === 'spawn' || q.type === 'entry') continue;
@@ -740,7 +748,9 @@ export function hubGuidanceTarget(target, subject) {
   /* polish-oct29 (#13): a building's arrow aims at the door itself (its stand spot is at the doorstep, level with a hero walking up,
      so near the door the arrow pointed sideways) */
   const aim = !S.room && q.type === 'entrance' ? {x: q.x, y: q.y - 32} : null;
-  return routed(S, {room: S.key, x, y, label, ...(aim ? {aim} : {}), arrived: H.near?.q === q || !!H.player && Math.hypot(H.player.x - x, H.player.y - y) <= 12});
+  /* improve20-t-oct31 #13: at the subject's teacher, whose talk opens the same study, the hero has arrived too */
+  const sameStudy = kind === 'library' && !!q.props?.subject && H.near?.o?.panel === 'library' && H.near.o.subject === q.props.subject;
+  return routed(S, {room: S.key, x, y, label, ...(aim ? {aim} : {}), arrived: H.near?.q === q || sameStudy || !!H.player && Math.hypot(H.player.x - x, H.player.y - y) <= 12});
 }
 /* improve20-b-oct31 #8 (kid-appeal playtest: Maya walked the arrow from Home straight into the cliff by the house and had to find the
    stairs; in the Library it led her into the bench at the English desk's rug). When a wall stands on the straight line to the target,

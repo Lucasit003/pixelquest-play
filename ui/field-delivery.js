@@ -15,7 +15,7 @@ export function deliveryHTML({m,tasks,goal,icon,overflow=0}){
  const lines=GUARD_THANKS[m.stage]||GUARD_THANKS.elementary;
  const guard=(i)=>`<figure class="fd-guard${i?' fd-mirror':''}" data-guard="${i}">${topicArtHTML(GUARD_ART)}<figcaption><strong>${esc(GUARDS[i])}</strong><q>${esc(lines[i])}</q></figcaption></figure>`;
  const chip=(img,n,what)=>`<span class="fd-chip">${img}<span><strong>${esc(n)}</strong><small>${esc(what)}</small></span></span>`;
- const got=m.rewarded?[chip(icon('gold'),`+${FIELD_REWARD}`,'gold'),...(m.potion==='added'?[chip(icon('potion'),'+1','health potion')]:m.potion==='sold'?[chip(icon('gold'),`+${overflow}`,'gold (potion bag full)')]:[])].join(''):'';
+ const got=m.rewarded?[chip(icon('gold'),`+${m.gold||FIELD_REWARD}`,'gold'),...(m.potion==='added'?[chip(icon('potion'),'+1','health potion')]:m.potion==='sold'?[chip(icon('gold'),`+${overflow}`,'gold (potion bag full)')]:[])].join(''):'';
  return `<div class="field-delivered"><h3 class="field-delivered-title">Delivery complete!</h3><div class="fd-guards">${guard(0)}${guard(1)}</div>`
   +(got?`<div class="fd-got"><small>You got</small><div class="fd-chips">${got}</div></div>`:'<p class="subtle">No reward this time.</p>')
   +`<details class="fd-did"><summary><small>What you did</small></summary><ul class="field-done-list">${tasks.map(t=>`<li><strong>${esc(t.title)}</strong><span>${esc(t.explanation)}</span></li>`).join('')}</ul></details>`

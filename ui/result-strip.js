@@ -12,6 +12,12 @@ export const pastFirstChapter=s=>LEVELS.some(l=>l.kind==='level'&&!l.hidden&&l.c
 /* "1 health potion" -> number 1, word "health potion"; a line with no leading number keeps its words */
 export function splitCount(label){const m=/^(\d+)\s*[×x]?\s+(.+)$/.exec(String(label||''));return m?{n:m[1],what:m[2]}:{n:'',what:String(label||'')};}
 
+/* improve20-t-oct31 (audit2 rare-drops note: the prologue's Thorn Charm showed only as a toast back in town): every piece the run
+   brought home -- its gear drops, its jewels and the Boss Meter's payout -- once each, gear first. [{kind:'gear'|'jewel',id}] */
+export function runDrops(st){const out=[],seen=new Set(),add=(kind,id)=>{if(!id||seen.has(kind+':'+id))return;seen.add(kind+':'+id);out.push({kind,id});};
+ for(const id of st?.gear||[])add('gear',id);const p=st?.run?.meter?.paid;if(p&&p.kind!=='jewel')add('gear',p.id);
+ for(const id of st?.jewels||[])add('jewel',id);if(p&&p.kind==='jewel')add('jewel',p.id);return out;}
+
 /** The strip. won: "You got" or, on a defeat, "You kept". loot: resultLoot's list ({icon,label,quiet?}); gear: [{name,img}]; starsAll: the save's stars in all.
  * icon(name) gives an <img>; starIcon is the star's <img>. */
 export function youGotHTML({won=true,gold=0,xp=0,loot=[],gear=[],stars=0,starsAll=0,icon,starIcon=''}){
@@ -25,7 +31,10 @@ export function youGotHTML({won=true,gold=0,xp=0,loot=[],gear=[],stars=0,starsAl
  return `<div class="you-got level-rewards" data-you-got><small class="you-got-label">${won?'You got':'You kept'}</small><div class="you-got-row">${parts.join('')}</div></div>`;
 }
 
-export const YOU_GOT_CSS=`dialog[data-view=result] .you-got{display:flex;flex-direction:column;align-items:center;gap:4px;margin:2px 0}
+/* improve20-t-oct31: with the run's jewels and the meter's payout on the strip, five chips or more wrap to a second row; on a short
+   desktop window the hero picture then gives way (the hero level line stays), so the card fits and nothing is cut. Phone rules are untouched. */
+export const YOU_GOT_CSS=`@media(max-height:820px){html:not(.m-mode) dialog[data-view=result] .level-result:has(.you-got-item:nth-child(5)) .level-hero{display:none}}
+dialog[data-view=result] .you-got{display:flex;flex-direction:column;align-items:center;gap:4px;margin:2px 0}
 dialog[data-view=result] .you-got-label{letter-spacing:.12em;text-transform:uppercase;opacity:.8}
 dialog[data-view=result] .you-got-row{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 10px}
 dialog[data-view=result] .you-got-item{display:inline-flex;align-items:center;gap:6px;padding:4px 10px 4px 6px;border:1px solid rgba(227,184,90,.45);border-radius:4px;background:rgba(10,12,30,.45)}

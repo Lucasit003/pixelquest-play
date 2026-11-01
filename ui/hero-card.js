@@ -35,7 +35,7 @@ const ICON_AB=Object.fromEntries(ABILITY_ICON_IDS.map((n,i)=>[n,i]));
 const ICON_IX=Object.fromEntries(ICON_NAMES.map((n,i)=>[n,i]));
 
 /* every skin file the card may draw, relative to dist/ui/ */
-export const CARD_ART=['skin/keyart.webp','skin/pl-frame.png','skin/pl-window.png','skin/pl-parchment.png','skin/pl-card.png','skin/pl-plate.png','skin/divider.png','skin/star-gold.png','skin/icons.png','skin/ability-icons.png',
+export const CARD_ART=['skin/keyart.webp','skin/pl-frame.png','skin/pl-window.png','skin/pl-parchment.png','skin/pl-card-plain.png','skin/pl-plate.png','skin/divider.png','skin/star-gold.png','skin/icons.png','skin/ability-icons.png',
  'skin/rewards/scroll.png','skin/uiicons/swords.png',...new Set(Object.values(SUBJECT_ICON).map(n=>ownIconURL(n)?.replace(/^ui\//,'')).filter(Boolean))];
 /* an icon by name: our own PixelLab file when there is one, else its cell in the 32 px strip */
 function iconArt(art,ic){if(ic.strip==='ability')return [art['skin/ability-icons.png'],ic.i*32];const own=ownIconURL(ic.name)?.replace(/^ui\//,'');if(own&&art[own])return [art[own],0];return [art['skin/icons.png'],(ICON_IX[ic.name]??ICON_IX.sparkle)*32];}
@@ -78,7 +78,7 @@ export function drawHeroCard(cv,m,art={},hero=null){if(cv.width!==CARD_W||cv.hei
  /* abilities awakened: eight slots, icons for the awake ones */
  y=R.y+288;text(c,`ABILITIES AWAKENED · ${m.awake} OF ${m.abilities.length}`,X,y,{size:16,bold:true,color:INK2});
  const n=Math.max(1,m.abilities.length),gap=8,box=Math.min(68,Math.floor((IW-gap*(n-1))/n));
- m.abilities.forEach((a,i)=>{const bx=X+i*(box+gap),by=y+10;nine(c,art['skin/pl-card.png'],bx,by,box,box,[8,8,8,8],1,true);if(a.on)icon(c,art,a.icon,bx+(box-64)/2|0,by+(box-64)/2|0,64);else{c.fillStyle='rgba(20,14,10,.35)';c.fillRect(bx+6,by+6,box-12,box-12);}});
+ m.abilities.forEach((a,i)=>{const bx=X+i*(box+gap),by=y+10;nine(c,art['skin/pl-card-plain.png'],bx,by,box,box,[8,8,8,8],1,true);if(a.on)icon(c,art,a.icon,bx+(box-64)/2|0,by+(box-64)/2|0,64);else{c.fillStyle='rgba(20,14,10,.35)';c.fillRect(bx+6,by+6,box-12,box-12);}});
  /* topics mastered per subject */
  y=R.y+394;text(c,`TOPICS MASTERED · ${m.topics}`,X,y,{size:16,bold:true,color:INK2});
  const cols=4,cw=IW/cols;m.subjects.forEach((sj,i)=>{const cx=X+(i%cols)*cw,cy=y+8+Math.floor(i/cols)*56;icon(c,art,{name:sj.icon},cx,cy+4,48);

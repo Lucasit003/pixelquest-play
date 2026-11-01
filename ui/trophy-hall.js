@@ -1,5 +1,5 @@
 /* The Trophy Hall panel (improve20-c-oct31, item 16; data: game/trophies.js). Each plaque is a canvas: the existing PixelLab card
-   frame (skin/pl-card.png, 9-slice at 2x) tinted bronze, silver or gold from the art itself, with the boss's own idle frame inside,
+   frame (skin/pl-card-plain.png, 9-slice at 2x) tinted bronze, silver or gold from the art itself, with the boss's own idle frame inside,
    cropped to its drawn pixels. An unbeaten boss is its own shape filled dark, with a "?". No new art.
    Boss atlases load only as their plaque scrolls into view, and are let go when the panel closes (the town never needs them). */
 import {trophies,trophyCount,TROPHY_TOTAL,METAL_TINT} from '../game/trophies.js';
@@ -49,7 +49,7 @@ export function paintPlaque(cv,card,id,metal){const g=cv.getContext('2d');g.imag
 function mark(g){g.font='bold 40px "Pixel Operator", monospace';g.textAlign='center';g.textBaseline='middle';g.fillStyle='#000';g.fillText('?',PLAQUE_W/2+2,PLAQUE_H/2+8);g.fillStyle='#e9dcb6';g.fillText('?',PLAQUE_W/2,PLAQUE_H/2+6);}
 /* browser: load the card once, then each plaque's atlas when it scrolls into view; repaint until ready; release on close */
 export function wireTrophyHall(root){const cvs=[...root.querySelectorAll('[data-trophy-sprite]')];if(!cvs.length)return;const before=new Set(loadedSprites()),mine=new Set();
- const card=new Image();card.src=new URL('./skin/pl-card.png',import.meta.url).href;
+ const card=new Image();card.src=new URL('./skin/pl-card-plain.png',import.meta.url).href;
  const want=new Set(),paint=()=>{if(!card.complete||!card.naturalWidth)return;for(const cv of cvs)if(!cv.dataset.done){const id=cv.dataset.trophySprite;if(want.has(cv)&&paintPlaque(cv,card,id,cv.dataset.metal||null))cv.dataset.done='1';else if(!cv.dataset.base){paintPlaque(cv,card,id,cv.dataset.metal||null);cv.dataset.base='1';}}};
  const see=cv=>{if(want.has(cv))return;want.add(cv);const id=cv.dataset.trophySprite;if(!before.has(id))mine.add(id);loadSprite(id);};
  if(typeof IntersectionObserver==='function'){const io=new IntersectionObserver(es=>{for(const e of es)if(e.isIntersecting){see(e.target);io.unobserve(e.target);}},{root:null,rootMargin:'120px'});cvs.forEach(cv=>io.observe(cv));}else cvs.forEach(see);

@@ -111,7 +111,8 @@ function director(){
  try{
   const modal=d.querySelector('#modal'),view=modal?.open?modal.dataset.view:'';
   let key;
-  if(sheetOpen()&&d.querySelector('#ui-sheet')?.dataset.view==='credits')key='credits';
+  /* improve20-t-oct31 #17: the finale card plays the credits theme, at full volume (not ducked) */
+  if(sheetOpen()&&d.querySelector('#ui-sheet')?.dataset.view==='credits'||view==='finale')key='credits';
   else if(titleOpen()||(view==='settings'&&returnToTitle))key='title';
   else if(override)key=override;
   else if(w){/* a lost fight leaves the boss alive: once the level has ended, the boss track gives way to the area's own (playtest 14 Oct pass 2) */const boss=!w.ended&&w.enemies?.some?.(e=>e.boss&&e.hp>0);const own=w.level?.kind==='level'&&getSoundtrack()!=='classic';/* every level and every boss has its own track (owner, 14 Oct) */key=boss?(own?bossMusicKey(w.level.id):'boss'):own?levelMusicKey(w.level.id):musicKey(w.biome||w.scene||w.zone||'town');}
@@ -122,7 +123,7 @@ function director(){
   /* the next-step strip's icon follows where the step points: gate, Library, Guild or a map pad */
   const ob=d.querySelector('#objective');if(ob){try{const k=nextStep(ctx.save())?.target?.kind||'';if(ob.dataset.kind!==k)ob.dataset.kind=k;}catch{}}
   if(R.className!==was)rescale();
-  duck(!!(modal?.open&&view!=='welcome'&&view!=='cinematic')||sheetOpen());
+  duck(!!(modal?.open&&view!=='welcome'&&view!=='cinematic'&&view!=='finale')||sheetOpen());
  }catch{}
  later(director,250);
 }
