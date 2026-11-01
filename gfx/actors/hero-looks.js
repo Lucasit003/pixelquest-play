@@ -20,7 +20,10 @@ import {loadSprite,registerSprite,releaseSprite,spriteReady} from './sprites.js'
 import {HERO_VARIANTS,ROLE_MAPS,VARIANT_DIRECTIONS} from './hero-variants.js';
 import {heroArtKey,heroBody,heroDirectionAtlas} from './hero-directions.js';
 import {ARMOR_SOURCES,ARMOR_SETS,tintForChest,tintLUT,decodeRoleMap} from './hero-armor.js';
-import {LOOK_MAPS} from './hero-look-maps.js';
+import {LOOK_MAPS as ATLAS_LOOK_MAPS} from './hero-look-maps.js';
+import {DRINK_SHEETS,DRINK_ROLE_MAPS,DRINK_LOOK_MAPS} from './hero-drink.js';
+/* potion-drink-nov1: the drink sheets' maps join the atlases' (tools/bake-hero-drink.mjs) */
+const LOOK_MAPS={...ATLAS_LOOK_MAPS,...DRINK_LOOK_MAPS},HAS_ROLE=new Set([...ROLE_MAPS,...DRINK_ROLE_MAPS]);
 import {lookFor,lookName,normalizeLook,paletteLUT,applyPalette,decodeLookMap} from './hero-palette.js';
 
 export const MAX_VARIANTS=2,MAX_TINTS=4,MAX_ROLE_MAPS=6;
@@ -51,7 +54,7 @@ export function tintFor(look,set){const t=tintForChest(set);return t&&ARMOR_SOUR
 export const tintedName=(id,tint)=>id+'@'+tint;
 /* The palette of one atlas: the armour set's tint (only on an atlas with an armour role map) and the creator look (only on
    an atlas with a look map), as one name: 'bogking', 'h.blonde+s.tone3' or 'bogking|h.blonde'; null when nothing changes. */
-export function paletteFor(atlasId,tint,look){const a=tint&&ROLE_MAPS.includes(atlasId)?tint:'',key=LOOK_MAPS[atlasId],l=key&&look?lookName(lookFor(key,look)):'';
+export function paletteFor(atlasId,tint,look){const a=tint&&HAS_ROLE.has(atlasId)?tint:'',key=LOOK_MAPS[atlasId],l=key&&look?lookName(lookFor(key,look)):'';
  return a&&l?a+'|'+l:a||l||null;}
 const parsePalette=p=>{const [a,l]=p.includes('|')?p.split('|'):p.includes('.')?['',p]:[p,''];const look={};for(const part of (l||'').split('+').filter(Boolean)){const [k,v]=part.split('.');look[{h:'hair',s:'skin',e:'eyes'}[k]]=v;}return {tint:a||null,look};};
 
@@ -102,7 +105,7 @@ function dropTints(atlasId){for(const k of [...tints.keys()])if(k.startsWith(atl
 const lutFor=(atlasId,P)=>{const {tint,look}=parsePalette(P);return paletteLUT(LOOK_MAPS[atlasId]||null,look,tint?tintLUT(atlasId.slice(5).split(/[-@]/)[0],tint):null);};
 /* The ready recoloured sprite id for an atlas under palette P (paletteFor), or null while it is being made (and starts
    making it). One pass over a copy of the atlas applies the armour and the look together. */
-export function tintedAtlas(atlasId,P){if(!P)return null;const key=tintedName(atlasId,P);let t=tints.get(key);
+export function tintedAtlas(atlasId,P,store=tints,max=MAX_TINTS){if(!P)return null;const tints=store,key=tintedName(atlasId,P);let t=tints.get(key);
  if(t){tints.delete(key);tints.set(key,t);return t.ready?key:null;}
  const s=loadSprite(atlasId);if(!s.ready)return null;const ms=mapsFor(atlasId,P);if(ms.some(m=>!m.ready&&!m.failed)||ms.every(m=>m.failed))return null;
  t={ready:false};tints.set(key,t);
@@ -111,7 +114,7 @@ export function tintedAtlas(atlasId,P){if(!P)return null;const key=tintedName(at
   const data=new Uint8ClampedArray(px.data);applyPalette(data,ms.map(m=>m.ready?m.map:null),lut);const img=backend.make(px.w,px.h,data);if(!img){tints.delete(key);return;}
   registerSprite(key,src.meta,img);t.ready=true;lookStats.tintBuilds++;
   if(atlasId===pinned&&atlasId.includes('--')&&releaseSprite(atlasId)){dropped.add(atlasId);lookStats.sourceDrops++;}});
- while(tints.size>MAX_TINTS){const old=tints.keys().next().value;tints.delete(old);releaseSprite(old);lookStats.tintReleases++;}
+ while(tints.size>max){const old=tints.keys().next().value;tints.delete(old);releaseSprite(old);lookStats.tintReleases++;}
  return null;}
 
 /* ---- what to draw ---- */
@@ -170,5 +173,14 @@ export function heroLookPending(look,o={}){const body=heroBody(look),base='hero-
  const v=variantAtlasId(look,body,A),pv=paletteFor(v,T,C);if(pv&&spriteReady(tintedName(v,pv)))return false;
  const vs=v!==base?loadSprite(v):null;if(vs&&!vs.ready&&!vs.failed)return true;const id=vs?.ready?v:base,P=paletteFor(id,T,C);
  return !!(P&&!tints.get(tintedName(id,P))?.ready&&!mapsFailed(id,P));}
+/* potion-drink-nov1: the drink sheet a hero draws while drinking (scenes/combat.js p.drink): the worn drawn weapon's own drink
+   when one was made (hero-<class>[-<body>]--<art>-drink), else the body's, recoloured like the atlas (armour set + creator
+   colours) in a small cache of its own (the sheets are one short row, so they never push a big atlas out of MAX_TINTS).
+   null while it loads or while its colours are still being made: the hero keeps the normal pose meanwhile, never wrong colours. */
+const drinkTints=new Map();
+export const MAX_DRINK_TINTS=4;
+export function heroDrinkId(look,{plain=false,art,set,colours:co}={}){const body=heroBody(look),key=heroArtKey(look,body),L=heroLookOf(look),A=plain?null:art===undefined?L.art:art;
+ const v=variantAtlasId(look,body,A)+'-drink',id=DRINK_SHEETS.includes(v)?v:'hero-'+key+'-drink';if(!DRINK_SHEETS.includes(id))return null;const s=loadSprite(id);if(!s.ready)return null;if(plain)return id;
+ const P=paletteFor(id,tintFor(look,set===undefined?L.set:set),coloursFor(look,co));if(!P)return id;const t=tintedAtlas(id,P,drinkTints,MAX_DRINK_TINTS);return t||(tintComing(id,P)?null:id);}
 /* tests and the loader's bookkeeping */
-export function resetHeroLooks(){for(const id of [...resident])releaseSprite(id);resident.length=0;pinned=null;held.clear();dropped.clear();for(const k of busts.keys())releaseSprite(k);busts.clear();for(const k of [...tints.keys()])releaseSprite(k);tints.clear();roleMaps.clear();for(const k in lookStats)lookStats[k]=0;lookOf=()=>null;colours={};}
+export function resetHeroLooks(){for(const id of [...resident])releaseSprite(id);resident.length=0;pinned=null;held.clear();dropped.clear();for(const k of busts.keys())releaseSprite(k);busts.clear();for(const k of [...tints.keys()])releaseSprite(k);tints.clear();for(const k of [...drinkTints.keys()])releaseSprite(k);drinkTints.clear();roleMaps.clear();for(const k in lookStats)lookStats[k]=0;lookOf=()=>null;colours={};}

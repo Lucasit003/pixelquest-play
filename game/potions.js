@@ -11,15 +11,23 @@ export const POTION_WAIT=3,POTION_CAP=5;
    wave again") alike. World.startLevel SETS p.freePotion to this, never adds, and it never reaches s.potions, so retries cannot farm it. */
 export const FREE_POTIONS=1;
 export const potionsLeftInLevel=p=>Math.max(0,POTION_CAP-(p?.drunk|0));
-export function usePotion(s,p,{cap=0}={}){const free=p.freePotion>0,kind=free?'health':potionKind(s),a=POTIONS[kind],key=kind==='regen'?'regenPotions':'potions';
+/* potion-drink-nov1: the reasons a press is refused, answered at once with no animation (a level's drink plays only when this is null) */
+export function potionRefusal(s,p,{cap=0}={}){const free=p.freePotion>0,kind=free?'health':potionKind(s),a=POTIONS[kind];
  if(p.hp<=0)return {ok:false,message:'You cannot drink a potion after falling.'};
  if(cap&&(p.drunk|0)>=cap)return {ok:false,capped:true,message:'No more potions this level.'};
  if(!potionCount(s,p))return {ok:false,message:`No ${a.name.toLowerCase()}s. Visit the Apothecary.`};
  if(p.hp>=p.maxHp)return {ok:false,message:'Your health is full.'};
  if(p.potionWait>0)return {ok:false,wait:true,message:'Wait a moment before the next potion.'};
  if(kind==='regen'&&p.potionRegen>0)return {ok:false,message:'Your regeneration potion is still working.'};
+ return null;}
+/* Spends one potion and heals (the gulp). Town drinks at the press; a level calls it at DRINK.gulp of the drink (scenes/combat.js). */
+export function usePotion(s,p,{cap=0}={}){const no=potionRefusal(s,p,{cap});if(no)return no;const free=p.freePotion>0,kind=free?'health':potionKind(s),a=POTIONS[kind],key=kind==='regen'?'regenPotions':'potions';
  if(free)p.freePotion--;else s[key]--;p.drunk=(p.drunk|0)+1;p.potionWait=POTION_WAIT;if(kind==='regen'){p.potionRegen=a.seconds;return {ok:true,...(free?{free}:{}),message:'Regenerating'};}
  const healed=Math.min(a.heal,p.maxHp-p.hp);p.hp+=healed;return {ok:true,...(free?{free}:{}),message:`+${Math.ceil(healed)}`};}
+/* potion-drink-nov1 (owner 1 Nov: "a drinking potion animation ... it should take some time to drink"): in a level a drink takes
+   DRINK.time s; the potion is spent and the heal lands at DRINK.gulp (a hit never cancels it; Dodge before the gulp cancels it with
+   nothing spent); the hero walks at DRINK.speed and cannot attack, cast or jump meanwhile. Town and menus stay instant. */
+export const DRINK={time:.9,gulp:.55,speed:.4,buffer:.3};
 /* the drink delay counts real time (World.update, before hitstop and slow motion), so the slot's 3 s means 3 s */
 export const tickPotionWait=(p,dt)=>{if(p.potionWait>0)p.potionWait=Math.max(0,p.potionWait-Math.max(0,dt));};
 export function tickPotion(p,dt){if(!(p.potionRegen>0)||p.hp<=0)return;const step=Math.min(Math.max(0,dt),p.potionRegen);p.hp=Math.min(p.maxHp,p.hp+POTIONS.regen.rate*step);p.potionRegen=Math.max(0,p.potionRegen-step);}

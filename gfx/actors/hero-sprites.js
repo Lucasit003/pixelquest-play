@@ -10,7 +10,7 @@ import {appearance} from './definitions.js';
 import {ABILITY_GLOW} from '../../game/ability-fx.js';
 import {patAge,PET_TIME} from './pet-sprites.js';
 import {heroSpriteIds,heroArtKey} from './hero-directions.js';
-import {heroDrawId,heroDirectionDrawId,heroBustId,heroBustPending,heroLookOf,variantAtlasId} from './hero-looks.js';
+import {heroDrawId,heroDirectionDrawId,heroBustId,heroBustPending,heroLookOf,variantAtlasId,heroDrinkId} from './hero-looks.js';
 export {setHeroLooks,previewHeroArt,setHeroColours,heroColoursOf,heroLookPending} from './hero-looks.js';
 export {setHeroBodies,heroBody} from './hero-directions.js';
 
@@ -148,7 +148,10 @@ function drawShadow(c,x,y,k){if(typeof Image==='undefined')return;if(!shadow){sh
 /* Draws shadow + hero, feet-anchored. Returns true for a hero (drawn, or still loading and so drawn as
    nothing), false when the actor isn't a hero. */
 export function drawHero(c,a,time=0){if(!heroSpriteId(appearance(a)))return false;const h=heroAtlas(a);if(!h)return true;
- const did=heroDirectionDrawId(appearance(a),{plain:!!a.plain,...(a.look||{})}),ds=did?loadSprite(did):null,{id,meta,state,t,facing,pet}=heroRenderPose(a,h,ds?.ready?{id:did,meta:ds.meta}:null,time);
+ const did=heroDirectionDrawId(appearance(a),{plain:!!a.plain,...(a.look||{})}),ds=did?loadSprite(did):null;let {id,meta,state,t,facing,pet}=heroRenderPose(a,h,ds?.ready?{id:did,meta:ds.meta}:null,time);
+ /* potion-drink-nov1: in a level (a.drink is set there, null between drinks) the drink sheet is kept warm, and while drinking it
+    plays on the drink's own clock over every other pose but a roll and a fall (a hit flashes over it; the drink goes on) */
+ if(a.drink!==undefined&&!a.plain){const k=heroDrinkId(appearance(a),a.look||{});if(k&&a.drink&&!(a.hp<=0)&&!(a.dead>0)&&!(a.dodge>0)){const m=loadSprite(k).meta;if(m?.states?.drink){id=k;meta=m;state='drink';t=Math.max(0,a.drink.t||0);facing=a.facing<0?-1:1;}}}
  const k=pixelScale(a),x=Math.round(a.x),y=Math.round(a.y-(a.z||0));
  const alpha=a.hidden>0?.28:a.inv>0&&Math.floor(time*22)%2?.65:1;
  if(!a.noShadow)drawShadow(c,x,Math.round(a.y),k);/* v2:levels -- stages draw their own downloaded shadow (a.noShadow) */

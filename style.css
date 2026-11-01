@@ -3691,3 +3691,6 @@ dialog[data-view=travel] button.travel-pin::after{content:"";position:absolute;i
 .m-mode .travel-tab small{font-size:11px}
 @media (max-height:370px){.m-mode dialog[data-view=travel] :is(.travel-how,.travel-more summary small){display:none}.m-mode dialog[data-view=travel] .travel-side{gap:6px}.m-mode dialog[data-view=travel] .travel-tabs{gap:4px}}
 .m-mode dialog[data-view=travel] .travel-more summary{min-height:26px;font-size:13px;gap:2px 6px}.m-mode dialog[data-view=travel] .travel-more summary small{font-size:11px}.m-mode dialog[data-view=travel] .travel-more p{margin:2px 0 0;font-size:12px}
+/* potion-drink-nov1: the drink's fill ring round the potion slot (main.js drinkRing): a gold ring that fills clockwise over the 0.9 s drink */
+.drink-ring{position:absolute;inset:-3px;z-index:3;border-radius:50%;pointer-events:none;background:conic-gradient(#ffd77a var(--fill,0%),#ffffff26 0);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 4px),#000 calc(100% - 3px));mask:radial-gradient(farthest-side,transparent calc(100% - 4px),#000 calc(100% - 3px));filter:drop-shadow(0 0 2px #0008)}
+.drink-ring[hidden]{display:none}
