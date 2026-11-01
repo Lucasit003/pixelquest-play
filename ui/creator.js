@@ -104,10 +104,21 @@ export function wireCreator(root,opts={}){const el=root?.querySelector?.('.creat
   paintBust();}
  const choose=b=>{if(!b||b.disabled)return;const part=b.dataset.crPart,v=b.dataset.crV||null;setPart(S(),cls,part,v);sfx('ui.click');changed();
   el.querySelector(`[data-cr-part="${part}"][data-cr-v="${v||''}"]`)?.focus?.();};
- el.addEventListener('click',e=>{const b=e.target.closest?.('[data-cr-part]');if(b){choose(b);return;}const a=e.target.closest?.('[data-cr]');if(!a)return;
+ const onClick=e=>{const b=e.target.closest?.('[data-cr-part]');if(b){choose(b);return;}const a=e.target.closest?.('[data-cr]');if(!a)return;
   if(a.dataset.cr==='random'){randomLook(S(),cls);sfx('ui.click');changed();}
   else if(a.dataset.cr==='reset'){resetLook(S(),cls);sfx('ui.back');changed();}
-  else if(a.dataset.cr==='gear'){gear=!gear;a.setAttribute('aria-pressed',gear);a.textContent=gear?'Showing gear':'Gear hidden';sfx('ui.click');}});
+  else if(a.dataset.cr==='gear'){gear=!gear;a.setAttribute('aria-pressed',gear);a.textContent=gear?'Showing gear':'Gear hidden';sfx('ui.click');}};
+ el.addEventListener('click',onClick);
+ /* improve20-p-oct31 #3: on a phone the options scroll (the look step's panel, the Home -> Appearance sheet), and eye colour, Surprise me
+    and Reset sat below the fold with no sign of them. opts.actionsInto (the look step's Next bar) takes Surprise me and Reset, so they
+    are always in view (phone mode only); and the scrolling box gets .more-below while rows are still under its edge, which creator.css
+    turns into a "More below" chip at its foot (any size: a 720 px desktop window also hid Surprise me and Reset in Appearance). */
+ const doc=el.ownerDocument||globalThis.document,view=doc?.defaultView||globalThis,phone=()=>!!doc?.documentElement?.classList.contains('m-mode');
+ let moved=null;if(opts.actionsInto&&phone()){opts.actionsInto.querySelectorAll('.cr-actions').forEach(n=>n.remove());moved=el.querySelector('.cr-actions');if(moved){opts.actionsInto.prepend(moved);moved.addEventListener('click',onClick);}}
+ const scroller=()=>{for(let p=el.parentElement;p;p=p.parentElement){const o=view.getComputedStyle?.(p)?.overflowY;if(o==='auto'||o==='scroll')return p;}return null;};
+ let cueOn=null,dead=false;const cue=()=>{if(dead||!el.isConnected||!cueOn)return;cueOn.classList.toggle('more-below',cueOn.scrollHeight-cueOn.scrollTop-cueOn.clientHeight>12);};
+ const watchCue=()=>{if(dead||!el.isConnected)return;const sc=scroller();if(sc!==cueOn){cueOn?.removeEventListener?.('scroll',cue);cueOn?.classList.remove('more-below');cueOn=sc;sc?.addEventListener?.('scroll',cue,{passive:true});}cue();};
+ view.addEventListener?.('resize',watchCue);for(const ms of [60,400,1200])later(watchCue,ms);
  /* radio groups: arrows move and choose, Home/End jump; the outer screens' own arrow handling never sees these keys */
  el.addEventListener('keydown',e=>{const b=e.target.closest?.('[data-cr-part]');if(!b)return;const k=e.key;
   if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End',' ','Enter'].includes(k))return;e.preventDefault();e.stopPropagation();
@@ -115,7 +126,7 @@ export function wireCreator(root,opts={}){const el=root?.querySelector?.('.creat
   const list=[...b.closest('[role="radiogroup"]').querySelectorAll('[data-cr-part]:not(:disabled)')],i=list.indexOf(b);
   const n=k==='Home'?0:k==='End'?list.length-1:Math.max(0,Math.min(list.length-1,i+(k==='ArrowLeft'||k==='ArrowUp'?-1:1)));if(n!==i)choose(list[n]);});
  applyLooks(S());paintBodies();paintBust();if(!timer)tick();
- return {rerender,stop(){clearTimeout(timer);timer=0;},get gear(){return gear;}};}
+ return {rerender,stop(){clearTimeout(timer);timer=0;dead=true;moved?.remove();moved=null;cueOn?.removeEventListener?.('scroll',cue);cueOn?.classList.remove('more-below');cueOn=null;view.removeEventListener?.('resize',watchCue);},get gear(){return gear;}};}
 
 /* One still gameplay frame, at 2x native pixels, with no CSS enlargement in any creator step. */
 export function drawCreatorFigure(cv,cls,o={}){if(cv.width!==192||cv.height!==144){cv.width=192;cv.height=144;}return drawHeroFigure(cv,cls,{time:0,front:false,...o});}

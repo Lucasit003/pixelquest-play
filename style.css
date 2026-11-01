@@ -3071,3 +3071,56 @@ html.m-mode .rift-level{grid-column:1;grid-row:1/3}
 html.m-mode .rift-mods{grid-column:1;grid-row:3/7}
 html.m-mode .rift-best,html.m-mode .rift-last,html.m-mode .rift-reward,html.m-mode .rift-shards{grid-column:2}
 html.m-mode .rift-mods li{flex-direction:column;align-items:flex-start;gap:2px}
+/* improve20-p-oct31 #1: a press on an empty or locked ability slot: a small hint by that slot (ui/slot-hint.js), the caret on the slot,
+   never the centre toast over the hero; the slot gives a short shake (none under reduced motion, which also skips the fade) */
+#slot-hint{position:absolute;left:0;top:0;z-index:8;display:flex;flex-direction:column;align-items:center;gap:1px;max-width:min(360px,74%);padding:4px 16px 6px;font:700 calc(13px * var(--hz,1))/1.2 var(--ui);color:var(--ink);text-align:center;text-shadow:0 2px 0 #0d0806;pointer-events:none;border-style:solid;border-width:calc(4*var(--u));border-color:transparent;border-image:url(ui/skin/pl-plate.png) 8 8 8 8 fill/calc(10*var(--u)) calc(10*var(--u)) round;image-rendering:pixelated;opacity:0;transform:translateY(4px);transition:opacity .15s,transform .15s}
+#slot-hint.show{opacity:1;transform:none}
+#slot-hint[hidden]{display:none}
+#slot-hint b{color:var(--gold);font-size:inherit;letter-spacing:.5px}
+#slot-hint::after{content:'';position:absolute;left:var(--caret,50%);bottom:calc(-4*var(--u) - 11px);margin-left:-6px;border:6px solid transparent;border-top-color:var(--gold-deep)}
+#slot-hint.no-caret::after{display:none}
+#hotbar .ability-slot.denied{animation:pq-slot-deny .32s steps(6)}
+@keyframes pq-slot-deny{0%,100%{translate:0}20%{translate:-3px}40%{translate:3px}60%{translate:-2px}80%{translate:2px}}
+html.cine-on #slot-hint{visibility:hidden!important}
+#stage.slot-hint-on #ability-hint{visibility:hidden}
+/* improve20-p-oct31 #2: the turning sunburst (160 px, 96 px on phones) spilled over the tier word above the stars ("NORMAL") and the
+   time below them at every size. Its rays now stay inside the star row: the row clips them, with a little room above and below and
+   a fade at every edge, so they glow behind the stars and never reach a line of text. Same art and turn; the row's width is unchanged,
+   and so is its height on desktop (the room is taken from its margins: a taller row pushed the tall Rift and finale cards 14 px over) */
+dialog[data-view=result] .level-stars[data-burst]{overflow:hidden;padding:7px 28px;margin:-5px -28px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 24px,#000 calc(100% - 24px),transparent),linear-gradient(transparent,#000 5px,#000 calc(100% - 5px),transparent);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent,#000 24px,#000 calc(100% - 24px),transparent),linear-gradient(transparent,#000 5px,#000 calc(100% - 5px),transparent);mask-composite:intersect}
+dialog[data-view=result] .level-stars[data-burst]::before{opacity:.62}
+.m-mode dialog[data-view=result] .level-stars[data-burst]{padding:4px 18px;margin:2px -18px}
+/* improve20-p-oct31 #4: phone result and defeat sheets. A defeat (and any short card) sat in the top half with the bottom half empty,
+   and only a win drew the hero. The card now sits in the middle of the sheet (auto margins in a column, so a card taller than the
+   sheet still starts at the top and scrolls), and the hero stands beside the rewards on a defeat too (667x375 still gives a win's
+   pose up for room). The left column's spare row is the one under the time again: since polish2-oct29 moved the rows, the stretchy
+   row (oct25) had become the stars' own, so a tall reward column (the finale, a Rift win) pushed the time under the NEXT GOAL bar. */
+@media(max-height:500px) and (min-width:600px){
+ .m-mode dialog[data-view=result] #modal-content{display:flex;flex-direction:column}
+ .m-mode dialog[data-view=result] #modal-content>.level-result{margin-top:auto;margin-bottom:auto;flex:none;width:100%;max-height:100%;box-sizing:border-box;padding-top:4px}
+ .m-mode dialog[data-view=result] .level-result{grid-template-rows:repeat(6,auto) minmax(0,1fr)}
+ .m-mode dialog[data-view=result] .level-result .level-hero{display:block;width:96px;height:64px;flex:none}
+ /* the card is never taller than the sheet: the reward column shrinks into its own scroll box (the spare row takes what is left), and
+    the You got strip sits beside the banner AND the level name, so the name no longer waits under the strip's taller row */
+ .m-mode dialog[data-view=result] #modal-content .level-result>.level-result-body{grid-row:3 / 8;max-height:none;min-height:0;align-self:stretch}
+ .m-mode dialog[data-view=result] #modal-content .level-result>.you-got{grid-row:1 / 3}
+ /* Details open: the card grows and the sheet scrolls as before, with the goal and the buttons pinned */
+ .m-mode dialog[data-view=result] #modal-content>.level-result:has(#result-extra:not([hidden])){max-height:none}
+}
+/* narrow phones (740 and 667 wide): four rewards (the finale: gold, XP, a potion, stars) wrap the strip onto two rows, so it spans the
+   name, the cheer and the tier too, and the reward column below it scrolls in what is left; the stars and time stay in view */
+@media(max-height:500px) and (min-width:600px) and (max-width:760px){
+ .m-mode dialog[data-view=result] #modal-content .level-result>.you-got:has(.you-got-item:nth-child(4)){grid-row:1 / 5}
+ .m-mode dialog[data-view=result] #modal-content .level-result:has(>.you-got .you-got-item:nth-child(4))>.level-result-body{grid-row:5 / 8}
+}
+/* short phones (740x360, 667x375): the buttons' bar gives up a little padding so the rating clears the NEXT GOAL bar */
+@media(max-height:380px) and (min-width:600px){
+ .m-mode dialog[data-view=result] #modal-content .level-result>.modal-actions{margin-top:4px;padding-top:4px;padding-bottom:4px}
+ .m-mode dialog[data-view=result] #modal-content .level-result>.result-goal{bottom:53px}
+}
+
+/* improve20-p-oct31 #6: a danger lane under the hotbar (desktop), a phone button or the joystick fades that HUD piece while the lane is up
+   (main.js heroUnder, tier-fx liveLanes); a faded phone button still takes taps */
+#hotbar.lane-under,#xp-track.lane-under,#keyboard-actions.lane-under{opacity:.35}
+.m-mode :is(#touch button,#hotbar button,#hud-potion,#joy-ghost){transition:opacity .18s ease-out}
+.m-mode :is(#touch button,#hotbar button,#hud-potion,#joy-ghost).lane-under{opacity:.45}

@@ -83,7 +83,7 @@ export function fitStageText({W,H,title,top,obstacles,bold=true,scale=1,pad=40,l
 /* Warning priority: HUD/controls and hero are hard exclusions. Try full copy, tighter
    padding, then concise copy with all actors/CLEAR reserved before letting those yield.
    Pixel fonts stay at their smallest crisp scale (1); never clip text to fit a panel. */
-export function shortWarning(title){return title.replace(/Step off the glowing (?:row|lane|ground)/gi,'Leave the glow').replace(/Move to the green lane/gi,'Use the green lane').replace(/Move out of the glowing circles/gi,'Leave the circles').replace(/Leave the glowing circles/gi,'Leave the circles').replace(/(Walk|Back) away from (?:the \w+|her|him)/g,'$1 away').replace(/Watch the glowing ground/gi,'Watch the glow').replace(/Hit the one with a shadow/gi,'Hit the shadowed one');}
+export function shortWarning(title){return title.replace(/Step off the glowing (?:row|lane|ground)/gi,'Leave the glow').replace(/Move to the (?:green|CLEAR) lane/gi,'Use the CLEAR lane').replace(/Move out of the glowing circles/gi,'Leave the circles').replace(/Leave the glowing circles/gi,'Leave the circles').replace(/(Walk|Back) away from (?:the \w+|her|him)/g,'$1 away').replace(/Watch the glowing ground/gi,'Watch the glow').replace(/Hit the one with a shadow/gi,'Hit the shadowed one');}
 /* combatpolish-oct28: a wrapped warning ended on a lone word ("Flame wall! Jump over / it!" at 740x360). Keep the line count but use the
    narrowest width that still gives it, so the lines come out even; the box only narrows about its centre, so it stays clear of
    everything the wider box was clear of. */

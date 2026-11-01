@@ -1155,7 +1155,7 @@ export const GHOST = {color: '#fff1a6', alpha: 1, fill: 'rgba(55,83,102,.5)', sh
 function silhouette(c, p, t, kit, over, I, D, ms) {
   if (typeof document === 'undefined') return;
   if (!xray) { xray = document.createElement('canvas'); xray.width = 120; xray.height = 110; xmask = document.createElement('canvas'); xmask.width = 120; xmask.height = 110; xedge=document.createElement('canvas');xedge.width=120;xedge.height=110; }
-  const g = xray.getContext('2d'), m = xmask.getContext('2d');
+  const RF = {willReadFrequently: true}, g = xray.getContext('2d', RF), m = xmask.getContext('2d', RF); /* improve20-p-oct31 perf: read back every frame while the hero is covered */
   if (!g?.clearRect || !m?.clearRect) return;
   const bx = Math.round(p.x) - 60, by = Math.round(p.y) - 90;
   g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, 120, 110); g.imageSmoothingEnabled = false;
@@ -1166,7 +1166,7 @@ function silhouette(c, p, t, kit, over, I, D, ms) {
   g.globalCompositeOperation = 'source-in'; g.fillStyle = GHOST.color; g.fillRect(0, 0, 120, 110);
   m.setTransform(1, 0, 0, 1, 0, 0); m.clearRect(0, 0, 120, 110); m.imageSmoothingEnabled = false;
   m.translate(-bx, -by); for (const s of over) { if (!s.barracks) drawSprite(m, I, D, s, ms, true); else if (ready(H.barracks)) m.drawImage(H.barracks, s[1], s[2]); } m.setTransform(1, 0, 0, 1, 0, 0);
-  const edge=xedge.getContext('2d');edge.clearRect(0,0,120,110);edge.drawImage(xray,0,0);g.globalCompositeOperation = 'source-over';for(const [dx,dy] of [[-1,0],[1,0],[0,-1],[0,1]])g.drawImage(xedge,dx,dy);g.globalCompositeOperation='destination-out';g.drawImage(xedge,0,0);edge.globalCompositeOperation='source-in';edge.fillStyle=GHOST.fill;edge.fillRect(0,0,120,110);edge.globalCompositeOperation='source-over';g.globalCompositeOperation='source-over';g.drawImage(xedge,0,0);g.globalCompositeOperation = 'destination-in'; g.drawImage(xmask, 0, 0); g.globalCompositeOperation = 'source-over';
+  const edge=xedge.getContext('2d',RF);edge.clearRect(0,0,120,110);edge.drawImage(xray,0,0);g.globalCompositeOperation = 'source-over';for(const [dx,dy] of [[-1,0],[1,0],[0,-1],[0,1]])g.drawImage(xedge,dx,dy);g.globalCompositeOperation='destination-out';g.drawImage(xedge,0,0);edge.globalCompositeOperation='source-in';edge.fillStyle=GHOST.fill;edge.fillRect(0,0,120,110);edge.globalCompositeOperation='source-over';g.globalCompositeOperation='source-over';g.drawImage(xedge,0,0);g.globalCompositeOperation = 'destination-in'; g.drawImage(xmask, 0, 0); g.globalCompositeOperation = 'source-over';
   /* a hero only ankle-deep in a bush is plainly visible: ghost him only when a real share of him is covered */
   /* Only the body and its one-pixel outline can survive the mask. Read that rectangle, not the empty padding. */
   if (px && body) { x0 = Math.max(0, x0 - 1); y0 = Math.max(0, y0 - 1); x1 = Math.min(119, x1 + 1); y1 = Math.min(109, y1 + 1); const after = g.getImageData(x0, y0, x1 - x0 + 1, y1 - y0 + 1).data; let hid = 0; for (let i = 3; i < after.length; i += 4) if (after[i]) hid++; if (hid < body * GHOST.share) return; }

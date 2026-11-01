@@ -96,3 +96,16 @@ html[data-motion="reduced"] .creator [aria-checked="true"]{transform:none}
 .m-mode dialog[data-view=appearance] .creator{grid-template-columns:minmax(0,310px) minmax(0,1fr)}
 .m-mode dialog[data-view=appearance] .creator .cr-preview{position:sticky;top:0;z-index:1;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"stage close" "ctl ctl";gap:8px;align-items:end}
 .m-mode dialog[data-view=appearance] .creator .cr-closeup{flex-direction:column;align-items:center;gap:2px}
+/* improve20-p-oct31 #3 (phone look step and Home -> Appearance): eye colour, Surprise me and Reset sat below the fold of the scrolling
+   options with no sign of them. On the look step Surprise me and Reset ride in the Next bar (creator.js actionsInto), always in view;
+   and while colour rows are still under the scrolling box's edge, a "More below" chip shows at its foot (creator.js .more-below; at any
+   size, since a 720 px desktop window also hid Surprise me and Reset in Appearance). */
+.m-mode .title-screen[data-step="look"] .hero-look-actions{align-items:center}
+.m-mode .title-screen[data-step="look"] .hero-look-actions .cr-actions{margin-right:auto;flex-wrap:nowrap;gap:8px}
+.m-mode .title-screen[data-step="look"] .hero-look-actions .cr-actions button{min-height:44px;padding:6px 14px}
+.m-mode .title-screen[data-step="look"] .hero-look.more-below::after,.title-screen[data-step="look"] .select-pane.more-below::after,dialog[data-view=appearance] #modal-content.more-below::after{content:'More below ▾';position:sticky;bottom:6px;z-index:2;display:block;width:max-content;margin:-28px 2px 6px auto;padding:2px 10px 3px;font:700 14px/18px var(--ui);letter-spacing:.5px;color:var(--gold-2,#f0d48a);text-shadow:0 2px 0 #0d0806;pointer-events:none;background:#2a2f5c;border:1px solid #e3b85a88;border-radius:10px;box-shadow:0 2px 0 #0d0806;animation:cr-more-nudge 1.4s ease-in-out infinite}
+@keyframes cr-more-nudge{0%,100%{translate:0 0}50%{translate:0 -3px}}
+html[data-motion="reduced"] .more-below::after{animation:none}
+/* Home -> Appearance on a short phone: the eyebrow and the subtitle go (the creator's own line says looks are free and never change
+   strength), so the colours start higher in the sheet */
+@media(max-height:420px){.m-mode dialog[data-view=appearance] .modal-head{padding:2px 0 6px;margin-bottom:6px}.m-mode dialog[data-view=appearance] .modal-head :is(.eyebrow,p){display:none}}

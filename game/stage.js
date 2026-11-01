@@ -90,6 +90,9 @@ export function levelGeometry(level){
  if(!sm)return geo;
  geo.width=sm.width||sm.w;geo.height=Math.max(STAGE.viewH,sm.h||STAGE.viewH);
  if(sm.band){geo.floorTop=sm.band[0];geo.floorBottom=sm.band[1];}
+ /* improve20-p-oct31 #5 (phone floor band): the map's drawn band stays geo.artBottom (the camera frames it, camTopFor); a phone's
+    playable band ends at its floor gap, so feet, foes, hazards and pickups stay out of the bottom strip under the thumbs */
+ geo.artBottom=geo.floorBottom;geo.floorBottom=phoneNearEdge(geo);
  geo.blocked=(x,y)=>x>=0&&x<geo.width&&stageBlocked(key,x,y);
  if(sm.spawn)geo.spawn={x:sm.spawn[0],y:Math.max(geo.floorTop+4,Math.min(geo.floorBottom-2,sm.spawn[1]))};
  geo.secrets=(sm.secrets||[]).map(o=>({id:String(o.id??`${Math.round(o.x)},${Math.round(o.y)}`),x:o.x,y:Math.max(geo.floorTop+4,Math.min(geo.floorBottom-2,o.y)),loot:o.loot||'gold',name:o.name||'Secret'}));
@@ -103,11 +106,18 @@ export function levelGeometry(level){
 /* The camera's top edge: a band that fits above the hotbar is framed once; a taller one follows the hero. */
 /* v2:ui-mobile */export function setView(w=480,h=270){STAGE.camW=Math.max(64,Math.min(480,Math.round(w)));STAGE.camH=Math.max(64,Math.min(270,Math.round(h)));return {w:STAGE.camW,h:STAGE.camH};}
 export function camTopFor(geo,y){const H=/* v2:ui-mobile */STAGE.camH,maxTop=Math.max(0,(geo?.height||H)-H),vis=H-(/* camface-oct28: phones (ui/mobile.js measurePads) */STAGE.padB??STAGE.hudBottom);if(!geo)return 0;
- const fixed=geo.floorBottom-geo.floorTop<=vis-20;if(!fixed)return Math.max(0,Math.min(maxTop,Math.round(y-vis/2)));
+ const fb=/* improve20-p-oct31 #5: the drawn band */geo.artBottom??geo.floorBottom,fixed=fb-geo.floorTop<=vis-20;if(!fixed)return Math.max(0,Math.min(maxTop,Math.round(y-vis/2)));
  /* tallfields-oct31: a fixed frame puts the band's near edge at the bottom of the visible strip. A taller band on a phone camera
     then leaves a hero at the far edge with his head (46 px) under the top HUD. Such a frame moves up by half that shortfall (head
     room wanted: 30 px), never so far that the near edge leaves the screen: both edges stay in view, the frame stays fixed (a frame
     that slid with the hero's depth stepped against the camface/campad pads when it rounded). Desktop views and 96-unit bands keep
     the fixed frame exactly (tests/campad-oct28 and camface-oct28 pin those). */
- let top=geo.floorBottom-vis;const room=geo.floorTop-46-top;if(geo.floorBottom-geo.floorTop>STAGE.floorBottom-STAGE.floorTop&&room<30)top-=Math.max(0,Math.min(top-(geo.floorBottom-H),Math.round((30-room)/2)));
+ let top=fb-vis;const room=geo.floorTop-46-top;if(fb-geo.floorTop>STAGE.floorBottom-STAGE.floorTop&&room<30)top-=Math.max(0,Math.min(top-(fb-H),Math.round((30-room)/2)));
  return Math.max(0,Math.min(maxTop,Math.round(top)));}
+/* improve20-p-oct31 #5 (phone floor band, audit2 item 19): camface-oct28 framed the band PHONE_FLOOR_GAP (STAGE.padB, 20) above a phone's
+   bottom edge; tallfields-oct31 then lifted that frame for head room at the far edge, which put the near edge 5 world px from the bottom
+   at 844x390 and on it at 740x360, under the joystick. The frame stays as tallfields set it (the head room is kept) and the PLAYABLE band
+   ends where the floor gap starts instead: the near edge of a fixed phone frame, never under a 96-unit band. Desktop (padB null), and
+   a view too small for a fixed frame (the camera follows the hero there), keep the drawn band. */
+export function phoneNearEdge(geo){const fb=geo.artBottom??geo.floorBottom;if(STAGE.padB==null)return fb;const vis=STAGE.camH-STAGE.padB;if(fb-geo.floorTop>vis-20)return fb;
+ return Math.max(geo.floorTop+STAGE.floorBottom-STAGE.floorTop,Math.min(fb,camTopFor(geo,0)+vis));}

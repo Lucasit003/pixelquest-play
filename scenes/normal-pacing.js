@@ -10,13 +10,13 @@ export const NORMAL_SEQUENCES={m1:['fire fan','firefall'],m2:['forge eruption','
    walk away; helpers - defeat them; ash - the warnings stay lit on the ground. tests/playtest-ch2.test.js checks each
    action against the move's kind. */
 export const NORMAL_CUES={'fire fan':'Fire fan! Dodge through it!',firefall:'Firefall! Leave the circles!','forge eruption':'Eruption! Leave the circles!','core laser':'Core laser! Step off the glowing row!',
- 'dive under':'Dive! Leave the circle!','fire-breath arc':'Fire breath! Move to the green lane!','flame wall':'Flame wall! Jump over it!','ember rush':'Ember rush! Step off the glowing row!',
+ 'dive under':'Dive! Leave the circle!','fire-breath arc':'Fire breath! Move to the CLEAR lane!','flame wall':'Flame wall! Jump over it!','ember rush':'Ember rush! Step off the glowing row!',
  'imp swarm':'Imp swarm! Defeat the imps!','fire rain':'Fire rain! Leave the circles!','glass spikes':'Glass spikes! Leave the circles!','void wave':'Void wave! Jump over it!',
  'meteor rain':'Meteors! Leave the circles!',hellfire:'Hellfire! Dodge through it!','pillar form':'Fire pillar! Walk away from it!','ash storm':'Ash storm! Watch the glowing ground!',
  'tide ring':'Tide ring! Jump the ring!',undertow:'Undertow! Walk away from the Priest!','lantern brood':'Lanterns! Pop them!','mist veil':'Mist veil! Leave the circle!',
  'mirror split':'Mirror split! Hit the one with a shadow!',echo:'Echo! Watch what it copies!',starfall:'Starfall! Leave the circles!','crystal ram':'Crystal ram! Step off the glowing row!',
  'frost seeker':'Frost seeker! Dodge as it reaches you!','frost nova':'Frost nova! Back away from the Lich!','rift step':'Rift step! Leave the circle!','crystal blade':'Crystal blade! Leave the circles!',
- 'tentacle grab':'Two tentacles! Leave the circles!','abyss wave':'Abyss wave! Move to the green lane!','night wind':'Night wind! Leave the circles!','wing swoop':'Wing swoop! Back away from her!'};
+ 'tentacle grab':'Two tentacles! Leave the circles!','abyss wave':'Abyss wave! Move to the CLEAR lane!','night wind':'Night wind! Leave the circles!','wing swoop':'Wing swoop! Back away from her!'};
 /* oct24-ch3 (playtest ch3: v1's phase two showed "HIGH TIDE" and nothing else): a paced Normal boss's other labelled moves say the
    action too, by the same rules (a stance - stop hitting until it drops; a lure light - walk away; a slow tide - the dry lane;
    the dark - the lanterns stay lit). Dream echoes are the moves of its options. */
@@ -38,9 +38,9 @@ export function normalBoss(w,e){if(w.tierKey==='normal'&&['e7','e8'].includes(w.
  /* playtest ch2: the warning panel names a move only when it has a label; the Dungeon Master, Forge Golem, Vexx, the Demon Slime, the Lich and the Moth Queen had none, so their taught moves came with no panel at all. oct24-ember-econ: the label is the move and its action (NORMAL_CUES) */
  {const seq=NORMAL_SEQUENCES[w.level.id]||[];e.attacks=e.attacks.map(a=>seq.includes(a.name)?{...a,label:NORMAL_CUES[a.name]||a.label||a.name.toUpperCase()}:moreCue(a));if(e.rebirth?.attacks)e.rebirth={...e.rebirth,attacks:e.rebirth.attacks.map(moreCue)};}
  /* improve20-a-oct31 #5 (kid-appeal playtest: a 12-year-old never fell below 74% on the last boss): in phase two the Abyss Wave comes
-    round a second time (its own full 1.8 s tell and the green lane again), one more telegraphed pattern; HP, attack and every warning
+    round a second time (its own full 1.8 s tell and the CLEAR lane again), one more telegraphed pattern; HP, attack and every warning
     time are unchanged. Sim (--only=v7 --isolated --recommended-level, 24 runs, seeds 1-3): --skill=good ends at 60% (was 63%), kid 0 deaths */
- if(w.level.id==='v7')e.attacks=e.attacks.map(a=>a.name==='tentacle grab'?{...a,count:2,spread:50,hold:0,windup:1.2,recover:1.8,label:'Two tentacles! Leave the circles!'}:a.name==='abyss wave'?{...a,len:88,windup:1.8,dur:1.2,recover:2.4,label:'Abyss wave! Move to the green lane!',then:'abyss wave',thenPhase:2}:a.name==='ink darkness'?{...a,dur:3,banner:null}:a);
+ if(w.level.id==='v7')e.attacks=e.attacks.map(a=>a.name==='tentacle grab'?{...a,count:2,spread:50,hold:0,windup:1.2,recover:1.8,label:'Two tentacles! Leave the circles!'}:a.name==='abyss wave'?{...a,len:88,windup:1.8,dur:1.2,recover:2.4,label:'Abyss wave! Move to the CLEAR lane!',then:'abyss wave',thenPhase:2}:a.name==='ink darkness'?{...a,dur:3,banner:null}:a);
  return e;}
 /* improve20-l-oct31 (5): the Normal final boss was still gentle for a good player (sim --skill=good ended v7 near 60% health). In phase
    two each Abyss Wave's tell also calls one of the level's own boss adds (levels.js bossAdds: a Deep One) from the far side, at most

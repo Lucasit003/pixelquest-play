@@ -14,8 +14,10 @@ let cv=null,mk=null,ed=null;
 const make=()=>{const n=()=>{const x=document.createElement('canvas');x.width=XRAY.w;x.height=XRAY.h;return x;};cv=n();mk=n();ed=n();};
 /* c is in world coordinates (the stage camera's transform). drawHero(g) and drawCover(g,e) draw into a context that is already
    translated to world space. Returns true when the outline was drawn. */
+/* improve20-p-oct31 perf: the three canvases are read back (getImageData) or fed to each other every frame a boss covers the hero, so
+   they are CPU canvases (willReadFrequently); Chrome warned on each */
 export function drawHeroXray(c,state,drawHero,drawCover){const over=heroCovers(state);if(!over.length||typeof document==='undefined')return false;if(!cv)make();
- const W=XRAY.w,H=XRAY.h,g=cv.getContext('2d'),m=mk.getContext('2d'),edge=ed.getContext('2d');if(!g?.getImageData||!m||!edge)return false;const p=state.player,bx=Math.round(p.x)-W/2,by=Math.round(p.y)-XRAY.up;
+ const W=XRAY.w,H=XRAY.h,RF={willReadFrequently:true},g=cv.getContext('2d',RF),m=mk.getContext('2d',RF),edge=ed.getContext('2d',RF);if(!g?.getImageData||!m||!edge)return false;const p=state.player,bx=Math.round(p.x)-W/2,by=Math.round(p.y)-XRAY.up;
  g.setTransform(1,0,0,1,0,0);g.globalCompositeOperation='source-over';g.clearRect(0,0,W,H);g.imageSmoothingEnabled=false;g.translate(-bx,-by);drawHero(g);g.setTransform(1,0,0,1,0,0);
  /* only the hero's solid pixels: a soft glow or shadow would fill in as a blob */
  const px=g.getImageData(0,0,W,H),d=px.data;let body=0;for(let i=3;i<d.length;i+=4){d[i]=d[i]>127?255:0;if(d[i])body++;}if(!body)return false;g.putImageData(px,0,0);
