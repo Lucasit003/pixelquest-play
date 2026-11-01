@@ -81,6 +81,14 @@ export function flankSpot(w, c, x, y) {
   for (const sd of [side, -side]) { const yy = p.y + sd * PARTY.flank; if (ok(yy)) return {x, y: yy}; }
   const sx = x >= p.x ? 1 : -1; return {x: p.x + sx * PARTY.flank, y};
 }
+/* improve20-e-nov1 #4: on his way to a spot past the hero (the far side of the hero's foe) he walked straight through the hero (m1: on him
+   in about half the frames of the opening fight). A path that would pass within flankMin of the hero goes by the hero's flank first. */
+export function detour(w, c, spot) {
+  const p = w.player; if (!p) return spot; const vx = spot.x - c.x, vy = spot.y - c.y, L2 = vx * vx + vy * vy; if (L2 < 1) return spot;
+  const k = Math.max(0, Math.min(1, ((p.x - c.x) * vx + (p.y - c.y) * vy) / L2)); if (Math.hypot(c.x + vx * k - p.x, c.y + vy * k - p.y) >= PARTY.flankMin) return spot;
+  const side = Math.abs(c.y - p.y) > 2 ? Math.sign(c.y - p.y) : c.slot < 0 ? -1 : 1, via = flankSpot(w, c, p.x, p.y);
+  const b = w.bounds?.() || {y0: -1e9, y1: 1e9}, yy = p.y + side * PARTY.flank; return yy >= b.y0 && yy <= b.y1 && !w.layout?.blocked?.(p.x, yy) ? {x: p.x, y: yy} : via;
+}
 /** A companion's hit: the hero's crit, gear tricks, class mechanic, hitstop and kill stamina never ride on it. */
 export function partyHit(w, c, e, power, {kb = 40, name = c.name} = {}) {
   const a = {damage: power, kb, element: 'none', name, ally: true, trick: true, party: true}, p = w.player, base = w.base;
@@ -204,7 +212,7 @@ export function updateParty(w, dt) {
     /* in reach but beside the hero on his own lane (between him and the foe): step up or down off that lane, still in reach */
     const lane = d <= reach && Math.abs(c.y - p.y) < 12 && Math.abs(c.x - p.x) < 40, side = c.slot < 0 ? -1 : 1;
     const spot = lane ? flankSpot(w, c, c.x, e.y + side * Math.min(reach * .6, 22)) : flankSpot(w, c, e.x + sx * reach * .8, e.y + c.slot * .3);
-    if (d > reach || (lane || d2(c, p) < PARTY.flankMin) && Math.hypot(spot.x - c.x, spot.y - c.y) > 3) { setState(c, moveTo(w, c, spot.x, spot.y, speed, dt) ? 'walk' : 'idle'); if (d > reach || c.cd > 0) continue; }
+    if (d > reach || (lane || d2(c, p) < PARTY.flankMin) && Math.hypot(spot.x - c.x, spot.y - c.y) > 3) { const via = detour(w, c, spot); setState(c, moveTo(w, c, via.x, via.y, speed, dt) ? 'walk' : 'idle'); if (d > reach || c.cd > 0) continue; }
     c.facing = e.x >= c.x ? 1 : -1;
     if (c.cd <= 0) {
       c.cd = c.stats.rate; c.busy = .45; setState(c, 'attack');

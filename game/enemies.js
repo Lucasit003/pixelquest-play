@@ -80,6 +80,11 @@ export const ENEMY_TYPES={
   fact:F('geography','Obsidian is natural volcanic glass. It forms when lava cools so fast that crystals have no time to grow.')},
  'ash-ghoul':{name:'Ash Ghoul',sprite:'ash-ghoul',hp:58,atk:15,def:6,speed:38,scale:1,ai:'chase',band:9,weakness:'ice',attacks:[melee({name:'ash claw',range:42,cd:1.6,windup:.45})],
   fact:F('geography','Volcanic ash is made of tiny bits of rock and glass, not soft ash like from a wood fire.')},
+ /* improve20-e-nov1 #1: Emberkeep's own ranged regular (PixelLab, 1 Nov). Its one move is a slow lob: the ring shows on the ground from the
+    wind-up, the ember arcs over for a second (scenes/enemy-ai.js drawLob, the existing fx-fireball) and bursts where the ring was. */
+ 'ember-lobber':{name:'Ember Lobber',sprite:'ember-lobber',hp:38,atk:12,def:2,speed:34,scale:1,ai:'caster',band:9,weakness:'ice',keep:110,attacks:[
+  {name:'ember lob',state:'attack',kind:'aoe',at:'player',lob:true,fx:'fx-fire-burst',radius:18,range:190,cd:3.4,windup:.5,delay:1,dmg:1}],
+  fact:F('geography','A volcano can fling out blobs of lava that cool as they fly through the air. Pieces bigger than about 6 cm (2.5 inches) across are called volcanic bombs.')},
  'drowned-thrall':{name:'Drowned Thrall',sprite:'drowned-thrall',hp:40,atk:9,def:4,speed:38,scale:1,ai:'chase',band:9,weakness:'storm',attacks:[melee({name:'boat hook',range:40,cd:1.6,windup:.45})],
   fact:F('science','About half of Earth\'s oxygen is made in the ocean, mostly by tiny drifting living things called plankton. Seaweeds, which are large algae, make some too.')},
  'void-spawn':{name:'Void Spawn',sprite:'void-spawn',hp:48,atk:14,def:2,speed:60,scale:1,ai:'strafe',band:9,weakness:'holy',attacks:[melee({name:'void claw',range:40,cd:1.6,windup:.45})],

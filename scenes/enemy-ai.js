@@ -168,7 +168,7 @@ function resolveHit(e,w,b,k){const a=b.atk,p=w.player,fx=fxList(w),f=e.facing,k2
    for(let i=0;i<n;i++){const off=n===1?0:(i-(n-1)/2)*(a.spread||12),ty=p.y+off,dx=Math.max(20,Math.abs(p.x-muz.x));
     fx.push({kind:'shot',owner:e,a,fx:a.fx,x:muz.x,y:muz.y,h,vx:f*a.speed,vy:clampN((ty-muz.y)*a.speed/dx,-45,45),life:(a.range+40)/a.speed,t:0,homing:a.homing||0});}break;}
   case 'aoe':case 'line':case 'leap':b.markers.forEach((m,i)=>{
-   if(a.fx){fx.push({kind:'hazard',owner:e,a,fx:a.fx,x:m.x,y:m.y,r:m.r,t:-(a.delay||0)-(a.kind==='line'?i*.09:a.fall?i*.14:i*.05),marker:m,hit:false,dmgMult:1,hs:a.hs});}
+   if(a.fx){fx.push({kind:'hazard',owner:e,a,fx:a.fx,x:m.x,y:m.y,r:m.r,t:-(a.delay||0)-(a.kind==='line'?i*.09:a.fall?i*.14:i*.05),marker:m,hit:false,dmgMult:1,hs:a.hs,...(a.lob?lobFrom(e):{})});}
    else{if(inMarker(m,p)&&!b.hitDone[i]){b.hitDone[i]=1;hurtPlayer(e,w,a,m);}puff(w,a.impact||'fx-dust',m.x,m.y,e,a.impactState);}});
    if(a.puddle&&a.kind==='leap'){w.enemyFx=w.enemyFx.filter(f=>!(f.pilotPuddle&&f.owner===e));w.enemyFx.push({kind:'zone',pilotPuddle:true,owner:e,a:{dmg:0,tint:'#82cc87',outline:true},x:b.to.x,y:b.to.y,r:30,t:0,dur:1.8,slow:.15,tick:.6});}
    if(!a.fx)w.quake?.('aoe',e.boss?.9:.4);b.markers=a.fx?[]:b.markers;break;
@@ -305,6 +305,12 @@ function updateFx(w,dt){const fx=fxList(w),p=w.player,B=bounds(w);if(w.flooded>0
    if(!f.hit&&f.t>=hitAt){f.hit=true;if(p&&inMarker({shape:'circle',x:f.x,y:f.y,r:f.r},p))hurtPlayer(f.owner,w,f.a,f,f.dmgMult);}}}
  w.enemyFx=w.enemyFx.filter(f=>!gone.has(f)&&(OWN.has(f.kind)||f.kind==='shot'||f.t<0||f.t<(f.dur||.5)));}
 
+/* improve20-e-nov1 #1: a lobbed shot (a.lob, the Ember Lobber) starts at the thrower's hand and arcs onto its ground ring over a.delay
+   seconds; lobPoint is where it is when tl seconds are left (pure, tested). It is drawn with the existing fx-fireball and a ground shadow. */
+export const LOB_PEAK=56;
+export function lobFrom(e){const k=e.scale||1;return {sx:e.x+(e.facing||1)*10*k,sy:e.y,sh:Math.round((metaOf(e.sprite)?.height||40)*k*.7)};}
+export function lobPoint(f,tl){const T=f.a?.delay||1,k=Math.max(0,Math.min(1,1-tl/T)),sx=f.sx??f.x,sy=f.sy??f.y;return {x:sx+(f.x-sx)*k,y:sy+(f.y-sy)*k,h:(f.sh||0)*(1-k)+4*LOB_PEAK*k*(1-k),k};}
+function drawLob(c,f,t){const q=lobPoint(f,-f.t);shadow(c,q.x,q.y,3+3*q.k,1.5+1.2*q.k,.18+.2*q.k);drawSprite(c,'fx-fireball','fly',t,Math.round(q.x),Math.round(q.y-q.h),{facing:f.x>=(f.sx??f.x)?1:-1});}
 /* ---------- drawing ---------- */
 /* Top of an enemy's head in world units (for hp bars and labels): from its atlas height, scale and flight height. */
 /* A chapter mini-boss fought as an elite draws at its own eliteDraw (game/enemies.js, about 1.4x the hero's height); the
@@ -395,7 +401,7 @@ export function enemyLayer(c,w,t){const out=w.level?.encounter?.readable?[{y:1e9
  drawLinks(c,w,t,out);
  for(const f of w.enemyFx||[]){
   if(OWN.has(f.kind)){drawMoveFx(c,f,t,out,K);continue;}
-  if(f.kind==='hazard'){if(f.marker&&!f.hit)marker(c,w.level?.encounter?{...f.marker,soft:true,lane:w.level.encounter.readable&&f.marker.shape==='box',motion:w.motion}:f.marker,1,t);if(f.t<0){if(f.a?.fall)out.push({y:f.y,draw:()=>drawFall(c,f,t)});if(f.glow)out.push({y:f.y,draw:()=>drawSprite(c,f.glow,'twinkle',t,f.x,f.y-12)});continue;}
+  if(f.kind==='hazard'){if(f.marker&&!f.hit)marker(c,w.level?.encounter?{...f.marker,soft:true,lane:w.level.encounter.readable&&f.marker.shape==='box',motion:w.motion}:f.marker,1,t);if(f.t<0){if(f.a?.fall)out.push({y:f.y,draw:()=>drawFall(c,f,t)});if(f.a?.lob)out.push({y:f.y+1,draw:()=>drawLob(c,f,t)});if(f.glow)out.push({y:f.y,draw:()=>drawSprite(c,f.glow,'twinkle',t,f.x,f.y-12)});continue;}
    out.push({y:f.y,draw:()=>{const hs=f.hs||'rise',rise=stateInfo(f.fx,hs),brk=metaOf(f.fx)?.states?.break;if(brk&&f.t>rise.dur)drawSprite(c,f.fx,'break',f.t-rise.dur,f.x,f.y);else drawSprite(c,f.fx,hs,f.t,f.x,f.y);}});}
   else if(f.kind==='shot'){out.push({y:f.y,draw:()=>{shadow(c,f.x,f.y,4,1.5,.22);drawSprite(c,f.fx,'fly',f.t,f.x,f.y-f.h,{facing:sgn(f.vx)});}});}
   else if(f.kind==='blast'){out.push({y:f.y,draw:()=>drawSprite(c,f.fx,'blast',f.t,f.x,f.y-f.h,{facing:sgn(f.vx)})});}
