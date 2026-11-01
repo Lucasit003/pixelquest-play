@@ -681,7 +681,7 @@ html.m-mode dialog[data-view=lesson] .lesson-body.lesson-body>.lesson-check .les
 .m-mode dialog:is([data-view=lesson-quiz],[data-view=placement]) #quiz-feedback .feedback>.edu-read{position:absolute;top:6px;right:6px;margin:0}
 .m-mode dialog:is([data-view=lesson-quiz],[data-view=placement]) #quiz-feedback .feedback:has(>.edu-read)>:first-child{padding-right:150px}
 .m-mode dialog:is([data-view=lesson-quiz],[data-view=placement]) .question:has(#quiz-form:not(.choice-form)):has(#quiz-feedback:not(:empty)) .question-reading h3{margin:6px 0}
-/* 25 Oct: Next on an unanswered Try-it lights the Try-it once (main.js lessonStep); no timer, Skip Try-it goes on. */
+/* 25 Oct: Next on an unanswered Try-it lights the Try-it once (main.js lessonStep); no timer, "Try it later" goes on. */
 .lesson-check.nudge{outline:3px solid #f0d48a;outline-offset:3px;border-radius:2px;animation:pq-tryit-nudge .45s ease-out 2}
 .lesson-check.nudge #lesson-hint{color:#fff1c8}
 @keyframes pq-tryit-nudge{50%{outline-color:#fff6d8;outline-offset:6px}}
@@ -780,6 +780,16 @@ dialog#modal:is([data-view=placement],[data-view=lesson-quiz]) #quiz-feedback .f
 dialog#modal:is([data-view=placement],[data-view=lesson-quiz]) #quiz-feedback .feedback.feedback:has(>#lesson-pic)>.edu-read{grid-column:1/2;grid-row:1/2;position:absolute;top:0;right:0;margin:0}
 dialog#modal:is([data-view=placement],[data-view=lesson-quiz]) #quiz-feedback .feedback.feedback:has(>#lesson-pic)>.am{padding-right:156px}
 @media(max-height:500px){dialog#modal:is([data-view=placement],[data-view=lesson-quiz]) #quiz-feedback .feedback.feedback:has(>#lesson-pic)>#lesson-pic{height:min(120px,30vh)}}
+/* improve20-q-oct31 (audit2 #3): an answer's key hint is a small keycap badge in the button's top-left corner, in its own box and
+   colour, never beside the answer ("1 8" read as eighteen); the answer stays centred on a tile, first on a button. Touch has no
+   number keys, so touch shows no badge (phone mode, or a touch-only screen). */
+html :is(.answers,.choice-answers,.lesson-answers) button[data-answer]{position:relative}
+html :is(.answers,.choice-answers,.lesson-answers) button[data-answer]>span.tag.tag{position:absolute;top:4px;left:4px;min-width:0;margin:0;padding:1px 3px 0;font:400 16px/13px var(--ui);letter-spacing:0;text-transform:none;text-align:center;color:#d9c48f;background:#0000008c;border:1px solid #d9c48f80;border-radius:2px;opacity:1;pointer-events:none}
+html .tile-answers button[data-answer]>.choice-text{flex:1;text-align:center}
+html :is(.answers,.choice-answers,.lesson-answers):not(.tile-answers) button[data-answer]:has(>span.tag){padding-left:26px}
+html.m-mode :is(.answers,.choice-answers,.lesson-answers) button[data-answer]>span.tag.tag{display:none}
+html.m-mode :is(.answers,.choice-answers,.lesson-answers):not(.tile-answers) button[data-answer]:has(>span.tag){padding-left:12px}
+@media (hover:none) and (pointer:coarse){html :is(.answers,.choice-answers,.lesson-answers) button[data-answer]>span.tag.tag{display:none}html :is(.answers,.choice-answers,.lesson-answers):not(.tile-answers) button[data-answer]:has(>span.tag){padding-left:12px}}
 /* oct26-phonelesson: phone lesson legibility (docs/playtest/oct26-phonelesson). The lesson sheet takes the whole screen like every other
    phone sheet (it was 92dvh, 29-31px lost). The picture column is exactly as wide as the picture (min-content): a long equation line above
    the picture used to set the column to its full length and squeeze the step's text to one word a line (AP Micro, APUSH). main.js

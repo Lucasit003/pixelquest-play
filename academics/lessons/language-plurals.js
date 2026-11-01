@@ -17,7 +17,7 @@ export default {
    check:{prompt:'Leo packs one lunch for himself and one for his sister. What do we call the two of them?',answer:'lunches',options:['lunches','lunchs','lunch'],hint:'Lunch ends in ch, so add -es.'}},
   {skill:'choose',say:'For these practice words, look at the ending. Is it s, x, z, sh or ch? Then add -es.',pic:[{"t":"theater","scene":"plurals","part":"look"}],eq:'s, x, z, sh, ch: add -es'},
   {skill:'choose',say:'Words with other endings usually just add -s: ball becomes balls. A few nouns change in other ways, like baby becoming babies.',pic:[{t:'word',base:'ball',suffix:'s',n:2}],eq:'ball + s = balls',
-   check:{prompt:'Which ending makes more than one bench: -s or -es?',answer:'-es',options:['-es','-s'],hint:'Bench ends in ch.'}},
+   check:{prompt:'Which ending makes more than one bench: -s or -es?',answer:'-es',options:['-es','-s'],hint:'Bench ends in ch.',pic:{t:'word',base:'bench',suffix:'es',n:2}}},
   {skill:'choose',say:'Look at the end, then add -s or -es. That is how to make most plurals.',pic:[{"t":"theater","scene":"plurals","part":"foxes"}]}],
  items(add){
   for(const w of WORDS){const k=ES.test(w)?'es':'s',mark=ES.test(w)?ending(w).length:0;

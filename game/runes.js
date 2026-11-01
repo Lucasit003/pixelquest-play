@@ -31,6 +31,11 @@ export function placeRune(s,id){if(!canPlace(s,id))return 0;const r=s.runes&&typ
 /* Reset is free and open whenever the current hero has a rune placed; it returns only that hero's runes */
 export const canReset=s=>runesPlaced(s)>0;
 export function resetRunes(s){if(!canReset(s))return false;for(const id of Object.keys(s.runes))if(HERO_OF[id]===s.hero)delete s.runes[id];return true;}
+/* improve20-q-oct31 (audit2 #21): rune lines (the result card, rune goals, objective text: game/rune-goal.js runeLead) wait for the
+   save's first rune and an owned ability whose slot can take it. A new player's first lesson wakes the starter ability before any
+   topic is mastered, and "Master 1 more topic: earn a rune" then led the lesson summary above the one next goal (the second
+   ability, which that same first topic opens). Home → Abilities keeps its rune bar and slots: that is where runes live. */
+export const runesShown=s=>runePoints(s)>0&&ownedAbilities(s).length>0;
 /* any owned ability of the current hero still below rank III */
 export const runeRoom=s=>ownedAbilities(s).some(a=>runeRank(s,a.id)<RUNE_MAX);
 /* how many free runes the current hero can place right now (the rest wait, banked, for the next ability) */

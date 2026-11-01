@@ -11,14 +11,14 @@ export default {
  steps:[
   {skill:'rose',say:'A compass rose shows four directions: north, east, south and west.',pic:[{t:'compass'}],eq:'N, E, S, W'},
   {skill:'rose',say:'Going around clockwise, the order is north, east, south, west. Opposites face each other.',pic:[{t:'compass',mark:'south',face:'north'}],eq:'north and south are opposite',
-   check:{prompt:'East is on one side of the compass rose. Which direction is straight across from it?',answer:'west',options:['west','north','south'],hint:'East and west face each other across the compass.'}},
+   check:{prompt:'East is on one side of the compass rose. Which direction is straight across from it?',answer:'west',options:['west','north','south'],hint:'East and west face each other across the compass.',pic:{t:'compass',face:'east',turn:'around'}}},
   {skill:'turn',say:'If you face north and turn right, you face east. A right turn goes one step clockwise.',pic:[{t:'compass',face:'north',turn:'right'}],eq:'north, turn right, east'},
   {skill:'turn',say:'A left turn goes one step the other way. Facing north, turn left and you face west.',pic:[{t:'compass',face:'north',turn:'left'}],eq:'north, turn left, west',
-   check:{prompt:'Mo faces east and turns right. Which way does Mo face now?',answer:'south',options:['south','north','west'],hint:'A right turn goes one step clockwise: north, east, south, west.'}},
+   check:{prompt:'Mo faces east and turns right. Which way does Mo face now?',answer:'south',options:['south','north','west'],hint:'A right turn goes one step clockwise: north, east, south, west.',pic:{t:'compass',face:'east',turn:'right'}}},
   {skill:'turn',say:'Turning around is a half turn. You end up facing the opposite way.',pic:[{t:'compass',face:'east',turn:'around'}],eq:'east, turn around, west'},
   {skill:'map',say:'On most maps, north is at the top. Up is north, down is south, right is east and left is west.',pic:[{t:'compass',from:'the well',to:'the barn',dir:'north'}]},
   {skill:'map',say:'The barn is above the well, so the barn is north of the well.',pic:[{t:'compass',from:'the well',to:'the barn',dir:'north',solve:true}],
-   check:{prompt:'On a map with north at the top, the pond is below the tree. Which direction is the pond from the tree?',answer:'south',options:['south','north','east'],hint:'Down on the map is south.'}}],
+   check:{prompt:'On a map with north at the top, the pond is below the tree. Which direction is the pond from the tree?',answer:'south',options:['south','north','east'],hint:'Down on the map is south.',pic:{t:'compass',from:'the tree',to:'the pond',dir:'south'}}}],
  items(add){
   /* 28 Oct (elfact): every why in this topic started with a lower-case letter ("dog is living."); each now starts with a capital. */
   {const _a0=add;add=(s,p,a,pic,why,acc)=>_a0(s,p,a,pic,typeof why==="string"?why.charAt(0).toUpperCase()+why.slice(1):why,acc);}

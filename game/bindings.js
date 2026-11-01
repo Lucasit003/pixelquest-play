@@ -7,3 +7,5 @@ export function normalizeBindings(saved={}){const out={};for(const a of Object.k
 export function bindingError(bindings,action,key){if(['escape','enter','arrowup','arrowdown','arrowleft','arrowright','control','alt','meta','capslock','dead','unidentified'].includes(key))return 'That key is used for navigation. Choose another key.';const used=Object.keys(ACTION_LABELS).find(a=>a!==action&&bindings[a]===key);return used?`That key is already used for ${ACTION_LABELS[used]}. Choose another.`:'';}
 /* oct24-progress (playtest r3): a Ranger looses a Power Shot and a Mage or Summoner a Power Blast; only melee heroes swing */
 export const heavyName=s=>s?.hero==='ranger'?'Power Shot':['mage','summoner'].includes(s?.hero)?'Power Blast':'Power Swing';
+/* improve20-q-oct31 (audit2 #22): the basic attack named for the class, as heavyName is ("Tap J for a basic swing" read wrong for a Ranger's arrow) */
+export const basicName=s=>s?.hero==='ranger'?'shot':['mage','summoner'].includes(s?.hero)?'blast':'swing';

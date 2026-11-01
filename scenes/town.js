@@ -333,7 +333,7 @@ const footBlocked = (S, x, y) => blockedAt(S, x - FOOT.hw, y - FOOT.up) || block
 const H = {S: null, player: null, cam: {x: 0, y: 0}, fade: null, near: null, time: 0, from: null, save: null, events: [], drawT: 0};
 const current = () => H.S ?? (H.S = scene('village'));
 
-function placeAt(p, S, x, y) { H.S = S; p.x = x; p.y = y; H.cam.x = x; H.cam.y = y; H.snap = true; H.vx = H.vy = 0;
+function placeAt(p, S, x, y) { H.S = S; p.x = x; p.y = y; H.cam.x = x; H.cam.y = y; H.snap = true; H.vx = H.vy = 0; H.walked = false; H.still = 0;
   /* townchunk-oct28: every arrival in the village goes through here; core/loader.js holds it until the arrival view is in */
   if (S.key === 'village') { H.arrival = {x, y}; H.onArrive?.(H.arrival); } }
 /** townchunk-oct28: the last arrival point in the village (core/loader.js gates it), and the loader's hook for arrivals. */
@@ -426,7 +426,7 @@ function facingBonus(p, x, y) {
    panel opens it (news he has still comes first, hubInteract) */
 export const TALK_PANEL = {brannoc_the_smith: 'smith'};
 function nearest(S, p) {
-  let best = null;
+  let best = null, close = false;
   /* people: figures on the map and walkers on their routes (where they are right now). Every target is
      scored the same way (distance from the hero to where you stand to use it, less a bonus when he faces
      it), so a villager standing near a bed no longer takes the bed's prompt. */
@@ -434,6 +434,7 @@ function nearest(S, p) {
   for (const f of people) {
     /* owner, 8 Oct (packet #15): you walk up to someone to talk to them -- close by and facing them, never across the square */
     const raw = Math.hypot(p.x - f.x, (p.y - f.y) * 1.4) + 4, face = facingBonus(p, f.x, f.y - 20), d = raw - face;
+    if (raw < PET_CLEAR) close = true;
     if (raw < 28 && face > 0 && (!best || d < best.d)) best = {d, q: {x: f.x, y: f.y, sx: f.x, sy: f.y + 8, mark: [f.x, f.y - 50]}, o: {label: `Talk to ${f.name}`, talk: {key: f.key, name: f.name}}};
   }
   for (const q of S.points) {
@@ -443,15 +444,19 @@ function nearest(S, p) {
     const out = !S.room && worldExit(q), qx = q.x, qy = out ? q.sy : q.y;
     const raw = out ? Math.hypot(p.x - qx, (p.y - qy) * .8) * .6 : doorReach(q, p.x, p.y);
     const d = raw - (out ? 0 : facingBonus(p, q.x, q.y));
+    if (raw < PET_CLEAR && optionFor(S, q)) close = true;
     if (raw < DOOR_REACH && (!best || d < best.d)) { const o = optionFor(S, q); if (o) best = {d, q, o}; }
   }
   /* kidfix-a-oct31: with nothing else in reach and the hero standing still, E pets the companion at his side (gfx/actors/pet-sprites.js
-     petThePet: its own sit animation and code-drawn hearts). Lowest priority, so it never takes a door, a person or a shop */
-  const pet = !best && (H.still ?? 0) > PET_STILL && PETS.find(x => x.key === H.save?.pet);
+     petThePet: its own sit animation and code-drawn hearts). Lowest priority, so it never takes a door, a person or a shop.
+     improve20-q-oct31 (audit2 #2): "Pet Ink Cat" took the bubble a second after walking into a room, before the child had done
+     anything. It now waits until the hero has walked in this room (H.walked, cleared on every arrival in placeAt) and then stood
+     still for PET_STILL seconds, with no door, person, station or chest even near reach (PET_CLEAR, half again the reach). */
+  const pet = !best && !close && H.walked && (H.still ?? 0) > PET_STILL && PETS.find(x => x.key === H.save?.pet);
   if (pet) { const px = p.x - 22 * p.facing, py = p.y + 9; best = {d: 99, q: {x: px, y: py, sx: px, sy: py, mark: [px, py - 30], pet: true}, o: {label: `Pet ${pet.name}`, run: () => { petThePet(pet); H.petted = (H.petted | 0) + 1; }}}; }
   return best;
 }
-export const PET_STILL = 1;
+export const PET_STILL = 1.5, PET_CLEAR = 45;
 
 function fadeTo(mid) { if (!H.fade) H.fade = {t: 0, mid, done: false}; }
 function enter(room, door) {
@@ -562,7 +567,7 @@ export function hubUpdate(world, dt, input) {
   H.cam.x += (p.x - H.cam.x) * k; H.cam.y += (p.y - 20 - H.cam.y) * k;
   /* townchunk-oct28: where the camera is heading, for the streamer's look-ahead */
   if (k < 1 && dt > 0) { const a = Math.min(1, dt * 6); H.vx = (H.vx ?? 0) * (1 - a) + (H.cam.x - cx0) / dt * a; H.vy = (H.vy ?? 0) * (1 - a) + (H.cam.y - cy0) / dt * a; }
-  H.still = mx || my ? 0 : (H.still ?? 0) + dt;
+  H.still = mx || my ? 0 : (H.still ?? 0) + dt; if (mx || my) H.walked = true;
   H.near = H.fade ? null : nearest(S, p);
   /* only narration with nobody to walk up to plays by itself; a person's beat waits for the talk key (personBeat) */
   if (!H.fade) { const b = beatDue('near', current(), p) ?? beatDue('enter', current()); if (b && !isPerson(b.speaker)) fire(b); }

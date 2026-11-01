@@ -10,13 +10,13 @@ export default {
  steps:[
   {skill:'core',say:'A pattern is a part that repeats again and again. Here the part is red, blue.',pic:[{t:'tiles',seq:['red','blue','red','blue','red','blue']}],eq:'red, blue | red, blue | red, blue'},
   {skill:'next',say:'To find what comes next, find the repeating part and keep going.',pic:[{t:'tiles',seq:['red','blue','red','blue','red',null],fill:'blue'}],
-   check:{prompt:'Green, yellow, green, yellow, green. Which color comes next?',answer:'yellow',options:['yellow','green','red'],hint:'The part that repeats is green, yellow.'}},
+   check:{prompt:'Green, yellow, green, yellow, green. Which color comes next?',answer:'yellow',options:['yellow','green','red'],hint:'The part that repeats is green, yellow.',pic:{t:'tiles',seq:['green','yellow','green','yellow','green',null],fill:'yellow'}}},
   {skill:'core',say:'A repeating part can be longer. Here it is circle, square, square.',pic:[{t:'tiles',seq:['circle','square','square','circle','square','square']}],eq:'circle, square, square'},
   {skill:'next',say:'After circle, square, square, it starts again with a circle.',pic:[{t:'tiles',seq:['circle','square','square','circle','square','square',null],fill:'circle'}],
-   check:{prompt:'Star, star, triangle, star, star, triangle, star. Which shape comes next?',answer:'star',options:['star','triangle','circle'],hint:'The part that repeats is star, star, triangle.'}},
+   check:{prompt:'Star, star, triangle, star, star, triangle, star. Which shape comes next?',answer:'star',options:['star','triangle','circle'],hint:'The part that repeats is star, star, triangle.',pic:{t:'tiles',seq:['star','star','triangle','star','star','triangle','star',null],fill:'star'}}},
   {skill:'core',say:'Some patterns have three different things: red, green, yellow, then red again.',pic:[{t:'tiles',seq:['red','green','yellow','red','green','yellow']}]},
   {skill:'missing',say:'A blank can be in the middle. Look at what comes before and after it.',pic:[{t:'tiles',seq:['red','green',null,'red','green','yellow'],fill:'yellow'}],
-   check:{prompt:'Blue, red, blue, ___, blue, red. What color is missing?',answer:'red',options:['red','blue','green'],hint:'Blue and red take turns.'}},
+   check:{prompt:'Blue, red, blue, ___, blue, red. What color is missing?',answer:'red',options:['red','blue','green'],hint:'Blue and red take turns.',pic:{t:'tiles',seq:['blue','red','blue',null,'blue','red'],fill:'red'}}},
   {skill:'next',say:'Find the repeating part, then use it to fill any gap.',pic:[{t:'tiles',seq:['circle','circle','star','circle','circle','star']}]}],
  items(add){
   for(const [set,noun] of [[COLORS,'color'],[SHAPES,'shape']])for(const [name,core] of Object.entries(CORES))for(const pick of perms(set,Math.max(...core)+1)){

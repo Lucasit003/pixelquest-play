@@ -20,5 +20,19 @@ export function tickControls(t,age,inLevel=false,bossFight=false){const step=t?.
    a busy toast channel retries with current readiness instead of queuing a stale combat instruction. */
 export function tickAbilityNudge(w,dt,show){const boss=w.enemies.find(e=>e.boss&&e.hp>0);if(!boss){w.abilityNudge=null;return false;}let h=w.abilityNudge;if(!h||!w.enemies.includes(h.boss)||h.boss.hp<=0)h=w.abilityNudge={boss,age:0,said:false,cast:w.lastCast};if(w.paused||w.player.hp<=0||['bossintro','rebirth','victory'].includes(w.flow))return false;if(h.cast!==w.lastCast){h.cast=w.lastCast;h.age=0;}else h.age+=dt;const count=Math.max(0,Math.floor(Number(w.save.settings.abilityNudges)||0));if(h.said||count>=3||h.age<20||!nudgeTier(w.save))return false;const ids=activeLoadout(w.save),slot=ids.findIndex(id=>{const a=ABILITIES[w.save.hero].find(a=>a.id===id);return a&&nudgeWanted(w.save,id)&&unlocked(w.save,a)&&!(w.player.cooldowns[id]>0)&&w.player.mp>=a.cost;});if(slot<0)return false;const a=ABILITIES[w.save.hero].find(a=>a.id===ids[slot]);if(!show(a,slot))return false;h.said=true;w.save.settings.abilityNudges=count+1;w.events.persist?.();return true;}
 
+/* improve20-q-oct31 (audit2 #22): every tip has a when rule (TIP_WHEN). A tip whose moment has not come waits, hidden, with its
+   clock stopped (ui/controls-tutorial.js); a tip for a system the save has not unlocked is skipped (TIP_LOCKED). The moment comes
+   from tipContext: town (in Oakhaven), level, fight (a level's waves, boss and everything but its open path) and ability (an awake
+   ability equipped). The Travel tips (run across town, jump while exploring) are for getting about Oakhaven: they showed on the
+   prologue's open path between two fights, so they wait for town now. Interact needs no rule: in a level it is done on entering
+   combat (tickControls). */
+const hasAbility=s=>!!s&&activeLoadout(s).some(id=>{const a=id&&(ABILITIES[s.hero]||[]).find(x=>x.id===id);return !!a&&unlocked(s,a);});
+export const tipContext=(w,s)=>{const level=!!w?.level;return {town:w?.zone==='town'&&!level,level,fight:level&&!['walk','go'].includes(w?.flow),ability:hasAbility(s)};};
+export const TIP_WHEN=Object.freeze({move:()=>true,attack:()=>true,dodge:()=>true,heavy:()=>true,interact:()=>true,ability:c=>c.ability,run:c=>c.town,jump:c=>c.town});
+export const TIP_LOCKED=Object.freeze({ability:c=>!c.ability});
+const stepOf=t=>t?.steps?.[t.index];
+export const tipWaits=(t,c)=>{const k=stepOf(t);return !!k&&!!c&&!!TIP_WHEN[k]&&!TIP_WHEN[k](c);};
+export const tipLocked=(t,c)=>{const k=stepOf(t);return !!k&&!!c&&!!TIP_LOCKED[k]?.(c);};
+
 /* Once, when the player begins travelling after the introductory controls. */
 export function beginTraversal(s,input){if(s.settings.traversalSeen||!['up','down','left','right'].some(k=>input[k]))return null;s.settings.traversalSeen=true;return {steps:['run','jump'],index:0};}
