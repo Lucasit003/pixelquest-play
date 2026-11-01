@@ -103,8 +103,9 @@ export function runFinish(w,won,{time,gold}){const l=levelById(w.level?.id);if(!
  const top=s.levels[l.id],r=k==='normal'?top:top?.tiers?.[k];if(!r)return null;r.best??={time:null,score:0};
  const sc=scoreRun({won,time:time+(w.run.carry||0),par:levelParFor(l,k),tier:k,waves:won?w.layout.arenas.length:Math.min(w.wave|0,w.layout.arenas.length),wavesTotal:w.layout.arenas.length,
   knockouts:w.run.knockouts|0,lost:(w.run.lostCarry||0)+netLost(w.run)/Math.max(1,w.player.maxHp),found:[...w.found].filter(id=>w.draft.active.includes(id)).length,elites:w.run.elites|0,mimic:w.run.mimic,seal:w.run.seal,blessing:w.run.blessing,potions:w.run.drank?1:0,abilities:w.run.damage>0?(w.run.abilDamage||0)/w.run.damage:null});
- const prevBest=r.best.grade||null,newBest=!!sc.grade&&gradeRank(sc.grade)>gradeRank(prevBest);if(newBest)r.best.grade=sc.grade;
- const advBefore=adventurerLevel(s).level;const delve=awardRun(s,l,{won,grade:sc.grade,tier:k,prevBest,progress:(w.run.waves||0)/Math.max(1,w.layout.arenas.length)});
+ const prevBest=r.best.grade||null,rift=!!w.rift,newBest=!rift&&!!sc.grade&&gradeRank(sc.grade)>gradeRank(prevBest);if(newBest)r.best.grade=sc.grade;
+ /* a Rift run never sets the level's best grade, so it never pays the first-best Delver bonus either */
+ const advBefore=adventurerLevel(s).level;const delve=awardRun(s,l,{won,grade:sc.grade,tier:k,prevBest:rift&&sc.grade&&gradeRank(sc.grade)>gradeRank(prevBest)?sc.grade:prevBest,progress:(w.run.waves||0)/Math.max(1,w.layout.arenas.length)});
  let chests=[],meter=null;if(won){const n=w.run.cacheEssence|0;if(n){(s.gear.mats??={})[ESSENCE]=(s.gear.mats[ESSENCE]||0)+n;w.run.essence=(w.run.essence|0)+n;w.run.cacheEssence=0;}chests=openChests(s,{grade:sc.grade,boss:l.boss,kill:{mats:w.run.mats,items:w.run.gear},gold});settleMeter(s,l.id);const t=tickMeter(s,l.id,{total:sc.total,tier:k,double:sc.grade==='S+'});meter={...t.meter,added:t.added,paid:t.paid};}
  else meter={...meterOf(s,l.id),added:0,paid:null};
  const tasks=syncTasks(s),adv={before:advBefore,after:adventurerLevel(s).level};

@@ -4,12 +4,14 @@ import {sfx} from '../core/audio.js';
    Placement is checked against the baked collision and camera. A failed check waits; tells are never shortened. */
 import {STAGE} from '../game/stage.js';
 import {liveThreatFx} from './encounter-budget.js';
+/* the arena's hazard row: the tier's encounter, or a Rift run's Hazard storm (scenes/rift-fx.js riftStorm) */
+export const encOf=w=>w?.level?.encounter||w?.riftStorm||null;
 export const HAZARD_CUES={tide:'Tide! Walk to the dry lane!',lures:'Lure! Leave the circle!',echoes:'Echo! Leave your old circle!',stars:'Starfall! Leave the circle!',beats:'Choir beat! Step off the glowing row!',portals:'Portal! Leave the solid circle!',tentacles:'Tentacle! Leave the circle!',pollen:'Pollen! Leave the circle!',volley:'Arrows! Step off the glowing row!',stones:'Falling stone! Leave the circle!',graves:'Bones rising! Step off the glowing row!',roots:'Roots! Leave the circle!',rubble:'Falling rubble! Leave the circle!',thorns:'Thorns! Move to the green lane!',wire:'Tripwire! Step off the glowing row!',spores:'Spores! Leave the circle!',vents:'Vents! Move to the green lane!',hammers:'Hammer falling! Leave the circle!',jets:'Fire jet! Step off the glowing row!',drill:'Drill volley! Step off the glowing row!',banks:'Vents! Move to the green lane!',faults:'Glass fault! Step off the glowing row!',islands:'Lava pulse! Move to a green island!',gust:'Ash gust! Move to the green lane!'};
 export const ESCAPE_WIDTH=48,SLOW_WALK=58,REACTION=.4;
 export const hazardContains=(m,p,pad=0)=>m.organic?((p.x-(m.x0+m.x1)/2)/((m.x1-m.x0)/2+pad))**2+((p.y-m.y)/(m.band+pad))**2<=1:p.x>=m.x0-pad&&p.x<=m.x1+pad&&Math.abs(p.y-m.y)<=m.band+pad;
 const fighting=w=>['wave','boss'].includes(w.flow)&&!w.ended&&w.player?.hp>0&&!w.deathPending;
-const guarded=w=>w.enemies.some(e=>e.hp>0&&(w.level?.encounter?.readable&&e.dizzyUntil>w.time||e.shielded||e.linkTo||e.helper||e.decoy||e.mini||e.echo||e.entering>0||e.cinematic&&e.inv>1))||(w.enemyFx||[]).some(f=>f.pilotPuddle);
-const attacking=w=>w.enemies.some(e=>e.hp>0&&(w.level?.encounter&&e.boss&&e.brain?.mode==='recover'||e.wind>0||['tele','act'].includes(e.brain?.mode)))||(w.enemyFx||[]).some(f=>liveThreatFx(f))||(w.shots||[]).some(s=>s.hostile);
+const guarded=w=>w.enemies.some(e=>e.hp>0&&(encOf(w)?.readable&&e.dizzyUntil>w.time||e.shielded||e.linkTo||e.helper||e.decoy||e.mini||e.echo||e.entering>0||e.cinematic&&e.inv>1))||(w.enemyFx||[]).some(f=>f.pilotPuddle);
+const attacking=w=>w.enemies.some(e=>e.hp>0&&(encOf(w)&&e.boss&&e.brain?.mode==='recover'||e.wind>0||['tele','act'].includes(e.brain?.mode)))||(w.enemyFx||[]).some(f=>liveThreatFx(f))||(w.shots||[]).some(s=>s.hostile);
 export function clearHazards(w){w.tierFx={age:0,side:0,current:null,want:false,count:0};}
 /* A 48-unit clear corridor parallel to the patch, plus a collision-free walking segment from the hero.
    Scan every 4 units (baked collision cells are >=8), including the corridor edges. No dodge/ability is assumed. */
@@ -21,23 +23,23 @@ export function escapeRoute(w,m,warning){m={...m,x0:Math.min(m.x0,m.x1),x1:Math.
   if(clear)return {x0:m.x0,x1:m.x1,y0:y-24,y1:y+24};}
  /* A central patch can also be walked past horizontally. Check a full 48-unit lane and the approach segment. */
  const xs=[];for(let x=Math.max(B.x0+(w.lock?78:24),(w.camX||0)+24);x<=Math.min(B.x1-(w.lock?78:24),(w.camX||0)+STAGE.camW-24);x+=2)if(x+24<m.x0||x-24>m.x1)xs.push(x);xs.sort((a,b)=>Math.abs(a-p.x)-Math.abs(b-p.x));for(const x of xs){if(Math.abs(x-p.x)>speed*Math.max(0,warning-REACTION)+1e-9)continue;let clear=true;for(let xx=x-24;xx<=x+24;xx+=4)for(let y=B.y0;y<=B.y1;y+=4)if(blocked(xx,y))clear=false;const n=Math.ceil(Math.abs(x-p.x)/4);for(let i=0;i<=n;i++)if(blocked(p.x+(x-p.x)*i/Math.max(1,n),p.y))clear=false;if(clear)return {x0:x-24,x1:x+24,y0:B.y0,y1:B.y1};}return null;}
-export function hazardMarker(w,h,side=0){const B=w.bounds(),cam=w.camX||0,x0=Math.max(B.x0+54,cam+24),x1=Math.min(B.x1-54,cam+STAGE.camW-24);let y=w.level?.encounter?Math.max(B.y0+h.band,Math.min(B.y1-h.band,w.player.y+(w.level.encounter.readable&&!['stones','roots'].includes(h.kind)?(side%2?4:-4):0))):(side?B.y1-h.band:B.y0+h.band);
+export function hazardMarker(w,h,side=0){const B=w.bounds(),cam=w.camX||0,x0=Math.max(B.x0+54,cam+24),x1=Math.min(B.x1-54,cam+STAGE.camW-24);let y=encOf(w)?Math.max(B.y0+h.band,Math.min(B.y1-h.band,w.player.y+(encOf(w).readable&&!['stones','roots'].includes(h.kind)?(side%2?4:-4):0))):(side?B.y1-h.band:B.y0+h.band);
  /* tallfields-oct31: on a band taller than STAGE's a small camera may not show both edges at once; an edge marker then sits at the
     edge of the visible strip instead of being skipped (96-unit bands keep their placement exactly) */
- if(!w.level?.encounter&&w.layout&&w.layout.floorBottom-w.layout.floorTop>STAGE.floorBottom-STAGE.floorTop)y=side?Math.min(y,(w.camTop||0)+STAGE.camH-STAGE.hudBottom-h.band):Math.max(y,(w.camTop||0)+h.band);
+ if(!encOf(w)&&w.layout&&w.layout.floorBottom-w.layout.floorTop>STAGE.floorBottom-STAGE.floorTop)y=side?Math.min(y,(w.camTop||0)+STAGE.camH-STAGE.hudBottom-h.band):Math.max(y,(w.camTop||0)+h.band);
  if(x1-x0<120||y-h.band<(w.camTop||0)||y+h.band>(w.camTop||0)+STAGE.camH-STAGE.hudBottom)return null;
- if(w.level?.encounter?.veilmoor)return veilMarker(w,h,side,{x0,x1,y,B});
- if(w.level?.encounter?.emberkeep)return emberMarker(w,h,side,{x0,x1,y,B});
- if(w.level?.encounter?.readable&&['volley','graves','thorns','wire'].includes(h.kind))return {shape:'box',lane:true,x0,x1,y:w.player.y<=(B.y0+B.y1)/2?Math.min(y,B.y1-ESCAPE_WIDTH-h.band-2):Math.max(y,B.y0+ESCAPE_WIDTH+h.band+2),band:h.band};
+ if(encOf(w)?.veilmoor)return veilMarker(w,h,side,{x0,x1,y,B});
+ if(encOf(w)?.emberkeep)return emberMarker(w,h,side,{x0,x1,y,B});
+ if(encOf(w)?.readable&&['volley','graves','thorns','wire'].includes(h.kind))return {shape:'box',lane:true,x0,x1,y:w.player.y<=(B.y0+B.y1)/2?Math.min(y,B.y1-ESCAPE_WIDTH-h.band-2):Math.max(y,B.y0+ESCAPE_WIDTH+h.band+2),band:h.band};
  const width=h.width||64,x=Math.max(x0,Math.min(x1-width,w.player.x-width/2));return {shape:'box',organic:true,x0:x,x1:x+width,y,band:h.band};}
-export function tierTick(w,dt){const r=w.level?.encounter;if(!r||w.hazardsDisabled)return;if(!w.tierFx)clearHazards(w);const f=w.tierFx;
+export function tierTick(w,dt){const r=encOf(w);if(!r||w.hazardsDisabled)return;if(!w.tierFx)clearHazards(w);const f=w.tierFx;
  if(!fighting(w)){clearHazards(w);return;}if(w.paused||w.cinematicShot)return;if(r.readable&&(w.level.id==='e8'||r.emberkeep||r.veilmoor)&&w.flowT<2){f.current=null;f.age=0;f.want=false;return;}
  if(guarded(w)){f.current=null;f.want=false;f.age=0;return;}
  const h=r.hazard;if(!f.current){f.age+=dt;if(f.age<h.rest)return;f.want=true;if(attacking(w))return;const m=hazardMarker(w,h,h.alternate?f.side%2:0);if(!m||!escapeRoute(w,m,h.warning)){f.want=false;f.age=h.rest-.5;return;}
   const markers=m.parts||[m];if(w.tierKey==='legendary'&&!r.readable){const B=w.bounds(),left=Math.max(B.x0+54,(w.camX||0)+24),right=Math.min(B.x1-54,(w.camX||0)+STAGE.camW-24),m2={...m,x0:m.x0-left>=80?Math.max(left,m.x0-120):m.x1+8,x1:m.x0-left>=80?m.x0-8:Math.min(right,m.x1+120)};if(m2.x1-m2.x0>=48&&escapeRoute(w,{...m,x0:Math.min(m.x0,m2.x0),x1:Math.max(m.x1,m2.x1)},h.warning))markers.push(m2);}
   f.current={markers,marker:m,safe:r.readable&&(m.lane||r.emberkeep||r.veilmoor)?escapeRoute(w,m,h.warning):null,islands:m.islands,cue:r.readable?HAZARD_CUES[h.kind]:null,age:0,warning:h.warning,active:h.active,hit:false,kind:h.kind};f.want=false;f.age=0;f.count++;if(r.readable)sfx('tell.aoe');return;}
  const z=f.current;if(z.marker.x0<(w.camX||0)||z.marker.x1>(w.camX||0)+STAGE.camW){f.current=null;f.age=0;return;}z.age+=dt;if(r.readable&&z.age>=z.warning&&!z.impact){z.impact=true;sfx('land');const fx={stones:'fx-wr-rocks',graves:'fx-bone-totem',volley:'fx-hr-arrow',roots:'fx-earth-spike',rubble:'fx-wr-rocks',thorns:'fx-earth-spike',spores:'fx-spore',stars:'fx-bolt-holy',echoes:'fx-col-shadow',portals:'fx-portal',tentacles:'fx-tentacle',pollen:'fx-spore',lures:'fx-marsh-gas'}[h.kind];if(fx)(w.enemyFx??=[]).push({kind:'hazard',owner:z,a:{dmg:0},fx,hs:['stones','rubble'].includes(h.kind)?'play':['volley','spores'].includes(h.kind)?'fly':'rise',x:(z.marker.x0+z.marker.x1)/2,y:z.marker.y,r:0,t:0,hit:true,marker:null});}if(z.age+1e-9>=z.warning&&z.age<z.warning+z.active&&!z.hit&&(z.markers||[z.marker]).some(m=>hazardContains(m,w.player))&&!(w.player.z>14)){
-  if(h.slow){w.player.slowZ=Math.min(w.player.slowZ??1,1-h.slow);}else{const before=w.player.hp;w.hurt(w.level.encounter.hazard.damage??24,{x:(z.marker.x0+z.marker.x1)/2,y:z.marker.y,kb:24,move:`arena ${z.kind}`,arenaHazard:true});if(w.player.hp<before)z.hit=true;}}
+  if(h.slow){w.player.slowZ=Math.min(w.player.slowZ??1,1-h.slow);}else{const before=w.player.hp;w.hurt(encOf(w).hazard.damage??24,{x:(z.marker.x0+z.marker.x1)/2,y:z.marker.y,kb:24,move:`arena ${z.kind}`,arenaHazard:true});if(w.player.hp<before)z.hit=true;}}
  if(z.age+1e-9>=z.warning+z.active){f.current=null;f.age=r.readable&&w.tierKey==='legendary'&&['stones','wire','hammers','banks','stars','pollen','beats','portals','tentacles'].includes(h.kind)&&f.side%2===0?h.rest:0;f.side++;}}
 /* The pilot keeps its oval pools. Elderwood lanes use continuous bands, never tiled crack bricks;
    organic arena footprints use the exact ellipse for impact. Progress follows the perimeter, never a blocky bar. */
@@ -57,7 +59,7 @@ export function clearLabelAt(w,r){const cx=(r.x0+r.x1)/2,cy=(r.y0+r.y1)/2+3,p=w?
 const clearLabel=(c,x,y)=>drawPixelText(c,'CLEAR',x,y,{align:'center',color:'#c5ffe4',outline:'#18392b'});
 export function clearLabelLayer(w,c){const list=w.clearLabels=[];return {y:1e9+1,draw:()=>{for(const l of list)clearLabel(c,l.x,l.y);}};}
 export function safeLane(c,r,label=true,w){r=visibleSafeLane(w,r);if(!r)return;const at=label?clearLabelAt(w,r):null;softMarker(c,{labelSink:Array.isArray(w?.clearLabels)?w.clearLabels:null,noLabel:!label,shape:'box',lane:true,safe:true,x0:r.x0,x1:r.x1,y:(r.y0+r.y1)/2,band:(r.y1-r.y0)/2,...(at?{labelX:at.x,labelY:at.y}:{})});}
-export function tierLayer(w,c){const z=w.tierFx?.current;if(!z)return;if(!z.islands)safeLane(c,z.safe,!w.level?.encounter?.readable,w);for(const r of z.islands||[])safeLane(c,r,!w.level?.encounter?.readable,w);for(const m of z.markers||[z.marker])softMarker(c,m,z.age/z.warning,z.age+1e-9>=z.warning);}
+export function tierLayer(w,c){const z=w.tierFx?.current;if(!z)return;if(!z.islands)safeLane(c,z.safe,!encOf(w)?.readable,w);for(const r of z.islands||[])safeLane(c,r,!encOf(w)?.readable,w);for(const m of z.markers||[z.marker])softMarker(c,m,z.age/z.warning,z.age+1e-9>=z.warning);}
 
 /* Arena banks stay deterministic. Each handoff is fully warned; the same footprint drives drawing and damage. */
 function emberMarker(w,h,side,{x0,x1,y,B}){const top=Math.max(B.y0+h.band,(w.camTop||0)+h.band),bottom=Math.min(B.y1-h.band,(w.camTop||0)+STAGE.camH-STAGE.hudBottom-h.band),rowY=side%2?bottom-8:top+8;

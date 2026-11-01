@@ -3031,3 +3031,43 @@ html.m-mode .pet-moment{top:10%}
  html.m-mode dialog[data-view=home] .rune-bar{margin:0 0 4px;padding:0 10px;font-size:16px;line-height:1.3;min-height:0}
  html.m-mode dialog[data-view=home] .home-abilities{padding-top:0}
 }
+
+/* round2 R1 (31 Oct): on a phone the setup column scrolls and Begin stays pinned at its foot, so picking
+   Elementary (which adds the grade row) can never push the button off the screen */
+.m-mode .title-screen[data-step=setup] .er-detail.hero-detail{height:100%;min-height:0;align-items:stretch}
+.m-mode .title-screen[data-step=setup] .er-stats{align-self:stretch;max-height:100%;min-height:0;overflow-y:auto;overscroll-behavior:contain;justify-content:flex-start}
+.m-mode .title-screen[data-step=setup] .hero-setup #begin{position:sticky;bottom:0;z-index:2;box-shadow:0 -10px 10px #152034}
+.m-mode .title-screen[data-step=setup] .setup-intro{display:none}
+.m-mode .title-screen[data-step=setup] .select-pane .select-head{padding-bottom:4px;margin-bottom:6px}
+.m-mode .title-screen[data-step=setup] .school-grade{margin:2px 0 4px}
+.m-mode .title-screen[data-step=setup] .school-grade-opts{flex-wrap:nowrap;gap:4px}
+.m-mode .title-screen[data-step=setup] .school-grade-opts button{flex:1 1 0;min-width:0;min-height:36px;padding:2px 3px;font-size:13px;white-space:nowrap}
+@media(max-height:440px){.m-mode .title-screen[data-step=setup] .er-title{display:none}}
+@media(max-height:380px){.m-mode .title-screen[data-step=setup] .hero-setup :is(#hero-nickname,.pixel-select,#school-mode,.ps-btn){min-height:36px;height:auto;padding-block:4px}.m-mode .title-screen[data-step=setup] .hero-setup label{margin:0;line-height:1.1}.m-mode .title-screen[data-step=setup] .hero-setup #begin{min-height:40px}}
+/* improve20-r-oct31: the Rift of the Week: its card, the result lines and the run's modifier tags under the objective */
+.rift-card{display:flex;flex-direction:column;gap:8px;margin:4px 0 8px}
+.rift-level{display:flex;align-items:center;gap:12px;margin:0}
+.rift-level>span:last-child{display:flex;flex-direction:column}
+.rift-level strong{font-size:calc(var(--fs) * 1.5);color:var(--ink)}
+.rift-level small,.rift-best small{color:var(--muted)}
+.rift-portal{flex:none;width:40px;height:40px;border-radius:50%;background:radial-gradient(circle,#f1e2ff 0 18%,#b77cff 19% 52%,#4b2475 53% 100%);box-shadow:0 0 0 2px #2a1440}
+.rift-mods{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.rift-mods li{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.rift-tag{display:inline-block;padding:1px 8px;border-radius:3px;background:#3b1f5c;color:#f1e2ff;font:700 var(--fs)/1.3 var(--ui);letter-spacing:.5px;white-space:nowrap}
+.rift-best{display:flex;flex-direction:column;margin:0}
+.rift-best strong{font-size:calc(var(--fs) * 1.25)}
+.rift-last,.rift-shards,.rift-ghost{margin:0;color:var(--ink-2)}
+.rift-reward{display:flex;align-items:center;gap:8px;margin:0}
+.rift-ghost{opacity:.7;font-size:var(--fs)}
+#rift-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;justify-content:flex-end;pointer-events:none}
+#rift-tags[hidden]{display:none}
+#rift-tags .rift-tag{font-size:12px;padding:0 6px;opacity:.92}
+#rift-tags .rift-tag-name{background:#b77cff;color:#1d0f2e}
+/* phone: the top-right corner holds Map/Journal/Menu, so the run's Rift tags sit under the gold on the left */
+html.m-mode #rift-tags{position:fixed;left:calc(16px + env(safe-area-inset-left,0px));top:106px;margin:0;justify-content:flex-start;max-width:46vw}
+/* on a phone the Rift card is two columns (this week's level and modifiers; best, last week and reward), so Enter fits without scrolling */
+html.m-mode .rift-card{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);grid-auto-flow:row dense;gap:6px 18px;align-content:start}
+html.m-mode .rift-level{grid-column:1;grid-row:1/3}
+html.m-mode .rift-mods{grid-column:1;grid-row:3/7}
+html.m-mode .rift-best,html.m-mode .rift-last,html.m-mode .rift-reward,html.m-mode .rift-shards{grid-column:2}
+html.m-mode .rift-mods li{flex-direction:column;align-items:flex-start;gap:2px}

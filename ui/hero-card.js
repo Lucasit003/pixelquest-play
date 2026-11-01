@@ -7,6 +7,7 @@
    child typed; the panel says "Only share with people you know."
    heroCardModel(save) is pure; drawHeroCard(canvas, model, art, heroCanvas) draws with whatever images it is given
    (tests/herocard-oct27.test.js runs it under @napi-rs/canvas); the panel helpers at the end are browser-only. */
+import {riftTitle} from '../game/rift.js';
 import {CLASSES,SUBJECTS} from '../game/data.js';
 import {ABILITIES} from '../game/abilities.js';
 import {unlocked} from '../game/math.js';
@@ -29,7 +30,7 @@ export function heroCardModel(s={}){
  const subjects=Object.entries(SUBJECTS).map(([id,v])=>({id,name:v.name,color:v.color,icon:SUBJECT_ICON[id]||'book-open',count:TOPICS.filter(t=>t.subject===id&&mastered(s,t)).length}));
  return {hero,name:typed||c.name,className:c.name,level:Math.max(1,s.level|0),stars:totalStars(s),maxStars:maxStars(),
   furthest:last?{id:last.id,name:last.name,chapter:CHAPTERS.find(ch=>ch.id===last.chapter)?.name||''}:null,
-  abilities,awake:abilities.filter(a=>a.on).length,subjects,topics:subjects.reduce((t,x)=>t+x.count,0),url:PLAY_URL,title:GAME_TITLE,subtitle:GAME_SUB,honour:heroTitle(s)};}
+  abilities,awake:abilities.filter(a=>a.on).length,subjects,topics:subjects.reduce((t,x)=>t+x.count,0),url:PLAY_URL,title:GAME_TITLE,subtitle:GAME_SUB,honour:[heroTitle(s),riftTitle(s)].filter(Boolean).join(' · ')||null};}
 const ICON_AB=Object.fromEntries(ABILITY_ICON_IDS.map((n,i)=>[n,i]));
 const ICON_IX=Object.fromEntries(ICON_NAMES.map((n,i)=>[n,i]));
 

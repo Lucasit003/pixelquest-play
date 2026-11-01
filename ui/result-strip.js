@@ -17,7 +17,7 @@ export function splitCount(label){const m=/^(\d+)\s*[×x]?\s+(.+)$/.exec(String(
 export function youGotHTML({won=true,gold=0,xp=0,loot=[],gear=[],stars=0,starsAll=0,icon,starIcon=''}){
  const item=(kind,img,n,what,cls='')=>`<span class="you-got-item${cls}" data-reward="${kind}">${img}<span class="you-got-text">${n!==''?`<strong>${esc(n)}</strong>`:''}<small>${esc(what)}</small></span></span>`;
  /* a defeat shows only what the run did bring home: no "+0" chips, and no strip at all when there is nothing */
- const parts=[...(won||gold>0?[item('gold',icon('gold'),`+${gold}`,'gold',' level-reward')]:[]),...(won||xp>0?[item('xp',icon('xp'),`+${xp}`,'XP',' level-reward')]:[]),
+ const parts=[...(won||gold>0?[item('gold',icon('gold'),`+${gold}`,'gold',' level-reward')]:[]),...(xp>0?[item('xp',icon('xp'),`+${xp}`,'XP',' level-reward')]:[]),
   ...loot.map(x=>{const {n,what}=splitCount(x.label);return item('item',icon(x.icon),n,what,` level-loot-item${x.quiet?' loot-quiet':''}`);}),
   ...gear.map(g=>item('gear',g.img||icon('chest'),'',g.name,' level-loot-item')),
   ...(stars>0?[item('stars',starIcon,`+${stars}`,`${stars>1?'stars':'star'}${starsAll?` · ${starsAll} in all`:''}`)]:[])];

@@ -199,10 +199,12 @@ export const arenaTier=(level,n)=>(level.chapter==='emberkeep'?9:level.chapter==
    best.time how long that record run lasted). */
 /* tier: which of the level's tiers was played (Normal unless given). A win also keeps the best stars for that tier.
    time includes the time spent before any wave retry, and a run with a knockout (a retried wave) earns at most 2 stars. */
-export function recordLevel(save,id,{won,time,score,tier,knockouts=0}){const l=levelById(id),k=tiered(l)?tierKey(tier):'normal';save.levels??={};
+/* A Rift of the Week run (game/rift.js; round 2 review) counts as a play but leaves the Normal record alone: its modifiers change the
+   level's difficulty, so its time, stars, score and grade live in s.rift only. */
+export function recordLevel(save,id,{won,time,score,tier,knockouts=0,rift=false}){const l=levelById(id),k=tiered(l)?tierKey(tier):'normal';save.levels??={};
  const top=save.levels[id]??={done:false,best:{time:null,score:0},plays:0};
  const r=k==='normal'?top:((top.tiers??={})[k]??={done:false,best:{time:null,score:0},plays:0,stars:0});r.best??={time:null,score:0};
- r.plays=(r.plays|0)+1;const first=won&&!r.done&&l?.kind==='level';
+ r.plays=(r.plays|0)+1;if(rift)return {first:false,recordTime:false,recordScore:false,stars:won&&l?.kind==='level'?Math.min(knockouts>0?2:3,levelStarsFor(l,k,time)):0,newStars:0,tier:k,rift:true};const first=won&&!r.done&&l?.kind==='level';
  const stars=won&&l?.kind==='level'?Math.min(knockouts>0?2:3,levelStarsFor(l,k,time)):0,newStars=stars>(r.stars|0)?stars-(r.stars|0):0;if(newStars)r.stars=stars;
  const recordTime=won&&l?.kind==='level'&&(r.best.time==null||time<r.best.time);if(recordTime)r.best.time=Math.round(time*10)/10;
  const recordScore=score>(r.best.score|0);if(recordScore){r.best.score=score;if(l?.kind==='arena')r.best.time=Math.round(time*10)/10;}
