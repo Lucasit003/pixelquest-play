@@ -17,7 +17,9 @@ import ROOMS from '../assets/town/interiors-reviewed-oct13.js';
 import FX from '../assets/town/fx.js';
 import {shopById} from '../game/shops.js';
 import {levelDone} from '../game/levels.js';
-import {FURN, footprint, placeFurniture, spare} from '../game/furniture.js';
+import {drawTrail} from '../gfx/hero-trail.js';
+import {trailOf} from '../game/prizes.js';
+import {FURN, footprint, placeFurniture, spare, wallSpot, wallFits, WALL} from '../game/furniture.js';
 import {talk, talkAndAdvance, nameOf, holds, STORY} from '../game/npcs.js';
 import {COMPANIONS, ART, joined} from '../game/party.js';
 import {questLive, currentStep, questState} from '../game/quests.js';
@@ -259,7 +261,7 @@ function houseBlock(S) {
   const key = JSON.stringify(items);
   if (key === houseKey) return houseCells;
   const c = S.D.collision, out = new Set();
-  for (const it of items) { const f = FURN[it.id]; if (!f || f.flat) continue; const r = footprint(f, it.x, it.y);
+  for (const it of items) { const f = FURN[it.id]; if (!f || f.flat || it.wall) continue; const r = footprint(f, it.x, it.y);
     for (let gy = Math.floor(r.y0 / c.cell); gy < Math.ceil(r.y1 / c.cell); gy++) for (let gx = Math.floor(r.x0 / c.cell); gx < Math.ceil(r.x1 / c.cell); gx++) out.add(gy * c.w + gx); }
   houseKey = key; houseCells = out;
   return out;
@@ -267,13 +269,18 @@ function houseBlock(S) {
 const furnImages = new Map();
 const furnImage = f => { if (!furnImages.has(f.id)) furnImages.set(f.id, typeof Image === 'undefined' ? null : Object.assign(new Image(), {src: new URL('../' + f.img, import.meta.url).href})); return furnImages.get(f.id); };
 /* where the item being placed would go: just in front of the hero, snapped to the 8 px floor grid */
+/* improve20-r7a-nov1 #12: the room's own art on the back wall (window, shelves, hearth, headboard; the thin beam strips along its top are what the pieces hang from) */
+const wallArt = S => (S.wallArt ??= S.D.sprites.filter(a => a[5] < 1e5 && a[2] < 160 && !(a[4] <= 12 && a[2] < 100)).map(a => ({x0: a[1], x1: a[1] + a[3], y0: a[2], y1: a[2] + a[4]})));
 function placingSpot() {
   const p = H.player, f = FURN[H.placing]; if (!p || !f) return null;
+  /* a wall piece hangs on the back wall, at the free spot nearest the hero; with the wall full it stands on the floor like any piece */
+  if (f.wall) { const S = current(); const at = S && wallSpot(f, Math.round(p.x), H.save?.house?.items ?? [], wallArt(S)); if (at) return {...at, wall: true}; }
   const dir = p.direction === 'up' ? [0, -1] : p.direction === 'down' ? [0, 1] : [p.facing < 0 ? -1 : 1, 0];
   const x = dir[0] ? p.x + dir[0] * (14 + f.w / 2) : p.x, y = dir[1] > 0 ? p.y + 10 + Math.min(24, f.h / 3) : dir[1] < 0 ? p.y - 22 : p.y + 4;
   return {x: Math.round(x / 8) * 8, y: Math.round(y / 8) * 8};
 }
 function placingOk(S, f, x, y) {
+  if (f.wall && y <= WALL.floor) return S.key === 'home' && wallFits(f, x, H.save?.house?.items ?? [], wallArt(S));
   const r = footprint(f, x, y), [bx0, by0, bx1, by1] = S.D.bounds ?? [0, 0, S.D.w, S.D.h], top = f.flat ? r.y0 : y - f.h;
   if (r.x0 < bx0 + 4 || r.x1 > bx1 - 4 || top < by0 + 4 || r.y1 > by1 - 4) return false;
   if (f.flat) return true;
@@ -316,7 +323,7 @@ export function hubConfirmPlacing() {
   if (!f || !S || S.key !== 'home') { H.placing = null; return {ok: false, reason: 'Furniture can only go in your Home.'}; }
   const at = placingSpot();
   if (!at || !placingOk(S, f, at.x, at.y)) return {ok: false, reason: `The ${f.name.toLowerCase()} does not fit there. Try another spot.`};
-  if (!placeFurniture(H.save, f.id, at.x, at.y)) { H.placing = null; return {ok: false, reason: 'You have none of those left to place.'}; }
+  if (!placeFurniture(H.save, f.id, at.x, at.y, !!at.wall)) { H.placing = null; return {ok: false, reason: 'You have none of those left to place.'}; }
   H.placing = null;
   return {ok: true, name: f.name};
 }
@@ -721,7 +728,7 @@ export function personBeat(name) {
 export function hubHeads() { const S = current(), v = H.view; if (!S?.room || !v || H.fade) return []; return [...S.figures, ...crewHere(S)].map(f => ({l: (f.x - 14 - v.ox) / VIEW_W, r: (f.x + 14 - v.ox) / VIEW_W, t: (f.y - 60 - v.oy) / VIEW_H, b: (f.y - v.oy) / VIEW_H})); }
 /** The interact prompt for the HUD: {text} or null. */
 export function hubPrompt() {
-  if (H.placing && FURN[H.placing]) return {text: `Place the ${FURN[H.placing].name.toLowerCase()} (Escape puts it away)`};
+  if (H.placing && FURN[H.placing]) { const hang = !!placingSpot()?.wall; return {text: `${hang ? 'Hang' : 'Place'} the ${FURN[H.placing].name.toLowerCase()}${hang ? ' on the wall' : ''} (Escape puts it away)`}; }
   if (!H.near) return null;
   /* where the prompt sits (round 3: on the door, not at the hero's feet): just above the marker icon
      drawn over the door frame, as fractions of the 480x270 view */
@@ -788,8 +795,8 @@ export function hubGuidanceTarget(target, subject) {
   if (H.fade || !target) return null;
   const S = current(), kind = target.kind === 'pad' ? 'gate' : target.kind;
   if (kind === 'npc' || kind === 'building') return questGuide(S, target);
-  if (!['gate', 'library', 'guild', 'alchemist'].includes(kind)) return null;
-  const name = {gate: 'South gate', library: 'Library', guild: 'Guild', alchemist: 'Apothecary'}[kind];
+  if (!['gate', 'library', 'guild', 'alchemist'].includes(kind) && kind !== 'smith') return null;
+  const name = kind === 'smith' ? 'Weaponsmith' : {gate: 'South gate', library: 'Library', guild: 'Guild', alchemist: 'Apothecary'}[kind];
   let q, label = name;
   if (S.room) {
     if (kind !== 'gate') q = S.points.find(p => actionOf(p) === kind && (subject ? p.props?.subject === subject : !p.props?.subject))
@@ -1030,6 +1037,8 @@ export function drawHub(c, state, t, kit) {
   list.sort((a, b) => a - b);
   /* figures that move: the player, the companion and the walkers */
   const figures = [];
+  /* improve20-r7a-nov1 #8: a worn trail behind the hero (gfx/hero-trail.js, cosmetic) */
+  { const tr = trailOf(H.save); if (tr) figures.push({y: p.y + 12, draw: () => drawTrail(c, p, tr, undefined, state.motion !== false)}); }
   figures.push({y: p.y, hero: true, draw: () => kit.actor(c, p, t)});
   if (state.pet) figures.push({y: p.y + 10, draw: () => kit.companion(c, state.pet, p.x - 22 * p.facing, p.y + 9, t, p.moving, p.facing, state.motion)});
   /* the Barracks room: the roster board, and the companions waiting there (their own approved atlas, idling, unmodified) */

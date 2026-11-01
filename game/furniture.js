@@ -45,7 +45,10 @@ const T=[
  ['show-bookcase','Grand bookcase',1400,'show',75,71,'prop-cabinet_27.png'],
  ['show-alchemy','Alchemist\'s cabinet',2000,'show',85,77,'prop-cabinet_2.png'],
  ['show-hearth','Great stone hearth',3000,'show',89,108,'prop-fireplace_1.png']];
-export const FURNITURE=Object.freeze(T.map(([id,name,price,kind,w,h,src])=>Object.freeze({id,name,price,kind,w,h,src,flat:kind==='rug',img:`assets/town/furniture/${id}.png`})));
+/* improve20-r7a-nov1 #12 (improve20-x-nov1 report: "Wall pieces stand on the floor like all furniture"): the pieces made to hang (the banner,
+   the shield trophy, the weapon rack and the armour plaque, all front views) go on the Home's back wall. Same art, no new pictures. */
+export const WALL_IDS=Object.freeze(['show-banner','show-shields','show-weapons','show-armour']);
+export const FURNITURE=Object.freeze(T.map(([id,name,price,kind,w,h,src])=>Object.freeze({id,name,price,kind,w,h,src,flat:kind==='rug',...(WALL_IDS.includes(id)?{wall:true}:{}),img:`assets/town/furniture/${id}.png`})));
 export const FURN=Object.freeze(Object.fromEntries(FURNITURE.map(f=>[f.id,f])));
 export const MAX_PLACED=40;
 /* the Showpiece shelf, cheapest first; one of each can be owned */
@@ -60,10 +63,22 @@ export const footprint=(f,x,y)=>{const h=Math.max(8,Math.min(24,Math.round(f.h/3
 export const placedCount=(s,id)=>s.house.items.filter(i=>i.id===id).length;
 export const spare=(s,id)=>(s.house.owned[id]||0)-placedCount(s,id);
 export function buyFurniture(s,id){const f=FURN[id];if(!f||(s.gold||0)<f.price||f.kind==='show'&&(s.house.owned[id]|0)>0)return false;s.gold-=f.price;s.house.owned[id]=(s.house.owned[id]||0)+1;return true;}
-export function placeFurniture(s,id,x,y){if(!FURN[id]||spare(s,id)<1||s.house.items.length>=MAX_PLACED)return false;s.house.items.push({id,x:Math.round(x),y:Math.round(y)});return true;}
+export function placeFurniture(s,id,x,y,wall=false){if(!FURN[id]||spare(s,id)<1||s.house.items.length>=MAX_PLACED||wall&&!FURN[id].wall)return false;s.house.items.push({id,x:Math.round(x),y:Math.round(y),...(wall?{wall:1}:{})});return true;}
+/* The Home's back wall (room pixels; the plaster face of the room "home" runs y 80-160 between x 96 and 480, under a beam at y 92-102): a hung
+   piece's top sits just under the beam (WALL.rail), so a row of pieces lines up. It hangs inside the wall, clear of the room's own wall art
+   (the window, the shelves, a sconce: rects the caller passes) and of every piece already hung; furniture standing in front of the wall (the
+   bed, the hearth, the logs: art whose top is at WALL.stand or lower) may hide at most WALL.tuck px of its foot, as a headboard does. It never
+   blocks the floor. An item hung on the wall carries wall:1 (additive; a piece placed on the floor before this keeps standing where it was). */
+export const WALL=Object.freeze({x0:98,x1:478,rail:98,floor:160,stand:128,tuck:12});
+export const wallRect=(f,x)=>({x0:Math.round(x-f.w/2),x1:Math.round(x+f.w/2),y0:WALL.rail,y1:WALL.rail+f.h});
+const hit=(a,b)=>a.x0<b.x1&&b.x0<a.x1&&a.y0<b.y1&&b.y0<a.y1;
+export function wallFits(f,x,items=[],art=[]){if(!f?.wall)return false;const r=wallRect(f,x);if(r.x0<WALL.x0||r.x1>WALL.x1||r.y1>WALL.floor)return false;
+ return !art.some(a=>hit(r,a)&&!(a.y0>=WALL.stand&&r.y1-a.y0<=WALL.tuck))&&!items.some(it=>it.wall&&FURN[it.id]&&hit(r,wallRect(FURN[it.id],it.x)));}
+/* the free spot on the wall nearest to x where f hangs (4 px steps), or null when the wall has no room left for it */
+export function wallSpot(f,x,items=[],art=[],reach=WALL.x1-WALL.x0){for(let d=0;d<=reach;d+=4)for(const sx of d?[x-d,x+d]:[x]){const q=Math.round(sx/4)*4;if(wallFits(f,q,items,art))return {x:q,y:WALL.rail+f.h};}return null;}
 export function pickUp(s,i){if(i<0||i>=s.house.items.length)return false;s.house.items.splice(i,1);return true;}
 /* a save's house, cleaned: known items only, whole counts, and never more placed than owned (save.js normalize) */
 export function cleanHouse(h){const owned={},items=[];
  for(const [id,n] of Object.entries(h?.owned&&typeof h.owned==='object'?h.owned:{}))if(FURN[id]&&Math.floor(Number(n))>0)owned[id]=FURN[id].kind==='show'?1:Math.floor(Number(n));
- for(const it of Array.isArray(h?.items)?h.items:[])if(it&&FURN[it.id]&&Number.isFinite(+it.x)&&Number.isFinite(+it.y)&&items.filter(o=>o.id===it.id).length<(owned[it.id]||0)&&items.length<MAX_PLACED)items.push({id:it.id,x:Math.round(+it.x),y:Math.round(+it.y)});
+ for(const it of Array.isArray(h?.items)?h.items:[])if(it&&FURN[it.id]&&Number.isFinite(+it.x)&&Number.isFinite(+it.y)&&items.filter(o=>o.id===it.id).length<(owned[it.id]||0)&&items.length<MAX_PLACED)items.push({id:it.id,x:Math.round(+it.x),y:Math.round(+it.y),...(it.wall&&FURN[it.id].wall?{wall:1}:{})});
  return {owned,items};}

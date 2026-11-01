@@ -11,8 +11,13 @@
    improve20-f-nov1 #10 (audit5 #2): each day's adventure goal pays a prize you can see instead of its gold: the cheapest Home piece
    (game/furniture.js, Decorate catalogue, Showpieces excepted) the save does not own yet, the day's date choosing among equally cheap
    ones. Nothing random: the prize is shown before the goal is done and is the same all day for the same save. A save that owns every
-   piece gets the goal's gold as before. Cosmetic only (furniture never reads into a fight or learning); no new save field. */
+   piece gets the goal's gold as before. Cosmetic only (furniture never reads into a fight or learning); no new save field.
+   improve20-r7a-nov1 #8 (audit6 #9: Day 1's prize was a "Small fern", day 2 and day 9 a "Red stool"): the prize is a keepsake a kid wants
+   (game/prizes.js): a hero title, a trail colour, a hero-card backdrop or a Home piece. The date picks the kind (prizeKindFor) and then the
+   piece among the ones this save does not own (any Home piece, not only the cheapest); a kind with nothing left passes to the next. Still
+   nothing random-for-reward and nothing counted across days: the same save sees the same prize all day. */
 import {FURNITURE,FURN} from './furniture.js';
+import {PRIZES,PRIZE,PRIZE_KINDS,givePrize,owns,prizeLabel,prizeWhere} from './prizes.js';
 export const GOALS=[
  /* adventure: a fall still counts for "play" */
  {id:'play-1',kind:'adventure',on:'play',need:1,text:'Play any level (win or lose)',gold:10},
@@ -60,7 +65,7 @@ const cleanIds=a=>Array.isArray(a)?[...new Set(a.map(live).filter(id=>GOAL[id]))
 function trimPaid(p){const out={};for(const k of Object.keys(p||{}).filter(k=>DAY.test(k)).sort().reverse().slice(0,PAID_DAYS)){const ids=cleanIds(p[k]);if(ids.length)out[k]=ids;}return out;}
 export function cleanDaily(v){const d=emptyDaily();if(!v||typeof v!=='object'||Array.isArray(v))return d;if(typeof v.day==='string'&&DAY.test(v.day))d.day=v.day;
  if(v.n&&typeof v.n==='object')for(const [old,c] of Object.entries(v.n)){const id=live(old);if(GOAL[id]&&Number.isFinite(+c))d.n[id]=Math.max(d.n[id]|0,Math.min(GOAL[id].need,Math.floor(+c)));}
- d.done=cleanIds(v.done);if(typeof v.prize==='string'&&FURN[v.prize]&&FURN[v.prize].kind!=='show'&&d.day)d.prize=v.prize;if(v.paid&&typeof v.paid==='object'&&!Array.isArray(v.paid)){const p=trimPaid(v.paid);if(Object.keys(p).length)d.paid=p;}return d;}
+ d.done=cleanIds(v.done);if(typeof v.prize==='string'&&(PRIZE[v.prize]||FURN[v.prize]&&FURN[v.prize].kind!=='show')&&d.day)d.prize=v.prize;if(v.paid&&typeof v.paid==='object'&&!Array.isArray(v.paid)){const p=trimPaid(v.paid);if(Object.keys(p).length)d.paid=p;}return d;}
 /* a new day replaces the record: nothing carries over, nothing is lost but the unfinished goals (a remembered day comes back as it was paid) */
 export function syncDay(s,now=Date.now()){const day=dayKey(now);if(!s.daily||s.daily.day!==day){const old=s.daily,paid={...(old?.paid||{})};if(old?.day&&old.done?.length)paid[old.day]=cleanIds([...(paid[old.day]||[]),...old.done]);
   const kept=trimPaid(paid),keys=Object.keys(kept).sort(),full=keys.length>=PAID_DAYS&&day<keys[0],done=full?goalsFor(day).map(g=>g.id):cleanIds(kept[day]);
@@ -77,17 +82,27 @@ export const goldScale=level=>Math.max(1,replayGoldAt(level)/ELDERWOOD_REPLAY);
 export const goalGold=(g,level=1)=>g.gold?Math.round(g.gold*goldScale(level)):0;
 export const rewardText=(g,level=1)=>g.gold?`+${goalGold(g,level)} gold`:`+${g.n||1} ${g.matName||'material'}`;
 export const PRIZE_KIND='adventure';
+/* the kind of keepsake a day offers first (from the date only), then the rest in order */
+export const prizeKindFor=day=>{const i=hash('prizekind:'+day)%PRIZE_KINDS.length;return [...PRIZE_KINDS.slice(i),...PRIZE_KINDS.slice(0,i)];};
+const decorOf=f=>f&&{key:f.id,kind:'decor',id:f.id,name:f.name,img:f.img};
+/* the day's prize for this save: {key, kind, name, img?|color?}, or null once everything is owned */
+/* a Home piece day picks among every unowned piece (Showpieces excepted) by the date, so a royal bed or a treasure chest can come, not only the
+   cheapest stool (prizeFor, kept for older callers) */
+export const decorPrizeFor=(s,day)=>{const free=FURNITURE.filter(f=>f.kind!=='show'&&!((s?.house?.owned?.[f.id]|0)>0));return free.length?free[hash('decor:'+day)%free.length]:null;};
+export function dailyPrize(s,day){for(const k of prizeKindFor(day)){if(k==='decor'){const f=decorPrizeFor(s,day);if(f)return decorOf(f);continue;}
+  const free=PRIZES.filter(p=>p.kind===k&&!owns(s,p.key));if(free.length)return free[hash('prize:'+k+':'+day)%free.length];}return null;}
+const prizeByKey=key=>PRIZE[key]||decorOf(FURN[key]&&FURN[key].kind!=='show'?FURN[key]:null)||null;
 /* the day's prize piece for this save: the cheapest unowned non-Showpiece, ties settled by the date; null once every piece is owned */
 export function prizeFor(s,day){const free=FURNITURE.filter(f=>f.kind!=='show'&&!((s?.house?.owned?.[f.id]|0)>0));if(!free.length)return null;const low=Math.min(...free.map(f=>f.price)),pick=free.filter(f=>f.price===low);return pick[hash('prize:'+day)%pick.length];}
 /* s.daily.prize: the piece today's prize goal paid (a FURN id), so the done goal still names it; additive, cleaned by cleanDaily, gone on a new day */
-const prizeOf=(s,g,d)=>g.kind===PRIZE_KIND?prizeFor(s,d.day):null;
-export const prizeText=f=>`${f.name} for your Home`;
-export function dailyView(s,now=Date.now()){const d=syncDay(s,now);return goalsFor(d.day).map(g=>{const done=d.done.includes(g.id),f=!done&&prizeOf(s,g,d);return {...g,gold:f?0:goalGold(g,s.level),have:done?g.need:Math.min(g.need,d.n[g.id]|0),done,reward:f?prizeText(f):done&&g.kind===PRIZE_KIND&&d.prize?prizeText(FURN[d.prize]||{name:'A Home piece'}):rewardText(g,s.level),...(f?{prize:f.id,prizeImg:f.img}:{})};});}
+const prizeOf=(s,g,d)=>g.kind===PRIZE_KIND?dailyPrize(s,d.day):null;
+export const prizeText=p=>p.kind==='title'?`Title: ${p.name}`:p.kind&&p.kind!=='decor'?p.name:`${p.name} for your Home`;
+export function dailyView(s,now=Date.now()){const d=syncDay(s,now);return goalsFor(d.day).map(g=>{const done=d.done.includes(g.id),f=!done&&prizeOf(s,g,d),paid=done&&g.kind===PRIZE_KIND&&d.prize?prizeByKey(d.prize):null,p=f||paid;return {...g,gold:p?0:goalGold(g,s.level),have:done?g.need:Math.min(g.need,d.n[g.id]|0),done,reward:p?prizeText(p):done&&g.kind===PRIZE_KIND&&d.prize?'A keepsake':rewardText(g,s.level),...(p?{prize:p.key,prizeKind:p.kind,...(p.img?{prizeImg:p.img}:{}),...(p.color?{prizeColor:p.color,prizeSpark:p.spark}:{})}:{})};});}
 /* An event from EVENTS ('visit' with arg = the room; 'foes', 'secret', 'star' with arg = how many). Returns the goals it finished, already paid. */
 export function dailyEvent(s,on,arg,now=Date.now()){if(!EVENTS.includes(on))return [];const by=on==='foes'||on==='secret'||on==='star'?Math.max(0,Math.floor(+arg||0)):1;if(!by)return [];const d=syncDay(s,now),out=[];
  for(const g of goalsFor(d.day)){if(g.on!==on||d.done.includes(g.id)||(g.room&&g.room!==arg))continue;d.n[g.id]=Math.min(g.need,(d.n[g.id]|0)+by);
   if(d.n[g.id]>=g.need){d.done.push(g.id);const f=prizeOf(s,g,d);
-   if(f){s.house??={owned:{},items:[]};s.house.owned??={};s.house.owned[f.id]=(s.house.owned[f.id]|0)+1;d.prize=f.id;out.push({...g,gold:0,prize:f.id,line:`Daily goal done: a ${f.name} for your Home! Place it from Home → Decorate.`});continue;}
+   if(f){if(f.kind==='decor'){s.house??={owned:{},items:[]};s.house.owned??={};s.house.owned[f.id]=(s.house.owned[f.id]|0)+1;}else givePrize(s,f.key);d.prize=f.key;out.push({...g,gold:0,prize:f.key,prizeKind:f.kind,line:`Daily goal done: ${prizeLabel(f)}! ${prizeWhere(f)}`});continue;}
    if(g.gold)s.gold=(s.gold|0)+goalGold(g,s.level);else if(g.mat){s.gear??={};s.gear.mats??={};s.gear.mats[g.mat]=(s.gear.mats[g.mat]|0)+(g.n||1);}out.push({...g,gold:goalGold(g,s.level),line:`Daily goal done: ${rewardText(g,s.level)}`});}}
  if(out.length)d.paid=trimPaid({...(d.paid||{}),[d.day]:d.done});return out;}
 /* the most gold any one day's three goals can pay (the balance pin) */

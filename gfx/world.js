@@ -19,6 +19,8 @@ import {legacyTelegraph,enemyTop,bodyHalf} from '../scenes/enemy-ai.js';
 import {drawPet,petFollow} from './actors/pet-sprites.js';
 import {companionEntity,companionPlate} from './actors/companion-sprites.js';
 import {drawHeroXray} from './hero-xray.js';
+import {drawTrail} from './hero-trail.js';
+import {trailOf} from '../game/prizes.js';
 export {BUILDINGS,actor};
 export const rect=(c,x,y,w,h,col)=>{c.fillStyle=col;c.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));};
 const ellipse=(c,x,y,rx,ry,color)=>{c.fillStyle=color;c.beginPath();c.ellipse(Math.round(x),Math.round(y),rx,ry,0,0,Math.PI*2);c.fill();};
@@ -256,6 +258,7 @@ let cx=Math.max(150,Math.min(550,p.x)),cy=Math.max(85,Math.min(height-85,p.y));/
  /* improve20-w-nov1 #11: the hero's ground shadow goes down first, so arena danger ground (painted next, in enemyLayer) sits above it, never hidden under the hero's feet */if(stage)groundShadow(c,p.x,p.y);
  /* v2:enemies */if(state.enemyLayer)entities.push(...state.enemyLayer(c,t));for(const f of fx)if(!f.ground&&f.type!=='text')entities.push({y:effectDepth(f),draw:()=>effect(c,f)});
  /* v2:levels */if(stage)entities.push(...stageEntities(c,stageOpts(state,t)));
+ /* improve20-r7a-nov1 #8: a worn trail behind the hero (gfx/hero-trail.js, cosmetic; sorted just over the pet, who walks in it) */{const tr=trailOf(state.save);if(tr)entities.push({y:p.y+12,draw:()=>drawTrail(c,stage?snap(p):p,tr,undefined,state.motion!==false)});}
  entities.push({y:p.y,draw:()=>{if(stage)dodgeRing(c,p);actor(c,stage?{...snap(p),noShadow:true}:p,t);}});if(state.pet){const px=Math.round(p.x-22*p.facing),py=Math.round(p.y+9),pf=petFollow(state.pet,px,py,t,p.facing,state.motion!==false,p.moving);entities.push({y:pf.y,draw:()=>drawPet(c,state.pet,px,py,t,p.moving,p.facing,state.motion)});}entities.sort((a,b)=>a.y-b.y).forEach(e=>e.draw());/* improve20-a-oct31 #1: a boss or elite drawn over the hero shows his outline through it (gfx/hero-xray.js) */if(stage&&!state.cinematicTarget)drawHeroXray(c,state,g=>actor(g,{...snap(p),noShadow:true},t),(g,e)=>{const a=snap(e);if(!state.drawEnemy?.(g,a,t))actor(g,a,t);});
  // Shots fly at the height they were launched from - the weapon tip - while x/y stay
  // on the ground plane for collision.

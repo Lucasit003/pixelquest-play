@@ -29,13 +29,15 @@ export const shortName=n=>String(n||'').replace(/^[^,]*?['’]s\s+(?=\S)/,'')||S
  * icon(name) gives an <img>; starIcon is the star's <img>. */
 /* improve20-x-nov1 #20c (audit4 #11): riftBonus is the Rift's first-win gold, already inside `gold`, named in the gold chip so gold is not shown
    twice; shard (an <img>) adds the week's Rift Shard as its own chip */
-export function youGotHTML({won=true,gold=0,xp=0,riftBonus=0,shard='',loot=[],gear=[],stars=0,starsAll=0,icon,starIcon=''}){
+/* improve20-r7a-nov1 #11 (audit6 #19): `next` names the smith piece the hero can buy now (gear-guidance.js affordableUpgrade, a shop buy), on
+   the gold chip's own words line ("gold · next buy: Emberbrand"), so gold points at something; the strip's layout is untouched */
+export function youGotHTML({won=true,gold=0,xp=0,riftBonus=0,shard='',loot=[],gear=[],stars=0,starsAll=0,icon,starIcon='',next=''}){
  /* improve20-h-nov1: every chip carries its full words as a title, so a compact chip (below) still names itself */
  /* improve20-s-nov1 #18/#20 (audit5 b18, b15): a found piece carries its rarity: the border and a glow behind its icon in the rarity's
     colour, its pips under the icon (so it never rests on colour alone, and still shows on a compact phone chip) and the name in the title */
  const item=(kind,img,n,what,cls='',rar=null)=>`<span class="you-got-item${cls}" title="${esc((n!==''?n+' ':'')+what+(rar?` (${rarName(rar)})`:''))}" data-reward="${kind}"${rar?` data-rar="${esc(rar)}" style="--rar:${rarColor(rar)}"`:''}>${rar?`<span class="you-got-ico">${img}${rarPips(rar,'rar-on-cell')}</span>`:img}<span class="you-got-text">${n!==''?`<strong>${esc(n)}</strong>`:''}<small>${esc(what)}</small></span></span>`;
  /* a defeat shows only what the run did bring home: no "+0" chips, and no strip at all when there is nothing */
- const parts=[...(won||gold>0?[item('gold',icon('gold'),`+${gold}`,riftBonus>0?'gold (Rift bonus)':'gold',' level-reward')]:[]),...(shard?[item('shard',shard,'+1','Rift Shard',' level-reward')]:[]),...(xp>0?[item('xp',icon('xp'),`+${xp}`,'XP',' level-reward')]:[]),
+ const parts=[...(won||gold>0?[item('gold',icon('gold'),`+${gold}`,(riftBonus>0?'gold (Rift bonus)':'gold')+(won&&next?` · next buy: ${next}`:''),' level-reward')]:[]),...(shard?[item('shard',shard,'+1','Rift Shard',' level-reward')]:[]),...(xp>0?[item('xp',icon('xp'),`+${xp}`,'XP',' level-reward')]:[]),
   ...loot.map(x=>{const {n,what}=splitCount(x.label);return item('item',icon(x.icon),n,what,` level-loot-item${x.quiet?' loot-quiet':''}`);}),
   ...gear.map(g=>item('gear',g.img||icon('chest'),'',g.name,' level-loot-item',g.rar||null)),
   ...(stars>0?[item('stars',starIcon,`+${stars}`,`${stars>1?'stars':'star'}${starsAll?` · ${starsAll} in all`:''}`)]:[])];

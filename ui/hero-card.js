@@ -17,7 +17,8 @@ import {LEVELS,CHAPTERS,levelDone,totalStars,maxStars} from '../game/levels.js';
 import {ICON_NAMES} from './icon-names.js';
 import {ABILITY_ICON_IDS} from './ability-icon-names.js';
 import {abilityIconName,SUBJECT_ICON,ownIconURL} from './icons.js';
-import {heroTitle} from '../game/titles.js';
+import {heroTitle,TITLES,cleanTitles} from '../game/titles.js';
+import {backdropOf,PRIZE_BACKDROPS,PRIZES,owns} from '../game/prizes.js';
 
 export const CARD_W=1200,CARD_H=630,PLAY_URL='https://lucasit003.github.io/pixelquest-play/',GAME_TITLE='PixelQuest',GAME_SUB='The Thorn Kingdom';
 export const SHARE_NOTE='Only share with people you know.';
@@ -30,13 +31,13 @@ export function heroCardModel(s={}){
  const subjects=Object.entries(SUBJECTS).map(([id,v])=>({id,name:v.name,color:v.color,icon:SUBJECT_ICON[id]||'book-open',count:TOPICS.filter(t=>t.subject===id&&mastered(s,t)).length}));
  return {hero,name:typed||c.name,className:c.name,level:Math.max(1,s.level|0),stars:totalStars(s),maxStars:maxStars(),
   furthest:last?{id:last.id,name:last.name,chapter:CHAPTERS.find(ch=>ch.id===last.chapter)?.name||''}:null,
-  abilities,awake:abilities.filter(a=>a.on).length,subjects,topics:subjects.reduce((t,x)=>t+x.count,0),url:PLAY_URL,title:GAME_TITLE,subtitle:GAME_SUB,honour:[heroTitle(s),riftTitle(s)].filter(Boolean).join(' · ')||null};}
+  abilities,awake:abilities.filter(a=>a.on).length,subjects,topics:subjects.reduce((t,x)=>t+x.count,0),url:PLAY_URL,title:GAME_TITLE,subtitle:GAME_SUB,honour:[heroTitle(s),riftTitle(s)].filter(Boolean).join(' · ')||null,/* improve20-r7a-nov1 #8: a worn daily backdrop (game/prizes.js), as its path under dist/ui/ */backdrop:(b=>b?b.img.replace(/^ui\//,''):null)(backdropOf(s))};}
 const ICON_AB=Object.fromEntries(ABILITY_ICON_IDS.map((n,i)=>[n,i]));
 const ICON_IX=Object.fromEntries(ICON_NAMES.map((n,i)=>[n,i]));
 
 /* every skin file the card may draw, relative to dist/ui/ */
 export const CARD_ART=['skin/keyart.webp','skin/pl-frame.png','skin/pl-window.png','skin/pl-parchment.png','skin/pl-card-plain.png','skin/pl-plate.png','skin/divider.png','skin/star-gold.png','skin/icons.png','skin/ability-icons.png',
- 'skin/rewards/scroll.png','skin/uiicons/swords.png',...new Set(Object.values(SUBJECT_ICON).map(n=>ownIconURL(n)?.replace(/^ui\//,'')).filter(Boolean))];
+ 'skin/rewards/scroll.png','skin/uiicons/swords.png',...PRIZE_BACKDROPS.map(b=>b[2].replace(/^ui\//,'')),...new Set(Object.values(SUBJECT_ICON).map(n=>ownIconURL(n)?.replace(/^ui\//,'')).filter(Boolean))];
 /* an icon by name: our own PixelLab file when there is one, else its cell in the 32 px strip */
 function iconArt(art,ic){if(ic.strip==='ability')return [art['skin/ability-icons.png'],ic.i*32];const own=ownIconURL(ic.name)?.replace(/^ui\//,'');if(own&&art[own])return [art[own],0];return [art['skin/icons.png'],(ICON_IX[ic.name]??ICON_IX.sparkle)*32];}
 const blit=(c,im,sx,sy,sw,sh,dx,dy,dw,dh)=>{if(im&&sw>0&&sh>0&&dw>0&&dh>0)c.drawImage(im,sx,sy,sw,sh,dx,dy,dw,dh);};
@@ -57,7 +58,7 @@ export function drawHeroCard(cv,m,art={},hero=null){if(cv.width!==CARD_W||cv.hei
  c.fillStyle='#10182a';c.fillRect(0,0,CARD_W,CARD_H);
  /* left: the hero on the road to the Thorn Kingdom (the title key art at 2x, castle above, path below) */
  const L={x:34,y:34,w:420,h:562};c.save();c.beginPath();c.rect(L.x+8,L.y+8,L.w-16,L.h-16);c.clip();
- const ka=art['skin/keyart.webp'];if(ka)blit(c,ka,316,58,L.w/2,L.h/2,L.x,L.y,L.w,L.h);else{c.fillStyle='#2b3f2e';c.fillRect(L.x,L.y,L.w,L.h);}
+ const ka=art['skin/keyart.webp'],bd=m.backdrop&&art[m.backdrop];/* improve20-r7a-nov1 #8: a worn backdrop (192x224) at a whole 3x, its lower part, centred */if(bd)blit(c,bd,Math.round((bd.width-L.w/3)/2),bd.height-L.h/3,L.w/3,L.h/3,L.x,L.y,L.w,L.h);else if(ka)blit(c,ka,316,58,L.w/2,L.h/2,L.x,L.y,L.w,L.h);else{c.fillStyle='#2b3f2e';c.fillRect(L.x,L.y,L.w,L.h);}
  const g=c.createLinearGradient(0,L.y+L.h*.45,0,L.y+L.h);g.addColorStop(0,'rgba(16,24,42,0)');g.addColorStop(1,'rgba(16,24,42,.82)');c.fillStyle=g;c.fillRect(L.x,L.y,L.w,L.h);
  const foot=L.y+L.h-44;c.fillStyle='rgba(10,8,6,.45)';c.beginPath();c.ellipse(L.x+L.w/2,foot-6,78,16,0,0,Math.PI*2);c.fill();
  if(hero)c.drawImage(hero,Math.round(L.x+L.w/2-hero.width/2),Math.round(foot-hero.height));
@@ -93,6 +94,15 @@ export function drawHeroCard(cv,m,art={},hero=null){if(cv.width!==CARD_W||cv.hei
 const IMGS=new Map();
 function loadImg(path){if(IMGS.has(path))return IMGS.get(path);const p=new Promise(res=>{const I=globalThis.Image;if(!I)return res(null);const im=new I();im.onload=()=>res(im);im.onerror=()=>res(null);im.src=new URL('./'+path,import.meta.url).href;});IMGS.set(path,p);return p;}
 export async function loadCardArt(){const out={};await Promise.all(CARD_ART.map(async p=>{out[p]=await loadImg(p);}));try{await globalThis.document?.fonts?.load?.(`bold 48px ${FONT}`);await globalThis.document?.fonts?.load?.(`32px ${FONT}`);}catch{}return out;}
+/* improve20-r7a-nov1 #8: the one place keepsakes are worn (game/prizes.js): a title (daily or earned, or none), a trail and a hero-card
+   backdrop, each a list of what this save owns. Daily prizes come from finishing the day's goals; nothing here is for sale. */
+const escH=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+export function keepsakesHTML(s){const P=s?.prizes||{},earned=cleanTitles(s?.titles),mine=k=>PRIZES.filter(p=>p.kind===k&&owns(s,p.key));
+ const opt=(v,label,on)=>`<option value="${escH(v)}"${on?' selected':''}>${escH(label)}</option>`;
+ const tSel=P.title||'',titles=[opt('',earned.length?`Newest earned (${TITLES[earned.at(-1)].name})`:'No title',!tSel||!earned.length&&tSel==='none'),...earned.map(id=>opt(id,TITLES[id].name,tSel===id)),...mine('title').map(p=>opt(p.key,p.name,tSel===p.key)),...(earned.length?[opt('none','No title',tSel==='none')]:[])];
+ const trails=[opt('','No trail',!P.trail),...mine('trail').map(p=>opt(p.key,p.name,P.trail===p.key))],backs=[opt('','The road to the Thorn Kingdom',!P.backdrop),...mine('backdrop').map(p=>opt(p.key,p.name.replace(/ backdrop$/,''),P.backdrop===p.key))];
+ const n=PRIZES.filter(p=>owns(s,p.key)).length;
+ return `<div class="keepsakes" aria-label="Keepsakes"><label>Title <select id="ks-title" data-ks="title">${titles.join('')}</select></label><label>Trail <select id="ks-trail" data-ks="trail">${trails.join('')}</select></label><label>Backdrop <select id="ks-backdrop" data-ks="backdrop">${backs.join('')}</select></label><p class="subtle">${n?`You have ${n} of ${PRIZES.length} keepsakes.`:'No keepsakes yet.'} Finish a day's adventure goal to win titles, trails and backdrops.</p></div>`;}
 export function heroCardPanelHTML(){return `<div class="herocard-panel"><canvas id="hero-card-canvas" width="${CARD_W}" height="${CARD_H}" role="img" aria-label="Your hero card"></canvas><div class="herocard-actions"><button id="hero-card-save" class="primary">Save picture</button><button id="hero-card-share">Share</button></div><p class="herocard-note">${SHARE_NOTE} The picture is made on this device; nothing is uploaded.</p></div>`;}
 export const cardFileName=m=>`pixelquest-${String(m.className||'hero').toLowerCase().replace(/[^a-z]+/g,'-')}-card.png`;
 const blobOf=cv=>new Promise(res=>{try{cv.toBlob(b=>res(b),'image/png');}catch{res(null);}});

@@ -199,6 +199,8 @@ export function wireTitle(api={}){
   if(e.key==='Escape'&&['select','look','setup'].includes(root.dataset.step)){e.preventDefault();e.stopPropagation();const st=root.dataset.step;if(st==='setup'&&openLook())step('look');else step(st==='select'?'title':'select');return;}
   /* Keyboard-only play: arrow keys walk the menu (up/down) and the hero grid (4 columns). */
   if(['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName))return;
+  /* improve20-r7a-nov1 #13 (audit6 #24): Enter or Space on a focused hero card picks it and goes on, as "Choose this hero" does (a button's own Enter only previewed it) */
+  if(root.dataset.step==='select'&&(e.key==='Enter'||e.key===' ')&&e.target.matches?.('.hero-card')){e.preventDefault();e.stopPropagation();if(e.repeat||e.target.classList.contains('coming-soon'))return;if(!e.target.classList.contains('selected'))e.target.click();root.querySelector('[data-title="look"]')?.click();return;}
   if(root.dataset.step==='setup'||root.dataset.step==='look')return;const k=e.key;if(!['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(k))return;
   const list=[...(root.dataset.step==='title'?root.querySelectorAll('.title-menu button,.learner'):root.querySelectorAll('.hero-card'))];
   const i=list.indexOf(globalThis.document.activeElement),cols=1;

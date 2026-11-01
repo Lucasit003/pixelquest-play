@@ -35,6 +35,7 @@ import {emptyParty,cleanParty} from '../game/party.js';
 import {emptyQuests,cleanQuests} from '../game/quests.js';
 import {cleanTravel} from '../game/fasttravel.js';
 import {cleanTitles,earnTitles,TITLES} from '../game/titles.js';
+import {cleanPrizes} from '../game/prizes.js';
 
 // v7 writes a new key (v6 did the same). Older keys are never written again: they stay behind as rollback copies (a v5 build still finds
 // its own save under V5_KEY), and load() still reads every one of them, newest first.
@@ -223,6 +224,10 @@ const frac=(v,a,b)=>Math.max(a,Math.min(b,Number(v)||0));
  /* exploit7-oct29: a title the save does not meet is dropped (a hand-edited or hand-made save code carrying "thorn-hero" with v7 unbeaten);
     every rule reads a record that never goes back (a won level), so an earned title can never be lost this way */
  s.titles=cleanTitles(value.titles).filter(id=>TITLES[id].earned(s));earnTitles(s);
+ /* improve20-r7a-nov1 #8 (game/prizes.js): the daily keepsakes (titles, trails, hero-card backdrops) and what is worn; additive within v9, a save
+    without it starts empty; a worn title may be an earned one (s.titles) or 'none'. Cosmetic only. s.dayHello: the last day the "New day!" banner
+    showed (game/tomorrow.js newDayDue), a date or absent */
+ s.prizes=cleanPrizes(value.prizes,id=>!!TITLES[id]&&s.titles.includes(id));if(typeof value.dayHello==='string'&&/^\d{4}-\d\d-\d\d$/.test(value.dayHello))s.dayHello=value.dayHello;else delete s.dayHello;
 
  /* kid-appeal help (kidfix-a-oct31, game/hints.js): additive within v9; a save without it starts empty, and the school grade is a hint only */
  s.hints=cleanHints(value.hints);s.schoolGrade=cleanSchoolGrade(value.schoolGrade);s.goalTurn=value.goalTurn==='learn'||value.goalTurn==='fight'?value.goalTurn:null;

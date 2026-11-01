@@ -4,6 +4,7 @@
 // Save: s.titles = [id, ...] (additive within save v9, cleaned by core/save.js normalize(); a save from before this field that
 // already meets a title's rule gets it back on load, since it was earned by play).
 import {LEVELS,gameFinale,levelDone} from './levels.js';
+import {worn} from './prizes.js';
 
 export const TITLES={
  'thorn-hero':{name:'Hero of the Thorn Kingdom',how:'Free the Thorn Kingdom: win the last Veilmoor level.',earned:s=>LEVELS.some(l=>gameFinale(l.id)&&levelDone(s,l.id))},
@@ -13,4 +14,5 @@ export const cleanTitles=v=>Array.isArray(v)?[...new Set(v.filter(id=>typeof id=
 /* adds every title whose rule the save now meets; returns the ids added (none twice) */
 export function earnTitles(s){const have=s.titles=cleanTitles(s.titles),add=TITLE_IDS.filter(id=>!have.includes(id)&&TITLES[id].earned(s));have.push(...add);return add;}
 /* the title shown with the hero: the latest one earned, or null */
-export const heroTitle=s=>{const t=cleanTitles(s?.titles);return t.length?TITLES[t[t.length-1]].name:null;};
+/* improve20-r7a-nov1 #8: a worn title (s.prizes.title, game/prizes.js) wins: a daily keepsake, an earned title, or 'none' for no title */
+export const heroTitle=s=>{const t=cleanTitles(s?.titles),w=s?.prizes?.title;if(w==='none')return null;if(w&&TITLES[w]&&t.includes(w))return TITLES[w].name;const p=worn(s,'title');if(p)return p.name;return t.length?TITLES[t[t.length-1]].name:null;};

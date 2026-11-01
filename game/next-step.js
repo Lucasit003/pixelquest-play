@@ -24,7 +24,8 @@ import {nextQuestStep,questLive,QUESTS} from './quests.js';
 import {COMPANIONS,hireable} from './party.js';
 import {starSource} from './ladder-guide.js';
 import {nextShowpiece} from './furniture.js';
-import {gearAtCap} from '../ui/gear-guidance.js';
+import {gearAtCap,affordableUpgrade} from '../ui/gear-guidance.js';
+import {ITEM} from './gear.js';
 import {adviceLevel} from './tiers.js';
 import {learningRoad,nextUnlockStep} from '../academics/learning-road.js';
 import {startGrade,STAGE_FLOOR} from '../academics/placement.js';
@@ -122,6 +123,16 @@ function adventure(save){
  for(const k of TIER_KEYS)for(const l of playable())if(tierOpen(save,l.id,k)&&starsOf(save,l.id,k)<3)return {...tierPad(l,k),text:`Try for 3 stars in ${l.name} on ${TIERS[k].label}: ${k==='legendary'?'beat its 3-star time with no fall':'beat its par time'} on the map card.`};
  return null;
 }
+/* improve20-r7a-nov1 #11 (audit6 #19: 1,036 gold by minute 40 with nothing pointing at what to buy): once a boss has fallen and the hero holds
+   FIRST_UPGRADE_GOLD or more but has never owned a piece bought at the smithy (the starting pieces cost 0), the adventure goal is led by "Visit the Weaponsmith:
+   your first upgrade" (the piece NEXT UPGRADE would pick, its price), with the adventure kept as `then`. It goes once any upgrade is owned
+   or once the smithy has been opened while it showed (s.settings.upgradeVisit; settings keeps unknown keys), so it never holds the goal.
+   It never comes before a learning step (it sits where the adventure goal would), and gold still unlocks nothing. */
+export const FIRST_UPGRADE_GOLD=300;
+export function firstUpgrade(save){if((save?.gold|0)<FIRST_UPGRADE_GOLD||!save?.gear?.owned||save.settings?.upgradeVisit)return null;if(!LEVELS.some(l=>l.kind==='level'&&levelDone(save,l.id)))return null;
+ if(Object.keys(save.gear.owned).some(id=>ITEM[id]&&!ITEM[id].scholar&&ITEM[id].shop>0))return null;
+ let u=null;try{u=affordableUpgrade(save);}catch{u=null;}if(!u||u.kind==='craft'||!ITEM[u.id])return null;return {id:u.id,name:ITEM[u.id].name,cost:u.cost};}
+const upgradeFirst=(save,n)=>{const u=n&&firstUpgrade(save);return u?{id:'first-upgrade',text:`Visit the Weaponsmith: your first upgrade, the ${u.name} (${u.cost} gold).`,target:{kind:'smith'},item:u.id,then:n}:n;};
 export function nextStep(save,{room}={}){goalSave=save;
  /* newplayer-oct27: after a lost first fight the HUD no longer reads as if the child had never been to the gate; it offers the Library too, as the defeat card does */
  if(!levelDone(save,'prologue'))return {id:'prologue',text:save?.levels?.prologue?.plays>0?'Goblins still hold the south gate. Try again, or awaken an ability at the Library first.':'Goblins at the south gate! Go and see.',target:{kind:'gate'}};
@@ -134,7 +145,7 @@ export function nextStep(save,{room}={}){goalSave=save;
  if(a&&abilityMastery(save,a.subject)+1e-8>=a.gate){const n=adventure(save)||pad(levelById('e1'));return {...n,id:'level-up',text:`Fight foes and finish adventures to earn XP toward hero level ${xpLevel(a)} for ${a.name}. ${n.text}`};}
  if(unplacedStage(save))return firstLibrary(save,room);
  {const c=chargeStep(save);if(c)return c;}
- if(levelDone(save,'e3')||!openInMode(save).length)return tryNew(save,adventure(save))||endGoal(save);
+ if(levelDone(save,'e3')||!openInMode(save).length)return upgradeFirst(save,tryNew(save,adventure(save))||endGoal(save));
  /* improve20-z-nov1 #1: the first lesson names a subject that has an open lesson (a placed Middle School learner may have opened another subject than the next power's) */
  const fsub=(o=>o.some(t=>t.subject===a?.subject)?subject:SUBJECTS[(o.find(t=>save.lessons?.[t.id]?.reached>0)||o[0])?.subject]?.name||subject)(openInMode(save));
  if(!lessonDone(save)&&!earned(save))return {id:'first-lesson',text:room==='library'?(fsub?`Start your first ${fsub} lesson.`:'Choose a study area to start your first lesson.'):(fsub?`Visit the Library for your first ${fsub} lesson.`:'Visit the Library for your first lesson.'),target:{kind:'library'}};
@@ -158,8 +169,8 @@ export function nextStep(save,{room}={}){goalSave=save;
   if(r.ready)return {id:'earn-power',text:`Take the mastery test on “${t.title}” at the Library.`,target:{kind:'library'}};
   const e2=levelById('e2');if(e2&&!levelDone(save,'e2')&&levelOpen(save,'e2')&&!levelFogged(e2))return pad(e2);
   return {id:'earn-power',text:'Finish practice and take the test at the Library.',target:{kind:'library'}};}
- const n=tryNew(save,adventure(save));if(n)return n;
- return endGoal(save);}
+ const n=tryNew(save,adventure(save));if(n)return upgradeFirst(save,n);
+ return upgradeFirst(save,endGoal(save));}
 function endGoal(save){
  /* improve20-x-nov1 #20a: saving up for a Showpiece is the goal once nothing else is left */
  const sp=showpieceStep(save);if(sp)return sp;
