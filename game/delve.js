@@ -33,8 +33,8 @@ export const DELVER_TITLES={10:'Delver',20:'Pathfinder',30:'Vaultbreaker',40:'De
 export const delverTitle=L=>{let t='';for(const [at,name] of Object.entries(DELVER_TITLES))if(L>=+at)t=name;return t;};
 export const RANK_TITLES={5:'Adept',15:'Veteran',25:'Champion'};
 export const rankTitle=(hero,R)=>{let t='';for(const [at,name] of Object.entries(RANK_TITLES))if(R>=+at)t=`${CLASSES[hero]?.name||hero} ${name}`;return t;};
-/* SkyBlock's role for each class (section 5.7), shown on the class rank. */
-export const ROLES={paladin:'Tank',berserker:'Berserk',warrior:'Berserk',ranger:'Archer',rogue:'Archer',mage:'Mage',summoner:'Healer'};
+/* improve20-h-nov1 (audit2 #11): the SkyBlock role map (Warrior and Berserker both "Berserk", Ranger and Rogue both "Archer") is gone;
+   a class rank is named after its own class only ("Rogue rank 2"), in ui/run-ui.js. */
 /* The Delver level a Legendary pad recommends, by chapter (owner decision 3: advice only, never a gate). */
 export const REC_DELVER={elderwood:5,emberkeep:12,veilmoor:20};
 export const recDelver=(level,tier)=>tier==='legendary'&&level?.kind==='level'&&!level.hidden?REC_DELVER[level.chapter]||0:0;

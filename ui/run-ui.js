@@ -5,7 +5,8 @@
    a burst, the items rising). No spinning reel, no roulette, nothing to buy. */
 import {gradeFile,GRADE_STARS,nextGrade} from '../game/grade.js';
 import {meterOf,REQ} from '../game/meter.js';
-import {delverLevel,classRank,delverTitle,rankTitle,ROLES,RANK_MAX,DELVE_MAX} from '../game/delve.js';
+import {delverLevel,classRank,delverTitle,RANK_TITLES,RANK_MAX,DELVE_MAX} from '../game/delve.js';
+import {xpFor} from '../game/math.js';
 import {SKILLS,SKILL_NAMES,SKILL_TEXT,skillLevels,adventurerLevel,TASKS,taskDone,nameColor,SKILL_MAX} from '../game/skills.js';
 import {MATS,ITEM,firstLegendary} from '../game/gear.js';
 import {JEWEL} from '../game/jewels.js';
@@ -61,15 +62,25 @@ export function meterPickerHTML(s,l){const m=meterOf(s,l.id),gift=[l.boss,l.duo]
 /* Best grade sits beside time stars; neither is a tier gate. */
 export function tierRunHTML(s,l,k){const g=tierRecord(s,l.id,k)?.best?.grade;return `<span class="run-best">Best grade: ${g?gradeBadge(g,16):'none yet'}</span>`;}
 /* ---- the journal's Skills page ---- */
+/* improve20-h-nov1 (audit2 #11: nine different levels on one page, "Delver" beside "Delving", "Warrior rank (Berserk)" and a Rogue
+   rank reading "(Archer)"): the page leads with two numbers, the hero level (what abilities ask for) and the one Adventurer level
+   (every counter rolls up into it); the Delver level, the class rank and the skills wait under Details. The Delving skill is
+   Delver XP / 5 (game/skills.js), so it is folded into the Delver row instead of sitting beside it as a second near-identical
+   word, and the task group of the same name reads "Level runs". A class rank is named after its own class only. Display only:
+   every save field and every XP rule is unchanged. */
+const RANK_NAME=L=>{let t='';for(const [at,n] of Object.entries(RANK_TITLES))if(L>=+at)t=n;return t;};
+export const TASK_GROUP_LABEL={Delving:'Level runs'};
 export function skillsHTML(s){const A=adventurerLevel(s),lv=skillLevels(s),D=delverLevel(s),title=delverTitle(D.level);
- const hero=s.hero,R=classRank(s,hero);
- const row=(icon,name,L,max,into,need,text)=>`<div class="run-skill">${runIcon(icon,32)}<span><strong>${esc(name)} ${L}${L>=max?' (max)':''}</strong>${bar(need?into/need:1)}<small>${need?`${into} / ${need} XP`:'Maxed'}${text?` · ${esc(text)}`:''}</small></span></div>`;
- const groups=[...new Set(TASKS.map(t=>t.group))];
- return `<div class="run-skills"><div class="run-adv">${runIcon('adventurer-emblem',48)}<span><small>Adventurer Level</small><strong style="color:${nameColor(A.level)}">${A.level}</strong>${bar(A.into/A.need)}<small>${A.into} / ${A.need} XP · from skill levels and tasks</small></span></div><div class="run-skill-grid">`+
-  row('delver-emblem',`Delver${title?` · ${title}`:''}`,D.level,DELVE_MAX,D.into,D.need,'Every level run counts, wins most.')+
-  row('skill-combat',`${CLASSES[hero]?.name||hero} rank (${ROLES[hero]||''})${rankTitle(hero,R.level)?` · ${rankTitle(hero,R.level)}`:''}`,R.level,RANK_MAX,R.into,R.need,'Runs as this hero; the others share a quarter.')+
-  SKILLS.map(k=>row('skill-'+k,SKILL_NAMES[k],lv[k].level,SKILL_MAX,lv[k].into,lv[k].need,SKILL_TEXT[k])).join('')+
-  `</div><h3>Adventurer tasks</h3><div class="run-task-groups">${groups.map(g=>`<div class="run-task-group"><small>${esc(g)}</small>${TASKS.filter(t=>t.group===g).map(t=>`<p class="run-task ${taskDone(s,t.id)?'done':''}">${taskDone(s,t.id)?'✔':'○'} ${esc(t.text)} <em>+${t.xp}</em></p>`).join('')}</div>`).join('')}</div></div>`;}
+ const hero=s.hero,R=classRank(s,hero),cls=CLASSES[hero]?.name||hero,rank=RANK_NAME(R.level),L=Math.max(1,s.level|0),need=xpFor(L),into=Math.max(0,+s.xp||0);
+ const row=(icon,name,L,max,into,need,text,tag='')=>`<div class="run-skill">${runIcon(icon,32)}<span><strong>${esc(name)} ${L}${L>=max?' (max)':''}${tag?` <em class="run-skill-tag">${esc(tag)}</em>`:''}</strong>${bar(need?into/need:1)}<small>${need?`${into} / ${need} XP`:'Maxed'}${text?` · ${esc(text)}`:''}</small></span></div>`;
+ const groups=[...new Set(TASKS.map(t=>t.group))],others=SKILLS.filter(k=>k!=='delving'),dv=lv.delving.level*10;
+ return `<div class="run-skills"><div class="run-lead"><div class="run-adv run-hero-level"><img class="run-icon" src="ui/skin/pl-icons/level-up-emblem.png" width="48" height="48" alt="" draggable="false" style="image-rendering:pixelated"><span><small>Hero level</small><strong>${L}</strong>${bar(into/need)}<small>${into} / ${need} XP<span class="run-why"> · each ability needs a hero level and its topics</span></small></span></div>`+
+  `<div class="run-adv">${runIcon('adventurer-emblem',48)}<span><small>Adventurer Level</small><strong style="color:${nameColor(A.level)}">${A.level}</strong>${bar(A.into/A.need)}<small>${A.into} / ${A.need} XP<span class="run-why"> · from the skills under Details and your tasks</span></small></span></div></div>`+
+  `<details class="run-more"><summary>Details: Delver level, ${esc(cls)} rank and ${others.length} skills</summary><div class="run-skill-grid">`+
+  row('delver-emblem','Delver level',D.level,DELVE_MAX,D.into,D.need,`Every level run counts, wins most.${dv?` Worth ${dv} Adventurer XP so far.`:''}`,title&&title!=='Delver'?title:'')+
+  row('skill-combat',`${cls} rank`,R.level,RANK_MAX,R.into,R.need,`Runs as the ${cls}; your other heroes share a quarter.`,rank)+
+  others.map(k=>row('skill-'+k,SKILL_NAMES[k],lv[k].level,SKILL_MAX,lv[k].into,lv[k].need,SKILL_TEXT[k])).join('')+
+  `</div></details><h3>Adventurer tasks</h3><div class="run-task-groups">${groups.map(g=>`<div class="run-task-group"><small>${esc(TASK_GROUP_LABEL[g]||g)}</small>${TASKS.filter(t=>t.group===g).map(t=>`<p class="run-task ${taskDone(s,t.id)?'done':''}">${taskDone(s,t.id)?'✔':'○'} ${esc(t.text)} <em>+${t.xp}</em></p>`).join('')}</div>`).join('')}</div></div>`;}
 export const RUN_CSS=`:where(.run-result){display:flex;flex-direction:column;gap:6px;margin:6px 0;text-align:left}:where(.run-head,.run-adv,.run-skill,.run-meter){display:flex;align-items:center;gap:10px}
 :where(.run-total,.run-adv>span,.run-skill>span,.run-meter>span){display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}:where(.run-grade){display:inline-flex;align-items:center;gap:4px;vertical-align:middle}
 .run-result .run-total strong,.run-grade strong{color:#e3b85a}.run-newbest{color:#7fd36b;font-style:normal}
@@ -83,6 +94,11 @@ export const RUN_CSS=`:where(.run-result){display:flex;flex-direction:column;gap
 @keyframes run-pop{0%{transform:scale(1)}35%{transform:scale(1.25) translateY(-4px)}100%{transform:scale(1)}}@keyframes run-burst{0%{opacity:0;transform:scale(.4)}30%{opacity:.9}100%{opacity:0;transform:scale(1.4)}}@keyframes run-rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.run-chest.open .run-chest-img,.run-chest.open::before,.run-chest.open .run-chest-items{animation:none}}
 .run-skill-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:10px 24px}.run-task-groups{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:6px 24px}.run-task-group>small{color:#e3b85a;letter-spacing:1px;text-transform:uppercase}.run-task{margin:2px 0}.run-adv>span>strong{font-size:36px;line-height:1;text-shadow:2px 2px 0 #000}.run-adv{padding:6px 10px;background:#00000026;border:1px solid #e3b85a33;border-radius:4px}.run-task.done{color:#7fd36b}.run-task em{color:#e3b85a;font-style:normal;font-size:.85em}:where(.run-skills){display:flex;flex-direction:column;gap:8px}:where(.run-meter-picks){margin-top:8px}.grid.run-meter-picks{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}.run-meter-pick.chosen{outline:2px solid #e3b85a}.run-meter-pick>.tag{display:block;margin-bottom:4px}.run-pick-name{display:flex;align-items:center;gap:8px;margin:2px 0}.run-pick-name>*{flex:none}
+/* improve20-h-nov1: the Skills page leads with the hero level and the Adventurer level side by side; the rest folds under Details */
+.run-lead{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:8px 16px}.run-hero-level>span>strong{color:#ffe9a8}
+.run-more{margin:0}.run-more>summary{cursor:pointer;min-height:40px;display:flex;align-items:center;gap:8px;font-weight:700;color:#e3b85a;list-style:none}.run-more>summary::-webkit-details-marker{display:none}
+.run-more>summary::before{content:'▸'}.run-more[open]>summary::before{content:'▾'}.run-more[open]>summary{margin-bottom:6px}.run-skill-tag{font-style:normal;font-weight:400;color:#e3b85a;font-size:.85em}
+html.m-mode .run-lead .run-adv>span>strong{font-size:26px}html.m-mode .run-lead .run-adv{padding:4px 8px}html.m-mode .run-lead .run-icon{width:36px;height:36px}html.m-mode .run-lead .run-why{display:none}
 @media (max-width:560px){:where(.run-parts){grid-template-columns:1fr}}
 dialog[data-view=result] #modal-content{overflow-y:auto;scroll-behavior:smooth}
 dialog[data-view=result] .run-result{margin:6px 0 0;padding-top:6px;border-top:1px solid #e3b85a33;gap:6px}

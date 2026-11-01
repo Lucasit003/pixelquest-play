@@ -25,6 +25,7 @@ import {loadSprite as loadActor, drawSprite as drawActor} from '../gfx/actors/sp
 import {swayTable, drawSwayed, stepCritters, critterDraws, leafDraws} from '../gfx/motion.js';
 import {TOWN_SPOTS, townPlace, visitPlace, FARM_NAME} from '../game/fasttravel.js';
 import {heldImage, dropImage} from '../core/loader.js';
+import {icon as uiIcon} from '../ui/icons.js';
 import {townViewChunks, chunkDist} from '../core/town-view.js';
 
 const BASE = new URL('../assets/town/', import.meta.url).href;
@@ -1254,32 +1255,49 @@ export const hubRestoration = () => { const S = scene('village'), r = restoreOf(
  * The village map panel (the minimap button in town): the baked 1/4 render of Oakhaven in a 4:3 frame,
  * with the places that matter marked by pack icons and labelled in the page's own font. Returns HTML;
  * main.js shows it. Inside a room the panel shows the village with the room's door marked.
+ * improve20-h-nov1 (audit2 #23: numbered dots and a legend made a child match "7" to the Adventurers' Guild): each place is its
+ * own icon (the town's own door markers, ui/skin/packicons3/town-markers.png, and existing UI icons) with a short name on the
+ * map; the full name is its title and aria-label. The building of the HUD's next goal (opts.goal: a next-step target) is lit and
+ * named "Next: ...". ui/map-you.js lays the names out after layout so they never cover each other, a marker or "You".
  */
-export function hubMapHtml(state) {
+const MAP_PLACES = {library: ['Library', 'Library', 'mk:1'], guild: ['Adventurers’ Guild', 'Guild', 'swords'], smith: ['Weaponsmith', 'Smith', 'anvil'], alchemist: ['Apothecary', 'Apothecary', 'potion'], home: ['Home', 'Home', 'mk:4'], community: ['Village noticeboard', 'Noticeboard', 'mk:6'],
+  inn: ['Lantern Inn (food)', 'Inn', 'mk:5'], barracks: ['Barracks (companions)', 'Barracks', 'shield'], farmhouse: [FARM_NAME, 'Farm', 'leaf'], exit: ['To the world map', 'Gate', 'map']};
+const mapEsc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
+const mapIcon = n => n.startsWith('mk:') ? `<i class="ico" style="--i:${n.slice(3)};--s:24px;background-image:url(ui/skin/packicons3/town-markers.png)" aria-hidden="true"></i>` : uiIcon(n, {size: 24});
+/** Which map place a next-step target points at (library, guild, alchemist, exit, or a building's place key), or null. */
+export function mapGoalPlace(target) {
+  if (!target) return null;
+  const kind = target.kind === 'pad' ? 'gate' : target.kind;
+  if (kind === 'gate') return 'exit';
+  if (['library', 'guild', 'alchemist', 'smith', 'home', 'community'].includes(kind)) return kind;
+  const room = kind === 'building' ? target.id : kind === 'npc' ? target.room : null;
+  if (!room) return null;
+  const door = scene('village').points.find(q => q.type === 'entrance' && roomFor(q) === room);
+  return door ? (PANELS.includes(actionOf(door)) && MAP_PLACES[actionOf(door)] ? actionOf(door) : MAP_PLACES[door.props?.key] ? door.props.key : null) : MAP_PLACES[room] ? room : null;
+}
+export function hubMapHtml(state, opts = {}) {
   const V = scene('village'), D = V.D, p = state.player, S = current();
   const at = S.room ? (returnDoor(S) ?? {x: p.x, y: p.y}) : p;
   const pct = (x, y) => `left:${(x / D.w * 100).toFixed(2)}%;top:${(y / D.h * 100).toFixed(2)}%`;
-  const NAMES = {library: 'Library', guild: 'Adventurers’ Guild', smith: 'Weaponsmith', alchemist: 'Apothecary', home: 'Home', community: 'Village noticeboard'};
   const marks = [];
   for (const q of V.points) {
-    const a = actionOf(q);
-    if ((q.type === 'entrance' || q.type === 'board' && a === 'community') && NAMES[a] && !marks.some(m => m[2] === NAMES[a])) marks.push([q, a === 'library' ? MARK.library : a === 'home' ? MARK.door : MARK.shop, NAMES[a]]);
-    else if (q.type === 'entrance' && q.props?.key === 'inn' && !marks.some(m => m[2] === 'Lantern Inn (food)')) marks.push([q, MARK.shop, 'Lantern Inn (food)']);
-    else if (q.type === 'entrance' && q.props?.key === 'barracks' && !marks.some(m => m[2] === 'Barracks (companions)')) marks.push([q, MARK.door, 'Barracks (companions)']);
-    else if (q.type === 'entrance' && q.props?.key === 'farmhouse' && !marks.some(m => m[2] === FARM_NAME)) marks.push([q, MARK.door, FARM_NAME]);
-    else if (worldExit(q)) marks.push([q, MARK.exit, 'To the world map']);
+    const a = actionOf(q), key = (q.type === 'entrance' || q.type === 'board' && a === 'community') && MAP_PLACES[a] && a !== 'barracks' ? a
+      : q.type === 'entrance' && ['inn', 'barracks', 'farmhouse'].includes(q.props?.key) ? q.props.key : worldExit(q) ? 'exit' : null;
+    if (key && !marks.some(m => m[1] === key)) marks.push([q, key]);
   }
+  const goal = mapGoalPlace(opts.goal);
   const nearMark=marks.findIndex(([q])=>Math.hypot(q.x-at.x,q.y-at.y)<D.w*.025);
   const crowded=side=>marks.filter(([q],i)=>i!==nearMark&&(q.x-at.x)*side>0&&(q.x-at.x)*side<D.w*.22&&Math.abs(q.y-at.y)<D.h*.08).length;
   const nearest=side=>Math.min(Infinity,...marks.filter(([q],i)=>i!==nearMark&&(q.x-at.x)*side>0&&Math.abs(q.y-at.y)<D.h*.08).map(([q])=>Math.abs(q.x-at.x)));
   /* on a tie (the south gate: the Barracks on its left, the Apothecary on its right) the label goes to the roomier side */
   const labelLeft=at.x>D.w*.8||(at.x>D.w*.22&&(crowded(1)>crowded(-1)||crowded(1)===crowded(-1)&&crowded(1)>0&&nearest(1)<nearest(-1)));
   const labelEdge=at.y<D.h*.08?' pq-map-you-top':at.y>D.h*.92?' pq-map-you-bottom':'';
+  const goalName = goal && MAP_PLACES[goal] ? MAP_PLACES[goal][0] : '';
   return `<div class="pq-map-layout"><div class="pq-village-map" style="aspect-ratio:${D.w}/${D.h}">`
-    + `<img src="assets/town/${D.map}" alt="Map of Oakhaven with numbered destinations" class="pq-map-image">`
-    + marks.map(([q, n, label],i) => `<span class="pq-map-mark${i===nearMark?' pq-map-mark-here':''}" style="${pct(q.x,q.y)}" aria-label="${i+1}. ${label}">${i+1}</span>`).join('')
+    + `<img src="assets/town/${D.map}" alt="Map of Oakhaven with its places marked" class="pq-map-image">`
+    + marks.map(([q, key],i) => { const [full, short, ic] = MAP_PLACES[key], g = key === goal; return `<span class="pq-map-mark${i===nearMark?' pq-map-mark-here':''}${g?' pq-map-goal':''}" style="${pct(q.x,q.y)}" data-place="${key}" title="${full}" aria-label="${g?'Next goal: ':''}${full}">${mapIcon(ic)}<b class="pq-map-name" aria-hidden="true">${g?'Next: ':''}${short}</b></span>`; }).join('')
     + `<span class="pq-map-you${nearMark>=0?' pq-map-you-near':''}${labelLeft?' pq-map-you-left':''}${labelEdge}" style="${pct(at.x,at.y)}" aria-label="Your location">You</span></div>`
-    + `<div class="pq-map-key"><h3>Places to visit</h3><ol>${marks.map(([, , label])=>`<li>${label}</li>`).join('')}</ol><p>Your hero is marked <strong>You</strong>.</p></div></div>`;
+    + `<div class="pq-map-key">${goalName ? `<h3>Next goal</h3><p class="pq-map-goal-line">${mapIcon(MAP_PLACES[goal][2])}<span>${goalName}${opts.goalText ? `<small>${mapEsc(opts.goalText)}</small>` : ''}</span></p>` : ''}<p>Your hero is marked <strong>You</strong>.</p></div></div>`;
 }
 
 /**

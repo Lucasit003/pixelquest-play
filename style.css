@@ -3178,3 +3178,72 @@ dialog[data-view=result] .level-stars[data-burst]::before{opacity:.62}
 #hotbar.lane-under,#xp-track.lane-under,#keyboard-actions.lane-under{opacity:.35}
 .m-mode :is(#touch button,#hotbar button,#hud-potion,#joy-ghost){transition:opacity .18s ease-out}
 .m-mode :is(#touch button,#hotbar button,#hud-potion,#joy-ghost).lane-under{opacity:.45}
+/* ---------- improve20-h-nov1 #2: the Journal's ability path (ui/ability-tree.js). One rung per ability in ladder order down a line; a
+   lit rung's node glows gold and the line between two lit rungs is gold; the next rung is outlined and says what is left. ---------- */
+.tree-lead{margin:0 0 6px;color:var(--muted)}
+.tree-path{list-style:none;margin:0;padding:0}
+.tree-rung{position:relative;display:grid;grid-template-columns:52px minmax(0,1fr);gap:10px;align-items:center;min-height:54px;padding:3px 10px 3px 0;border-radius:4px}
+.tree-rung::before,.tree-rung::after{content:'';position:absolute;left:25px;width:2px;height:50%;background:#4b4f6e}
+.tree-rung::before{top:0}.tree-rung::after{bottom:0}
+.tree-rung:first-child::before,.tree-rung:last-child::after{display:none}
+.tree-rung.tree-in::before,.tree-rung.tree-out::after{background:var(--gold-deep);box-shadow:0 0 6px #e8c47a66}
+.tree-node{position:relative;z-index:1;justify-self:center;display:grid;place-items:center;width:44px;height:44px;box-sizing:border-box;border-radius:50%;background:#14172b;border:2px solid #4b4f6e;line-height:0}
+.tree-lit .tree-node{border-color:var(--gold);box-shadow:0 0 0 2px #e8c47a33,0 0 10px #e8c47a66}
+.tree-locked .tree-node .ico{filter:grayscale(1) brightness(.55)}
+.tree-next{background:#cfe3ff0d;box-shadow:inset 0 0 0 1px #cfe3ff66}
+.tree-next .tree-node{border-color:#cfe3ff;box-shadow:0 0 0 3px #cfe3ff40}
+.tree-body{display:flex;flex-direction:column;gap:2px;min-width:0}
+.tree-head{display:flex;align-items:baseline;gap:8px;min-width:0}
+.tree-step{flex:none;min-width:1.1em;color:var(--gold)}
+.tree-name{font-size:18px;color:var(--ink)}
+.tree-locked .tree-name{color:var(--ink-2)}
+.tree-state{margin-left:auto;flex:none;font-style:normal;font-size:13px;letter-spacing:1px;text-transform:uppercase}
+.tree-lit .tree-state{color:#acd69b}.tree-next .tree-state{color:#cfe3ff}.tree-locked .tree-state{color:var(--faint)}
+.tree-gates{display:flex;flex-wrap:wrap;gap:2px 12px;font-size:14px;color:var(--ink-2)}
+.tree-sub{padding-left:6px;border-left:3px solid var(--accent);color:var(--accent)}
+.tree-gate.met{color:#acd69b}
+.tree-goal{font-size:14px;color:var(--muted)}
+.tree-next .tree-goal{font-size:15px;font-weight:700;color:#ffe9a8}
+html.m-mode .tree-rung{grid-template-columns:44px minmax(0,1fr);gap:6px;min-height:46px}
+html.m-mode .tree-rung::before,html.m-mode .tree-rung::after{left:21px}
+html.m-mode .tree-node{width:38px;height:38px}
+html.m-mode .tree-name{font-size:16px}
+html.m-mode .tree-lead{display:none}
+/* ---------- improve20-h-nov1 #3: the town map's places are icons with short names (scenes/town.js hubMapHtml); ui/map-you.js
+   fitMapLabels picks each name's side. The next goal's building glows and its name reads "Next: ...". ---------- */
+.pq-village-map .pq-map-mark{width:30px;height:30px;font-size:0;background:url(ui/skin/pl-slot.png) center/100% 100%;z-index:1}
+.pq-village-map .pq-map-mark>.ico{filter:drop-shadow(0 1px 0 #0d0806)}
+.pq-map-name{position:absolute;left:50%;top:100%;transform:translate(-50%,1px);padding:0 4px;white-space:nowrap;font:700 13px/16px var(--ui);letter-spacing:0;color:var(--ink);background:#171b2de6;border:1px solid #e8c47a59;border-radius:2px;pointer-events:none;text-shadow:none}
+.pq-map-mark.pq-name-above .pq-map-name{top:auto;bottom:100%;transform:translate(-50%,-1px)}
+.pq-map-mark.pq-name-right .pq-map-name{left:100%;top:50%;transform:translate(2px,-50%)}
+.pq-map-mark.pq-name-left .pq-map-name{left:auto;right:100%;top:50%;transform:translate(-2px,-50%)}
+.pq-map-mark.pq-name-below-e .pq-map-name{left:0;transform:translate(0,1px)}.pq-map-mark.pq-name-below-w .pq-map-name{left:auto;right:0;transform:translate(0,1px)}
+.pq-map-mark.pq-name-above-e .pq-map-name{left:0;top:auto;bottom:100%;transform:translate(0,-1px)}.pq-map-mark.pq-name-above-w .pq-map-name{left:auto;right:0;top:auto;bottom:100%;transform:translate(0,-1px)}
+.pq-village-map .pq-map-goal{z-index:2;box-shadow:0 0 0 2px var(--gold),0 0 10px 3px #e8c47acc;animation:pq-map-goal 1.6s ease-in-out infinite}
+.pq-map-goal .pq-map-name{color:#ffe9a8;border-color:var(--gold);background:#2a1d0ef0}
+@keyframes pq-map-goal{50%{box-shadow:0 0 0 2px var(--gold),0 0 16px 7px #e8c47a99}}
+@media (prefers-reduced-motion:reduce){.pq-village-map .pq-map-goal{animation:none}}
+:root[data-motion=reduced] .pq-village-map .pq-map-goal{animation:none}
+.pq-village-map .pq-map-you{z-index:3}
+.pq-map-mark .map-ability-badge{left:auto;right:-14px;top:-14px;transform:none}
+.pq-map-key .pq-map-goal-line{display:flex;align-items:center;gap:8px;margin:0 0 8px;color:var(--ink)}
+.pq-map-key .pq-map-goal-line>span{display:flex;flex-direction:column;gap:2px;font-weight:700;color:#ffe9a8}
+.pq-map-key .pq-map-goal-line small{font-weight:400;color:var(--ink-2);line-height:1.25}
+.pq-map-key p.map-next-ability{display:flex;align-items:center;gap:6px;margin:8px 0 0;color:#cfe3ff}
+/* on a phone the map fills the sheet's height beside the goal (the head drops its line of text) and the sheet no longer scrolls */
+html.m-mode dialog[data-view=village-map] .modal-head p,html.m-mode dialog[data-view=village-map] .modal-head .eyebrow{display:none}
+html.m-mode dialog[data-view=village-map] .modal-head{padding:0;margin-bottom:2px}
+html.m-mode dialog[data-view=village-map] .pq-village-map{width:min(100%,520px,calc((100dvh - 100px)*4/3));max-width:520px}
+html.m-mode .pq-map-name{font-size:11px;line-height:13px;padding:0 3px}
+html.m-mode .pq-village-map .pq-map-mark{width:28px;height:28px}
+html.m-mode dialog[data-view=village-map] .pq-map-layout{flex-wrap:nowrap;justify-content:center}
+html.m-mode dialog[data-view=village-map] .pq-map-key{min-width:0;flex:0 1 225px}
+/* the Library's next-ability badge crowds the Library, Inn and noticeboard cluster on a phone map; the key's line names it there */
+html.m-mode .pq-map-mark .map-ability-badge{display:none}
+/* improve20-h-nov1 #5: the phone Attack button shows the class's own weapon (ui/mobile.js ATTACK_ICONS); the Warrior keeps the sword */
+.m-mode #touch .t-attack[data-weapon=staff]::before{background-image:url(ui/skin/gear/staff-3.png)}
+.m-mode #touch .t-attack[data-weapon=dagger]::before{background-image:url(ui/skin/gear/dagger-3.png)}
+.m-mode #touch .t-attack[data-weapon=bow]::before{background-image:url(ui/skin/gear/bow-3.png)}
+.m-mode #touch .t-attack[data-weapon=hammer]::before{background-image:url(ui/skin/gear/hammer-3.png)}
+.m-mode #touch .t-attack[data-weapon=axe]::before{background-image:url(ui/skin/gear/axe-3.png)}
+.m-mode #touch .t-attack[data-weapon=focus]::before{background-image:url(ui/skin/gear/focus-3.png)}

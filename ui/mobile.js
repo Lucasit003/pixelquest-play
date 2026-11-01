@@ -99,6 +99,12 @@ function tryFullscreen(){
  if(doc().fullscreenElement||!el.requestFullscreen)return;
  el.requestFullscreen({navigationUI:'hide'}).then(()=>globalThis.screen?.orientation?.lock?.('landscape').catch(()=>{})).catch(()=>{});
 }
+/* improve20-h-nov1 (audit2 #22's leftover: the Mage's Attack button showed a sword): the Attack button shows the class's own
+   weapon (CLASSES[hero].weapon). The Warrior keeps touch/attack.png; every other class uses the gold top tier of its weapon's
+   existing PixelLab gear icon (ui/skin/gear/<weapon>-3.png), the same warm gold as that sword. No new art; style.css draws it
+   from the button's data-weapon. main.js calls this from updateHUD, so a hero switch changes it at once. */
+export const ATTACK_ICONS={sword:'ui/skin/touch/attack.png',staff:'ui/skin/gear/staff-3.png',dagger:'ui/skin/gear/dagger-3.png',bow:'ui/skin/gear/bow-3.png',hammer:'ui/skin/gear/hammer-3.png',axe:'ui/skin/gear/axe-3.png',focus:'ui/skin/gear/focus-3.png'};
+export function syncAttackIcon(weapon,d=doc()){const w=ATTACK_ICONS[weapon]?weapon:'sword',b=d?.querySelector?.('#touch .t-attack');if(b&&b.dataset.weapon!==w)b.dataset.weapon=w;return w;}
 export function initMobile({world}={}){
  const w=win();if(!w||!wantsMobile(w))return false;
  on=true;getWorld=()=>world;
