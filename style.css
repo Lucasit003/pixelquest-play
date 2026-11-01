@@ -1795,6 +1795,8 @@ dialog[data-view=field-mission] .modal-head{padding-left:14px}
 dialog[data-view=field-mission] .modal-head .eyebrow{display:none}
 .supply-groups.supply-rows{flex-direction:column;align-items:flex-start;gap:4px}
 .supply-groups.supply-rows span{padding:3px 8px}
+/* improve20-r7b-nov1 #2: the counted apples and bottles are their pictures (game/field-mission.js SUPPLY_ART), one per thing */
+.supply-groups span:has(.supply-icon){display:flex;flex-wrap:wrap;gap:4px;letter-spacing:0;max-width:none}.supply-icon{width:32px;height:32px;image-rendering:pixelated;object-fit:contain;display:block}
 /* Keep the row diagram beside the answer in shallow desktop windows. */
 @media(max-height:600px) and (min-width:701px){
  dialog[data-view=field-mission] .modal-head{padding-bottom:10px}
@@ -2225,6 +2227,13 @@ dialog[data-view=result] .run-tip{font-size:16px;line-height:1.3}
 .reward-chip[data-reward=level]{border-color:#9fd36b;color:#d8f5b8}
 /* the mastery-test requirement is its own line above the buttons, not wedged between them */
 .test-gate{margin:10px auto 0;text-align:center;max-width:60ch}
+/* improve20-r7b-nov1 #1 (audit6 #16): on a phone (or a window under 430 px tall) the quiz result drops the "Mastery test opens after" line;
+   the Toward mastery bar above it already says what is left, and the card's buttons then sit inside 390 px */
+.m-mode .result>.test-gate{display:none}@media(max-height:430px){.result>.test-gate{display:none}}
+/* short phones (740x360, 667x375): the result's head loses its eyebrow and the score, pips and XP chip their spare room, so the buttons
+   stay on the screen */
+@media(max-height:420px){.m-mode dialog[data-view=lesson-summary] .modal-head{padding-top:0;padding-bottom:4px;margin-bottom:4px}.m-mode dialog[data-view=lesson-summary] .modal-head .eyebrow{display:none}.m-mode dialog[data-view=lesson-summary] .result{padding-top:0;margin-top:0}.m-mode dialog[data-view=lesson-summary] .result>.am-pips{margin-bottom:2px}.m-mode dialog[data-view=lesson-summary] .result>.reward-chips{margin:0}.m-mode dialog[data-view=lesson-summary] .result>.reward-chips>*{padding-top:2px;padding-bottom:2px}.m-mode dialog[data-view=lesson-summary] .result>p{margin:2px 0}.m-mode dialog[data-view=lesson-summary] .result>.edu-mastery{margin:2px auto}}
+.m-mode dialog:not([data-view=result]) .result>.modal-actions{flex-wrap:nowrap;gap:6px}.m-mode dialog:not([data-view=result]) .result>.modal-actions>button{flex:0 1 auto;min-width:0;min-height:44px;padding:3px 10px;white-space:normal;line-height:1.15;text-wrap:balance}
 /* Typed-answer quiz (b9): the question and its answer box sit together in a centred column, the nav keeps the choice
    quiz's place at the bottom, and Stop is a real secondary button instead of a stray text link. */
 dialog:is([data-view=placement],[data-view=lesson-quiz]) .question:has(#quiz-form:not(.choice-form))>:is(.question-reading,#quiz-form,#quiz-feedback){width:min(100%,780px);margin-left:auto;margin-right:auto}
@@ -2783,7 +2792,11 @@ dialog[data-view=result] .victory-cheer{margin:0 auto 2px;font:700 var(--fs)/1.2
 dialog[data-view=result] .result-time{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
 dialog[data-view=result] .victory-tag{display:inline-block;padding:2px 8px 3px;font:700 calc(var(--fs) - 2px)/1.2 var(--ui);letter-spacing:1px;text-transform:uppercase;color:#cfe3ff;background:#142036;border:2px solid #4b5f86;box-shadow:0 2px 0 #0b1220}
 dialog[data-view=result] .victory-tag:is([data-tag=first],[data-tag=record],[data-tag=stars]){color:#2a1206;background:#f0c860;border-color:#7a4d00;box-shadow:0 2px 0 #3d2400}
-dialog[data-view=result] .victory-tag:is([data-tag=first],[data-tag=record],[data-tag=stars]){animation:am-pop .4s steps(5) .5s both}
+dialog[data-view=result] .victory-tag:is([data-tag=first],[data-tag=record],[data-tag=stars]){animation:vt-pop .4s steps(5) .5s both}
+/* improve20-r7b-nov1 #1 (audit6 #16): the badge's text is never under 12 px, and its pop grows from full size (am-pop starts at scale 0,
+   so the first frames showed the words at about 6 px) */
+dialog[data-view=result] .victory-tag{font-size:max(12px,calc(var(--fs) - 2px))}
+@keyframes vt-pop{0%{transform:scale(1)}50%{transform:scale(1.18)}100%{transform:scale(1)}}
 @media (prefers-reduced-motion:reduce){dialog[data-view=result] .victory-tag{animation:none!important}}
 :root[data-motion=reduced] dialog[data-view=result] .victory-tag{animation:none!important}
 /* polish2-oct29 (readiness #15): the phone victory card had no banner and an empty bottom half. It fills the sheet: the banner, the
@@ -3194,7 +3207,17 @@ dialog[data-view=result] .level-stars[data-burst]::before{opacity:.62}
 @media(max-height:500px) and (min-width:600px) and (max-width:760px){
 /* improve20-j-nov1: a compact strip (COMPACT_AT chips, ui/result-strip.js) never wraps, so it keeps rows 1-2 and the reward column gets the room */
  .m-mode dialog[data-view=result] #modal-content .level-result>.you-got:not(.you-got-compact):has(.you-got-item:nth-child(4)){grid-row:1 / 5}
- .m-mode dialog[data-view=result] #modal-content .level-result:has(>.you-got:not(.you-got-compact) .you-got-item:nth-child(4))>.level-result-body{grid-row:5 / 8}
+ .m-mode dialog[data-view=result] #modal-content .level-result:has(>.you-got:not(.you-got-compact) .you-got-item:nth-child(4))>.level-result-body{grid-row:5 / 9}
+}
+@media(max-height:500px) and (min-width:600px){
+ /* improve20-r7b-nov1 #1 (audit6 #16): the rating key ("Stars: how fast you won") had taken the stretchy row (minmax(0,1fr)) under the time,
+    so a card at the sheet's height squeezed it under the NEXT GOAL bar. It gets its own auto row, wrapping in the column, and the spare
+    row moves under it; the reward column spans one more row to match */
+ .m-mode dialog[data-view=result] .level-result{grid-template-rows:repeat(7,auto) minmax(0,1fr)}
+ .m-mode dialog[data-view=result] .level-result>.rating-key{grid-column:1;grid-row:7;white-space:normal;overflow-wrap:anywhere;min-width:0}
+ .m-mode dialog[data-view=result] .level-result>.level-line{grid-row:8}
+ .m-mode dialog[data-view=result] #modal-content .level-result>.level-result-body{grid-row:3 / 9}
+ .m-mode dialog[data-view=result] #modal-content .level-result:has(>.you-got .you-got-found)>.level-result-body{grid-row:4 / 9}
 }
 /* short phones (740x360, 667x375): the buttons' bar gives up a little padding so the rating clears the NEXT GOAL bar */
 @media(max-height:380px) and (min-width:600px){

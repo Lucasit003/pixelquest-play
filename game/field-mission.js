@@ -12,11 +12,15 @@ export const fieldGold=level=>Math.max(FIELD_REWARD,replayGoldAt(level));
    potion bag (game/potions.js addPotions: a full bag sells it for BAG.overflow gold). record.potion = 'added' | 'sold' says which, for the
    delivery screen; a save rewarded before this keeps its record as it was (nothing is paid twice or back-paid) */
 export const FIELD_POTION=1;
+/* improve20-r7b-nov1 #2 (audit6 #20): the counted things are pictures, not dots: the apple is a PixelLab icon made for this
+   (art/pixellab/gear/provenance.json), the water bottle the Library's blue potion prop (PixelLab, assets/sprites/theater-potion-blue.png cropped to its picture as ui/skin/rewards/bottle-blue.png). One picture per thing counted. */
+export const SUPPLY_ART={apple:{src:'ui/skin/rewards/apple.png',alt:'apple'},bottle:{src:'ui/skin/rewards/bottle-blue.png',alt:'bottle'}};
+export const supplyIcons=(q,n)=>{const a=SUPPLY_ART[q?.item];return a?Array.from({length:n|0},()=>`<img class="supply-icon supply-${q.item}" src="${a.src}" alt="" width="32" height="32" draggable="false">`).join(''):'● '.repeat(n|0);};
 export const FIELD_TASKS={
  elementary:[
-  {title:'Pack the supplies',prompt:'Two crates hold 4 apples each. Add 3 loose apples. How many apples can you send to the south gate?',hint:'Count both crates first: 4 + 4. Then add the 3 loose apples.',answer:11,explanation:'4 + 4 + 3 = 11 apples.',visual:[4,4,3]},
+  {title:'Pack the supplies',prompt:'Two crates hold 4 apples each. Add 3 loose apples. How many apples can you send to the south gate?',hint:'Count both crates first: 4 + 4. Then add the 3 loose apples.',answer:11,explanation:'4 + 4 + 3 = 11 apples.',visual:[4,4,3],item:'apple'},
   {title:'Share with the guards',prompt:'You packed 11 apples. The guards eat 6. How many apples are left?',hint:'Start with 11 and take away 6.',answer:5,explanation:'11 − 6 = 5 apples left.'},
-  {title:'Fill the water rack',prompt:'There are 3 rows of bottles, with 2 bottles in each row. How many bottles are there?',hint:'Add 2 three times, one row at a time.',answer:6,explanation:'2 + 2 + 2 = 6 bottles.',visual:[2,2,2],visualLayout:'rows'}
+  {title:'Fill the water rack',prompt:'There are 3 rows of bottles, with 2 bottles in each row. How many bottles are there?',hint:'Add 2 three times, one row at a time.',answer:6,explanation:'2 + 2 + 2 = 6 bottles.',visual:[2,2,2],visualLayout:'rows',item:'bottle'}
  ],
  middle:[
   {title:'Pack the supplies',prompt:'The storehouse has 24 ration packs. Send three quarters of them to the south gate. How many packs do you send?',hint:'Find one quarter of 24, then multiply by 3.',answer:18,explanation:'24 ÷ 4 = 6; 6 × 3 = 18 packs.'},

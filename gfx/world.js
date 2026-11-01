@@ -14,7 +14,7 @@ import {drawEffect,drawShot,effectDepth} from './combat-fx.js'
 import {drawSprite} from './actors/sprites.js';import {shakeOffset,squash,cooldownView,DODGE_CD,killSquash,comboView} from '../game/feel.js';
 /* PixelLab props for the hero's own placed things (9 Oct): the Summoner's totems, the Ranger's traps, the Paladin's sanctuary */
 const TOTEM_SPRITE={'wolf-totem':'fx-hr-wolf-totem','stone-totem':'fx-hr-stone-totem','bear-trap':'fx-hr-trap','snare-trap':'fx-hr-vines','sanctuary':'fx-hr-sanctum','consecration':'fx-hr-runes'};
-import {legacyTelegraph,enemyTop} from '../scenes/enemy-ai.js';
+import {legacyTelegraph,enemyTop,bodyHalf} from '../scenes/enemy-ai.js';
 /* v2:heroes -- companions are downloaded sprites too */
 import {drawPet,petFollow} from './actors/pet-sprites.js';
 import {companionEntity,companionPlate} from './actors/companion-sprites.js';
@@ -244,8 +244,8 @@ let cx=Math.max(150,Math.min(550,p.x)),cy=Math.max(85,Math.min(height-85,p.y));/
  if(town){for(const detail of TOWN_DETAILS)if(visible(detail.x,detail.y,detail.h))entities.push({y:detail.y,draw:()=>drawTownDetail(c,detail)});for(const b of BUILDINGS)if(visible(b.x,b.y,townHeight(b))){entities.push({y:b.y,draw:()=>{ellipse(c,b.x+4,b.y,b.w*.48,12,'#14292155');label(c,b.sign,b.x,b.y+13,'#e7d8ab',6);}});lights.push([b.x,b.y-24,26,b.y]);}for(const npc of [{x:257,y:239,appearance:'mage',weapon:'staff'},{x:418,y:255,appearance:'ranger',weapon:'bow'},{x:499,y:375,appearance:'summoner',weapon:'focus'}])if(visible(npc.x,npc.y,50))entities.push({y:npc.y,draw:()=>actor(c,{...npc,hp:1,plain:true,scale:.87,direction:'down',facing:npc.x>335?-1:1},t)});const f=TOWN.fountain;for(let i=0;i<5;i++)rect(c,f.x-9+i*4,f.y-9+((t*15+i*3)%7),1,2,'#d3e4bd99');}
  for(const f of fx.filter(f=>f.ground))effect(c,f);
  if(!town&&state.travel){const target=state.travel;label(c,'THE PATH CONTINUES',target.x,target.y-5,'#e2c487',7);for(let i=0;i<3;i++){stroke(c,[[target.x-5,target.y+10+i*7],[target.x,target.y+14+i*7],[target.x+5,target.y+10+i*7]],'#d7c78b',1);}}
- if(stage)for(const m of state.party||[])entities.push(companionEntity(c,m,t,groundShadow,{bar:!state.cinematicTarget,hero:p,lift:true}),{y:1e9,draw:()=>companionPlate(c,m,{bar:!state.cinematicTarget})});
- for(const al of state.allies||[])entities.push({y:al.y,draw:()=>{const fade=Math.min(1,al.life/.3,al.still?(al.max-al.life)/.25:1);if(!al.still)groundShadow(c,al.x,al.y);drawSprite(c,al.sprite,al.state,al.stateT,Math.round(al.x),Math.round(al.y),{facing:al.facing,alpha:fade*(al.kind==='guardian'?1:.88)});}});
+ if(stage){const avoid=(state.party?.length?(state.enemies||[]).filter(e=>e.boss&&e.hp>0):[]).map(e=>{const h=bodyHalf(e);return {x0:e.x-h,x1:e.x+h,y0:enemyTop(e),y1:e.y-(e.z||0)};});for(const m of state.party||[])entities.push(companionEntity(c,m,t,groundShadow,{bar:!state.cinematicTarget,hero:p,lift:true}),{y:1e9,draw:()=>companionPlate(c,m,{bar:!state.cinematicTarget,avoid})});}
+ for(const al of state.allies||[])entities.push({y:al.y,draw:()=>{const fade=Math.min(1,al.life/.3,al.still?(al.max-al.life)/.25:1);if(!al.still)groundShadow(c,al.x,al.y);drawSprite(c,al.sprite,al.state,al.stateT,Math.round(al.x),Math.round(al.y-(al.lift||0)),{facing:al.facing,scale:al.scale||1,alpha:fade*(al.kind==='guardian'?1:.88)});}});
  /* dodge afterimages (the hero's own frames, fading) and the coins a fallen enemy throws (combat.js deathFx) */
  for(const g of state.trails||[])entities.push({y:g.y-.5,draw:()=>{c.save();c.globalAlpha=.34*g.life/g.max;actor(c,stage?snap(g):g,t);c.restore();}});
  for(const k of state.coins||[])if(k.age>=0)entities.push({y:k.y,draw:()=>drawSprite(c,'theater-coin-gold','idle',0,Math.round(k.x),Math.round(k.y-k.z),{scale:.2})});

@@ -1,6 +1,7 @@
 /* Offline service worker (v2:perf). Registered by core/loader.js as a module worker once the title is up.
    - install: caches the core (core/asset-manifest.js PRECACHE: the page, every module main.js reaches, styles,
-     fonts, the UI skin, the title, hub and world-map art, the prologue and the first level). A file an older
+     fonts, the UI skin, the title, hub and world-map art), then OFFLINE (improve20-r7b-nov1: the prologue and e1-e3 whole, their
+     stages, enemy atlases and effects; a miss there does not stop the install). A file an older
      version already holds is copied across when its content hash is unchanged, so an update downloads only what
      changed. Copies come from the HTTP cache when they match the manifest's hash (the first visit has just
      downloaded them), else from the network.
@@ -10,7 +11,7 @@
    - VERSION (a hash of every file) names the cache: a new build gets a new cache, unchanged entries move over,
      the old cache is deleted, and the new worker takes over at once (skipWaiting + clients.claim).
    Saves never touch this: they live in localStorage. */
-import {VERSION,PRECACHE,FILES} from './core/asset-manifest.js';
+import {VERSION,PRECACHE,FILES,OFFLINE} from './core/asset-manifest.js';
 const CACHE='pq-'+VERSION,CLIPS='pq-narration';
 const SCOPE=self.registration?.scope||new URL('./',self.location).href;
 const pathOf=url=>{const u=new URL(url);u.search='';u.hash='';return u.href.startsWith(SCOPE)?decodeURIComponent(u.href.slice(SCOPE.length))||'index.html':null;};
@@ -33,6 +34,7 @@ self.addEventListener('install',e=>{e.waitUntil((async()=>{const c=await caches.
  const ok=await pool(PRECACHE,6,p=>fill(c,p,olds));
  /* the page and its code must all be there, or this version is not installed (the previous one keeps serving) */
  const bad=PRECACHE.filter((p,i)=>!ok[i]&&(p==='index.html'||/\.(js|css)$/.test(p)));if(bad.length)throw new Error('precache incomplete: '+bad.slice(0,5).join(', '));
+ await pool(OFFLINE,6,p=>fill(c,p,olds));
  await self.skipWaiting();})());});
 
 self.addEventListener('activate',e=>{e.waitUntil((async()=>{const c=await caches.open(CACHE);

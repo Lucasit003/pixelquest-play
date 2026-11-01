@@ -4,7 +4,7 @@
    meter.js, delve.js, skills.js). Nothing here touches learning: no mastery, answers, lessons or ability unlocks.
    - The clock is never shown during play; the grade's time only appears on the result card.
    - Effects are code (a glint, a glow, shake); the shrine and the Mimic are PixelLab art (art/pixellab/run-layer). */
-import {draftRun,draftWaves,compatibleDraft,drafted,BLESSINGS,draftBanner} from '../game/draft.js';
+import {draftRun,draftWaves,compatibleDraft,drafted,BLESSINGS,draftBanner,returningBoss} from '../game/draft.js';
 import {scoreRun,gradeRank} from '../game/grade.js';
 import {openChests,ESSENCE} from '../game/chests.js';
 import {tickMeter,settleMeter,meterOf} from '../game/meter.js';
@@ -49,7 +49,7 @@ export function runStart(w,l,k,prev){const s=w.save;w.draft=null;w.shrine=null;w
  /* the Scholar's Seal stands in the walk after the first fight (or before it on a one-wave level), clear of collision */
  if(d.seal&&sealReady(s)){const A=L.arenas,y=L.floorTop+16;let x=A.length>1?Math.round((A[0].x1+A[1].x0)/2):Math.max((L.spawn?.x||60)+240,(A[0]?.x0||400)-120);for(let t=0;t<30&&(L.blocked(x,y)||L.blocked(x-10,y)||L.blocked(x+10,y));t++)x+=8;w.seal={x,y,broken:!!prev?.seal};img(SEAL_ART);}
  if(d.mimic&&!prev?.mimicDone){const m=all.find(x=>x.id===d.mimic);if(m){w.mimic={x:m.x,y:m.y,id:m.id,state:'sleep',t:0};loadSprite('mimic');}}
- if(!prev){const text=draftBanner(d,t=>baseDef(t).name,!!globalThis.document?.documentElement?.classList?.contains('m-mode'));if(text)w.events.toast?.(text);}
+ if(!prev){const text=draftBanner(d,t=>baseDef(t).name,!!globalThis.document?.documentElement?.classList?.contains('m-mode'),t=>returningBoss(t,s));if(text)w.events.toast?.(text);}
  return d;}
 /* ---- the Blessing shrine ---- */
 function blessBase(w){const B=BLESSINGS[w.blessing],b=w.base;if(!B||!b)return;

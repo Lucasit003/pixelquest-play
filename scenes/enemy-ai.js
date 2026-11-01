@@ -319,6 +319,8 @@ function drawLob(c,f,t){const q=lobPoint(f,-f.t);shadow(c,q.x,q.y,3+3*q.k,1.5+1.
 /* A chapter mini-boss fought as an elite draws at its own eliteDraw (game/enemies.js, about 1.4x the hero's height); the
    picture only, never its reach or body (bodyR and the move ranges read e.scale and the data). */
 export const enemyRenderScale=e=>e.boss||e.decoy?Math.max(1,Math.floor((e.scale||1)+1e-6)):e.elite&&e.eliteDraw?e.eliteDraw:Math.max(.65,Math.round((e.scale||1)*.68*100)/100);
+/* improve20-r7b-nov1 #4: half the drawn body width (the atlas's `width` at its render scale) */
+export const bodyHalf=e=>Math.round(((e&&metaOf(e.sprite)?.width)||44)*enemyRenderScale(e||{})/2);
 export function enemyTop(e){const m=metaOf(e.sprite);return e.y-(e.z||0)-(m?m.height*enemyRenderScale(e):46*enemyRenderScale(e));}
 /* The old procedural enemies' wind-up (no ENEMY_AI yet, or atlas still loading): the same downloaded red-orange marker. */
 export function legacyTelegraph(c,e,t){const r=e.boss?44:e.behavior==='hop'?20:24,hop=e.behavior==='hop'||e.boss&&e.phase===2;

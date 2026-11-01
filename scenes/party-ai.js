@@ -20,7 +20,7 @@ import {difficultyOf} from '../game/levels.js';
 import {damage} from '../game/math.js';
 import {STAGE} from '../game/stage.js';
 import {loadSprite, spriteMeta, frameStart} from '../gfx/actors/sprites.js';
-import {enemyFxTick} from './enemy-ai.js';
+import {enemyFxTick, bodyHalf} from './enemy-ai.js';
 
 const d2 = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 const live = e => e.hp > 0 && !(e.entering > 0) && e.entered !== false;
@@ -96,6 +96,28 @@ export function flankSpot(w, c, x, y) {
   const b = w.bounds?.() || {y0: -1e9, y1: 1e9}, ok = yy => yy >= b.y0 && yy <= b.y1 && !w.layout?.blocked?.(x, yy), side = c.slot < 0 ? -1 : 1;
   for (const sd of [side, -side]) { const yy = p.y + sd * PARTY.flank; if (ok(yy)) return {x, y: yy}; }
   const sx = x >= p.x ? 1 : -1; return {x: p.x + sx * PARTY.flank, y};
+}
+/* improve20-r7b-nov1 #4: at a boss he stood inside the boss's picture (m1: behind the Dungeon Master, his name over it). Half the boss's
+   drawn body width (its atlas `width` at its render scale); his boss spot is that far plus BOSS_CLEAR to the boss's side away from the
+   hero when the hero is up close on his side (else the side he is on, so no long walk round), a little in front of the boss's feet, and his reach on a boss is never shorter than that spot */
+export const BOSS_CLEAR = 13, BOSS_FRONT = 6;
+export const bossHalf = bodyHalf;
+export function bossSpot(w, c, e) {
+  const p = w.player, b = w.bounds?.(), dx = bossHalf(e) + BOSS_CLEAR, own = c.x < e.x ? -1 : 1, sx = p && Math.sign(p.x - e.x) === own && Math.abs(p.x - e.x) < dx + 30 ? -own : own;
+  const fit = x => !b || (x >= b.x0 + 4 && x <= b.x1 - 4), y0 = b ? Math.max(b.y0, Math.min(b.y1, e.y + BOSS_FRONT)) : e.y + BOSS_FRONT;
+  for (const s of [sx, -sx]) { const x = e.x + s * dx; if (fit(x) && !w.layout?.blocked?.(x, y0)) return {x, y: y0}; }
+  return {x: e.x + sx * dx, y: y0};
+}
+/* improve20-r7b-nov1 #4: to the boss's far side he goes round it, BOSS_ROUND px above or below its lane (the side he is already on, else the
+   other), never straight through its body; the hero's flank detour still applies on the way */
+export const BOSS_ROUND = 30;
+export function roundBoss(w, c, e, spot) {
+  if (Math.sign(c.x - e.x) === Math.sign(spot.x - e.x)) return detour(w, c, spot);
+  /* where his straight line crosses the boss's x: clear of its feet by BOSS_ROUND, he walks it */
+  const k = (e.x - c.x) / ((spot.x - c.x) || 1), yAt = c.y + (spot.y - c.y) * Math.max(0, Math.min(1, k)); if (Math.abs(yAt - e.y) >= BOSS_ROUND - 2) return detour(w, c, spot);
+  const b = w.bounds?.() || {y0: -1e9, y1: 1e9}, ok = yy => yy >= b.y0 && yy <= b.y1 && !w.layout?.blocked?.(e.x, yy), pref = Math.sign(c.y - e.y) || 1;
+  for (const sd of [pref, -pref]) { const yy = e.y + sd * BOSS_ROUND; if (ok(yy)) return detour(w, c, {x: e.x, y: yy}); }
+  return detour(w, c, spot);
 }
 /* improve20-e-nov1 #4: on his way to a spot past the hero (the far side of the hero's foe) he walked straight through the hero (m1: on him
    in about half the frames of the opening fight). A path that would pass within flankMin of the hero goes by the hero's flank first. */
@@ -222,13 +244,15 @@ export function updateParty(w, dt) {
     if (c.skillCd <= 0 && useSkill(w, c, near)) continue;
     /* the tank takes the foe nearest the hero that is not already on it, else the nearest */
     const order = near.sort((a, b) => d2(a, p) - d2(b, p)), e = (c.stats.role === 'tank' || c.stats.role === 'vanguard' ? order.find(o => o.tgt !== c) : null) ?? order[0];
-    const reach = (c.stats.reach || 16) + Math.max(6, (e.boss ? 22 : 9) * Math.max(1, e.scale || 1)), d = d2(c, e);
+    const reach = Math.max((c.stats.reach || 16) + Math.max(6, (e.boss ? 22 : 9) * Math.max(1, e.scale || 1)), e.boss ? bossHalf(e) + BOSS_CLEAR + 2 : 0), d = d2(c, e);
     /* improve20-w-nov1 #14: with the hero already on this foe he takes the foe's other side (a flank), never the hero's own spot */
     const heroOn = d2(p, e) < reach + 24, sx = heroOn ? (p.x < e.x ? 1 : -1) : (c.x < e.x ? -1 : 1);
     /* in reach but beside the hero on his own lane (between him and the foe): step up or down off that lane, still in reach */
     const lane = d <= reach && Math.abs(c.y - p.y) < 12 && Math.abs(c.x - p.x) < 40, side = c.slot < 0 ? -1 : 1;
-    const spot = standOff(w, e, lane ? flankSpot(w, c, c.x, e.y + side * Math.min(reach * .6, 22)) : flankSpot(w, c, e.x + sx * reach * .8, e.y + c.slot * .3), reach);
-    if (d > reach || (lane || d2(c, p) < PARTY.standoff) && Math.hypot(spot.x - c.x, spot.y - c.y) > 3) { const via = detour(w, c, spot); setState(c, moveTo(w, c, via.x, via.y, speed, dt) ? 'walk' : 'idle'); if (d > reach || c.cd > 0) continue; }
+    const spot = e.boss ? bossSpot(w, c, e) : standOff(w, e, lane ? flankSpot(w, c, c.x, e.y + side * Math.min(reach * .6, 22)) : flankSpot(w, c, e.x + sx * reach * .8, e.y + c.slot * .3), reach);
+    /* over the boss's picture he walks off it; he only holds his swing while right inside it (round the boss, BOSS_ROUND off its feet, he swings as he goes) */
+    const bx = Math.abs(c.x - e.x), bh = e.boss ? bossHalf(e) : 0, overBoss = e.boss && bx < bh + 10 && Math.abs(c.y - e.y) < 44, inBoss = e.boss && bx < bh + 6 && Math.abs(c.y - e.y) < BOSS_ROUND - 6;
+    if (d > reach || (lane || d2(c, p) < PARTY.standoff || overBoss) && Math.hypot(spot.x - c.x, spot.y - c.y) > 3) { const via = e.boss ? roundBoss(w, c, e, spot) : detour(w, c, spot); setState(c, moveTo(w, c, via.x, via.y, speed, dt) ? 'walk' : 'idle'); if (d > reach || c.cd > 0 || inBoss) continue; }
     c.facing = e.x >= c.x ? 1 : -1;
     if (c.cd <= 0) {
       c.cd = c.stats.rate; c.busy = .45; setState(c, 'attack');

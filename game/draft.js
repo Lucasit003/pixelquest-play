@@ -53,9 +53,13 @@ export function draftWaves(waves,d,bounded=false){if(!d||(!d.mini&&!d.echo?.leng
  return out;}
 /* What the start-of-run banner says ("This run: Swift Minotaur mini-boss · Blessing of Life shrine"). */
 /* oct25-phone2: `short` (phones) drops the "This visit:" lead-in, so the line fits one row under the fight */
-export function draftBanner(d,nameOf=k=>k,short=false){if(!d)return '';const bits=[];
+/* improve20-r7b-nov1 #3 (audit6 #23): a mini-boss that is some level's own boss (Grubnak in Slime Bog, just after beating him), or one the
+   save's Bestiary has beaten before, is a return: the gate banner leaves him out (skipMini) and he is announced when he walks in (scenes/combat.js spawnGroup) */
+export const returningBoss=(type,save=null)=>!!type&&(LEVELS.some(l=>l.boss===type||l.duo===type)||(save?.bestiary?.[type]?.defeated|0)>0);
+export function returnLine(type,mod,nameOf=k=>k){const n=String(nameOf(type)).split(',')[0];return `${mod&&MODS[mod]?MODS[mod].label+' '+n.replace(/^The /,''):n} returns! (mini-boss)`;}
+export function draftBanner(d,nameOf=k=>k,short=false,skipMini=()=>false){if(!d)return '';const bits=[];
  /* "Shielded Minotaur mini-boss", never "Shielded The Minotaur" (a boss's own name keeps its article only when it stands alone) */
- if(d.mini){const n=String(nameOf(d.mini.type));bits.push(`${d.mini.mod?MODS[d.mini.mod].label+' '+n.replace(/^The /,''):n} mini-boss`);}
+ if(d.mini&&!skipMini(d.mini.type)){const n=String(nameOf(d.mini.type));bits.push(`${d.mini.mod?MODS[d.mini.mod].label+' '+n.replace(/^The /,''):n} mini-boss`);}
  if(d.blessing)bits.push(`${BLESSINGS[d.blessing].name} shrine`);
  if(d.echo?.length)bits.push(`Echoes of ${d.echo.map(nameOf).join(' and ')}`);
  return bits.length?`${short?'':'This visit: '}${bits.join(' · ')}`:'';}

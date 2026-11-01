@@ -23,8 +23,11 @@ export function companionEntity(c, m, t, shadow, {bar = true, hero = null, lift 
 }
 /* improve20-w-nov1 #14: his health bar and name while he is hurt (not while Downed). world.js draws it as its own entry above every actor
    (lift), so a boss standing in front of him never hides his name */
-export function companionPlate(c, m, {bar = true} = {}) {
-  if (!bar || m.mode === 'downed' || !(m.hp < m.maxHp)) return;
+/* improve20-r7b-nov1 #4: the plate's box (name and bar); `avoid` holds boxes ({x0,x1,y0,y1}, the live bosses' pictures) it must never draw over */
+export function plateBox(m) { const x = Math.round(m.x), y = Math.round(m.y), k = m.art?.scale || 1, top = y - Math.round(56 * k) - 8, hw = Math.max(12, (m.name || '').length * 3 + 2); return {x0: x - hw, x1: x + hw, y0: top - 10, y1: top + 4}; }
+export const plateBlocked = (m, avoid = []) => { const b = plateBox(m); return avoid.some(r => b.x0 < r.x1 && b.x1 > r.x0 && b.y0 < r.y1 && b.y1 > r.y0); };
+export function companionPlate(c, m, {bar = true, avoid = []} = {}) {
+  if (!bar || m.mode === 'downed' || !(m.hp < m.maxHp) || plateBlocked(m, avoid)) return;
   const x = Math.round(m.x), y = Math.round(m.y), k = m.art?.scale || 1, w = 22, top = y - Math.round(56 * k) - 8, f = Math.max(0, m.hp / m.maxHp);
   c.save(); c.fillStyle = '#1b1f1c'; c.fillRect(x - w / 2 - 1, top - 1, w + 2, 4); c.fillStyle = f > .35 ? '#7fd36b' : '#e2b04a'; c.fillRect(x - w / 2, top, Math.round(w * f), 2); c.restore();
   if (m.name) drawPixelText(c, m.name, x, top - 3, {align: 'center', color: '#e9f2c6', outline: '#18241a'});
