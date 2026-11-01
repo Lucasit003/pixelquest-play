@@ -5,8 +5,9 @@ import {woodBoss,woodTick} from './elderwood.js';
 import {sfx} from '../core/audio.js';
 import {tierAttacks} from './boss-moves.js';
 import {recoverFloor} from '../game/tier-encounters.js';
+import {guardBoss,guardTick} from './boss-guard.js';
 /* Main-road signature remixes. Changes belong to this spawned boss only, never the roster; Normal has its own spawn-local pacing. */
-export function pilotBoss(w,e){if(!w.level?.encounter)return normalBoss(w,e);e.recoveryGate=true;if(w.level.encounter.sequence)return elderBoss(w,e);if(!['e1','e2'].includes(w.level.id))return e;const legendary=w.tierKey==='legendary';e.pilot=true;e.phaseShift={...e.phaseShift,at:.5};
+export function pilotBoss(w,e){if(!w.level?.encounter)return guardBoss(w,normalBoss(w,e));e.recoveryGate=true;if(w.level.encounter.sequence)return elderBoss(w,e);if(!['e1','e2'].includes(w.level.id))return e;const legendary=w.tierKey==='legendary';e.pilot=true;e.phaseShift={...e.phaseShift,at:.5};
  e.attacks=e.attacks.filter(a=>!['bomb barrage','double leap'].includes(a.name)).map(a=>({...a,fullTell:true,windup:Math.max(legendary?.8:1,Math.min(1.3,a.windup)),cd:a.cd*.55,dmg:(a.dmg||1)*1.5,recover:1.1}));
  if(w.level.id==='e1'){e.pilotCall='call the tribe';e.attacks=e.attacks.map(a=>a.name==='call the tribe'?{...a,count:2,max:2,label:'WATCH THE MARKED SIDE!',forced:true,uses:1,spots:'pilot-side',visibleTell:true,pilotGuards:true,mods:legendary?[null,'swift']:[],windup:1.4,recover:1.2,then:'camp sweep'}:a);
   e.attacks.push({name:'camp sweep',label:'STEP PAST THE CLUB!',state:'attack2',kind:'sweep',range:260,len:96,band:12,dur:1.1,windup:1.4,fullTell:true,dmg:1,cd:8,forced:true,fx:'fx-dust',fxs:'rise',recover:1.2});
@@ -14,7 +15,7 @@ export function pilotBoss(w,e){if(!w.level?.encounter)return normalBoss(w,e);e.r
   e.attacks.push({name:'bog ripple',label:'STEP BACK FROM THE RIPPLE!',state:'attack2',kind:'wave',shape:'ring',previewReach:true,range:180,reach:90,r0:12,speed:75,band:8,windup:1.4,fullTell:true,dmg:.9,cd:8,forced:true,fx:'fx-slime-spawn',fxs:'rise',recover:1.2});}
  e.attacks=e.attacks.map(a=>['club smash','ground pound'].includes(a.name)?{...a,then:'camp sweep'}:w.level.id==='e2'&&a.kind==='leap'?{...a,then:'bog ripple'}:a);e.attacks=e.attacks.map(a=>({...a,recover:Math.max(recoverFloor(w.tierKey),a.recover||0)}));return e;}
 /* After the phase animation, a single marked call introduces the Chief's new rule. */
-export function pilotTick(e,w){normalTick(w,e);if(w?.level?.encounter?.veilmoor)veilTick(e,w);if(w?.level?.encounter?.emberkeep)emberTick(e,w);if(w?.level?.encounter?.elderwood)woodTick(e,w);if(e.pilotGuard&&w&&!(e.pilotTurn>w.time)){e.pilotFacing=e.facing;e.pilotTurn=w.time+.7;}if(e.pilotCall&&!e.pilotCalled&&e.brain?.phase===2&&['move','recover'].includes(e.brain.mode)){e.pilotCalled=true;e.brain.force=e.pilotCall;}}
+export function pilotTick(e,w){guardTick(e,w);normalTick(w,e);if(w?.level?.encounter?.veilmoor)veilTick(e,w);if(w?.level?.encounter?.emberkeep)emberTick(e,w);if(w?.level?.encounter?.elderwood)woodTick(e,w);if(e.pilotGuard&&w&&!(e.pilotTurn>w.time)){e.pilotFacing=e.facing;e.pilotTurn=w.time+.7;}if(e.pilotCall&&!e.pilotCalled&&e.brain?.phase===2&&['move','recover'].includes(e.brain.mode)){e.pilotCalled=true;e.brain.force=e.pilotCall;}}
 /* Roots and the drill are supporting hazards, not a second boss hit: keep the full warning and cadence. */
 export const pilotHitCap=(w,from)=>w.level?.encounter&&['e6','m4'].includes(w.level.id)&&from?.arenaHazard?w.player.maxHp*.15:!w.level?.encounter?(w.tierKey==='normal'&&['e7','e8'].includes(w.level?.id)&&(from?.by?.boss||from?.boss)?w.player.maxHp*.25:pacedNormal(w)?w.player.maxHp*((from?.by?.boss||from?.boss)? .20 : .15):Infinity):w.player.maxHp*(from?.by?.boss||from?.boss?(w.tierKey==='legendary'?.33:.28):(w.tierKey==='legendary'?.25:.20));
 
@@ -25,7 +26,9 @@ export function pilotEnemy(w,e){if(!w.level?.encounter)return normalEnemy(w,e);e
  e.attacks=(e.attacks||[]).map(a=>({...a,fullTell:true,windup:Math.max(w.tierKey==='legendary'?.8:1,a.windup),cd:a.cd*.65,recover:.35}));return e;}
 export function pilotBlock(w,e,a){if(!w.level?.encounter||!(e.pilotArmour||e.pilotGuard))return false;
  if(a.heavy||!a.basic&&!a.trick){if(!(e.pilotOpen>w.time)){w.text(e.pilotArmour?'ARMOUR BROKEN!':'GUARD BROKEN!',e.x,e.y-34,'#ffe49a');w.burst(e.x,e.y,'#ffe49a',12,'shard');sfx('armour.crack');w.effect('ring',e.x,e.y,{radius:22,color:'#ffe49a',ground:true,life:.4,max:.4});}e.pilotOpen=w.time+3;e.ward=0;return false;}
- if(e.pilotOpen>w.time)return false;if(!e.pilotArmour&&Math.sign(w.player.x-e.x)!==(e.pilotFacing||e.facing||1))return false;
+ if(e.pilotOpen>w.time)return false;
+ /* improve20-a-oct31 #3: a PERFECT dodge (boss-moves.js perfectDodge: a roll started within 0.2 s of the hit) leaves the boss Exposed for 2 s, and his armour is open for it too. Before, armour blocked every basic hit unless a heavy or an ability cracked it, so a player who only dodged and swung could dodge forever and never hurt the Goblin King on Heroic or Legendary */
+ if(e.pilotArmour&&e.exposedBy==='perfect'&&e.exposed>0)return false;if(!e.pilotArmour&&Math.sign(w.player.x-e.x)!==(e.pilotFacing||e.facing||1))return false;
  if(w.time-(e.pilotSaid??-9)>.3){e.pilotSaid=w.time;w.text('Blocked!',e.x,e.y-34,'#b8dfff');w.burst(e.x,e.y,'#d9ecf5',8,'spark');sfx('blocked');}if(a.basic&&!a.heavy)blockedHint(w);return true;}
 
 /* Count contacts, not targets in one swing. Transient per fight; no save or combat changes. */

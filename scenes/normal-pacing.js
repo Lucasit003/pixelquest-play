@@ -36,7 +36,10 @@ export function normalBoss(w,e){if(w.tierKey==='normal'&&['e7','e8'].includes(w.
  e.attacks=e.attacks.map(a=>({...a,fullTell:true,windup:Math.max(.65,Math.min(1.1,a.windup||.8)),cd:a.cd*.75,recover:Math.max(.65,a.recover||0),...(a.kind==='summon'?{count:Math.min(2,a.count||1),max:2,visibleTell:true}:{})}));
  /* playtest ch2: the warning panel names a move only when it has a label; the Dungeon Master, Forge Golem, Vexx, the Demon Slime, the Lich and the Moth Queen had none, so their taught moves came with no panel at all. oct24-ember-econ: the label is the move and its action (NORMAL_CUES) */
  {const seq=NORMAL_SEQUENCES[w.level.id]||[];e.attacks=e.attacks.map(a=>seq.includes(a.name)?{...a,label:NORMAL_CUES[a.name]||a.label||a.name.toUpperCase()}:moreCue(a));if(e.rebirth?.attacks)e.rebirth={...e.rebirth,attacks:e.rebirth.attacks.map(moreCue)};}
- if(w.level.id==='v7')e.attacks=e.attacks.map(a=>a.name==='tentacle grab'?{...a,count:2,spread:50,hold:0,windup:1.2,recover:1.8,label:'Two tentacles! Leave the circles!'}:a.name==='abyss wave'?{...a,len:88,windup:1.8,dur:1.2,recover:2.4,label:'Abyss wave! Move to the green lane!'}:a.name==='ink darkness'?{...a,dur:3,banner:null}:a);
+ /* improve20-a-oct31 #5 (kid-appeal playtest: a 12-year-old never fell below 74% on the last boss): in phase two the Abyss Wave comes
+    round a second time (its own full 1.8 s tell and the green lane again), one more telegraphed pattern; HP, attack and every warning
+    time are unchanged. Sim (--only=v7 --isolated --recommended-level, 24 runs, seeds 1-3): --skill=good ends at 60% (was 63%), kid 0 deaths */
+ if(w.level.id==='v7')e.attacks=e.attacks.map(a=>a.name==='tentacle grab'?{...a,count:2,spread:50,hold:0,windup:1.2,recover:1.8,label:'Two tentacles! Leave the circles!'}:a.name==='abyss wave'?{...a,len:88,windup:1.8,dur:1.2,recover:2.4,label:'Abyss wave! Move to the green lane!',then:'abyss wave',thenPhase:2}:a.name==='ink darkness'?{...a,dur:3,banner:null}:a);
  return e;}
 export function normalTick(w,e){if(!e.normalPacing||!e.brain)return;const b=e.brain,phase=b.phase||1;if(e.normalPhase===phase||!['move','recover'].includes(b.mode))return;e.normalPhase=phase;const [call,then]=NORMAL_SEQUENCES[w.level.id];b.force=call;if(phase===2)e.attacks=e.attacks.map(a=>a.name===call?{...a,then}:a);}
 

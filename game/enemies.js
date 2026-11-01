@@ -93,7 +93,7 @@ export const ENEMY_TYPES={
 
  /* ---------- Elderwood bosses, easy to hard ---------- */
  'goblin-king':{name:'Grubnak, Goblin Chief',sprite:'grubnak',boss:true,hp:340,atk:11,def:4,speed:46,scale:1,ai:'boss',band:12,kbResist:.6,
-  intro:'Grubnak\'s camp, Grubnak\'s rules! Bow to your chief!',defeat:'My big club... it was too heavy anyway!',
+  taunts:['My club is bigger than you!','Nobody beats Grubnak in his own camp!'],intro:'Grubnak\'s camp, Grubnak\'s rules! Bow to your chief!',defeat:'My big club... it was too heavy anyway!',
   fact:F('language','The word "chief" comes from the Latin word "caput", which means "head". A chief is the head of a group.'),
   half:'Grubnak is ANGRY now! Tribe, help your chief!',phaseShift:{at:.5,line:'Grubnak is ANGRY now! Tribe, help your chief!',speed:1.3,cd:.7,tint:'#ffd34a',title:'THE CHIEF CALLS HIS TRIBE'},attacks:[
   {name:'club smash',state:'attack',kind:'melee',range:68,band:14,cd:1.7,windup:.65,dmg:1.25},
@@ -105,7 +105,7 @@ export const ENEMY_TYPES={
   {name:'bomb barrage',state:'throw',kind:'aoe',at:'player',fx:'fx-goblin-bomb',radius:22,count:5,spread:56,range:240,cd:3.4,windup:.65,dmg:1,phase:2,recover:.8},
   {name:'call the tribe',state:'shout',kind:'summon',key:'goblin',count:3,max:4,range:400,cd:8,windup:.8,fx:'fx-portal',phase:2}]},
  'slime-king':{name:'The Bog King',sprite:'bogking',boss:true,wide:true,hp:300,atk:12,def:5,speed:26,scale:1,ai:'boss',band:12,kbResist:.8,keep:60,weakness:'fire',
-  intro:'Croak! You have hopped right into my bog!',defeat:'Ribbit... back to the bottom of the pond.',
+  taunts:['This bog is my kingdom, tiny hero.','I will squash you flat as a lily pad!'],intro:'Croak! You have hopped right into my bog!',defeat:'Ribbit... back to the bottom of the pond.',
   fact:F('science','Frogs and toads drink through their skin instead of their mouths, soaking up water from damp ground.'),
   half:'Ribbit! Now I\'m REALLY hopping mad!',phaseShift:{at:.5,line:'Ribbit! Now I\'m REALLY hopping mad!',speed:1.25,cd:.7,tint:'#c48bff',title:'THE BOG BOILS'},attacks:[
   {name:'tongue lash',state:'attack',kind:'melee',range:70,band:12,cd:2.4,windup:.65,dmg:1.2},
@@ -114,7 +114,7 @@ export const ENEMY_TYPES={
   {name:'spawn slimes',state:'heal',kind:'summon',key:'slime',count:2,max:4,range:400,cd:8,windup:.8,fx:'fx-slime-spawn'},
   {name:'double flop',state:'walk',kind:'leap',radius:30,range:170,cd:2.8,windup:.65,dmg:1.1,air:.6,repeat:2,phase:2,impact:'fx-dust',recover:.8}]},
  'orc-warlord':{name:'Gorrak the Warlord',sprite:'gorrak',boss:true,hp:380,atk:15,def:8,speed:38,scale:1,ai:'boss',band:12,kbResist:.85,
-  intro:'You knock on my gate? Then face the warlord!',defeat:'Hrrk... a worthy foe. The camp is yours.',
+  taunts:['Gorrak has crushed a hundred heroes.','You will make it a hundred and one!'],intro:'You knock on my gate? Then face the warlord!',defeat:'Hrrk... a worthy foe. The camp is yours.',
   fact:F('history','On the march, Roman legions built a brand-new fortified camp, with a ditch and a wall, almost every evening.'),
   half:'No more holding back! Warcamp, to me!',phaseShift:{at:.5,line:'No more holding back! Warcamp, to me!',speed:1.25,cd:.75,dmg:1.1,tint:'#ff4a2a',title:'THE WARLORD IS ANGRY'},
   /* in a duo with Mother Ruk (Shaman Grove): if she falls first, her spirits ride his axe */
@@ -127,7 +127,7 @@ export const ENEMY_TYPES={
   {name:'war charge',state:'run',kind:'dash',range:300,cd:6,windup:.85,dmg:1.3,speed:230,band:14,phase:2},
   {name:'war horn',state:'shout',kind:'summon',key:'orc-rogue',count:1,max:2,range:400,cd:12,windup:.65,fx:'fx-portal',phase:2}]},
  minotaur:{name:'The Minotaur',sprite:'pl-minotaur',boss:true,hp:440,atk:17,def:9,speed:36,scale:1,ai:'boss',band:12,kbResist:.85,
-  intro:'Lost in my hollow? Nobody finds the way out!',defeat:'You found the way out... and you found me.',
+  taunts:['I could smell you from the gate.','Run all you like. I run faster!'],intro:'Lost in my hollow? Nobody finds the way out!',defeat:'You found the way out... and you found me.',
   fact:F('history','The Minotaur myth comes from ancient Crete, where the huge palace of Knossos had so many rooms it may have inspired the labyrinth story.'),
   half:'RAAAH! The hollow shakes when I run!',phaseShift:{at:.5,line:'RAAAH! The hollow shakes when I run!',speed:1.3,cd:.7,tint:'#ff5530',title:'THE MINOTAUR RAGES'},attacks:[
   {name:'axe swing',state:'attack',kind:'melee',range:68,band:12,cd:2.4,windup:.65,dmg:1.25},
@@ -136,7 +136,7 @@ export const ENEMY_TYPES={
   {name:'stampede',state:'walk',kind:'dash',range:300,cd:3.6,windup:.7,dmg:1.3,speed:280,band:14,phase:2}]},
  /* a PixelLab body of his own (8 Oct): a crowned skeleton in plate and a purple cape; raise the dead tears graves open */
  'skeleton-king':{name:'The Skeleton King',sprite:'boneking',boss:true,hp:400,atk:18,def:10,speed:32,scale:1,ai:'boss',band:12,kbResist:.9,weakness:'holy',
-  intro:'Rise, my bones! We have a visitor!',defeat:'Back to my nap... wake me in a hundred years.',
+  taunts:['A new skeleton for my army? Perfect.','Stay a while. Stay forever!'],intro:'Rise, my bones! We have a visitor!',defeat:'Back to my nap... wake me in a hundred years.',
   fact:F('science','Your skull is made of 22 bones. Most of them are locked together by wiggly joins called sutures.'),
   half:'My bones remember how to fight!',phaseShift:{at:.5,line:'My bones remember how to fight!',speed:1.2,cd:.7,tint:'#7fd8ff',title:'THE BONES REMEMBER'},
   /* a second life (owner, 8 Oct, after Elden Ring): he falls, then rises as a floating lich in cold blue fire. Health 500 -> 400
@@ -157,7 +157,7 @@ export const ENEMY_TYPES={
   {name:'raise the dead',state:'summon',kind:'summon',key:'skeleton',count:2,max:3,range:400,cd:10,windup:.8,fx:'fx-portal'},
   {name:'grave hands',state:'cast',kind:'aoe',at:'player',fx:'fx-dark-hand',radius:16,count:3,spread:34,range:280,cd:4.5,windup:.65,dmg:1.1,phase:2}]},
  'orc-shaman':{name:'Mother Ruk',sprite:'mother-ruk',boss:true,hp:520,atk:19,def:9,speed:30,scale:1,ai:'boss',band:12,kbResist:.8,keep:60,
-  intro:'The spirits whisper your name, little one.',defeat:'The spirits say... you win. Fine.',
+  taunts:['The spirits say you fall here.','Gorrak! Show them our strength!'],intro:'The spirits whisper your name, little one.',defeat:'The spirits say... you win. Fine.',
   fact:F('science','Many medicines began as plants. Aspirin is related to a chemical people first found in willow bark.'),
   half:'Spirits, lend me your strength!',phaseShift:{at:.5,line:'Spirits, lend me your strength!',speed:1.15,cd:.7,tint:'#7dff9a',title:'THE SPIRITS ANSWER'},
   /* in a duo with Gorrak (Shaman Grove): if he falls first, his rage passes into her spells */
@@ -172,7 +172,7 @@ export const ENEMY_TYPES={
  /* hp 660 -> 440 (15 Oct, BALANCE.md "Heroic fairness"): with its second life it was the longest fight in Elderwood on every
     tier (e7 269 s on Normal against e8's 146 s) and the 6-minute clock beat five classes there on Heroic */
  'stone-golem':{name:'The Watch Golem',sprite:'watch-golem',boss:true,hp:440,atk:22,def:16,speed:24,scale:1,ai:'boss',band:14,kbResist:1,weakness:'storm',
-  intro:'INTRUDER DETECTED. GUARD MODE: ON.',defeat:'POWER... LOW. GOOD... NIGHT.',
+  taunts:['SCANNING... THREAT LEVEL: SMALL.','PREPARING... TO... STOMP.'],intro:'INTRUDER DETECTED. GUARD MODE: ON.',defeat:'POWER... LOW. GOOD... NIGHT.',
   fact:F('science','Igneous rock forms when lava or magma cools. Sedimentary rock forms from layers of sand and mud pressed together over a very long time.'),
   half:'GROUND... SHAKING... ROCKS... FALLING.',phaseShift:{at:.5,line:'GROUND... SHAKING... ROCKS... FALLING.',speed:1.2,cd:.75,tint:'#ffcf7a',title:'THE GROUND SHAKES'},
   /* a second life: the golem breaks apart, then its heart melts it back together as a colossus of lava and basalt */
@@ -192,7 +192,7 @@ export const ENEMY_TYPES={
  /* The Thorn King keeps data.js BOSS (roster.js gives him the cinematic, whose second life is his phase change); his body is
     a PixelLab king in thorn-black plate with a thorned greatsword (8 Oct). The procedural king only shows while the atlas loads. */
  'thorn-king':{...BOSS,name:'The Thorn King',sprite:'thornking',ai:'boss',scale:1,band:12,kbResist:.9,hp:460,atk:23,def:15,speed:34,
-  phaseLine:'You only cut my branches. My roots run deep!',intro:'The whole forest bends to my crown of thorns!',defeat:'The thorns wither... let the forest grow free.',
+  phaseLine:'You only cut my branches. My roots run deep!',taunts:['Every root and branch obeys me.','Kneel, little hero, like the trees!'],intro:'The whole forest bends to my crown of thorns!',defeat:'The thorns wither... let the forest grow free.',
   fact:F('science','Roses do not really have thorns. Botanists call their sharp points prickles, because they grow from the stem\'s skin, not its wood.'),
   attacks:[
   {name:'thorn blade',state:'attack',kind:'melee',range:52,band:12,cd:2.2,windup:.65,dmg:1.2},
@@ -200,9 +200,9 @@ export const ENEMY_TYPES={
   {name:'thorn line',state:'special',kind:'line',fx:'fx-earth-spike',count:6,gap:26,radius:13,range:220,cd:4.2,windup:.7,dmg:1.1},
   {name:'bramble field',state:'cast',kind:'aoe',at:'player',fx:'fx-earth-spike',radius:14,count:4,spread:40,range:260,cd:4.6,windup:.7,dmg:1.1,phase:2},
   {name:'thornlings rise',state:'cast',kind:'summon',key:'thornling',count:2,max:3,range:400,cd:11,windup:.8,fx:'fx-portal',phase:2}]},
- 'bramblejaw':{name:'Bramblejaw',sprite:'bramblejaw',mini:true,boss:true,hp:230,atk:9,def:3,speed:40,scale:1,ai:'boss',band:10,kbResist:.5,intro:'Nobody gets past my gate! Not even a tiny hero!',defeat:'Ow ow ow! Fine, the gate is yours!',fact:F('science','Brambles like blackberry bushes use their hooked thorns to climb over other plants toward the sunlight.'),half:'Now you made me grumpy!',phaseShift:{at:.5,line:'Now you made me grumpy!',speed:1.15,cd:.85,tint:'#ff6a4a',title:'BRAMBLEJAW GETS GRUMPY'},attacks:[{name:'club smash',state:'attack',kind:'melee',range:70,band:12,cd:2.2,windup:.8,dmg:1.1},{name:'club sweep',state:'attack2',kind:'melee',range:74,band:14,cd:2.8,windup:.85,dmg:1}]},
+ 'bramblejaw':{name:'Bramblejaw',sprite:'bramblejaw',mini:true,boss:true,hp:230,atk:9,def:3,speed:40,scale:1,ai:'boss',band:10,kbResist:.5,taunts:['Turn back! This is MY gate!','I bite harder than I bark!'],intro:'Nobody gets past my gate! Not even a tiny hero!',defeat:'Ow ow ow! Fine, the gate is yours!',fact:F('science','Brambles like blackberry bushes use their hooked thorns to climb over other plants toward the sunlight.'),half:'Now you made me grumpy!',phaseShift:{at:.5,line:'Now you made me grumpy!',speed:1.15,cd:.85,tint:'#ff6a4a',title:'BRAMBLEJAW GETS GRUMPY'},attacks:[{name:'club smash',state:'attack',kind:'melee',range:70,band:12,cd:2.2,windup:.8,dmg:1.1},{name:'club sweep',state:'attack2',kind:'melee',range:74,band:14,cd:2.8,windup:.85,dmg:1}]},
   'bandit-chief':{name:'Red Hand',sprite:'redhand',boss:true,hp:380,atk:15,def:6,speed:52,scale:1,ai:'boss',band:10,kbResist:.6,
-  intro:'Your gold or your... no, just your gold!',defeat:'Fine, fine! Keep your coins. I\'m going straight!',
+  taunts:['Nice boots. Are they my size?','Let\'s see what\'s in your pockets!'],intro:'Your gold or your... no, just your gold!',defeat:'Fine, fine! Keep your coins. I\'m going straight!',
   fact:F('history','Stories about Robin Hood, an outlaw who robbed the rich, were already being told in England more than 600 years ago.'),
   half:'Okay, okay, no more Mister Nice Bandit!',phaseShift:{at:.5,line:'Okay, okay, no more Mister Nice Bandit!',speed:1.25,cd:.7,tint:'#ff6a4a',title:'RED HAND GETS SERIOUS'},attacks:[
   {name:'quick cut',state:'attack',kind:'melee',range:60,band:10,cd:1.8,windup:.65,dmg:1.1},
@@ -210,7 +210,7 @@ export const ENEMY_TYPES={
   {name:'blade rush',state:'run',kind:'dash',range:260,cd:4.6,windup:.7,dmg:1.2,speed:260,band:12},
   {name:'call the gang',state:'shout',kind:'summon',key:'bandit-thug',count:1,max:2,range:400,cd:10,windup:.7,fx:'fx-portal',phase:2}]},
  'mushroom-lord':{name:'The Mushroom Lord',sprite:'mushlord',boss:true,hp:480,atk:17,def:8,speed:30,scale:1,ai:'boss',band:12,kbResist:.85,weakness:'fire',
-  intro:'Shhh. The mire was sleeping. You woke it.',defeat:'Poof... I\'ll grow back after the next rain.',
+  taunts:['Breathe in, little hero. Go on.','My spores will put you to sleep.'],intro:'Shhh. The mire was sleeping. You woke it.',defeat:'Poof... I\'ll grow back after the next rain.',
   fact:F('science','The largest living thing on Earth may be a honey fungus in Oregon that spreads underground across nearly 10 square kilometres.'),
   half:'Spores everywhere! Hold your breath!',phaseShift:{at:.5,line:'Spores everywhere! Hold your breath!',speed:1.2,cd:.7,tint:'#b98aff',title:'THE MIRE BLOOMS'},attacks:[
   {name:'cap slam',state:'attack',kind:'melee',range:42,band:12,cd:2.4,windup:.65,dmg:1.25},
@@ -220,7 +220,7 @@ export const ENEMY_TYPES={
 
  /* ---------- Emberkeep (lava) ---------- */
  'dungeon-master':{name:'The Dungeon Master',sprite:'pl-dungeon-master',boss:true,hp:800,atk:28,def:14,speed:40,scale:1,ai:'boss',band:12,kbResist:.85,keep:72,
-  intro:'Welcome to my dungeon. Coming in is free. Leaving is not!',defeat:'My keys! Take them... the gate is open.',
+  taunts:['I built every trap in this place.','And I saved the best one for you!'],intro:'Welcome to my dungeon. Coming in is free. Leaving is not!',defeat:'My keys! Take them... the gate is open.',
   fact:F('history','The word dungeon comes from "donjon", the strong main tower of a castle, not just the prison underneath it.'),
   half:'You want the keys? Come and take them!',phaseShift:{at:.5,line:'You want the keys? Come and take them!',speed:1.2,cd:.7,tint:'#ff8a4a',title:'THE MASTER UNBOUND'},attacks:[
   {name:'flame lash',state:'attack',kind:'melee',range:100,band:12,cd:2.4,windup:.6,dmg:1.2},
@@ -229,7 +229,7 @@ export const ENEMY_TYPES={
   {name:'firefall',state:'special',kind:'aoe',at:'player',fx:'fx-fire-burst',radius:18,count:3,spread:40,range:280,cd:4.5,windup:.7,dmg:1,phase:2},
   {name:'summon guard',state:'cast',kind:'summon',key:'skeleton-warrior',count:1,max:2,range:400,cd:10,windup:.8,fx:'fx-portal',phase:2}]},
  'forge-golem':{name:'The Forge Golem',sprite:'pl-forge-golem',boss:true,hp:860,atk:29,def:17,speed:26,scale:1,ai:'boss',band:14,kbResist:1,weakness:'ice',
-  intro:'CLANG! Freshly forged, and still red hot!',defeat:'Cooling... cooling... clunk.',
+  taunts:['CLANG! Hammer ready. Anvil ready.','Hero... ready to be flattened!'],intro:'CLANG! Freshly forged, and still red hot!',defeat:'Cooling... cooling... clunk.',
   fact:F('science','Blacksmiths judge how hot iron is by its glow, from dull red, to orange, to bright yellow, the hottest.'),
   phaseShift:{at:.5,speed:1.2,cd:.7,tint:'#ff8a2a',title:'THE FORGE ROARS'},attacks:[
   {name:'anvil fist',state:'attack',kind:'melee',range:40,band:12,cd:2.4,windup:.65,dmg:1.3},
@@ -237,7 +237,7 @@ export const ENEMY_TYPES={
   {name:'forge eruption',state:'cast',kind:'aoe',at:'player',fx:'fx-fire-burst',radius:16,count:3,spread:36,range:280,cd:4,windup:.75,dmg:1.15},
   {name:'core laser',state:'special',kind:'beam',fx:'fx-golem-laser',len:260,band:10,range:260,cd:5,windup:1,dmg:1.6,phase:2}]},
  'fire-wyrm':{name:'Scorchtail the Wyrm',sprite:'pl-scorchtail',boss:true,hp:900,atk:30,def:14,speed:30,scale:1,ai:'boss',band:12,kbResist:1,weakness:'ice',
-  intro:'Hssss! These bridges are MY bridges!',defeat:'Hsss... I\'ll slither back under the lava.',
+  taunts:['Hssss! Nobody crosses for free.','And I only take payment in heroes!'],intro:'Hssss! These bridges are MY bridges!',defeat:'Hsss... I\'ll slither back under the lava.',
   fact:F('language','"Wyrm" is the Old English word for a serpent or dragon, and it is where our word "worm" comes from.'),
   /* moveset (TRICKY_LEVELS section 4, m3): a dragon over lava bridges. Tail Whip punishes standing behind him, the breath
      sweeps the bridge from far to near, he sinks into the lava and bursts up under a marked spot, and his wings blow the hero
@@ -250,7 +250,7 @@ export const ENEMY_TYPES={
   {name:'wing gust',state:'attack2',kind:'aoe',at:'front',range:58,radius:40,impact:'fx-dust',push:70,cd:5,windup:.65,dmg:.7,label:'WING GUST'},
   {name:'flame road',state:'cast',kind:'line',fx:'fx-col-fire',count:8,gap:24,radius:13,range:240,cd:4.6,windup:.7,dmg:1.1,phase:2,weight:2,label:'FLAME ROAD'}]},
  'flame-knight':{name:'Sir Cinder',sprite:'pl-sir-cinder',boss:true,hp:850,atk:30,def:14,speed:44,scale:1,ai:'boss',band:10,kbResist:.7,weakness:'ice',
-  intro:'En garde! The Flame Knight never retreats!',defeat:'A fair fight. My flame salutes you.',
+  taunts:['Draw your weapon, challenger.','Let\'s see if your courage burns hot!'],intro:'En garde! The Flame Knight never retreats!',defeat:'A fair fight. My flame salutes you.',
   fact:F('history','A full suit of plate armour weighed about 15 to 25 kilograms, spread over the whole body, so knights could still run and climb.'),
   /* moveset (m4): a duelling knight in a training yard. En Garde holds a guard that answers a frontal hit with a lunge; a
      perfect roll through that lunge staggers him. Flame Wall runs along the floor (jump it); Drill Call marches two shield
@@ -265,7 +265,7 @@ export const ENEMY_TYPES={
   {name:'drill call',state:'cast',kind:'summon',key:'skeleton-warrior',spots:'edge',count:2,max:2,range:400,cd:20,windup:.7,fx:'fx-dust',sound:'tell.summon',uses:2,label:'DRILL CALL!',bossOnly:true},
   {name:'ember rush',state:'walk',kind:'dash',range:260,cd:4.5,windup:.7,dmg:1.2,speed:260,band:12,phase:2,stagger:1.2,trail:{fx:'fx-fire-burst',delay:.7,radius:14,dmg:.6},label:'EMBER RUSH'}]},
  'imp-lord':{name:'Vexx, Lord of Imps',sprite:'pl-imp-lord',boss:true,hp:920,atk:31,def:14,speed:30,scale:1,ai:'boss',band:14,kbResist:1,fly:4,weakness:'ice',
-  intro:'Vexx is the biggest imp of all! Get them, everyone!',defeat:'Ouch! Imps, run away!',
+  taunts:['So small! So serious! Ha!','Imps, show this hero how we play!'],intro:'Vexx is the biggest imp of all! Get them, everyone!',defeat:'Ouch! Imps, run away!',
   fact:F('science','Chains are strong because each link spreads the pull around a loop, which is why bridges and anchors use them.',true),
   phaseShift:{at:.5,speed:1.2,cd:.7,tint:'#ff5a3a',title:'VEXX THROWS A TANTRUM'},attacks:[
   {name:'chain lash',state:'attack',kind:'melee',range:62,band:14,cd:2.6,windup:.7,dmg:1.25},
@@ -273,7 +273,7 @@ export const ENEMY_TYPES={
   {name:'imp swarm',state:'cast',kind:'summon',key:'imp',count:2,max:4,range:400,cd:7,windup:.7,fx:'fx-portal'},
   {name:'fire rain',state:'cast',kind:'aoe',at:'player',fx:'fx-fire-burst',radius:18,count:4,spread:44,range:300,cd:4.4,windup:.75,dmg:1.05,phase:2}]},
  'obsidian-sentinel':{name:'The Obsidian Sentinel',sprite:'pl-obsidian',boss:true,hp:940,atk:31,def:20,speed:30,scale:1,ai:'boss',band:12,kbResist:1,weakness:'storm',
-  intro:'None shall pass the black glass halls.',defeat:'My glass is cracked. You may pass.',
+  taunts:['I have guarded these halls for ages.','You will not be the one to pass.'],intro:'None shall pass the black glass halls.',defeat:'My glass is cracked. You may pass.',
   fact:F('science','Obsidian is volcanic glass. It forms when lava cools so fast that its atoms have no time to line up into crystals.'),
   /* moveset (m6): a glass knight. Void Wave is a slash that travels down the hall (jump it); Mirror Guard holds the sword up:
      hits from the front are parried and shots bounce back, so strike from behind or wait for the opening; glass spikes and,
@@ -285,7 +285,7 @@ export const ENEMY_TYPES={
   {name:'mirror guard',state:'special',kind:'stance',reflect:true,hold:1.3,range:200,riposte:'glass blade',cd:8,windup:.6,recover:.9,label:'MIRROR GUARD',bossOnly:true,legendary:{then:'void wave'}},
   {name:'shatter field',state:'attack',kind:'aoe',at:'player',fx:'fx-glass-spike',radius:14,count:4,spread:42,range:260,cd:4.8,windup:.75,dmg:1.1,phase:2,label:'SHATTER FIELD',heroic:{count:6,spread:38}}]},
  'demon-slime':{name:'Moltar, the Forge Ogre',sprite:'pl-demon-slime',boss:true,hp:980,atk:32,def:16,speed:30,scale:1,ai:'boss',band:14,kbResist:1,weakness:'ice',
-  intro:'I am the heart of the volcano! Feel the heat!',defeat:'I cool... and crack... and crumble.',
+  taunts:['Every forge fire here is mine!','Come closer. I need more fuel.'],intro:'I am the heart of the volcano! Feel the heat!',defeat:'I cool... and crack... and crumble.',
   fact:F('geography','Basalt lava can be about 1,200 degrees Celsius, more than hot enough to melt aluminium.'),
   half:'The volcano answers me!',phaseShift:{at:.5,line:'The volcano answers me!',speed:1.25,cd:.7,dmg:1.1,tint:'#ff7a1a',title:'THE FORGE ERUPTS'},attacks:[
   {name:'cleaver',state:'attack',kind:'melee',range:100,band:14,cd:2.8,windup:.7,dmg:1.3,impact:'fx-dust'},
@@ -293,7 +293,7 @@ export const ENEMY_TYPES={
   {name:'hellfire',state:'cast',kind:'projectile',fx:'fx-fireball',range:280,cd:3.2,windup:.65,dmg:1,speed:120,count:2,spread:18},
   {name:'meteor rain',state:'special',kind:'aoe',at:'player',fx:'fx-flame-pillar',radius:18,count:6,spread:70,range:300,cd:5,windup:.85,dmg:1,phase:2}]},
  'cinder-wraith':{name:'The Cinder Wraith',sprite:'pl-cinder-wraith',boss:true,hp:900,atk:30,def:14,speed:34,scale:1,ai:'boss',band:12,kbResist:.9,weakness:'ice',
-  intro:'Nothing grows here. Nothing but ash... and me.',defeat:'Blown away... like smoke in the wind.',
+  taunts:['Can you feel the warmth fading?','Soon you\'ll be ash like the rest.'],intro:'Nothing grows here. Nothing but ash... and me.',defeat:'Blown away... like smoke in the wind.',
   fact:F('geography','Volcanic ash is not soft like ash from a campfire. It is made of tiny, sharp pieces of rock and glass.'),
   /* moveset (mx1): a fire spirit of the ash wastes. Ash Storm darkens the dunes (the hero, two ember braziers and every
      warning stay lit; his ember eyes show where he is); Pillar Form turns him into a slow chasing column of fire, then he
@@ -306,7 +306,7 @@ export const ENEMY_TYPES={
   {name:'ash ghouls rise',state:'cast',kind:'summon',key:'ash-ghoul',count:2,max:2,range:400,cd:13,windup:.7,fx:'fx-dust',phase:2,label:'ASH GHOULS RISE'}]},
  /* ---------- Veilmoor (mystic) ---------- */
  'drowned-priest':{name:'The Drowned Priest',sprite:'pl-drowned-priest',boss:true,hp:1000,atk:33,def:15,speed:32,scale:1,ai:'boss',band:12,kbResist:.85,keep:55,weakness:'storm',
-  intro:'The tide rises for my shrine. You will sink!',defeat:'The water... goes still.',
+  taunts:['The water rises with every prayer.','Can you hold your breath, hero?'],intro:'The tide rises for my shrine. You will sink!',defeat:'The water... goes still.',
   fact:F('geography','The deepest point in the ocean, the Challenger Deep, is nearly 11 kilometres below the surface.'),
   /* moveset (v1): a priestess of the drowned shrine. Tide Ring sends a ring of water out along the floor (jump it); a geyser
      line; from half health High Tide floods the near half of the shrine (slow), and while it is flooded her Undertow pulls
@@ -320,7 +320,7 @@ export const ENEMY_TYPES={
   {name:'undertow',state:'cast',kind:'undertow',dur:1.8,pull:34,range:260,cd:8,windup:.7,then:'coral sweep',label:'UNDERTOW',bossOnly:true},
   {name:'call the wisps',state:'cast',kind:'summon',key:'wisp',count:2,max:3,range:400,cd:10,windup:.7,fx:'fx-geyser',label:'CALL THE WISPS'}]},
  'wisp-mother':{name:'The Wisp Mother',sprite:'pl-wisp-mother',boss:true,hp:1020,atk:33,def:15,speed:36,scale:1,ai:'boss',band:10,kbResist:.85,weakness:'holy',
-  intro:'My little lights led you here. How sweet.',defeat:'Fly free, my little lights...',
+  taunts:['Follow the lights, little one.','They only lead one way: to me.'],intro:'My little lights led you here. How sweet.',defeat:'Fly free, my little lights...',
   fact:F('science','Fireflies make "cold light": their glow gives off almost no heat at all.'),
   /* moveset (v2): the fen's lying lights. Lantern Brood sets three lantern wisps circling her, each one shielding a part of
      every hit until it is popped; Mist Veil fades her out and back beside a lantern; Will-o'-Lure sends a light drifting out
@@ -334,7 +334,7 @@ export const ENEMY_TYPES={
   {name:'will-o\'-lure',state:'cast',kind:'lure',drift:1.2,fuse:1,radius:20,fx:'fx-marsh-gas',lightFx:'fx-spark-holy',range:300,cd:5.5,windup:.6,dmg:1.15,label:'WILL-O\'-LURE',legendary:{count:2,spread:56}},
   {name:'grasping lights',state:'special',kind:'aoe',at:'player',fx:'fx-pale-light',radius:16,count:3,spread:36,range:300,cd:4.6,windup:.65,dmg:1.15,phase:2,label:'GRASPING LIGHTS'}]},
  'shadow-twin':{name:'Your Shadow',sprite:'pl-shadow-twin',boss:true,hp:1000,atk:34,def:15,speed:56,scale:1,ai:'boss',band:10,kbResist:.6,weakness:'holy',
-  intro:'Every move you make, I make too.',defeat:'You beat... yourself?',
+  taunts:['I know every trick you know.','So how will you surprise yourself?'],intro:'Every move you make, I make too.',defeat:'You beat... yourself?',
   fact:F('science','Your shadow is longest early in the morning and late in the evening, when the Sun is low in the sky.'),
   /* moveset (v3): the hero's dark mirror. Echo repeats the shape of the hero's last ability (the same one twice in a row makes
      it stronger: mix up your powers); Shadow Step dashes through the hero and its afterimages burst a moment later; from half
@@ -347,7 +347,7 @@ export const ENEMY_TYPES={
   {name:'shadow flame',state:'special',kind:'melee',range:64,band:14,impact:'fx-aura-shadow',cd:4.5,windup:.7,dmg:1.3,label:'SHADOW FLAME'},
   {name:'mirror split',state:'attack2',kind:'split',count:1,hp:.05,fx:'fx-aura-shadow',range:400,cd:18,windup:.8,phase:2,label:'MIRROR SPLIT',banner:'ONLY THE REAL ONE HAS A SHADOW!',bossOnly:true,legendary:{count:2,max:2}}]},
  'crystal-golem':{name:'The Crystal Golem',sprite:'pl-crystal-golem',boss:true,hp:1000,atk:33,def:21,speed:26,scale:1,ai:'boss',band:14,kbResist:1,weakness:'storm',
-  intro:'A fallen star made me. I will shine forever!',defeat:'Shattered... into a thousand sparkles.',
+  taunts:['I fell from the sky. You\'ll fall too.','Let my starlight blind you!'],intro:'A fallen star made me. I will shine forever!',defeat:'Shattered... into a thousand sparkles.',
   fact:F('science','Quartz is one of the most common minerals in Earth\'s crust. Most of the sand on beaches is made of tiny bits of it.'),
   /* moveset (v4): a golem of fallen-star crystal in the starfall ruins. Crystal Ram charges down the floor and gets stuck if it
      hits the arena wall (bait it); Starfall drops stars on marked spots; Prism Pylons rise at the arena's sides and shield him
@@ -362,7 +362,7 @@ export const ENEMY_TYPES={
   {name:'prism pylons',state:'special',kind:'summon',key:'prism-pylon',spots:'sides',count:2,max:2,link:true,linkColor:'#e2c4ff',range:400,cd:20,windup:.8,fx:'fx-aura-arcane',uses:1,label:'PRISM PYLONS',banner:'BREAK THE PYLONS!',bossOnly:true,heroic:{uses:2},legendary:{uses:1}},
   {name:'shard burst',state:'cast',kind:'aoe',at:'self',radius:54,impact:'fx-aura-ice',cd:6,windup:.7,dmg:1.1,forced:true,onMash:{hits:6,window:2.2},label:'SHARD BURST'}]},
  lich:{name:'The Choir Lich',sprite:'pl-choir-lich',boss:true,hp:1080,atk:34,def:15,speed:30,scale:1,ai:'boss',band:12,kbResist:.85,keep:60,weakness:'fire',
-  intro:'My choir needs one more voice. Yours!',defeat:'The song... is over.',
+  taunts:['Sing with us, hero. Everyone does.','Your voice will suit my choir.'],intro:'My choir needs one more voice. Yours!',defeat:'The song... is over.',
   fact:F('science','Sound is a vibration. A choir makes the air vibrate, and that makes your eardrums vibrate too, which is how you hear.'),
   phaseShift:{at:.5,speed:1.2,cd:.7,tint:'#8ff0ff',title:'THE CHOIR CRESCENDO'},attacks:[
   {name:'staff strike',state:'attack',kind:'melee',range:80,band:12,cd:2.6,windup:.6,dmg:1.15},
@@ -371,7 +371,7 @@ export const ENEMY_TYPES={
   {name:'ice spikes',state:'cast',kind:'line',fx:'fx-ice-spike',count:6,gap:24,radius:12,range:200,cd:4.2,windup:.65,dmg:1.1},
   {name:'raise the choir',state:'cast',kind:'summon',key:'skeleton-mage',count:1,max:2,range:400,cd:11,windup:.8,fx:'fx-portal',phase:2}]},
  'void-knight':{name:'The Void Knight',sprite:'pl-void-knight',boss:true,hp:1000,atk:35,def:17,speed:34,scale:1,ai:'boss',band:12,kbResist:.95,weakness:'holy',
-  intro:'Beyond this gate is the deep. I am its keeper.',defeat:'The gate... is yours to open.',
+  taunts:['The deep is calling for you.','I will make sure you answer.'],intro:'Beyond this gate is the deep. I am its keeper.',defeat:'The gate... is yours to open.',
   fact:F('science','Space is almost empty, with no air to carry sound, so space is completely silent.'),
   /* moveset (v6): the gate's keeper. Rift Step goes into one portal and out of another behind the hero (Heroic: a second,
      dimmer exit; the brighter one is real); Star Cape drops stars in a cross (the gaps are safe); Gate Guard holds his sword
@@ -387,7 +387,7 @@ export const ENEMY_TYPES={
   {name:'crystal blade',state:'special',kind:'line',fx:'fx-col-arcane',count:8,gap:22,radius:12,range:240,cd:4.6,windup:.75,dmg:1.2,phase:2,label:'CRYSTAL BLADE'},
   {name:'call the shades',state:'cast',kind:'summon',key:'shade',count:1,max:2,range:400,cd:10,windup:.7,fx:'fx-portal',phase:2}]},
  'moth-queen':{name:'The Moth Queen',sprite:'pl-moth-queen',boss:true,hp:1000,atk:33,def:14,speed:46,scale:1,ai:'boss',band:12,kbResist:.8,fly:24,weakness:'fire',
-  intro:'Come into the moonlight, little hero...',defeat:'The moon... is setting...',
+  taunts:['Your light is so very bright.','My moths and I want it for ourselves.'],intro:'Come into the moonlight, little hero...',defeat:'The moon... is setting...',
   fact:F('science','Adult luna moths have no mouths. They live for only about a week and never eat at all.'),
   phaseShift:{at:.5,speed:1.25,cd:.7,tint:'#e6b8ff',title:'THE QUEEN TAKES WING'},attacks:[
   {name:'wing swoop',state:'attack',kind:'melee',range:48,band:12,cd:2.2,windup:.6,dmg:1.2},
@@ -395,7 +395,7 @@ export const ENEMY_TYPES={
   {name:'night wind',state:'special',kind:'aoe',at:'player',fx:'fx-tornado',radius:16,count:2,spread:44,range:300,cd:4.4,windup:.7,dmg:1.15},
   {name:'little lights',state:'cast',kind:'summon',key:'wisp',count:2,max:3,range:400,cd:9,windup:.7,fx:'fx-portal',phase:2}]},
  cthulhu:{name:'The Sleeper in the Deep',sprite:'pl-sleeper',boss:true,hp:1200,atk:36,def:18,speed:30,scale:1,ai:'boss',band:14,kbResist:1,weakness:'holy',
-  intro:'You woke me from a thousand-year dream.',defeat:'Back... to sleep... in the deep...',
+  taunts:['So small. So brave. So far from home.','Look into the deep. It looks back.'],intro:'You woke me from a thousand-year dream.',defeat:'Back... to sleep... in the deep...',
   fact:F('science','The colossal squid has the biggest eyes of any known animal, each about the size of a football.'),
   /* moveset (v7, the final exam): Tentacle Grab bursts from a marked spot, drags the hero toward him and holds (roll out);
      Ink Darkness puts out the light but the hero's and two lanterns'; Abyss Wave sweeps a beam across the floor; from half
@@ -421,7 +421,7 @@ export const ENEMY_TYPES={
     the stats and move pattern of the boss it replaces (balance unchanged) with art, names and moves of its own chapter. Drawn by
     PixelLab (art/enemies/<key>/pixellab.json); fought as elites and Run Draft mini-bosses, never as a level's boss. ---------- */
  'magma-brute':{name:'The Magma Brute',sprite:'magma-brute',boss:true,hp:440,atk:22,def:16,speed:24,scale:1,eliteDraw:0.78,ai:'boss',band:14,kbResist:1,weakness:'storm',drop:'obsidian-chip',
-  intro:'The mountain made me. Now it sends me.',defeat:'Cooling... cracking... going dark.',
+  taunts:['Step closer. The lava is warm.','I\'ll knock you right into it!'],intro:'The mountain made me. Now it sends me.',defeat:'Cooling... cracking... going dark.',
   fact:F('science','Obsidian is natural volcanic glass. It forms when lava cools so fast that its crystals have no time to grow.'),
   half:'The lava in me boils over!',phaseShift:{at:.5,line:'The lava in me boils over!',speed:1.2,cd:.75,tint:'#ff8a3a',title:'THE BRUTE BOILS OVER'},attacks:[
   {name:'hammer slam',state:'attack',kind:'aoe',at:'front',radius:34,range:60,cd:2.6,windup:.7,dmg:1.25,impact:'fx-dust',recover:.7},
@@ -429,7 +429,7 @@ export const ENEMY_TYPES={
   {name:'obsidian skin',state:'attack2',kind:'buff',def:2,time:4,range:400,cd:12,windup:.6},
   {name:'lava rain',state:'attack',kind:'aoe',at:'player',fx:'fx-molten-spear',radius:14,count:3,spread:36,range:260,cd:4.6,windup:.75,dmg:1.1,phase:2}]},
  'imp-warchief':{name:'The Imp Warchief',sprite:'imp-warchief',boss:true,hp:440,atk:17,def:9,speed:36,scale:1,eliteDraw:0.78,ai:'boss',band:12,kbResist:.85,drop:'imp-horn',
-  intro:'Vexx sent me to teach you some manners!',defeat:'Tell Vexx... I want a day off.',
+  taunts:['Lesson one: imps hit first!','Lesson two: imps hit again!'],intro:'Vexx sent me to teach you some manners!',defeat:'Tell Vexx... I want a day off.',
   fact:F('language','In Old English an "impa" was a young plant shoot. Centuries later "imp" came to mean a small, naughty demon.'),
   half:'Imps, watch your chief CHARGE!',phaseShift:{at:.5,line:'Imps, watch your chief CHARGE!',speed:1.3,cd:.7,tint:'#ff5530',title:'THE WARCHIEF CHARGES'},attacks:[
   {name:'fork thrust',state:'attack',kind:'melee',range:68,band:12,cd:2.4,windup:.65,dmg:1.25},
@@ -437,7 +437,7 @@ export const ENEMY_TYPES={
   {name:'fork quake',state:'attack2',kind:'aoe',at:'front',radius:40,range:90,cd:4.2,windup:.7,dmg:1.15,impact:'fx-dust'},
   {name:'war charge',state:'walk',kind:'dash',range:300,cd:3.6,windup:.7,dmg:1.3,speed:280,band:14,phase:2}]},
  'veil-seer':{name:'The Veil Seer',sprite:'veil-seer',boss:true,hp:520,atk:19,def:9,speed:30,scale:1,eliteDraw:0.81,ai:'boss',band:12,kbResist:.8,keep:60,
-  intro:'My lantern saw you coming, little moth.',defeat:'The light... goes out...',
+  taunts:['My lantern shows your next step.','And I\'ll be waiting there.'],intro:'My lantern saw you coming, little moth.',defeat:'The light... goes out...',
   fact:F('science','A 2024 study suggests moths circle lamps because they try to keep their backs toward the brightest light, which is usually the sky.'),
   half:'Faithful, come to the light!',phaseShift:{at:.5,line:'Faithful, come to the light!',speed:1.15,cd:.7,tint:'#c9a8ff',title:'THE LANTERN FLARES'},attacks:[
   {name:'lantern sweep',state:'attack',kind:'melee',range:56,band:12,cd:2.6,windup:.65,dmg:1.1},
@@ -445,7 +445,7 @@ export const ENEMY_TYPES={
   {name:'crystal path',state:'attack2',kind:'line',fx:'fx-crystal-spike',count:6,gap:24,radius:12,range:200,cd:4.5,windup:.7,dmg:1.1},
   {name:'call the faithful',state:'attack2',kind:'summon',key:'cultist',count:1,max:2,range:400,cd:11,windup:.8,fx:'fx-portal',phase:2}]},
  'prism-sentinel':{name:'The Prism Sentinel',sprite:'prism-sentinel',boss:true,hp:440,atk:22,def:16,speed:24,scale:1,eliteDraw:0.76,ai:'boss',band:14,kbResist:1,weakness:'storm',
-  intro:'The star fell. I stayed. You go.',defeat:'Shattered... into... light.',
+  taunts:['Stop. Turn. Leave. Last warning.','Then shatter on my crystals.'],intro:'The star fell. I stayed. You go.',defeat:'Shattered... into... light.',
   fact:F('science','A prism splits white light into a rainbow, because each colour bends by a slightly different amount as it passes through.'),
   half:'My crystals sing! Hear them break!',phaseShift:{at:.5,line:'My crystals sing! Hear them break!',speed:1.2,cd:.75,tint:'#d9b8ff',title:'THE PRISM SINGS'},attacks:[
   {name:'crystal slam',state:'attack',kind:'aoe',at:'front',radius:34,range:60,cd:2.6,windup:.7,dmg:1.25,impact:'fx-dust',recover:.7},
@@ -453,7 +453,7 @@ export const ENEMY_TYPES={
   {name:'prism skin',state:'attack2',kind:'buff',def:2,time:4,range:400,cd:12,windup:.6},
   {name:'falling shards',state:'attack',kind:'aoe',at:'player',fx:'fx-glass-spike',radius:14,count:3,spread:36,range:260,cd:4.6,windup:.75,dmg:1.1,phase:2}]},
  'abyss-herald':{name:'The Abyss Herald',sprite:'abyss-herald',boss:true,hp:400,atk:18,def:10,speed:32,scale:1,eliteDraw:0.85,ai:'boss',band:12,kbResist:.9,weakness:'holy',
-  intro:'The Sleeper dreams of you. I came to wake you.',defeat:'Back... to the deep... with me.',
+  taunts:['The deep has waited long for you.','Come down. The water is so dark.'],intro:'The Sleeper dreams of you. I came to wake you.',defeat:'Back... to the deep... with me.',
   fact:F('geography','The deepest known place in the ocean, the Challenger Deep in the Mariana Trench, is nearly 11 kilometres down.'),
   half:'The tide is turning, little one!',phaseShift:{at:.5,line:'The tide is turning, little one!',speed:1.2,cd:.7,tint:'#7dffd8',title:'THE DEEP RISES'},attacks:[
   {name:'abyss claw',state:'attack',kind:'melee',range:30,band:10,cd:2.2,windup:.65,dmg:1.2},
@@ -465,7 +465,7 @@ export const ENEMY_TYPES={
     elites. These two keep those bosses' numbers and move pattern exactly (balance unchanged); only the look, names and effects
     are the Veilmoor's. */
  'veil-jailer':{name:'The Veil Jailer',sprite:'veil-jailer',boss:true,hp:800,atk:28,def:14,speed:40,scale:1,eliteDraw:0.77,ai:'boss',band:12,kbResist:.85,keep:72,
-  intro:'Nobody passes the Veil Gate. I hold every key.',defeat:'My keys... they slip... away...',
+  taunts:['I have a cell with your name on it.','Hold still while I lock it!'],intro:'Nobody passes the Veil Gate. I hold every key.',defeat:'My keys... they slip... away...',
   fact:F('language','The word "jail" comes from an old French word for a cage, which grew out of the Latin "cavea", a cage or enclosure.'),
   half:'Prisoners! Out of your cells!',phaseShift:{at:.5,line:'Prisoners! Out of your cells!',speed:1.2,cd:.7,tint:'#8fd8ff',title:'THE GATE OPENS'},attacks:[
   {name:'chain lash',state:'attack',kind:'melee',range:100,band:12,cd:2.4,windup:.6,dmg:1.2},
@@ -474,7 +474,7 @@ export const ENEMY_TYPES={
   {name:'falling stars',state:'special',kind:'aoe',at:'player',fx:'fx-crystal-spike',radius:18,count:3,spread:40,range:280,cd:4.5,windup:.7,dmg:1,phase:2},
   {name:'free the prisoners',state:'cast',kind:'summon',key:'skeleton-warrior',count:1,max:2,range:400,cd:10,windup:.8,fx:'fx-portal',phase:2}]},
  'trench-hulk':{name:'The Trench Hulk',sprite:'trench-hulk',boss:true,hp:980,atk:32,def:16,speed:30,scale:1,eliteDraw:0.78,ai:'boss',band:14,kbResist:1,weakness:'ice',
-  intro:'Up from the deep, and hungry. You will do.',defeat:'Back down... to the dark water...',
+  taunts:['I climbed a long way for lunch.','Stop squirming, little snack!'],intro:'Up from the deep, and hungry. You will do.',defeat:'Back down... to the dark water...',
   fact:F('science','Many deep-sea anglerfish carry a glowing lure on their heads. In many of them the light is made by bacteria living inside the lure.'),
   half:'The deep comes with me!',phaseShift:{at:.5,line:'The deep comes with me!',speed:1.25,cd:.7,dmg:1.1,tint:'#5fe0d0',title:'THE TRENCH RISES'},attacks:[
   {name:'anchor smash',state:'attack',kind:'melee',range:100,band:14,cd:2.8,windup:.7,dmg:1.3,impact:'fx-dust'},

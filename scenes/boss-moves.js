@@ -195,7 +195,7 @@ export function stanceBlock(w,e,a,src){const st=e.stance;if(!st||e.hp<=0)return 
 /* A roll that starts within 0.2 s before a hit would land is PERFECT: the boss is Exposed for 2 s, the world slows for a
    moment (off when motion is reduced), and a boss mid-lunge (stagger:true) staggers. */
 export function perfectDodge(e,w,a){const p=w.player;if(!p||!(p.dodge>0)||!e.boss&&!e.elite)return false;const since=.32-p.dodge;if(since>.2)return false;
- if(w.perfectAt&&w.time-w.perfectAt<.6)return true;w.perfectAt=w.time;e.exposed=Math.max(e.exposed||0,2);w.text?.('PERFECT!',p.x,p.y-44,'#fff2a8',true);sfx('perfect');if(w.motion!==false)w.slowmo=Math.max(w.slowmo||0,.12);
+ if(w.perfectAt&&w.time-w.perfectAt<.6)return true;w.perfectAt=w.time;e.exposed=Math.max(e.exposed||0,2);e.exposedBy='perfect';if(e.pilotArmour)w.text?.('OPENING!',e.x,e.y-34,'#ffe49a');w.text?.('PERFECT!',p.x,p.y-44,'#fff2a8',true);sfx('perfect');if(w.motion!==false)w.slowmo=Math.max(w.slowmo||0,.12);
  if(a?.stagger&&e.brain){e.brain.dizzy=a.stagger;}return true;}
 /* An interactable prop (a pylon): basic hits and gear tricks chip one, any learned ability three. */
 export function propHit(w,e,a){if(!e.prop)return false;e.prop.hits-=(a.basic||a.trick||a.ally||a.tick)?1:3;e.flash=.05;sfx('ward',undefined,{pan:panOf(w,e.x)});

@@ -270,6 +270,8 @@ function step(e,w,dt,mover){_world=w;const b=brain(e,w);
  switch(b.mode){
   case 'trans':if(b.t>=b.transDur){b.mode='move';setState(e,'idle');}else if(b.phase===2&&b.t<b.transDur-.05)e.inv=Math.max(e.inv,.6);break;
   case 'hurt':if(b.t>=b.hurtDur){b.mode='move';b.freeze=false;setState(e,'idle');}break;
+  /* improve20-a-oct31 #4: a held guard stance (scenes/boss-guard.js owns its start, pose and end) */
+  case 'guard':e.facing=sgn(p.x-e.x)||e.facing;break;
   case 'block':if(b.t>=.8){b.mode='move';e.def=b.baseDef;setState(e,'idle');}break;
   case 'recover':if(b.force&&(!e.recoveryGate||b.t>=b.recover)&&!stunned&&forced(e,w,b))break;if(b.t>=b.recover)b.mode='move';else setState(e,'idle');break;
   /* a feint (Heroic and up): half a wind-up, a break, then the full real tell */
@@ -365,6 +367,8 @@ export function drawEnemy(c,e,t){if(!e.sprite)return false;const s=loadSprite(e.
  if(e.hp>0){if(e.flash>0){if(e.flashWhite>0)overlay(c,e.sprite,m,state,st,e.x,e.y-z,e.facing||1,k,'#ffffff',alpha);else{c.save();c.globalCompositeOperation='lighter';drawSprite(c,e.sprite,state,st,e.x,e.y-z,{facing:e.facing||1,scale:k,alpha:.6*alpha});c.restore();}}
   else if(b?.mode==='tele'){const left=b.teleDur-b.t;if(left<.15){c.save();c.globalCompositeOperation='lighter';drawSprite(c,e.sprite,state,st,e.x,e.y-z,{facing:e.facing||1,scale:k,alpha:.55});c.restore();}
    else{const pulse=.5+.5*Math.sin((t||0)*TELE_PULSE);overlay(c,e.sprite,m,state,st,e.x,e.y-z,e.facing||1,k,TELE.flash,.1+.24*pulse*Math.min(1,b.t/Math.max(.01,b.teleDur)+.25));}}
+  /* improve20-a-oct31 #4: a held guard reads at a glance: a strong steel-blue wash over the boss's own frame */
+  else if(e.guard)overlay(c,e.sprite,m,state,st,e.x,e.y-z,e.facing||1,k,e.tint||'#8fc4ff',.34+.1*Math.sin((t||0)*5));
   else if(e.tint)overlay(c,e.sprite,m,state,st,e.x,e.y-z,e.facing||1,k,e.tint,.1+.06*Math.sin((t||0)*4));
 }
  /* the killing blow lights the body up for a few frames before it falls (combat.js deathFx) */

@@ -9,7 +9,11 @@ const pilotRow=(...args)=>{const r=row(...args),l=!!args[4];return {...r,hp:l?1.
 /* Completed Elderwood uses restrained damage and short fights, with named map mechanics. */
 const woodRow=(pair,mod,kind,boss,hp,call,then,legendary=false)=>({...pilotRow(pair,mod,'ambush',boss,legendary),hp,sequence:{call,then},elderwood:true,readable:true,mod,atk:legendary?1.4:1.3,phaseAt:legendary?.6:.5,lastStand:false,hazard:{kind,warning:legendary?1.6:1.8,active:.65,rest:legendary?2.5:3.5,alternate:true,...(kind==='wire'?{slow:.25,damage:0}:{}),band:['stones','rubble','roots','spores'].includes(kind)?14:8,width:['stones','rubble','roots','spores'].includes(kind)?48:88}});
 /* Emberkeep shares the checked warning vocabulary, but owns its terrain and boss scripts. */
-const emberRow=(pair,mod,kind,boss,hp,call,then,legendary=false)=>({...woodRow(pair,mod,kind,boss,hp,call,then,legendary),elderwood:false,emberkeep:true,hazard:{kind,warning:kind==='islands'?2.4:legendary?1.8:2,active:.65,rest:kind==='hammers'?7:legendary?3.5:4.5,alternate:true,band:kind==='hammers'?16:8,width:kind==='hammers'?56:88}});
+/* improve20-a-oct31 #6: on the 128-unit band (tallfields-oct31) the lane rows that follow the hero's row (m3 jets, m6 faults, mx1 gust) always
+   found an escape lane and fired as authored, so Heroic and Legendary Emberkeep took about 25% more damage and Legendary m3/m6 began to
+   kill. Their warning is longer (Legendary 2.2 s, was 1.8; Heroic 2.2, was 2) and they come round less often (rest below, was 3.5/4.5). */
+export const LANE_ROWS=new Set(['jets','faults','gust']),LANE_TRIM={warning:2.2,rest:6,heroicRest:7};
+const emberRow=(pair,mod,kind,boss,hp,call,then,legendary=false)=>({...woodRow(pair,mod,kind,boss,hp,call,then,legendary),elderwood:false,emberkeep:true,hazard:{kind,warning:kind==='islands'?2.4:LANE_ROWS.has(kind)?(legendary?LANE_TRIM.warning:2.2):legendary?1.8:2,active:.65,rest:kind==='hammers'?7:LANE_ROWS.has(kind)?(legendary?LANE_TRIM.rest:LANE_TRIM.heroicRest):legendary?3.5:4.5,alternate:true,band:kind==='hammers'?16:8,width:kind==='hammers'?56:88}});
 /* Veilmoor uses delayed positions and visible target order, with the same walking escape contract. */
 /* tallfields-oct31: the band is 128 tall now (was 96) and Legendary Veilmoor got easier on it (sim, same seeds: deaths -22/-32%,
    damage -6/-13%, mostly v3's echoes). Its patch telegraphs are sized to the taller band, 64 wide and 16 deep (were 56 and 14),

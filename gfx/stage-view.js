@@ -14,6 +14,7 @@ import {drawPixelText} from '../ui/canvas-ui.js';
 import {potionCount} from '../game/potions.js';
 import {clearLabelAt} from '../scenes/tier-fx.js';
 import {firstFlashAlpha,FIRST_BANNER} from '../scenes/rune-fx.js';
+import {GUARD} from '../scenes/boss-guard.js';
 const R=Math.round;
 /* ---- the swap point ------------------------------------------------------------------------------------- */
 let UI=null;
@@ -83,6 +84,8 @@ export function stageBanners(w){if(!w?.level)return [];const f=w.flow,k=w.flowT|
  if(f==='victory'&&!w.cinematicTarget)out.push({kind:'victory',title:'VICTORY',alpha:Math.min(1,k/.3)});
  /* kidfix-b-oct31: the first-cast moment's one line, "<ABILITY>!", through the banner queue (scenes/rune-fx.js) */
  if(w.firstCast&&w.run&&f!=='victory'){const t=(w.run.time??0)-w.firstCast.at;if(t>=0&&t<FIRST_BANNER)out.push({kind:'wave',title:`${String(w.firstCast.name).toUpperCase()}!`,y:54,alpha:Math.min(1,t/.12,(FIRST_BANNER-t)/.3),prio:3,dur:FIRST_BANNER});}
+ /* improve20-a-oct31 #4: the first time Grubnak's guard goes up (scenes/boss-guard.js), the one line that says how to break it */
+ if(w.guardCue&&w.run&&f==='boss'){const t=(w.run.time??0)-w.guardCue.at;if(t>=0&&t<GUARD.cue)out.push({kind:'wave',title:'LIBRARY POWERS BREAK GUARDS!',touchTitle:'ABILITY BUTTONS BREAK GUARDS!',y:54,alpha:Math.min(1,t/.15,(GUARD.cue-t)/.3),prio:3,dur:GUARD.cue});}
  return queueBanners(w,out);}
 /* kidfix-a-oct31 (kid-appeal playtest shot 02: the boss quote, "CALLS FOR BACKUP!" and "DEFEAT THE GUARDS!" stacked at the prologue boss):
    the top-of-screen announcements (wave, cleared, quote: the banners with a prio) show ONE at a time. The one up keeps its own timing; one that
