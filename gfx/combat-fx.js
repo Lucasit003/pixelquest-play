@@ -5,6 +5,7 @@
 // fx-aura-<el> (pimen heal sparkles). Elements: fire ice storm poison holy nature shadow arcane physical.
 // Size rule (art direction): every effect stays inside 2x hero height by 3x hero width (the sheets are 64 px or smaller,
 // and rings tile small sprites around their edge instead of scaling anything).
+import {drawPetProc} from './pet-proc.js';
 import {loadSprite,drawSprite} from './actors/sprites.js';
 import {ABILITY_FX_SPRITES} from '../game/ability-fx.js';
 
@@ -24,6 +25,8 @@ const put=(c,id,state,t,x,y,o={})=>drawSprite(c,id,state,t,Math.round(x),Math.ro
 const column=el=>el==='holy'?'fx-aura-holy':`fx-col-${el}`;
 export function drawEffect(c,f){const el=elementOf(f),t=age(f),r=f.radius||16;
  switch(f.type){
+  /* improve20-w-nov1 #13: a pet's proc (gfx/pet-proc.js, code effects only) */
+  case 'pet-proc':return drawPetProc(c,f);
   /* Small ballistic droplets: rise, fall under gravity, then fade without leaving a floor blob. */
   case 'slime-splash':{c.save();c.fillStyle=f.color;c.globalAlpha*=Math.max(0,1-t/.65);for(let i=0;i<11;i++){const a=i*2.4,v=22+(i%4)*9,x=f.x+Math.cos(a)*v*t,y=f.y-10+Math.sin(a)*v*t*.35-(38+i%3*12)*t+110*t*t,size=i%3===0?3:2;c.fillRect(Math.round(x),Math.round(y),size,size);}c.restore();return true;}
 
@@ -87,4 +90,4 @@ function runeShot(c,s){const rk=s.rune|0;if(!(rk>0))return;const x=Math.round(s.
  if(rk>=3){const d=Math.hypot(s.vx||0,s.vy||0)||1;c.globalAlpha=.3;c.beginPath();c.arc(Math.round(x-(s.vx||0)/d*10),Math.round(y-(s.vy||0)/d*10),rr*.7,0,Math.PI*2);c.fill();}c.restore();}
 export function drawShot(c,s,t=0){runeShot(c,s);if(s.sprite)return put(c,s.sprite,'fly',(s.age||0)+t*0,s.x,s.y-(s.h??24),{facing:s.vx<0?-1:1});const el=s.element||elementOf(s);return put(c,`fx-bolt-${el}`,'fly',(s.age||0)+t*0,s.x,s.y-(s.h??24),{facing:s.vx<0?-1:1});}
 /* Depth key for an effect, so the hero (same y) draws over its own slash and casts, and hit stars sit on their target. */
-export function effectDepth(f){return f.type==='burst'||f.type==='line'||((f.type==='plates'||f.type==='orbit-of')&&f.half==='front')?f.y+1:f.y-.5;}
+export function effectDepth(f){return f.type==='pet-proc'||f.type==='burst'||f.type==='line'||((f.type==='plates'||f.type==='orbit-of')&&f.half==='front')?f.y+1:f.y-.5;}

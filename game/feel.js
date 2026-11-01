@@ -49,3 +49,7 @@ export function squash(knock,motion=true){if(!motion||!(knock>0))return [1,1];co
 export const DODGE_CD=.7;
 export function cooldownView(left,total,was=0){const l=Math.max(0,+left||0),t=Math.max(+total||0,l,1e-6),cooling=l>.05;
  return {cooling,frac:cooling?Math.min(1,l/t):0,label:l>1?String(Math.ceil(l)):'',ready:was>.05&&!cooling};}
+
+/* improve20-w-nov1 (a15): every floating number is a whole number at display, hero and foe, damage and healing. A number
+   rounds (never to 0 when it was not 0); a string that starts like a number ("-34.2", "+12.5 Gold") has each decimal rounded. Words pass through. */
+export function floatLabel(txt){const r=v=>{const n=Math.round(Math.abs(v));return (v<0?'-':'')+(n||(v?1:0));};if(typeof txt==='number')return Number.isFinite(txt)?r(txt):'';const s=String(txt??'');return /^[-+−]?\d/.test(s)?s.replace(/\d+\.\d+/g,m=>r(+m)):s;}

@@ -5,18 +5,20 @@
    - defeat: 0 = no defeat yet, 1 = the first defeat happened and its retry gives one extra potion, 2 = that potion was handed out.
    - petPointer: the one-time "Your cat has friends!" pointer at Home has shown.
    - offered: subjects whose first-open placement offer has shown.
+   - petTips: how often each pet's "+N%" has shown beside its proc (improve20-w-nov1; it stops at scenes/pet-fx.js PET_TIPS).
    - firstCast: abilities whose first-cast moment has played (kidfix-b-oct31: once per ability per save). A save from before the
      field gets every ability it already owns listed (core/save.js), so only a newly unlocked ability gets the moment.
    s.schoolGrade (2-5, 0 for "Not sure", null when never asked) is the title flow's optional grade hint. It never sets a placement.
    Pure: callers pass the save. */
 export const NUDGE_STOP=10,LOW_HP_HELPS=2,LOW_HP=.3,SCHOOL_GRADES=[2,3,4,5];
-export const emptyHints=()=>({casts:{},lowHp:0,defeat:0,petPointer:false,offered:[],firstCast:[]});
+export const emptyHints=()=>({casts:{},lowHp:0,defeat:0,petPointer:false,offered:[],firstCast:[],petTips:{}});
 const int=(v,lo,hi)=>Math.max(lo,Math.min(hi,Math.floor(Number(v))||0));
 export function cleanHints(v){const h=emptyHints();if(!v||typeof v!=='object'||Array.isArray(v))return h;
  if(v.casts&&typeof v.casts==='object'&&!Array.isArray(v.casts))for(const [id,n] of Object.entries(v.casts).slice(0,200))if(typeof id==='string'&&id.length<=40&&int(n,0,1e6)>0)h.casts[id]=int(n,0,1e6);
  h.lowHp=int(v.lowHp,0,LOW_HP_HELPS);h.defeat=int(v.defeat,0,2);h.petPointer=v.petPointer===true;
  if(Array.isArray(v.offered))h.offered=[...new Set(v.offered.filter(x=>typeof x==='string'&&x.length<=40))].slice(0,32);
- if(Array.isArray(v.firstCast))h.firstCast=[...new Set(v.firstCast.filter(x=>typeof x==='string'&&x.length<=40))].slice(0,64);return h;}
+ if(Array.isArray(v.firstCast))h.firstCast=[...new Set(v.firstCast.filter(x=>typeof x==='string'&&x.length<=40))].slice(0,64);
+ if(v.petTips&&typeof v.petTips==='object'&&!Array.isArray(v.petTips))for(const k of ['fire','study','defence','loot','speed'])if(int(v.petTips[k],0,99)>0)h.petTips[k]=int(v.petTips[k],0,99);return h;}
 export const cleanSchoolGrade=v=>v===0||SCHOOL_GRADES.includes(v)?v:null;
 const H=s=>s.hints||(s.hints=emptyHints());
 export function noteCast(s,id){const h=H(s);h.casts[id]=Math.min(1e6,(h.casts[id]|0)+1);return h.casts[id];}
@@ -45,3 +47,5 @@ export function markFirstCast(s,id){const h=H(s);(h.firstCast||(h.firstCast=[]))
    "Not sure"). rung: the topic's grade (academics/lessons.js rungOf); checkable: the subject has a check at the topic's stage. The check
    only ever raises a placement; nothing places on its own. */
 export function skipAheadDue(s,subject,rung,checkable){if(!checkable||(s?.placement?.[subject]|0)>0)return false;const g=s?.schoolGrade;return g==null||g===0||rung<g;}
+/* improve20-w-nov1 #13: a pet's "+N%" shows the first `max` times per pet per save; true = show it now (counted) */
+export function notePetTip(s,key,max){const h=H(s),t=h.petTips||(h.petTips={});if((t[key]|0)>=max)return false;t[key]=(t[key]|0)+1;return true;}

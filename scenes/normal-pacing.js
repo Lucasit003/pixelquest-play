@@ -58,5 +58,7 @@ export function normalEnemy(w,e){if(!pacedNormal(w)||e.boss)return e;e.attacks=(
 /* One faster ranged foe replaces a regular slot; no extra wave or concurrent enemy is added. */
 /* oct24-ember-finale (playtest ch2: "a Swift Grave Wraith is on every level"): on every other Emberkeep level the slot's own foe
    is the swift one (a Swift Imp, a Swift Ember Skeleton...), so the Grave Wraith comes on m1, m3, m5 and m7 only */
-export const OWN_SWIFT=new Set(['m2','m4','m6','mx1']);
-export function normalLevel(l,k){if(k!=='normal'||!NORMAL_SEQUENCES[l?.id])return l;const type=l.chapter==='emberkeep'?'skeleton-mage':'cultist',own=OWN_SWIFT.has(l.id);return {...l,waves:l.waves.map(w=>{const groups=waveGroups(w).map(g=>g.map(e=>typeof e==='string'?e:{...e})),g=groups.at(-1),pick=g.findIndex(e=>typeof e==='string'&&e!=='skeleton-mage'),i=own&&pick>=0?pick:g.findIndex(e=>typeof e==='string');if(i>=0)g[i]={type:own?g[i]:type,mod:'swift'};return {...(Array.isArray(w)?{}:w),groups};})};}
+/* improve20-w-nov1 #12 (a7): the Grave Wraith left Emberkeep, so every Emberkeep level's swift foe is its own (m1, m3, m5 and m7 too); a Veilmoor level
+   gets its swift Cultist only where Cultists already belong (v1, v3, v5), else its own foe is the swift one */
+export const OWN_SWIFT=new Set(['m1','m2','m3','m4','m5','m6','m7','mx1']);
+export function normalLevel(l,k){if(k!=='normal'||!NORMAL_SEQUENCES[l?.id])return l;const type=l.chapter==='emberkeep'?'skeleton-mage':'cultist',own=OWN_SWIFT.has(l.id)||!l.waves.some(w=>waveGroups(w).flat().includes(type));return {...l,waves:l.waves.map(w=>{const groups=waveGroups(w).map(g=>g.map(e=>typeof e==='string'?e:{...e})),g=groups.at(-1),pick=g.findIndex(e=>typeof e==='string'&&e!=='skeleton-mage'),i=own&&pick>=0?pick:g.findIndex(e=>typeof e==='string');if(i>=0)g[i]={type:own?g[i]:type,mod:'swift'};return {...(Array.isArray(w)?{}:w),groups};})};}

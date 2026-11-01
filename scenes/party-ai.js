@@ -30,7 +30,10 @@ export const PARTY = {follow: 28, run: 80, teleport: 320, offscreen: 2, assist: 
      5-9 s, so a 1.5 s taunt every 8 s handed him about one boss attack in two, and standing in front of the hero he soaked
      the boss's bolts; with closeness also drawing a boss's helpers he halved a weaker child's falls (C3 0.43-0.51). On Legendary a
      boss ignores Hold the Line and its bolts aimed at the hero fly past him, and foes turn to him only for a taunt. */
-  legendBossTaunt: 0, legendChasers: 0};
+  legendBossTaunt: 0, legendChasers: 0,
+  /* improve20-w-nov1 #14 (a9): in a fight he keeps a flank spot FLANK px above or below the hero's lane, never on the hero's own spot
+     (closer than FLANK_MIN he steps back out to it) */
+  flank: 32, flankMin: 26};
 const legend = w => w?.tierKey === 'legendary';
 
 /* ?companion=wil: a dev override (any save, no hiring needed). Play uses the companion hired at the Barracks, s.party.with. */
@@ -70,6 +73,14 @@ function moveTo(w, c, x, y, speed, dt) {
 function puff(w, c) { w.effect?.('ring', c.x, c.y, {radius: 14, color: '#d8d3b4', ground: true, life: .35, max: .35}); for (let i = 0; i < 4; i++) w.effect?.('particle', c.x + (i - 1.5) * 4, c.y, {vx: (i - 1.5) * 14, vy: -6, color: '#cfc9a8', life: .35, max: .35}); }
 function revive(w, c, share, line = true) { c.mode = 'follow'; c.hp = Math.max(c.hp, Math.round(c.maxHp * share)); c.inv = .8; c.downT = 0; c.reviveT = 0; setState(c, 'idle'); if (line) bark(w, c, COMPANIONS[c.companion].barks.revived); }
 
+/* improve20-w-nov1 #14: a spot that would put him on the hero is moved to the hero's flank: same x, FLANK px to his own side of the
+   hero's lane (c.slot picks the side; the other side when the band edge or a wall is in the way) */
+export function flankSpot(w, c, x, y) {
+  const p = w.player; if (!p || Math.hypot(x - p.x, y - p.y) >= PARTY.flankMin) return {x, y};
+  const b = w.bounds?.() || {y0: -1e9, y1: 1e9}, ok = yy => yy >= b.y0 && yy <= b.y1 && !w.layout?.blocked?.(x, yy), side = c.slot < 0 ? -1 : 1;
+  for (const sd of [side, -side]) { const yy = p.y + sd * PARTY.flank; if (ok(yy)) return {x, y: yy}; }
+  const sx = x >= p.x ? 1 : -1; return {x: p.x + sx * PARTY.flank, y};
+}
 /** A companion's hit: the hero's crit, gear tricks, class mechanic, hitstop and kill stamina never ride on it. */
 export function partyHit(w, c, e, power, {kb = 40, name = c.name} = {}) {
   const a = {damage: power, kb, element: 'none', name, ally: true, trick: true, party: true}, p = w.player, base = w.base;
@@ -179,7 +190,7 @@ export function updateParty(w, dt) {
     if (d2(c, p) > PARTY.teleport || c.off > PARTY.offscreen) { puff(w, c); c.x = p.x - PARTY.follow * (p.facing || 1); c.y = p.y + c.slot; c.off = 0; puff(w, c); }
     const near = foes.filter(e => d2(e, p) < PARTY.assist);
     if (!near.length || w.flow === 'walk' || w.flow === 'go') {
-      c.mode = 'follow'; const fx = p.x - PARTY.follow * (p.facing || 1), fy = p.y + c.slot, far = Math.hypot(fx - c.x, fy - c.y);
+      c.mode = 'follow'; const fs = flankSpot(w, c, p.x - PARTY.follow * (p.facing || 1), p.y + c.slot), fx = fs.x, fy = fs.y, far = Math.hypot(fx - c.x, fy - c.y);
       if (far > 4) setState(c, moveTo(w, c, fx, fy, speed * (far > PARTY.run ? 1.5 : 1), dt) ? 'walk' : 'idle'); else { setState(c, 'idle'); c.facing = p.facing || 1; }
       continue;
     }
@@ -188,7 +199,12 @@ export function updateParty(w, dt) {
     /* the tank takes the foe nearest the hero that is not already on it, else the nearest */
     const order = near.sort((a, b) => d2(a, p) - d2(b, p)), e = (c.stats.role === 'tank' || c.stats.role === 'vanguard' ? order.find(o => o.tgt !== c) : null) ?? order[0];
     const reach = (c.stats.reach || 16) + Math.max(6, (e.boss ? 22 : 9) * Math.max(1, e.scale || 1)), d = d2(c, e);
-    if (d > reach) { setState(c, moveTo(w, c, e.x + (c.x < e.x ? -reach * .8 : reach * .8), e.y + c.slot * .3, speed, dt) ? 'walk' : 'idle'); continue; }
+    /* improve20-w-nov1 #14: with the hero already on this foe he takes the foe's other side (a flank), never the hero's own spot */
+    const heroOn = d2(p, e) < reach + 24, sx = heroOn ? (p.x < e.x ? 1 : -1) : (c.x < e.x ? -1 : 1);
+    /* in reach but beside the hero on his own lane (between him and the foe): step up or down off that lane, still in reach */
+    const lane = d <= reach && Math.abs(c.y - p.y) < 12 && Math.abs(c.x - p.x) < 40, side = c.slot < 0 ? -1 : 1;
+    const spot = lane ? flankSpot(w, c, c.x, e.y + side * Math.min(reach * .6, 22)) : flankSpot(w, c, e.x + sx * reach * .8, e.y + c.slot * .3);
+    if (d > reach || (lane || d2(c, p) < PARTY.flankMin) && Math.hypot(spot.x - c.x, spot.y - c.y) > 3) { setState(c, moveTo(w, c, spot.x, spot.y, speed, dt) ? 'walk' : 'idle'); if (d > reach || c.cd > 0) continue; }
     c.facing = e.x >= c.x ? 1 : -1;
     if (c.cd <= 0) {
       c.cd = c.stats.rate; c.busy = .45; setState(c, 'attack');

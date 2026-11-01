@@ -377,7 +377,7 @@ export function drawEnemy(c,e,t){if(!e.sprite)return false;const s=loadSprite(e.
  return true;}
 /* Ground telegraph: red-orange graded Foozle ground cracks (fx-marker), tiled over the danger area, brightening as the
    hit approaches. Authored pilot tells add a static code outline, also visible before the effect atlas loads. */
-function marker(c,m,prog,t){if(m.hide)return;if(m.soft){softMarker(c,m,prog);return;}if(m.outline){c.save();c.strokeStyle='#ffe49a';c.lineWidth=1.5;c.setLineDash([4,3]);if(m.shape==='box')c.strokeRect(Math.min(m.x0,m.x1),m.y-m.band,Math.abs(m.x1-m.x0),m.band*2);else{c.beginPath();c.ellipse(m.x,m.y,m.r,m.r*.55,0,0,Math.PI*2);c.stroke();}c.restore();}const s=loadSprite('fx-marker');if(!s.ready)return;const pulse=.5+.5*Math.sin(t*14),alpha=Math.min(1,(.35+.6*prog)*(.8+.2*pulse))*(m.dim||1);
+function marker(c,m,prog,t){if(m.hide)return;if(m.soft){softMarker(c,m,prog,false,{age:m.age??prog,warning:m.warn||1,motion:m.motion!==false});return;}if(m.outline){c.save();c.strokeStyle='#ffe49a';c.lineWidth=1.5;c.setLineDash([4,3]);if(m.shape==='box')c.strokeRect(Math.min(m.x0,m.x1),m.y-m.band,Math.abs(m.x1-m.x0),m.band*2);else{c.beginPath();c.ellipse(m.x,m.y,m.r,m.r*.55,0,0,Math.PI*2);c.stroke();}c.restore();}const s=loadSprite('fx-marker');if(!s.ready)return;const pulse=.5+.5*Math.sin(t*14),alpha=Math.min(1,(.35+.6*prog)*(.8+.2*pulse))*(m.dim||1);
  const put=(x,y)=>drawSprite(c,'fx-marker','glow',0,Math.round(x),Math.round(y),{alpha});const gx=14,gy=6;
  if(m.shape==='box'){const lo=Math.min(m.x0,m.x1),hi=Math.max(m.x0,m.x1);for(let y=m.y-m.band+gy/2,r=0;y<=m.y+m.band;y+=gy,r++)for(let x=lo+(r%2?gx/2:0);x<=hi;x+=gx)put(x,y);return;}
  /* fill the ellipse with cracks on a staggered grid, so the whole danger area glows red-orange */
@@ -388,14 +388,14 @@ function marker(c,m,prog,t){if(m.hide)return;if(m.soft){softMarker(c,m,prog);ret
 export function enemyLayer(c,w,t){const out=w.level?.encounter?.readable?[{y:1e9,draw:()=>veilOverlay(c,w)}]:[];if(!w.enemies?.some(e=>e.brain)){if(w.enemyFx)w.enemyFx.length=0;return out;}
  for(const e of w.enemies){const b=e.brain;if(!b||e.hp<=0||!b.markers?.length)continue;
   if(e.normalPacing||w.level?.encounter?.readable)safeLane(c,b.safeLane,!w.level?.encounter?.veilmoor,w);
-  const prog=b.mode==='tele'?Math.min(1,b.t/Math.max(.01,b.teleDur)):1;for(const m of b.markers)marker(c,e.normalPacing||w.level?.encounter?{...m,soft:true,lane:(e.normalPacing||w.level.encounter.readable)&&m.shape==='box'}:m,prog,t);}
+  const prog=b.mode==='tele'?Math.min(1,b.t/Math.max(.01,b.teleDur)):1;for(const m of b.markers)marker(c,e.normalPacing||w.level?.encounter?{...m,soft:true,lane:(e.normalPacing||w.level.encounter.readable)&&m.shape==='box',age:b.mode==='tele'?b.t:b.teleDur,warn:b.teleDur,motion:w.motion}:m,prog,t);}
  /* a vanished boss's decoy exits, drawn dimmer than the real one (Heroic and up) */
  for(const e of w.enemies){const b=e.brain;if(!b||e.hp<=0||b.mode!=='act'||b.atk?.kind!=='vanish')continue;if(!w.level?.encounter?.veilmoor)for(const m of b.decoys||[])marker(c,m,1,t);
   const gate=b.atk.gate;if(gate&&!e.fade)for(const m of [...(b.markers||[]),...(b.decoys||[])])out.push({y:m.y-1,draw:()=>drawSprite(c,gate,'rise',Math.min(.45,b.t*.6),m.x,m.y,{alpha:m.dim?.45:1})});}
  drawLinks(c,w,t,out);
  for(const f of w.enemyFx||[]){
   if(OWN.has(f.kind)){drawMoveFx(c,f,t,out,K);continue;}
-  if(f.kind==='hazard'){if(f.marker&&!f.hit)marker(c,w.level?.encounter?{...f.marker,soft:true,lane:w.level.encounter.readable&&f.marker.shape==='box'}:f.marker,1,t);if(f.t<0){if(f.a?.fall)out.push({y:f.y,draw:()=>drawFall(c,f,t)});if(f.glow)out.push({y:f.y,draw:()=>drawSprite(c,f.glow,'twinkle',t,f.x,f.y-12)});continue;}
+  if(f.kind==='hazard'){if(f.marker&&!f.hit)marker(c,w.level?.encounter?{...f.marker,soft:true,lane:w.level.encounter.readable&&f.marker.shape==='box',motion:w.motion}:f.marker,1,t);if(f.t<0){if(f.a?.fall)out.push({y:f.y,draw:()=>drawFall(c,f,t)});if(f.glow)out.push({y:f.y,draw:()=>drawSprite(c,f.glow,'twinkle',t,f.x,f.y-12)});continue;}
    out.push({y:f.y,draw:()=>{const hs=f.hs||'rise',rise=stateInfo(f.fx,hs),brk=metaOf(f.fx)?.states?.break;if(brk&&f.t>rise.dur)drawSprite(c,f.fx,'break',f.t-rise.dur,f.x,f.y);else drawSprite(c,f.fx,hs,f.t,f.x,f.y);}});}
   else if(f.kind==='shot'){out.push({y:f.y,draw:()=>{shadow(c,f.x,f.y,4,1.5,.22);drawSprite(c,f.fx,'fly',f.t,f.x,f.y-f.h,{facing:sgn(f.vx)});}});}
   else if(f.kind==='blast'){out.push({y:f.y,draw:()=>drawSprite(c,f.fx,'blast',f.t,f.x,f.y-f.h,{facing:sgn(f.vx)})});}
