@@ -88,13 +88,29 @@ export function answerPlacement(save,run,id,input){
  if(!run||run.closed||run.items[run.i]?.id!==id||!String(input).trim())return null;
  /* Retirement and XP count as usual; mastering a topic by retiring its last question does not,
     because this check opens grades and nothing else. */
- const r=grade(save,run.items[run.i],input,{master:false});run.right[id]=r.ok;run.i++;run.xp+=r.xp;return r;
+ const r=grade(save,run.items[run.i],input,{master:false});run.right[id]=r.ok;run.i++;run.xp+=r.xp;
+ /* improve20-z-nov1 #2: two misses in a row inside one grade's block mark the run to stop (stopPlacement) */
+ const k=run.i-1;if(STAGE_GRADES[run.stage]&&!r.ok&&k%PLACEMENT_PER_GRADE>0&&run.right[run.items[k-1].id]===false)run.stop=true;return r;
 }
+/* improve20-z-nov1 #2 (audit6 #8): a Middle School check of 12 typed questions ran to the end however hard it was. Two misses in a row in
+   one grade's block end it: that block can no longer pass (PLACEMENT_PASS of PLACEMENT_PER_GRADE) and the blocks above it are harder.
+   stopPlacement keeps the answered items only; finishPlacement scores them (a block never reached scores 0 of 0) with the same rules:
+   the stage's floor opens, a block passed opens its grade, and it only ever raises. A wrong-but-not-twice block still goes on to the next.
+   Middle and High School checks only: the Elementary check (three short Grade 2-4 blocks) runs as before. */
+export function stopPlacement(run){if(!run||run.closed||!run.stop||run.i<1)return false;run.items=run.items.slice(0,run.i);run.stopped=true;return true;}
+/* improve20-z-nov1 #2: "Start a Grade N lesson now", the first Library visit's main choice for a Middle or High School learner. The grade is
+   the one picked at the title (s.schoolGrade, Middle School 6-8) when the subject has it, else the highest one below it, else the stage's first
+   grade (High School: Grade 9, the floor its check opens whatever the score). startAt only ever raises a placement and opens lessons only:
+   it never masters a topic, so mastery stays the gate for every ability. */
+export const STAGE_FLOOR=Object.freeze({middle:6,high:9});
+export function startGrade(save,subject,stage=save?.schoolMode){if(!STAGE_GRADES[stage])return null;const gs=placementGrades(subject,stage);if(!gs.length)return null;
+ const want=stage==='middle'&&gs.includes(save?.schoolGrade)?save.schoolGrade:stage==='middle'&&save?.schoolGrade>=6?gs.filter(g=>g<=save.schoolGrade).at(-1)??gs[0]:gs[0];return want;}
+export function startAt(save,subject,g){if(!grades(subject).includes(g))return false;(save.placement??={})[subject]=Math.max(placementGrade(save,subject),g);return true;}
 export function finishPlacement(save,run){
  const gs=run?.grades||PLACEMENT_GRADES;
- if(!run||run.closed||run.i!==gs.length*PLACEMENT_PER_GRADE||run.items.length!==run.i||new Set(run.items.map(q=>q.id)).size!==run.i||run.items.some(q=>ITEMS[q.id]!==q||q.subject!==run.subject||typeof run.right[q.id]!=='boolean'))return null;
+ if(!run||run.closed||run.i!==(run.stopped?run.items.length:gs.length*PLACEMENT_PER_GRADE)||run.items.length!==run.i||run.i<1||new Set(run.items.map(q=>q.id)).size!==run.i||run.items.some(q=>ITEMS[q.id]!==q||q.subject!==run.subject||typeof run.right[q.id]!=='boolean'))return null;
  const scores=gs.map(g=>{const qs=run.items.filter(q=>rungOf(topic(q.topic))===g);return {grade:g,total:qs.length,score:qs.filter(q=>run.right[q.id]).length};});
- if(scores.some(r=>r.total!==PLACEMENT_PER_GRADE))return null;
+ if(scores.some(r=>run.stopped?r.total>PLACEMENT_PER_GRADE:r.total!==PLACEMENT_PER_GRADE))return null;
  const before=openGrade(save,run.subject);let floor=0;
  /* balance-oct26 (owner): the highest grade passed opens, even past a failed lower block (Middle 2/4, 4/4, 3/4 opens Grade 8; it
     used to stop at the failed Grade 6 and open nothing). Every grade below a placement is open too (lessons.js gradeOpen), so a

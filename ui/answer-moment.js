@@ -49,6 +49,11 @@ export function unlockNeed(save,a){
    topics. A saved unlock is skipped. Scholar badges are derived from earned records. */
 /* improve20-y-nov1 #5 (audit4 #24): until the first topic is mastered (no Scholar badge yet) the card glosses its words once: what
    "mastered" means and what a Scholar badge is. */
+/* improve20-z-nov1 #4 (audit6 #2): the next ability's charges as a ring round its icon on the HUD card, one segment per topic on its road,
+   lit for those mastered (code draws only the ring, an effect; the icon is the ability's own). null when the road is not a short topic road. */
+export const CHARGE_MAX=12;
+export function chargeRing(road){if(!road||road.sleeping||!road.reachable||road.knowledge||!(road.total>1)||road.total>CHARGE_MAX)return null;const n=road.total,seg=360/n,gap=Math.min(8,seg*.18);
+ return 'conic-gradient('+Array.from({length:n},(_,i)=>{const a=i*seg,c=i<road.done?'var(--charge-on)':'var(--charge-off)';return `${c} ${(a+gap/2).toFixed(1)}deg ${(a+seg-gap/2).toFixed(1)}deg,transparent ${(a+seg-gap/2).toFixed(1)}deg ${(a+seg+gap/2).toFixed(1)}deg`;}).join(',').replace(/^/,`transparent 0deg ${(gap/2).toFixed(1)}deg,`)+')';}
 export function abilityProgressHTML(save,subject,{justUnlocked=null,celebrate=false,compact=false,shelf=false}={}){
  const road=learningRoad(save,subject),badges=scholarBadges(save),badge=`<span class="road-badges${celebrate?' earned':''}"><i aria-hidden="true"></i>${celebrate?'Scholar badge earned! ':''}${badges} Scholar badge${badges===1?'':'s'}${badges?'':`<small class="road-gloss"> (one for each topic you master)</small>`}</span>`;
  /* kidfix-b-oct31: the near goal leads: a rune (game/rune-goal.js), then the ability gate as topic dots instead of "N more topics" */
@@ -58,14 +63,14 @@ export function abilityProgressHTML(save,subject,{justUnlocked=null,celebrate=fa
  /* oct24-polish2 (playtest r3 D3: a Ranger's Snare Trap is 10 Science topics away and the road looked flat): a road of 20 topics
     or fewer is drawn as one pip per topic, and the topic just mastered lights its pip with a "+1 topic" line when it counts
     toward this ability. The ladder is unchanged; nothing new is earned. */
- const pips=!sleeping&&total>1&&total<=20,plus=celebrate&&!sleeping&&subject===a.subject&&done>0&&total>0;
+ const pips=!sleeping&&total>1&&total<=20,ring=chargeRing(road),plus=celebrate&&!sleeping&&subject===a.subject&&done>0&&total>0;
  const tick=(ok,label)=>`<span class="am-goal-check${ok?' ok':''}">${ok?'✓':'○'} ${esc(label)}</span>`;
 const dots=lead?gateDots(save,road):null;
  /* improve20-v-nov1 #19: the HUD card said the name twice ("Sundering Blow", then "Sundering Blow ●●○○○○ Coding" with a bar and a pip row
     for the same two topics). When its step is the gate dots, that one line is the name, the progress and the subject (.road-gate) */
  const st=compact?nextUnlockStep(save,road):null,gate=!!(dots&&st?.kind==='topics');
  const step=dots?(level?dots:`${dots} · hero level ${levelNeed}`):sleeping?'Finish a Library lesson to awaken this ability.':knowledge?`Your knowledge is ready! Reach hero level ${levelNeed}.`:road.reachable?`${remaining} more topic${remaining===1?'':'s'} to ${level?'unlock':'learn'} ${a.name}!${level?'':` Reach hero level ${levelNeed} too.`}`:`Keep studying ${sub.name} for ${a.name}.`;
- return `<div class="am-goal road${compact?' road-compact':''}${gate?' road-gate':''}${celebrate?' road-earned':''}" style="--accent:${esc(sub.color)}" data-ability="${esc(a.id)}">${leadHTML}<span class="road-icon">${abilityIcon(a,save.hero,compact?32:48)}</span><span class="am-goal-k">${justUnlocked?`${esc(justUnlocked)} unlocked! Next ability`:sleeping?'Your first ability':shelf&&subject===a.subject?`Next ${esc(sub.name)} ability`:'Your next ability'}</span>${gate?'':`<strong>${esc(a.name)}</strong>`}${compact?'':`<span class="am-goal-what">${esc(abilityWhat(a,CLASSES[save.hero]?.signature,abilityNumbers(save,a)))}</span>`}${(()=>{/* in the Library, the next lesson's ability (often a different one, e.g. Ember Dart beside Fireball) gets its own line here *//* juice-oct27 (new-player playtest: the first-ability card read "Heavy Strike" and then "Rallying Cry (next lesson)"): while the
+ return `<div class="am-goal road${compact?' road-compact':''}${gate?' road-gate':''}${celebrate?' road-earned':''}" style="--accent:${esc(sub.color)}" data-ability="${esc(a.id)}">${leadHTML}<span class="road-icon${ring?' road-ring':''}"${ring?` style="--ring:${esc(ring)}" data-charge="${esc(done)}/${esc(total)}"`:''}>${abilityIcon(a,save.hero,compact?32:48)}</span><span class="am-goal-k">${justUnlocked?`${esc(justUnlocked)} unlocked! Next ability`:sleeping?'Your first ability':shelf&&subject===a.subject?`Next ${esc(sub.name)} ability`:'Your next ability'}</span>${gate?'':`<strong>${esc(a.name)}</strong>`}${compact?'':`<span class="am-goal-what">${esc(abilityWhat(a,CLASSES[save.hero]?.signature,abilityNumbers(save,a)))}</span>`}${(()=>{/* in the Library, the next lesson's ability (often a different one, e.g. Ember Dart beside Fireball) gets its own line here *//* juice-oct27 (new-player playtest: the first-ability card read "Heavy Strike" and then "Rallying Cry (next lesson)"): while the
     starter sleeps the card is about that one ability only */if(!shelf||compact||sleeping)return '';const id=nextLesson(save,{hero:save.hero,subject})?.ability?.id,b=id&&id!==a.id?ABILITIES[save.hero]?.find(x=>x.id===id):null;return b?`<span class="am-goal-what am-goal-next-what"><b>${esc(b.name)}</b> (next lesson): ${esc(abilityWhat(b,CLASSES[save.hero]?.signature,abilityNumbers(save,b)))}</span>`:'';})()}${sleeping||gate?'':`<span class="road-count">${total?`${done} of ${total} topic${total===1?'':'s'} mastered`:'Knowledge ready'} <small>${esc(sub.name)}</small>${total&&!badges?`<small class="road-gloss">Mastered: its lesson, quiz and practice done, then its test passed.</small>`:''}</span><span class="am-goal-meter${pips?' pips':''}" role="progressbar" aria-label="Topics toward ${esc(a.name)}" aria-valuemin="0" aria-valuemax="${total||1}" aria-valuenow="${total?done:1}">${pips?Array.from({length:total},(_,i)=>`<b class="${i<done?'on':''}${plus&&i===done-1?' new':''}"></b>`).join(''):`<i style="width:${percent}%"></i>`}</span>${plus?`<span class="road-plus">+1 topic toward ${esc(a.name)}!</span>`:''}`}${compact?roadPipHTML(gate?{...st,text:dots}:st):`<span class="am-goal-checks">${sleeping?tick(false,'Finish your first lesson'):tick(knowledge,`${sub.name} knowledge`)+tick(level,`Hero level ${levelNeed}`)}</span><span class="am-goal-line">${esc(step)}</span>${closerHTML(save,a,road,shelf)}${badge}${celebrate&&!sleeping?`<button type="button" class="road-preview" data-road-preview="${esc(a.id)}">Preview ${esc(a.name)}</button><canvas class="road-canvas" width="192" height="100" hidden role="img" aria-label="${esc(a.name)} animation preview"></canvas>`:''}`}</div>`;
 }
 
@@ -97,10 +102,11 @@ export function nextStepId(stage){return {lesson:'lesson-again',quiz:'start-quiz
 export function masteryCloser(save,t,road=learningRoad(save,t.subject)){
  if(!road)return 'Every ability for this hero is unlocked.';
  const a=road.ability,sub=SUBJECTS[a.subject]?.name||a.subject,mine=a.subject===t.subject,n=road.remaining,name=`<b>${esc(a.name)}</b>`,lv=road.level?'':` You also need hero level ${esc(road.levelNeed)}.`;
- if(road.knowledge)return `${mine?`+1 topic toward ${name}! `:''}Your knowledge for ${name} is ready.${road.level?'':` Reach hero level ${esc(road.levelNeed)} to use it.`}`;
+ if(road.knowledge)return `${mine&&road.total?`${name} ${esc(road.total)}/${esc(road.total)} charged! `:''}Your knowledge for ${name} is ready.${road.level?'':` Reach hero level ${esc(road.levelNeed)} to use it.`}`;
  if(!road.reachable)return `Keep studying ${esc(sub)} for ${name}.`;
  const left=`${n} more ${esc(sub)} topic${n===1?'':'s'}`;
- return mine?`+1 topic toward ${name}: ${left} to go.${lv}`:`Next ability: ${name}, ${left} away.${lv}`;
+ /* improve20-z-nov1 #4 (audit6 #2): a topic toward the next ability is a charge, said as one ("Volley 1/3 charged!") */
+ return mine?`${name} ${esc(road.done)}/${esc(road.total)} charged! ${left} to go.${lv}`:`Next ability: ${name}, ${left} away.${lv}`;
 }
 export function masteryMomentHTML(save,t,{score=0,total=0,points='',stage='',subjectName='',rune=''}={}){
  const closer=masteryCloser(save,t);
@@ -110,7 +116,9 @@ export function masteryMomentHTML(save,t,{score=0,total=0,points='',stage='',sub
    art: the Library's open book stamping in over the victory sunburst, the starting grade (or "High School") on the victory banner, what the
    check opened, and the scores; the first lesson's Start button follows it (main.js placementSummary). Markup only. */
 export function placementMomentHTML({banner='',floor=false,lead='',opens='',scores=[],xp=0}={}){
- return `<div class="placement-moment" data-placement-moment><span class="eyebrow">YOUR STARTING POINT</span><span class="pm-badge" aria-hidden="true"></span><h2 class="pm-banner"${floor?' data-placement-floor':''}>${esc(banner)}</h2>${lead?`<p class="pm-lead">${esc(lead)}</p>`:''}${opens?`<p class="pm-opens" data-placement-opens>${esc(opens)}</p>`:''}<p class="pm-scores">${scores.length===1?`${esc(scores[0].score)} of ${esc(scores[0].total)} right`:scores.map(v=>`Grade ${esc(v.grade)}: ${esc(v.score)}/${esc(v.total)}`).join(' · ')} · +${esc(xp)} XP</p></div>`;
+ /* improve20-z-nov1 #2: a check that stopped early leaves blocks it never asked (0 of 0); they are not listed */
+ const one=scores.length===1;scores=scores.filter(v=>v.total>0);
+ return `<div class="placement-moment" data-placement-moment><span class="eyebrow">YOUR STARTING POINT</span><span class="pm-badge" aria-hidden="true"></span><h2 class="pm-banner"${floor?' data-placement-floor':''}>${esc(banner)}</h2>${lead?`<p class="pm-lead">${esc(lead)}</p>`:''}${opens?`<p class="pm-opens" data-placement-opens>${esc(opens)}</p>`:''}<p class="pm-scores">${one?`${esc(scores[0].score)} of ${esc(scores[0].total)} right`:scores.map(v=>`Grade ${esc(v.grade)}: ${esc(v.score)}/${esc(v.total)}`).join(' · ')} · +${esc(xp)} XP</p></div>`;
 }
 /* improve20-m-nov1 (audit3 #6): the mastery test's pass rule in words, said on its first question and again on a result that missed it
    (the rule itself is academics/lessons.js finishTest and does not change). need = right answers that pass, skills = skills in the test. */

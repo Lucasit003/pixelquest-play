@@ -2939,6 +2939,12 @@ html.m-mode dialog[data-view=alchemist] .potion-shop .card h3{font-size:20px}}
 .school-grade-q{font-size:14px;color:var(--ink)}.school-grade-q small{color:var(--muted)}
 .school-grade-opts{display:flex;flex-wrap:wrap;gap:4px}.school-grade-opts button{padding:3px 8px;font-size:13px;min-height:28px}
 .school-grade-opts button.picked{outline:2px solid #e8c47a;outline-offset:1px;color:#ffe9a8}
+/* improve20-z-nov1 #3 (audit6 #5): three big school-stage buttons in the grade row's style (the dropdown hid Elementary on a phone) */
+.school-stage{display:flex;gap:6px;margin:2px 0 4px}
+.school-grade-opts{flex-wrap:nowrap}.select-pane .hero-setup .school-grade-opts button{flex:1 1 auto;min-width:0;padding:3px 2px;white-space:nowrap;font-size:14px}
+.select-pane .hero-setup .school-stage button,.school-stage button{flex:1 1 0;min-width:0;min-height:48px;padding:4px 6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;line-height:1.1;white-space:nowrap}
+.school-stage button b{font-size:15px}.school-stage button small{font-size:12px;color:var(--muted)}
+.school-stage button.picked{outline:2px solid #e8c47a;outline-offset:1px;color:#ffe9a8}.school-stage button.picked small{color:#f3dca0}
 
 /* kidfix-a-oct31: the first-open placement offer for a child who gave a grade above 2 */
 .grade-offer{display:flex;align-items:center;gap:12px;margin:8px 0;padding:10px 12px;border:2px solid #e8c47a;border-radius:4px;background:rgba(232,196,122,.12)}
@@ -3109,6 +3115,8 @@ html.m-mode .pet-moment{top:10%}
 .m-mode .title-screen[data-step=setup] .school-grade{margin:2px 0 4px}
 .m-mode .title-screen[data-step=setup] .school-grade-opts{flex-wrap:nowrap;gap:4px}
 .m-mode .title-screen[data-step=setup] .school-grade-opts button{flex:1 1 0;min-width:0;min-height:36px;padding:2px 3px;font-size:13px;white-space:nowrap}
+.m-mode .title-screen[data-step=setup] .school-stage{margin:2px 0}.m-mode .title-screen[data-step=setup] .school-stage button{min-height:40px;padding:2px 3px}
+@media(max-height:380px){.m-mode .title-screen[data-step=setup] .school-stage button{min-height:36px}.m-mode .title-screen[data-step=setup] .school-stage button b{font-size:14px}.m-mode .title-screen[data-step=setup] .school-stage button small{font-size:11px}}
 @media(max-height:440px){.m-mode .title-screen[data-step=setup] .er-title{display:none}}
 @media(max-height:380px){.m-mode .title-screen[data-step=setup] .hero-setup :is(#hero-nickname,.pixel-select,#school-mode,.ps-btn){min-height:36px;height:auto;padding-block:4px}.m-mode .title-screen[data-step=setup] .hero-setup label{margin:0;line-height:1.1}.m-mode .title-screen[data-step=setup] .hero-setup #begin{min-height:40px}}
 /* improve20-r-oct31: the Rift of the Week: its card, the result lines and the run's modifier tags under the objective */
@@ -3501,3 +3509,16 @@ html.m-mode #hud-potion.potion-point{animation:pq-slot-pulse .8s steps(4) infini
 html.m-mode #hud-potion.potion-point::after{content:'';position:absolute;right:calc(100% + 6px);top:50%;width:0;height:0;border:9px solid transparent;border-left:12px solid #f3d48a;transform:translateY(-50%);filter:drop-shadow(0 2px 0 #0d0806);animation:pq-point-nudge .6s steps(2) infinite;pointer-events:none}
 @keyframes pq-point-nudge{50%{transform:translate(4px,-50%)}}
 @media (prefers-reduced-motion:reduce){html.m-mode #hud-potion.potion-point::after{animation:none}}
+/* improve20-z-nov1 #4 (audit6 #2): the next ability's charges as a ring round its icon (one segment per topic on its road, lit when
+   mastered; answer-moment.js chargeRing), and the "Volley 1/3 charged!" moment: the ring and the ability's own icon glow, a line pops in */
+.road-icon.road-ring{position:relative;--charge-on:#ffd25a;--charge-off:rgba(255,255,255,.22);padding:4px;margin:4px}
+.road-icon.road-ring::before{content:"";position:absolute;inset:-6px;border-radius:50%;background:var(--ring);-webkit-mask:radial-gradient(circle closest-side,transparent calc(100% - 5px),#000 calc(100% - 4px));mask:radial-gradient(circle closest-side,transparent calc(100% - 5px),#000 calc(100% - 4px));pointer-events:none}
+.road-icon.road-ring>*{position:relative}
+#next-unlock.charging{opacity:1;transform:none}
+html.m-mode.in-town #next-unlock.charging{display:block}
+.road-charge-pop{display:block;grid-column:1/-1!important;margin:0 0 4px;color:#ffe066!important;font-size:16px;letter-spacing:.5px;text-shadow:2px 2px 0 #000;animation:charge-pop .5s steps(4) both}
+.road.road-charged .road-icon{animation:charge-glow 1.2s steps(6) 2}
+.road.road-charged .road-icon.road-ring::before{filter:drop-shadow(0 0 4px #ffd25a) brightness(1.3)}
+@keyframes charge-pop{from{opacity:0;transform:translateY(6px) scale(.8)}to{opacity:1;transform:none}}
+@keyframes charge-glow{0%,100%{filter:none;transform:none}50%{filter:drop-shadow(0 0 6px #ffd25a) brightness(1.35);transform:scale(1.12)}}
+@media (prefers-reduced-motion:reduce){.road-charge-pop,.road.road-charged .road-icon{animation:none}}

@@ -905,9 +905,12 @@ dialog[data-view=library] .library-content>.edu-first-check{display:grid;grid-te
 dialog[data-view=library] .library-content>.edu-first-check>.edu-away-k{grid-column:1/-1;margin:0;color:var(--gold-2)}
 dialog[data-view=library] .library-content>.edu-first-check>.edu-first-line{grid-column:1;font-size:16px;line-height:1.45}
 dialog[data-view=library] .library-content>.edu-first-check>[data-away-check]{grid-column:2;margin:0;white-space:nowrap}
+/* improve20-z-nov1 #2: the lesson button leads (primary art), the check sits under it as the second choice */
+dialog[data-view=library] .library-content>.edu-first-check>[data-away-lesson]{grid-column:2;margin:0;white-space:nowrap}
+dialog[data-view=library] .library-content>.edu-first-check>button.primary{border-image-source:url(skin/pl-button-primary.png)!important;color:#fff2d0!important}dialog[data-view=library] .library-content>.edu-first-check>button.primary:hover:not(:disabled){border-image-source:url(skin/pl-button-primary-hover.png)!important}
 @media(max-height:500px){dialog[data-view=library] .library-content>.edu-first-check{margin:8px 0 6px;padding:8px 12px 10px;gap:4px 12px}dialog[data-view=library] .library-content>.edu-first-check>.edu-first-line{font-size:14px;line-height:1.35}}
 /* short landscape screens (phones): the line sits beside the ability card, as the next-lesson card does, so its button is on the first screen */
-@media(max-height:600px) and (min-width:700px){dialog[data-view=library] .library-content>.road+.edu-first-check{grid-column:2;align-self:stretch;margin:0;grid-template-columns:minmax(0,1fr);align-content:center}dialog[data-view=library] .library-content>.road+.edu-first-check>[data-away-check]{grid-column:1;justify-self:start;white-space:normal;margin-top:4px}}
+@media(max-height:600px) and (min-width:700px){dialog[data-view=library] .library-content>.road+.edu-first-check{grid-column:2;align-self:stretch;margin:0;grid-template-columns:minmax(0,1fr);align-content:center}dialog[data-view=library] .library-content>.road+.edu-first-check>[data-away-check]{grid-column:1;justify-self:start;white-space:normal;margin-top:4px}dialog[data-view=library] .library-content>.road+.edu-first-check>[data-away-lesson]{grid-column:1;justify-self:start;white-space:normal;margin-top:4px}}
 /* a course row's summary is long (its name, what opens it, its count) and reaches the middle, where the divider above it is drawn: the
    row starts below the whole divider instead of under half of it */
 dialog[data-view=library] .course-row+.course-row{padding-top:calc(14*var(--edu-u) + 6px)}

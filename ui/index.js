@@ -22,7 +22,7 @@ export {readProfiles,activeProfile,switchProfile} from './profiles.js';
 export {openProfiles} from './profiles-screen.js';
 export {encodeSave,decodeSave} from './savecode.js';
 import {decorate} from './decorate.js';
-export {titleScreen,wireTitle} from './title.js';
+export {titleScreen,wireTitle,GRADE_ROWS,gradeOptsHTML} from './title.js';
 export {uiSettingsHTML,wireUiSettings,applySettings} from './settings.js';
 export {openStats} from './stats.js';
 export {openCredits} from './credits-screen.js';

@@ -8,9 +8,11 @@
    - petTips: how often each pet's "+N%" has shown beside its proc (improve20-w-nov1; it stops at scenes/pet-fx.js PET_TIPS).
    - firstCast: abilities whose first-cast moment has played (kidfix-b-oct31: once per ability per save). A save from before the
      field gets every ability it already owns listed (core/save.js), so only a newly unlocked ability gets the moment.
-   s.schoolGrade (2-5, 0 for "Not sure", null when never asked) is the title flow's optional grade hint. It never sets a placement.
+   s.schoolGrade (2-5, or 6-8 for Middle School since improve20-z-nov1, 0 for "Not sure", null when never asked) is the title flow's optional grade hint. It never sets a placement.
    Pure: callers pass the save. */
-export const NUDGE_STOP=10,LOW_HP_HELPS=2,LOW_HP=.3,SCHOOL_GRADES=[2,3,4,5];
+export const NUDGE_STOP=10,LOW_HP_HELPS=2,LOW_HP=.3,SCHOOL_GRADES=[2,3,4,5,6,7,8];
+/* improve20-z-nov1 #2: Middle School asks the grade too (6-8); the Elementary-only helpers below read 2-5 */
+export const ELEMENTARY_GRADES=[2,3,4,5],MIDDLE_GRADES=[6,7,8];
 export const emptyHints=()=>({casts:{},lowHp:0,defeat:0,petPointer:false,offered:[],firstCast:[],petTips:{}});
 const int=(v,lo,hi)=>Math.max(lo,Math.min(hi,Math.floor(Number(v))||0));
 export function cleanHints(v){const h=emptyHints();if(!v||typeof v!=='object'||Array.isArray(v))return h;
@@ -37,7 +39,7 @@ export const petPointerDue=(s,won)=>!H(s).petPointer&&!!won;
 export function markPetPointer(s){H(s).petPointer=true;}
 export const PET_POINTER_TEXT='Your cat has friends! Visit Pets to meet them.';
 /* a subject's first Library open: offer the placement check when a stated grade above 2 has no placement and no work in it */
-export function placementOffer(s,subject,hasWork){const g=s.schoolGrade;if(!(g>2)||H(s).offered.includes(subject))return null;if((s.placement?.[subject]|0)>0||hasWork)return null;return g;}
+export function placementOffer(s,subject,hasWork){const g=s.schoolGrade;if(!(g>2)||g>5||H(s).offered.includes(subject))return null;if((s.placement?.[subject]|0)>0||hasWork)return null;return g;}
 export function markOffered(s,subject){const h=H(s);if(!h.offered.includes(subject))h.offered.push(subject);}
 /* kidfix-b-oct31, the first-cast moment: true the first time this ability is cast in a level on this save (then marked) */
 export const firstCastDue=(s,id)=>!!id&&!(H(s).firstCast||[]).includes(id);

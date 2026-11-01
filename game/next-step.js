@@ -26,6 +26,8 @@ import {starSource} from './ladder-guide.js';
 import {nextShowpiece} from './furniture.js';
 import {gearAtCap} from '../ui/gear-guidance.js';
 import {adviceLevel} from './tiers.js';
+import {learningRoad,nextUnlockStep} from '../academics/learning-road.js';
+import {startGrade,STAGE_FLOOR} from '../academics/placement.js';
 /* How much practice to suggest before the next adventure. The test still needs practiceNeeded (lessons.js: 10 on a save's first topic, 25 after). */
 export const PRACTICE_FIRST=10;
 const lessonDone=save=>Object.values(save?.lessons||{}).some(l=>l?.done);
@@ -79,6 +81,28 @@ export function showpieceStep(save){const g=save?.gold|0;if(g<SHOW_GOLD)return n
    when Heroic is open there and not yet won, Heroic is the replay to suggest. */
 export const OVER_BAND=4;
 export const overlevelled=(save,id)=>{const l=levelById(id);return !!l&&tiered(l)&&(save?.level|0)>=adviceLevel(l,'normal')+OVER_BAND&&tierOpen(save,id,'heroic')&&!tierDone(save,id,'heroic');};
+/* improve20-z-nov1 #1 (audit6 #1): a Middle or High School save has no open topic until a lesson or the check opens one, so the first-lesson
+   step was skipped and the goal went straight to Goblin Camp. While the stage is not Elementary, nothing in it is open and no subject is
+   placed in it, the goal is the Library, where the first visit starts a lesson (ui/first-library.js firstStart). Same id as the
+   Elementary step, so the town's lines about the Library follow it. */
+const openInMode=save=>TOPICS.filter(t=>!mastered(save,t)&&topicInSchoolMode(save,t)&&topicOpen(save,t));
+export const unplacedStage=save=>{const f=STAGE_FLOOR[save?.schoolMode];return !!f&&!Object.values(save?.placement||{}).some(g=>(+g||0)>=f)&&!openInMode(save).length;};
+function firstLibrary(save,room){if(room!=='library')return {id:'first-lesson',text:'Visit the Library: pick your first lesson.',target:{kind:'library'}};
+ const g=save.schoolMode==='middle'?(startGrade({...save},'math','middle')??6):null;
+ return {id:'first-lesson',text:g?`Pick your first lesson: press “Start a Grade ${g} lesson now”.`:'Pick your first lesson: press “Start a High School lesson now”.',target:{kind:'library'}};}
+/* improve20-z-nov1 #4 (audit6 #2): after ability 2 the next power is about three topics away and the goal only ever named adventures.
+   save.goalTurn (additive within v9, core/save.js) alternates the suggestion: a topic's first mastery sets 'fight' (main.js), and the next
+   goal that is an adventure says "Try your new skills"; a level won sets 'learn', and the next goal is the next charge toward the next
+   ability ("Charge Volley (1/3): ..."), read from the same road the HUD card shows (learning-road.js). After the ending the post-game road
+   keeps the goal (the HUD card still shows the charges). Only the suggestion changes: the gates,
+   the practice counts and the test are untouched, and nothing here unlocks anything. Every class's ladder reads the same road. */
+export function chargeStep(save){if(save?.goalTurn!=='learn'||!earned(save)||gameCleared(save))return null;const road=learningRoad(save);
+ if(!road||road.sleeping||!road.reachable||road.knowledge||road.remaining<1)return null;const a=road.ability,st=nextUnlockStep(save,road),sub=SUBJECTS[a.subject]?.name||a.subject,t=st?.topic&&TOPICS.find(x=>x.id===st.topic);
+ const left=st?.kind==='practice'?st.need-st.have:0,what=st?.kind==='practice'&&t?`practise ${left} more question${left===1?'':'s'} in “${t.title}”`:st?.kind==='quiz'&&t?`pass the quiz on “${t.title}”`:st?.kind==='test'&&t?`take the mastery test on “${t.title}”`:`start ${/^[aeiou]/i.test(sub)?'an':'a'} ${sub} lesson`;
+ return {id:'charge',text:`Charge ${a.name} (${road.done}/${road.total}): ${what} at the Library.`,target:{kind:'library'},charge:{ability:a.id,done:road.done,total:road.total}};}
+/* a goal after a fresh charge that is an adventure on the map: "Try your new skills" leads it */
+const tryNew=(save,n)=>{if(save?.goalTurn!=='fight'||!earned(save)||n?.target?.kind!=='pad')return n;const l=levelById(n.target.id);
+ return {...n,text:n.id==='level-'+n.target.id&&l?`Try your new skills at ${l.name}.`:`Try your new skills! ${n.text}`,tryNew:true};};
 function adventure(save){
  const h=hireStep(save);if(h)return h;
  const q=nextQuestStep(save,questLive);if(q?.rank==='handin')return questStep(q);
@@ -108,8 +132,12 @@ export function nextStep(save,{room}={}){goalSave=save;
  if(lost&&!potionCount(save||{})&&(save?.gold|0)>=price){const n=nextStep({...save,levels:Object.fromEntries(Object.entries(save.levels).map(([k,v])=>[k,{...v,resolve:0}]))},{room});return {id:'potions',text:`Out of potions: buy some at the Apothecary (${price} gold each).`,target:{kind:'alchemist'},then:n};}
  const a=nextPower(save),subject=SUBJECTS[a?.subject]?.name;
  if(a&&abilityMastery(save,a.subject)+1e-8>=a.gate){const n=adventure(save)||pad(levelById('e1'));return {...n,id:'level-up',text:`Fight foes and finish adventures to earn XP toward hero level ${xpLevel(a)} for ${a.name}. ${n.text}`};}
- if(levelDone(save,'e3')||!TOPICS.some(t=>!mastered(save,t)&&topicInSchoolMode(save,t)&&topicOpen(save,t)))return adventure(save)||endGoal(save);
- if(!lessonDone(save)&&!earned(save))return {id:'first-lesson',text:room==='library'?(subject?`Start your first ${subject} lesson.`:'Choose a study area to start your first lesson.'):(subject?`Visit the Library for your first ${subject} lesson.`:'Visit the Library for your first lesson.'),target:{kind:'library'}};
+ if(unplacedStage(save))return firstLibrary(save,room);
+ {const c=chargeStep(save);if(c)return c;}
+ if(levelDone(save,'e3')||!openInMode(save).length)return tryNew(save,adventure(save))||endGoal(save);
+ /* improve20-z-nov1 #1: the first lesson names a subject that has an open lesson (a placed Middle School learner may have opened another subject than the next power's) */
+ const fsub=(o=>o.some(t=>t.subject===a?.subject)?subject:SUBJECTS[(o.find(t=>save.lessons?.[t.id]?.reached>0)||o[0])?.subject]?.name||subject)(openInMode(save));
+ if(!lessonDone(save)&&!earned(save))return {id:'first-lesson',text:room==='library'?(fsub?`Start your first ${fsub} lesson.`:'Choose a study area to start your first lesson.'):(fsub?`Visit the Library for your first ${fsub} lesson.`:'Visit the Library for your first lesson.'),target:{kind:'library'}};
  /* improve20-f-nov1 #9 (audit5 #1): a fight comes right after the first lesson AND its quiz (it came after the lesson alone, and the quiz
     card then pointed at practice, so a new kid met about 30 answers before a second fight). Until the first quiz is sat the goal is that
     quiz; then Goblin Camp; then practice (the practice step names the power it awakens). Only the suggested order changes: mastery, the
@@ -130,7 +158,7 @@ export function nextStep(save,{room}={}){goalSave=save;
   if(r.ready)return {id:'earn-power',text:`Take the mastery test on “${t.title}” at the Library.`,target:{kind:'library'}};
   const e2=levelById('e2');if(e2&&!levelDone(save,'e2')&&levelOpen(save,'e2')&&!levelFogged(e2))return pad(e2);
   return {id:'earn-power',text:'Finish practice and take the test at the Library.',target:{kind:'library'}};}
- const n=adventure(save);if(n)return n;
+ const n=tryNew(save,adventure(save));if(n)return n;
  return endGoal(save);}
 function endGoal(save){
  /* improve20-x-nov1 #20a: saving up for a Showpiece is the goal once nothing else is left */
