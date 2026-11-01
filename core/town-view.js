@@ -4,10 +4,10 @@
    room's door, a fast-travel spot) waits for the core (sprite pages, water, overview, effects) and the chunks under
    the arrival view; scenes/town.js loads the rest behind it, nearest first, and draws the overview where a chunk is
    still on its way.
-   TOWN_VIEW is the largest camera (game/stage.js setView caps it at 480x270). The margin covers the camera's ease
+   TOWN_VIEW is the largest camera: the Far town view (ownernotes-b-nov1 #2, game/stage.js HUB_MAX, 672x378; levels stay 480x270). The margin covers the camera's ease
    from the hero (placeAt puts it on him, hubUpdate eases it 20 px up) and the first steps of a walk. A smaller phone
    camera, clamped the same way, always sits inside this rectangle. */
-export const TOWN_VIEW = Object.freeze({w: 480, h: 270, margin: 64});
+export const TOWN_VIEW = Object.freeze({w: 672, h: 378, margin: 64});
 /* the camera rectangle drawHub would use for a camera at (x, y-10), clamped to the map's bounds, grown by the margin */
 export function townViewRect(x, y, D, V = TOWN_VIEW) {
   const [bx0, by0, bx1, by1] = D.bounds ?? [0, 0, D.w, D.h];

@@ -7,13 +7,17 @@
       listed in assets/narration/index.json and made by tools/narration-clips.mjs. A clip's file name
       is a hash of the voice and the exact spoken text, so an edited caption can never play a stale
       clip: it simply has no clip until the script is run again.
-   2. The browser's speechSynthesis, preferring an on-device voice, when any line of a reading has no
-      clip. Where neither exists (Node, jsdom, some browsers) every call is a silent no-op.
+   2. The browser's speechSynthesis, when any line of a reading has no clip. ownernotes-b-nov1 #6 ("the lesson
+      audio might be bad"): the voice is chosen by quality (pickVoice below: Premium, Enhanced, Siri, then Google
+      voices, then the plain system voices), never a novelty voice such as Bad News or Zarvox, which a Mac lists
+      beside the real ones. Where neither exists (Node, jsdom, some browsers) every call is a silent no-op.
+   While either voice speaks, the music dips under it (core/audio.js voiceDuck), and one reading always stops
+   the last, so two never overlap.
 
    No timers: playback advances only on media and utterance events. Nothing here touches a save
    except through the toggle callback main.js passes in. */
 import {hash} from '../academics/bank.js';
-import {getVolume} from '../core/audio.js';
+import {getVolume,voiceDuck} from '../core/audio.js';
 
 export const VOICE='af_heart';
 export const CLIP_DIR='assets/narration/';
@@ -67,6 +71,35 @@ export function topicLines(topic){
  for(const st of topic.steps){out.push(st.say);if(st.check)out.push(tryLine(st.check),answerLine(st.check),st.check.hint);}
  return [...new Set(out.filter(Boolean))];
 }
+/* ownernotes-b-nov1 #6: how a "Read to me" text splits into lines (one clip or utterance each), and the fixed card lines
+   (the ability unlock card) that tools/narration-clips.mjs records, so those cards read in the lesson voice too. The card
+   builds its text from the same helpers, so a recorded line can never drift from what the card says. */
+export const readLines=text=>String(text??'').split(/(?<=[.!?])\s+/).map(x=>x.trim()).filter(Boolean);
+export const unlockWhy=(a,subjectName)=>a?.gate===0?`Your training awakens ${a.name}.`:`Your ${subjectName} knowledge made this possible.`;
+export const unlockReadText=(a,why,awakening=a?.gate===0)=>`${awakening?'Ability awakened':'Ability unlocked'}: ${a.name}. ${why}`;
+export function cardLines(abilities,subjects){
+ const out=[];for(const list of Object.values(abilities||{}))for(const a of list||[]){const sub=subjects?.[a.subject]?.name||a.subject;out.push(...readLines(unlockReadText(a,unlockWhy(a,sub))));}
+ return [...new Set(out)];
+}
+/* ownernotes-b-nov1 #6: the browser voice, best first. A Mac lists novelty voices (Bad News, Bubbles, Zarvox...) beside the
+   real ones, and the old pick (the default, or the first local voice) could land on one. Novelty voices are never used;
+   Premium, Enhanced, Siri and Google voices come first, then the natural cloud voices, then the plain system voices, then
+   the old robotic ones. Within a rank: the page's own region (en-US), then en-GB, then any English; an on-device voice
+   before a network one; the system default before the rest. */
+export const NOVELTY_VOICES=Object.freeze(['Albert','Bad News','Bahh','Bells','Boing','Bubbles','Cellos','Deranged','Good News','Hysterical','Jester','Organ','Pipe Organ','Princess','Superstar','Trinoids','Whisper','Wobble','Zarvox']);
+const OLD_VOICES=['Fred','Junior','Kathy','Ralph','Vicki','Victoria','Eddy','Flo','Grandma','Grandpa','Reed','Rocko','Sandy','Shelley'];
+const bareName=v=>String(v?.name||'').replace(/\s*\(.*$/,'').replace(/^(Microsoft|Apple)\s+/i,'').trim();
+export const noveltyVoice=v=>NOVELTY_VOICES.some(n=>bareName(v).toLowerCase()===n.toLowerCase());
+export function voiceRank(v){const n=String(v?.name||'');
+ if(noveltyVoice(v))return Infinity;
+ if(/premium/i.test(n))return 0;if(/enhanced/i.test(n))return 1;if(/siri/i.test(n))return 2;if(/^google\b/i.test(n))return 3;
+ if(/natural|neural/i.test(n))return 4;if(OLD_VOICES.some(o=>bareName(v).toLowerCase()===o.toLowerCase()))return 6;return 5;}
+export function pickVoice(voices,lang='en'){
+ const L=String(lang||'en').toLowerCase(),base=L.slice(0,2),region=L.length>2?L:'en-us',norm=v=>String(v?.lang||'').toLowerCase().replace('_','-');
+ const ok=[...(voices||[])].filter(v=>v&&norm(v).startsWith(base)&&voiceRank(v)<Infinity);
+ const where=v=>norm(v)===region?0:norm(v)==='en-gb'?1:2;
+ return ok.sort((a,b)=>voiceRank(a)-voiceRank(b)||where(a)-where(b)||(b.localService?1:0)-(a.localService?1:0)||(b.default?1:0)-(a.default?1:0))[0]||null;
+}
 export const narrationOn=save=>save?.settings?.narration!==false;
 /* The lesson guide: one name everywhere (npcs.js, the Library marker, every line). */
 export const GUIDE_NAME='Archivist Aldous';
@@ -79,15 +112,17 @@ export function createNarrator(env={}){
  const Utterance=()=>env.Utterance!==undefined?env.Utterance:globalThis.SpeechSynthesisUtterance;
  const makeAudio=env.makeAudio||(url=>{try{return typeof globalThis.Audio==='function'?new globalThis.Audio(url):null;}catch{return null;}});
  const base=env.base??new URL('../'+CLIP_DIR,import.meta.url).href;
- let clips=new Set(),voice=VOICE,loaded=false,token=0,playing=null,finish=null;
+ let clips=new Set(),voice=VOICE,loaded=false,token=0,playing=null,finish=null,chosen=null;
  const ready=(async()=>{try{const idx=await (env.loadIndex?env.loadIndex():fetch(base+'index.json').then(r=>r.ok?r.json():null));if(idx&&Array.isArray(idx.clips)){clips=new Set(idx.clips);voice=idx.voice||VOICE;}}catch{}loaded=true;})();
+ /* the browser builds its voice list lazily: asking once now means the ranked pick has it by the first reading */
+ try{synth()?.getVoices?.();}catch{}
  const hasClip=line=>clips.has(clipKey(line,voice));
  /* 'clip' only when every line has a clip, so one reading is never half Kokoro, half robot. */
  const mode=lines=>{const ls=[].concat(lines).filter(Boolean);if(!ls.length)return null;if(ls.every(hasClip))return 'clip';return synth()&&typeof Utterance()==='function'?'speech':null;};
- function stop(){token++;const p=playing;playing=null;if(p){try{p.pause();}catch{}p.onended=p.onerror=null;}const s=synth();if(s){try{s.cancel();}catch{}}const f=finish;finish=null;f?.();}
+ function stop(){token++;const p=playing;playing=null;if(p){try{p.pause();}catch{}p.onended=p.onerror=null;}const s=synth();if(s){try{s.cancel();}catch{}}const f=finish;finish=null;f?.();try{voiceDuck(false);}catch{}}
  function speak(lines,{onstart,onend}={}){
   stop();const ls=[].concat(lines).map(l=>String(l??'').trim()).filter(Boolean),m=mode(ls);if(!m)return false;
-  const my=token;let called=false;const done=()=>{if(called)return;called=true;if(finish===done)finish=null;onend?.();};finish=done;
+  const my=token;let called=false;const done=()=>{if(called)return;called=true;if(finish===done)finish=null;if(my===token)try{voiceDuck(false);}catch{}onend?.();};finish=done;try{voiceDuck(true);}catch{}
   if(m==='clip'){
    const next=i=>{if(my!==token)return;if(i>=ls.length){playing=null;done();return;}
     const a=makeAudio(base+clipKey(ls[i],voice)+'.mp3');if(!a){fallback(i);return;}playing=a;
@@ -100,14 +135,18 @@ export function createNarrator(env={}){
    next(0);return true;}
   return speechFrom(ls,my,done,onstart);
  }
- function speechFrom(ls,my,done,onstart){
+ function speechFrom(ls,my,done,onstart,local=false){
   const s=synth(),U=Utterance();if(!s||typeof U!=='function'||my!==token)return false;
-  let v=null;try{const lang=String(globalThis.document?.documentElement?.lang||'en').slice(0,2).toLowerCase();const vs=Array.from(s.getVoices?.()||[]).filter(x=>x.localService&&String(x.lang).toLowerCase().startsWith(lang));v=vs.find(x=>x.default)||vs[0]||null;}catch{}
-  const us=ls.map((l,i)=>{const u=new U(speechText(l));u.rate=0.9;u.pitch=1;if(v){u.voice=v;u.lang=v.lang;}if(i===0&&onstart)u.onstart=()=>onstart();if(i===ls.length-1)u.onend=done;u.onerror=done;return u;});
+  /* with no voice list yet, the lines still say they are English, so the browser never reads them with its default voice for another
+     language (headless Chrome's default is Google Deutsch) */
+  let v=null,all=[];const pageLang=String(globalThis.document?.documentElement?.lang||'en');try{all=Array.from(s.getVoices?.()||[]);v=pickVoice(local?all.filter(x=>x.localService):all,pageLang);}catch{}chosen=v?.name||null;
+  /* a network voice (Google's) that fails, as it does offline, hands the rest of the reading to the best on-device voice */
+  let moved=false;const fail=i=>e=>{if(moved||my!==token)return;if(v&&!v.localService&&!local&&!/cancel|interrupt/i.test(String(e?.error||''))){moved=true;try{s.cancel();}catch{}if(speechFrom(ls.slice(i),my,done,null,true))return;}done();};
+  const us=ls.map((l,i)=>{const u=new U(speechText(l));u.rate=0.9;u.pitch=1;if(v){u.voice=v;u.lang=v.lang;}else u.lang=/^en\b/i.test(pageLang)&&pageLang.length>2?pageLang:'en-US';if(i===0&&onstart)u.onstart=()=>onstart();if(i===ls.length-1)u.onend=()=>{if(!moved)done();};u.onerror=fail(i);return u;});
   try{for(const u of us)s.speak(u);}catch{done();return false;}
   return true;
  }
- return {speak,stop,mode,hasClip,ready,get loaded(){return loaded;},get clipCount(){return clips.size;}};
+ return {speak,stop,mode,hasClip,ready,get loaded(){return loaded;},get clipCount(){return clips.size;},get browserVoice(){return chosen;}};
 }
 
 let shared=null;

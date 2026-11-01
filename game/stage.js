@@ -105,6 +105,10 @@ export function levelGeometry(level){
  return geo;}
 /* The camera's top edge: a band that fits above the hotbar is framed once; a taller one follows the hero. */
 /* v2:ui-mobile */export function setView(w=480,h=270){STAGE.camW=Math.max(64,Math.min(480,Math.round(w)));STAGE.camH=Math.max(64,Math.min(270,Math.round(h)));return {w:STAGE.camW,h:STAGE.camH};}
+/* ownernotes-b-nov1 #2: the town's own view (ui/scale.js hubFit, Settings > Town view), read by scenes/town.js; levels keep camW x camH.
+   HUB_MAX is the largest (Far, 1.4 x 480x270); core/town-view.js streams the ground for it. Unset, the town uses the level view. */
+export const HUB_MAX=Object.freeze({w:672,h:378});
+export function setHubView(w=STAGE.camW,h=STAGE.camH){STAGE.hubW=Math.max(64,Math.min(HUB_MAX.w,Math.round(w)));STAGE.hubH=Math.max(64,Math.min(HUB_MAX.h,Math.round(h)));return {w:STAGE.hubW,h:STAGE.hubH};}
 export function camTopFor(geo,y){const H=/* v2:ui-mobile */STAGE.camH,maxTop=Math.max(0,(geo?.height||H)-H),vis=H-(/* camface-oct28: phones (ui/mobile.js measurePads) */STAGE.padB??STAGE.hudBottom);if(!geo)return 0;
  const fb=/* improve20-p-oct31 #5: the drawn band */geo.artBottom??geo.floorBottom,fixed=fb-geo.floorTop<=vis-20;if(!fixed)return Math.max(0,Math.min(maxTop,Math.round(y-vis/2)));
  /* tallfields-oct31: a fixed frame puts the band's near edge at the bottom of the visible strip. A taller band on a phone camera

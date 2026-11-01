@@ -156,8 +156,14 @@ export const STORY = [
     say: [`News from all over town! ${RESTORED[id]}`]})),
 ];
 
+/* ownernotes-b-nov1 #5 (owner: "my game is kinda laggy when I came back from the battle"): the id of the HUD's next step, which a
+   `when.step` beat compares. After a won level the next step is a learning charge (game/next-step.js chargeStep reads the whole learning
+   road), and the hub asked for it once per story beat in hubUpdate and once per villager marker in drawHub, every frame: about 2.3 ms of
+   every town frame (3.3x the fresh-town cost) in headless Chrome, more on a busy laptop. holds() takes an optional `step` function so a
+   caller can work it out once per frame (scenes/town.js stepNow); without one it is worked out here, as before. */
+export const stepIdOf = save => { const ns = nextStep(save ?? {}); return (ns.then || ns).id; };
 /** Does a `when` hold for this save? */
-export function holds(when, save) {
+export function holds(when, save, step = null) {
   if (!when) return true;
   const done = id => !!save?.levels?.[id]?.done, seen = id => !!save?.hub?.seen?.includes(id);
   if (when.done && !done(when.done)) return false;
@@ -166,7 +172,7 @@ export function holds(when, save) {
   if (when.notSeen && seen(when.notSeen)) return false;
   /* {quest:{id, state?, step?}}: a quest's state ('locked'|'open'|'active'|'done') and/or its current step index */
   if (when.quest) { const q = when.quest; if (!questLive(q.id)) return false; if (q.state && questState(save ?? {}, q.id) !== q.state) return false; if (q.step !== undefined) { const st = questState(save ?? {}, q.id), c = st === 'active' ? currentStep(save, q.id) : null; if (c?.index !== q.step) return false; } }
-  if (when.step || when.stepNot) { const ns = nextStep(save ?? {}), step = (ns.then || ns).id; if (when.step && step !== when.step) return false; if (when.stepNot && step === when.stepNot) return false; }
+  if (when.step || when.stepNot) { const id = typeof step === 'function' ? step() : stepIdOf(save); if (when.step && id !== when.step) return false; if (when.stepNot && id === when.stepNot) return false; }
   return true;
 }
 

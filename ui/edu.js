@@ -24,10 +24,16 @@ export function loadLessonSprites(){if(lessonSprites)return lessonSprites;
 /* Loaded on entering educational content, never at the title. */
 
 /* "Read to me" buttons anywhere (data-edu-read): one delegated listener reads the button's text aloud. */
-import {narrator} from './edu-narration.js';
-export function wireReadButtons(doc=globalThis.document){
+import {narrator,readLines} from './edu-narration.js';
+/* ownernotes-b-nov1 #6: the reading stops when its card goes (the panel closes, or the next question replaces the button), so
+   a question's voice never runs on over the next one or out into the world. A new reading always stops the last. */
+export function wireReadButtons(doc=globalThis.document,{n=narrator}={}){
  if(!doc?.addEventListener||doc.__eduRead)return false;doc.__eduRead=true;
- doc.addEventListener('click',e=>{const b=e.target?.closest?.('[data-edu-read]');if(!b)return;narrator().speak(String(b.dataset.eduRead).split(/(?<=[.!?])\s+/));});
+ doc.addEventListener('click',e=>{const b=e.target?.closest?.('[data-edu-read]');if(!b)return;const N=n(),host=b.closest?.('dialog')||b.ownerDocument?.body,Obs=b.ownerDocument?.defaultView?.MutationObserver||globalThis.MutationObserver;
+  let watch=null,off=null;const end=()=>{watch?.disconnect();watch=null;off?.();off=null;};
+  const started=N.speak(readLines(b.dataset.eduRead),{onend:end});if(!started||!host)return;
+  if(Obs){watch=new Obs(()=>{if(!b.isConnected){end();N.stop();}});watch.observe(host,{childList:true,subtree:true});}
+  if(host.tagName==='DIALOG'){const close=()=>{end();N.stop();};host.addEventListener('close',close,{once:true});off=()=>host.removeEventListener('close',close);}});
  return true;
 }
 wireReadButtons();

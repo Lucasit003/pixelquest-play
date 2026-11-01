@@ -235,7 +235,7 @@ export const ENEMY_TYPES={
   {name:'summon guard',state:'cast',kind:'summon',key:'skeleton-warrior',count:1,max:2,range:400,cd:10,windup:.8,fx:'fx-portal',phase:2}]},
  'forge-golem':{name:'The Forge Golem',sprite:'pl-forge-golem',boss:true,hp:860,atk:29,def:17,speed:26,scale:1,ai:'boss',band:14,kbResist:1,weakness:'ice',
   taunts:['CLANG! Hammer ready. Anvil ready.','Hero... ready to be flattened!'],intro:'CLANG! Freshly forged, and still red hot!',defeat:'Cooling... cooling... clunk.',
-  fact:F('science','Blacksmiths judge how hot iron is by its glow, from dull red, to orange, to bright yellow, the hottest.'),
+  fact:F('science','Blacksmiths judge how hot iron is by its glow, from dull red, to orange, to yellow, and finally white, the hottest.'),
   phaseShift:{at:.5,speed:1.2,cd:.7,tint:'#ff8a2a',title:'THE FORGE ROARS'},attacks:[
   {name:'anvil fist',state:'attack',kind:'melee',range:40,band:12,cd:2.4,windup:.65,dmg:1.3},
   {name:'arm cannon',state:'special',kind:'projectile',fx:'fx-golem-arm',range:260,cd:3.4,windup:.6,dmg:1.1,speed:150},
@@ -271,7 +271,7 @@ export const ENEMY_TYPES={
   {name:'ember rush',state:'walk',kind:'dash',range:260,cd:4.5,windup:.7,dmg:1.2,speed:260,band:12,phase:2,stagger:1.2,trail:{fx:'fx-fire-burst',delay:.7,radius:14,dmg:.6},label:'EMBER RUSH'}]},
  'imp-lord':{name:'Vexx, Lord of Imps',sprite:'pl-imp-lord',boss:true,hp:920,atk:31,def:14,speed:30,scale:1,ai:'boss',band:14,kbResist:1,fly:4,weakness:'ice',
   taunts:['So small! So serious! Ha!','Imps, show this hero how we play!'],intro:'Vexx is the biggest imp of all! Get them, everyone!',defeat:'Ouch! Imps, run away!',
-  fact:F('science','Chains are strong because each link spreads the pull around a loop, which is why bridges and anchors use them.',true),
+  fact:F('science','Ships hold their anchors with heavy chains. The Menai Bridge in Wales, opened in 1826, was built with its road hanging from giant iron chains.'),
   phaseShift:{at:.5,speed:1.2,cd:.7,tint:'#ff5a3a',title:'VEXX THROWS A TANTRUM'},attacks:[
   {name:'chain lash',state:'attack',kind:'melee',range:62,band:14,cd:2.6,windup:.7,dmg:1.25},
   {name:'hellfire breath',state:'special',kind:'melee',range:120,band:14,cd:3.6,windup:.75,dmg:1.4},
@@ -377,7 +377,7 @@ export const ENEMY_TYPES={
   {name:'raise the choir',state:'cast',kind:'summon',key:'skeleton-mage',count:1,max:2,range:400,cd:11,windup:.8,fx:'fx-portal',phase:2}]},
  'void-knight':{name:'The Void Knight',sprite:'pl-void-knight',boss:true,hp:1000,atk:35,def:17,speed:34,scale:1,ai:'boss',band:12,kbResist:.95,weakness:'holy',
   taunts:['The deep is calling for you.','I will make sure you answer.'],intro:'Beyond this gate is the deep. I am its keeper.',defeat:'The gate... is yours to open.',
-  fact:F('science','Space is almost empty, with no air to carry sound, so space is completely silent.'),
+  fact:F('science','Space has almost no air to carry sound, so you could not hear a shout out there. Astronauts talk by radio.'),
   /* moveset (v6): the gate's keeper. Rift Step goes into one portal and out of another behind the hero (Heroic: a second,
      dimmer exit; the brighter one is real); Star Cape drops stars in a cross (the gaps are safe); Gate Guard holds his sword
      across: a frontal hit is answered by a Void Sweep; from half health Crystal Blade slams a long line of arcane light, and

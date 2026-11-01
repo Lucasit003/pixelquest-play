@@ -43,7 +43,7 @@ export function initUI(c){
  ctx=c;const d=globalThis.document,w=globalThis.window;if(!d||!w)return;
  const s=c.save();
  applySettings(s);setSheetWorld(c.world);setDialogueWorld(c.world);setProfilePersist(c.persist);installSheetKeys(w);unlockAudio(w);setDirected(true);
- initMobile({world:c.world});initScale(c.save);armStartFullscreen(c.save);
+ initMobile({world:c.world});initScale(c.save,{town:()=>c.world?.zone==='town'&&!c.world?.level}/* ownernotes-b-nov1 #2: the town's own view */);armStartFullscreen(c.save);
  fillIcons(d);installToastHold();loadCanvasUI();installStageBanners();
  /* Settings opened from the title screen come back to the title when they close. */
  d.querySelector('#modal')?.addEventListener('close',()=>{if(returnToTitle){returnToTitle=false;d.documentElement.classList.remove('title-panel');later(()=>{if(!d.querySelector('#modal').open)c.welcome?.();},0);}});

@@ -3608,3 +3608,40 @@ dialog[data-view=help] #modal-content{display:flex;flex-direction:column;overflo
 html:not(.m-mode) .title-screen[data-step=setup] .er-detail.hero-detail{grid-template-rows:minmax(0,1fr);min-height:0}
 html:not(.m-mode) .title-screen[data-step=setup] .er-stats{min-height:0;max-height:100%;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
 .title-screen[data-step=setup] .hero-setup #begin{position:sticky;bottom:0;z-index:1}
+/* ownernotes-b-nov1 #1 (owner, 1 Nov: "the inventory is also kind of huge on my screen"): on a laptop (1280x720 to 1512x982) the Home
+   panel filled the screen, its frame and padding took 56 px a side and the paper doll was a big empty box round a 1x hero. Desktop panels
+   now have a smaller cap, the window frame is drawn at an exact 2x (38 px corners, it was 2.53x at 48 px) with padding to match, and the
+   Home tabs are a little tighter. Phones (m-mode) keep their full-screen sheets. */
+:where(html:not(.m-mode)) dialog{width:min(980px,92vw);max-height:90vh;max-height:90dvh}
+html:not(.m-mode) dialog:not([data-view=welcome]):not([data-view=cinematic]){border-width:22px;border-image-width:38px;--panel-pad:16px 16px 14px}
+html:not(.m-mode) dialog[data-home]{width:min(940px,90vw);height:min(700px,88dvh)}
+html:not(.m-mode) dialog[data-home] .home-tabs{gap:4px;margin:2px 0 8px}
+html:not(.m-mode) dialog[data-home] .home-tabs button{padding:5px 6px}
+html:not(.m-mode) dialog[data-home] .modal-head{padding:2px 0 8px;margin-bottom:4px}
+/* the paper doll: the hero canvas is 72x72 (the figure at 1x) shown at an exact 3x, the slots hug it, the totals sit in two rows of three */
+.inv{grid-template-columns:auto minmax(0,1fr);gap:14px}
+.inv-doll.gear-doll{grid-template-columns:72px 216px 72px;justify-content:center;gap:6px 10px;padding:10px 12px}
+.gear-doll .inv-hero{width:216px;height:216px}
+.gear-doll .inv-stats{grid-template-columns:repeat(3,1fr)}
+.m-mode .inv-doll.gear-doll{grid-template-columns:64px 144px 64px;gap:4px 6px}
+.m-mode .gear-doll .inv-hero{width:144px;height:144px}
+@media (max-width:760px){html:not(.m-mode) .inv{grid-template-columns:1fr}}
+/* ownernotes-b-nov1 #2: Town view is a desktop setting (a phone's view is already as wide as its screen allows at 2x) */
+.m-mode :is(.town-view-row,.town-view-note){display:none}
+@media (max-height:760px){html:not(.m-mode) dialog[data-home] .modal-head p{display:none}html:not(.m-mode) dialog[data-home] .modal-head{padding-bottom:4px}}
+.gear-doll .inv-stats div{padding:2px 0 4px}
+/* ownernotes-b-nov1 #3 (owner: "the potion bottle in the inventory slides a little bit and isn't centred"): every button drops 2 px while
+   pressed (button:active, the press feel of the text buttons), so a hotbar slot, an inventory slot and a bag cell slid under the finger or
+   the mouse; an icon slot shows its press with its frame instead. And on the desktop hotbar the key badge's dark box covered the bottle's
+   neck and cork, so the visible bottle sat low and right of the slot's centre; the potion slot's key is the plain outlined letter, clear of the
+   bottle, which is centred in the slot (tests/ownernotes-b-nov1.test.js measures it). */
+#hotbar button:active:not(:disabled),.inv :is(.inv-slot,.inv-cell):active:not(:disabled),.gear-pick .inv-cell:active:not(:disabled){transform:none}
+html:not(.m-mode) #hotbar #hud-potion kbd{background:none;box-shadow:none;padding:0 2px}
+/* ownernotes-b-nov1 #1: on a laptop the paper doll's stats read as one compact line each (name left, value right), so the whole doll,
+   both stat rows included, fits a 1280x720 panel without a cut-off row at the fold */
+html:not(.m-mode) .gear-doll .inv-stats{gap:4px;margin-top:4px}
+html:not(.m-mode) .gear-doll .inv-stats div{display:flex;align-items:baseline;justify-content:space-between;gap:6px;padding:3px 8px;text-align:left}
+html:not(.m-mode) .gear-doll .inv-stats dd{line-height:1}
+/* ownernotes-b-nov1 #1: in the (now narrower) Weaponsmith panel the gold tag stays on the tab row instead of wrapping under Buy */
+html:not(.m-mode) dialog[data-view=smith] .smith-head .smith-tabs{gap:4px}
+html:not(.m-mode) dialog[data-view=smith] .smith-head .smith-tabs button{padding-left:8px;padding-right:8px}

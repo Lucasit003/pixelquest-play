@@ -20,7 +20,7 @@ import {levelDone} from '../game/levels.js';
 import {drawTrail} from '../gfx/hero-trail.js';
 import {trailOf} from '../game/prizes.js';
 import {FURN, footprint, placeFurniture, spare, wallSpot, wallFits, WALL} from '../game/furniture.js';
-import {talk, talkAndAdvance, nameOf, holds, STORY} from '../game/npcs.js';
+import {talk, talkAndAdvance, nameOf, holds, stepIdOf, STORY} from '../game/npcs.js';
 import {COMPANIONS, ART, joined} from '../game/party.js';
 import {questLive, currentStep, questState} from '../game/quests.js';
 import {loadSprite as loadActor, drawSprite as drawActor} from '../gfx/actors/sprites.js';
@@ -32,7 +32,7 @@ import {townViewChunks, chunkDist} from '../core/town-view.js';
 
 const BASE = new URL('../assets/town/', import.meta.url).href;
 /* v2:ui-mobile -- the hub camera follows the rendered view (STAGE.camW x camH): 480x270 on desktop, smaller on phones */
-let VIEW_W = 480, VIEW_H = 270; const syncView = () => { VIEW_W = STAGE.camW || 480; VIEW_H = STAGE.camH || 270; }; const PROXY = {x: 350, y: 300}; const FOOT = {hw: 5, up: 4, down: 1};
+let VIEW_W = 480, VIEW_H = 270; const syncView = () => { VIEW_W = STAGE.hubW || STAGE.camW || 480; VIEW_H = STAGE.hubH || STAGE.camH || 270; }; /* ownernotes-b-nov1 #2: the town's own view (game/stage.js setHubView) */ const PROXY = {x: 350, y: 300}; const FOOT = {hw: 5, up: 4, down: 1};
 /* Actions main.js knows how to open. Shops map onto the existing panels where they fit. */
 export const PANELS = ['library', 'guild', 'smith', 'alchemist', 'home', 'community', 'barracks'];
 /* The Library's subject stations: marker `subject` -> what the prompt says (a marker's own `label` wins). */
@@ -557,7 +557,7 @@ function leave() {
 /** Run one frame of the hub: World.update for animation and timers, our own movement. */
 export function hubUpdate(world, dt, input) {
   const p = world.player;
-  H.save = world.save;
+  H.save = world.save; H.stepMemo = undefined; H.stepFresh = true;
   /* evening after a level is won (the light pools and windows read at dusk), day otherwise */
   H.dusk = !!world.lastResult?.won;
   if (p !== H.player) {
@@ -689,13 +689,16 @@ export function hubTravelHere() { const p = H.player; return p && !H.fade ? hubV
 
 /* ---- story beats (game/npcs.js STORY) ---- */
 const seenBeats = () => (H.save.hub ??= {seen: []}).seen ??= [];
+/* ownernotes-b-nov1 #5: the next step's id, worked out at most once a frame: hubUpdate resets it, and the drawHub right after reuses it
+   (a drawHub with no hubUpdate before it, as while paused, works it out again) */
+const stepNow = () => H.stepMemo ??= stepIdOf(H.save ?? {});
 /* A fresh game: nothing cleared, no XP yet. An older save never replays the opening. */
 const freshGame = s => !Object.values(s?.levels ?? {}).some(l => l?.done) && !(s?.xp > 0);
 function beatDue(trigger, S, p) {
   if (!H.save?.started) return null;
   const seen = seenBeats();
   for (const b of STORY) {
-    if (b.trigger !== trigger || seen.includes(b.id) || !holds(b.when, H.save)) continue;
+    if (b.trigger !== trigger || seen.includes(b.id) || !holds(b.when, H.save, stepNow)) continue;
     if (trigger === 'new-game' && !freshGame(H.save)) { seen.push(b.id); continue; }
     if (trigger === 'near' && !(S.key === b.room && Math.hypot(p.x - b.x, p.y - b.y) < b.r)) continue;
     if (trigger === 'enter' && S.key !== b.room) continue;
@@ -720,7 +723,7 @@ function isPerson(name) {
 export function personBeat(name) {
   if (!name || !H.save?.started || !isPerson(name)) return null;
   const seen = seenBeats();
-  return STORY.find(b => BY_PERSON.has(b.trigger) && b.speaker === name && !seen.includes(b.id) && holds(b.when, H.save)) ?? null;
+  return STORY.find(b => BY_PERSON.has(b.trigger) && b.speaker === name && !seen.includes(b.id) && holds(b.when, H.save, stepNow)) ?? null;
 }
 
 /* improve20-k-nov1 #5: where each person in this room is drawn, as fractions of the view ({l, r, t, b}), so main.js can fade a HUD plate
@@ -984,6 +987,7 @@ let xray = null;
  */
 export function drawHub(c, state, t, kit) {
   syncView(); /* v2:ui-mobile */
+  if (!H.stepFresh) H.stepMemo = undefined; H.stepFresh = false; /* ownernotes-b-nov1 #5 */
   pumpStream(); /* townchunk-oct28 */
   const S = current(), D = S.D, I = images(S), p = state.player;
   H.drawT = t;

@@ -162,7 +162,7 @@ const ATMOSPHERE={
 /* lightload2-oct27: the canopy overhang drew from the pre-v2 woodland-props sheet, which a live game never loaded, so it drew nothing; removed with the sheet */
 const atmosphereAt=(state,p)=>state.level?(ATMOSPHERE[{forest:'forest',lava:'castle',mystic:'hall'}[chapterBiome(stageKey(state.level))]]||ATMOSPHERE.forest):state.zone==='town'?ATMOSPHERE.town:(ATMOSPHERE[regionAt(p.y).id]||ATMOSPHERE.forest);
 function grade(c,atm,t,motion,cam=null){
- /* v2:ui-mobile -- the grade covers the camera view (480x270 on desktop, smaller on phones) */const VW=STAGE.camW,VH=STAGE.camH,VK=VW/480;
+ /* v2:ui-mobile -- the grade covers the camera view (480x270 on desktop, smaller on phones); ownernotes-b-nov1 #2: the hub passes its own view */const VW=cam?.width||STAGE.camW,VH=cam?.height||STAGE.camH,VK=VW/480;
  c.save();
  c.globalCompositeOperation='multiply';c.globalAlpha=atm.tintA;rect(c,0,0,VW,VH,atm.tint);
  /* Owner #9 (8 Oct, "lighting more professional"): light with a direction. Warm sun falls from the top left and the far

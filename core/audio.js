@@ -14,10 +14,10 @@
                              or a biome key such as 'lava-gate' (the part before '-' picks the track)
      stopMusic(fade)         fade the music out
      sting(key)              'victory' 'levelup' 'defeat' 'unlock'
-     setVolume({master, music, sfx}), getVolume(), duck(on) */
+     setVolume({master, music, sfx}), getVolume(), duck(on), voiceDuck(on) */
 import {ZZFX} from '../ui/vendor/zzfx.js';
 
-let ac=null,master,limiter,sfxBus,musicBus,duckGain,enabled=true,musicOn=true,ducked=false;
+let ac=null,master,limiter,sfxBus,musicBus,duckGain,enabled=true,musicOn=true,ducked=false,voiced=false;
 const vol={master:.92,music:.55,sfx:.8};
 const AC=()=>globalThis.AudioContext||globalThis.webkitAudioContext;
 
@@ -44,7 +44,7 @@ export function unlockAudio(target=globalThis){
 function applyVolume(t=.08){
  if(!ac)return;
  const now=ac.currentTime,set=(node,v)=>{node.gain.cancelScheduledValues(now);node.gain.setTargetAtTime(v,now,Math.max(.001,t));};
- set(master,vol.master);set(sfxBus,enabled?vol.sfx:0);set(musicBus,musicOn?vol.music:0);set(duckGain,ducked?.4:1);
+ set(master,vol.master);set(sfxBus,enabled?vol.sfx:0);set(musicBus,musicOn?vol.music:0);set(duckGain,voiced?VOICE_DUCK:ducked?.4:1);
 }
 const clamp01=v=>Math.max(0,Math.min(1,Number(v)));
 export function setVolume(v={}){for(const k of ['master','music','sfx'])if(v[k]!==undefined&&!Number.isNaN(Number(v[k])))vol[k]=clamp01(v[k]);applyVolume();}
@@ -53,6 +53,11 @@ export function enable(v){enabled=!!v;applyVolume();}
 export function enableMusic(v){musicOn=!!v;applyVolume();if(musicOn&&wanted&&!wanted.live)playMusic(wanted.key);}
 /* Pull the music down while a panel or the pause menu is up. */
 export function duck(on){if(ducked===!!on)return;ducked=!!on;applyVolume(.25);}
+/* ownernotes-b-nov1 #6: while the lesson voice reads (a Kokoro clip or the browser voice), the music dips further, to a quarter,
+   so the words sit clearly on top; it comes back up when the reading ends or stops. */
+export const VOICE_DUCK=.25;
+export function voiceDuck(on){if(voiced===!!on)return;voiced=!!on;applyVolume(.2);}
+export const voiceDucked=()=>voiced;
 
 /* ---------- SFX ---------- */
 /* ZzFX parameter lists: [volume, randomness, frequency, attack, sustain, release, shape, shapeCurve,

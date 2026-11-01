@@ -54,7 +54,15 @@ function heroStateRaw(a,meta,time){const S=meta.states,age=Number.isFinite(a.ani
 
 /* Direction only changes grounded locomotion. Combat, jumps, blocks and their anchors keep the base atlas.
    A down/up view must never inherit the last horizontal mirror; the weapon stays in its source hand. */
+/* ownernotes-b-nov1 #4 (owner: "a roll that goes up and down, not just left and right"): the roll always moved the way the hero was
+   held (combat.js dodge: up, down and diagonals, 220 px/s for .32 s, i-frames .34 s), but the only roll art is side-on, so a roll
+   straight up or down looked like a sideways roll that slid. A roll within ROLL_UPDOWN of straight up or down now plays the directions
+   atlas' own north or south stride at roll speed (ROLL_STRIDE x the walk), facing the way it goes; its afterimages (combat.js trails, copies of
+   the hero) and dust follow it the same way. Diagonal and sideways rolls keep the roll art. Pictures from the existing atlases only. */
+export const ROLL_UPDOWN=.8,ROLL_STRIDE=2.6;
+export const rollSuffix=a=>a?.dodge>0&&Math.abs(a.dy||0)>=ROLL_UPDOWN?(a.dy<0?'north':'south'):null;
 export function heroRenderPose(a,base,directional,time=0){const pose=heroState(a,base.meta,time),fallback={...base,...pose,facing:a.facing<0?-1:1};
+ if(directional&&pose.state==='dodge'){const sx=rollSuffix(a),S=directional.meta.states,st=sx&&(S['run-'+sx]?'run-'+sx:S['walk-'+sx]?'walk-'+sx:null);return st?{...directional,state:st,t:pose.t*ROLL_STRIDE,facing:1}:fallback;}
  if(!directional||!['idle','walk','run'].includes(pose.state))return fallback;
  const direction=a.moving?a.direction:(a.lastDirection||a.direction),suffix=direction==='down'?'south':direction==='up'?'north':null;
  if(!suffix)return fallback;const S=directional.meta.states;let state=pose.state+'-'+suffix,t=pose.t;
