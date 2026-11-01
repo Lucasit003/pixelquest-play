@@ -3247,3 +3247,90 @@ html.m-mode .pq-map-mark .map-ability-badge{display:none}
 .m-mode #touch .t-attack[data-weapon=hammer]::before{background-image:url(ui/skin/gear/hammer-3.png)}
 .m-mode #touch .t-attack[data-weapon=axe]::before{background-image:url(ui/skin/gear/axe-3.png)}
 .m-mode #touch .t-attack[data-weapon=focus]::before{background-image:url(ui/skin/gear/focus-3.png)}
+/* improve20-v-nov1 #14: the "Knowledge becomes power" card was 648 px of content in a 570 px box at 1280x720 (and cut the same way at
+   844x390 and 740x360), so Try it, Continue and Read to me sat half under the frame. The hero's preview now stands BESIDE the title block
+   (eyebrow, ribbon, name, meta, why) instead of above it, the quote and the ability facts take one full-width line each, and the buttons
+   are pinned to the card's bottom edge (sticky, on the card's own parchment) so they stay on screen even with larger text. The awakening
+   ring and the swirl play on the hero. Layout only; ui/library.css keeps the card's look. */
+dialog[data-view=unlock] .edu-unlock{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:14px;align-items:center;max-width:780px;overflow:clip;padding:16px 22px 12px}
+dialog[data-view=unlock] .edu-unlock>*{grid-column:1/-1}
+dialog[data-view=unlock] .edu-unlock>:is(.edu-unlock-eyebrow,.edu-unlock-ribbon,.edu-unlock-name,.edu-unlock-meta,.edu-unlock-why){grid-column:2}
+dialog[data-view=unlock] .edu-unlock>:is(.edu-unlock-rune,.edu-unlock-preview){grid-column:1;grid-row:1/span 5;float:none;position:relative;left:auto;top:auto;margin:0 auto}
+dialog[data-view=unlock] .edu-unlock>.edu-unlock-rune.edu-unlock-icon{position:relative;left:auto;top:auto;margin:0 auto}
+dialog[data-view=unlock] .edu-unlock>.edu-unlock-preview{margin:-8px -10px}
+dialog[data-view=unlock] .edu-unlock .edu-unlock-ribbon{margin:4px auto}
+dialog[data-view=unlock] .edu-unlock .edu-unlock-name{margin:2px 0}
+dialog[data-view=unlock] .edu-unlock .edu-unlock-meta{margin:0}
+dialog[data-view=unlock] .edu-unlock .edu-unlock-why{margin:6px 0 0}
+dialog[data-view=unlock] .edu-unlock :is(.edu-unlock-quote,.edu-unlock-desc){max-width:none;margin:4px auto}
+dialog[data-view=unlock] .edu-unlock :is(.edu-unlock-slot,.edu-unlock-where){margin:2px 0}
+dialog[data-view=unlock] .edu-unlock .edu-unlock-actions{position:sticky;bottom:0;z-index:3;margin:8px -8px 0;padding:4px 8px;background:#dcc47c}
+dialog[data-view=unlock] .edu-unlock>.ui-fx{position:absolute;left:108px;top:97px}
+dialog[data-view=unlock] .edu-unlock.edu-awakening .edu-awaken-ring,dialog[data-view=unlock] .edu-unlock-rays{left:108px;top:97px}
+@media(max-height:700px){
+ dialog[data-view=unlock] .edu-unlock{padding:8px 16px 6px;column-gap:8px}
+ dialog[data-view=unlock] .edu-unlock>.edu-unlock-preview{width:204px;height:164px;margin:-24px -20px -28px -6px}
+ dialog[data-view=unlock] .edu-unlock .edu-unlock-name{font-size:26px;margin:0}
+ dialog[data-view=unlock] .edu-unlock .edu-unlock-why{margin:4px 0 0}
+ dialog[data-view=unlock] .edu-unlock :is(.edu-unlock-quote,.edu-unlock-desc){margin:2px auto}
+ dialog[data-view=unlock] .edu-unlock :is(.edu-unlock-slot,.edu-unlock-where){margin:0;line-height:1.35}
+ dialog[data-view=unlock] .edu-unlock .edu-unlock-actions{margin-top:4px}
+ dialog[data-view=unlock] .edu-unlock>.ui-fx,dialog[data-view=unlock] .edu-unlock.edu-awakening .edu-awaken-ring{left:99px;top:81px}
+}
+/* improve20-v-nov1 #17: a busy first clear at 1280x720 (level up, Heroic open, Wil's run) put LEVEL UP and "Heroic is now open" under the
+   sticky NEXT GOAL, with the hero cut to his head. On desktop screens up to 780 px tall the time and its tag join the stars and grade
+   on one row; the highlights (level up, a new ability, the next tier, chapter clear) lead the detail column and Wil's row follows; Wil's
+   wage is its own small lowercase line, not a third caps message. main.js fitResult() checks the card once it is drawn: if anything
+   important still sits under the sticky strip it tightens the card (.result-tight: the boss's parting words go, the banner shrinks)
+   and, only if that is not enough, lets NEXT GOAL flow under the body (.goal-flow) and scrolls the highlights clear of the buttons. */
+@media(max-height:780px){
+ html:not(.m-mode) dialog[data-view=result] .level-result>.level-starline,html:not(.m-mode) dialog[data-view=result] .level-result>.result-time{display:inline-flex;vertical-align:middle;margin-top:0;margin-bottom:0}
+ html:not(.m-mode) dialog[data-view=result] .level-result>.result-time{margin-left:14px}
+}
+html:not(.m-mode) dialog[data-view=result] .level-result-detail>.level-highlights{order:-1}
+dialog[data-view=result] .level-record.level-companion .comp-wage-note{flex-basis:100%;text-transform:none;letter-spacing:0;font-size:14px;line-height:1.2}
+dialog[data-view=result] .level-result.result-tight .level-line{display:none}
+html:not(.m-mode) dialog[data-view=result] .level-result.result-tight[data-outcome=won] .victory-title{height:46px;background-size:256px 64px;background-position:center -8px;font-size:24px}
+html dialog[data-view=result] #modal-content .level-result.goal-flow>.result-goal{position:static}
+html dialog[data-view=result] #modal-content .level-result.goal-flow>.result-goal::after{display:none}
+/* improve20-v-nov1 #18: Text size 125/150% reached panels, dialogue and toasts, but not the quiz question, the HUD, the goal plate or
+   the controls strip. They grow too, by less than the panels where the frame is fixed art (the HUD) or the screen is short (phones). The
+   quiz rules below only set font-size, and only at 125/150, so the 100% card is exactly as lane M leaves it. */
+html[data-text="125"]{--tx-hud:18px;--tx-goal:20px;--tx-keys:18px;--tx-q:29px;--tx-qa:22px;--tx-qp:22px;--tx-qpa:17px;--tx-ph:14px;--tx-pl:17px}
+html[data-text="150"]{--tx-hud:20px;--tx-goal:22px;--tx-keys:20px;--tx-q:32px;--tx-qa:24px;--tx-qp:24px;--tx-qpa:18px;--tx-ph:15px;--tx-pl:18px}
+html[data-text="125"]:not(.m-mode) :is(#hero-name,#level,#hp-text,#mp-text,#hud .hud-sub,#gold),html[data-text="150"]:not(.m-mode) :is(#hero-name,#level,#hp-text,#mp-text,#hud .hud-sub,#gold){font-size:var(--tx-hud)}
+html[data-text="125"]:not(.m-mode) #objective :is(b,kbd),html[data-text="150"]:not(.m-mode) #objective :is(b,kbd){font-size:var(--tx-goal)}
+html[data-text="125"]:not(.m-mode) #keyboard-actions,html[data-text="150"]:not(.m-mode) #keyboard-actions,html[data-text="125"]:not(.m-mode) #keyboard-actions kbd,html[data-text="150"]:not(.m-mode) #keyboard-actions kbd{font-size:var(--tx-keys);line-height:1.15}
+html[data-text="125"]:not(.m-mode) #keyboard-actions,html[data-text="150"]:not(.m-mode) #keyboard-actions{padding-top:1px;padding-bottom:1px}html[data-text="125"]:not(.m-mode) #keyboard-actions kbd,html[data-text="150"]:not(.m-mode) #keyboard-actions kbd{line-height:1}
+html[data-text="125"]:not(.m-mode) #next-unlock,html[data-text="150"]:not(.m-mode) #next-unlock{margin-bottom:calc(13*var(--u) + 10px)}
+html[data-text="125"].m-mode #hero-name,html[data-text="150"].m-mode #hero-name{font-size:var(--tx-ph)}
+html[data-text="125"].m-mode :is(#level,#objective b,.wallet),html[data-text="150"].m-mode :is(#level,#objective b,.wallet){font-size:var(--tx-pl)}
+html[data-text="125"] #modal#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf>.question-reading>h3,html[data-text="150"] #modal#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf>.question-reading>h3{font-size:var(--tx-q)}
+html[data-text="125"] #modal#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-feedback:not(:empty))>.question-reading>h3,html[data-text="150"] #modal#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-feedback:not(:empty))>.question-reading>h3{font-size:var(--tx-qa)}
+html[data-text="125"] #modal#modal#modal#modal#modal[data-view=placement] .question-reading>h3,html[data-text="150"] #modal#modal#modal#modal#modal[data-view=placement] .question-reading>h3{font-size:var(--tx-qa)}
+@media(max-height:500px){
+ html[data-text="125"] #modal#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-feedback:empty)>.question-reading>h3,html[data-text="150"] #modal#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-feedback:empty)>.question-reading>h3,html[data-text="125"] #modal#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf>.question-reading>h3,html[data-text="150"] #modal#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf>.question-reading>h3{font-size:var(--tx-qp)}
+ html[data-text="125"] #modal#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-feedback:not(:empty))>.question-reading>h3,html[data-text="150"] #modal#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-feedback:not(:empty))>.question-reading>h3{font-size:var(--tx-qpa)}
+}
+/* improve20-v-nov1 #19: the next-ability card names the ability once. With the rune lead its step is the gate dots ("Sundering Blow
+   ●●○○○○ Coding"), and that one line is the name, the progress and the subject, beside the icon (.road-gate; the separate name, count,
+   pip row and bar repeated it). On a phone the card rests as a chip in town, the icon and its progress bar (about 100x44 px instead of
+   230x142), and opens to the rune line and the name line for 8 s when it changes, or on a tap (ui/index.js). */
+html:not(.m-mode) #next-unlock .road.road-gate .road-icon{grid-row:2/span 2}
+#next-unlock .road.road-gate .road-pip{grid-column:2;border-top:0;margin:0 0 4px;padding-top:0}
+#next-unlock .road.road-gate .road-pip-text{font-size:18px;line-height:1.25}
+html:not(.m-mode) #next-unlock .road.road-gate .road-pip-bar,html.m-mode #next-unlock.open .road.road-gate .road-pip-bar{display:none}
+html.m-mode.in-town #next-unlock.peek{pointer-events:auto;z-index:5;cursor:pointer;-webkit-tap-highlight-color:transparent}
+html.m-mode.in-town #next-unlock.peek:not(.open){width:auto;padding:4px 8px}
+html.m-mode.in-town #next-unlock.peek:not(.open) .road{display:grid;grid-template-columns:32px 56px;gap:0 8px;align-items:center}
+html.m-mode.in-town #next-unlock.peek:not(.open) .road>*{display:none}
+html.m-mode.in-town #next-unlock.peek:not(.open) .road>.road-icon{display:block;grid-row:1;grid-column:1}
+html.m-mode.in-town #next-unlock.peek:not(.open) .road>.road-pip{display:block;grid-row:1;grid-column:2;margin:0;padding:0;border:0}
+html.m-mode.in-town #next-unlock.peek:not(.open) .road>.road-pip>.road-pip-text{display:none}
+html.m-mode.in-town #next-unlock.peek:not(.open) .road>.road-pip>.road-pip-bar{display:block;height:8px}
+html.m-mode.in-town #next-unlock.peek:not(.open) .road:not(:has(>.road-pip>.road-pip-bar))>.am-goal-meter{display:block;grid-row:1;grid-column:2;height:8px}
+/* improve20-v-nov1 #20: the line under the stars and the grade that says which is which (main.js levelEnd) */
+dialog[data-view=result] .level-result>.rating-key{margin:2px 0 4px;font-size:16px;line-height:1.2;color:var(--muted);letter-spacing:0;text-transform:none;font-weight:400}
+.m-mode dialog[data-view=result] .level-result>.rating-key{font-size:14px;margin:0 0 2px}
+.m-mode dialog[data-view=result] .level-result>.rating-key>span{display:block}.m-mode dialog[data-view=result] .level-result>.rating-key>.rk-sep{display:none}
+dialog[data-view=result] .level-result.result-tight>.rating-key{display:none}

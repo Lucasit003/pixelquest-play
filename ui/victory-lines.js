@@ -15,7 +15,12 @@ export const VICTORY_CHEERS={
 export const victoryCheer=l=>l?VICTORY_CHEERS[l.id]||`${String(l.name||'The level').replace(/^the /,'The ')} is clear!`:'';
 const clock=t=>`${Math.floor(t/60)}:${String(Math.floor(t%60)).padStart(2,'0')}`;
 /* One tag, the most special first. st: the run's stats (first, recordTime, newStars, stars, best.time); stars: the stars shown. */
+/* improve20-v-nov1 R1: a Rift run's tag reads this week's Rift best (s.rift.best, via riftFinish's result on st.rift), never the
+   level's Normal record: "Your best: 5:36" sat beside a 3:39 that was the fastest Rift run yet */
+export function riftTag(x){if(!x?.won)return null;if(x.first)return {kind:'first',text:'First Rift win this week!'};if(x.newBest)return {kind:'record',text:'New Rift best!'};
+ return x.best?.time!=null?{kind:'replay',text:`Rift best: ${clock(x.best.time)}`}:null;}
 export function victoryTag(st,stars=0){if(!st)return null;
+ if('rift' in st)return riftTag(st.rift);
  if(st.first)return {kind:'first',text:'First clear!'};
  if(st.recordTime)return {kind:'record',text:'New best time!'};
  if(st.newStars&&stars===3)return {kind:'stars',text:'All 3 stars!'};

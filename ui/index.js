@@ -60,7 +60,12 @@ export function initUI(c){
  /* The objective and next-unlock cards peek in for 8 s when their text changes (town only), then slide away,
     so the resting HUD stays in two corners. */
  for(const id of ['#next-unlock']){const el=d.querySelector(id);if(!el||!globalThis.MutationObserver)continue;let last='',t=0;
-  new MutationObserver(()=>{const txt=el.textContent;if(txt===last)return;last=txt;if(c.world?.zone!=='town'||c.world?.level)return;el.classList.add('peek');clearTimeout(t);t=later(()=>el.classList.remove('peek'),8000);}).observe(el,{childList:true,subtree:true,characterData:true});}
+  /* improve20-v-nov1 #19: on a phone the card covered about a quarter of the view. There it now stays in town as a small chip (the
+     ability's icon and its progress bar) and opens to the full card (.open) for 8 s when its text changes, or on a tap; the desktop
+     card peeks and slides away as before */
+  const phone=()=>d.documentElement.classList.contains('m-mode'),shut=()=>el.classList.remove(...(phone()?['open']:['peek','open']));
+  new MutationObserver(()=>{const txt=el.textContent;if(txt===last)return;last=txt;if(c.world?.zone!=='town'||c.world?.level)return;el.classList.add('peek','open');clearTimeout(t);t=later(shut,8000);}).observe(el,{childList:true,subtree:true,characterData:true});
+  el.addEventListener('click',()=>{if(!phone())return;clearTimeout(t);if(el.classList.toggle('open'))t=later(shut,8000);});}
  /* Hotbar cost and potion count become number badges: copy the leading number into data-n. */
  const bar=d.querySelector('#hotbar');
  /* 25 Oct: on a phone the potion badge reads the bag count only ("4", not "4+1"); the free one shows as its own "+1 free" tag above the slot (style.css). */

@@ -301,7 +301,7 @@ export class World{
   const loot=[];let clearXP=0;if(rec.first){const pb=addPotions(this.save,1);loot.push(pb.added?'Health potion':`Potion bag full (${BAG.cap} of ${BAG.cap}): +${pb.gold} gold instead`);const x=clearXP=this.runXP(levelXPReward(l,k));if(x){this.run.xp+=x;this.events.xp?.(x);}}
   this.events.persist?.();
   const top=this.save.levels[l.id],r=k==='normal'?top:top.tiers[k];this.lastResult={id:l.id,won,tier:k,rift:riftR,riftRun:this.rift||null,tierLabel:tierOf(k).label,boss:l.boss?this.enemies.find(e=>e.boss)||null:null,stats:{levelUp:this.run.levelUp||null,reducedXP:this.run.damped?this.run.rec:0,clearXP,winXP:winBonus,retryWave:won?null:Math.min(this.wave,this.layout.arenas.length),resolve:resolveOf(this.save,l.id),bestiary:[...this.run.bestiary],secrets:[...this.run.secrets],gear:[...(this.run.gear||[])],/* improve20-t-oct31: the jewels found on this run, for the result card's strip */jewels:[...(this.run.jewels||[])],mats:{...(this.run.mats||{})},/* late playtest 24 Oct: after "Retry boss fight" the result showed only the retry (0:13) beside stars and a record
-   worked out on the whole run (4:52); it shows the whole run now */time:Math.round((time+(this.run.carry||0))*10)/10,/* lategame-oct27: this attempt alone (game/party.js lossXP) */attempt:time,damage:Math.round(this.run.damage),taken:Math.round(this.run.taken),kills:this.kills,gold,xp:this.run.xp,loot,score,waves:this.run.waves,first:rec.first,recordTime:rec.recordTime,recordScore:rec.recordScore,stars:rec.stars,newStars:rec.newStars,knockouts:this.run.knockouts|0,best:{...r.best},plays:r.plays,run:runR}};
+   worked out on the whole run (4:52); it shows the whole run now */time:Math.round((time+(this.run.carry||0))*10)/10,/* lategame-oct27: this attempt alone (game/party.js lossXP) */attempt:time,damage:Math.round(this.run.damage),taken:Math.round(this.run.taken),kills:this.kills,gold,xp:this.run.xp,loot,score,waves:this.run.waves,first:rec.first,recordTime:rec.recordTime,recordScore:rec.recordScore,stars:rec.stars,newStars:rec.newStars,knockouts:this.run.knockouts|0,best:{...r.best},plays:r.plays,run:runR,/* improve20-v-nov1 R1: a Rift run's card reads the Rift's own best, not the Normal record in best */...(this.rift?{rift:riftR||null}:{})}};
   this.events.levelEnd?.(this.lastResult);return this.lastResult;}
  /* v2:enemies -- seam. Return true when ENEMY_AI[e.ai] (scenes/enemy-ai.js) drove this enemy this frame;
     the built-in AI below then skips it. Helpers an AI can use: this.player, this.bounds(), this.hurt(base,from),
@@ -330,6 +330,13 @@ export class World{
  busy(){const p=this.player;return p.attack>0||p.dodge>0||p.z>1;}
  owned(token){return()=>this.player.token===token&&this.player.hp>0&&this.player.dodge<=0;}
  // Frame the shot on the king plus a per-beat offset.
+ /* improve20-v-nov1 #16: a cinematic freezes the world on the frame of the hit that started it, so that hit's white flash (it only
+    fades in unpaused frames), its damage number, the combo count, the slash arc of the hero's frozen swing and an ability's target
+    ring stayed drawn through every beat: the Thorn King was a white silhouette for his whole mid-fight scene. main.js cinematic()
+    calls this once as any cinematic starts (the mid-fight scene and every epilogue): flashes and squash clear, floating numbers and
+    hit effects go (the tents, props, and auras riding on the hero stay), the combo closes, a taunt plate (timed on the frozen run clock) closes with the rest of its queue (the phase or the fight is over) and the hero stands at rest. */
+ cinematicStart(){for(const e of this.enemies){e.flash=0;e.flashWhite=0;e.deathFlash=0;e.knock=0;e.killPop=0;}this.fx=this.fx.filter(f=>f.type==='prop'||f.follow);this.hitChain=null;this.hitstop=0;this.slowmo=0;this.hurtFlash=0;this.trails=[];this.quote=null;this.tauntQ=[];
+  const p=this.player;if(p&&p.hp>0){p.token=(p.token||0)+1;p.attack=0;p.moveLock=0;p.charge=0;this.animate(p,'idle');}}
  cinematicBeat(beat){const king=this.enemies.find(e=>e.boss);if(!king)return;
   const [dx,dy]=beat.shot||[0,-16];
   this.cinematicTarget={x:king.x+dx,y:king.y+dy};

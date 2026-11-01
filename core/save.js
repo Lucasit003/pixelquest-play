@@ -102,6 +102,8 @@ export function normalize(value){
  s.house=cleanHouse(value.house);
  s.fieldMission=cleanFieldMission(value.fieldMission);
  s.settings={...s.settings,...value.settings,bindings:normalizeBindings(value.settings?.bindings)};
+ /* improve20-v-nov1 #15: the tier last chosen at each level, so the picker opens on it (additive within v9; anything else is dropped) */
+ if(obj(value.tierPick)){const p=Object.entries(value.tierPick).filter(([id,k])=>levelById(id)&&['normal','heroic','legendary'].includes(k)).slice(0,100);if(p.length)s.tierPick=Object.fromEntries(p);}
 
  if(!['warrior','mage','rogue','ranger','paladin','berserker','summoner'].includes(s.hero))s.hero='warrior';
  for(const k of ['level','xp','gold','potions'])s[k]=Math.max(k==='level'?1:0,Number(s[k])||0);
