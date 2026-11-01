@@ -474,6 +474,14 @@ dialog[data-view=welcome] #modal-content{padding:0;overflow:hidden;height:100%}
 .stat-chapter li.done{color:var(--ink)}
 .pip-mark{width:calc(7*var(--u));height:calc(6*var(--u));background:url(ui/skin/pip-off.png) center/contain no-repeat;image-rendering:pixelated}
 li.done .pip-mark{background-image:url(ui/skin/pip.png)}
+/* improve20-s-nov1 #18 (audit5 b18): rarity pips (ui/rarity.js) -- 1 to 5 small diamonds (the round's brief: a shape, so rarity never
+   rests on colour alone), in the pip art's gold and outline (ui/skin/pip.png). The art itself is 13 px wide, so five would not fit a
+   46 px bag cell. Inline beside a rarity word, or pinned to the foot of an item cell (bag, paper doll, smith card, Finish pick, result chip) */
+.rar-pips{display:inline-flex;align-items:center;gap:3px;padding:0 2px;vertical-align:1px;pointer-events:none;line-height:0}
+.rar-pips i{display:block;flex:none;width:5px;height:5px;transform:rotate(45deg);background:#fbd693;box-shadow:0 0 0 1px #161d1d,1px 1px 0 1px #161d1d}
+.inv-ico,.smith-ico{position:relative}
+.rar-pips.rar-on-cell{position:absolute;left:50%;bottom:-4px;transform:translateX(-50%);z-index:1;padding:2px 3px;background:#161d1dcc;border-radius:2px}
+.result-chest-items .rar-pips{margin-right:3px}
 .stat-bosses{grid-column:1/-1}
 .boss-list{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
 .credits{text-align:center;max-width:720px;margin:0 auto}

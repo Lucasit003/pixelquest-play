@@ -15,7 +15,7 @@ import {irisOpen} from './juice.js';
 import {icon} from './icons.js';
 import {activeProfile} from './profiles.js';
 import {openProfiles} from './profiles-screen.js';
-import {creatorHTML,wireCreator,customised,creatorStyles,drawCreatorFigure} from './creator.js';
+import {creatorHTML,wireCreator,customised,creatorStyles,drawCreatorFigure,previewPose,attackLen} from './creator.js';
 import {drawHeroBust} from '../gfx/actors/hero-sprites.js';
 /* One line of fantasy per class: what playing it feels like. */
 /* every class is playable (owner, 8 Oct: "get all the characters done"); a class listed here only if it ever needs locking again */
@@ -134,7 +134,9 @@ function backdrop(root,world){
    grade(b,bg.width,bg.height);
   }catch{}
   const sp=root.querySelector('[data-detail-sprite]'),id=root.querySelector('.hero-detail')?.dataset.hero;
-  if(sp&&id&&['select','setup'].includes(root.dataset.step))drawCreatorFigure(sp,id);
+  /* improve20-s-nov1 #19 (audit5 b11): the chosen hero plays its idle loop with an attack every few seconds (creator.js previewPose),
+     at the stage's whole-number scale (3x and up), on its class backdrop (creator.css); still when motion is reduced */
+  if(sp&&id&&['select','setup'].includes(root.dataset.step))drawCreatorFigure(sp,id,{fit:true,...previewPose(t,attackLen(id),undefined,world?.motion!==false)});
   raf=later(tick,33);
  };
  tick();
@@ -197,7 +199,9 @@ export function wireTitle(api={}){
   const list=[...(root.dataset.step==='title'?root.querySelectorAll('.title-menu button,.learner'):root.querySelectorAll('.hero-card'))];
   const i=list.indexOf(globalThis.document.activeElement),cols=1;
   const d=k==='ArrowDown'?cols:k==='ArrowUp'?-cols:k==='ArrowRight'?1:-1;
-  const n=list[Math.max(0,Math.min(list.length-1,(i<0?0:i+d)))];if(n){e.preventDefault();e.stopPropagation();n.focus();sfx('ui.move');}
+  /* improve20-s-nov1 #19 (audit5 b11): in the hero list an arrow key previews the hero it lands on (details, stats and the stage),
+     as a click does, so the ring and the details never disagree; Enter or "Choose this hero" still moves on */
+  const n=list[Math.max(0,Math.min(list.length-1,(i<0?0:i+d)))];if(n){e.preventDefault();e.stopPropagation();n.focus();if(root.dataset.step==='select'&&n.matches('.hero-card')&&!n.classList.contains('selected')&&!n.classList.contains('coming-soon'))n.click();else sfx('ui.move');}
  });
  /* Leaving the title: the world opens from black around the hero (main.js's handler has already run). */
  root.querySelector('#begin')?.addEventListener('click',()=>{if(!globalThis.document.querySelector('#modal')?.open){restoreHero(api.world);irisOpen(.5,.55);}});

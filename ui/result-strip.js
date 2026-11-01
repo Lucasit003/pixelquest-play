@@ -4,6 +4,7 @@
 // chapter (Emberkeep), Details shows only the lines that changed on this run. HTML only; main.js shows it. Nothing is lost.
 // On a landscape phone the strip heads the right-hand column, above the hero level, so it is never squeezed under the stars.
 import {LEVELS,levelOpen} from '../game/levels.js';
+import {rarPips,rarColor,rarName} from './rarity.js';
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 /** True once any level past the first chapter is open: from then on Details shows every line, as before. */
@@ -30,11 +31,13 @@ export const shortName=n=>String(n||'').replace(/^[^,]*?['’]s\s+(?=\S)/,'')||S
    twice; shard (an <img>) adds the week's Rift Shard as its own chip */
 export function youGotHTML({won=true,gold=0,xp=0,riftBonus=0,shard='',loot=[],gear=[],stars=0,starsAll=0,icon,starIcon=''}){
  /* improve20-h-nov1: every chip carries its full words as a title, so a compact chip (below) still names itself */
- const item=(kind,img,n,what,cls='')=>`<span class="you-got-item${cls}" title="${esc((n!==''?n+' ':'')+what)}" data-reward="${kind}">${img}<span class="you-got-text">${n!==''?`<strong>${esc(n)}</strong>`:''}<small>${esc(what)}</small></span></span>`;
+ /* improve20-s-nov1 #18/#20 (audit5 b18, b15): a found piece carries its rarity: the border and a glow behind its icon in the rarity's
+    colour, its pips under the icon (so it never rests on colour alone, and still shows on a compact phone chip) and the name in the title */
+ const item=(kind,img,n,what,cls='',rar=null)=>`<span class="you-got-item${cls}" title="${esc((n!==''?n+' ':'')+what+(rar?` (${rarName(rar)})`:''))}" data-reward="${kind}"${rar?` data-rar="${esc(rar)}" style="--rar:${rarColor(rar)}"`:''}>${rar?`<span class="you-got-ico">${img}${rarPips(rar,'rar-on-cell')}</span>`:img}<span class="you-got-text">${n!==''?`<strong>${esc(n)}</strong>`:''}<small>${esc(what)}</small></span></span>`;
  /* a defeat shows only what the run did bring home: no "+0" chips, and no strip at all when there is nothing */
  const parts=[...(won||gold>0?[item('gold',icon('gold'),`+${gold}`,riftBonus>0?'gold (Rift bonus)':'gold',' level-reward')]:[]),...(shard?[item('shard',shard,'+1','Rift Shard',' level-reward')]:[]),...(xp>0?[item('xp',icon('xp'),`+${xp}`,'XP',' level-reward')]:[]),
   ...loot.map(x=>{const {n,what}=splitCount(x.label);return item('item',icon(x.icon),n,what,` level-loot-item${x.quiet?' loot-quiet':''}`);}),
-  ...gear.map(g=>item('gear',g.img||icon('chest'),'',g.name,' level-loot-item')),
+  ...gear.map(g=>item('gear',g.img||icon('chest'),'',g.name,' level-loot-item',g.rar||null)),
   ...(stars>0?[item('stars',starIcon,`+${stars}`,`${stars>1?'stars':'star'}${starsAll?` · ${starsAll} in all`:''}`)]:[])];
  if(!parts.length)return '';
  /* improve20-y-nov1 #1 (audit4 #17): a compact phone strip shows a gear piece or jewel as its icon only, so a kid could not tell what the
@@ -51,6 +54,9 @@ dialog[data-view=result] .you-got-label{letter-spacing:.12em;text-transform:uppe
 dialog[data-view=result] .you-got-row{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 10px}
 dialog[data-view=result] .you-got-item{display:inline-flex;align-items:center;gap:6px;padding:4px 10px 4px 6px;border:1px solid rgba(227,184,90,.45);border-radius:4px;background:rgba(10,12,30,.45)}
 dialog[data-view=result] .you-got-item img{width:32px;height:32px;image-rendering:pixelated;flex:none}
+dialog[data-view=result] .you-got-item[data-rar]{border-color:var(--rar)}
+dialog[data-view=result] .you-got-ico{position:relative;display:inline-grid;place-items:center;flex:none;padding-bottom:4px}
+dialog[data-view=result] .you-got-ico>.ico{filter:drop-shadow(0 0 2px var(--rar)) drop-shadow(0 0 5px var(--rar))}
 dialog[data-view=result] .you-got-text{display:flex;flex-direction:column;align-items:flex-start;line-height:1.05}
 dialog[data-view=result] .level-result .you-got-item strong{font-size:calc(var(--fs) * 1.35);color:#ffe9a8}
 dialog[data-view=result] .you-got-item small{font-size:calc(var(--fs) * .85);color:#e9dcc0}

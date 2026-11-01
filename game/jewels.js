@@ -6,7 +6,9 @@
      learning or mastery (CLAUDE.md invariants).
    - A pet grows with the hero: +0.5% per level cleared together, up to double (10%), the Ink Cat too: its perk is ability
      damage now (owner, 14 Oct), so no pet changes how fast a child masters a topic. */
-export const RARITY={common:{name:'Common',color:'#d8cfb6',power:.03},uncommon:{name:'Uncommon',color:'#7fd36b',power:.04},rare:{name:'Rare',color:'#6fb3ff',power:.05},epic:{name:'Epic',color:'#c38bff',power:.075},legendary:{name:'Legendary',color:'#ffb84a',power:.11}};
+/* improve20-s-nov1 #18 (audit5 b18): Epic moved from violet #c38bff to magenta #f040c0, so Rare and Epic differ under deuteranopia
+   (Machado, CIE76 2.3 -> 26.4) and protanopia (14.2 -> 23.5); text contrast on the panels stays 5.3:1. tools/rarity-cvd.mjs */
+export const RARITY={common:{name:'Common',color:'#d8cfb6',power:.03},uncommon:{name:'Uncommon',color:'#7fd36b',power:.04},rare:{name:'Rare',color:'#6fb3ff',power:.05},epic:{name:'Epic',color:'#f040c0',power:.075},legendary:{name:'Legendary',color:'#ffb84a',power:.11}};
 export const STAT_NAMES={atk:'Strength',def:'Defence',hp:'Health',mag:'Magic',speed:'Speed',crit:'Strong hit chance',cdr:'Ability wait time'};
 /* [id, name, slot, rarity, boss key (or null for the elite pool), main stat, second stat, the look (its icon)] */
 const T=[

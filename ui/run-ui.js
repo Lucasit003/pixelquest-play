@@ -3,6 +3,7 @@
    Delver level on the tier cards, and the Skills page of the journal. HTML strings only; main.js shows them.
    Icons are PixelLab (art/pixellab/run-layer, served from ui/skin/run/); the chest opening is a code effect (a lid pop,
    a burst, the items rising). No spinning reel, no roulette, nothing to buy. */
+import {rarPips,rarColor} from './rarity.js';
 import {gradeFile,GRADE_STARS,nextGrade} from '../game/grade.js';
 import {meterOf,REQ} from '../game/meter.js';
 import {delverLevel,classRank,delverTitle,RANK_TITLES,RANK_MAX,DELVE_MAX} from '../game/delve.js';
@@ -33,7 +34,7 @@ export const levelUps=run=>{const d=run?.delve,a=run?.adv;return {delver:!!d&&d.
    the main result card carries a compact chest row after the stars, each chest opening in two short beats (a shake, then the lid pops and
    its items show; resultChestTick), and a Delver or class-rank level-up gets its own banner line like the hero's. Tap or any key skips
    the beats; reduced motion shows them open and still. The Details breakdown (card:true) no longer repeats either. Display only. */
-const chestItem=it=>it.mat?`${matIcon(it.mat)}<b>${it.n}</b><em> ${esc(matName(it.mat))}</em>`:it.item?`★<em> ${esc(ITEM[it.item]?.name||it.item)}</em>`:it.gold?'':esc(it.note);
+const chestItem=it=>it.mat?`${matIcon(it.mat)}<b>${it.n}</b><em> ${esc(matName(it.mat))}</em>`:it.item?`${rarPips(ITEM[it.item]?.rarity)}<em style="color:${rarColor(ITEM[it.item]?.rarity)}"> ${esc(ITEM[it.item]?.name||it.item)}</em>`:it.gold?'':esc(it.note);
 /* improve20-y-nov1 #2 (lane J): on desktop the chest art was 36 px with 14 px words (about 20 px of drawn chest); it is drawn 1:1 at 48 px now,
    its name and items at 16 px. fitResult (main.js) still keeps every line clear of the sticky NEXT GOAL. Phones keep the compact row. */
 export function resultChestsHTML(run){const c=run?.grade&&run.chests;if(!c?.length)return '';
@@ -53,7 +54,7 @@ export function runResultHTML(run,{early=false,card=false}={}){if(!run)return ''
  const tip=tips.length?`<p class="run-tip">${tips.map(esc).join(' ')}</p>`:'';
  /* guide-oct26 (oct26-midgame): the Wooden Chest listed "436 gold", the same gold already shown under Earned, so a child counted it twice;
     it now points at Earned without a second number (game/chests.js still records it; amounts unchanged) */
- const chests=!card&&run.chests?.length?`<p class="run-tip">Your victory chests: all of it is yours. Spend Essence at the smith.</p><div class="run-chests" aria-label="Victory chests">${run.chests.map((c,i)=>`<div class="run-chest" data-chest="${c.key}" data-i="${i}">${runIcon('chest-'+c.key,48,'run-chest-img')}<small>${esc(c.name)}</small><ul class="run-chest-items">${c.items.map(it=>`<li${it.gold?' class="run-chest-earned"':''}>${it.mat?`${matIcon(it.mat)} ${it.n} ${esc(matName(it.mat))}`:it.item?`★<em> ${esc(ITEM[it.item]?.name||it.item)}</em>`:it.gold?'◆ Your gold (already in your purse)':esc(it.note)}</li>`).join('')||'<li>Boss loot</li>'}</ul></div>`).join('')}</div>`:'';
+ const chests=!card&&run.chests?.length?`<p class="run-tip">Your victory chests: all of it is yours. Spend Essence at the smith.</p><div class="run-chests" aria-label="Victory chests">${run.chests.map((c,i)=>`<div class="run-chest" data-chest="${c.key}" data-i="${i}">${runIcon('chest-'+c.key,48,'run-chest-img')}<small>${esc(c.name)}</small><ul class="run-chest-items">${c.items.map(it=>`<li${it.gold?' class="run-chest-earned"':''}>${it.mat?`${matIcon(it.mat)} ${it.n} ${esc(matName(it.mat))}`:it.item?`${rarPips(ITEM[it.item]?.rarity)}<em style="color:${rarColor(ITEM[it.item]?.rarity)}"> ${esc(ITEM[it.item]?.name||it.item)}</em>`:it.gold?'◆ Your gold (already in your purse)':esc(it.note)}</li>`).join('')||'<li>Boss loot</li>'}</ul></div>`).join('')}</div>`:'';
  const m=run.meter;const from=m?.paid?Math.max(0,1-(m.added||0)/(REQ[m.paid.kind]||1)):m?.need?Math.max(0,(m.pts-(m.added||0))/m.need):0,to=m?.paid?1:m?.frac||0;
  const meter=(m?.target||m?.paid)&&!(early&&!m.paid&&!m.added)?`<div class="run-meter run-stage">${runIcon('meter-skull',16,'run-meter-icon')}<span><small>Boss Meter${m.paid?'':m.target?`: ${esc(m.name)}`:''}</small>${m.target||m.paid?`<span class="run-bar run-meter-bar"><span style="width:${Math.round(from*100)}%" data-to="${Math.round(to*100)}%"></span></span>`:''}<em${m.paid?' class="run-paid"':''}>${m.paid?`Full! Guaranteed drop: ${esc(m.paid.name)}`:m.target?`${m.pts} / ${m.need}${m.added?` (+${m.added})`:''}`:''}</em></span></div>`:'';
  /* balance-oct26 (owner: too many level counters for a 12-year-old): the Delver line (with a class rank inside it) and the

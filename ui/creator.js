@@ -58,7 +58,7 @@ function bodyRowHTML(cls,body){const opts=[null,...(HERO_BODIES[cls]||[])];
 export function creatorHTML(cls,s,{gear=true}={}){const body=bodyOf(s,cls),look=lookOf(s,cls);
  return `<section class="creator" data-cr-class="${esc(cls)}" aria-label="Appearance">
  <div class="cr-preview">
-  <div class="cr-stage"><canvas class="cr-figure" width="192" height="144" role="img" aria-label="Your hero"></canvas></div>
+  <div class="cr-stage" data-stage="${esc(cls)}"><canvas class="cr-figure" width="192" height="144" role="img" aria-label="Your hero"></canvas></div>
   <div class="cr-closeup"><canvas class="cr-bust" width="128" height="128" role="img" aria-label="Close-up of your hero's face"></canvas><span class="cr-cap">Close-up</span></div>
   <div class="cr-preview-ctl"><button type="button" class="cr-toggle" data-cr="gear" aria-pressed="${gear}">${gear?'Showing gear':'Gear hidden'}</button></div>
  </div>
@@ -89,10 +89,10 @@ export function wireCreator(root,opts={}){const el=root?.querySelector?.('.creat
   const sp=loadSprite(id);if(!sp.ready){pending||=!sp.failed;return;}const m=sp.meta,[bx,by,bw,bh]=m.bust?.[2]<=40?m.bust:[Math.max(0,m.anchor[0]-14),Math.max(0,m.anchor[1]-58),28,28],k=Math.max(1,Math.floor(cv.width/Math.max(bw,bh)));
   g.imageSmoothingEnabled=false;g.clearRect(0,0,cv.width,cv.height);g.drawImage(sp.img,bx,m.states.idle.row*m.cell[1]+by,bw,bh,Math.round((cv.width-bw*k)/2),Math.round((cv.height-bh*k)/2),bw*k,bh*k);});
   if(pending&&n<60)later(()=>paintBodies(n+1),80);};
- /* The same still gameplay frame as the hero and name steps. */
- const fig=el.querySelector('.cr-figure'),bust=el.querySelector('.cr-bust');
+ /* The hero as on the hero and name steps: its own idle loop (improve20-s-nov1 #19), on the class's backdrop, at the stage's whole scale */
+ const fig=el.querySelector('.cr-figure'),bust=el.querySelector('.cr-bust'),t0=globalThis.performance?.now?.()??0;
  const tick=()=>{const toggle=el.querySelector('[data-cr=gear]');if(toggle)toggle.hidden=heroDrawId(cls,{})===heroDrawId(cls,{art:null,set:null});if(!fig?.isConnected){timer=0;return;}
-  try{drawCreatorFigure(fig,cls,gear?{}:{art:null,set:null});}catch{}timer=later(tick,50);};
+  try{const t=((globalThis.performance?.now?.()??0)-t0)/1000;drawCreatorFigure(fig,cls,{...(gear?{}:{art:null,set:null}),fit:true,time:opts.motion?.()===false?0:t});}catch{}timer=later(tick,50);};
  const paintBust=()=>{if(bust)try{drawHeroBust(bust,cls,bust.width);}catch{}};
  function rerender(){const s=S(),body=bodyOf(s,cls),look=lookOf(s,cls),key=keyFor(cls,body),P=lookParts(key);
   /* the body row keeps its buttons; the colour rows are rebuilt when what the body offers changes */
@@ -128,5 +128,13 @@ export function wireCreator(root,opts={}){const el=root?.querySelector?.('.creat
  applyLooks(S());paintBodies();paintBust();if(!timer)tick();
  return {rerender,stop(){clearTimeout(timer);timer=0;dead=true;moved?.remove();moved=null;cueOn?.removeEventListener?.('scroll',cue);cueOn?.classList.remove('more-below');cueOn=null;view.removeEventListener?.('resize',watchCue);},get gear(){return gear;}};}
 
-/* One still gameplay frame, at 2x native pixels, with no CSS enlargement in any creator step. */
-export function drawCreatorFigure(cv,cls,o={}){if(cv.width!==192||cv.height!==144){cv.width=192;cv.height=144;}return drawHeroFigure(cv,cls,{time:0,front:false,...o});}
+/* One gameplay frame of the hero sprite as drawn (whole-number scale, no smoothing, no recolour beyond the player's own look). */
+/* improve20-s-nov1 #19 (audit5 b11): the hero select and the creator showed one still frame at 2x in a grey box. With {fit:true}
+   the canvas takes its CSS size as its own pixel size (no CSS enlargement, so the hero's pixels stay square at any width) and
+   drawHeroFigure picks the largest whole scale that fits: 3x from a 280x216 stage, 4x at 384x288. `time`/`state` play the
+   sprite's own frames: previewPose gives the idle loop with one attack every PREVIEW_PERIOD seconds. */
+export const PREVIEW_PERIOD=3.5;
+export function previewPose(t,attack=.6,period=PREVIEW_PERIOD,motion=true){if(!motion)return {state:'idle',time:0};const p=((t%period)+period)%period,a=period-attack;return p>=a?{state:'attack',time:p-a}:{state:'idle',time:t};}
+export function attackLen(cls){try{const st=loadSprite('hero-'+cls)?.meta?.states?.attack;return st?.frames&&st?.fps?st.frames/st.fps:.6;}catch{return .6;}}
+export function fitCanvas(cv){const r=cv?.getBoundingClientRect?.(),w=Math.round(r?.width||0),h=Math.round(r?.height||0);if(w>=64&&h>=48&&(cv.width!==w||cv.height!==h)){cv.width=w;cv.height=h;}return cv;}
+export function drawCreatorFigure(cv,cls,{fit=false,...o}={}){if(fit)fitCanvas(cv);if(!fit||cv.width<64||cv.height<48)if(cv.width!==192||cv.height!==144){cv.width=192;cv.height=144;}return drawHeroFigure(cv,cls,{time:0,front:false,...o});}

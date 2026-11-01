@@ -21,7 +21,7 @@ import {runeCastFx,runeHitFx,firstCastMoment,bigNumber,shotRune} from './rune-fx
 import {TOWN} from '../game/maps.js';
 import {levelById,levelDone,recordLevel,levelScore,levelReward,levelXPReward,arenaWave,arenaTier,difficultyOf,resolveOf,tiered,tierDone,tierRecord} from '../game/levels.js';
 import {TIER_KEYS,tierKey,tierOf,tierLevel,tierScale,applyBossTier,tierBossTrim,rallyPoints,vampHeal,checkEnrage,splitParts,MODS,killGold,adviceLevel,killXP,winXP,bossAtkTrim} from '../game/tiers.js';
-import {STAGE,BEATS,REBIRTH,levelGeometry,camTopFor,waveGroups,waveSide,stageKey} from '../game/stage.js';
+import {STAGE,BEATS,REBIRTH,levelGeometry,camTopFor,bossLiftFor,waveGroups,waveSide,stageKey} from '../game/stage.js';
 import {baseDef,makeEnemy,entryEnemy} from '../game/roster.js';
 import {TRACKS} from '../gfx/actors/definitions.js';
 import {equipmentAnchors} from '../gfx/actors/render.js';
@@ -41,7 +41,7 @@ import {biomeMap} from '../gfx/biomes/index.js';
 import {petProc,petTick} from './pet-fx.js';
 import {partyStart,updateParty,partyFocus,partyHurt,oldTarget,hurtOn} from './party-ai.js';
 import {runCarry,runStart,runTick,runInteract,runSecret,runKill,runLayer,runFinish,runStats} from './run-fx.js';
-/* v2:enemies */ import {runEnemy,drawEnemy,enemyLayer,tickIdleEnemyFx} from './enemy-ai.js';
+/* v2:enemies */ import {runEnemy,drawEnemy,enemyLayer,tickIdleEnemyFx,enemyTop} from './enemy-ai.js';
 import {stanceBlock,propHit,linkShield,panOf} from './boss-moves.js';
 import {guardHit} from './boss-guard.js';
 /* v2:hub */ import {applyBoons} from '../game/shops.js';
@@ -267,7 +267,11 @@ export class World{
   /* v2:enemies -- let the boss's death animation finish (hold and fade) before the results, at most 4 s */
   if(f==='victory'&&this.flowT>=BEATS.victory&&(this.flowT>=4||!this.enemies.some(e=>e.boss&&e.deathTime>0)))this.finish(true);}
  /* The camera eases to a locked arena, otherwise leads the player; it never scrolls back (Castle Crashers). */
- follow(dt){const L=this.layout;if(!L)return;const W=/* v2:ui-mobile */STAGE.camW;this.camTop=camTopFor(L,this.player.y);const lo=this.lock?this.lock.x0:0,hi=this.lock?Math.max(this.lock.x0,this.lock.x1-W):Math.max(0,L.width-W);let target=clamp(this.player.x-W*(this.lock?.5:.4),lo,hi);if(!this.lock)target=Math.max(target,this.camFloor);
+ follow(dt){const L=this.layout;if(!L)return;const W=/* v2:ui-mobile */STAGE.camW;this.camTop=camTopFor(L,this.player.y);
+  /* improve20-s-nov1 #20 (audit5 b24): a phone camera in a boss fight lifts so the boss's head clears the boss bar (game/stage.js bossLiftFor), eased in
+     and out so it never steps; desktop (padB null) is unchanged */
+  {const bo=STAGE.padB!=null&&['boss','bossintro','rebirth'].includes(this.flow)?(this.enemies||[]).find(e=>e.boss&&e.hp>0&&!e.decoy):null,want=bo?bossLiftFor({camTop:this.camTop,bossTop:enemyTop(bo),heroFeet:this.player.y}):0;
+   this.bossLift=(this.bossLift||0)+(want-(this.bossLift||0))*Math.min(1,dt*4);if(this.bossLift<.5&&!want)this.bossLift=0;this.camTop=Math.max(0,Math.round(this.camTop-this.bossLift));}const lo=this.lock?this.lock.x0:0,hi=this.lock?Math.max(this.lock.x0,this.lock.x1-W):Math.max(0,L.width-W);let target=clamp(this.player.x-W*(this.lock?.5:.4),lo,hi);if(!this.lock)target=Math.max(target,this.camFloor);
   /* 25 Oct (phone): the touch controls cover the screen's sides (joystick ghost left, action arc right; ui/mobile.js measures them into STAGE.padL/padR, 0 on desktop). At an arena edge the camera may look past the edge by that much, so the hero never stands under a button. Hero bounds are unchanged. */
   let pr=STAGE.padR||0,pl=0;
   /* camface-oct28 (phone safe zone): the hero stood under the top-left hero panel at the top of the floor band. While his head (46 px above his feet on the ground; a jump does not move the camera) is level with a top HUD obstacle, keep him that far from its side, faded in over 12 px of height so the camera eases and never steps. Desktop has none (ui/mobile.js measurePads) */

@@ -109,3 +109,27 @@ html[data-motion="reduced"] .more-below::after{animation:none}
 /* Home -> Appearance on a short phone: the eyebrow and the subtitle go (the creator's own line says looks are free and never change
    strength), so the colours start higher in the sheet */
 @media(max-height:420px){.m-mode dialog[data-view=appearance] .modal-head{padding:2px 0 6px;margin-bottom:6px}.m-mode dialog[data-view=appearance] .modal-head :is(.eyebrow,p){display:none}}
+
+/* improve20-s-nov1 #19 (audit5 b11): "a small static sprite in a flat grey box". The stage's frame drew its 9-slice with `fill`, which
+   painted the slot's grey middle over the class backdrop, and the shared rule above set the Warrior's backdrop for every class. The
+   frame is now a border only, each class (hero select) and the class being styled (creator) stands in its own PixelLab backdrop
+   (ui/skin/stages/<class>.png) at 2x, cropped to the floor, and the hero canvas takes its CSS size as its pixel size (creator.js
+   drawCreatorFigure fit) so the hero is drawn at 3x on phones and laptops and 4x on big windows, never stretched. */
+.title-screen .select-pane .er-detail.hero-detail[data-hero] .er-stage,.title-screen .creator .cr-stage,.creator .cr-stage[data-stage]{border-image:url(skin/pl-slot.png) 5 / 6px;background-color:#202b36;background-size:384px 448px;background-position:center bottom;background-repeat:no-repeat;image-rendering:pixelated;overflow:hidden}
+.title-screen .select-pane .er-detail.hero-detail[data-hero="warrior"] .er-stage,.creator .cr-stage[data-stage="warrior"]{background-image:url(skin/stages/warrior.png)}
+.title-screen .select-pane .er-detail.hero-detail[data-hero="mage"] .er-stage,.creator .cr-stage[data-stage="mage"]{background-image:url(skin/stages/mage.png)}
+.title-screen .select-pane .er-detail.hero-detail[data-hero="rogue"] .er-stage,.creator .cr-stage[data-stage="rogue"]{background-image:url(skin/stages/rogue.png)}
+.title-screen .select-pane .er-detail.hero-detail[data-hero="ranger"] .er-stage,.creator .cr-stage[data-stage="ranger"]{background-image:url(skin/stages/ranger.png)}
+.title-screen .select-pane .er-detail.hero-detail[data-hero="paladin"] .er-stage,.creator .cr-stage[data-stage="paladin"]{background-image:url(skin/stages/paladin.png)}
+.title-screen .select-pane .er-detail.hero-detail[data-hero="berserker"] .er-stage,.creator .cr-stage[data-stage="berserker"]{background-image:url(skin/stages/berserker.png)}
+.title-screen .select-pane .er-detail.hero-detail[data-hero="summoner"] .er-stage,.creator .cr-stage[data-stage="summoner"]{background-image:url(skin/stages/summoner.png)}
+/* phones and narrow windows: the hero select's stage grows from 224x176 (2x) to 292x228, so the hero stands at 3x */
+.m-mode .title-screen .select-pane .er-detail.hero-detail[data-hero] .er-stage{width:292px;height:228px;min-height:228px}
+.m-mode .title-screen .select-pane .er-stage .er-hero.detail-sprite{width:280px;height:216px}
+/* the creator: a bigger preview on the same backdrop -- 300x228 (hero 3x) where the look step has room */
+@media(min-height:601px) and (min-width:760px){html:not(.m-mode) .title-screen[data-step="look"] .creator .cr-stage,html:not(.m-mode) dialog[data-view=appearance] .creator .cr-stage{width:300px;height:228px;min-height:228px}
+html:not(.m-mode) .title-screen[data-step="look"] .creator .cr-figure,html:not(.m-mode) dialog[data-view=appearance] .creator .cr-figure{width:288px;height:216px}
+html:not(.m-mode) .title-screen[data-step="look"] .creator{grid-template-columns:minmax(300px,320px) minmax(0,1fr)}}
+/* phone look step: the stage stands 20 px taller so its hero is drawn at 3x as well (canvas 212x184) */
+.m-mode .title-screen[data-step="look"] .creator .cr-stage{height:196px;min-height:196px}
+.m-mode .title-screen[data-step="look"] .creator .cr-figure{width:212px;height:184px}

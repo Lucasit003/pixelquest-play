@@ -114,6 +114,13 @@ export function camTopFor(geo,y){const H=/* v2:ui-mobile */STAGE.camH,maxTop=Mat
     the fixed frame exactly (tests/campad-oct28 and camface-oct28 pin those). */
  let top=fb-vis;const room=geo.floorTop-46-top;if(fb-geo.floorTop>STAGE.floorBottom-STAGE.floorTop&&room<30)top-=Math.max(0,Math.min(top-(fb-H),Math.round((30-room)/2)));
  return Math.max(0,Math.min(maxTop,Math.round(top)));}
+/* improve20-s-nov1 #20 (audit5 b24): on a phone the camera frames the floor band for the hero, so a tall boss at the band's far edge
+   (the Hollow Minotaur, 120 px) had its head and weapon under the boss bar and off the top at 844x390. In a boss fight a phone camera
+   lifts by what the boss's top needs to clear the boss bar (`room` world px under the view's top), never past the stage's top and
+   never so far that the hero's feet leave the strip above the bottom pad: the hero always wins. Returns the lift in world px (>= 0). */
+export const BOSS_ROOM=22;
+export function bossLiftFor({camTop,bossTop,heroFeet,camH=STAGE.camH,padB=STAGE.padB??0,room=BOSS_ROOM}){if(!Number.isFinite(bossTop)||!Number.isFinite(camTop))return 0;
+ const want=room-(bossTop-camTop),keep=camH-padB-4-(heroFeet-camTop);return Math.max(0,Math.min(want,camTop,keep));}
 /* improve20-p-oct31 #5 (phone floor band, audit2 item 19): camface-oct28 framed the band PHONE_FLOOR_GAP (STAGE.padB, 20) above a phone's
    bottom edge; tallfields-oct31 then lifted that frame for head room at the far edge, which put the near edge 5 world px from the bottom
    at 844x390 and on it at 740x360, under the joystick. The frame stays as tallfields set it (the head room is kept) and the PLAYABLE band
