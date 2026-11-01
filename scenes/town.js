@@ -108,7 +108,18 @@ export function barracksCrew(save) {
   }
   return out.slice(0, BARRACKS.crew.length).map((m, i) => ({...m, x: BARRACKS.crew[i].x, y: BARRACKS.crew[i].y}));
 }
-const crewHere = S => S.key === 'barracks' ? barracksCrew(H.save) : [];
+/* improve20-k-nov1 #1 (audit3 #11): a companion who has joined and is not out with you also stands beside the Barracks door in the
+   village (his own atlas, a talk line from game/npcs.js), so a child sees him in town; one a quest sends you to meet waits inside only */
+export const DOOR_CREW = {x: 1350, y: 2184};
+export function villageCrew(save) { return barracksCrew(save).filter(m => joined(save, m.id)).slice(0, 1).map(m => ({...m, x: DOOR_CREW.x, y: DOOR_CREW.y, door: true})); }
+/* the hire beat: the companion steps out from beside the roster board to the hero and cheers (main.js runs the lines and banner) */
+export const STEP_OUT = {walk: .9, hold: 3.2};
+export function hubStepOut(id) { const p = H.player, m = BARRACKS.crew[0]; if (!p || current().key !== 'barracks' || !ART[id]) return false; const side = p.x > m.x ? -1 : 1; H.stepOut = {id, t0: H.time, from: {x: m.x, y: m.y}, to: {x: Math.round(p.x + side * 26), y: Math.round(p.y + 2)}}; return true; }
+export const hubSteppingOut = () => !!H.stepOut && H.time - H.stepOut.t0 < STEP_OUT.hold;
+function stepOutNow() { const o = H.stepOut; if (!o) return []; const k = (H.time - o.t0) / STEP_OUT.walk; if (H.time - o.t0 >= STEP_OUT.hold || current().key !== 'barracks') { H.stepOut = null; return []; }
+  const f = Math.min(1, k), x = o.from.x + (o.to.x - o.from.x) * f, y = o.from.y + (o.to.y - o.from.y) * f;
+  return [{id: o.id, key: o.id, name: COMPANIONS[o.id].short, x, y, clip: f < 1 ? 'walk' : 'cheer', t: f < 1 ? H.time - o.t0 : H.time - o.t0 - STEP_OUT.walk, facing: f < 1 ? Math.sign(o.to.x - o.from.x) || 1 : Math.sign((H.player?.x ?? x) - x) || 1, beat: true}]; }
+const crewHere = S => S.key === 'barracks' ? [...barracksCrew(H.save), ...stepOutNow()] : S.key === 'village' ? villageCrew(H.save) : [];
 /* someone a live quest is waiting on: an open quest's giver, or a talk step whose item is in hand */
 function questNews(save, key) {
   if (!save || !key) return false;
@@ -117,6 +128,31 @@ function questNews(save, key) {
     if (s?.kind === 'talk' && s.who === key && (st === 'open' || !s.take || save.quests?.q?.[id]?.items?.includes(s.take))) return true;
   }
   return false;
+}
+/* improve20-k-nov1 #5 (audit3 #23): every room talker's stand point (where the quest arrow leads and "arrived" is measured) sat on the
+   talker (a few px off their feet), so a hero who followed the arrow stood inside Farmer Hob, his baskets or the captain. Each talker
+   now gets a talk spot one tile in front: TALK.d px below their feet, or just past the counter, desk or altar in front of them (the first
+   blocked band straight down), else beside them, the first one whose foot box
+   is open and clear of every other person's footprint. A counter keeper's talk spot is a step below his customer-side point (COUNTER_STAND), clear of the counter's drawers. The old stand
+   point still counts for reach (doorReach measures to the talker too). */
+export const TALK = {d: 26, side: 30, band: 50, far: 110, past: 12, thin: 8, aside: 28};
+function talkSpots(S) {
+  const people = S.points.filter(q => q.type === 'npc-spot'), open = (x, y, self = null) => ![[-5, -4], [5, -4], [-5, 1], [5, 1], [0, 0]].some(([dx, dy]) => blockedAt(S, x + dx, y + dy))
+    && !people.some(o => o !== self && Math.abs(x - o.x) < 18 && Math.abs(y - o.y) < 12) && !(S.D.props?.interior === 'barracks' && BARRACKS.roomBlock.some(([x0, y0, x1, y1]) => x > x0 - 6 && x < x1 + 6 && y > y0 - 6 && y < y1 + 6));
+  for (const q of people) {
+    if (q.front) { const [fx, fy] = open(q.front[0], q.front[1] + 14, q) ? [q.front[0], q.front[1] + 14] : q.front; q.talkFrom = [q.sx, q.sy]; q.sx = fx; q.sy = fy; continue; }
+    /* straight down first: a counter, desk or altar in front of the talker is a blocked band starting within TALK.band px of their feet;
+       the spot is TALK.past px past it, on the customer's side (a sliver under TALK.thin px, a wall edge at their feet, is not a counter). With no band, the spot is TALK.d px below */
+    let down = null, start = -1;
+    for (let dy = 8; dy <= TALK.far; dy += 2) { const ok = open(q.x, q.y + dy, q); if (!ok) { if (start < 0) { if (dy > TALK.band) break; start = dy; } } else if (start >= 0 && dy - start < TALK.thin) start = -1; else if (start >= 0) { down = open(q.x, q.y + dy + TALK.past, q) ? [q.x, q.y + dy + TALK.past] : null; break; } }
+    if (start < 0) down = open(q.x, q.y + TALK.d, q) ? [q.x, q.y + TALK.d] : null;
+    const c = down || [[q.x - TALK.side, q.y + 6], [q.x + TALK.side, q.y + 6], [q.x - TALK.side, q.y + TALK.d], [q.x + TALK.side, q.y + TALK.d]].find(([x, y]) => open(x, y, q));
+    /* a counter with its own point in front (a shop or "Speak with" marker) keeps that point's place: the talker's spot steps aside along
+       the counter (TALK.aside px), so each one's arrow puts its own prompt in reach; if neither side is open the talker keeps his place */
+    const free = ([x, y]) => !S.points.some(o => o !== q && o.type !== 'npc-spot' && !['spawn', 'entry'].includes(o.type) && Math.hypot(o.sx - x, o.sy - y) < TALK.aside);
+    const pick = c && (free(c) ? c : [-1, 1].map(s => [c[0] + s * TALK.aside, c[1]]).find(([x, y]) => open(x, y, q) && free([x, y])));
+    if (pick) { q.talkFrom = [q.sx, q.sy]; q.sx = pick[0]; q.sy = pick[1]; }
+  }
 }
 function scene(key) {
   key = ROOM_ALIAS[key] ?? key;
@@ -144,6 +180,7 @@ function scene(key) {
      flickering glow sit in its opening (18 px above the sprite's foot, a little right of centre; the point is the foot + 8) */
   const hearths = S.points.filter(q => /^fireplace_[01]$/.test(q.props?.prop ?? ''));
   if (hearths.length) S.fx = {lights: S.fx.lights, ambient: [...S.fx.ambient.filter(([x,y,kind]) => kind !== 'fire' || !hearths.some(q => Math.hypot(x-q.x,y-q.y)<60)), ...hearths.map(q => [q.x, q.y - 26, 'fire'])]};
+  if (S.room) talkSpots(S);
   scenes.set(key, S);
   return S;
 }
@@ -482,7 +519,7 @@ function enter(room, door) {
    reach, so the E the tutorial asked for next took him straight back in. He now comes out a few steps straight down from the door (beside it, or along the lane, only if that is blocked), the first
    free spot whose distance to the door (scored as nearest() scores it) is clear of the 30 px reach; failing that, the stand spot. */
 export const DOOR_REACH = 30;
-export function doorReach(q, x, y) { return Math.min(Math.hypot(x - q.sx, y - q.sy) * 1.25, Math.hypot(x - q.x, (y - q.y) * 1.3), q.front ? Math.hypot(x - q.front[0], y - q.front[1]) * 1.25 : Infinity); }
+export function doorReach(q, x, y) { return Math.min(Math.hypot(x - q.sx, y - q.sy) * 1.25, Math.hypot(x - q.x, (y - q.y) * 1.3), q.front ? Math.hypot(x - q.front[0], y - q.front[1]) * 1.25 : Infinity, q.talkFrom ? Math.hypot(x - q.talkFrom[0], y - q.talkFrom[1]) * 1.25 : Infinity); }
 export function outsideDoor(V, q) {
   const ok = (x, y) => !footBlocked(V, x, y) && doorReach(q, x, y) >= DOOR_REACH + 4;
   for (const dx of [0, -8, 8, -16, 16]) for (let dy = 26; dy <= 64; dy += 2) if (ok(q.sx + dx, q.sy + dy)) return [q.sx + dx, q.sy + dy];
@@ -666,6 +703,9 @@ export function personBeat(name) {
   return STORY.find(b => BY_PERSON.has(b.trigger) && b.speaker === name && !seen.includes(b.id) && holds(b.when, H.save)) ?? null;
 }
 
+/* improve20-k-nov1 #5: where each person in this room is drawn, as fractions of the view ({l, r, t, b}), so main.js can fade a HUD plate
+   that would cover one (the Barracks captain sat under the goal plate on a phone) */
+export function hubHeads() { const S = current(), v = H.view; if (!S?.room || !v || H.fade) return []; return [...S.figures, ...crewHere(S)].map(f => ({l: (f.x - 14 - v.ox) / VIEW_W, r: (f.x + 14 - v.ox) / VIEW_W, t: (f.y - 60 - v.oy) / VIEW_H, b: (f.y - v.oy) / VIEW_H})); }
 /** The interact prompt for the HUD: {text} or null. */
 export function hubPrompt() {
   if (H.placing && FURN[H.placing]) return {text: `Place the ${FURN[H.placing].name.toLowerCase()} (Escape puts it away)`};
@@ -676,7 +716,10 @@ export function hubPrompt() {
   /* a point with a drawn footprint (q.box, the roster board) also passes it: when the HUD pushes the prompt down onto it (a phone's
      quest plank), main.js placePrompt moves the prompt beside it instead */
   const box = q.box && v ? [(q.box.x0 - v.ox) / VIEW_W, (q.box.y0 - v.oy) / VIEW_H, (q.box.x1 - v.ox) / VIEW_W] : null;
-  return v ? {text: H.near.o.label, at: [(q.x - v.ox) / VIEW_W, (Math.min(q.y, q.sy ?? q.y) - 70 - v.oy) / VIEW_H], ...(box ? {box} : {})} : {text: H.near.o.label};
+  /* improve20-k-nov1 #5: a talker's drawn body ({l, r, t, b} fractions): main.js slides the bubble beside him when it would cover him (a phone
+     clamps the bubble under the goal plate, which put it over the Barracks captain) */
+  const body = v && q.type === 'npc-spot' ? {l: (q.x - 16 - v.ox) / VIEW_W, r: (q.x + 16 - v.ox) / VIEW_W, t: (q.y - 60 - v.oy) / VIEW_H, b: (q.y - v.oy) / VIEW_H} : null;
+  return v ? {text: H.near.o.label, at: [(q.x - v.ox) / VIEW_W, (Math.min(q.y, q.sy ?? q.y) - 70 - v.oy) / VIEW_H], ...(box ? {box} : {}), ...(body ? {body} : {})} : {text: H.near.o.label};
 }
 
 /**
@@ -968,8 +1011,8 @@ export function drawHub(c, state, t, kit) {
   if (S.key === 'barracks') {
     const r = BARRACKS.roster, im = (H.roster ??= load(r.img));
     figures.push({y: r.y, draw: () => { if (ready(im)) c.drawImage(im, Math.round(r.x - im.width / 2), Math.round(r.y - im.height + 4)); }});
-    for (const m of crewHere(S)) { const art = ART[m.id]; loadActor(art.sprite); figures.push({y: m.y, draw: () => { shadow(c, m.x, m.y); drawActor(c, art.sprite, art.clips.idle, ms / 1000, m.x, m.y, {facing: -1, scale: art.scale}); }}); }
   }
+  for (const m of crewHere(S)) { const art = ART[m.id]; loadActor(art.sprite); figures.push({y: m.y, draw: () => { shadow(c, m.x, m.y); drawActor(c, art.sprite, art.clips[m.clip || 'idle'] || art.clips.idle, m.t ?? ms / 1000, m.x, m.y, {facing: m.facing || -1, scale: art.scale}); }}); }
   for (const m of S.walkers) {
     const st = state.motion === false ? walkerAt(m, 0) : walkerTick(m, t, p);
     if (st.x < vx0 - 60 || st.x > vx1 + 60 || st.y < vy0 - 10 || st.y > vy1 + 90) continue;

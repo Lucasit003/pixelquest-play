@@ -46,6 +46,20 @@ export const BARRACKS_CSS = `.grid.barracks-grid{grid-template-columns:repeat(au
 :where(.comp-facts){margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:3px}
 .comp-card .comp-wage{color:#e3b85a;margin:2px 0 0}
 .comp-card .comp-away{opacity:.85;font-size:.92em}
+.barracks-grid .comp-hero{grid-column:1/-1;gap:10px}
+.comp-hero .comp-top{gap:18px;align-items:center}
+.comp-hero .comp-big{width:192px;height:192px;background:radial-gradient(ellipse at 50% 80%,#e3b85a33,transparent 62%)}
+.comp-hero .comp-head{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.barracks-grid .comp-hero h3.comp-name{margin:0;font-size:calc(var(--fs,16px) * 1.8)!important;line-height:1.15;color:#ffe9a8}
+.comp-hero .comp-plain{margin:0;color:#e9dcc0;font-size:calc(var(--fs,16px) * 1.1)}
+.comp-hero .comp-bar{height:12px}
+.comp-hero .comp-bar-label{opacity:.9}
+.comp-hero .comp-head>button{align-self:flex-start;min-width:200px}
+.comp-hero .comp-wage{margin:0}
+.comp-rules>summary{cursor:pointer;min-height:36px;display:flex;align-items:center;font-weight:700;color:#e3b85a}
+.comp-rules .comp-facts{margin-bottom:6px}
+html.m-mode .comp-hero .comp-big{width:120px;height:120px}
+html.m-mode .barracks-grid .comp-hero h3.comp-name{font-size:calc(var(--fs,16px) * 1.4)!important}
 .barracks-grid .barracks-note{margin:0;align-self:start}
 :where(.pad-companion,.pad-quest){margin:6px 0 0;display:flex;align-items:center;gap:6px}
 .pad-companion strong{color:#e3b85a}
@@ -58,6 +72,7 @@ dialog .level-record.level-companion{flex-wrap:wrap;align-items:center;justify-c
 dialog .level-record.level-companion .comp-result-bar{display:inline-block;width:56px;flex:none}
 dialog .level-record.level-companion .comp-wage-note{white-space:nowrap}`;
 
+const NOTE = `<p class="subtle barracks-note">One companion travels with you at a time. The wage comes out of a won run’s gold; a lost run costs nothing, and your first ${TRIAL_RUNS} wins together are free. Companions never change what you learn or your abilities.</p>`;
 /** The roster board's hire panel. */
 export function barracksHTML(save) {
   const ids = Object.keys(COMPANIONS).filter(hireable), withId = save?.party?.with;
@@ -66,19 +81,22 @@ export function barracksHTML(save) {
     if (!m) return recruitCardHTML(save, id);
     /* ready2fix-oct30 #11: the level line says what fills the bar in plain words (game/party.js runXP, numbers unchanged) */
     const bar = levelBar(m.xp), L = bar.level, nt = nextTrait(id, L), have = traitsAt(id, L), hired = withId === id;
-    return `<div class="card comp-card${hired ? ' selected' : ''}" data-companion="${id}"><div class="comp-top"><canvas class="comp-portrait" data-comp-sprite="${id}" width="96" height="96" aria-hidden="true"></canvas><div><span class="tag">${esc(role.toUpperCase())} · LEVEL ${L}</span><h3>${esc(c.name)}</h3><small class="subtle">${esc(c.line)}</small></div></div>`
-      + `<p class="comp-wage">${esc(wageText(save, id))}</p><button data-hire="${id}" class="${hired ? '' : 'primary'}">${hired ? `Leave ${esc(c.short)} at the Barracks` : `Hire ${esc(c.short)}`}</button>${hired ? `<small class="subtle">${esc(c.short)} travels with you until you change it.</small>` : ''}`
-      + `<div class="comp-bar" role="progressbar" aria-label="${esc(c.short)}’s level" aria-valuemin="0" aria-valuemax="${bar.need || 1}" aria-valuenow="${bar.need ? bar.have : 1}"><span style="width:${Math.round(bar.share * 100)}%"></span></div>`
-      + `<ul class="comp-facts"><li>${bar.need ? `Level ${L}: ${num(bar.have)} / ${bar.need} toward level ${L + 1}. Adventures together fill this bar: a win adds 1 (a Heroic win 1.5, a Legendary win 2) and a lost try adds a little.` : `Level ${L}: the top level`}</li>`
+    /* improve20-k-nov1 #1 (audit3 #11): the card leads with the companion big (his own sprite at 2.5x), his name, one plain line, his level bar
+       and "Bring Wil"; the rules sheet sits under a "How companions grow" fold, with the panel's rules note */
+    return `<div class="card comp-card comp-hero${hired ? ' selected' : ''}" data-companion="${id}"><div class="comp-top"><canvas class="comp-portrait comp-big" data-comp-sprite="${id}" data-comp-scale="2.5" width="192" height="192" aria-hidden="true"></canvas><div class="comp-head"><span class="tag">${esc(role.toUpperCase())} · LEVEL ${L}</span><h3 class="comp-name">${esc(c.name)}</h3>`
+      + `<p class="comp-plain">${esc(c.short)} fights with you and grows with every win.</p>`
+      + `<div class="comp-bar" role="progressbar" aria-label="${esc(c.short)}’s level" aria-valuemin="0" aria-valuemax="${bar.need || 1}" aria-valuenow="${bar.need ? bar.have : 1}"><span style="width:${Math.round(bar.share * 100)}%"></span></div><small class="comp-bar-label">${bar.need ? `Level ${L} · ${num(bar.have)} / ${bar.need} toward level ${L + 1}` : `Level ${L} · the top level`}</small>`
+      + `<button data-hire="${id}" class="${hired ? '' : 'primary'}">${hired ? `Leave ${esc(c.short)} at the Barracks` : `Bring ${esc(c.short)}`}</button><p class="comp-wage">${esc(wageText(save, id))}</p>${hired ? `<small class="subtle">${esc(c.short)} travels with you until you change it.</small>` : ''}</div></div>`
+      + `<details class="comp-rules"><summary>How companions grow</summary><ul class="comp-facts"><li>${bar.need ? `Level ${L}: ${num(bar.have)} / ${bar.need} toward level ${L + 1}. Adventures together fill this bar: a win adds 1 (a Heroic win 1.5, a Legendary win 2) and a lost try adds a little.` : `Level ${L}: the top level`}</li>`
       + `<li>${nt ? `Next trait at level ${nt.at}: <strong>${esc(nt.name)}</strong> (${esc(nt.text)})` : 'Every trait learned'}${have.length ? ` · Has: ${esc(have.join(', '))}` : ''}</li>`
       + `<li>${esc(c.skill.name)}: ${esc(c.skill.text)}</li>`
       + `<li>Runs together: ${m.runs} · Wins: ${m.wins}</li>`
-      + `<li class="comp-away">${esc(c.short)} stays here for the prologue, Goblin Camp and the arenas.</li></ul>`
+      + `<li class="comp-away">${esc(c.short)} stays here for the prologue, Goblin Camp and the arenas.</li></ul>${NOTE}</details>`
       + `</div>`;
   }).join('');
   /* oct25-exploit2 O1: the rules note is the grid's last cell, beside the card on a wide screen (at 1280x720 it ran under the frame's
      bottom edge below the card); on a phone it still sits under the card */
-  return `<div class="grid barracks-grid">${cards}<p class="subtle barracks-note">One companion travels with you at a time. The wage comes out of a won run’s gold; a lost run costs nothing, and your first ${TRIAL_RUNS} wins together are free. Companions never change what you learn or your abilities.</p></div>`;
+  return `<div class="grid barracks-grid">${cards}${ids.some(id => save?.party?.crew?.[id]) ? '' : NOTE}</div>`;
 }
 
 /* improve20-b-oct31 #11 (kid-appeal playtest, shot 15: one silhouette card in a big empty panel; "Who's that? How do I get him?"): a

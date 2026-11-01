@@ -3334,3 +3334,46 @@ dialog[data-view=result] .level-result>.rating-key{margin:2px 0 4px;font-size:16
 .m-mode dialog[data-view=result] .level-result>.rating-key{font-size:14px;margin:0 0 2px}
 .m-mode dialog[data-view=result] .level-result>.rating-key>span{display:block}.m-mode dialog[data-view=result] .level-result>.rating-key>.rk-sep{display:none}
 dialog[data-view=result] .level-result.result-tight>.rating-key{display:none}
+/* improve20-k-nov1 #3: the Journal's Mastery tab, one row per subject (ui/journal-mastery.js) */
+.jm-rows{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:8px}
+.jm-row{display:flex;gap:12px;align-items:center;padding:10px 12px;border-left:4px solid var(--subject-color);background:#ffffff08;min-width:0}
+.jm-row:not(.jm-started){opacity:.82}
+.jm-row>.ico{flex:none;transform:scale(1.25);margin:0 4px}
+.jm-text{flex:1;min-width:0;display:grid;gap:4px}
+.jm-top{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.jm-top strong{color:var(--ink);font-size:18px}
+.jm-stage{color:var(--muted);font-size:14px}
+.jm-count{color:var(--gold);font-size:16px}.jm-count b{font-size:20px}
+.jm-bar{margin:0}
+.jm-goal{font-size:14px;color:var(--ink);line-height:1.25}.jm-goal.jm-quiet{color:var(--muted)}
+.jm-details{margin-top:14px}.jm-details>summary{cursor:pointer;min-height:40px;display:flex;align-items:center;font-weight:700;color:var(--gold)}
+dialog[data-view=journal] .jm-grid .journal-row{grid-template-columns:minmax(195px,1.6fr) repeat(calc(var(--jm-cols,4) + 1),minmax(66px,1fr))}
+.m-mode .jm-rows{grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px}
+.m-mode .jm-row{padding:6px 10px}
+/* improve20-k-nov1 #4: the Rift card's level vignette, modifier icons and reward chips */
+.rift-vignette{position:relative;flex:none;width:176px;height:104px;background-repeat:no-repeat;image-rendering:pixelated;border:2px solid #b77cff;box-shadow:0 0 0 2px #2a1440,0 0 14px #b77cff66;border-radius:4px;overflow:hidden}
+.rift-portal-art{position:absolute;right:2px;bottom:-6px;width:48px;height:60px;image-rendering:pixelated;filter:drop-shadow(0 0 4px #d6a8ff)}
+.rift-mods li{align-items:center;flex-wrap:nowrap;gap:10px}
+.rift-mods li>.ico{flex:none}
+.rift-mods li>span{display:flex;flex-direction:column;min-width:0}
+.rift-mod-name{font-size:calc(var(--fs) * 1.3);color:#e9d6ff;letter-spacing:.3px}
+.rift-reward{flex-wrap:wrap;gap:8px 10px}
+.rift-reward-k{color:var(--muted);width:100%}
+.rift-chip{display:inline-flex;align-items:center;gap:6px;padding:2px 12px 2px 4px;border:2px solid #b77cff;border-radius:18px;background:#3b1f5c;color:#f1e2ff}
+.rift-chip b{font-size:calc(var(--fs) * 1.15)}
+.rift-chip.got{opacity:.85}
+html.m-mode .rift-vignette{width:132px;height:78px}
+html.m-mode .rift-portal-art{width:36px;height:45px}
+/* improve20-k-nov1 #5: the goal plate steps back while a villager stands under it in a room (main.js npcUnder) */
+#objective{transition:opacity .2s}
+#objective.npc-under{opacity:.28}
+html.m-mode .rift-vignette{width:112px;height:66px}
+html.m-mode .rift-portal-art{width:30px;height:38px}
+html.m-mode .rift-mods li{flex-direction:row;align-items:center;gap:6px}
+html.m-mode .rift-mods li>.ico{--s:24px!important;width:24px;height:24px}
+.m-mode .rift-mod-name{font-size:var(--fs)}
+.m-mode .rift-mods li>span>span{font-size:calc(var(--fs) * .9);line-height:1.2}
+html.m-mode .rift-reward-k{display:none}
+html.m-mode .rift-chip{padding:0 8px 0 2px}
+html.m-mode .rift-chip .ico{--s:24px!important;width:24px;height:24px}
+html.m-mode .rift-card{row-gap:3px}

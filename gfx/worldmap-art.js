@@ -126,11 +126,13 @@ function tintedFlag(art,tier,i){const rgb=TIER_TINT[tier];if(!rgb||!ready(art.ui
  const d=g.getImageData(0,0,w,h);for(let p=0;p<d.data.length;p+=4){const r=d.data[p],gg=d.data[p+1],b=d.data[p+2];if(b>r+30&&b>gg+10){const l=(r+gg+b)/3/110;d.data[p]=Math.min(255,rgb[0]*l);d.data[p+1]=Math.min(255,rgb[1]*l);d.data[p+2]=Math.min(255,rgb[2]*l);}}g.putImageData(d,0,0);return tintCache[k]=cv;}
 /* improve20-r-oct31: the Rift of the Week's portal: the map's own star icon and ERW sparkle, recoloured violet once (no drawn icon), over a
    violet pad ring like the stops', with its name and key under it. */
+let rPortal=null;const riftPortal=()=>{if(rPortal||typeof Image==='undefined')return rPortal;rPortal=new Image();rPortal.decoding='async';rPortal.src=new URL('../assets/worldmap/rift-portal.png',import.meta.url).href;return rPortal;};
+let qMark=null;const questMarker=()=>{if(qMark||typeof Image==='undefined')return qMark;qMark=new Image();qMark.decoding='async';qMark.src=new URL('../ui/skin/packicons3/town-markers.png',import.meta.url).href;return qMark;};
 const RIFT_TINT=[178,120,255],riftCache={};
 function tintedUi(art,name,i=0){if(!ready(art.ui))return null;const f=cell(art,name,i);if(!f)return null;const key=name+':'+f.join(',');if(riftCache[key])return riftCache[key];const [sx,sy,w,h]=f,cv=makeCanvas(w,h),g=cv.getContext('2d',{willReadFrequently:true});g.drawImage(art.ui,sx,sy,w,h,0,0,w,h);
  const d=g.getImageData(0,0,w,h);for(let p=0;p<d.data.length;p+=4){if(!d.data[p+3])continue;const l=(d.data[p]*.3+d.data[p+1]*.59+d.data[p+2]*.11)/170;d.data[p]=Math.min(255,RIFT_TINT[0]*l);d.data[p+1]=Math.min(255,RIFT_TINT[1]*l);d.data[p+2]=Math.min(255,RIFT_TINT[2]*l);}g.putImageData(d,0,0);return riftCache[key]=cv;}
 function drawRift(c,v,art,t){const {x,y}=v.rift,P=MAPS[v.chapter].pad||[9,4],pulse=.55+.3*Math.sin(t*Math.PI*2/1.6);c.save();c.fillStyle='#3b1f5c';pixEllipse(c,x,y,P[0]+1,P[1]+1);c.globalAlpha=pulse;c.fillStyle='#b77cff';pixEllipse(c,x,y,P[0],P[1]);c.globalAlpha=1;
- const star=tintedUi(art,'icon-sparkle');if(star)c.drawImage(star,x-10,y-24+Math.round(Math.sin(t*3)*1.5),20,20);const sp=tintedUi(art,'sparkle',frameIndex(art,'sparkle',t));if(sp)c.drawImage(sp,x-13,y-26);
+ /* improve20-k-nov1 #4: the portal is PixelLab art (assets/worldmap/rift-portal.png, 32x40, 1 Nov); the glow, pulse and sparkle stay code effects. The tinted star is the fallback while it loads */const pt=riftPortal();if(ready(pt)){c.imageSmoothingEnabled=false;c.drawImage(pt,x-16,y-36);}else{const star=tintedUi(art,'icon-sparkle');if(star)c.drawImage(star,x-10,y-24+Math.round(Math.sin(t*3)*1.5),20,20);}const sp=tintedUi(art,'sparkle',frameIndex(art,'sparkle',t));if(sp)c.drawImage(sp,x-13,y-26);
  const lb=v.touch?v.rift.label:`${v.rift.label} (${v.rift.key})`,w=textWidth(lb)+8;c.fillStyle='rgba(28,14,44,.78)';c.fillRect(Math.round(x-w/2),y+6,Math.round(w),15);text(c,lb,x,y+5,{color:'#e9d6ff',align:'center'});c.restore();}
 /* A clean half-size token: about 24 px tall, comparable to the huts and stop flags. */
 let heroCv=null;export const HERO_K=.5;
@@ -158,6 +160,8 @@ function drawBoard(c,v,art,S,t){if(v.reduced)t=0;const {x:ox,y:oy}=camera(v.chap
    /* improve20-c-oct31: a pad cleared on Heroic (or Legendary) wears that tier's crest, beside the flag's tint */if((n.tier==='heroic'||n.tier==='legendary')&&art.crest?.[n.tier]){const cr=art.crest[n.tier];front.push(()=>{const bx=x-P[0]-15,by=y-17;c.save();c.fillStyle='rgba(20,16,12,.7)';pixEllipse(c,bx+9,by+10,9,9);c.imageSmoothingEnabled=false;c.drawImage(cr,bx+1,by+2,16,16);c.restore();});}if(n.stars&&art.star){const k=n.stars;c.fillStyle='#203238';c.fillRect(x-14,y-4,29,11);for(let j=0;j<3;j++){const sx=x-13+j*9,sy=y-3;c.save();c.globalAlpha=j<k?1:.35;c.imageSmoothingEnabled=false;c.drawImage(art.star,3,3,26,26,sx,sy,8,8);c.restore();}}}
   if(n.boss&&n.state!=='done'&&n.state!=='soon')front.push(()=>{const f=cell(art,'icon-skull');if(f&&ready(art.ui))c.drawImage(art.ui,f[0],f[1],f[2],f[3],x-P[0]-14,y-10,16,16);});}
  for(const f of front)f();
+ /* improve20-k-nov1 #2: an active quest's pad wears the town quest giver's own talk marker (ui/skin/packicons3/town-markers.png, frame 0), bobbing as it does in town */
+ for(const n of v.nodes)if(n.quest){const im=questMarker();if(!ready(im))continue;const bob=v.reduced?0:Math.floor(t*2.5)%2;c.save();c.imageSmoothingEnabled=false;c.drawImage(im,0,0,32,32,Math.round(n.x)+4,Math.round(n.y)-32-bob,24,24);c.restore();}
  if(v.rift)drawRift(c,v,art,t);
  drawSmallHero(c,v,t);
  if(v.reveal)drawReveal(c,art,v.reveal,t);if(v.burst)blit(c,art,'sparkle',v.burst.x,v.burst.y+12,{i:Math.floor(v.burst.t*24)});}
