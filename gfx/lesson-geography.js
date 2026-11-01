@@ -25,7 +25,11 @@ export const gridmap=(c,{cols=5,rows=5,marks=[],key=[],start,startLabel='S',path
 export const contours=(c,{base=20,interval=10,lines=4,blank=-1,hidden=[],showInterval=true,gap=55,compare},p)=>{
  const panel=(x,width,spacing,name)=>{text(c,name,x+width/2,22,17);for(let i=0;i<lines;i++){const xx=x+25+i*spacing;c.strokeStyle='#8a593b';c.lineWidth=3;c.beginPath();c.moveTo(xx,61);c.lineTo(xx,190);c.stroke();text(c,i===blank||hidden.includes(i)?'? m':`${base+i*interval} m`,xx,202+(i%2)*24,12);}};
  if(compare){panel(20,275,compare[0],'Slope A');panel(340,275,compare[1],'Slope B');text(c,'Same map scale and contour interval',320,265,14);}
- else{panel(90,450,gap,'Contour lines: a hillside seen from above');text(c,showInterval?`Contour interval: ${interval} m`:'Equal elevation steps between neighboring lines',320,265,15);}
+ /* improve20-g-nov1 #15 (audit5 b5): a hill seen from above is nested closed rings, the lowest outside and the highest round the top, not
+    straight lines (kids did not see a hill in them). Each ring's height sits on a paper tag on its right-hand side. */
+ else{text(c,'Contour lines: a hill seen from above',320,20,17);const cx=300,cy=142;for(let i=0;i<lines;i++){const rx=250-i*(200/Math.max(1,lines)),ry=100-i*(80/Math.max(1,lines));c.strokeStyle='#8a593b';c.lineWidth=3;c.beginPath();c.ellipse(cx-i*6,cy+i*3,rx,ry,0,0,Math.PI*2);c.stroke();
+  const t=i===blank||hidden.includes(i)?'? m':`${base+i*interval} m`,tx=cx-i*6+rx,ty=cy+i*3;c.fillStyle=paper;c.fillRect(tx-24,ty-11,48,22);c.strokeStyle=ink;c.lineWidth=1;c.strokeRect(tx-24,ty-11,48,22);text(c,t,tx,ty,13);}
+ text(c,showInterval?`Contour interval: ${interval} m`:'Equal elevation steps between neighboring lines',320,265,15);}
 };
 export const rainfall=(c,{values,labels=['Apr','May','Jun'],title='Fictional rainfall record (mm)'},p)=>{
  const max=Math.max(10,...values),top=Math.ceil(max/20)*20,x0=80,y=226,w=470;

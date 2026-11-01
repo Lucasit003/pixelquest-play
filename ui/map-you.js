@@ -5,7 +5,17 @@
 const SPOTS=[['',''],['pq-map-you-left',''],['','pq-map-you-bottom'],['pq-map-you-left','pq-map-you-bottom'],['','pq-map-you-top'],['pq-map-you-left','pq-map-you-top'],['pq-map-you-above',''],['pq-map-you-below','']];
 const hit=(a,b)=>Math.max(0,Math.min(a.right,b.right)-Math.max(a.left,b.left))*Math.max(0,Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top));
 /** The whole fit, in order: names, then "You" clear of them, then the names again round "You", then "You" once more. */
-export function fitMap(root){const a=fitMapLabels(root);fitMapYou(root);if(!a)return null;const b=fitMapLabels(root),y=fitMapYou(root);return {names:b,you:y};}
+/* improve20-d-nov1 (lane Y's leftover): on a phone the map is small enough that the Noticeboard, Inn and Library icons (and at 740x360 the
+   exit and the Barracks) overlapped by a few px. Before the names are placed, icons that overlap are pushed apart (2 px gap) along the
+   axis that needs the shorter move, half each, kept inside the map. A desktop map has no overlap, so nothing there moves. Returns the moves. */
+export function separateMarks(root){const map=root?.querySelector?.('.pq-village-map');if(!map)return null;const frame=map.getBoundingClientRect();if(!frame.width)return null;
+ const marks=[...map.querySelectorAll('.pq-map-mark')].filter(m=>m.getBoundingClientRect().width);for(const m of marks)if(m.style)m.style.translate='';
+ const box=m=>{const r=m.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom};},R=marks.map(box),off=marks.map(()=>[0,0]),G=2;
+ for(let it=0;it<12;it++){let moved=false;for(let i=0;i<R.length;i++)for(let j=i+1;j<R.length;j++){const a=R[i],b=R[j],ox=Math.min(a.right,b.right)-Math.max(a.left,b.left)+G,oy=Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top)+G;if(ox<=0||oy<=0)continue;moved=true;
+  const sx=(a.left+a.right)<(b.left+b.right)?-1:1,sy=(a.top+a.bottom)<(b.top+b.bottom)?-1:1,[dx,dy]=ox<=oy?[ox/2*sx,0]:[0,oy/2*sy];
+  for(const [k,s] of [[i,1],[j,-1]]){const r=R[k],mx=Math.max(frame.left-r.left,Math.min(frame.right-r.right,dx*s)),my=Math.max(frame.top-r.top,Math.min(frame.bottom-r.bottom,dy*s));r.left+=mx;r.right+=mx;r.top+=my;r.bottom+=my;off[k][0]+=mx;off[k][1]+=my;}}if(!moved)break;}
+ const out=[];marks.forEach((m,k)=>{const [x,y]=off[k];if(Math.abs(x)>=.5||Math.abs(y)>=.5){m.style.translate=`${Math.round(x)}px ${Math.round(y)}px`;out.push([m.dataset.place,Math.round(x),Math.round(y)]);}});return out;}
+export function fitMap(root){separateMarks(root);const a=fitMapLabels(root);fitMapYou(root);if(!a)return null;const b=fitMapLabels(root),y=fitMapYou(root);return {names:b,you:y};}
 export function fitMapYou(root){const map=root?.querySelector?.('.pq-village-map'),you=map?.querySelector('.pq-map-you');if(!you)return null;
  const frame=map.getBoundingClientRect();if(!frame.width)return null;const marks=[...map.querySelectorAll('.pq-map-mark,.pq-map-name')].map(m=>m.getBoundingClientRect());
  const keep=you.className.replace(/\s*pq-map-you-(?:left|top|bottom|above|below)\b/g,''),cost=()=>{const r=you.getBoundingClientRect(),pad={left:r.left-2,right:r.right+2,top:r.top-2,bottom:r.bottom+2};return marks.reduce((n,m)=>n+hit(pad,m),0)+(r.left<frame.left||r.right>frame.right||r.top<frame.top||r.bottom>frame.bottom?1e6:0);};

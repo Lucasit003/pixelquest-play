@@ -146,6 +146,7 @@ canvas{display:block;max-width:100%}
 .boss-bar{position:relative;height:calc(7*var(--u));margin:6px 0 4px;border-style:solid;border-width:calc(1*var(--u)) calc(10*var(--u));border-color:transparent;border-image:url(ui/skin/pl-bar.png) 11 39 11 20 fill/calc(2.82*var(--u)) calc(10.0*var(--u)) stretch;image-rendering:pixelated}
 .boss-bar i{position:absolute;inset:calc(1*var(--u)) 0;display:block;background:url(ui/skin/fill-red.png) 0 0/100% 100%;image-rendering:pixelated;transition:width .22s steps(8)}
 #boss-phase{display:block;font-weight:700;letter-spacing:2px;color:var(--gold);text-shadow:0 2px 0 #0d0806}
+#boss-guards{display:block;margin-top:2px;font-weight:700;font-size:var(--fs);line-height:1.1;letter-spacing:1px;color:#bfe0ff;text-transform:uppercase;text-shadow:0 2px 0 #0d0806,0 0 6px #000}#boss-guards[hidden]{display:none}
 #boss-duo{margin-top:4px}#boss-duo[hidden]{display:none}
 #boss-title2{display:block;font-weight:700;font-size:var(--fs);line-height:1;color:#ffe6c0;text-transform:uppercase;letter-spacing:2px;text-shadow:0 2px 0 #3a0d08,0 0 8px #000}
 
@@ -2634,6 +2635,8 @@ dialog:is([data-view=placement],[data-view=lesson-quiz]) .question:has(#quiz-fee
 .travel-place.travel-here{opacity:1;cursor:default}
 .travel-place.travel-here small{color:var(--gold);font-weight:700}
 .travel-none{margin:0;color:var(--muted)}
+/* improve20-d-nov1: a group's locked places fold into one line; the names open on a tap */
+.travel-more{margin:6px 0 0;color:var(--muted)}.travel-more summary{cursor:pointer;min-height:32px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.travel-more summary b{color:#cdbb92;font-weight:700}.travel-more summary b::before{content:"";display:inline-block;width:16px;height:16px;margin-right:6px;vertical-align:-3px;background:url(ui/skin/pl-icons/tier-lock.png) center/16px 16px no-repeat;image-rendering:pixelated}.travel-more summary small{font-size:.8em}.travel-more p{margin:4px 0 0 22px;font-size:.85em}
 #scene-fade .travel-caption{display:none}
 #scene-fade.travel .travel-caption{display:flex;position:absolute;inset:0;align-items:center;justify-content:center;color:#f6e7bf;font:700 calc(var(--fs,16px)*1.4)/1 var(--ui);letter-spacing:.06em;text-shadow:0 2px 0 #000}
 #scene-fade.travel .travel-caption::before{content:"Fast travel · ";color:var(--gold);margin-right:.3em}
@@ -3330,6 +3333,27 @@ html dialog[data-view=result] #modal-content .level-result.goal-flow>.result-goa
 .lesson-checkpoint strong{color:var(--gold-2,#f0d48a)}.lesson-checkpoint button{margin-left:auto;min-height:34px;padding:2px 12px;font-size:14px}
 .lesson-footer .lesson-dots i.half{margin-left:6px;box-shadow:-5px 0 0 -3px var(--gold-2,#f0d48a)}
 html.m-mode .lesson-checkpoint{font-size:14px;padding:3px 8px;margin:0 0 4px}html.m-mode .lesson-checkpoint button{min-height:30px}
+/* improve20-d-nov1: the packed result card (main.js fitResult, desktop only), so the busiest first clear (m1: three chests, two found items,
+   hero, Delver and class level-ups, Heroic open, Wil) shows NEXT GOAL and the buttons with no scroll at 1280x720 */
+html:not(.m-mode) dialog[data-view=result] .level-result.result-packed>.result-chests{flex-wrap:nowrap;gap:6px;margin:2px 0}
+html:not(.m-mode) dialog[data-view=result] .level-result.result-packed .result-chest{max-width:none!important;flex:0 1 auto;min-width:0;padding:1px 6px 1px 2px;gap:4px}
+html:not(.m-mode) dialog[data-view=result] .level-result.result-packed .result-chest-img{width:32px;height:32px;margin:0}
+html:not(.m-mode) dialog[data-view=result] .level-result.result-packed .result-chest-text>small,html:not(.m-mode) dialog[data-view=result] .level-result.result-packed .result-chest-items{font-size:14px}
+html:not(.m-mode) dialog[data-view=result] .level-result.result-packed .result-chest::before{width:44px;height:44px;margin-top:-22px}
+html:not(.m-mode) dialog[data-view=result] .level-result.result-packed .you-got{gap:2px;margin:0}
+html:not(.m-mode) dialog[data-view=result] .level-result.result-packed .you-got-row{gap:4px 8px}
+html:not(.m-mode) dialog[data-view=result] .level-result.result-packed .you-got-item{padding:2px 8px 2px 4px}
+html:not(.m-mode) dialog[data-view=result] .level-result.result-packed .you-got-item img{width:24px;height:24px}
+html:not(.m-mode) dialog[data-view=result] .level-result.result-packed .you-got-item strong{font-size:var(--fs)}
+html:not(.m-mode) dialog[data-view=result] .level-result.result-packed .level-result-body{margin:2px 0}
+html:not(.m-mode) dialog[data-view=result] .level-result.result-packed .level-highlights .level-record{margin:0;padding-top:1px;padding-bottom:1px}
+html:not(.m-mode) dialog[data-view=result] .level-result.result-packed .level-highlights .level-levelup strong{font-size:20px}
+html:not(.m-mode) dialog[data-view=result] .level-result.result-packed .level-record.level-companion{flex-wrap:nowrap;margin:0}
+html:not(.m-mode) dialog[data-view=result] .level-result.result-packed .level-record.level-companion .comp-wage-note{flex-basis:auto;white-space:nowrap}
+html:not(.m-mode) dialog[data-view=result] .level-result.result-packed>.result-goal{font-size:17px;line-height:1.25;padding-top:4px}
+html:not(.m-mode) dialog[data-view=result] .level-result.result-packed .level-highlights .level-levelup small{white-space:nowrap}
+html:not(.m-mode) dialog[data-view=result] .level-result.result-packed>.result-goal .result-library{font-size:15px;line-height:1.2}
+
 /* improve20-v-nov1 #18: Text size 125/150% reached panels, dialogue and toasts, but not the quiz question, the HUD, the goal plate or
    the controls strip. They grow too, by less than the panels where the frame is fixed art (the HUD) or the screen is short (phones). The
    quiz rules below only set font-size, and only at 125/150, so the 100% card is exactly as lane M leaves it. */
@@ -3428,6 +3452,10 @@ html.m-mode .rift-card{row-gap:3px}
    the fight; on phones it keeps this place instead of the compact bottom strip (main.js toastCompactWanted) */
 #toast.armour-banner{border-width:calc(14*var(--u));border-image:url(ui/skin/pl-window.png) 19 19 19 19 fill/calc(24.0*var(--u)) calc(24.0*var(--u)) round;padding:calc(8*var(--u) + 2px) calc(12*var(--u) + 16px) calc(10*var(--u) + 4px);text-align:center;font-size:max(18px,var(--fs));font-weight:bold;line-height:1.25;color:var(--gold);text-shadow:0 2px 0 #2a1408;letter-spacing:1px;z-index:12}
 .m-mode #toast.armour-banner{top:18%;border-width:calc(10*var(--u));padding:calc(10*var(--u) + 1px) calc(16*var(--u) + 8px) calc(12*var(--u) + 3px);max-width:70%;text-align:center}
+/* improve20-d-nov1: on a phone the banner is a smaller plate (15 px, one line) that main.js placeArmourBanner puts up top under the boss bar or
+   in the bottom strip, whichever covers neither the hero nor a boss; the padding keeps the words inside the plate's corner ornaments */
+.m-mode #toast.armour-banner{font-size:15px;letter-spacing:0;line-height:1.2;border-width:calc(8*var(--u));padding:calc(6*var(--u) + 1px) 32px calc(8*var(--u) + 2px);white-space:nowrap}
+@media (max-width:800px){.m-mode #toast.armour-banner{font-size:14px;padding-left:28px;padding-right:28px}}
 /* Showpiece shelf: a shorter picture box so a whole row, price and Buy included, shows at 1280x720 without scrolling */
 .deco-show .deco-pic{min-height:84px}
 .deco-show .deco-pic img{max-height:88px}

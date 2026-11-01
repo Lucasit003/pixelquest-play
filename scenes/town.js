@@ -585,10 +585,16 @@ export function hubUpdate(world, dt, input) {
   if (world.zone !== 'town') return;
   /* Move in small steps, one axis at a time, so walls slide instead of stopping dead.
      A player placed inside a wall (a test, an old save) may always walk out. */
-  const stuck = footBlocked(S, p.x, p.y), n = Math.ceil(Math.max(Math.abs(mx), Math.abs(my)) / 3);
+  const px0 = p.x, py0 = p.y, stuck = footBlocked(S, p.x, p.y), n = Math.ceil(Math.max(Math.abs(mx), Math.abs(my)) / 3);
   /* improve20-b-oct31 #8: walking diagonally into a corner (both axes blocked) used to stop dead, since the corner assist only ran
      for straight-line input; now a step that moves on neither axis gets the same assist, on the axis the wall is not on */
-  for (let i = 0; i < n; i++) {
+  /* improve20-u-nov1 #4: a route slide that has begun carries on (H.slide) until the route agrees with the input and the full held step is
+     open again, so the hero does not step back into the pocket the next frame; it also ends when the input stops */
+  const guided = H.guide && H.guide.room === S.key && H.time - H.guide.at < 1;
+  let slid = false;
+  if ((mx || my) && guided && H.slide && H.time < H.slide.until) { const d = routeSlide(S, p.x, p.y, H.guide.x, H.guide.y, mx, my); if (d) { p.x += d.x; p.y += d.y; slid = true; H.slide = d.agree && !footBlocked(S, p.x + mx, p.y + my) ? null : {until: H.time + .3}; } else H.slide = null; }
+  else H.slide = null;
+  for (let i = 0; i < (slid ? 0 : n); i++) {
     const sx = mx / n, sy = my / n, x0 = p.x, y0 = p.y; let bx = false, by = false;
     if (personAhead(S, p.x, p.y, p.x + sx, p.y)) { /* a villager stands there */ }
     else if (stuck || !footBlocked(S, p.x + sx, p.y)) p.x += sx;
@@ -600,6 +606,11 @@ export function hubUpdate(world, dt, input) {
     else by = true;
     if (bx && by && p.x === x0 && p.y === y0) { const st = Math.hypot(sx, sy), ny = cornerNudge(S, p.x, p.y, sx, 0, 0, 1, st); if (ny) p.y += ny; else p.x += cornerNudge(S, p.x, p.y, 0, sy, 1, 0, st); }
   }
+  /* improve20-u-nov1 #4 (audit6 #13): a held diagonal toward the guide arrow walked into the pocket between the cliff and the bushes east of
+     Home's stairs (1146,1726) and stopped dead, since both axes are walls there and the opening lies behind the hero. When a held move goes
+     nowhere and the guide arrow is up in this room, the hero follows the walkable route instead (routeSlide), unless it runs back against the
+     input (more than 150 degrees off, ROUTE.slide), so a held push toward the arrow always gets somewhere. */
+  if (!slid && (mx || my) && !stuck && p.x === px0 && p.y === py0 && guided) { const d = routeSlide(S, p.x, p.y, H.guide.x, H.guide.y, mx, my); if (d) { p.x += d.x; p.y += d.y; H.slide = {until: H.time + .3}; } }
   p.x = Math.max(4, Math.min(S.D.w - 4, p.x)); p.y = Math.max(8, Math.min(S.D.h - 2, p.y));
   /* Stepping onto a room's exit mat leaves, the way a door works. */
   if (S.room && !H.fade && my > 0) { const ex = S.points.find(q => q.type === 'exit'); if (ex && Math.abs(p.x - ex.x) < 28 && p.y > Math.min(ex.y, ex.sy) - 14) leave(); }
@@ -805,7 +816,7 @@ export function hubGuidanceTarget(target, subject) {
    target, the label and "arrived" are unchanged; only where the arrow points. Cached per hero cell, so it costs nothing per frame. */
 /** The decoded scene for a room key (for tests and tools). */
 export const hubScene = key => scene(key);
-export const ROUTE = {reach: 150, near: 20, pad: 2};
+export const ROUTE = {reach: 150, near: 20, pad: 2, slide: -.87};
 /* pad: extra clearance each side, so a keyboard's eight directions (which never follow the line exactly) still get past the corner */
 /* people stand their ground (personAhead), so the route walks round them as it does round walls */
 const personAt = (S, x, y, pad = 1) => { S.people ??= [...(S.figures ?? []), ...S.points.filter(q => q.type === 'npc-spot')].map(q => [q.x, q.y]); return S.people.some(([px, py]) => Math.abs(x - px) < PERSON.hw + 4 * pad && Math.abs(y - py) < PERSON.hh + 3 * pad); };
@@ -871,9 +882,21 @@ export function routeAim(S, px, py, tx, ty) {
   if (!best) best = keyEscape(S, path, px, py) || path[Math.min(path.length - 1, 3)];
   return best && {x: Math.round(best.x), y: Math.round(best.y)};
 }
+/* improve20-u-nov1 #4: one step of a held move along the walkable route to (tx, ty): toward the route a few cells ahead, unless that runs
+   more than 150 degrees off the input (mx, my); the full step, else its x part, else its y part. Null when there is no such step. */
+export function routeSlide(S, px, py, tx, ty, mx, my) {
+  const path = routePath(S, px, py, tx, ty); if (!path || path.length < 2) return null;
+  const q = path[Math.min(3, path.length - 1)], dx = q.x - px, dy = q.y - py, d = Math.hypot(dx, dy), m = Math.hypot(mx, my);
+  if (d < 1 || !m || (dx * mx + dy * my) / (d * m) < ROUTE.slide) return null;
+  const st = Math.min(m, d), ux = dx / d * st, uy = dy / d * st;
+  const agree = dx * mx + dy * my > 0;
+  for (const [x, y] of [[ux, uy], [ux, 0], [0, uy]]) if ((x || y) && !footBlocked(S, px + x, py + y) && !personAhead(S, px, py, px + x, py + y)) return {x, y, agree};
+  return null;
+}
 let routeMemo = {key: '', aim: null};
 function routed(S, r) {
-  const p = H.player; if (!r || !p || r.arrived) return r;
+  const p = H.player; if (!r || !p || r.arrived) { H.guide = null; return r; }
+  H.guide = {room: S.key, x: r.x, y: r.y, at: H.time};
   const key = `${S.key}|${Math.floor(p.x / 8)}|${Math.floor(p.y / 8)}|${r.x | 0}|${r.y | 0}`;
   if (routeMemo.key !== key) routeMemo = {key, aim: routeAim(S, p.x, p.y, r.x, r.y)};
   return routeMemo.aim ? {...r, aim: routeMemo.aim, route: true} : r;

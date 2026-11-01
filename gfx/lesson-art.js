@@ -89,11 +89,18 @@ const rod=(ctx,x,y)=>{for(let i=0;i<10;i++)cube(ctx,x,y+i*8,9,8);};
 const flat=(ctx,x,y)=>{for(let r=0;r<10;r++)for(let c=0;c<10;c++)cube(ctx,x+c*8,y+r*8,8,8);};
 /* regroup:true trades ten ones for a ten (adding). regroup:'split' does the reverse: one ten breaks
    into ten ones, which is the move a subtraction with borrowing actually makes. */
-const blocks=(ctx,{h,ten:t=0,one:o=0,regroup,count,solve},p)=>{if(regroup==='split'&&t>=1)return splitBlocks(ctx,{h,ten:t,one:o,count,solve},p);const trade=regroup===true&&o>=10,tp=trade?ease(clamp(p/0.8)):0,snapped=trade&&p>=0.8;
+/* improve20-g-nov1 #15 (audit5 b9): a bare place-value picture (a quiz question's: no count labels, no regroup, no solve) used only the top
+   left of the 640x280 board, so in a quiz box its rods were about 8 px tall under 6 px labels. It now scales about its own content to fill
+   the board (at most 2.4x) and names its columns in the 16px font. */
+const blocksCols=({h,ten:t=0,one:o=0})=>{const W=[...(h==null?[]:[['hundreds',Math.min(h,2)*88-8]]),['tens',Math.min(t,9)*16-7],['ones',Math.min(o,5)*14-3]].map(([n,w])=>[n,Math.max(w,n.length*22)]);let x=0;return W.map(([n,w])=>{const c=[n,x,w];x+=w+56;return c;});};
+const blocksFit=spec=>{const {h,ten:t=0,one:o=0}=spec,cols=blocksCols(spec),x1=Math.max(...cols.map(([,x,w])=>x+w)),y0=8,y1=40+Math.max(Math.ceil((h||0)/2)*88-8,Math.ceil(t/9)*88-8,Math.ceil(o/5)*14-3,14);
+ const z=Math.min(2.4,(PIC_W-48)/x1,(PIC_H-28)/(y1-y0));return {z,dx:(PIC_W-x1*z)/2,dy:(PIC_H-(y1-y0)*z)/2-y0*z};};
+const blocks=(ctx,spec,p)=>{const {regroup,count,solve}=spec;if(!count&&!solve&&!regroup&&!spec.fitted){const f=blocksFit(spec);ctx.save();ctx.translate(f.dx,f.dy);ctx.scale(f.z,f.z);blocksAt(ctx,{...spec,fitted:true},p);ctx.restore();return;}return blocksAt(ctx,spec,p);};
+const blocksAt=(ctx,{h,ten:t=0,one:o=0,regroup,count,solve,fitted},p)=>{if(regroup==='split'&&t>=1)return splitBlocks(ctx,{h,ten:t,one:o,count,solve},p);const trade=regroup===true&&o>=10,tp=trade?ease(clamp(p/0.8)):0,snapped=trade&&p>=0.8;
  /* The hundreds column only when the picture has hundreds at all, so two-digit lessons stay uncluttered. */
- const cols=h==null?[['tens',120],['ones',380]]:[['hundreds',40],['tens',250],['ones',440]],X=Object.fromEntries(cols),top=40,shownT=t+(snapped?1:0),shownO=o-(snapped?10:0);
- ctx.font='bold 15px sans-serif';ctx.textAlign='left';ctx.textBaseline='alphabetic';ctx.fillStyle=LABEL;
- for(const [w,x] of cols)ctx.fillText(w,x,top-12);
+ const cols=fitted?blocksCols({h,ten:t,one:o}).map(([n,x])=>[n,x]):h==null?[['tens',120],['ones',380]]:[['hundreds',40],['tens',250],['ones',440]],X=Object.fromEntries(cols),top=40,shownT=t+(snapped?1:0),shownO=o-(snapped?10:0);
+ ctx.font=fitted?'bold 16px sans-serif':'bold 15px sans-serif';ctx.textAlign='left';ctx.textBaseline='alphabetic';ctx.fillStyle=LABEL;
+ for(const [w,x] of cols)ctx.fillText(w,x,top-(fitted?8:12));
  for(let i=0;i<(h||0);i++)flat(ctx,X.hundreds+(i%2)*88,top+Math.floor(i/2)*88);
  for(let i=0;i<shownT;i++)rod(ctx,X.tens+(i%9)*16,top+Math.floor(i/9)*88);
  const onesAt=i=>({x:X.ones+(i%5)*14,y:top+Math.floor(i/5)*14});

@@ -12,7 +12,7 @@ export default {
  {skill:"many",say:"Once you know one, you can price any number.  Four pencils at 5 cents each is 20 cents.",pic:[{"t":"coins","coins":["n","n","n","n"],"count":true}],eq:"4 x 5 = 20 cents",
   check:{prompt:"Pencils cost 5 cents each. What do 7 cost?",answer:35,options:[35,12,30,57],hint:"7 lots of 5.",pic:{"t":"coins","coins":["n","n","n"],"count":true}}},
  {skill:"pack",say:"It also works backwards.  If the pack cost 30 cents and each one is 5 cents, the pack held 6.",pic:[{"t":"groups","n":6,"k":1}],eq:"30 / 5 = 6 in the pack"},
- {skill:"one",say:"Now the deals can be compared: 5 cents each beats 6 cents each, however big the packs are.",pic:[{"t":"coins","coins":["n","p"],"count":true}],eq:"5 cents each is cheaper",
+ {skill:"one",say:"Now the deals can be compared: 5 cents each beats 6 cents each, whatever the pack size, if you will use them all.",pic:[{"t":"coins","coins":["n","p"],"count":true}],eq:"5 cents each is cheaper",
   check:{"prompt":"One shop sells pens at 9 cents each, another at 7 cents each. Which is the better deal?","answer":"7 cents each","options":["7 cents each","9 cents each"],"hint":"Cheaper for the same thing is the better deal.","pic":{"t":"pair","a":"9¢ each","b":"7¢ each"}}},
  {skill:"many",say:"Price per item first, then decide.  That is how to tell a real bargain from a big box.",pic:[{"t":"groups","n":3,"k":4}]}],
  items(add){

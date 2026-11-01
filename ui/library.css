@@ -1018,3 +1018,16 @@ html.m-mode dialog[data-view=lesson] .lesson[data-young] .lesson-body.young-tigh
 html.m-mode dialog[data-view=lesson] .lesson[data-young] .lesson-body.young-tight{row-gap:3px}
 /* phone side-answers on a young card: the answer tiles sit beside the Try-it's question (not under it), so the card is one row shorter */
 html.m-mode dialog[data-view=lesson] .lesson[data-young] .lesson-body.side-answers.wide-check>.lesson-check>.lesson-answers{grid-column:3;grid-row:1;grid-template-columns:repeat(auto-fit,minmax(96px,auto));max-width:46vw;margin:0}
+/* improve20-d-nov1: youngPhoneFit's last step (young-row): caption 16px, the answer tiles in one row across the Try-it at 16px (still 44px tall);
+   beside the question (with side-answers) the row keeps the side column's width */
+html.m-mode dialog[data-view=lesson] .lesson[data-young] .lesson-body.young-row .lesson-say{font-size:16px;line-height:1.2}
+html.m-mode dialog[data-view=lesson] .lesson[data-young] .lesson-body.young-row.wide-check>.lesson-check>.lesson-answers{display:grid;grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);max-width:none;min-width:0;margin:0;gap:6px}
+html.m-mode dialog[data-view=lesson] .lesson[data-young] .lesson-body.young-row .lesson-answers [data-answer]{font-size:16px;line-height:1.15;min-height:44px;padding-top:2px;padding-bottom:2px}
+html.m-mode dialog[data-view=lesson] .lesson[data-young] .lesson-body.young-row.side-answers.wide-check>.lesson-check>.lesson-answers{grid-column:3;grid-row:1;max-width:46vw}
+/* improve20-g-nov1 #16 (audit5 b19): before any answer the dashed "the Archivist's notes appear here" box took a third of the practice and
+   quiz card. It collapses to one quiet line (no timer); the notes still open in the same place once an answer is checked. The room goes
+   to the training dummy and the answer tiles. */
+@media(min-height:640px){html:not(.m-mode) #modal#modal#modal[data-view=lesson-quiz] .question:has(#quiz-form)>#quiz-feedback:empty::before{content:'Take your time: there is no timer.';padding:2px 8px;border:0;font-size:14px;color:#bfb08caa}html:not(.m-mode) #modal#modal#modal[data-view=lesson-quiz] .question.qf:has(#quiz-feedback:empty)>.question-reading:has(>:is(#quiz-pic,.question-text-card)) .pd-canvas{width:220px;height:125px}html:not(.m-mode) #modal#modal#modal[data-view=lesson-quiz] .question.qf:has(#quiz-feedback:empty) #quiz-form.choice-form [data-answer]{min-height:60px;min-width:120px;font-size:22px}}
+/* improve20-g-nov1 #16: on a phone the young card puts Read to me and Narration side by side (lane N), so the caption's float spacer is
+   as wide as that row and one button tall; the 68x76 stacked spacer let the caption run under the buttons */
+html.m-mode dialog[data-view=lesson].lesson-compact .lesson[data-young] .edu-speech>.lesson-say::before{width:98px;height:48px}

@@ -25494,6 +25494,202 @@ export const QUESTION_REVISIONS=[
   "oldPrompt": "Mom Dana was born in 1959 and Wren was born in 1985. How many years older is Mom Dana than Wren?",
   "newPrompt": "Dad Max is 40 and Tia is 8. How many years older is Dad Max than Tia?",
   "reason": "improve20-n-nov1 (audit4 a2): Try-it; Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "A sealed bag of baking soda and vinegar has a total mass of 70 g after they react and fizz. The vinegar alone has a mass of 60 g. What is the mass of the baking soda, in grams?",
+  "newPrompt": "In a sealed bag, baking soda and vinegar react and fizz. Everything inside the bag now has a total mass of 70 g. Before mixing, the vinegar had a mass of 60 g. What was the mass of the baking soda, in grams?",
+  "reason": "improve20-g-nov1 (audit5 b4): the sealed-bag total is everything inside the bag (not the bag too), and the vinegar or baking soda is weighed before mixing, since after the fizz neither is there as it was."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "A sealed bag of baking soda and vinegar has a total mass of 70 g after they react and fizz. The baking soda alone has a mass of 10 g. What is the mass of the vinegar, in grams?",
+  "newPrompt": "In a sealed bag, baking soda and vinegar react and fizz. Everything inside the bag now has a total mass of 70 g. Before mixing, the baking soda had a mass of 10 g. What was the mass of the vinegar, in grams?",
+  "reason": "improve20-g-nov1 (audit5 b4): the sealed-bag total is everything inside the bag (not the bag too), and the vinegar or baking soda is weighed before mixing, since after the fizz neither is there as it was."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "A sealed bag of baking soda and vinegar has a total mass of 92 g after they react and fizz. The vinegar alone has a mass of 75 g. What is the mass of the baking soda, in grams?",
+  "newPrompt": "In a sealed bag, baking soda and vinegar react and fizz. Everything inside the bag now has a total mass of 92 g. Before mixing, the vinegar had a mass of 75 g. What was the mass of the baking soda, in grams?",
+  "reason": "improve20-g-nov1 (audit5 b4): the sealed-bag total is everything inside the bag (not the bag too), and the vinegar or baking soda is weighed before mixing, since after the fizz neither is there as it was."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "A sealed bag of baking soda and vinegar has a total mass of 92 g after they react and fizz. The baking soda alone has a mass of 17 g. What is the mass of the vinegar, in grams?",
+  "newPrompt": "In a sealed bag, baking soda and vinegar react and fizz. Everything inside the bag now has a total mass of 92 g. Before mixing, the baking soda had a mass of 17 g. What was the mass of the vinegar, in grams?",
+  "reason": "improve20-g-nov1 (audit5 b4): the sealed-bag total is everything inside the bag (not the bag too), and the vinegar or baking soda is weighed before mixing, since after the fizz neither is there as it was."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "A sealed bag of baking soda and vinegar has a total mass of 114 g after they react and fizz. The vinegar alone has a mass of 90 g. What is the mass of the baking soda, in grams?",
+  "newPrompt": "In a sealed bag, baking soda and vinegar react and fizz. Everything inside the bag now has a total mass of 114 g. Before mixing, the vinegar had a mass of 90 g. What was the mass of the baking soda, in grams?",
+  "reason": "improve20-g-nov1 (audit5 b4): the sealed-bag total is everything inside the bag (not the bag too), and the vinegar or baking soda is weighed before mixing, since after the fizz neither is there as it was."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "A sealed bag of baking soda and vinegar has a total mass of 114 g after they react and fizz. The baking soda alone has a mass of 24 g. What is the mass of the vinegar, in grams?",
+  "newPrompt": "In a sealed bag, baking soda and vinegar react and fizz. Everything inside the bag now has a total mass of 114 g. Before mixing, the baking soda had a mass of 24 g. What was the mass of the vinegar, in grams?",
+  "reason": "improve20-g-nov1 (audit5 b4): the sealed-bag total is everything inside the bag (not the bag too), and the vinegar or baking soda is weighed before mixing, since after the fizz neither is there as it was."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "A sealed bag of baking soda and vinegar has a total mass of 136 g after they react and fizz. The vinegar alone has a mass of 105 g. What is the mass of the baking soda, in grams?",
+  "newPrompt": "In a sealed bag, baking soda and vinegar react and fizz. Everything inside the bag now has a total mass of 136 g. Before mixing, the vinegar had a mass of 105 g. What was the mass of the baking soda, in grams?",
+  "reason": "improve20-g-nov1 (audit5 b4): the sealed-bag total is everything inside the bag (not the bag too), and the vinegar or baking soda is weighed before mixing, since after the fizz neither is there as it was."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "A sealed bag of baking soda and vinegar has a total mass of 136 g after they react and fizz. The baking soda alone has a mass of 31 g. What is the mass of the vinegar, in grams?",
+  "newPrompt": "In a sealed bag, baking soda and vinegar react and fizz. Everything inside the bag now has a total mass of 136 g. Before mixing, the baking soda had a mass of 31 g. What was the mass of the vinegar, in grams?",
+  "reason": "improve20-g-nov1 (audit5 b4): the sealed-bag total is everything inside the bag (not the bag too), and the vinegar or baking soda is weighed before mixing, since after the fizz neither is there as it was."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "A covered dish holds 100 g of water. It is left covered for a week. Does the scale show the same total mass after a week: yes or no?",
+  "newPrompt": "A tightly sealed jar holds 100 g of water. It stays sealed for a week. Does the scale show the same total mass after a week: yes or no?",
+  "reason": "improve20-g-nov1 (audit5 b4): a covered dish is not sealed, so water vapor can escape over a week; a tightly sealed jar keeps the total mass."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "A covered dish holds 109 g of water. It is left covered for a week. Does the scale show the same total mass after a week: yes or no?",
+  "newPrompt": "A tightly sealed jar holds 109 g of water. It stays sealed for a week. Does the scale show the same total mass after a week: yes or no?",
+  "reason": "improve20-g-nov1 (audit5 b4): a covered dish is not sealed, so water vapor can escape over a week; a tightly sealed jar keeps the total mass."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "A covered dish holds 118 g of water. It is left covered for a week. Does the scale show the same total mass after a week: yes or no?",
+  "newPrompt": "A tightly sealed jar holds 118 g of water. It stays sealed for a week. Does the scale show the same total mass after a week: yes or no?",
+  "reason": "improve20-g-nov1 (audit5 b4): a covered dish is not sealed, so water vapor can escape over a week; a tightly sealed jar keeps the total mass."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "A covered dish holds 127 g of water. It is left covered for a week. Does the scale show the same total mass after a week: yes or no?",
+  "newPrompt": "A tightly sealed jar holds 127 g of water. It stays sealed for a week. Does the scale show the same total mass after a week: yes or no?",
+  "reason": "improve20-g-nov1 (audit5 b4): a covered dish is not sealed, so water vapor can escape over a week; a tightly sealed jar keeps the total mass."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "A covered dish holds 136 g of water. It is left covered for a week. Does the scale show the same total mass after a week: yes or no?",
+  "newPrompt": "A tightly sealed jar holds 136 g of water. It stays sealed for a week. Does the scale show the same total mass after a week: yes or no?",
+  "reason": "improve20-g-nov1 (audit5 b4): a covered dish is not sealed, so water vapor can escape over a week; a tightly sealed jar keeps the total mass."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "A covered dish holds 145 g of water. It is left covered for a week. Does the scale show the same total mass after a week: yes or no?",
+  "newPrompt": "A tightly sealed jar holds 145 g of water. It stays sealed for a week. Does the scale show the same total mass after a week: yes or no?",
+  "reason": "improve20-g-nov1 (audit5 b4): a covered dish is not sealed, so water vapor can escape over a week; a tightly sealed jar keeps the total mass."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "A covered dish holds 154 g of water. It is left covered for a week. Does the scale show the same total mass after a week: yes or no?",
+  "newPrompt": "A tightly sealed jar holds 154 g of water. It stays sealed for a week. Does the scale show the same total mass after a week: yes or no?",
+  "reason": "improve20-g-nov1 (audit5 b4): a covered dish is not sealed, so water vapor can escape over a week; a tightly sealed jar keeps the total mass."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "A covered dish holds 163 g of water. It is left covered for a week. Does the scale show the same total mass after a week: yes or no?",
+  "newPrompt": "A tightly sealed jar holds 163 g of water. It stays sealed for a week. Does the scale show the same total mass after a week: yes or no?",
+  "reason": "improve20-g-nov1 (audit5 b4): a covered dish is not sealed, so water vapor can escape over a week; a tightly sealed jar keeps the total mass."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "A covered dish holds 172 g of water. It is left covered for a week. Does the scale show the same total mass after a week: yes or no?",
+  "newPrompt": "A tightly sealed jar holds 172 g of water. It stays sealed for a week. Does the scale show the same total mass after a week: yes or no?",
+  "reason": "improve20-g-nov1 (audit5 b4): a covered dish is not sealed, so water vapor can escape over a week; a tightly sealed jar keeps the total mass."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "A covered dish holds 181 g of water. It is left covered for a week. Does the scale show the same total mass after a week: yes or no?",
+  "newPrompt": "A tightly sealed jar holds 181 g of water. It stays sealed for a week. Does the scale show the same total mass after a week: yes or no?",
+  "reason": "improve20-g-nov1 (audit5 b4): a covered dish is not sealed, so water vapor can escape over a week; a tightly sealed jar keeps the total mass."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "A covered dish holds 190 g of water. It is left covered for a week. Does the scale show the same total mass after a week: yes or no?",
+  "newPrompt": "A tightly sealed jar holds 190 g of water. It stays sealed for a week. Does the scale show the same total mass after a week: yes or no?",
+  "reason": "improve20-g-nov1 (audit5 b4): a covered dish is not sealed, so water vapor can escape over a week; a tightly sealed jar keeps the total mass."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "A covered dish holds 199 g of water. It is left covered for a week. Does the scale show the same total mass after a week: yes or no?",
+  "newPrompt": "A tightly sealed jar holds 199 g of water. It stays sealed for a week. Does the scale show the same total mass after a week: yes or no?",
+  "reason": "improve20-g-nov1 (audit5 b4): a covered dish is not sealed, so water vapor can escape over a week; a tightly sealed jar keeps the total mass."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "A covered dish holds 208 g of water. It is left covered for a week. Does the scale show the same total mass after a week: yes or no?",
+  "newPrompt": "A tightly sealed jar holds 208 g of water. It stays sealed for a week. Does the scale show the same total mass after a week: yes or no?",
+  "reason": "improve20-g-nov1 (audit5 b4): a covered dish is not sealed, so water vapor can escape over a week; a tightly sealed jar keeps the total mass."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "A covered dish holds 217 g of water. It is left covered for a week. Does the scale show the same total mass after a week: yes or no?",
+  "newPrompt": "A tightly sealed jar holds 217 g of water. It stays sealed for a week. Does the scale show the same total mass after a week: yes or no?",
+  "reason": "improve20-g-nov1 (audit5 b4): a covered dish is not sealed, so water vapor can escape over a week; a tightly sealed jar keeps the total mass."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "A covered dish holds 226 g of water. It is left covered for a week. Does the scale show the same total mass after a week: yes or no?",
+  "newPrompt": "A tightly sealed jar holds 226 g of water. It stays sealed for a week. Does the scale show the same total mass after a week: yes or no?",
+  "reason": "improve20-g-nov1 (audit5 b4): a covered dish is not sealed, so water vapor can escape over a week; a tightly sealed jar keeps the total mass."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "A covered dish holds 235 g of water. It is left covered for a week. Does the scale show the same total mass after a week: yes or no?",
+  "newPrompt": "A tightly sealed jar holds 235 g of water. It stays sealed for a week. Does the scale show the same total mass after a week: yes or no?",
+  "reason": "improve20-g-nov1 (audit5 b4): a covered dish is not sealed, so water vapor can escape over a week; a tightly sealed jar keeps the total mass."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "Jax has a sealed bag with baking soda and vinegar mixed together. After they fizz, the bag (still sealed) has a total mass of 130 g. The vinegar inside has a mass of 100 g. What is the mass of the baking soda, in grams?",
+  "newPrompt": "Jax mixes baking soda and vinegar in a sealed bag. After they fizz, everything inside the bag has a total mass of 130 g. Before mixing, the vinegar had a mass of 100 g. What was the mass of the baking soda, in grams?",
+  "reason": "improve20-g-nov1 (audit5 b4): the sealed-bag total is everything inside the bag (not the bag too), and the vinegar or baking soda is weighed before mixing, since after the fizz neither is there as it was. Try-it."
+ },
+ {
+  "subject": "science",
+  "level": 3,
+  "oldPrompt": "Priya leaves a covered dish with 150 g of water on the counter for a week. Does the scale show the same total mass after the week: yes or no?",
+  "newPrompt": "Priya puts 150 g of water in a tightly sealed jar and leaves it on the counter for a week. Does the scale show the same total mass after the week: yes or no?",
+  "reason": "improve20-g-nov1 (audit5 b4): a covered dish is not sealed, so water vapor can escape over a week; a tightly sealed jar keeps the total mass. Try-it."
+ },
+ {
+  "subject": "math",
+  "level": 3,
+  "oldPrompt": "Round 85 to the nearest ten. Which ten is it closest to?",
+  "newPrompt": "Round 85 to the nearest ten. Use the 5-or-more rule: what do you get?",
+  "reason": "improve20-g-nov1 (audit5 b4): 85 is equally close to 80 and 90, so the 5-or-more rule decides, not closeness. Try-it."
+ },
+ {
+  "subject": "language",
+  "level": 3,
+  "oldPrompt": "\"Every friday, the twins visit Oakhaven.\" Which word needs a capital letter: every, friday or oakhaven?",
+  "newPrompt": "\"Every friday, the twins visit Oakhaven.\" Which word is missing its capital letter: Every, friday or Oakhaven?",
+  "reason": "improve20-d-nov1: Every and Oakhaven need capital letters too (they have them); only friday is missing one, so the question asks which word is missing its capital and shows the options as written. Try-it."
  }
 ];
 export const ANSWER_ID_RENAMES=new Map(QUESTION_REVISIONS.map(r=>[`${r.subject}-${r.level}-${hash(r.oldPrompt)}`,`${r.subject}-${r.level}-${hash(r.newPrompt)}`]));

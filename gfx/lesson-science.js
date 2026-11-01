@@ -10,8 +10,14 @@ const fitText=(c,s,x,y,w,h,size=14,bold)=>{s=String(s);const font=n=>`${bold?'bo
 /* Oct 14 playtest: table text was ~10px on a laptop once the 640px canvas was scaled into the lesson; it now starts at 20px (shrinking to fit as before). */
 /* setups: {title, rows:[[thing, A value, B value]], head (first heading, default Thing), cols (headings after it; default Setup A, Setup B), mark:thing (solve only)}. */
 export const setups=(c,{title='Two setups',rows,head='Thing',cols=['Setup A','Setup B'],mark,solve},p)=>{
- const h=Math.min(44,190/(rows.length+1)),y0=48,w0=200,wc=400/cols.length;text(c,title,320,22,22);
- [[head,...cols],...rows].forEach((row,i)=>row.slice(0,cols.length+1).forEach((s,j)=>{const x=j===0?20:20+w0+(j-1)*wc,w=j===0?w0:wc,y=y0+i*h;
+ /* improve20-d-nov1: a long label (the "total mass (sealed)" row) dropped to the small bitmap cut in the fixed 200 px first column. When
+    every column can hold its longest text at its own size within the 600 px table, each gets that width and an equal share of what is
+    left; otherwise the old split (200, then the rest shared) stays, so no table that fitted before changes */
+ const h=Math.min(44,190/(rows.length+1)),y0=48,all=[[head,...cols],...rows],sz=i=>Math.min(i?20:18,Math.floor(h*0.48));
+ const need=[0,...cols].map((_,j)=>Math.max(...all.map((r,i)=>{c.font=`${i?'':'bold '}${sz(i)}px sans-serif`;return (c.measureText?.(String(r[j]??'')).width??0)+14;})));
+ const tot=need.reduce((a,b)=>a+b,0),fit=tot<=600&&need.some((n,j)=>n>(j?400/cols.length:200)),ws=fit?need.map(n=>n+(600-tot)/need.length):[200,...cols.map(()=>400/cols.length)];
+ const xs=ws.map((_,j)=>20+ws.slice(0,j).reduce((a,b)=>a+b,0));text(c,title,320,22,22);
+ [[head,...cols],...rows].forEach((row,i)=>row.slice(0,cols.length+1).forEach((s,j)=>{const x=xs[j],w=ws[j],y=y0+i*h;
   if(i&&solve&&mark===row[0]&&p>=0.5){c.fillStyle='#f3dc8f';c.fillRect(x,y,w,h);}
   c.strokeStyle=line;c.lineWidth=1;c.strokeRect(x,y,w,h);fitText(c,s,x+w/2,y+h/2,w,h,Math.min(i?20:18,Math.floor(h*0.48)),!i);}));
 };

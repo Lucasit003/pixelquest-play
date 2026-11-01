@@ -7,16 +7,16 @@ export default {
  title:"How things changed",goal:"Everyday things were invented in an order, and each one came after the one before it.",points:20,
  skills:{"order":"What came first","after":"What came next","compare":"Which is older"},
  steps:[
- {skill:"order",say:"People developed many everyday tools over time. Our timelines show selected examples, not every invention or a single path followed by every community.",pic:[{"t":"timeline","events":["horse and cart","steam train","car","airplane"]}]},
- {skill:"order",say:"People traveled by horse and cart long before there were any engines.",pic:[{"t":"word","base":"horse and cart"}],eq:"horse and cart, then the steam train",
+ {skill:"order",say:"People made many everyday tools over time. Our timelines show just a few examples. Not every place changed in the same way.",pic:[{"t":"timeline","events":["horse and cart","steam train","car","airplane"]}]},
+ {skill:"order",say:"People traveled by horse and cart long before engines.",pic:[{"t":"word","base":"horse and cart"}],eq:"horse and cart, then the steam train",
   check:{prompt:"Which came first: the horse and cart, or the car?",answer:"the horse and cart",options:["the horse and cart","the car"],hint:"Engines came much later than horses.",pic:{"t":"word","base":"horse and cart"}}},
- {skill:"after",say:"The steam train came first, then the car, and the airplane after that.",pic:[{"t":"word","base":"steam train"}],eq:"train, car, airplane"},
- {skill:"after",say:"Oil lamps were used in ancient times, before candles. Gas lighting and electric light bulbs came much later. These methods overlapped in use.",pic:[{"t":"word","base":"light bulb"}],eq:"fire, oil lamp, candle, gas lamp, light bulb",
-  check:{"prompt":"Look back: which came first, the steam train or the airplane?","answer":"the steam train","options":["the steam train","the airplane"],"hint":"The train came first, then the car, and the airplane after that.","pic":{"t":"pair","a":"steam train","b":"airplane"}}},
- {skill:"compare",say:"If one thing comes before another on the timeline, it is the older one.",pic:[{"t":"timeline","events":["firelight","oil lamp","candle","gas lamp","light bulb"]}]},
- {skill:"compare",say:"The telephone is older than television, because people were talking down wires long before anyone watched a screen.",pic:[{"t":"word","base":"telephone"}],eq:"telephone, then television",
+ {skill:"after",say:"First came the steam train. Then came the car with a petrol engine. The airplane came after that. In this lesson, the car means a petrol car.",pic:[{"t":"word","base":"steam train"}],eq:"train, car, airplane"},
+ {skill:"after",say:"Oil lamps were used in ancient times, before candles. Gas lights and electric light bulbs came much later. For a long time, people used more than one kind.",pic:[{"t":"word","base":"light bulb"}],eq:"fire, oil lamp, candle, gas lamp, light bulb",
+  check:{"prompt":"Look back: which came first, the steam train or the airplane?","answer":"the steam train","options":["the steam train","the airplane"],"hint":"The steam train came first. The airplane came much later.","pic":{"t":"pair","a":"steam train","b":"airplane"}}},
+ {skill:"compare",say:"On a timeline, the thing that comes first is the older one.",pic:[{"t":"timeline","events":["firelight","oil lamp","candle","gas lamp","light bulb"]}]},
+ {skill:"compare",say:"The telephone is older than television. People talked over wires long before anyone watched TV.",pic:[{"t":"word","base":"telephone"}],eq:"telephone, then television",
   check:{"prompt":"Look back: which came first in homes, candles or the electric light bulb?","answer":"candles","options":["candles","the electric light bulb"],"hint":"Candles came long before electric light.","pic":{"t":"pair","a":"candles","b":"light bulb"}}},
- {skill:"order",say:"Read the order of the selected examples. Coming earlier does not prove one invention caused another. Here, straight before and straight after mean neighboring entries on our selected timeline.",pic:[{"t":"timeline","events":["letter","telegraph","telephone","radio","television","internet"]}]}],
+ {skill:"order",say:"Read the order of the examples. Coming first does not mean it caused the next one. Straight before means the entry just before it on our timeline. Straight after means the entry just after it.",pic:[{"t":"timeline","events":["letter","telegraph","telephone","radio","television","internet"]}]}],
  items(add){
   const _SKIP=new Set(["Which came first: the horse and cart, or the car?","People lit their homes with candles before which of these?","Which is older: the telephone or the television?"]),_add=add;
   add=(s,p,a,pic,why,acc)=>{if(!_SKIP.has(String(p)))_add(s,p,a,pic,why,acc);};

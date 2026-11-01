@@ -11,7 +11,7 @@ export default {
   check:{prompt:"What is 4 × 10?",answer:40,options:[40,4,44],hint:"Each digit moves one place to the left.",pic:{"t":"blocks","ten":4,"one":0,"count":true}}},
  {skill:"digits",say:"The digit 3 in 30 is now in the tens place.",pic:[{"t":"blocks","ten":3,"one":0,"count":true}],eq:"30"},
  {skill:"digits",say:"The digit 0 in 30 is in the ones place.",pic:[{"t":"blocks","ten":3,"one":0,"count":true}],eq:"30",
-  check:{prompt:"What is the digit in the ones place of 50?",answer:0,options:[0,5,10],hint:"The ones place is now empty.",pic:{"t":"blocks","ten":5,"one":0,"count":true}}},
+  check:{prompt:"What is the digit in the ones place of 50?",answer:0,options:[0,5,10],hint:"A 0 fills the ones place.",pic:{"t":"blocks","ten":5,"one":0,"count":true}}},
  {skill:"back",say:"Dividing by ten moves each digit one place to the right.",pic:[{"t":"blocks","ten":3,"one":0,"count":true}],eq:"30 ÷ 10"},
  {skill:"back",say:"For example, 30 becomes 3 when you divide it by ten.",pic:[{"t":"blocks","ten":0,"one":3,"count":true}],eq:"30 ÷ 10 = 3",
   check:{prompt:"What is 60 ÷ 10?",answer:6,options:[6,60,66],hint:"Each digit moves one place to the right.",pic:{"t":"blocks","ten":0,"one":6,"count":true}}}],

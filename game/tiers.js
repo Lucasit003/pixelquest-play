@@ -57,8 +57,11 @@ export const CH2_BOSS_ATK={ex1:.75,ex2:.75,m1:.75,m2:.75,m3:.75,m4:.6,m5:.75,m6:
    not know the potion key lost the prologue to Bramblejaw (tools/balance-sim.mjs --only=prologue --bot=masher --skill=0
    --abilities=0 --gear=starter --controls-seen --potions=never: 8 of 56 first tries won). The prologue (always Normal) takes
    FIRST_FIGHT: the boss's health and blows, and the scouts' blows. After it the same kid wins 279 of 280 first tries and ends on
-   about half its health (25-60% was the target: still a fight). Nothing else changes. tests/hook-oct27.test.js. */
-export const FIRST_FIGHT={bossHp:.65,bossAtk:.35,foeAtk:.4};
+   about half its health (25-60% was the target: still a fight). Nothing else changes. tests/hook-oct27.test.js.
+   improve20-u-nov1 #1: the prologue lost its rally (NO_RALLY), and the same kid then won on 90% health in about 42 s (was 52%, 55-74 s);
+   Bramblejaw is back to a fight with his full health and more of it (bossHp .65 -> 1.2) and harder blows (bossAtk .35 -> .8): 140 of 140
+   first tries won, ending on 56% (rogue 26%, mage 73%), in 42-54 s. */
+export const FIRST_FIGHT={bossHp:1.2,bossAtk:.8,foeAtk:.4};
 export const bossAtkTrim=(id,k,from)=>tierKey(k)!=='normal'?1:id==='prologue'?((from?.by?.boss||from?.boss)?FIRST_FIGHT.bossAtk:FIRST_FIGHT.foeAtk):(from?.by?.boss||from?.boss)?CH2_BOSS_ATK[id]||1:1;
 /* A Grave Wraith keeps 110 px from the hero, so a kid who only walks and swings chased it round the arena (oct26-midgame). On
    Normal it holds NORMAL_KEEP instead, close enough for a swing to reach it after a few steps; Heroic and Legendary keep 110. */
@@ -144,7 +147,12 @@ export function tierLevel(l,k){k=tierKey(k);if(!l||l.kind!=='level'||k==='normal
 export function applyBossTier(e,k){const b=tierOf(k).boss;if(!e||!b)return e;e.tierKey=tierKey(k);e.cd=(e.cd||2)*b.cd;e.speed=(e.speed||30)*b.speed;e.cdMul=(e.cdMul||1)*b.cd;
  if(b.phaseAt&&e.phaseShift)e.phaseShift={...e.phaseShift,at:Math.max(e.phaseShift.at||.5,b.phaseAt)};return e;}
 /* Rally thresholds for a boss fight on a tier (a guard-call at each share of health). */
-export const rallyPoints=k=>{const b=tierOf(k).boss;return b?.rally?[b.rally,.5,.2]:[.5,.2];};
+/* improve20-u-nov1 #1 (audit6 #3: the same "DEFEAT THE BACKUP FIRST" beat twice in every fight): on Normal the prologue and e1 have
+   no rally (Grubnak already has his guard stance, scenes/boss-guard.js) and every other boss rallies once, at half health, and drops
+   its shield after RALLY_TIMEOUT.normal s at most. Heroic and Legendary keep their rallies and the 20 s safety. */
+export const NO_RALLY=['prologue','e1'],RALLY_TIMEOUT={normal:10,heroic:20,legendary:20};
+export const rallyPoints=(k,id)=>{const b=tierOf(k).boss;if(tierKey(k)==='normal')return NO_RALLY.includes(id)?[]:[.5];return b?.rally?[b.rally,.5,.2]:[.5,.2];};
+export const rallyTimeout=k=>RALLY_TIMEOUT[tierKey(k)]||20;
 /* ---- stars, par and rewards --------------------------------------------------------------------------------------- */
 /* Stars against the tier's par: 3 at or under par, 2 within half again, else 1 for any clear. */
 export const starsFor=(time,par)=>!(par>0)||!Number.isFinite(time)?1:time<=par?3:time<=par*1.5?2:1;

@@ -14,7 +14,7 @@ export default {
   check:{"prompt":"Round 41 to the nearest ten. Which ten is it closest to?","answer":40,"options":[40,50,45],"hint":"The ones digit is 1, so round down.","pic":{"t":"blocks","ten":4,"one":1}}},
  {skill:"round",say:"To round 48 to the nearest ten, look at the ones digit.  It's 8, so we round up to 50.",pic:[{"t":"blocks","ten":4,"one":8,"count":true}],eq:"48 rounds to 50"},
  {skill:"round",say:"Finally, let's round 55 to the nearest ten.  The ones digit is 5, so we round up to 60.",pic:[{"t":"blocks","ten":5,"one":5,"count":true}],eq:"55 rounds to 60",
-  check:{"prompt":"Round 85 to the nearest ten. Which ten is it closest to?","answer":90,"options":[90,80,95],"hint":"The ones digit is 5, so round up.","pic":{"t":"blocks","ten":8,"one":5}}}],
+  check:{"prompt":"Round 85 to the nearest ten. Use the 5-or-more rule: what do you get?","answer":90,"options":[90,80,95],"hint":"The ones digit is 5. Five or more rounds up.","pic":{"t":"blocks","ten":8,"one":5}}}],
  items(add){
   const _SKIP=new Set(["Round 37 to the nearest ten.","Round 23 to the nearest ten.","Round 55 to the nearest ten."]),_add=add;
   add=(s,p,a,pic,why,acc)=>{if(!_SKIP.has(String(p)))_add(s,p,a,pic,why,acc);};

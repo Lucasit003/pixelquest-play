@@ -43,3 +43,10 @@ export function bagMigrate(s){let over=bagCount(s)-BAG.cap;if(over<=0)return nul
  for(const kind of order){const key=kind==='regen'?'regenPotions':'potions',n=Math.min(over,Math.max(0,Number(s[key])||0));if(!n)continue;s[key]-=n;over-=n;sold+=n;gold+=n*POTIONS[kind].price;}
  s.gold=(Number(s.gold)||0)+gold;return {sold,gold};}
 export const bagNoteText=n=>n?.sold>0?`Potions now share one bag of ${BAG.cap}. The Apothecary bought back your ${n.sold} extra potion${n.sold>1?'s':''} for ${n.gold} gold.`:'';
+/* improve20-u-nov1 #3 (audit6 #6: "Out of potions: buy some at the Apothecary" on a defeat card with 1,036 gold): with the bag empty or
+   low (at most REFILL_LOW) and the gold there, the defeat card offers to refill it. It is the Apothecary's own purchase (buyPotion, one at
+   a time at the shop price, of the kind on the potion key), up to the bag limit (BAG.cap, owner 29 Oct) less any room held back (a first
+   defeat's retry potion); earned gold only, nothing free. */
+export const REFILL_LOW=2;
+export function refillOffer(s,hold=0){const kind=potionKind(s||{}),price=POTIONS[kind].price,n=Math.min(bagRoom(s)-Math.max(0,hold|0),Math.floor((Number(s?.gold)||0)/price));return bagCount(s)<=REFILL_LOW&&n>0?{kind,price,n,cost:n*price}:null;}
+export function refillPotions(s,hold=0){const o=refillOffer(s,hold);if(!o)return {ok:false,bought:0};let bought=0;for(let i=0;i<o.n;i++){if(!buyPotion(s,o.kind).ok)break;bought++;}return {ok:bought>0,bought,cost:bought*o.price,kind:o.kind};}

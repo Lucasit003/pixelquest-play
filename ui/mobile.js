@@ -155,3 +155,27 @@ export function compactToastBox(d=doc()){
  const vis=el=>{const r=el?.getBoundingClientRect();return r&&r.width>0&&r.height>0&&getComputedStyle(el).display!=='none'&&getComputedStyle(el).visibility!=='hidden'?r:null;};
  const g=vis(d.querySelector('#joy-ghost'));let right=sr.right-8;for(const el of d.querySelectorAll('#touch button,#hotbar button,#hud-potion')){const r=vis(el);if(r&&r.top>sr.top+sr.height*.3&&r.left>sr.left+sr.width/2)right=Math.min(right,r.left-8);}
  const left=(g?g.right:sr.left)+8,width=Math.max(160,right-left);return {center:Math.round(left-sr.left+width/2),width:Math.round(width),bottom:12};}
+/* improve20-d-nov1 (lane S's leftover): on a phone the armour/shield banner sat at 18% over the fight and covered the hero and an elite
+   drake. It now goes to the top strip, under the boss bar and between the hero panel and the Map/Journal/Menu buttons; when that strip
+   would cover the hero, a boss or an elite (their sprite boxes, world -> CSS px) it goes to the bottom strip between the joystick and the
+   action arc instead; when both would, to the one that covers less. Pure geometry here; main.js fitToast measures and places it.
+   A spot is {center,width,top} or {center,width,bottom} (CSS px from #stage, as fitToast sets them) plus its box {box:{left,top,right,bottom}}. */
+export const overlapArea=(a,b)=>Math.max(0,Math.min(a.right,b.right)-Math.max(a.left,b.left))*Math.max(0,Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top));
+export function pickBannerSpot(spots,actors){let best=null,bestA=Infinity;for(const s of spots){const a=actors.reduce((n,r)=>n+overlapArea(s.box,r),0);if(a===0)return s;if(a<bestA){best=s;bestA=a;}}return best;}
+/* the spots for a banner w x h CSS px. Phone: up top, then the bottom strip. Desktop (the same leftover at 1280x720: the plate at 25% sat on the
+   drake and the golem's head): its own place first, then the top strip between the hero panel and the boss bar, then just above the hotbar */
+export function armourBannerSpots(w,h,d=doc()){
+ const st=d?.querySelector?.('#stage');if(!st)return null;const sr=st.getBoundingClientRect();if(!sr.width)return null;
+ const vis=el=>{const r=el?.getBoundingClientRect();return r&&r.width>0&&r.height>0&&getComputedStyle(el).display!=='none'&&getComputedStyle(el).visibility!=='hidden'?r:null;};
+ const spot=(c,wd,top,kind)=>({kind,center:Math.round(c),width:Math.round(wd),top:Math.round(top),box:{left:c-Math.min(w,wd)/2,right:c+Math.min(w,wd)/2,top,bottom:top+h}});
+ if(!on){let l=sr.left+12,r=sr.right-12;for(const el of d.querySelectorAll('#hud .hero-hud,#hud .hud-sub')){const b=vis(el);if(b&&b.top<sr.top+sr.height*.25&&b.left<sr.left+sr.width/2)l=Math.max(l,b.right+12);}
+  const boss=vis(d.querySelector('#boss-hud'));if(boss&&boss.top<sr.top+sr.height*.25&&boss.left>sr.left+sr.width/2)r=Math.min(r,boss.left-12);
+  let hb=sr.bottom-12;for(const el of d.querySelectorAll('#hotbar')){const b=vis(el);if(b&&b.top>sr.top+sr.height/2)hb=Math.min(hb,b.top-12);}
+  return [spot(sr.width/2,sr.width*.9,sr.height*.25,'own'),...(r-l>=Math.min(w,sr.width*.9)?[spot((l+r)/2-sr.left,r-l,8,'top')]:[]),spot(sr.width/2,sr.width*.9,hb-sr.top-h,'bottom')];}
+ let l=sr.left+8,r=sr.right-8,top=sr.top+6;for(const el of d.querySelectorAll('#hud .hero-hud,#hud .hud-sub')){const b=vis(el);if(b&&b.top<sr.top+sr.height*.3&&b.left<sr.left+sr.width/2)l=Math.max(l,b.right+8);}
+ for(const el of d.querySelectorAll('#m-menu button')){const b=vis(el);if(b&&b.top<sr.top+sr.height*.3&&b.left>sr.left+sr.width/2)r=Math.min(r,b.left-8);}
+ const boss=vis(d.querySelector('#boss-hud'));if(boss&&boss.top<sr.top+sr.height*.3)top=Math.max(top,boss.bottom+4);
+ const tw=Math.min(w,r-l),tc=(l+r)/2-sr.left,tt=top-sr.top,bot=compactToastBox(d),bw=Math.min(w,bot?.width||w),bc=bot?.center??sr.width/2,bb=bot?.bottom??12;
+ /* the top strip only when the whole one-line plate fits in it (at 740x360 the shield tip does not) */
+ return [...(r-l>=w?[{kind:'top',center:Math.round(tc),width:Math.round(tw),top:Math.round(tt),box:{left:tc-tw/2,right:tc+tw/2,top:tt,bottom:tt+h}}]:[]),
+  {kind:'bottom',center:Math.round(bc),width:Math.round(bw),bottom:bb,box:{left:bc-bw/2,right:bc+bw/2,top:sr.height-bb-h,bottom:sr.height-bb}}];}

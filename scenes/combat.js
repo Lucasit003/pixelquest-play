@@ -20,7 +20,7 @@ import {runeDurationOnly} from '../game/runes.js';
 import {runeCastFx,runeHitFx,firstCastMoment,bigNumber,shotRune} from './rune-fx.js';
 import {TOWN} from '../game/maps.js';
 import {levelById,levelDone,recordLevel,levelScore,levelReward,levelXPReward,arenaWave,arenaTier,difficultyOf,resolveOf,tiered,tierDone,tierRecord} from '../game/levels.js';
-import {TIER_KEYS,tierKey,tierOf,tierLevel,tierScale,applyBossTier,tierBossTrim,rallyPoints,vampHeal,checkEnrage,splitParts,MODS,killGold,adviceLevel,killXP,winXP,bossAtkTrim} from '../game/tiers.js';
+import {TIER_KEYS,tierKey,tierOf,tierLevel,tierScale,applyBossTier,tierBossTrim,rallyPoints,rallyTimeout,vampHeal,checkEnrage,splitParts,MODS,killGold,adviceLevel,killXP,winXP,bossAtkTrim} from '../game/tiers.js';
 import {STAGE,BEATS,REBIRTH,levelGeometry,camTopFor,bossLiftFor,waveGroups,waveSide,stageKey} from '../game/stage.js';
 import {baseDef,makeEnemy,entryEnemy} from '../game/roster.js';
 import {TRACKS} from '../gfx/actors/definitions.js';
@@ -41,7 +41,7 @@ import {biomeMap} from '../gfx/biomes/index.js';
 import {petProc,petTick} from './pet-fx.js';
 import {partyStart,updateParty,partyFocus,partyHurt,oldTarget,hurtOn} from './party-ai.js';
 import {runCarry,runStart,runTick,runInteract,runSecret,runKill,runLayer,runFinish,runStats} from './run-fx.js';
-/* v2:enemies */ import {runEnemy,drawEnemy,enemyLayer,tickIdleEnemyFx,enemyTop} from './enemy-ai.js';
+/* v2:enemies */ import {runEnemy,drawEnemy,enemyLayer,tickIdleEnemyFx,enemyTop,holdPose} from './enemy-ai.js';
 import {stanceBlock,propHit,linkShield,panOf} from './boss-moves.js';
 import {guardHit} from './boss-guard.js';
 /* v2:hub */ import {applyBoons} from '../game/shops.js';
@@ -129,7 +129,7 @@ export class World{
   this.town();this.tierKey=k;this.tierMul=tierScale(l,k,this.save?.level|0);this.level=normalLevel(composeEncounter(l,k,tierLevel(l,k)),k);riftStart(this,opts.rift,id,k);if(this.level.encounter){this.tierMul.hp*=this.level.encounter.hp/tierOf(k).hp;if(this.level.encounter.atk)this.tierMul.atk*=this.level.encounter.atk/tierOf(k).atk;else if(this.level.encounter.atkStep)this.tierMul.atk*=this.level.encounter.atkStep;}this.layout=levelGeometry(this.level);this.found=new Set(this.save.levels?.[id]?.secrets||[]);this.zone=ZONE[l.chapter]||'forest';this.arena=l.kind==='arena';
   /* a replay of a cleared tier, or the arena, pays half kill gold (game/tiers.js killGold) */
   this.replayGold=this.arena||tierDone(this.save,id,k);
-  this.runGold=0;this.runGoldHalf=0;this.kills=0;this.wave=0;this.group=0;this.addsSpawned=false;this.run={time:0,damage:0,taken:0,xp:0,waves:0,bestiary:[],secrets:[],rec:l.kind==='level'?adviceLevel(l,k):0,hero:this.save.level||1};this.lastResult=null;this.rally=null;this.rallies=0;this.resolve=resolveOf(this.save,id);this.halfSaid=false;this.potHint=null;this.quote=null;this.tauntQ=null;this.guardCue=null;
+  this.runGold=0;this.runGoldHalf=0;this.kills=0;this.wave=0;this.group=0;this.addsSpawned=false;this.run={time:0,damage:0,taken:0,xp:0,waves:0,bestiary:[],secrets:[],rec:l.kind==='level'?adviceLevel(l,k):0,hero:this.save.level||1};this.lastResult=null;this.rally=null;this.rallies=0;this.resolve=resolveOf(this.save,id);this.halfSaid=false;this.potHint=null;this.quote=null;this.tauntQ=null;this.guardCue=null;this.guardNudge=null;this.guardPulsed=false;
   runStart(this,l,k,prevRun);
   this.tut=l.tutorial?(learned||{done:new Set(),moved:0}):null;this.controlsTutorial=controls;if(this.controlsTutorial)this.events.persist?.();
   for(const key of new Set([...(this.level.waves||[]).flatMap(w=>waveGroups(w).flat().map(e=>typeof e==='string'?e:e.type)),l.boss].filter(Boolean))){const sp=baseDef(key).sprite;if(sp)loadSprite(sp);}
@@ -145,6 +145,11 @@ export class World{
     before it is shown; the prompt shown is the first step not done whose condition holds. */
  teach(ev){this.controlsTutorial=advanceControls(this.controlsTutorial,{moved:'move',attacked:'attack',dodged:'dodge',heavy:'heavy',cast:'ability',interact:'interact'}[ev]);if(!this.tut)return;this.tut.done.add(ev);}
  /* A boss's guards: the level's own bossAdds, else 3-4 of the regulars from its own waves. */
+ /* improve20-u-nov1 #1: each boss's own rally, from its own frames: the Bog King summons (his 'heal' pose) and the guards are slimes that
+    well up out of the bog; Gorrak roars (his 'shout' pose) and his guards rush in in a line from the side away from the hero. */
+ rallyStyle(boss){const k=boss?.key;return k==='slime-king'?{pose:'heal',hold:.9,key:'slime',entrance:'surface'}:k==='orc-warlord'?{pose:'shout',hold:1,line:true}:null;}
+ /* the guards still standing in a rally (the boss bar says "2 guards left"); 0 when no rally is on */
+ rallyGuardsLeft(){if(!this.rally||this.rally.ended!=null)return 0;return [...this.enemies,...(this.reinforcements||[])].filter(e=>!e.boss&&!e.decoy&&!e.helper&&e.hp>0).length;}
  rallyAdds(){const l=this.level;if(l.bossAdds?.length)return l.bossAdds;const keys=[...new Set((l.waves||[]).flatMap(w=>waveGroups(w).flat()).filter(e=>typeof e==='string'))];
   const n=(l.tier||1)>3?4:3;return Array.from({length:n},(_,i)=>keys[i%Math.max(1,keys.length)]||'goblin');}
  /* An ambush opens from behind the hero, then closes in from both sides; other waves keep their own side. */
@@ -194,11 +199,11 @@ export class World{
  /* A group arrives from just off-screen and walks in. side 'both' alternates edges. Rows of arrival come from
     the map's lanes when it has them, else an even spread across the floor band in a centre-out order, with a
     little stagger in x, so a group reads as a group rather than a diagonal queue. */
- spawnGroup(list,side='right',g=0){const L=this.layout,b=this.lock||{x0:this.camX,x1:this.camX+STAGE.viewW},tier=this.tier(),n=(list||[]).length;
+ spawnGroup(list,side='right',g=0,how=null){const L=this.layout,b=this.lock||{x0:this.camX,x1:this.camX+STAGE.viewW},tier=this.tier(),n=(list||[]).length;
   const top=L.floorTop+10,bot=Math.min(L.floorBottom-6,(this.camTop||0)+STAGE.viewH-STAGE.hudBottom-12),ORDER=[.5,.15,.85,.33,.67,0,1],rowY=k=>top+Math.round((bot-top)*ORDER[k%ORDER.length]);
   (list||[]).forEach((entry,i)=>{const lanesFor=sd=>L.lanes.filter(l=>!l.side||l.side===sd),left=side==='left'||(side==='both'&&i%2===1),sd=left?'left':'right',lanes=lanesFor(sd);
    const k=side==='both'?i>>1:i,y=lanes.length?lanes[(k+g)%lanes.length].y:rowY(k+g),dx=16+(k%3)*14+(k>2?20:0);
-   const j=()=>(Math.random()<.5?-1:1)*(10+Math.random()*6),def=entryEnemy(entry,tier),kind=this.showEntrances()?entranceFor(def.key,this.level?.biome,i):null;
+   const j=()=>(Math.random()<.5?-1:1)*(10+Math.random()*6),def=entryEnemy(entry,tier),kind=!this.showEntrances()||how?.line?null:how?.entrance||entranceFor(def.key,this.level?.biome,i);
    /* an entrance (game/entrances.js): appear inside the arena, away from the hero, instead of walking in from the edge.
       Tents stand along the back of the path at three sites, shared by whoever comes out of them (review round 2: one per
       goblin, dropped mid-path, piled up), and the goblin steps out in front of its tent. */
@@ -210,6 +215,7 @@ export class World{
  /* The enemy shows itself before it fights: for its entrance time it neither acts nor can be hit (owner, 8 Oct). */
  enter(e,kind,delay=0,boss=false,site=null){if(!e)return e;const T=ENTRANCE_TIME[kind]*(boss?1.4:1)+delay;e.entrance=kind;e.entering=e.enterMax=T;e.entered=true;e.facing=this.player.x>=e.x?1:-1;
   if(kind==='rise'){this.fx.push({type:'mark',sprite:'fx-wr-crack',x:e.x,y:e.y,life:T+1.6,max:T+1.6,ground:true,reveal:.25,upto:boss?.8:.45,flip:1});this.schedule(delay,()=>this.fx.push({type:'debris',sprite:'fx-wr-rocks',x:e.x,y:e.y,life:.6,max:.6,flip:1}),()=>true);}
+  else if(kind==='surface'){const fx=this.enemyFx||(this.enemyFx=[]);this.schedule(delay,()=>fx.push({kind:'hazard',owner:e,a:{dmg:0},fx:'fx-slime-spawn',x:e.x,y:e.y,r:0,t:0,hit:true,marker:null}),()=>true);}
   else if(kind==='tent'){const at=site||{x:e.x,y:e.y-2},had=this.fx.find(f=>f.type==='prop'&&f.tent&&Math.abs(f.x-at.x)<30&&Math.abs(f.y-at.y)<30);
    if(had)had.life=had.max=Math.max(had.life,40);else this.fx.push({type:'prop',tent:true,scale:this.level?.id==='e3'?0.6:this.level?.id==='e1'?0.5:1,sprite:TENT_SPRITE(boss,this.fx.filter(f=>f.tent).length,this.level?.biome),x:at.x,y:at.y,life:40,max:40,flip:1});}
   /* a vine swing (owner, 9 Oct): from behind, on the side away from the hero, out of the treeline; it lets go near the
@@ -261,8 +267,8 @@ export class World{
    /* Phase-two rally (playtest S3: bosses fell in 36-43 s): at half health a boss raises its guard and calls its own guards.
       It takes no damage until they fall (or 20 s pass), then it is open again -- length from a pattern, not from health. */
    /* twice: at half health, and a last stand at a fifth */
-   const rallyAt=this.level.encounter?null:rallyPoints(this.tierKey)[this.rallies|0];if(boss&&!boss.partner&&rallyAt&&(!this.rally||this.rally.ended!=null)&&!boss.cinematic&&boss.hp<boss.maxHp*rallyAt&&boss.inv<1){this.rallies=(this.rallies|0)+1;this.rally={at:this.run.time,ended:null};boss.shielded=true;/* kidfix-a-oct31: the floating "DEFEAT THE GUARDS!" over the boss stacked with the quote and the rally banner (shot 02); the banner queue (gfx/stage-view.js queueBanners) says it: "CALLS FOR BACKUP!", then "DEFEAT THE BACKUP FIRST" */sfx('blocked',undefined,{pan:panOf(this,boss.x)});this.spawnGroup(this.rallyAdds(),'both',this.rallies);}
-   if(this.rally&&!this.rally.ended&&boss){const guards=[...this.enemies,...(this.reinforcements||[])].some(e=>!e.boss&&!e.decoy&&!e.helper&&(e.hp>0||e.deathTime>0)),t=this.run.time-this.rally.at;if((!guards&&t>1.5)||t>20){boss.shielded=false;this.rally.ended=this.run.time;}}
+   const rallyAt=this.level.encounter?null:rallyPoints(this.tierKey,this.level.id)[this.rallies|0];if(boss&&!boss.partner&&rallyAt&&(!this.rally||this.rally.ended!=null)&&!boss.cinematic&&boss.hp<boss.maxHp*rallyAt&&boss.inv<1){this.rallies=(this.rallies|0)+1;this.rally={at:this.run.time,ended:null};boss.shielded=true;/* kidfix-a-oct31: the floating "DEFEAT THE GUARDS!" over the boss stacked with the quote and the rally banner (shot 02); the banner queue (gfx/stage-view.js queueBanners) says it: "CALLS FOR BACKUP!", then "DEFEAT THE BACKUP FIRST" */sfx('blocked',undefined,{pan:panOf(this,boss.x)});const st=this.rallyStyle(boss),adds=this.rallyAdds();if(st)holdPose(boss,st.pose,st.hold);if(st?.line){this.quake?.('boss',.5);}this.spawnGroup(st?.key?adds.map(()=>st.key):adds,st?.line?(this.player.x<(this.lock?(this.lock.x0+this.lock.x1)/2:boss.x)?'right':'left'):'both',this.rallies,st?{entrance:st.entrance||null,line:!!st.line}:null);}
+   if(this.rally&&!this.rally.ended&&boss){const guards=[...this.enemies,...(this.reinforcements||[])].some(e=>!e.boss&&!e.decoy&&!e.helper&&(e.hp>0||e.deathTime>0)),t=this.run.time-this.rally.at;if((!guards&&t>1.5)||t>rallyTimeout(this.tierKey)){boss.shielded=false;this.rally.ended=this.run.time;}}
    if(this.tauntQ?.length&&(!this.quote||this.run.time-this.quote.at>=TAUNT_GAP))this.quote={text:this.tauntQ.shift(),at:this.run.time,taunt:true};
    /* the boss's line at half health (ENEMY_TYPES `half`), shown for 2.5 s */
    if(boss&&!this.halfSaid&&boss.half&&boss.hp<boss.maxHp*.5){this.halfSaid=true;this.quote={text:boss.half,at:this.run.time};}

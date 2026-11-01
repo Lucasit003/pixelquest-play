@@ -55,6 +55,9 @@ export function stateInfo(sprite,state){const m=metaOf(sprite),s=m?.states?.[sta
  return {dur:s.frames/(s.fps||8),contacts:(s.contact||[]).map(i=>(i+.5)/(s.fps||8)),loop:s.loop!==false,has:true};}
 const hasState=(e,s)=>{const m=metaOf(e.sprite);return !m||!!m.states?.[s];};
 function setState(e,s){if(!hasState(e,s))s=hasState(e,'idle')?'idle':s;if(e.state!==s){e.state=s;e.stateT=0;}}
+/* improve20-u-nov1 #1: a boss's rally pose (the Bog King's summoning 'heal', Gorrak's 'shout'), held like a phase change; only from
+   walking or recovering, so a tell already on screen always plays out */
+export function holdPose(e,state,dur){const b=e?.brain;if(!b||!hasState(e,state)||!['move','recover','trans'].includes(b.mode))return false;const rest=b.mode==='trans'?(b.transDur||0)-(b.t||0):0;b.mode='trans';b.t=0;b.transDur=Math.max(rest,dur);b.markers=[];b.freeze=false;setState(e,state);e.stateT=0;return true;}
 
 /* ---------- world helpers ---------- */
 export function bounds(w){if(w.bounds)return w.bounds();
@@ -350,7 +353,7 @@ export function drawEnemy(c,e,t){if(!e.sprite)return false;const s=loadSprite(e.
  if(!e.noShadow)shadow(c,e.x,e.y,rx,Math.min(ry,rx*.4),.3*alpha);
  /* entrances (game/entrances.js): claw up out of the ground, drop from the treetops, hop out of a tent, shimmer in */
  if(e.entering>0&&e.enterMax){const p=1-e.entering/e.enterMax,kind=e.entrance;
-  if(kind==='rise'){const below=Math.round((1-Math.min(1,p*1.15))*m.height*k);c.save();c.beginPath();c.rect(e.x-400,e.y-600,800,600+1);c.clip();drawSprite(c,e.sprite,'idle',0,e.x+Math.round(Math.sin(p*40)*(1-p)*1.5),e.y+below,{facing:e.facing||1,scale:k,alpha});c.restore();return true;}
+  if(kind==='rise'||kind==='surface'){const below=Math.round((1-Math.min(1,p*1.15))*m.height*k);c.save();c.beginPath();c.rect(e.x-400,e.y-600,800,600+1);c.clip();drawSprite(c,e.sprite,'idle',0,e.x+Math.round(Math.sin(p*40)*(1-p)*1.5),e.y+below,{facing:e.facing||1,scale:k,alpha});c.restore();return true;}
   if(kind==='drop'){const dz=Math.round((1-p)*(1-p)*150);drawSprite(c,e.sprite,'idle',0,e.x,e.y-z-dz,{facing:e.facing||1,scale:k,alpha});return true;}
   if(kind==='vine'){const side=e.vine?.side||1,L=186,H=Math.round(m.height*k*.95),rel=.15*side,th=p<.72?(-1.2+1.35*p/.72)*side:rel,px=e.x-6*side-L*Math.sin(rel),py=e.y-18-H-L*Math.cos(rel);
    /* swung in on a vine (owner, 9 Oct): the PixelLab vine pivots out of the treetops (rotated, never redrawn) with the

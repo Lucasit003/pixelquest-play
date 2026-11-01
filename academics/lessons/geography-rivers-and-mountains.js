@@ -13,9 +13,9 @@ export default {
  {skill:"where",say:"Every one of them sits on a continent.  The Nile flows through Africa.",pic:[{"t":"world","mark":"Africa"}],eq:"the Nile: Africa"},
  {skill:"where",say:"The Amazon is in South America, and the Mississippi is in North America.",pic:[{"t":"world","mark":"South America"}],eq:"the Amazon: South America",
   check:{"prompt":"Which continent does the Nile flow through?","answer":"Africa","options":["Africa","South America","Asia"],"hint":"Look back one step: the Nile and its continent.","pic":{"t":"world"}}},
- {skill:"famous",say:"Mount Everest is the highest mountain on Earth, and it is in Asia.",pic:[{"t":"world","mark":"Asia"}],eq:"Everest: Asia"},
+ {skill:"famous",say:"Mount Everest is the highest mountain above sea level on Earth, and it is in Asia.",pic:[{"t":"world","mark":"Asia"}],eq:"Everest: Asia"},
  {skill:"famous",say:"The Alps are in Europe, and Kilimanjaro is in Africa.  Name it, then place it.",pic:[{"t":"world","blank":"Europe"}],eq:"the Alps: Europe",
-  check:{prompt:"Which continent is Mount Everest on?",answer:"Asia",options:["Asia","Europe","Africa"],hint:"It is in the Himalayas, between Nepal and Tibet.",pic:{"t":"world","mark":"Asia"}}}],
+  check:{prompt:"Which continent is Mount Everest on?",answer:"Asia",options:["Asia","Europe","Africa"],hint:"It is in the Himalayas, on the border of Nepal and China (Tibet).",pic:{"t":"world","mark":"Asia"}}}],
  items(add){
   /* 28 Oct (elfact): prompts and whys started in lower case ("the Mekong is on which continent?"), the whys said "is on Africa",
      and mountain ranges took "is" ("Which continent is the Andes on?"). Ranges now take "are", sentences start with a capital,

@@ -6,12 +6,14 @@ import {sfx} from '../core/audio.js';
    GUARD.time s, so a hero with no ability can still win. The cue ("Library powers break guards!") is shown once, the first time
    the guard goes up (gfx/stage-view.js reads w.guardCue). Heroic and Legendary e1 already have the pilot armour (tier-pilot.js
    pilotBlock: heavy hits and abilities crack it), so the stance is Normal's. Spawn-local: the roster is never edited. */
-export const GUARD={at:.6,time:6,basic:.2,heavies:3,stagger:1.6,cue:3.2,tint:'#8fc4ff',pose:'shout',poseT:.12};
+/* improve20-u-nov1 #2 (audit6 #4: a phone kid mashing Attack): GUARD.basics basic hits crack it too, so mashing is slow but never zero, and
+   the first guarded hit asks for the ability button at once (w.guardNudge, game/controls-tutorial.js tickAbilityNudge) */
+export const GUARD={at:.6,time:6,basic:.2,heavies:3,basics:6,stagger:1.6,cue:3.2,tint:'#8fc4ff',pose:'shout',poseT:.12};
 export const guardsUp=(w,e)=>w?.tierKey==='normal'&&w.level?.id==='e1'&&e?.key==='goblin-king'&&!e.helper&&!e.elite;
 export function guardBoss(w,e){if(guardsUp(w,e))e.guardPlan=true;return e;}
 /* a learned ability: not a basic swing, a gear trick, a companion, a summon or a totem tick */
 export const breaksGuard=a=>!!a&&!a.basic&&!a.trick&&!a.ally&&!a.tick;
-function startGuard(e,w){const b=e.brain;e.guardDone=true;e.guard={at:w.time,until:w.time+GUARD.time,heavy:0,tint:e.tint||null,ringAt:w.time+.6};e.tint=GUARD.tint;
+function startGuard(e,w){const b=e.brain;e.guardDone=true;e.guard={at:w.time,until:w.time+GUARD.time,heavy:0,basics:0,tint:e.tint||null,ringAt:w.time+.6};e.tint=GUARD.tint;
  b.mode='guard';b.t=0;b.markers=[];b.atk=null;b.freeze=true;e.state=GUARD.pose;e.stateT=GUARD.poseT;e.facing=Math.sign(w.player.x-e.x)||e.facing||1;
  w.text?.('GUARD UP!',e.x,e.y-70,'#bfe0ff',true);sfx('guard');w.effect?.('ring',e.x,e.y,{radius:34,color:GUARD.tint,ground:true,life:.5,max:.5});
  if(!w.guardCue)w.guardCue={at:w.run?.time??w.time};}
@@ -30,6 +32,7 @@ export function guardTick(e,w){if(!e.guardPlan)return;const b=e.brain,g=e.guard;
 export function guardHit(w,e,a){const g=e.guard;if(!g||e.hp<=0)return 1;
  if(breaksGuard(a)){endGuard(e,w,true);return 1;}
  if(a.heavy&&++g.heavy>=GUARD.heavies){endGuard(e,w,true);return 1;}
+ if(a.basic&&!a.heavy){if(!w.guardNudge)w.guardNudge={at:w.time};if(++g.basics>=GUARD.basics){endGuard(e,w,true);return 1;}}
  if(a.heavy){w.text?.(`CRACK! ${GUARD.heavies-g.heavy} MORE`,e.x,e.y-70,'#ffe49a',true);sfx('armour.crack');}
  else if(!(w.time-(g.said??-9)<.7)){g.said=w.time;w.text?.('GUARDED',e.x,e.y-56,'#aab4c2');sfx('guard');}
  return GUARD.basic;}

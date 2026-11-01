@@ -19,6 +19,9 @@ export function guidancePlacement({player,target,camera,viewport,obstacles=[],wi
  const project=p=>({x:viewport.left+(p.x-camera.x+camera.width/2)*sx,y:viewport.top+(p.y-camera.y+camera.height/2)*sy});
  const p=project(player),goal=project(target.aim||target),dx=goal.x-p.x,dy=goal.y-p.y,d=Math.hypot(dx,dy);
  if(!Number.isFinite(d)||d<1)return null;
+ /* improve20-u-nov1 #4 (audit6 #13): the arrow shows the way to WALK, from the hero to the route aim; it used to be measured from wherever
+    the chip was pushed to clear the HUD, so a chip below and left of the stairs pointed down-right, into the pocket by the cliff */
+ const walkAngle=Math.atan2(dy,dx)*180/Math.PI+90;
  const edge={left:viewport.left+inset,right:viewport.left+viewport.width-inset,top:viewport.top+inset,bottom:viewport.top+viewport.height-inset};
  const offscreen=goal.x<edge.left||goal.x>edge.right||goal.y<edge.top||goal.y>edge.bottom;
  if(offscreen){
@@ -37,7 +40,7 @@ export function guidancePlacement({player,target,camera,viewport,obstacles=[],wi
   if(!spot){const diag=[];for(let dy=36;dy<=360;dy+=36)for(let dx=36;dx<=720;dx+=36)for(const [a,b] of [[-dx,-dy],[dx,-dy],[-dx,dy],[dx,dy]])diag.push(fit({x:base.x+a,y:base.y+b}));
    spot=diag.sort((p,q)=>Math.hypot(p.x-base.x,p.y-base.y)-Math.hypot(q.x-base.x,q.y-base.y)).find(free);}
   if(!spot)return null;
-  return{left:Math.round(spot.x-size/2),top:Math.round(spot.y-size/2),width:size,height:size,angle:Math.atan2(goal.y-spot.y,goal.x-spot.x)*180/Math.PI+90,edge:true,labelAbove:!below};
+  return{left:Math.round(spot.x-size/2),top:Math.round(spot.y-size/2),width:size,height:size,angle:walkAngle,edge:true,labelAbove:!below};
  }
  const limits={left:viewport.left+inset,right:viewport.left+viewport.width-inset-width,top:viewport.top+inset,bottom:viewport.top+viewport.height-inset-height};
  if(limits.right<limits.left||limits.bottom<limits.top)return null;
@@ -57,7 +60,7 @@ export function guidancePlacement({player,target,camera,viewport,obstacles=[],wi
   if(distance<score){score=distance;best={left:Math.round(left),top:Math.round(top),width,height};}
  }
  if(!best)return null;
- best.angle=Math.atan2(goal.y-(best.top+16),goal.x-(best.left+width/2))*180/Math.PI+90;
+ best.angle=walkAngle;
  return best;
 }
 

@@ -7,7 +7,8 @@ export const ENTRANCES={
  slime:'drop','magma-slime':'drop',sporeling:'rise','bandit-thug':'drop',thornling:'rise','pebble-golem':'rise',wisp:'fade',shade:'fade',imp:'fade',cultist:'fade',
  goblin:'tent','orc-rogue':'tent','goblin-king':'tent','skeleton-king':'rise',
 };
-export const ENTRANCE_TIME={rise:.9,drop:.7,tent:.6,fade:.7,vine:1.25};
+/* surface (improve20-u-nov1): the Bog King's rally slimes well up out of the bog (drawn like rise, with the slime-spawn splash) */
+export const ENTRANCE_TIME={rise:.9,drop:.7,tent:.6,fade:.7,vine:1.25,surface:.9};
 /* Tents only stand in goblin country; elsewhere a goblin walks in like everyone else. */
 const TENT_BIOMES=/camp|warcamp|gate|road/;
 /* owner, 9 Oct: "some goblins swing through on a vine from the forest and have them like jump on the field": in goblin

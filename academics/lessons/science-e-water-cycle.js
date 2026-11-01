@@ -15,17 +15,17 @@ export default {
  title:'The water cycle',goal:'Recognize four parts of a simple water-cycle model and follow one route through it.',points:20,
  skills:{steps:'Four parts of our model',order:'Following one route',example:'Spotting a process'},
  steps:[
-  {skill:'steps',say:'Water on Earth takes many routes. Our simple model follows four parts of one route through the water cycle.', pic:[{t:'cycle',stages:S}], eq:'evaporation, condensation, precipitation, collection'},
-  {skill:'steps',say:'Evaporation: the sun warms water in this example. Liquid water changes into water vapor, an invisible gas. The picture uses wisps to represent it.', pic:[{t:'theater',scene:'water-cycle',part:'evaporation'}], eq:'liquid water turns into water vapor'},
-  {skill:'steps',say:'Condensation: water vapor can cool enough to form tiny drops. These drops can form clouds. Clouds can also contain ice crystals.', pic:[{t:'theater',scene:'water-cycle',part:'condensation'}], eq:'water vapor turns into tiny drops'},
-  {skill:'steps',say:'Precipitation: water drops or ice crystals grow big and heavy enough to fall from clouds. Rain, snow, sleet and hail are forms of precipitation.', pic:[{t:'theater',scene:'water-cycle',part:'precipitation'}], eq:'rain, snow, sleet, hail',
+  {skill:'steps',say:'Water on Earth takes many routes. Our model shows one route with four steps.', pic:[{t:'cycle',stages:S}], eq:'evaporation, condensation, precipitation, collection'},
+  {skill:'steps',say:'Evaporation: the sun warms water in this example. The water turns into water vapor. Water vapor is a gas we cannot see. The picture shows it as wisps.', pic:[{t:'theater',scene:'water-cycle',part:'evaporation'}], eq:'liquid water turns into water vapor'},
+  {skill:'steps',say:'Condensation: water vapor cools and turns into tiny drops. The drops can make clouds. Clouds can also hold ice crystals.', pic:[{t:'theater',scene:'water-cycle',part:'condensation'}], eq:'water vapor turns into tiny drops'},
+  {skill:'steps',say:'Precipitation: water drops or ice crystals grow big and heavy. Then they fall. Rain, snow, sleet and hail are all precipitation.', pic:[{t:'theater',scene:'water-cycle',part:'precipitation'}], eq:'rain, snow, sleet, hail',
    /* 19 Oct: this Try-it moved here from the condensation step, whose caption names the answer */
-   check:{prompt:'Which process changes water vapor into the tiny liquid drops in a cloud?',answer:'condensation',options:['condensation','evaporation','collection'],hint:'It is the step where water vapor cools and turns back into liquid.',pic:{t:'cycle',stages:['evaporation','condensation','precipitation','collection']}}},
-  {skill:'steps',say:'Collection: the water gathers in oceans, lakes, rivers and under the ground.', pic:[{t:'theater',scene:'water-cycle',part:'collection'}], eq:'oceans, lakes, rivers, ground'},
-  {skill:'order',say:'Then some lake water evaporates in our model. Other water can flow away or soak into the ground: this is one possible route.', pic:[{t:'theater',scene:'water-cycle',part:'again'}], eq:'collection, then evaporation again',
-   check:{prompt:'In our four-part model, which step follows collection when lake water changes into vapor?',answer:'evaporation',options:['evaporation','precipitation','condensation'],hint:'The sun warms collected water, and it rises into the air as vapor.'}},
-  {skill:'example',say:'Look for a change into vapor or liquid drops, water falling from clouds, or water gathering. These processes can happen in many places.', pic:[{t:'cycle',stages:S}], eq:'vapor, liquid drops, falling, gathering',
-   check:{prompt:'Drops of water form on the outside of a cold can of juice. Which step of the water cycle is this like?',answer:'condensation',options:['condensation','evaporation','precipitation'],hint:'Water vapor in the air cools on the cold can and turns into liquid drops.'}}
+   check:{prompt:'Which process changes water vapor into the tiny liquid drops in a cloud?',answer:'condensation',options:['condensation','evaporation','collection'],hint:'It is the step where water vapor cools and turns into liquid.',pic:{t:'cycle',stages:['evaporation','condensation','precipitation','collection']}}},
+  {skill:'steps',say:'Collection: the water gathers in oceans, lakes and rivers. Some gathers under the ground.', pic:[{t:'theater',scene:'water-cycle',part:'collection'}], eq:'oceans, lakes, rivers, ground'},
+  {skill:'order',say:'Then some lake water evaporates again in our model. Other water can flow away or soak into the ground. This is one possible route.', pic:[{t:'theater',scene:'water-cycle',part:'again'}], eq:'collection, then evaporation again',
+   check:{prompt:'In our four-part model, which step follows collection when lake water changes into vapor?',answer:'evaporation',options:['evaporation','precipitation','condensation'],hint:'The sun warms the water. It rises into the air as vapor.'}},
+  {skill:'example',say:'Look for water turning into vapor or into drops. Look for water falling from clouds. Look for water gathering. These steps happen in many places.', pic:[{t:'cycle',stages:S}], eq:'vapor, liquid drops, falling, gathering',
+   check:{prompt:'Drops of water form on the outside of a cold can of juice. Which step of the water cycle is this like?',answer:'condensation',options:['condensation','evaporation','precipitation'],hint:'Water vapor in the air cools on the cold can. It turns into drops.'}}
  ],
  items(add){
   for(const [q,a] of NAMES){
