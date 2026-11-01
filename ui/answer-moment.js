@@ -88,3 +88,37 @@ function closerHTML(save,a,road,shelf){
 
 /* Which button on a topic's result screen is the one next step: the next thing the topic needs. */
 export function nextStepId(stage){return {lesson:'lesson-again',quiz:'start-quiz',practice:'practice',test:'start-test'}[stage]||'lesson-library';}
+
+/* improve20-m-nov1 (audit3 #9, R3): a topic's first mastery is a moment of its own. The seal stamps in over the victory sunburst,
+   the victory banner says TOPIC MASTERED, then what was mastered, what it brings closer (the real road: learningRoad()) and the
+   rune it earned. Markup only: nothing here is earned or written; the caller passes the numbers finishTest() already settled. */
+export function masteryCloser(save,t,road=learningRoad(save,t.subject)){
+ if(!road)return 'Every ability for this hero is unlocked.';
+ const a=road.ability,sub=SUBJECTS[a.subject]?.name||a.subject,mine=a.subject===t.subject,n=road.remaining,name=`<b>${esc(a.name)}</b>`,lv=road.level?'':` You also need hero level ${esc(road.levelNeed)}.`;
+ if(road.knowledge)return `${mine?`+1 topic toward ${name}! `:''}Your knowledge for ${name} is ready.${road.level?'':` Reach hero level ${esc(road.levelNeed)} to use it.`}`;
+ if(!road.reachable)return `Keep studying ${esc(sub)} for ${name}.`;
+ const left=`${n} more ${esc(sub)} topic${n===1?'':'s'}`;
+ return mine?`+1 topic toward ${name}: ${left} to go.${lv}`:`Next ability: ${name}, ${left} away.${lv}`;
+}
+export function masteryMomentHTML(save,t,{score=0,total=0,points='',stage='',subjectName='',rune=''}={}){
+ const closer=masteryCloser(save,t);
+ return `<div class="mastery-moment" data-mastery-moment><span class="mm-seal"><span class="am-seal" aria-hidden="true"></span></span><h2 class="mm-banner">Topic mastered!</h2><h3 class="mm-title">“${esc(t.title)}”</h3><p class="mm-score">${esc(score)} of ${esc(total)} right · +${esc(points)} ${esc(stage)} ${esc(subjectName)}</p>${closer?`<p class="mm-closer" data-mm-closer>${closer}</p>`:''}${rune}</div>`;
+}
+/* improve20-m-nov1 (audit3 #18, IMPROVE20 round 3 item 13): the placement result was small text. It is now a short moment with existing
+   art: the Library's open book stamping in over the victory sunburst, the starting grade (or "High School") on the victory banner, what the
+   check opened, and the scores; the first lesson's Start button follows it (main.js placementSummary). Markup only. */
+export function placementMomentHTML({banner='',floor=false,lead='',opens='',scores=[],xp=0}={}){
+ return `<div class="placement-moment" data-placement-moment><span class="eyebrow">YOUR STARTING POINT</span><span class="pm-badge" aria-hidden="true"></span><h2 class="pm-banner"${floor?' data-placement-floor':''}>${esc(banner)}</h2>${lead?`<p class="pm-lead">${esc(lead)}</p>`:''}${opens?`<p class="pm-opens" data-placement-opens>${esc(opens)}</p>`:''}<p class="pm-scores">${scores.length===1?`${esc(scores[0].score)} of ${esc(scores[0].total)} right`:scores.map(v=>`Grade ${esc(v.grade)}: ${esc(v.score)}/${esc(v.total)}`).join(' · ')} · +${esc(xp)} XP</p></div>`;
+}
+/* improve20-m-nov1 (audit3 #6): the mastery test's pass rule in words, said on its first question and again on a result that missed it
+   (the rule itself is academics/lessons.js finishTest and does not change). need = right answers that pass, skills = skills in the test. */
+export function testRuleText(need,total,skills){
+ return `To pass: ${need} of ${total} right${skills>1?`, with at least one right in every skill (${skills} skills)`:''}.`;
+}
+/* a test that did not pass: what it got, what was missing (the score, or a skill with no right answer yet, named) and that retakes are free */
+export function testMissHTML(t,r,need){
+ const name=k=>`<b>${esc(t.skills?.[k]||k)}</b>`,gap=(r.uncovered||[]).map(name),list=gap.length>1?`${gap.slice(0,-1).join(', ')} and ${gap.at(-1)}`:gap[0];
+ const free='Retakes are free, with no waiting, and every right answer still counted.';
+ if(r.score>=need&&gap.length)return `<p class="test-gap" data-test-gap>So close: ${esc(r.score)} of ${esc(r.total)} right, but no right answer yet in ${list}. The test needs ${esc(need)} right and at least one right in every skill. ${free}</p>`;
+ return `<p>${r.score>=need-2?'Almost there':'Not yet'}: ${esc(need)} of ${esc(r.total)} right, with at least one right in every skill, passes the test.${gap.length?` No right answer yet in ${list}.`:''} ${free}</p>`;
+}

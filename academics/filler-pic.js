@@ -18,6 +18,7 @@ export const FILLER_LINES=Object.freeze([
 /* Card titles that only say "read this": a passages card under one of them that re-types the question is filler. A passages card
    under any other title is a source (a quoted poem, a speech, a fictional passage) and is always kept. */
 export const RETYPE_TITLES=Object.freeze(['Read and decide','Read the sentence and the task']),WORD_TITLES=Object.freeze(['Read it','Choose one']);
+import {choicesOf} from '../game/math.js';
 const FILL=new Set(FILLER_LINES),norm=s=>String(s).toLowerCase().replace(/[“”"‘’'`]/g,'').replace(/[^a-z0-9]+/g,' ').trim();
 /* One picture part: is it filler for this question? */
 export function fillerPart(q,p){
@@ -26,6 +27,9 @@ export function fillerPart(q,p){
  if(!Array.isArray(lines)||!lines.length||lines.some(l=>typeof l!=='string'))return false;
  if(Array.isArray(p.why)&&p.why.some(Boolean))return false;
  if(p.t==='board'&&lines.every(l=>FILL.has(l.trim())))return true;
+ /* improve20-m-nov1 (audit3 #14): a card that only lists the answer choices ("Active revision": the three sentences the buttons
+    already show, each on its own button with its letter) says them a second time; the card is kept when a button shows only a letter. */
+ {const ch=choicesOf(q);if(ch&&ch.length===lines.length&&ch.every(x=>x.text)){const want=ch.map(x=>norm(x.text)).sort().join('|'),have=lines.map(l=>norm(l.replace(/^[A-F][:.)]\s+/,''))).sort().join('|');if(want===have)return true;}}
  /* a card holding only a word or two from the prompt ("Read it: Beach" for "A beach is what kind of feature?"): an almost empty box,
     and on a phone an empty-looking thumbnail. A sentence under study (four words or more, or a blank to fill) and a quoted source ("Et tu, Brute?") are kept. */
  {const P=' '+norm(q?.prompt)+' ',words=norm(lines.join(' ')).split(' ').filter(Boolean);
@@ -37,6 +41,12 @@ export function fillerPart(q,p){
 export const isFiller=(q,pic=q?.pic)=>!!pic&&[].concat(pic).filter(Boolean).length>0&&[].concat(pic).filter(Boolean).every(p=>fillerPart(q,p));
 /* The picture a question shows when it is asked (quiz, practice, test, review, exam, Seal, placement). */
 export function shownPic(q,pic=q?.pic){
- if(!pic)return null;if(!Array.isArray(pic))return fillerPart(q,pic)?null:pic;
- const kept=pic.filter(p=>p&&!fillerPart(q,p));return kept.length===pic.filter(Boolean).length?pic:kept.length?kept:null;
+ if(!pic)return null;if(!Array.isArray(pic))return fillerPart(q,pic)?null:numbered(q,pic);
+ const kept=pic.filter(p=>p&&!fillerPart(q,p)).map(p=>numbered(q,p));return kept.length===pic.filter(Boolean).length&&kept.every((p,i)=>p===pic.filter(Boolean)[i])?pic:kept.length?kept:null;
+}
+/* improve20-m-nov1 (audit3 #14): a card of several lines beside answer buttons lettered A, B, C with their own text numbers its lines
+   (gfx/lesson-language.js passages nums), so its line C is never taken for answer C. A card beside bare letter buttons keeps its letters. */
+function numbered(q,p){
+ if(p?.t!=='passages'||!Array.isArray(p.texts)||p.texts.length<2||p.nums)return p;
+ const c=choicesOf(q);return c&&c.every(x=>x.text&&/^[A-F]$/.test(String(x.value)))?{...p,nums:true}:p;
 }

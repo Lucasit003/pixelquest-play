@@ -179,9 +179,9 @@ function findChoices(q){const want=[q.answer,...(q.accept||[])].map(x=>answerKey
  if(!items&&/^[A-F]$/.test(String(q.answer).trim())){const L=[];for(const c of 'ABCDEF'){if(!markers(p,[...L,c]))break;L.push(c);}if(L.length>=2&&L.includes(String(q.answer).trim())&&letterTexts(p,L)){items=L;head=p;}}
  if(!items)return null;const labels=items.every(x=>/^[A-F]$/.test(x))&&head?letterTexts(head,items):null;
  return items.map((v,i)=>({value:v,label:labels?`${v}: ${labels[i]}`:v,...labels?{text:labels[i]}:{}}));}
-function markers(head,letters){const at=[];let from=0;for(const L of letters){const m=new RegExp(`(?:^|[\\s(;,:|])\\(?${L}(?:[:)]|,|(?=\\s+["“]))\\s+`).exec(head.slice(from));if(!m)return null;const s=from+m.index;at.push([s,s+m[0].length]);from=s+m[0].length;}return at;}
-function letterTexts(head,letters){const at=markers(head,letters);if(!at)return null;
- const out=at.map(([,e],i)=>{let x=head.slice(e,i+1<at.length?at[i+1][0]:head.length);if(i+1===at.length)x=x.split(/(?<=[.?!])\s+(?=[A-Z(])|\s+(?=(?:Answer|Type|Choose|Pick|Select)\b)/)[0];return x.replace(/[\s,;|]*(?:\bor)?[\s,;|]*$/,'').replace(/[.?!;:,\s]+$/,'').trim();});
+export function markers(head,letters){const at=[];let from=0;for(const L of letters){const m=new RegExp(`(?:^|[\\s(;,:|])\\(?${L}(?:[:)]|,|(?=\\s+["“]))\\s+`).exec(head.slice(from));if(!m)return null;const s=from+m.index;at.push([s,s+m[0].length]);from=s+m[0].length;}return at;}
+export function letterTexts(head,letters){const at=markers(head,letters);if(!at)return null;
+ const out=at.map(([,e],i)=>{let x=head.slice(e,i+1<at.length?at[i+1][0]:head.length);if(i+1===at.length)x=x.split(/(?<=[.?!])(?<!\b(?:Mr|Mrs|Ms|Dr|St|Mt|Jr|Sr|Prof|Gen|Gov|Capt|Lt|Col|Sgt|vs|etc|approx|No|U\.S|e\.g|i\.e|a\.m|p\.m)\.)\s+(?=[A-Z(])|(?<=(?<!\.)[.?!]["”’])\s+(?=(?:Which|What|Who|Whom|Whose|Why|How|Where|When)\b)|\s+(?=(?:Answer|Type|Choose|Pick|Select)\b)/)[0];return x.replace(/[\s,;|]*(?:\bor)?[\s,;|]*$/,'').replace(/[.?!;:,\s]+$/,'').trim();});
  return out.every(x=>x&&x.length<=160)?out:null;}
 export function matchAnswer(input,q){if(!answerKey(input))return {ok:false,typo:false};
  if(q.numeric){const number=numberIn(input,q);return {ok:Number.isFinite(number)&&Math.abs(number-Number(q.answer))<=numericTolerance(q.answer)+1e-12,typo:false};}

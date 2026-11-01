@@ -81,13 +81,13 @@ export const ENEMY_TYPES={
  'ash-ghoul':{name:'Ash Ghoul',sprite:'ash-ghoul',hp:58,atk:15,def:6,speed:38,scale:1,ai:'chase',band:9,weakness:'ice',attacks:[melee({name:'ash claw',range:42,cd:1.6,windup:.45})],
   fact:F('geography','Volcanic ash is made of tiny bits of rock and glass, not soft ash like from a wood fire.')},
  'drowned-thrall':{name:'Drowned Thrall',sprite:'drowned-thrall',hp:40,atk:9,def:4,speed:38,scale:1,ai:'chase',band:9,weakness:'storm',attacks:[melee({name:'boat hook',range:40,cd:1.6,windup:.45})],
-  fact:F('science','Seaweed is not a plant. It is algae, and it makes much of the oxygen we breathe.')},
+  fact:F('science','About half of Earth\'s oxygen is made in the ocean, mostly by tiny drifting living things called plankton. Seaweeds, which are large algae, make some too.')},
  'void-spawn':{name:'Void Spawn',sprite:'void-spawn',hp:48,atk:14,def:2,speed:60,scale:1,ai:'strafe',band:9,weakness:'holy',attacks:[melee({name:'void claw',range:40,cd:1.6,windup:.45})],
-  fact:F('science','Most of space is empty. Even between nearby stars there are huge distances with almost nothing in them.')},
+  fact:F('science','Sunlight takes about 8 minutes and 20 seconds to cross space and reach Earth, so you always see the Sun as it was a few minutes ago.')},
  'deep-one':{name:'Deep One',sprite:'deep-one',hp:64,atk:11,def:9,speed:34,scale:1,ai:'chase',band:9,weakness:'storm',attacks:[melee({name:'coral spear',range:42,cd:1.6,windup:.45})],
   fact:F('science','Some deep-sea fish make their own light, called bioluminescence, to find food in the dark.')},
  'moonmoth':{name:'Moonmoth',sprite:'moonmoth',hp:24,atk:11,def:0,speed:56,scale:1,ai:'flyer',band:9,attacks:[melee({name:'dust swoop',range:14,cd:1.6,windup:.45})],
-  fact:F('science','Many moths find their way at night using the moon and stars, which is why lamps can confuse them.')},
+  fact:F('science','Australia\'s Bogong moths can steer by the stars and the Milky Way on night journeys of up to 1,000 kilometres.')},
  'executioner-spirit':{name:'Lost Soul',sprite:'pl-executioner-spirit',hp:14,atk:8,def:0,speed:50,scale:1,ai:'flyer',band:9,fly:16,attacks:[melee({name:'touch',range:14,cd:1.6,windup:.42})],
   fact:F('science','Fireflies make light with a chemical reaction inside their bodies. Living things that glow are called bioluminescent.')},
 
@@ -193,14 +193,14 @@ export const ENEMY_TYPES={
     a PixelLab king in thorn-black plate with a thorned greatsword (8 Oct). The procedural king only shows while the atlas loads. */
  'thorn-king':{...BOSS,name:'The Thorn King',sprite:'thornking',ai:'boss',scale:1,band:12,kbResist:.9,hp:460,atk:23,def:15,speed:34,
   phaseLine:'You only cut my branches. My roots run deep!',taunts:['Every root and branch obeys me.','Kneel, little hero, like the trees!'],intro:'The whole forest bends to my crown of thorns!',defeat:'The thorns wither... let the forest grow free.',
-  fact:F('science','Roses do not really have thorns. Botanists call their sharp points prickles, because they grow from the stem\'s skin, not its wood.'),
+  fact:F('science','Roses do not really have thorns. Botanists call their sharp points prickles, because they grow from the stem\'s outer skin. True thorns are changed branches.'),
   attacks:[
   {name:'thorn blade',state:'attack',kind:'melee',range:52,band:12,cd:2.2,windup:.65,dmg:1.2},
   {name:'royal thrust',state:'attack2',kind:'melee',range:56,band:10,cd:2.6,windup:.65,dmg:1.25},
   {name:'thorn line',state:'special',kind:'line',fx:'fx-earth-spike',count:6,gap:26,radius:13,range:220,cd:4.2,windup:.7,dmg:1.1},
   {name:'bramble field',state:'cast',kind:'aoe',at:'player',fx:'fx-earth-spike',radius:14,count:4,spread:40,range:260,cd:4.6,windup:.7,dmg:1.1,phase:2},
   {name:'thornlings rise',state:'cast',kind:'summon',key:'thornling',count:2,max:3,range:400,cd:11,windup:.8,fx:'fx-portal',phase:2}]},
- 'bramblejaw':{name:'Bramblejaw',sprite:'bramblejaw',mini:true,boss:true,hp:230,atk:9,def:3,speed:40,scale:1,ai:'boss',band:10,kbResist:.5,taunts:['Turn back! This is MY gate!','I bite harder than I bark!'],intro:'Nobody gets past my gate! Not even a tiny hero!',defeat:'Ow ow ow! Fine, the gate is yours!',fact:F('science','Brambles like blackberry bushes use their hooked thorns to climb over other plants toward the sunlight.'),half:'Now you made me grumpy!',phaseShift:{at:.5,line:'Now you made me grumpy!',speed:1.15,cd:.85,tint:'#ff6a4a',title:'BRAMBLEJAW GETS GRUMPY'},attacks:[{name:'club smash',state:'attack',kind:'melee',range:70,band:12,cd:2.2,windup:.8,dmg:1.1},{name:'club sweep',state:'attack2',kind:'melee',range:74,band:14,cd:2.8,windup:.85,dmg:1}]},
+ 'bramblejaw':{name:'Bramblejaw',sprite:'bramblejaw',mini:true,boss:true,hp:230,atk:9,def:3,speed:40,scale:1,ai:'boss',band:10,kbResist:.5,taunts:['Turn back! This is MY gate!','I bite harder than I bark!'],intro:'Nobody gets past my gate! Not even a tiny hero!',defeat:'Ow ow ow! Fine, the gate is yours!',fact:F('science','Blackberry brambles have hooked prickles, like roses, not true thorns. The hooks catch on other plants and help the long stems scramble over them.'),half:'Now you made me grumpy!',phaseShift:{at:.5,line:'Now you made me grumpy!',speed:1.15,cd:.85,tint:'#ff6a4a',title:'BRAMBLEJAW GETS GRUMPY'},attacks:[{name:'club smash',state:'attack',kind:'melee',range:70,band:12,cd:2.2,windup:.8,dmg:1.1},{name:'club sweep',state:'attack2',kind:'melee',range:74,band:14,cd:2.8,windup:.85,dmg:1}]},
   'bandit-chief':{name:'Red Hand',sprite:'redhand',boss:true,hp:380,atk:15,def:6,speed:52,scale:1,ai:'boss',band:10,kbResist:.6,
   taunts:['Nice boots. Are they my size?','Let\'s see what\'s in your pockets!'],intro:'Your gold or your... no, just your gold!',defeat:'Fine, fine! Keep your coins. I\'m going straight!',
   fact:F('history','Stories about Robin Hood, an outlaw who robbed the rich, were already being told in England more than 600 years ago.'),
@@ -251,7 +251,7 @@ export const ENEMY_TYPES={
   {name:'flame road',state:'cast',kind:'line',fx:'fx-col-fire',count:8,gap:24,radius:13,range:240,cd:4.6,windup:.7,dmg:1.1,phase:2,weight:2,label:'FLAME ROAD'}]},
  'flame-knight':{name:'Sir Cinder',sprite:'pl-sir-cinder',boss:true,hp:850,atk:30,def:14,speed:44,scale:1,ai:'boss',band:10,kbResist:.7,weakness:'ice',
   taunts:['Draw your weapon, challenger.','Let\'s see if your courage burns hot!'],intro:'En garde! The Flame Knight never retreats!',defeat:'A fair fight. My flame salutes you.',
-  fact:F('history','A full suit of plate armour weighed about 15 to 25 kilograms, spread over the whole body, so knights could still run and climb.'),
+  fact:F('science','The Sun\'s glowing surface is about 5,500 degrees Celsius. Its core is far hotter: about 15 million degrees Celsius.'),
   /* moveset (m4): a duelling knight in a training yard. En Garde holds a guard that answers a frontal hit with a lunge; a
      perfect roll through that lunge staggers him. Flame Wall runs along the floor (jump it); Drill Call marches two shield
      knights in from the yard's edges. Heroic: his Blazing Arc may feint (half a wind-up, then the full real tell).
@@ -274,7 +274,7 @@ export const ENEMY_TYPES={
   {name:'fire rain',state:'cast',kind:'aoe',at:'player',fx:'fx-fire-burst',radius:18,count:4,spread:44,range:300,cd:4.4,windup:.75,dmg:1.05,phase:2}]},
  'obsidian-sentinel':{name:'The Obsidian Sentinel',sprite:'pl-obsidian',boss:true,hp:940,atk:31,def:20,speed:30,scale:1,ai:'boss',band:12,kbResist:1,weakness:'storm',
   taunts:['I have guarded these halls for ages.','You will not be the one to pass.'],intro:'None shall pass the black glass halls.',defeat:'My glass is cracked. You may pass.',
-  fact:F('science','Obsidian is volcanic glass. It forms when lava cools so fast that its atoms have no time to line up into crystals.'),
+  fact:F('history','About 2,000 years ago, people in Ohio shaped obsidian from Yellowstone, more than 1,500 miles away, into large spear points.'),
   /* moveset (m6): a glass knight. Void Wave is a slash that travels down the hall (jump it); Mirror Guard holds the sword up:
      hits from the front are parried and shots bounce back, so strike from behind or wait for the opening; glass spikes and,
      from half health, a field of shards. Heroic: a wider shard field. Legendary: Mirror Guard chains into Void Wave. */
@@ -294,7 +294,7 @@ export const ENEMY_TYPES={
   {name:'meteor rain',state:'special',kind:'aoe',at:'player',fx:'fx-flame-pillar',radius:18,count:6,spread:70,range:300,cd:5,windup:.85,dmg:1,phase:2}]},
  'cinder-wraith':{name:'The Cinder Wraith',sprite:'pl-cinder-wraith',boss:true,hp:900,atk:30,def:14,speed:34,scale:1,ai:'boss',band:12,kbResist:.9,weakness:'ice',
   taunts:['Can you feel the warmth fading?','Soon you\'ll be ash like the rest.'],intro:'Nothing grows here. Nothing but ash... and me.',defeat:'Blown away... like smoke in the wind.',
-  fact:F('geography','Volcanic ash is not soft like ash from a campfire. It is made of tiny, sharp pieces of rock and glass.'),
+  fact:F('geography','In 1943 a new volcano began growing on a farm in Mexico. Parícutin is a cinder cone, built from bits of lava blown into the air that cooled and fell around the vent.'),
   /* moveset (mx1): a fire spirit of the ash wastes. Ash Storm darkens the dunes (the hero, two ember braziers and every
      warning stay lit; his ember eyes show where he is); Pillar Form turns him into a slow chasing column of fire, then he
      is exhausted (a long opening); ash ghouls claw up from the dunes. Heroic: a longer storm. Legendary: Pillar Form twice. */
@@ -414,7 +414,7 @@ export const ENEMY_TYPES={
    {kind:'wave',shape:'ring',state:'special',fx:'fx-col-ice',speed:95,reach:190,th:8,range:200,windup:.8,dmg:1.15,label:'DREAM ECHO: TIDE RING'}]}]},
  /* ---------- boss helpers (15 Oct, TRICKY_LEVELS section 4): raised by a boss, never placed in a wave ---------- */
  'lantern-wisp':{name:'Lantern Wisp',sprite:'pl-wisp',hp:30,atk:9,def:0,speed:60,scale:1,ai:'orbit',band:9,fly:22,linkShare:.2,helper:true,attacks:[melee({name:'flicker',range:26,cd:3,windup:.6,dmg:.5})],
-  fact:F('science','A will-o\'-the-wisp is a faint light seen over marshes at night. Many scientists think burning marsh gas, such as methane, causes some of them.',true)},
+  fact:F('science','Marshes, bogs and fens are the world\'s largest natural source of methane gas. Microbes living in their soggy, airless soil make it.')},
  'prism-pylon':{name:'Prism Pylon',sprite:'pl-prism-pylon',hp:400,atk:0,def:0,speed:0,scale:1,ai:'still',band:9,kbResist:1,propHits:3,linkShare:.2,helper:true,prop:true,attacks:[],
   fact:F('science','A quartz crystal vibrates at a very steady rate when electricity passes through it, which is how quartz watches keep time.')},
  /* ---------- chapter mini-bosses (24 Oct): Emberkeep and the Veilmoor had Elderwood's bosses as their elites. Each new one keeps
@@ -422,7 +422,7 @@ export const ENEMY_TYPES={
     PixelLab (art/enemies/<key>/pixellab.json); fought as elites and Run Draft mini-bosses, never as a level's boss. ---------- */
  'magma-brute':{name:'The Magma Brute',sprite:'magma-brute',boss:true,hp:440,atk:22,def:16,speed:24,scale:1,eliteDraw:0.78,ai:'boss',band:14,kbResist:1,weakness:'storm',drop:'obsidian-chip',
   taunts:['Step closer. The lava is warm.','I\'ll knock you right into it!'],intro:'The mountain made me. Now it sends me.',defeat:'Cooling... cracking... going dark.',
-  fact:F('science','Obsidian is natural volcanic glass. It forms when lava cools so fast that its crystals have no time to grow.'),
+  fact:F('geography','The Hawaiian Islands are the tops of gigantic volcanoes built by countless lava eruptions. Some rise more than 30,000 feet above the sea floor.'),
   half:'The lava in me boils over!',phaseShift:{at:.5,line:'The lava in me boils over!',speed:1.2,cd:.75,tint:'#ff8a3a',title:'THE BRUTE BOILS OVER'},attacks:[
   {name:'hammer slam',state:'attack',kind:'aoe',at:'front',radius:34,range:60,cd:2.6,windup:.7,dmg:1.25,impact:'fx-dust',recover:.7},
   {name:'basalt sweep',state:'attack2',kind:'melee',range:60,band:12,cd:3,windup:.7,dmg:1.3},
@@ -430,7 +430,7 @@ export const ENEMY_TYPES={
   {name:'lava rain',state:'attack',kind:'aoe',at:'player',fx:'fx-molten-spear',radius:14,count:3,spread:36,range:260,cd:4.6,windup:.75,dmg:1.1,phase:2}]},
  'imp-warchief':{name:'The Imp Warchief',sprite:'imp-warchief',boss:true,hp:440,atk:17,def:9,speed:36,scale:1,eliteDraw:0.78,ai:'boss',band:12,kbResist:.85,drop:'imp-horn',
   taunts:['Lesson one: imps hit first!','Lesson two: imps hit again!'],intro:'Vexx sent me to teach you some manners!',defeat:'Tell Vexx... I want a day off.',
-  fact:F('language','In Old English an "impa" was a young plant shoot. Centuries later "imp" came to mean a small, naughty demon.'),
+  fact:F('science','A goat\'s or cow\'s horn is a core of bone inside a hard keratin sheath, and it is never shed. Deer antlers are bone, and they fall off every year.'),
   half:'Imps, watch your chief CHARGE!',phaseShift:{at:.5,line:'Imps, watch your chief CHARGE!',speed:1.3,cd:.7,tint:'#ff5530',title:'THE WARCHIEF CHARGES'},attacks:[
   {name:'fork thrust',state:'attack',kind:'melee',range:68,band:12,cd:2.4,windup:.65,dmg:1.25},
   {name:'imp rush',state:'walk',kind:'dash',range:300,cd:5.5,windup:.9,dmg:1.4,speed:240,band:14},
@@ -454,7 +454,7 @@ export const ENEMY_TYPES={
   {name:'falling shards',state:'attack',kind:'aoe',at:'player',fx:'fx-glass-spike',radius:14,count:3,spread:36,range:260,cd:4.6,windup:.75,dmg:1.1,phase:2}]},
  'abyss-herald':{name:'The Abyss Herald',sprite:'abyss-herald',boss:true,hp:400,atk:18,def:10,speed:32,scale:1,eliteDraw:0.85,ai:'boss',band:12,kbResist:.9,weakness:'holy',
   taunts:['The deep has waited long for you.','Come down. The water is so dark.'],intro:'The Sleeper dreams of you. I came to wake you.',defeat:'Back... to the deep... with me.',
-  fact:F('geography','The deepest known place in the ocean, the Challenger Deep in the Mariana Trench, is nearly 11 kilometres down.'),
+  fact:F('geography','Between about 4,000 and 6,000 metres down lies the ocean\'s abyssal zone. It is pitch black there, and the water is always near freezing.'),
   half:'The tide is turning, little one!',phaseShift:{at:.5,line:'The tide is turning, little one!',speed:1.2,cd:.7,tint:'#7dffd8',title:'THE DEEP RISES'},attacks:[
   {name:'abyss claw',state:'attack',kind:'melee',range:30,band:10,cd:2.2,windup:.65,dmg:1.2},
   {name:'undertow',state:'attack2',kind:'aoe',at:'self',radius:44,range:50,cd:4,windup:.7,dmg:1.3,impact:'fx-dust'},

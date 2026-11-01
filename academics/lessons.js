@@ -282,7 +282,7 @@ export function recordQuiz(save,t,score){
     return {best,improved,first,before};
 }
 export function finishTest(save,t,sitting){
-    if(!sitting.items.length || sitting.items.some(i=>typeof sitting.right[i.id]!=='boolean'))return {graded:false,passed:false,first:false,xp:0,score:0,total:sitting.items.length,missed:[]};
+    if(!sitting.items.length || sitting.items.some(i=>typeof sitting.right[i.id]!=='boolean'))return {graded:false,passed:false,first:false,xp:0,score:0,total:sitting.items.length,missed:[],uncovered:[]};
     const score=sitting.items.filter(item=>sitting.right[item.id]).length;
     const total=sitting.items.length;
     /* Old callers without a snapshot still cannot omit live skills. Include the sitting's
@@ -301,5 +301,7 @@ export function finishTest(save,t,sitting){
     r.miss=sitting.items.filter(item=>!sitting.right[item.id]).map(item=>item.id).slice(0,10);
     const first=passed && !(r.pts>0);
     if(first){settleFirst(save,t);r.pts=topicPoints(t);keepOpen(save,t);}
-    return {graded:true,passed,first,xp:first?XP.mastered:0,score,total,missed};
+    /* improve20-m-nov1 (audit3 #6): the skills with no right answer in this sitting, so a 9 of 10 that misses one skill can name it */
+    const uncovered=skills.filter(skill=>!sitting.items.some(item=>item.skill===skill && sitting.right[item.id]));
+    return {graded:true,passed,first,xp:first?XP.mastered:0,score,total,missed,uncovered};
 }

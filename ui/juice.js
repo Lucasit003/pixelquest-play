@@ -124,10 +124,10 @@ export function drawDamageText(c,f,alpha){
 }
 
 /* ---------- celebrations ----------
-   celebrate('unlock'|'boss'|'levelup', {host, sound}) plays a downloaded effect sprite (Foozle's
+   celebrate('unlock'|'boss'|'levelup'|'mastery', {host, sound}) plays a downloaded effect sprite (Foozle's
    Pixel Magic Effects, CC0, baked to ui/skin/fx-*.png at 64 px frames, shown at 4x) over the host
    (default: the stage) and the matching sting. Pass sound:false when the caller already played one. */
-const FX={unlock:{strip:'swirl',frames:10,ms:900,sting:'unlock',loops:2},boss:{strip:'burst',frames:7,ms:700,sting:'victory',loops:1},levelup:{strip:'burst',frames:7,ms:700,sting:'levelup',loops:1}};
+const FX={unlock:{strip:'swirl',frames:10,ms:900,sting:'unlock',loops:2},boss:{strip:'burst',frames:7,ms:700,sting:'victory',loops:1},levelup:{strip:'burst',frames:7,ms:700,sting:'levelup',loops:1},mastery:{strip:'burst',frames:7,ms:700,sting:'victory',loops:1}};
 export function celebrate(kind,{host,sound=true}={}){
  const f=FX[kind],d=doc();if(!f||!d)return;
  if(sound)sting(f.sting);
