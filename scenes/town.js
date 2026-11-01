@@ -533,14 +533,19 @@ export function hubUpdate(world, dt, input) {
   /* Move in small steps, one axis at a time, so walls slide instead of stopping dead.
      A player placed inside a wall (a test, an old save) may always walk out. */
   const stuck = footBlocked(S, p.x, p.y), n = Math.ceil(Math.max(Math.abs(mx), Math.abs(my)) / 3);
+  /* improve20-b-oct31 #8: walking diagonally into a corner (both axes blocked) used to stop dead, since the corner assist only ran
+     for straight-line input; now a step that moves on neither axis gets the same assist, on the axis the wall is not on */
   for (let i = 0; i < n; i++) {
-    const sx = mx / n, sy = my / n;
+    const sx = mx / n, sy = my / n, x0 = p.x, y0 = p.y; let bx = false, by = false;
     if (personAhead(S, p.x, p.y, p.x + sx, p.y)) { /* a villager stands there */ }
     else if (stuck || !footBlocked(S, p.x + sx, p.y)) p.x += sx;
     else if (!sy) p.y += cornerNudge(S, p.x, p.y, sx, 0, 0, 1, Math.abs(sx));
+    else bx = true;
     if (personAhead(S, p.x, p.y, p.x, p.y + sy)) { /* a villager stands there */ }
     else if (stuck || !footBlocked(S, p.x, p.y + sy)) p.y += sy;
     else if (!sx) p.x += cornerNudge(S, p.x, p.y, 0, sy, 1, 0, Math.abs(sy));
+    else by = true;
+    if (bx && by && p.x === x0 && p.y === y0) { const st = Math.hypot(sx, sy), ny = cornerNudge(S, p.x, p.y, sx, 0, 0, 1, st); if (ny) p.y += ny; else p.x += cornerNudge(S, p.x, p.y, 0, sy, 1, 0, st); }
   }
   p.x = Math.max(4, Math.min(S.D.w - 4, p.x)); p.y = Math.max(8, Math.min(S.D.h - 2, p.y));
   /* Stepping onto a room's exit mat leaves, the way a door works. */
@@ -730,7 +735,87 @@ export function hubGuidanceTarget(target, subject) {
   /* polish-oct29 (#13): a building's arrow aims at the door itself (its stand spot is at the doorstep, level with a hero walking up,
      so near the door the arrow pointed sideways) */
   const aim = !S.room && q.type === 'entrance' ? {x: q.x, y: q.y - 32} : null;
-  return {room: S.key, x, y, label, ...(aim ? {aim} : {}), arrived: H.near?.q === q || !!H.player && Math.hypot(H.player.x - x, H.player.y - y) <= 12};
+  return routed(S, {room: S.key, x, y, label, ...(aim ? {aim} : {}), arrived: H.near?.q === q || !!H.player && Math.hypot(H.player.x - x, H.player.y - y) <= 12});
+}
+/* improve20-b-oct31 #8 (kid-appeal playtest: Maya walked the arrow from Home straight into the cliff by the house and had to find the
+   stairs; in the Library it led her into the bench at the English desk's rug). When a wall stands on the straight line to the target,
+   the arrow aims at the next bend of the walkable route instead: a breadth-first search over the room's collision cells (the hero's
+   own foot box), and the farthest point of that route the hero can walk to in a straight line, at most ROUTE.reach px away. The
+   target, the label and "arrived" are unchanged; only where the arrow points. Cached per hero cell, so it costs nothing per frame. */
+/** The decoded scene for a room key (for tests and tools). */
+export const hubScene = key => scene(key);
+export const ROUTE = {reach: 150, near: 20, pad: 2};
+/* pad: extra clearance each side, so a keyboard's eight directions (which never follow the line exactly) still get past the corner */
+/* people stand their ground (personAhead), so the route walks round them as it does round walls */
+const personAt = (S, x, y, pad = 1) => { S.people ??= [...(S.figures ?? []), ...S.points.filter(q => q.type === 'npc-spot')].map(q => [q.x, q.y]); return S.people.some(([px, py]) => Math.abs(x - px) < PERSON.hw + 4 * pad && Math.abs(y - py) < PERSON.hh + 3 * pad); };
+/* a straight line only has to clear the space a villager really keeps (personAhead); the planned route keeps a little more */
+const walkBlocked = (S, x, y) => footBlocked(S, x, y) || personAt(S, x, y, 0);
+export function lineClear(S, x0, y0, x1, y1, pad = 0) { const n = Math.ceil(Math.hypot(x1 - x0, y1 - y0) / 4); for (let i = 1; i <= n; i++) { const t = i / n, x = x0 + (x1 - x0) * t, y = y0 + (y1 - y0) * t; if (walkBlocked(S, x, y) || pad && (walkBlocked(S, x - pad, y) || walkBlocked(S, x + pad, y) || walkBlocked(S, x, y - pad) || walkBlocked(S, x, y + pad))) return false; } return true; }
+/** The walkable route from (px, py) to (tx, ty) as village/room pixel points (cell centres), or null when there is none. */
+export function routePath(S, px, py, tx, ty) {
+  const c = S.D.collision, k = c.cell, F = flowField(S, tx, ty), d = F.dist, sx = Math.floor(px / k), sy = Math.floor(py / k);
+  if (sx < 0 || sy < 0 || sx >= c.w || sy >= c.h) return null;
+  /* a hero standing in a doorway, on a wall's edge or right beside a villager starts from the nearest reached cell */
+  let cur = d[sy * c.w + sx] >= 0 ? sy * c.w + sx : -1;
+  if (cur < 0) { let bd = Infinity; for (let r = 1; r <= 3 && cur < 0; r++) for (let y = sy - r; y <= sy + r; y++) for (let x = sx - r; x <= sx + r; x++) { if (x < 0 || y < 0 || x >= c.w || y >= c.h) continue; const j = y * c.w + x; if (d[j] >= 0 && d[j] < bd) { bd = d[j]; cur = j; } } }
+  if (cur < 0) return null;
+  const out = [{x: (cur % c.w + .5) * k, y: ((cur / c.w | 0) + .5) * k}];
+  while (d[cur] > 0) { const x = cur % c.w, y = cur / c.w | 0; let nx = -1;
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const X = x + dx, Y = y + dy; if (X < 0 || Y < 0 || X >= c.w || Y >= c.h) continue; const j = Y * c.w + X; if (d[j] >= 0 && d[j] < d[cur]) { nx = j; break; } }
+    if (nx < 0) break; cur = nx; out.push({x: (cur % c.w + .5) * k, y: ((cur / c.w | 0) + .5) * k}); }
+  return out;
+}
+/* The walkable cells (the hero's foot box clear of walls and of people) and, per target, the steps from every cell to it: one
+   breadth-first search over the whole room, kept for the last few targets, so following the route costs nothing per frame. The
+   furnished Home re-plans when its furniture moves. */
+function walkGrid(S) {
+  const c = S.D.collision, key = S.key === 'home' ? houseKey + '|' + JSON.stringify(H.save?.house?.items ?? []) : '';
+  if (S.walk && S.walk.key === key) return S.walk.g;
+  const g = new Uint8Array(c.w * c.h);
+  for (let y = 0; y < c.h; y++) for (let x = 0; x < c.w; x++) { const X = (x + .5) * c.cell, Y = (y + .5) * c.cell; g[y * c.w + x] = !footBlocked(S, X, Y) && !personAt(S, X, Y) ? 1 : 0; }
+  S.walk = {key, g}; S.flows = new Map();
+  return g;
+}
+function flowField(S, tx, ty) {
+  const g = walkGrid(S), c = S.D.collision, k = c.cell, id = `${Math.round(tx)},${Math.round(ty)}`;
+  let F = S.flows.get(id); if (F) return F;
+  const dist = new Int32Array(c.w * c.h).fill(-1), q = [];
+  /* the cells round the target; a person's own spot sits inside the space kept round them, so the ring widens until it finds floor */
+  for (let near = ROUTE.near; !q.length && near <= ROUTE.near * 2.5; near += 8) { const r = Math.ceil(near / k);
+    for (let y = Math.floor(ty / k) - r; y <= Math.floor(ty / k) + r; y++) for (let x = Math.floor(tx / k) - r; x <= Math.floor(tx / k) + r; x++) { if (x < 0 || y < 0 || x >= c.w || y >= c.h) continue; const j = y * c.w + x; if (g[j] && Math.hypot((x + .5) * k - tx, (y + .5) * k - ty) <= near) { dist[j] = 0; q.push(j); } } }
+  for (let h = 0; h < q.length; h++) { const i = q[h], x = i % c.w, y = i / c.w | 0;
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const X = x + dx, Y = y + dy; if (X < 0 || Y < 0 || X >= c.w || Y >= c.h) continue; const j = Y * c.w + X; if (dist[j] >= 0 || !g[j]) continue; dist[j] = dist[i] + 1; q.push(j); } }
+  F = {dist}; S.flows.set(id, F); if (S.flows.size > 4) S.flows.delete(S.flows.keys().next().value);
+  return F;
+}
+/* a keyboard walks the nearest of eight directions, re-aimed as it goes: that walk, not only the straight line, must reach (x, y),
+   or a shallow line past a corner would send the hero straight into it */
+function keyWalk(S, x, y, tx, ty) { for (let n = 0; n < 120; n++) { const dx = tx - x, dy = ty - y, d = Math.hypot(dx, dy); if (d < 3) return true; const ux = Math.abs(dx / d) > .38 ? Math.sign(dx) : 0, uy = Math.abs(dy / d) > .38 ? Math.sign(dy) : 0, m = Math.hypot(ux, uy), st = Math.min(2, d); x += ux / m * st; y += uy / m * st; if (walkBlocked(S, x, y)) return false; } return false; }
+function keyEscape(S, path, px, py) {
+  /* the shortest open eight-way step after which the route ahead can be walked straight; else the longest open step toward it */
+  const ahead = path.slice(0, 6); let best = null, bv = Infinity;
+  for (let a = 0; a < 8; a++) { const ux = Math.round(Math.cos(a * Math.PI / 4)), uy = Math.round(Math.sin(a * Math.PI / 4)), m = Math.hypot(ux, uy);
+    for (let s = 2; s <= 16; s += 2) { const x = px + ux / m * s, y = py + uy / m * s; if (walkBlocked(S, x, y)) break;
+      for (let n = ahead.length - 1; n >= 0; n--) { const p = ahead[n]; if (Math.hypot(p.x - x, p.y - y) > 3 && lineClear(S, x, y, p.x, p.y) && keyWalk(S, x, y, p.x, p.y)) { const v = s - n * 8; if (v < bv) { bv = v; best = {x, y}; } break; } } } }
+  return best;
+}
+/** Where the guide arrow should point from (px, py) toward (tx, ty): null when the straight line is walkable (or no route is found). */
+export function routeAim(S, px, py, tx, ty) {
+  if (lineClear(S, px, py, tx, ty)) return null;
+  const path = routePath(S, px, py, tx, ty); if (!path) return null;
+  /* the farthest clear point with the most clearance: padded first, then bare; "farthest" is measured along the route, so a
+     point the route only reaches after a detour is never taken as a short cut through a gap too narrow for eight directions */
+  let best = null; for (const pad of [ROUTE.pad, 0]) { let L = 0, q = path[0]; for (const p of path) { L += Math.hypot(p.x - q.x, p.y - q.y); q = p; if (L > ROUTE.reach) break; const d = Math.hypot(p.x - px, p.y - py); if (d > 6 && lineClear(S, px, py, p.x, p.y, pad) && keyWalk(S, px, py, p.x, p.y)) best = p; } if (best && Math.hypot(best.x - px, best.y - py) > 12) break; }
+  /* squeezed into a gap narrower than a route cell: the open eight-way step that lands nearest the goal */
+  if (!best) best = keyEscape(S, path, px, py) || path[Math.min(path.length - 1, 3)];
+  return best && {x: Math.round(best.x), y: Math.round(best.y)};
+}
+let routeMemo = {key: '', aim: null};
+function routed(S, r) {
+  const p = H.player; if (!r || !p || r.arrived) return r;
+  const key = `${S.key}|${Math.floor(p.x / 8)}|${Math.floor(p.y / 8)}|${r.x | 0}|${r.y | 0}`;
+  if (routeMemo.key !== key) routeMemo = {key, aim: routeAim(S, p.x, p.y, r.x, r.y)};
+  return routeMemo.aim ? {...r, aim: routeMemo.aim, route: true} : r;
 }
 /* a villager quest's town target (game/quests.js stepTarget): a person in a room ({kind:'npc', key, room}) or a building's door
    ({kind:'building', id}); from another room the arrow points at its way out first */
@@ -746,7 +831,7 @@ function questGuide(S, target) {
   } else if (S.room) { q = S.points.find(p => p.type === 'exit'); label = `Outside to the ${place}`; }
   else { q = door; label = place; }
   if (!q) return null;
-  return {room: S.key, x: q.sx, y: q.sy, label, arrived: !!H.player && Math.hypot(H.player.x - q.sx, H.player.y - q.sy) <= 12};
+  return routed(S, {room: S.key, x: q.sx, y: q.sy, label, arrived: !!H.player && Math.hypot(H.player.x - q.sx, H.player.y - q.sy) <= 12});
 }
 /** oct25-followups2 (tutorial step 3, "use something"): the closest thing in this room the hero can use, for the card to
  * name and the guide arrow to point at. Inside a room the way out is only a last resort. Read-only. */

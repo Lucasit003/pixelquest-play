@@ -33,10 +33,15 @@ export function useDefeatBoost(s){const h=H(s);if(h.defeat!==1)return false;h.de
 /* the one-time Pets pointer: the first time Home is entered after the first level win */
 export const petPointerDue=(s,won)=>!H(s).petPointer&&!!won;
 export function markPetPointer(s){H(s).petPointer=true;}
-export const PET_POINTER_TEXT='Your cat has friends! Visit Pets to choose who travels with you.';
+export const PET_POINTER_TEXT='Your cat has friends! Visit Pets to meet them.';
 /* a subject's first Library open: offer the placement check when a stated grade above 2 has no placement and no work in it */
 export function placementOffer(s,subject,hasWork){const g=s.schoolGrade;if(!(g>2)||H(s).offered.includes(subject))return null;if((s.placement?.[subject]|0)>0||hasWork)return null;return g;}
 export function markOffered(s,subject){const h=H(s);if(!h.offered.includes(subject))h.offered.push(subject);}
 /* kidfix-b-oct31, the first-cast moment: true the first time this ability is cast in a level on this save (then marked) */
 export const firstCastDue=(s,id)=>!!id&&!(H(s).firstCast||[]).includes(id);
 export function markFirstCast(s,id){const h=H(s);(h.firstCast||(h.firstCast=[])).includes(id)||h.firstCast.push(id);}
+/* improve20-c-oct31, "Too easy? Skip ahead": on a lesson's first screen, offer the existing placement check for its subject while the subject
+   has no placement and the topic sits below the grade the player stated at the title (s.schoolGrade), or no grade was stated (null or 0,
+   "Not sure"). rung: the topic's grade (academics/lessons.js rungOf); checkable: the subject has a check at the topic's stage. The check
+   only ever raises a placement; nothing places on its own. */
+export function skipAheadDue(s,subject,rung,checkable){if(!checkable||(s?.placement?.[subject]|0)>0)return false;const g=s?.schoolGrade;return g==null||g===0||rung<g;}

@@ -2953,3 +2953,75 @@ dialog[data-view=lesson-quiz] .question:has(#quiz-feedback:not(:empty)) .tile-al
  #modal[data-view=lesson-cheer] .cheer-stage{height:84px;margin:6px auto 0}#modal[data-view=lesson-cheer] .cheer-stage .topic-art,#modal[data-view=lesson-cheer] .cheer-stage .ta-body,#modal[data-view=lesson-cheer] .cheer-stage canvas,#modal[data-view=lesson-cheer] .cheer-stage img{width:80px;height:80px}#modal[data-view=lesson-cheer] .test-cheer .am-score{margin:4px 0}}
 /* once answered (the card's compact state), the scene steps down like the guide does, so the question keeps more width */
 #modal#modal[data-view=lesson-quiz] .question.qf:has(#quiz-feedback:not(:empty)) .pd-canvas{width:132px;height:75px}
+/* ---------- improve20-c-oct31: earned pets, the Trophy Hall, the hero show card, the unlock preview, Skip ahead ---------- */
+.pet-card.pet-locked .pet-portrait{filter:grayscale(.85) brightness(.55)}
+.pet-card.pet-locked h3,.pet-card.pet-locked>p{color:var(--muted)}
+.pet-card .pet-source{clear:both;margin:6px 0 8px;padding:6px 8px;background:rgba(0,0,0,.28);color:var(--gold);font-size:var(--fs-s,14px)}
+.pet-card .pet-source strong{color:var(--ink)}
+.pet-moment{position:absolute;left:50%;top:18%;z-index:40;transform:translateX(-50%);display:flex;align-items:center;gap:10px;padding:10px 18px 10px 10px;border:calc(4*var(--u)) solid transparent;border-image:url(ui/skin/pl-plate.png) 12 fill/calc(12*var(--u)) stretch;image-rendering:pixelated;pointer-events:none;animation:pet-moment-in .35s cubic-bezier(.2,1.4,.4,1) both;transition:opacity .5s}
+.pet-moment.out{opacity:0}
+.pet-moment canvas{width:96px;height:72px;image-rendering:pixelated}
+.pet-moment-text{display:flex;flex-direction:column;gap:2px;max-width:320px}
+.pet-moment-text strong{color:var(--gold);font-size:22px;letter-spacing:1px}
+.pet-moment-text span{color:var(--ink);font-size:15px}
+@keyframes pet-moment-in{from{opacity:0;transform:translate(-50%,-12px) scale(.9)}to{opacity:1;transform:translate(-50%,0) scale(1)}}
+:root[data-motion=reduced] .pet-moment{animation:none}
+@media (prefers-reduced-motion:reduce){.pet-moment{animation:none}}
+.trophy-count{margin:0 0 10px}
+.trophy-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(188px,1fr));gap:12px}
+.trophy{display:flex;flex-direction:column;align-items:center;text-align:center;padding:4px 2px 8px}
+.trophy-art{width:176px;height:148px;image-rendering:pixelated}
+.trophy h3{margin:6px 0 2px;font-size:16px;line-height:1.2}
+.trophy-meta{display:flex;align-items:center;justify-content:center;gap:4px;margin:0;color:var(--ink-2);font-size:14px}
+.trophy-meta img{image-rendering:pixelated}
+.trophy-line{margin:4px 0 0;color:var(--muted);font-size:13px;font-style:italic;line-height:1.3}
+.trophy-silver h3{color:#e3e8f0}.trophy-gold h3{color:var(--gold)}.trophy-bronze h3{color:#e2a46a}
+.trophy-dark h3{color:var(--faint)}
+.trophy .trophy-line.subtle{font-size:13px;font-style:normal}
+.hero-show{display:flex;flex-direction:column;align-items:center;gap:10px;padding:8px 0}
+.hshow-card{width:min(760px,100%);padding:22px 28px;border:calc(12*var(--u)) solid transparent;border-image:url(ui/skin/pl-frame.png) 19 fill/calc(24*var(--u)) round;image-rendering:pixelated;background:linear-gradient(180deg,#1a2338,#26304a);background-clip:padding-box}
+.hshow-title{text-align:center;color:var(--gold-deep);font-size:13px;letter-spacing:3px;font-weight:700}
+.hshow-body{display:flex;align-items:center;gap:22px;margin-top:8px}
+.hshow-figure{position:relative;flex:none;width:200px;height:200px;display:flex;align-items:flex-end;justify-content:center;background:radial-gradient(ellipse 60% 14% at 50% 94%,rgba(0,0,0,.45),transparent 70%)}
+.hshow-figure #hshow-hero{width:180px;height:196px;image-rendering:pixelated}
+.hshow-figure #hshow-pet{position:absolute;right:-18px;bottom:0;width:72px;height:56px;image-rendering:pixelated}
+.hshow-info{flex:1;min-width:0}
+.hshow-name{margin:0;font-size:34px;color:var(--ink);overflow-wrap:anywhere}
+.hshow-class{margin:2px 0;color:var(--accent,var(--gold));font-size:18px;font-weight:700}
+.hshow-honour{margin:0;color:var(--gold);font-size:13px;letter-spacing:2px;text-transform:uppercase}
+.hshow-pet{margin:2px 0 0;color:var(--ink-2);font-size:14px}
+.hshow-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px;margin-top:12px}
+.hshow-stat{display:flex;flex-direction:column;align-items:center;padding:8px 4px;border:calc(3*var(--u)) solid transparent;border-image:url(ui/skin/pl-slot.png) 5 fill/calc(6*var(--u)) stretch;image-rendering:pixelated}
+.hshow-stat img{width:32px;height:32px;image-rendering:pixelated}
+.hshow-stat strong{font-size:22px;color:var(--ink)}
+.hshow-stat span{font-size:14px;color:var(--muted)}
+.hshow-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center}
+.edu-unlock .edu-unlock-preview{display:block;width:204px;height:164px;margin:0 auto 4px;image-rendering:pixelated}
+.edu-unlock.has-preview .edu-unlock-rune{display:none}
+@media(max-height:700px){dialog[data-view=unlock] .edu-unlock .edu-unlock-preview{float:left;width:204px;height:164px;margin:-24px -50px -60px -40px}}
+#skip-ahead.skip-ahead{color:var(--gold);white-space:nowrap}
+html.m-mode .hshow-card{padding:10px 14px}
+html.m-mode .hshow-figure{width:130px;height:150px}
+html.m-mode .hshow-figure #hshow-hero{width:120px;height:131px}
+html.m-mode .hshow-name{font-size:24px}
+html.m-mode .hshow-stats{grid-template-columns:repeat(5,1fr);gap:4px;margin-top:6px}
+html.m-mode .hshow-stat{padding:4px 2px}
+html.m-mode .hshow-stat strong{font-size:16px}
+html.m-mode .hshow-stat span{font-size:14px;line-height:1.1;text-align:center}
+html.m-mode .trophy-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+html.m-mode .trophy-art{width:144px;height:121px}
+html.m-mode .pet-moment{top:10%}
+/* improve20-b-oct31 #13 (kid-appeal playtest: on a phone, Home -> Abilities needed a scroll to reach the cards): at phone heights the
+   Home header, tabs, hero line and rune bar shrink so the first row of ability cards shows at 844x390 and 667x375. Tabs stay on one
+   row and scroll sideways. Desktop is unchanged (phone mode only). */
+@media(max-height:500px){
+ html.m-mode dialog[data-view=home] .modal-head{margin-bottom:2px;padding:0 0 4px}
+ html.m-mode dialog[data-view=home] .modal-head h2{font-size:20px;line-height:1.1;margin:0}
+ html.m-mode dialog[data-view=home] .modal-head .close{width:36px;height:36px;min-height:36px}
+ html.m-mode dialog[data-view=home] .tabs{flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;gap:4px;margin:0 0 4px;scrollbar-width:none}
+ html.m-mode dialog[data-view=home] .tabs::-webkit-scrollbar{display:none}
+ html.m-mode dialog[data-view=home] .tabs button{flex:none;min-height:34px;padding:2px 10px;font-size:14px}
+ html.m-mode dialog[data-view=home] .notes{margin:0 0 4px;padding:0 10px;font-size:16px;line-height:1.3}
+ html.m-mode dialog[data-view=home] .rune-bar{margin:0 0 4px;padding:0 10px;font-size:16px;line-height:1.3;min-height:0}
+ html.m-mode dialog[data-view=home] .home-abilities{padding-top:0}
+}

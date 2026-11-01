@@ -25,6 +25,8 @@ export function makeArt({loader,json,mod}={}){
  /* the PixelLab star for the running star total and a cleared pad's stars (art/pixellab/tiers/) */
  try{loader(new URL('../../ui/skin/pl-icons/tier-star.png',BASE)).then(i=>{art.star=i;}).catch(()=>{});}catch{}
  const plateReady=loader(new URL('../../ui/skin/pl-plate.png',BASE)).then(i=>{art.plate=i;}).catch(()=>{});
+ /* improve20-c-oct31: the tier crests, as a cleared pad's Heroic or Legendary badge */
+ for(const k of ['heroic','legendary'])try{loader(new URL(`../../ui/skin/pl-icons/tier-${k}.png`,BASE)).then(i=>{(art.crest||={})[k]=i;}).catch(()=>{});}catch{}
  const lockReady=loader(new URL('../../ui/skin/pl-icons/tier-lock.png',BASE)).then(i=>{art.lock=i;}).catch(()=>{});
  art.uiReady=Promise.all([plateReady,lockReady,loader(new URL('ui-oct25.png',BASE)).then(i=>{art.ui=i;}),json(new URL('ui-oct25.json',BASE)).then(j=>{art.uiMeta=j;})]).catch(()=>{});
  if(typeof FontFace!=='undefined'&&typeof document!=='undefined'&&document.fonts){for(const [fam,file] of [['PixelOperator','PixelOperator.ttf'],['PixelOperatorBold','PixelOperator-Bold.ttf']]){const f=new FontFace(fam,`url(${new URL('../../fonts/'+file,BASE).href})`);f.load().then(x=>{document.fonts.add(x);widths.clear();}).catch(()=>{});}}
@@ -109,7 +111,9 @@ function drawPad(c,art,n,sel,t){const x=n.x,y=n.y;
 /* Ambient life from pack loops: a bird crosses the view every 8 s and a butterfly every 9 s, on gentle curves. */
 function drawFlyers(c,art,vx0,vy0,t,birdOnly){const bird=Math.floor(t/8),bp=(t%8)/8,bdir=bird%2?-1:1;if(bp<.7){const p=bp/.7,x=vx0+(bdir>0?-30+p*(VIEW_W+60):VIEW_W+30-p*(VIEW_W+60)),y=vy0+60+(bird*53%90)+Math.sin(p*6)*8;blit(c,art,'bird',x,y,{i:frameIndex(art,'bird',t),flip:bdir<0,ay:.5});}
  if(birdOnly)return;const fly=Math.floor((t+4)/9),fp=((t+4)%9)/9;if(fp<.8){const p=fp/.8,x=vx0+40+p*(VIEW_W-80),y=vy0+170-(fly*37%60)+Math.sin(p*14)*10+Math.sin(p*3)*20;blit(c,art,'butterfly',x,y,{i:frameIndex(art,'butterfly',t),flip:fly%2===1,ay:.5});}}
-function drawReveal(c,art,r,t){const n=r.pts.length,k=Math.floor(r.p*(n-1));for(let j=0;j<5;j++){const i=k-j*5;if(i<0)break;const [x,y]=r.pts[i];blit(c,art,'sparkle',x,y+12,{i:Math.floor(t*14)+j*3,alpha:1-j*.18});}}
+/* improve20-c-oct31: the new road draws itself: a gold line follows the light along the road's own path (worldmap.js runs it over 1.2 s on a
+   painted board and skips it for reduced motion) */
+function drawReveal(c,art,r,t){const n=r.pts.length,k=Math.floor(r.p*(n-1));if(k>0){c.save();c.lineCap='round';c.lineJoin='round';for(const [w,col] of [[5,'rgba(58,34,10,.55)'],[3,'#ffd65a'],[1,'#fff6c8']]){c.lineWidth=w;c.strokeStyle=col;c.beginPath();c.moveTo(r.pts[0][0],r.pts[0][1]);for(let i=1;i<=k;i++)c.lineTo(r.pts[i][0],r.pts[i][1]);c.stroke();}c.restore();}for(let j=0;j<5;j++){const i=k-j*5;if(i<0)break;const [x,y]=r.pts[i];blit(c,art,'sparkle',x,y+12,{i:Math.floor(t*14)+j*3,alpha:1-j*.18});}}
 
 
 /* ---------- a painted board (owner 16 Oct: "make our map simpler") ---------- */
@@ -143,7 +147,7 @@ function drawBoard(c,v,art,S,t){if(v.reduced)t=0;const {x:ox,y:oy}=camera(v.chap
   if(locked){if(ready(art.lock))c.drawImage(art.lock,x-6,y-10,12,12);continue;}
   if(n.next){const a=.5+.35*Math.sin(t*Math.PI*2/1.5);c.save();c.globalAlpha=a;c.fillStyle='#ffd84a';pixEllipse(c,x,y,P[0]+1,P[1]+1);c.restore();c.fillStyle='#fff3b0';c.globalAlpha=.5+a;for(const [dx,dy] of [[-P[0]-2,0],[P[0]+2,0]])c.fillRect(x+dx-(dx<0?0:1),y+dy-1,1,3);c.globalAlpha=1;}
   if(n.state==='done'&&n.kind==='level'){const i=frameIndex(art,'flag',t)+Math.floor(x),tf=tintedFlag(art,n.tier,((i%2)+2)%2);front.push(()=>{const f=cell(art,'flag',i),fx=x+14,fy=y-31;if(tf)c.drawImage(tf,fx,fy,26,32);else if(f&&ready(art.ui))c.drawImage(art.ui,...f,fx,fy,26,32);});
-   if(n.stars&&art.star){const k=n.stars;c.fillStyle='#203238';c.fillRect(x-14,y-4,29,11);for(let j=0;j<3;j++){const sx=x-13+j*9,sy=y-3;c.save();c.globalAlpha=j<k?1:.35;c.imageSmoothingEnabled=false;c.drawImage(art.star,3,3,26,26,sx,sy,8,8);c.restore();}}}
+   /* improve20-c-oct31: a pad cleared on Heroic (or Legendary) wears that tier's crest, beside the flag's tint */if((n.tier==='heroic'||n.tier==='legendary')&&art.crest?.[n.tier]){const cr=art.crest[n.tier];front.push(()=>{const bx=x-P[0]-15,by=y-17;c.save();c.fillStyle='rgba(20,16,12,.7)';pixEllipse(c,bx+9,by+10,9,9);c.imageSmoothingEnabled=false;c.drawImage(cr,bx+1,by+2,16,16);c.restore();});}if(n.stars&&art.star){const k=n.stars;c.fillStyle='#203238';c.fillRect(x-14,y-4,29,11);for(let j=0;j<3;j++){const sx=x-13+j*9,sy=y-3;c.save();c.globalAlpha=j<k?1:.35;c.imageSmoothingEnabled=false;c.drawImage(art.star,3,3,26,26,sx,sy,8,8);c.restore();}}}
   if(n.boss&&n.state!=='done'&&n.state!=='soon')front.push(()=>{const f=cell(art,'icon-skull');if(f&&ready(art.ui))c.drawImage(art.ui,f[0],f[1],f[2],f[3],x-P[0]-14,y-10,16,16);});}
  for(const f of front)f();
  drawSmallHero(c,v,t);

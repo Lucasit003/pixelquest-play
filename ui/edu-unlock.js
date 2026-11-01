@@ -35,11 +35,11 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
    level names); ids stay #unlock-next so existing flows keep working. Styling: .edu-unlock in library.css. */
 /* awakening:true is the first-lesson awakening of a class's starter (academics/awakening.js): the copy says the
    training awakened it, never that mastery earned it, and an Archivist line (quote) can follow. */
-export function unlockBannerHTML(a,{heroName='',subjectName=a.subject,subjectColor='#e7c77e',level=1,description='',why='',awakening=false,quote='',slot=-1,icon='',tryIt=null}={}){
+export function unlockBannerHTML(a,{heroName='',subjectName=a.subject,subjectColor='#e7c77e',level=1,description='',why='',awakening=false,quote='',slot=-1,icon='',tryIt=null,preview=false}={}){
  return `<div class="unlock edu-unlock${awakening?' edu-awakening':''}" role="status" aria-live="assertive" style="--accent:${esc(subjectColor)}">
 <div class="edu-unlock-rays" aria-hidden="true"></div>${awakening?'<div class="edu-awaken-ring" aria-hidden="true"></div>':''}
 <span class="eyebrow edu-unlock-eyebrow">KNOWLEDGE BECOMES POWER</span>
-${/* the ability's own icon when the caller has one (polish, 19 Oct); the generic rune otherwise. `icon` is trusted markup from ui/icons.js */icon?`<div class="rune edu-unlock-rune edu-unlock-icon" aria-hidden="true">${icon}</div>`:'<div class="rune edu-unlock-rune" aria-hidden="true">✧</div>'}
+${/* the ability's own icon when the caller has one (polish, 19 Oct); the generic rune otherwise. `icon` is trusted markup from ui/icons.js */icon?`<div class="rune edu-unlock-rune edu-unlock-icon" aria-hidden="true">${icon}</div>`:'<div class="rune edu-unlock-rune" aria-hidden="true">✧</div>'}${/* improve20-c-oct31: a looping preview of the ability, played by the hero's own animation for it at 2x (main.js paints it; the icon steps aside once it draws) */preview?`<canvas class="edu-unlock-preview" data-preview="${esc(a.id)}" width="204" height="164" role="img" aria-label="${esc(a.name)}, played by your hero"></canvas>`:''}
 <span class="tag edu-unlock-ribbon">${awakening?'ABILITY AWAKENED':'ABILITY UNLOCKED'}</span>
 <h2 class="edu-unlock-name">${esc(a.name)}</h2>
 <p class="subtle edu-unlock-meta">${esc(heroName)} · ${esc(a.branch||'')} · ${awakening?'Your first ability':`<span class="edu-unlock-subject">${esc(subjectName)} knowledge</span> · Hero level ${esc(level)}`}</p>

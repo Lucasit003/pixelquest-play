@@ -31,6 +31,16 @@ export const BARRACKS_CSS = `.grid.barracks-grid{grid-template-columns:repeat(au
 :where(.comp-card .comp-top){display:flex;gap:10px;align-items:center}
 :where(.comp-portrait){width:96px;height:96px;image-rendering:pixelated;flex:none}
 .comp-card.locked .comp-portrait{filter:brightness(0) opacity(.45)}
+.barracks-grid .recruit-card{grid-column:1/-1;gap:8px}
+.recruit-card h3{margin:2px 0}
+.recruit-card .recruit-pitch{margin:2px 0 0;color:#e9dcc0}
+.recruit-card .recruit-quest{margin:2px 0 0}
+:where(.recruit-steps){list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.recruit-step{display:flex;gap:8px;align-items:flex-start;padding:4px 8px;border-radius:4px;opacity:.75}
+.recruit-step small{display:block;opacity:.85}
+.recruit-step[data-state=done]{opacity:.6;text-decoration:line-through}
+.recruit-step[data-state=next]{opacity:1;background:rgba(227,184,90,.16);outline:2px solid #e3b85a;color:#ffe9a8}
+.recruit-mark{flex:none;width:1.2em;text-align:center;color:#e3b85a}
 :where(.comp-bar){height:8px;background:#1d1a16;border:1px solid #6b5a3a;border-radius:2px;overflow:hidden}
 .comp-bar>span{display:block;height:100%;background:linear-gradient(#e9c46a,#b8862f)}
 :where(.comp-facts){margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:3px}
@@ -53,11 +63,7 @@ export function barracksHTML(save) {
   const ids = Object.keys(COMPANIONS).filter(hireable), withId = save?.party?.with;
   const cards = ids.map(id => {
     const c = COMPANIONS[id], m = save?.party?.crew?.[id], role = ROLES[c.role]?.name || c.role;
-    if (!m) {
-      const q = c.quest, st = questState(save, q), step = st === 'active' ? currentStep(save, q) : null;
-      const how = st === 'locked' ? opensText(q) : st === 'open' ? `Talk to ${QUESTS[q].giver.name} to begin.` : step ? `Quest step: ${step.text}` : '';
-      return `<div class="card comp-card locked" data-companion="${id}"><div class="comp-top"><canvas class="comp-portrait" data-comp-sprite="${id}" width="96" height="96" aria-hidden="true"></canvas><div><span class="tag">${esc(role.toUpperCase())} · NOT YET JOINED</span><h3>${esc(c.name)}</h3></div></div><p>Joins after the quest <strong>${esc(QUESTS[q].title)}</strong>. ${esc(how)}</p></div>`;
-    }
+    if (!m) return recruitCardHTML(save, id);
     /* ready2fix-oct30 #11: the level line says what fills the bar in plain words (game/party.js runXP, numbers unchanged) */
     const bar = levelBar(m.xp), L = bar.level, nt = nextTrait(id, L), have = traitsAt(id, L), hired = withId === id;
     return `<div class="card comp-card${hired ? ' selected' : ''}" data-companion="${id}"><div class="comp-top"><canvas class="comp-portrait" data-comp-sprite="${id}" width="96" height="96" aria-hidden="true"></canvas><div><span class="tag">${esc(role.toUpperCase())} · LEVEL ${L}</span><h3>${esc(c.name)}</h3><small class="subtle">${esc(c.line)}</small></div></div>`
@@ -73,6 +79,23 @@ export function barracksHTML(save) {
   /* oct25-exploit2 O1: the rules note is the grid's last cell, beside the card on a wide screen (at 1280x720 it ran under the frame's
      bottom edge below the card); on a phone it still sits under the card */
   return `<div class="grid barracks-grid">${cards}<p class="subtle barracks-note">One companion travels with you at a time. The wage comes out of a won run’s gold; a lost run costs nothing, and your first ${TRIAL_RUNS} wins together are free. Companions never change what you learn or your abilities.</p></div>`;
+}
+
+/* improve20-b-oct31 #11 (kid-appeal playtest, shot 15: one silhouette card in a big empty panel; "Who's that? How do I get him?"): a
+   companion not yet joined gets a full "How to recruit" card: his portrait, a one-line pitch, his quest's steps from game/quests.js
+   (done ones ticked, the next one highlighted) and where to go for it. Only companions with approved art reach here (hireable). */
+export function recruitSteps(save, id) {
+  const q = COMPANIONS[id].quest, Q = QUESTS[q], st = questState(save, q), cur = currentStep(save, q), at = st === 'done' ? Q.steps.length : cur ? cur.index : -1;
+  const steps = Q.steps.map((x, i) => ({text: x.text, where: stepWhere(q, x), state: i < at ? 'done' : i === at ? 'next' : 'later'}));
+  /* a quest that has not opened yet starts with what opens it */
+  if (st === 'locked') steps.unshift({text: opensText(q).replace(/^Opens after (.+)\.$/, 'Beat $1.'), where: (Q.opens?.done || []).map(l => levelById(l)?.name || l).join(' and '), state: 'next', gate: true});
+  return {quest: q, title: Q.title, state: st, steps, next: steps.find(x => x.state === 'next') || null};
+}
+export function recruitCardHTML(save, id) {
+  const c = COMPANIONS[id], role = ROLES[c.role]?.name || c.role, R = recruitSteps(save, id);
+  const li = x => `<li class="recruit-step" data-state="${x.state}"><span class="recruit-mark" aria-hidden="true">${x.state === 'done' ? '✓' : x.state === 'next' ? '▶' : '·'}</span><span>${esc(x.text)}${x.state === 'next' && x.where ? `<small>Where: ${esc(x.where)}</small>` : ''}</span></li>`;
+  return `<div class="card comp-card recruit-card" data-companion="${id}" data-quest-state="${R.state}"><div class="comp-top"><canvas class="comp-portrait" data-comp-sprite="${id}" width="96" height="96" aria-hidden="true"></canvas><div><span class="tag">${esc(role.toUpperCase())} · NOT YET JOINED</span><h3>How to recruit ${esc(c.short)}</h3><p class="recruit-pitch">${esc(c.pitch || c.line)}</p></div></div>`
+    + `<p class="recruit-quest">Quest: <strong>${esc(R.title)}</strong></p><ol class="recruit-steps">${R.steps.map(li).join('')}</ol></div>`;
 }
 
 /** The level card: the hired companion and his wage, or why he stays home; and a quest step waiting on this level. */

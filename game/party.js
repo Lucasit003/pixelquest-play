@@ -26,7 +26,7 @@ export const ROLES = {
    scaled by 0.4 with the 24 Oct gold retune (docs/playtest/oct24-polish/ECONOMY.md) so each stays under 30% of a
    chapter's median replay gold (guardrail C7). */
 export const COMPANIONS = {
-  wil: {name: 'Wil Hobson', short: 'Wil', role: 'tank', quest: 'hobs-purse', wage: 10, line: 'The farmer’s son. Earnest, a bit clumsy, proud of his dad.',
+  wil: {name: 'Wil Hobson', short: 'Wil', role: 'tank', quest: 'hobs-purse', wage: 10, line: 'The farmer’s son. Earnest, a bit clumsy, proud of his dad.', pitch: 'A farm boy with a big shield. Nearby foes go for him, not you.',
     skill: {name: 'Hold the Line', text: 'Plants his shield. Foes close by turn to him (Legendary bosses ignore it).', cd: 8, radius: 60, taunt: 1.5, bossTaunt: 1.5},
     traits: [{at: 5, name: 'Sturdier', text: '+10% health'}, {at: 10, name: 'Shield Bash', text: 'Hold the Line pushes foes back'}, {at: 15, name: 'Second Wind', text: 'Gets up fast once a level'}],
     barks: {start: ['Shield’s up!', 'Behind me!', 'That one’s mine, I think.'], downed: 'Just catching my breath!', revived: 'Back on my feet!', join: 'Dad says I talk too much. I’ll talk less and hit more. For the farm!'}},

@@ -28,6 +28,7 @@ import {emptyGear,cleanGear,fromEquipment,syncScholar,ITEM} from '../game/gear.j
 import {GRADE_KEYS} from '../game/grade.js';
 import {emptyDelve,backfillDelve} from '../game/delve.js';
 import {syncTasks,TASK} from '../game/skills.js';
+import {emptyPets,cleanPets,syncPets,petOwned,FREE_PET} from '../game/pets.js';
 import {normalizeLook} from '../gfx/actors/hero-palette.js';
 import {emptyParty,cleanParty} from '../game/party.js';
 import {emptyQuests,cleanQuests} from '../game/quests.js';
@@ -60,7 +61,7 @@ export const VERSION=9;
 export const LADDER=3;
 export const LADDER2_RUNGS={'divine-shield':{gate:3,lvl:3},'hammer-of-light':{gate:6,lvl:4}};
 
-export function fresh(){return {version:VERSION,hero:'warrior',delve:emptyDelve(),skills:{crafting:0},adventurer:{tasks:{}},heroNames:{},fieldMission:cleanFieldMission(),level:1,xp:0,gold:30,mastery:{},answers:{},loadouts:{},equipment:{},potions:3,regenPotions:0,potionKind:'health',pet:'study',jewels:{owned:{},worn:{necklace:null,ring:null},pity:{}},gear:emptyGear(),house:{owned:{},items:[]},petBond:{},cleared:[],bossPhase2:false,cinematicSeen:false,schoolMode:null,settings:{sound:true,music:true,motion:!globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches,bindings:{...DEFAULT_BINDINGS}},started:false,lessons:{},kept:[],placement:{},levels:{},starPass:[],bestiary:{},/* v2:hub */boons:{pending:[],bounty:null},hub:{seen:[]},party:emptyParty(),quests:emptyQuests(),town:{seen:[]},/* fast travel (25 Oct, additive within v9) */travel:{places:[],hinted:false},/* daily goals (herocard-oct27, additive within v9, no streaks) */daily:emptyDaily(),/* titles (endfollow-oct29, additive within v9, cosmetic) */titles:[],/* kid-appeal help and the optional school grade (kidfix-a-oct31, additive within v9, game/hints.js) */hints:emptyHints(),runes:{},schoolGrade:null,/* v2:edu */awakened:false,/* v2:gamedesign */ladder:LADDER};}
+export function fresh(){return {version:VERSION,hero:'warrior',delve:emptyDelve(),skills:{crafting:0},adventurer:{tasks:{}},heroNames:{},fieldMission:cleanFieldMission(),level:1,xp:0,gold:30,mastery:{},answers:{},loadouts:{},equipment:{},potions:3,regenPotions:0,potionKind:'health',pet:'study',jewels:{owned:{},worn:{necklace:null,ring:null},pity:{}},gear:emptyGear(),house:{owned:{},items:[]},petBond:{},cleared:[],bossPhase2:false,cinematicSeen:false,schoolMode:null,settings:{sound:true,music:true,motion:!globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches,bindings:{...DEFAULT_BINDINGS}},started:false,lessons:{},kept:[],placement:{},levels:{},starPass:[],bestiary:{},/* v2:hub */boons:{pending:[],bounty:null},hub:{seen:[]},party:emptyParty(),quests:emptyQuests(),town:{seen:[]},/* fast travel (25 Oct, additive within v9) */travel:{places:[],hinted:false},/* daily goals (herocard-oct27, additive within v9, no streaks) */daily:emptyDaily(),/* titles (endfollow-oct29, additive within v9, cosmetic) */titles:[],/* kid-appeal help and the optional school grade (kidfix-a-oct31, additive within v9, game/hints.js) */hints:emptyHints(),runes:{},schoolGrade:null,/* earned pets (improve20-c-oct31, additive within v9, game/pets.js) */pets:emptyPets(),/* v2:edu */awakened:false,/* v2:gamedesign */ladder:LADDER};}
 
 const obj=v=>!!v&&typeof v==='object'&&!Array.isArray(v);
 const HEROES=['warrior','mage','rogue','ranger','paladin','berserker','summoner'];
@@ -225,6 +226,9 @@ const frac=(v,a,b)=>Math.max(a,Math.min(b,Number(v)||0));
     first-cast moment lists every ability it already owns, so only an ability unlocked from now on gets the moment. */
  s.runes=cleanRunes(value.runes,s);
  if(!Array.isArray(value.hints?.firstCast))s.hints.firstCast=Object.values(ABILITIES).flat().filter(a=>owns(s,a)).map(a=>a.id);
+ /* improve20-c-oct31 (game/pets.js): earned pets are additive within v9. A save without s.pets was written before pets had to be earned,
+    so it keeps all five (decided 31 Oct 2026 under the owner's delegation); a met source is latched, and a pet not owned falls back to the cat */
+ s.pets=cleanPets(value.pets,value.pets===undefined);syncPets(s);if(!petOwned(s,s.pet))s.pet=FREE_PET;
  syncTasks(s);
  s.version=VERSION;
  return s;
