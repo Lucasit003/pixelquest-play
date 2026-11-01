@@ -7,7 +7,7 @@
    The dummy is never drawn in code: only transforms of its image, plus the existing effect sprites. No timers: the scene
    only reacts to answers. Reduced motion: the still frame of each moment. */
 import {loadSprite,drawSprite} from '../gfx/actors/sprites.js';
-import {drawHeroFigure} from '../gfx/actors/hero-sprites.js';
+import {drawHeroFigure,previewAttackLen} from '../gfx/actors/hero-sprites.js';
 import {drawEffect} from '../gfx/combat-fx.js';
 import {motionReduced} from './juice.js';
 
@@ -52,8 +52,9 @@ export function mountDummyScene(root,{hero,health,cracked=false,extra=false}={})
    if(tw<1.1){ang+=.14*Math.exp(-tw*3.5)*Math.sin(tw*16);}
    if(st.crack){const tc=st.crackT==null?9:st.clock-st.crackT,p=still?1:Math.min(1,Math.max(0,tc)/.5);ang=1.15*p*p;dx=3*p;}
    c.save();c.translate(DUMMY_X+dx,GROUND);c.rotate(ang);c.drawImage(dummyImg,Math.round(-w/2),-h);c.restore();}
-  /* the hero: their own idle, attack and victory animations, gear look included, facing the dummy */
-  const ht=st.clock-st.heroT,state=st.hero==='attack'&&ht>.6?'idle':st.hero==='victory'&&ht>1.3?'idle':st.hero;if(state==='idle')st.hero='idle';
+  /* the hero: their own idle, attack and victory animations, gear look included, facing the dummy ('attack' is the class's showcase
+     attack, hero-sprites.js PREVIEW_ATTACK: the Ranger's arrow flies at the dummy, ownernotes-a-nov1) */
+  const ht=st.clock-st.heroT,state=st.hero==='attack'&&ht>Math.max(.6,previewAttackLen(hero))?'idle':st.hero==='victory'&&ht>1.3?'idle':st.hero;if(state==='idle')st.hero='idle';
   if(drawHeroFigure(heroCv,hero,{state,time:still?(state==='idle'?0:.3):(state==='idle'?st.clock:ht),front:false}))c.drawImage(heroCv,Math.round(HERO_X-51.5),GROUND+4-98);
   /* effects: the existing hit spark and straw-coloured splash particles, dust when it cracks */
   st.fx=st.fx.filter(f=>(f.life-=dt)>0);for(const f of st.fx){if(f.type==='dust'){drawSprite(c,'fx-dust','rise',f.max-f.life,f.x,f.y);}else drawEffect(c,f);}

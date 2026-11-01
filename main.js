@@ -70,7 +70,7 @@ import {loadAssets} from './gfx/assets.js';
 /* v2:perf */ import {perfBoot,prepareScene,prepareWork,loaderState} from './core/loader.js';
 import {regionAt} from './game/maps.js';
 import {BUILDINGS,drawWorld,drawMap,portrait,prewarm} from './gfx/world.js';
-/* v2:hub */ import {hubReady,hubState,hubUpdate,hubPrompt,hubInteract,hubTakeVisits,hubEvent,hubMapHtml,hubObjective,hubArriveAtGate,hubStartPlacing,hubCancelPlacing,hubPlacing,hubConfirmPlacing,hubNearestUsable,hubTravel,hubTravelHere,hubTakeUnlocked,hubStepOut,STEP_OUT,hubHeads} from './scenes/town.js';
+/* v2:hub */ import {hubReady,hubState,hubUpdate,hubPrompt,hubInteract,hubTakeVisits,hubEvent,hubMapHtml,hubObjective,hubArriveAtGate,hubStartPlacing,hubCancelPlacing,hubPlacing,hubConfirmPlacing,hubNearestUsable,hubTravel,hubTravelHere,hubTravelMap,hubTakeUnlocked,hubStepOut,STEP_OUT,hubHeads} from './scenes/town.js';
 import {travelList,travelBlocked,canTravel,placeName,takeTravelHint,townPlace} from './game/fasttravel.js';
 import {travelPickerHTML} from './ui/fasttravel-ui.js';
 /* v2:hub */ import {shopView,focusSubject} from './scenes/town-ui.js';
@@ -1351,10 +1351,18 @@ function fastTravel(){const why=travelWhy();if(why){if(mapOn)worldmap.notice(why
  /* the first-unlock hint has done its job once the picker opens */
  if($('#toast').classList.contains('travel-hint'))$('#toast').classList.remove('show','travel-hint');
  const here=mapOn?worldmap.here():world.zone==='town'&&hubReady()?(t=>t&&townPlace(t))(hubTravelHere()):null;
- show('travel',header('Fast travel','Go to any place you have already visited. It is free. Walk to new places to add them.')+travelPickerHTML(travelList(s),{here}));
+ /* ownernotes-a-nov1 (owner: "Fast travel map: make it look a lot better"): a map per region (ui/fasttravel-ui.js); it opens on the region the
+    hero is in (the world map: the chapter on show), the tabs switch region, and each shown map lays out its names (ui/map-you.js fitMap) */
+ const touch=document.documentElement.classList.contains('m-mode'),tab=mapOn?worldmap.debugState?.()?.chapter||null:null;
+ show('travel',header('Fast travel','Go to any place you have already visited. It is free. Walk to new places to add them.')+travelPickerHTML(travelList(s),{here,town:hubTravelMap(),tab,touch}));
  $$('[data-travel]').forEach(b=>b.onclick=()=>travelGo(b.dataset.travel));
- /* the section the hero is in comes into view, its first open place focused (the world map: that chapter's stops) */
- const hb=$('#modal-content .travel-here'),first=hb?.parentNode.querySelector('[data-travel]')||$('[data-travel]');hb?.scrollIntoView?.({block:'nearest'});(first||$('#modal-content [data-close]'))?.focus({preventScroll:!!hb});}
+ const root=$('#modal-content'),fit=k=>{const bd=root.querySelector(`[data-board="${k}"]`);if(!bd)return;fitMap(bd);requestAnimationFrame(()=>{if(!bd.hidden)fitMap(bd);});const im=bd.querySelector('.pq-map-image');if(im&&!im.complete)im.addEventListener('load',()=>{if(!bd.hidden)fitMap(bd);},{once:true});};
+ const showTab=(k,focus)=>{for(const b of root.querySelectorAll('[data-tab]')){const on=b.dataset.tab===k;b.classList.toggle('is-on',on);b.setAttribute('aria-selected',String(on));}
+  for(const bd of root.querySelectorAll('[data-board]'))bd.hidden=bd.dataset.board!==k;for(const f of root.querySelectorAll('[data-fold]'))f.hidden=f.dataset.fold!==k;fit(k);if(focus)root.querySelector(`[data-board="${k}"] [data-travel]`)?.focus({preventScroll:true});};
+ root.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>showTab(b.dataset.tab,false));
+ const on=root.querySelector('.travel-tab.is-on')?.dataset.tab||'town';showTab(on,false);
+ /* the first open place on the region shown is focused (the tab bar stays reachable with Shift+Tab) */
+ (root.querySelector(`[data-board="${on}"] [data-travel]`)||root.querySelector('[data-close]'))?.focus({preventScroll:true});}
 function travelGo(id){if(!canTravel(s,id)||travelWhy())return;forceClose();const name=placeName(id),reduced=settingsReducedMotion(s);
  if(id.startsWith('town:')){if(mapOn){closeWorldMap();world.town();hubArriveAtGate(world);}else if(world.zone!=='town')return;hubTravel(world,id.slice(5));travelFade(name,reduced);updateHUD();}
  else if(mapOn){if(worldmap.travelTo(id))worldmap.notice(name);}

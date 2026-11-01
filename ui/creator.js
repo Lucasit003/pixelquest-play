@@ -8,7 +8,7 @@
    Styling: ui/creator.css (kept out of style.css), added once by creatorStyles(). */
 import {HAIR_COLOURS,SKIN_TONES,EYE_COLOURS,LOOK_PARTS,lookParts,normalizeLook,isDefaultLook} from '../gfx/actors/hero-palette.js';
 import {HERO_BODIES,heroArtKey,setHeroBodies} from '../gfx/actors/hero-directions.js';
-import {drawHeroFigure,drawHeroBust,setHeroColours,preloadHero} from '../gfx/actors/hero-sprites.js';
+import {drawHeroFigure,drawHeroBust,setHeroColours,preloadHero,previewAttackLen} from '../gfx/actors/hero-sprites.js';
 import {heroDrawId} from '../gfx/actors/hero-looks.js';
 import {loadSprite,spriteReady} from '../gfx/actors/sprites.js';
 /* bust crops for the body thumbnails (lightload-oct27), one Image per art key */
@@ -135,6 +135,8 @@ export function wireCreator(root,opts={}){const el=root?.querySelector?.('.creat
    sprite's own frames: previewPose gives the idle loop with one attack every PREVIEW_PERIOD seconds. */
 export const PREVIEW_PERIOD=3.5;
 export function previewPose(t,attack=.6,period=PREVIEW_PERIOD,motion=true){if(!motion)return {state:'idle',time:0};const p=((t%period)+period)%period,a=period-attack;return p>=a?{state:'attack',time:p-a}:{state:'idle',time:t};}
-export function attackLen(cls){try{const st=loadSprite('hero-'+cls)?.meta?.states?.attack;return st?.frames&&st?.fps?st.frames/st.fps:.6;}catch{return .6;}}
+/* ownernotes-a-nov1: the length of the class's showcase attack (hero-sprites.js PREVIEW_ATTACK: the Ranger's shot and its arrow's
+   flight, the Summoner's raised totem, the Paladin's slam, the Berserker's chop), not the melee row */
+export function attackLen(cls){try{return previewAttackLen(cls);}catch{return .6;}}
 export function fitCanvas(cv){const r=cv?.getBoundingClientRect?.(),w=Math.round(r?.width||0),h=Math.round(r?.height||0);if(w>=64&&h>=48&&(cv.width!==w||cv.height!==h)){cv.width=w;cv.height=h;}return cv;}
 export function drawCreatorFigure(cv,cls,{fit=false,...o}={}){if(fit)fitCanvas(cv);if(!fit||cv.width<64||cv.height<48)if(cv.width!==192||cv.height!==144){cv.width=192;cv.height=144;}return drawHeroFigure(cv,cls,{time:0,front:false,...o});}

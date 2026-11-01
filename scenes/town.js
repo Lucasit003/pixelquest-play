@@ -12,7 +12,8 @@
 import VILLAGE from '../assets/town/oakhaven-approaches-oct13.js';
 import {STAGE} from '../game/stage.js'; /* v2:ui-mobile */
 import {SUBJECTS, PETS} from '../game/data.js';
-import {petThePet} from '../gfx/actors/pet-sprites.js';
+import {petThePet,pettingNow,PAT_SPOT} from '../gfx/actors/pet-sprites.js';
+import {drawWindowLight} from '../gfx/window-light.js';
 import ROOMS from '../assets/town/interiors-reviewed-oct13.js';
 import FX from '../assets/town/fx.js';
 import {shopById} from '../game/shops.js';
@@ -505,12 +506,13 @@ function nearest(S, p) {
     if (raw < DOOR_REACH && (!best || d < best.d)) { const o = optionFor(S, q); if (o) best = {d, q, o}; }
   }
   /* kidfix-a-oct31: with nothing else in reach and the hero standing still, E pets the companion at his side (gfx/actors/pet-sprites.js
-     petThePet: its own sit animation and code-drawn hearts). Lowest priority, so it never takes a door, a person or a shop.
+     petThePet: its own sit animation and code-drawn hearts; ownernotes-a-nov1: p.petting lets the hero kneel and pat it, hero-sprites.js PET_POSE).
+     Lowest priority, so it never takes a door, a person or a shop.
      improve20-q-oct31 (audit2 #2): "Pet Ink Cat" took the bubble a second after walking into a room, before the child had done
      anything. It now waits until the hero has walked in this room (H.walked, cleared on every arrival in placeAt) and then stood
      still for PET_STILL seconds, with no door, person, station or chest even near reach (PET_CLEAR, half again the reach). */
   const pet = !best && !close && H.walked && (H.still ?? 0) > PET_STILL && PETS.find(x => x.key === H.save?.pet);
-  if (pet) { const px = p.x - 22 * p.facing, py = p.y + 9; best = {d: 99, q: {x: px, y: py, sx: px, sy: py, mark: [px, py - 30], pet: true}, o: {label: `Pet ${pet.name}`, run: () => { petThePet(pet); H.petted = (H.petted | 0) + 1; }}}; }
+  if (pet) { const px = p.x - 22 * p.facing, py = p.y + 9; best = {d: 99, q: {x: px, y: py, sx: px, sy: py, mark: [px, py - 30], pet: true}, o: {label: `Pet ${pet.name}`, run: () => { petThePet(pet); p.petting = true; H.petted = (H.petted | 0) + 1; }}}; }
   return best;
 }
 export const PET_STILL = 1.5, PET_CLEAR = 45;
@@ -687,6 +689,16 @@ export function hubTravel(world, id) {
   return t;
 }
 /** The spot the hero stands at or in now (null when none), so the picker can say "You are here". */
+/** ownernotes-a-nov1 (owner: "Fast travel map: make it look a lot better"): Oakhaven's map picture (the town map panel's) and where each
+    fast-travel spot's door is on it (the map marks' own points, as hubMapHtml places them), for ui/fasttravel-ui.js's map. */
+export function hubTravelMap() {
+  const V = scene('village'), D = V.D, spots = {};
+  for (const {id} of TOWN_SPOTS) {
+    const q = id === 'gate' ? V.points.find(worldExit) : V.points.find(q => q.type === 'entrance' && q.props?.key === SPOT_DOOR[id]);
+    if (q) spots[id] = {x: Math.round(q.x), y: Math.round(q.y)};
+  }
+  return {img: 'assets/town/' + D.map, w: D.w, h: D.h, spots};
+}
 export function hubTravelHere() { const p = H.player; return p && !H.fade ? hubVisiting(p)[0] ?? null : null; }
 
 /* ---- story beats (game/npcs.js STORY) ---- */
@@ -794,6 +806,8 @@ export function hubMarkers() {
 export function hubEvent() { return H.events.shift() ?? null; }
 /** Hub state for tests and the integrator: the current room key ('village' outside). */
 export const hubState = () => ({room: current().key, fading: !!H.fade, near: H.near?.o.label ?? null, camera: {...H.cam}});
+/* ownernotes-a-nov1: the view's top-left corner in room pixels as last drawn (shots crop around the hero with it) */
+export const hubView = () => H.view ? {...H.view} : null;
 /** Current-room destination for the early objective arrow. Uses the same markers as E;
  * an objective outside this room first points at its actual exit, not coordinates in another room. */
 export function hubGuidanceTarget(target, subject) {
@@ -1033,6 +1047,8 @@ export function drawHub(c, state, t, kit) {
   /* the furnished Home: rugs on the floor now, everything else sorted in with the figures below */
   const house = S.key === 'home' ? (H.save?.house?.items ?? []) : [];
   for (const it of house) { const f = FURN[it.id], im = f && f.flat && furnImage(f); if (im && ready(im)) c.drawImage(im, Math.round(it.x - f.w / 2), Math.round(it.y - f.h)); }
+  /* ownernotes-a-nov1: sunlight through the window (gfx/window-light.js), on the floor and the rugs, under the furniture and the figures */
+  if (S.room) drawWindowLight(c, S.key, state.motion !== false);
   /* sprites in view, in baked draw order */
   const seen = new Set(), list = [];
   for (let by = Math.floor((vy0 - 8) / S.B); by <= Math.floor((vy1 + 8) / S.B); by++) for (let bx = Math.floor((vx0 - 8) / S.B); bx <= Math.floor((vx1 + 8) / S.B); bx++)
@@ -1046,7 +1062,8 @@ export function drawHub(c, state, t, kit) {
   /* improve20-r7a-nov1 #8: a worn trail behind the hero (gfx/hero-trail.js, cosmetic) */
   { const tr = trailOf(H.save); if (tr) figures.push({y: p.y + 12, draw: () => drawTrail(c, p, tr, undefined, state.motion !== false)}); }
   figures.push({y: p.y, hero: true, draw: () => kit.actor(c, p, t)});
-  if (state.pet) figures.push({y: p.y + 10, draw: () => kit.companion(c, state.pet, p.x - 22 * p.facing, p.y + 9, t, p.moving, p.facing, state.motion)});
+  /* ownernotes-a-nov1: while the hero pets it, the companion steps in close (PAT_SPOT), where his hand reaches when he kneels */
+  if (state.pet) { const [dx, dy] = pettingNow(state.pet) ? PAT_SPOT : [22, 9]; figures.push({y: p.y + 10, draw: () => kit.companion(c, state.pet, p.x - dx * p.facing, p.y + dy, t, p.moving, p.facing, state.motion)}); }
   /* the Barracks room: the roster board, and the companions waiting there (their own approved atlas, idling, unmodified) */
   if (S.key === 'barracks') {
     const r = BARRACKS.roster, im = (H.roster ??= load(r.img));

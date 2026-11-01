@@ -37,7 +37,7 @@ const ROLE_OF={hair:1,skin:2,eyes:3};
 export const LOOK_SOURCES={
  /* the pilot's Warrior: every hair hex is also a boot, glove, grip or cape hex, so only the head flood counts */
  warrior:{hair:['351119','4a191b','5c231c','6c2f1d','7e3f22','8d4a26','a55b2c','c17232'],skin:['ad4737','b8573f','d06c4a','dd815a','ec9161','f0a071','f8bd8a','f4d4b8'],
-  faceSeed:['f8bd8a','f0a071','f4d4b8','ec9161'],faceFlood:'skin',eye:['1f080e'],faceShade:['852628','bb5b2a'],box:{left:14,right:6,up:16,down:1},topHair:true,topLum:45,faceTopMax:1,pruneSpurs:8,thinMax:30,
+  faceSeed:['f8bd8a','f0a071','f4d4b8','ec9161'],faceFlood:'skin',eye:['1f080e','4a191b'],faceShade:['852628','bb5b2a'],box:{left:14,right:6,up:16,down:1},topHair:true,topLum:45,faceTopMax:1,pruneSpurs:8,thinMax:30,
   sub:{dir:{box:{left:10,right:10,up:16,down:1},hairZone:false,eyeRows:[-1,4],eyePair:true,topUpright:false,faceTopMax:.35},
    /* drawn-weapon variants (tools/bake-hero-armor.mjs) are redrawn with a more shaded face, snapped onto the darker skin steps */
    weapon:{faceSeed:['f8bd8a','f0a071','f4d4b8','ec9161','dd815a','d06c4a'],faceTopMax:.35},
@@ -60,7 +60,7 @@ export const LOOK_SOURCES={
  'ranger-f':{sub:{dir:{box:{left:12,right:12,up:16,down:10},hairZone:false,eyeRows:[-1,4],eyePair:true,topUpright:false,topDepth:30,faceTopMax:.35}},hair:['5c271f','732a19','954222','a3532f','b1572b'],hairCore:['732a19','954222','a3532f','b1572b'],hairCtx:['5c271f','522019','220908','763222','733e2d'],
   skin:['9c6a54','bc846e','dfa07c','eea67e'],skinCore:['dfa07c','eea67e'],skinCtx:['bc846e','9c6a54','814b39'],faceSeed:['eea67e','dfa07c'],eye:['522019'],sclera:['f3d6c3','e2b8a3'],eyeRows:[0,5],solid:6,grow:{hair:2,skin:1}},
  paladin:{sub:{dir:{box:{left:10,right:10,up:16,down:1},hairZone:false,eyeRows:[-1,4],eyePair:true,topUpright:false,faceTopMax:.35}},hair:['5e3226','70402b','814a2c','925333','af723f','c5874c','d8ac5f','da9a53','facb55','fff283'],hairCore:['af723f','d8ac5f','facb55','fff283'],hairCtx:['da9a53','c5874c','925333','814a2c','70402b'],
-  skin:['c5874c','da9a53','e88f7b','f2b370'],skinCore:['f2b370','e88f7b'],faceSeed:['f2b370','e88f7b'],eye:['150b0e'],eyeRows:[-1,2],solid:6,grow:{hair:2,skin:1},hairZone:{left:16,right:1,up:14,down:1},openHair:17,zoneClip:true},
+  skin:['c5874c','da9a53','e88f7b','f2b370'],skinCore:['f2b370','e88f7b'],faceSeed:['f2b370','e88f7b'],eye:['150b0e'],eyeAtEdge:true,eyeRows:[-1,2],solid:6,grow:{hair:2,skin:1},hairZone:{left:16,right:1,up:14,down:1},openHair:17,zoneClip:true},
  /* her face is lit in the hair's own golds in most frames (run, hurt: d8a25f, c78f51), so skin is not offered */
  'paladin-f':{sub:{dir:{box:{left:12,right:12,up:16,down:10},hairZone:false,eyeRows:[-1,4],eyePair:true,topUpright:false,topDepth:30,faceTopMax:.35}},hair:['72412b','885538','a66e43','b97f46','bd823e','c78f51','d8a25f','e4b34b','f6c75b'],hairCore:['bd823e','e4b34b','f6c75b'],hairCtx:['c78f51','d8a25f','a66e43','885538','72412b','b97f46'],
   faceSeed:['eeb26d','e4ba8c'],eye:['17131a'],sclera:['f8fbf6'],eyeRows:[-2,1],solid:6,grow:{hair:2},growNeed:3},
@@ -74,7 +74,7 @@ export const LOOK_SOURCES={
   faceSeed:['dc9372','c7876b'],solid:6,grow:{hair:2,skin:1}},
 };
 /* the shared defaults of a spec */
-const SPEC_DEFAULTS={eyePair:false,notNearIsland:0,notNearBelow:0,notNearSeed:2,zoneClip:false,openHair:0,pruneSpurs:0,thinMax:0,thinElong:2.6,hairNotNear:[],notNearSteps:1,topUpright:true,topDepth:16,eyeBox:null,coreFlood:true,faceTopMax:.3,growNeed:1,front:1,hairZone:{left:20,right:2,up:18,down:14},zoneMin:12,minSpeck:12,bigHair:30,hugeHair:60,maxElong:3.5,topLum:0,solid:7,faceFlood:'core',faceHighest:false,hairCtx:[],skinCtx:[],hair:null,hairCore:[],skin:null,skinCore:[],faceSeed:[],faceShade:[],eye:null,sclera:[],box:{left:14,right:6,up:16,down:1},grow:0,topHair:false,minHair:40,eyeRows:[-3,3],minFace:4,headFlood:true};
+const SPEC_DEFAULTS={eyePair:false,eyeAtEdge:false,notNearIsland:0,notNearBelow:0,notNearSeed:2,zoneClip:false,openHair:0,pruneSpurs:0,thinMax:0,thinElong:2.6,hairNotNear:[],notNearSteps:1,topUpright:true,topDepth:16,eyeBox:null,coreFlood:true,faceTopMax:.3,growNeed:1,front:1,hairZone:{left:20,right:2,up:18,down:14},zoneMin:12,minSpeck:12,bigHair:30,hugeHair:60,maxElong:3.5,topLum:0,solid:7,faceFlood:'core',faceHighest:false,hairCtx:[],skinCtx:[],hair:null,hairCore:[],skin:null,skinCore:[],faceSeed:[],faceShade:[],eye:null,sclera:[],box:{left:14,right:6,up:16,down:1},grow:0,topHair:false,minHair:40,eyeRows:[-3,3],minFace:4,headFlood:true};
 export const spec=s=>({...SPEC_DEFAULTS,...s});
 
 /* ---- which parts a body offers ---- */
@@ -129,13 +129,14 @@ export {applyTint};
 /* ---- the masks (bake time) ----
    lookMasks(spec, rgba, W, H, {exclude, lists}) -> {codes: Uint8Array (role<<5|index per pixel, 0 = none), hair, skin,
    eye, faceSize, fallback}. Indices are into `lists` (lookLists(key).lists) when given, else into the spec's own lists.
-   exclude: Uint8Array, 1 = never counted and never passed through (armour role pixels, a drawn weapon). */
+   exclude: Uint8Array, 1 = never counted and never passed through (armour role pixels, a drawn weapon).
+   eyes: false for a view that shows no eyes (a town walk seen from behind; ownernotes-a-nov1: the Ranger's hand took them). */
 const F_HAIR=1,F_HCORE=2,F_SKIN=4,F_SCORE=8,F_SEED=16,F_EYE=32,F_SCLERA=64,F_SHADE=128;
 /* how long and thin a group of pixels is: the ratio of its principal axes (1 = round) */
 const elong=(px,W)=>{const n=px.length;let mx=0,my=0;for(const i of px){mx+=i%W;my+=(i/W)|0;}mx/=n;my/=n;let a=0,b=0,c=0;for(const i of px){const x=i%W-mx,y=((i/W)|0)-my;a+=x*x;b+=y*y;c+=x*y;}a/=n;b/=n;c/=n;
  const tr=a+b,det=a*b-c*c,q=Math.sqrt(Math.max(0,tr*tr/4-det));return Math.sqrt((tr/2+q)/Math.max(.05,tr/2-q));};
 const part=(v,r,dflt)=>v&&typeof v==='object'?(v[r===1?'hair':'skin']??dflt):(v??dflt);
-export function lookMasks(s0,d,W,H,{exclude=null,lists=null}={}){const s=spec(s0),N=W*H,fl=new Uint8Array(N),col=new Int32Array(N).fill(-1);
+export function lookMasks(s0,d,W,H,{exclude=null,lists=null,eyes=true}={}){const s=spec(s0),N=W*H,fl=new Uint8Array(N),col=new Int32Array(N).fill(-1);
  const flag=new Map(),add=(list,f)=>{for(const h of list||[]){const k=parseInt(h,16);flag.set(k,(flag.get(k)||0)|f);}};
  if(s.hair){add(s.hair,F_HAIR);add(s.hairCore,F_HCORE|F_HAIR);}if(s.skin||s.faceSeed.length){add(s.skin,F_SKIN);add(s.skinCore,F_SCORE|F_SKIN);}add(s.faceSeed,F_SEED);add(s.eye,F_EYE);add(s.sclera,F_SCLERA);add(s.faceShade,F_SHADE);
  for(let i=0;i<N;i++){if(!d[i*4+3]||exclude?.[i])continue;const k=d[i*4]<<16|d[i*4+1]<<8|d[i*4+2];col[i]=k;fl[i]=flag.get(k)||0;}
@@ -223,9 +224,33 @@ export function lookMasks(s0,d,W,H,{exclude=null,lists=null}={}){const s=spec(s0
  /* ear and mouth shading: a shade colour inside the face box with 2+ skin neighbours */
  if(box&&s.faceShade.length)for(let i=0;i<N;i++){if(role[i]||!(fl[i]&F_SHADE)||!inBox(i))continue;let n=0;each(i,k=>{if(role[k]===2&&!(fl[k]&F_SHADE))n++;});if(n>=2)role[i]=4;}
  /* the eye: an eye colour on the eye rows within the face's columns (+2), touching the sclera, or else beside face skin */
- if((box||s.eyeBox)&&s.eye)for(let i=0;i<N;i++){if(!(fl[i]&F_EYE)||role[i]===2&&inFace[i])continue;const x=i%W,y=(i-x)/W,E=s.eyeBox;
+ const was=new Uint8Array(N);
+ if((box||s.eyeBox)&&s.eye&&eyes)for(let i=0;i<N;i++){if(!(fl[i]&F_EYE)||role[i]===2&&inFace[i])continue;const x=i%W,y=(i-x)/W,E=s.eyeBox;
   if(E?x<E[0]||x>E[2]||y<E[1]||y>E[3]:x<box.fx0-2||x>box.fx1+2||y<box.top+s.eyeRows[0]||y>box.top+s.eyeRows[1])continue;
-  let ok=false;if(s.sclera.length)each(i,k=>{if(fl[k]&F_SCLERA&&!(role[k]===1))ok=true;});else ok=(x+1<W&&inFace[i+1])||(x>0&&inFace[i-1]);if(ok)role[i]=3;}
+  let ok=false;if(s.sclera.length)each(i,k=>{if(fl[k]&F_SCLERA&&!(role[k]===1))ok=true;});else ok=(x+1<W&&inFace[i+1])||(x>0&&inFace[i-1]);if(ok){was[i]=role[i];role[i]=3;}}
+ /* ownernotes-a-nov1 (owner, 1 Nov: "still showing blue around his head"): without a sclera, a dark mark beside face skin is as
+    often the hair's own edge (the fringe's underside, the sideburn) or the nose's contour as an eye. A mark (4-connected eye
+    pixels) counts only when it sits inside the face: nothing see-through or hair left, right or below any of its pixels (the
+    fringe may sit on top of an eye), and face (or the mark) on both sides of at least one of them. eyeAtEdge: this body draws
+    its eye against the profile, so the front (right) side may be the outline. A dropped pixel goes back to its role before. */
+ if(!s.sclera.length&&!s.eyeBox){const done=new Uint8Array(N),bad=k=>role[k]!==3&&(col[k]<0||role[k]===1),side=k=>role[k]===3||role[k]===2||role[k]===4||inFace[k]===1;
+  for(let i=0;i<N;i++){if(role[i]!==3||done[i])continue;const comp=[],st=[i];done[i]=1;
+  while(st.length){const j=st.pop(),x=j%W;comp.push(j);for(const k of [x>0?j-1:-1,x<W-1?j+1:-1,j-W,j+W])if(k>=0&&k<N&&!done[k]&&role[k]===3){done[k]=1;st.push(k);}}
+  const edge=j=>{const x=j%W,y=(j-x)/W;return x<1||x>=W-1||y>=H-1;};
+  const keep=!comp.some(j=>edge(j)||bad(j-1)||bad(j+1)||bad(j+W))&&comp.some(j=>side(j-1)&&(side(j+1)||s.eyeAtEdge&&col[j+1]>=0));
+  if(!keep)for(const j of comp)role[j]=was[j];}}
+ /* with a sclera too, an eye is never on the outline: a mark with a see-through pixel left, right or below it is a dark edge pixel of
+    something else (the Summoner's raised totem in his heavy swing) and goes back to its role */
+ if(s.sclera.length&&!s.eyeBox){const done=new Uint8Array(N),open=k=>k<0||k>=N||!d[k*4+3];
+  for(let i=0;i<N;i++){if(role[i]!==3||done[i])continue;const comp=[],st=[i];done[i]=1;
+  while(st.length){const j=st.pop(),x=j%W;comp.push(j);for(const k of [x>0?j-1:-1,x<W-1?j+1:-1,j-W,j+W])if(k>=0&&k<N&&!done[k]&&role[k]===3){done[k]=1;st.push(k);}}
+  if(comp.some(j=>{const x=j%W;return open(x>0?j-1:-1)||open(x<W-1?j+1:-1)||open(j+W);}))for(const j of comp)role[j]=was[j];}}
+ /* a side view shows one eye: marks more than 2 px from its biggest group (the frontmost of equals) are dropped too */
+ if(!s.eyePair&&!s.eyeBox){const E=[];for(let i=0;i<N;i++)if(role[i]===3)E.push(i);if(E.length>1){const g=E.map((_,n)=>n),up=n=>g[n]===n?n:(g[n]=up(g[n]));
+  for(let a=0;a<E.length;a++)for(let b=a+1;b<E.length;b++){const xa=E[a]%W,xb=E[b]%W;if(Math.abs(xa-xb)<=2&&Math.abs((E[a]-xa)/W-(E[b]-xb)/W)<=2)g[up(a)]=up(b);}
+  const size=new Map(),front=new Map();E.forEach((i,n)=>{const r=up(n);size.set(r,(size.get(r)||0)+1);front.set(r,Math.max(front.get(r)??-1,i%W));});
+  let best=null;for(const r of size.keys())if(best===null||size.get(r)>size.get(best)||size.get(r)===size.get(best)&&front.get(r)>front.get(best))best=r;
+  E.forEach((i,n)=>{if(up(n)!==best)role[i]=was[i];});}}
  /* a front view shows two eyes: marks that don't span both (a lone forehead or nose pixel, owner 16 Oct) are dropped */
  if(s.eyePair){let x0=W,x1=-1;for(let i=0;i<N;i++)if(role[i]===3){const x=i%W;if(x<x0)x0=x;if(x>x1)x1=x;}if(x1-x0<3)for(let i=0;i<N;i++)if(role[i]===3)role[i]=0;}
  /* codes */
