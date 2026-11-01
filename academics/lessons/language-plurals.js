@@ -11,7 +11,7 @@ export default {
  steps:[
   {skill:'s',say:'A noun names a person, place or thing. One cat is singular. More than one is plural.',pic:[{"t":"theater","scene":"plurals","part":"one"}],eq:'1 cat'},
   {skill:'s',say:'For most nouns, add -s to show more than one: cat becomes cats.',pic:[{"t":"theater","scene":"plurals","part":"add-s"}],eq:'5 cats',
-   check:{prompt:'Mia sees two of the same animal. One is a frog. What are two of them called?',answer:'frogs',options:['frogs','frog','froges'],hint:'Frog does not end in s, x, z, sh or ch, so just add -s.'}},
+   check:{prompt:'Mia sees two of the same animal. One is a frog. What are two of them called?',answer:'frogs',options:['frogs','frog','froges'],hint:'Just add -s: frog → frogs.'}},
   {skill:'es',say:'Our practice words ending in s, x, z, sh or ch take -es: box becomes boxes.',pic:[{"t":"theater","scene":"plurals","part":"es"}],eq:'box + es = boxes'},
   {skill:'es',say:'The -es makes an extra sound you can hear: bus, buses. Dish, dishes.',pic:[{t:'word',base:'dish',suffix:'es',mark:2,n:2}],eq:'dish + es = dishes',
    check:{prompt:'Leo packs one lunch for himself and one for his sister. What do we call the two of them?',answer:'lunches',options:['lunches','lunchs','lunch'],hint:'Lunch ends in ch, so add -es.'}},

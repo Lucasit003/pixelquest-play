@@ -15,12 +15,12 @@ export default {
   {skill:'order',say:'A timeline shows things in the order they happen, from earlier to later.',pic:[{t:'timeline',events:['wake up','eat breakfast','go to school']}],eq:'earlier to later'},
   {skill:'read',say:'Read a timeline from left to right. The first thing is on the left.',pic:[{"t":"theater","scene":"garden","part":"grow"}],
    check:{prompt:'Jo plants a seed on Monday and it sprouts on Friday. Which happened first?',answer:'the seed was planted',options:['the seed was planted','the seed sprouted'],hint:'A seed has to be planted before it can sprout.'}},
-  {skill:'read',say:'A blank on a timeline can be filled by looking at what comes before and after it.',pic:[{t:'timeline',events:['a baby',null,'a teenager','a grown-up'],fill:'a child'}]},
+  {skill:'read',say:'A timeline can have a blank. Look at what comes before and after it.',pic:[{t:'timeline',events:['a baby',null,'a teenager','a grown-up'],fill:'a child'}]},
   {skill:'past',say:'Timelines can show long ago, too. Long ago people walked or rode horses.',pic:[{t:'timeline',events:SEQ.travel.events.slice(0,1)}]},
   {skill:'past',say:'Then trains were built, then cars, and later airplanes.',pic:[{t:'timeline',events:SEQ.travel.events}],
    check:{prompt:'Grandpa says the first cars came before the first airplanes. Is that true or false?',answer:'true',options:['true','false'],hint:'On the timeline, cars come before airplanes.'}},
-  {skill:'past',say:'How people send messages changed too: letters, then telephones, television and the internet.',pic:[{t:'timeline',events:SEQ.talk.events}]},
-  {skill:'order',say:'Our timelines run from earlier on the left to later on the right. Other timelines can run vertically; read their labels to find the direction of time.',pic:[{t:'timeline',events:SEQ.seasons.events}],
+  {skill:'past',say:'How people send messages changed too. First came letters. Then came telephones, television and the internet.',pic:[{t:'timeline',events:SEQ.talk.events}]},
+  {skill:'order',say:'Our timelines go from earlier on the left to later on the right. Some timelines go up and down. Read their labels to see which way time goes.',pic:[{t:'timeline',events:SEQ.seasons.events}],
    check:{prompt:'Starting in spring, which season comes right after summer?',answer:'fall',options:['fall','winter','spring'],hint:'Spring, summer, fall, winter.',pic:{t:'timeline',events:['spring','summer',null,'winter'],fill:'fall'}}}],
  items(add){
   /* 28 Oct (elfact): every why in this topic started with a lower-case letter ("dog is living."); each now starts with a capital. */

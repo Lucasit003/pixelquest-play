@@ -24549,6 +24549,951 @@ export const QUESTION_REVISIONS=[
   "oldPrompt": "Read A: \"We want writers to improve their stories. Discuss ideas first so writers know which scenes need more development.\" Read B: \"We want writers to improve their stories. Check punctuation before sharing so readers can follow the sentences.\" Which unanswered question would most help develop a plan for the shared aim? 1: What color is the writer's pencil?. 2: Which scenes need clearer development?. Answer 1 or 2.",
   "newPrompt": "Read A: \"We want writers to improve their stories. Discuss ideas first so writers know which scenes need more development.\" Read B: \"We want writers to improve their stories. Check punctuation before sharing so readers can follow the sentences.\" Which question would help most with a plan for what both speakers want? 1: What color is the writer's pencil? 2: Which scenes need clearer development? Answer 1 or 2.",
   "reason": "Elfact 28 Oct (docs/research/ELFACT_OCT28.md): the synthesize prompts were worded far above grade 5 (\"addresses both concerns without an unsupported sweeping claim\") and printed a double mark (\"?.\"); reworded in grade 5 words. Same question, same answer."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1848. In 1834, the bridge was painted. How many years ago was that?",
+  "newPrompt": "In the story it is 1848. In 1845, the bridge was painted. How many years ago was that?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1848. In 1862, the bridge will be painted. In how many years will that happen?",
+  "newPrompt": "In the story it is 1848. In 1851, the bridge will be painted. In how many years will that happen?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1848. In 1827, the fair was first held. How many years ago was that?",
+  "newPrompt": "In the story it is 1848. In 1841, the fair was first held. How many years ago was that?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1848. In 1869, the fair will be held for the first time. In how many years will that happen?",
+  "newPrompt": "In the story it is 1848. In 1855, the fair will be held for the first time. In how many years will that happen?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1848. In 1821, a library opened in the hall. How many years ago was that?",
+  "newPrompt": "In the story it is 1848. In 1844, a library opened in the hall. How many years ago was that?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1848. In 1875, a library will open in the hall. In how many years will that happen?",
+  "newPrompt": "In the story it is 1848. In 1852, a library will open in the hall. In how many years will that happen?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1863. In 1849, the fair was first held. How many years ago was that?",
+  "newPrompt": "In the story it is 1863. In 1860, the fair was first held. How many years ago was that?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1863. In 1877, the fair will be held for the first time. In how many years will that happen?",
+  "newPrompt": "In the story it is 1863. In 1866, the fair will be held for the first time. In how many years will that happen?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1863. In 1842, a library opened in the hall. How many years ago was that?",
+  "newPrompt": "In the story it is 1863. In 1856, a library opened in the hall. How many years ago was that?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1863. In 1884, a library will open in the hall. In how many years will that happen?",
+  "newPrompt": "In the story it is 1863. In 1870, a library will open in the hall. In how many years will that happen?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1863. In 1836, the church bell was cast. How many years ago was that?",
+  "newPrompt": "In the story it is 1863. In 1859, the church bell was cast. How many years ago was that?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1863. In 1890, the church bell will be cast. In how many years will that happen?",
+  "newPrompt": "In the story it is 1863. In 1867, the church bell will be cast. In how many years will that happen?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1877. In 1863, a library opened in the hall. How many years ago was that?",
+  "newPrompt": "In the story it is 1877. In 1874, a library opened in the hall. How many years ago was that?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1877. In 1891, a library will open in the hall. In how many years will that happen?",
+  "newPrompt": "In the story it is 1877. In 1880, a library will open in the hall. In how many years will that happen?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1877. In 1856, the church bell was cast. How many years ago was that?",
+  "newPrompt": "In the story it is 1877. In 1870, the church bell was cast. How many years ago was that?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1877. In 1898, the church bell will be cast. In how many years will that happen?",
+  "newPrompt": "In the story it is 1877. In 1884, the church bell will be cast. In how many years will that happen?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1877. In 1850, the market moved to the square. How many years ago was that?",
+  "newPrompt": "In the story it is 1877. In 1873, the market moved to the square. How many years ago was that?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1877. In 1904, the market will move to the square. In how many years will that happen?",
+  "newPrompt": "In the story it is 1877. In 1881, the market will move to the square. In how many years will that happen?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1901. In 1887, the church bell was cast. How many years ago was that?",
+  "newPrompt": "In the story it is 1901. In 1898, the church bell was cast. How many years ago was that?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1901. In 1915, the church bell will be cast. In how many years will that happen?",
+  "newPrompt": "In the story it is 1901. In 1904, the church bell will be cast. In how many years will that happen?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1901. In 1880, the market moved to the square. How many years ago was that?",
+  "newPrompt": "In the story it is 1901. In 1894, the market moved to the square. How many years ago was that?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1901. In 1922, the market will move to the square. In how many years will that happen?",
+  "newPrompt": "In the story it is 1901. In 1908, the market will move to the square. In how many years will that happen?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1901. In 1874, a clock was put on the hall. How many years ago was that?",
+  "newPrompt": "In the story it is 1901. In 1897, a clock was put on the hall. How many years ago was that?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1901. In 1928, a clock will be put on the hall. In how many years will that happen?",
+  "newPrompt": "In the story it is 1901. In 1905, a clock will be put on the hall. In how many years will that happen?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1914. In 1900, the market moved to the square. How many years ago was that?",
+  "newPrompt": "In the story it is 1914. In 1911, the market moved to the square. How many years ago was that?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1914. In 1928, the market will move to the square. In how many years will that happen?",
+  "newPrompt": "In the story it is 1914. In 1917, the market will move to the square. In how many years will that happen?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1914. In 1893, a clock was put on the hall. How many years ago was that?",
+  "newPrompt": "In the story it is 1914. In 1907, a clock was put on the hall. How many years ago was that?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1914. In 1935, a clock will be put on the hall. In how many years will that happen?",
+  "newPrompt": "In the story it is 1914. In 1921, a clock will be put on the hall. In how many years will that happen?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1914. In 1887, the pond was cleared. How many years ago was that?",
+  "newPrompt": "In the story it is 1914. In 1910, the pond was cleared. How many years ago was that?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1914. In 1941, the pond will be cleared. In how many years will that happen?",
+  "newPrompt": "In the story it is 1914. In 1918, the pond will be cleared. In how many years will that happen?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1932. In 1918, a clock was put on the hall. How many years ago was that?",
+  "newPrompt": "In the story it is 1932. In 1929, a clock was put on the hall. How many years ago was that?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1932. In 1946, a clock will be put on the hall. In how many years will that happen?",
+  "newPrompt": "In the story it is 1932. In 1935, a clock will be put on the hall. In how many years will that happen?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1932. In 1911, the pond was cleared. How many years ago was that?",
+  "newPrompt": "In the story it is 1932. In 1925, the pond was cleared. How many years ago was that?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1932. In 1953, the pond will be cleared. In how many years will that happen?",
+  "newPrompt": "In the story it is 1932. In 1939, the pond will be cleared. In how many years will that happen?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1932. In 1905, the school opened. How many years ago was that?",
+  "newPrompt": "In the story it is 1932. In 1928, the school opened. How many years ago was that?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1932. In 1959, the school will open. In how many years will that happen?",
+  "newPrompt": "In the story it is 1932. In 1936, the school will open. In how many years will that happen?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1949. In 1935, the pond was cleared. How many years ago was that?",
+  "newPrompt": "In the story it is 1949. In 1946, the pond was cleared. How many years ago was that?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1949. In 1963, the pond will be cleared. In how many years will that happen?",
+  "newPrompt": "In the story it is 1949. In 1952, the pond will be cleared. In how many years will that happen?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1949. In 1928, the school opened. How many years ago was that?",
+  "newPrompt": "In the story it is 1949. In 1942, the school opened. How many years ago was that?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1949. In 1970, the school will open. In how many years will that happen?",
+  "newPrompt": "In the story it is 1949. In 1956, the school will open. In how many years will that happen?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1949. In 1922, a new well was dug. How many years ago was that?",
+  "newPrompt": "In the story it is 1949. In 1945, a new well was dug. How many years ago was that?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1949. In 1976, a new well will be dug. In how many years will that happen?",
+  "newPrompt": "In the story it is 1949. In 1953, a new well will be dug. In how many years will that happen?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1966. In 1952, the school opened. How many years ago was that?",
+  "newPrompt": "In the story it is 1966. In 1963, the school opened. How many years ago was that?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1966. In 1980, the school will open. In how many years will that happen?",
+  "newPrompt": "In the story it is 1966. In 1969, the school will open. In how many years will that happen?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1966. In 1945, a new well was dug. How many years ago was that?",
+  "newPrompt": "In the story it is 1966. In 1959, a new well was dug. How many years ago was that?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1966. In 1987, a new well will be dug. In how many years will that happen?",
+  "newPrompt": "In the story it is 1966. In 1973, a new well will be dug. In how many years will that happen?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1966. In 1939, the mill was built. How many years ago was that?",
+  "newPrompt": "In the story it is 1966. In 1962, the mill was built. How many years ago was that?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1966. In 1993, the mill will be built. In how many years will that happen?",
+  "newPrompt": "In the story it is 1966. In 1970, the mill will be built. In how many years will that happen?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1962. Something happened in 1945. How many years ago was it?",
+  "newPrompt": "In the story it is 1962. Something happened in 1958. How many years ago was it?",
+  "reason": "improve20-n-nov1 (audit4 a2): Try-it; Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "In the story it is 1978. Something will happen in 1990. In how many years will it come?",
+  "newPrompt": "In the story it is 1978. Something will happen in 1983. In how many years will it come?",
+  "reason": "improve20-n-nov1 (audit4 a2): Try-it; Grade 2 level; the years-ago/until gap is a small count (up to 9), not 4-digit subtraction with regrouping (2.NBT.7 is within 1000)."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Nell was born in 1860. B: Eli was born in 1885. C: Priya was born in 1913. How many years older is A than B?",
+  "newPrompt": "Fictional Oakhaven family. A: Nell is 57. B: Eli is 32. C: Priya is 4. How many years older is A than B?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Nell was born in 1860. B: Eli was born in 1885. C: Priya was born in 1913. How many years older is B than C?",
+  "newPrompt": "Fictional Oakhaven family. A: Nell is 57. B: Eli is 32. C: Priya is 4. How many years older is B than C?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Nell was born in 1860. B: Eli was born in 1885. C: Priya was born in 1913. How many years older is A than C?",
+  "newPrompt": "Fictional Oakhaven family. A: Nell is 57. B: Eli is 32. C: Priya is 4. How many years older is A than C?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Nell was born in 1875. B: Priya was born in 1931. C: Eli was born in 1899. How many years older is A than C?",
+  "newPrompt": "Fictional Oakhaven family. A: Nell is 61. B: Priya is 5. C: Eli is 37. How many years older is A than C?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Nell was born in 1875. B: Priya was born in 1931. C: Eli was born in 1899. How many years older is C than B?",
+  "newPrompt": "Fictional Oakhaven family. A: Nell is 61. B: Priya is 5. C: Eli is 37. How many years older is C than B?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Nell was born in 1875. B: Priya was born in 1931. C: Eli was born in 1899. How many years older is A than B?",
+  "newPrompt": "Fictional Oakhaven family. A: Nell is 61. B: Priya is 5. C: Eli is 37. How many years older is A than B?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Eli was born in 1913. B: Nell was born in 1890. C: Priya was born in 1939. How many years older is B than A?",
+  "newPrompt": "Fictional Oakhaven family. A: Eli is 32. B: Nell is 55. C: Priya is 6. How many years older is B than A?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Eli was born in 1913. B: Nell was born in 1890. C: Priya was born in 1939. How many years older is A than C?",
+  "newPrompt": "Fictional Oakhaven family. A: Eli is 32. B: Nell is 55. C: Priya is 6. How many years older is A than C?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Eli was born in 1913. B: Nell was born in 1890. C: Priya was born in 1939. How many years older is B than C?",
+  "newPrompt": "Fictional Oakhaven family. A: Eli is 32. B: Nell is 55. C: Priya is 6. How many years older is B than C?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Faye was born in 1895. B: Cole was born in 1867. C: Ivy was born in 1923. D: Owen was born in 1917. How many years older is B than A?",
+  "newPrompt": "Fictional Oakhaven family. A: Faye is 33. B: Cole is 61. C: Ivy is 5. D: Owen is 11. How many years older is B than A?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Faye was born in 1895. B: Cole was born in 1867. C: Ivy was born in 1923. D: Owen was born in 1917. How many years older is A than D?",
+  "newPrompt": "Fictional Oakhaven family. A: Faye is 33. B: Cole is 61. C: Ivy is 5. D: Owen is 11. How many years older is A than D?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Faye was born in 1895. B: Cole was born in 1867. C: Ivy was born in 1923. D: Owen was born in 1917. How many years older is D than C?",
+  "newPrompt": "Fictional Oakhaven family. A: Faye is 33. B: Cole is 61. C: Ivy is 5. D: Owen is 11. How many years older is D than C?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Faye was born in 1895. B: Cole was born in 1867. C: Ivy was born in 1923. D: Owen was born in 1917. How many years older is B than C?",
+  "newPrompt": "Fictional Oakhaven family. A: Faye is 33. B: Cole is 61. C: Ivy is 5. D: Owen is 11. How many years older is B than C?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Owen was born in 1933. B: Ivy was born in 1935. C: Cole was born in 1882. D: Faye was born in 1906. How many years older is C than D?",
+  "newPrompt": "Fictional Oakhaven family. A: Owen is 8. B: Ivy is 6. C: Cole is 59. D: Faye is 35. How many years older is C than D?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Owen was born in 1933. B: Ivy was born in 1935. C: Cole was born in 1882. D: Faye was born in 1906. How many years older is D than A?",
+  "newPrompt": "Fictional Oakhaven family. A: Owen is 8. B: Ivy is 6. C: Cole is 59. D: Faye is 35. How many years older is D than A?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Owen was born in 1933. B: Ivy was born in 1935. C: Cole was born in 1882. D: Faye was born in 1906. How many years older is A than B?",
+  "newPrompt": "Fictional Oakhaven family. A: Owen is 8. B: Ivy is 6. C: Cole is 59. D: Faye is 35. How many years older is A than B?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Owen was born in 1933. B: Ivy was born in 1935. C: Cole was born in 1882. D: Faye was born in 1906. How many years older is C than B?",
+  "newPrompt": "Fictional Oakhaven family. A: Owen is 8. B: Ivy is 6. C: Cole is 59. D: Faye is 35. How many years older is C than B?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Ivy was born in 1953. B: Owen was born in 1946. C: Faye was born in 1920. D: Cole was born in 1897. How many years older is D than C?",
+  "newPrompt": "Fictional Oakhaven family. A: Ivy is 7. B: Owen is 14. C: Faye is 40. D: Cole is 63. How many years older is D than C?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Ivy was born in 1953. B: Owen was born in 1946. C: Faye was born in 1920. D: Cole was born in 1897. How many years older is C than B?",
+  "newPrompt": "Fictional Oakhaven family. A: Ivy is 7. B: Owen is 14. C: Faye is 40. D: Cole is 63. How many years older is C than B?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Ivy was born in 1953. B: Owen was born in 1946. C: Faye was born in 1920. D: Cole was born in 1897. How many years older is B than A?",
+  "newPrompt": "Fictional Oakhaven family. A: Ivy is 7. B: Owen is 14. C: Faye is 40. D: Cole is 63. How many years older is B than A?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Ivy was born in 1953. B: Owen was born in 1946. C: Faye was born in 1920. D: Cole was born in 1897. How many years older is D than A?",
+  "newPrompt": "Fictional Oakhaven family. A: Ivy is 7. B: Owen is 14. C: Faye is 40. D: Cole is 63. How many years older is D than A?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Miles was born in 1899. B: Rosa was born in 1874. C: Tess was born in 1927. How many years older is B than A?",
+  "newPrompt": "Fictional Oakhaven family. A: Miles is 34. B: Rosa is 59. C: Tess is 6. How many years older is B than A?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Miles was born in 1899. B: Rosa was born in 1874. C: Tess was born in 1927. How many years older is A than C?",
+  "newPrompt": "Fictional Oakhaven family. A: Miles is 34. B: Rosa is 59. C: Tess is 6. How many years older is A than C?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Miles was born in 1899. B: Rosa was born in 1874. C: Tess was born in 1927. How many years older is B than C?",
+  "newPrompt": "Fictional Oakhaven family. A: Miles is 34. B: Rosa is 59. C: Tess is 6. How many years older is B than C?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Miles was born in 1913. B: Tess was born in 1945. C: Rosa was born in 1889. How many years older is C than A?",
+  "newPrompt": "Fictional Oakhaven family. A: Miles is 39. B: Tess is 7. C: Rosa is 63. How many years older is C than A?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Miles was born in 1913. B: Tess was born in 1945. C: Rosa was born in 1889. How many years older is A than B?",
+  "newPrompt": "Fictional Oakhaven family. A: Miles is 39. B: Tess is 7. C: Rosa is 63. How many years older is A than B?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Miles was born in 1913. B: Tess was born in 1945. C: Rosa was born in 1889. How many years older is C than B?",
+  "newPrompt": "Fictional Oakhaven family. A: Miles is 39. B: Tess is 7. C: Rosa is 63. How many years older is C than B?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Tess was born in 1953. B: Rosa was born in 1904. C: Miles was born in 1927. How many years older is B than C?",
+  "newPrompt": "Fictional Oakhaven family. A: Tess is 8. B: Rosa is 57. C: Miles is 34. How many years older is B than C?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Tess was born in 1953. B: Rosa was born in 1904. C: Miles was born in 1927. How many years older is C than A?",
+  "newPrompt": "Fictional Oakhaven family. A: Tess is 8. B: Rosa is 57. C: Miles is 34. How many years older is C than A?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Tess was born in 1953. B: Rosa was born in 1904. C: Miles was born in 1927. How many years older is B than A?",
+  "newPrompt": "Fictional Oakhaven family. A: Tess is 8. B: Rosa is 57. C: Miles is 34. How many years older is B than A?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Zoe was born in 1937. B: Kai was born in 1931. C: Dana was born in 1909. D: Hugh was born in 1881. How many years older is D than C?",
+  "newPrompt": "Fictional Oakhaven family. A: Zoe is 7. B: Kai is 13. C: Dana is 35. D: Hugh is 63. How many years older is D than C?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Zoe was born in 1937. B: Kai was born in 1931. C: Dana was born in 1909. D: Hugh was born in 1881. How many years older is C than B?",
+  "newPrompt": "Fictional Oakhaven family. A: Zoe is 7. B: Kai is 13. C: Dana is 35. D: Hugh is 63. How many years older is C than B?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Zoe was born in 1937. B: Kai was born in 1931. C: Dana was born in 1909. D: Hugh was born in 1881. How many years older is B than A?",
+  "newPrompt": "Fictional Oakhaven family. A: Zoe is 7. B: Kai is 13. C: Dana is 35. D: Hugh is 63. How many years older is B than A?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Zoe was born in 1937. B: Kai was born in 1931. C: Dana was born in 1909. D: Hugh was born in 1881. How many years older is D than A?",
+  "newPrompt": "Fictional Oakhaven family. A: Zoe is 7. B: Kai is 13. C: Dana is 35. D: Hugh is 63. How many years older is D than A?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Hugh was born in 1896. B: Kai was born in 1947. C: Dana was born in 1920. D: Zoe was born in 1949. How many years older is A than C?",
+  "newPrompt": "Fictional Oakhaven family. A: Hugh is 61. B: Kai is 10. C: Dana is 37. D: Zoe is 8. How many years older is A than C?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Hugh was born in 1896. B: Kai was born in 1947. C: Dana was born in 1920. D: Zoe was born in 1949. How many years older is C than B?",
+  "newPrompt": "Fictional Oakhaven family. A: Hugh is 61. B: Kai is 10. C: Dana is 37. D: Zoe is 8. How many years older is C than B?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Hugh was born in 1896. B: Kai was born in 1947. C: Dana was born in 1920. D: Zoe was born in 1949. How many years older is B than D?",
+  "newPrompt": "Fictional Oakhaven family. A: Hugh is 61. B: Kai is 10. C: Dana is 37. D: Zoe is 8. How many years older is B than D?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Hugh was born in 1896. B: Kai was born in 1947. C: Dana was born in 1920. D: Zoe was born in 1949. How many years older is A than D?",
+  "newPrompt": "Fictional Oakhaven family. A: Hugh is 61. B: Kai is 10. C: Dana is 37. D: Zoe is 8. How many years older is A than D?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Dana was born in 1934. B: Zoe was born in 1967. C: Hugh was born in 1911. D: Kai was born in 1960. How many years older is C than A?",
+  "newPrompt": "Fictional Oakhaven family. A: Dana is 42. B: Zoe is 9. C: Hugh is 65. D: Kai is 16. How many years older is C than A?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Dana was born in 1934. B: Zoe was born in 1967. C: Hugh was born in 1911. D: Kai was born in 1960. How many years older is A than D?",
+  "newPrompt": "Fictional Oakhaven family. A: Dana is 42. B: Zoe is 9. C: Hugh is 65. D: Kai is 16. How many years older is A than D?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Dana was born in 1934. B: Zoe was born in 1967. C: Hugh was born in 1911. D: Kai was born in 1960. How many years older is D than B?",
+  "newPrompt": "Fictional Oakhaven family. A: Dana is 42. B: Zoe is 9. C: Hugh is 65. D: Kai is 16. How many years older is D than B?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Dana was born in 1934. B: Zoe was born in 1967. C: Hugh was born in 1911. D: Kai was born in 1960. How many years older is C than B?",
+  "newPrompt": "Fictional Oakhaven family. A: Dana is 42. B: Zoe is 9. C: Hugh is 65. D: Kai is 16. How many years older is C than B?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Nia was born in 1941. B: June was born in 1888. C: Otis was born in 1913. How many years older is B than C?",
+  "newPrompt": "Fictional Oakhaven family. A: Nia is 8. B: June is 61. C: Otis is 36. How many years older is B than C?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Nia was born in 1941. B: June was born in 1888. C: Otis was born in 1913. How many years older is C than A?",
+  "newPrompt": "Fictional Oakhaven family. A: Nia is 8. B: June is 61. C: Otis is 36. How many years older is C than A?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Nia was born in 1941. B: June was born in 1888. C: Otis was born in 1913. How many years older is B than A?",
+  "newPrompt": "Fictional Oakhaven family. A: Nia is 8. B: June is 61. C: Otis is 36. How many years older is B than A?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Nia was born in 1959. B: Otis was born in 1927. C: June was born in 1903. How many years older is C than B?",
+  "newPrompt": "Fictional Oakhaven family. A: Nia is 9. B: Otis is 41. C: June is 65. How many years older is C than B?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Nia was born in 1959. B: Otis was born in 1927. C: June was born in 1903. How many years older is B than A?",
+  "newPrompt": "Fictional Oakhaven family. A: Nia is 9. B: Otis is 41. C: June is 65. How many years older is B than A?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Nia was born in 1959. B: Otis was born in 1927. C: June was born in 1903. How many years older is C than A?",
+  "newPrompt": "Fictional Oakhaven family. A: Nia is 9. B: Otis is 41. C: June is 65. How many years older is C than A?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: June was born in 1918. B: Otis was born in 1941. C: Nia was born in 1967. How many years older is A than B?",
+  "newPrompt": "Fictional Oakhaven family. A: June is 53. B: Otis is 30. C: Nia is 4. How many years older is A than B?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: June was born in 1918. B: Otis was born in 1941. C: Nia was born in 1967. How many years older is B than C?",
+  "newPrompt": "Fictional Oakhaven family. A: June is 53. B: Otis is 30. C: Nia is 4. How many years older is B than C?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: June was born in 1918. B: Otis was born in 1941. C: Nia was born in 1967. How many years older is A than C?",
+  "newPrompt": "Fictional Oakhaven family. A: June is 53. B: Otis is 30. C: Nia is 4. How many years older is A than C?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Lila was born in 1923. B: Ada was born in 1951. C: Ray was born in 1895. D: Sam was born in 1945. How many years older is C than A?",
+  "newPrompt": "Fictional Oakhaven family. A: Lila is 37. B: Ada is 9. C: Ray is 65. D: Sam is 15. How many years older is C than A?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Lila was born in 1923. B: Ada was born in 1951. C: Ray was born in 1895. D: Sam was born in 1945. How many years older is A than D?",
+  "newPrompt": "Fictional Oakhaven family. A: Lila is 37. B: Ada is 9. C: Ray is 65. D: Sam is 15. How many years older is A than D?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Lila was born in 1923. B: Ada was born in 1951. C: Ray was born in 1895. D: Sam was born in 1945. How many years older is D than B?",
+  "newPrompt": "Fictional Oakhaven family. A: Lila is 37. B: Ada is 9. C: Ray is 65. D: Sam is 15. How many years older is D than B?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Lila was born in 1923. B: Ada was born in 1951. C: Ray was born in 1895. D: Sam was born in 1945. How many years older is C than B?",
+  "newPrompt": "Fictional Oakhaven family. A: Lila is 37. B: Ada is 9. C: Ray is 65. D: Sam is 15. How many years older is C than B?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Sam was born in 1961. B: Ray was born in 1910. C: Ada was born in 1963. D: Lila was born in 1934. How many years older is B than D?",
+  "newPrompt": "Fictional Oakhaven family. A: Sam is 6. B: Ray is 57. C: Ada is 4. D: Lila is 33. How many years older is B than D?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Sam was born in 1961. B: Ray was born in 1910. C: Ada was born in 1963. D: Lila was born in 1934. How many years older is D than A?",
+  "newPrompt": "Fictional Oakhaven family. A: Sam is 6. B: Ray is 57. C: Ada is 4. D: Lila is 33. How many years older is D than A?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Sam was born in 1961. B: Ray was born in 1910. C: Ada was born in 1963. D: Lila was born in 1934. How many years older is A than C?",
+  "newPrompt": "Fictional Oakhaven family. A: Sam is 6. B: Ray is 57. C: Ada is 4. D: Lila is 33. How many years older is A than C?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Sam was born in 1961. B: Ray was born in 1910. C: Ada was born in 1963. D: Lila was born in 1934. How many years older is B than C?",
+  "newPrompt": "Fictional Oakhaven family. A: Sam is 6. B: Ray is 57. C: Ada is 4. D: Lila is 33. How many years older is B than C?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Ada was born in 1981. B: Lila was born in 1948. C: Sam was born in 1974. D: Ray was born in 1925. How many years older is D than B?",
+  "newPrompt": "Fictional Oakhaven family. A: Ada is 5. B: Lila is 38. C: Sam is 12. D: Ray is 61. How many years older is D than B?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Ada was born in 1981. B: Lila was born in 1948. C: Sam was born in 1974. D: Ray was born in 1925. How many years older is B than C?",
+  "newPrompt": "Fictional Oakhaven family. A: Ada is 5. B: Lila is 38. C: Sam is 12. D: Ray is 61. How many years older is B than C?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Ada was born in 1981. B: Lila was born in 1948. C: Sam was born in 1974. D: Ray was born in 1925. How many years older is C than A?",
+  "newPrompt": "Fictional Oakhaven family. A: Ada is 5. B: Lila is 38. C: Sam is 12. D: Ray is 61. How many years older is C than A?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Ada was born in 1981. B: Lila was born in 1948. C: Sam was born in 1974. D: Ray was born in 1925. How many years older is D than A?",
+  "newPrompt": "Fictional Oakhaven family. A: Ada is 5. B: Lila is 38. C: Sam is 12. D: Ray is 61. How many years older is D than A?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Vera was born in 1902. B: Curt was born in 1927. C: Ruth was born in 1955. How many years older is A than B?",
+  "newPrompt": "Fictional Oakhaven family. A: Vera is 57. B: Curt is 32. C: Ruth is 4. How many years older is A than B?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Vera was born in 1902. B: Curt was born in 1927. C: Ruth was born in 1955. How many years older is B than C?",
+  "newPrompt": "Fictional Oakhaven family. A: Vera is 57. B: Curt is 32. C: Ruth is 4. How many years older is B than C?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Vera was born in 1902. B: Curt was born in 1927. C: Ruth was born in 1955. How many years older is A than C?",
+  "newPrompt": "Fictional Oakhaven family. A: Vera is 57. B: Curt is 32. C: Ruth is 4. How many years older is A than C?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Vera was born in 1917. B: Ruth was born in 1973. C: Curt was born in 1941. How many years older is A than C?",
+  "newPrompt": "Fictional Oakhaven family. A: Vera is 61. B: Ruth is 5. C: Curt is 37. How many years older is A than C?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Vera was born in 1917. B: Ruth was born in 1973. C: Curt was born in 1941. How many years older is C than B?",
+  "newPrompt": "Fictional Oakhaven family. A: Vera is 61. B: Ruth is 5. C: Curt is 37. How many years older is C than B?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Vera was born in 1917. B: Ruth was born in 1973. C: Curt was born in 1941. How many years older is A than B?",
+  "newPrompt": "Fictional Oakhaven family. A: Vera is 61. B: Ruth is 5. C: Curt is 37. How many years older is A than B?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Curt was born in 1955. B: Vera was born in 1932. C: Ruth was born in 1981. How many years older is B than A?",
+  "newPrompt": "Fictional Oakhaven family. A: Curt is 32. B: Vera is 55. C: Ruth is 6. How many years older is B than A?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Curt was born in 1955. B: Vera was born in 1932. C: Ruth was born in 1981. How many years older is A than C?",
+  "newPrompt": "Fictional Oakhaven family. A: Curt is 32. B: Vera is 55. C: Ruth is 6. How many years older is A than C?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Curt was born in 1955. B: Vera was born in 1932. C: Ruth was born in 1981. How many years older is B than C?",
+  "newPrompt": "Fictional Oakhaven family. A: Curt is 32. B: Vera is 55. C: Ruth is 6. How many years older is B than C?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Ella was born in 1965. B: Iris was born in 1937. C: Tom was born in 1959. D: Dean was born in 1909. How many years older is D than B?",
+  "newPrompt": "Fictional Oakhaven family. A: Ella is 5. B: Iris is 33. C: Tom is 11. D: Dean is 61. How many years older is D than B?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Ella was born in 1965. B: Iris was born in 1937. C: Tom was born in 1959. D: Dean was born in 1909. How many years older is B than C?",
+  "newPrompt": "Fictional Oakhaven family. A: Ella is 5. B: Iris is 33. C: Tom is 11. D: Dean is 61. How many years older is B than C?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Ella was born in 1965. B: Iris was born in 1937. C: Tom was born in 1959. D: Dean was born in 1909. How many years older is C than A?",
+  "newPrompt": "Fictional Oakhaven family. A: Ella is 5. B: Iris is 33. C: Tom is 11. D: Dean is 61. How many years older is C than A?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Ella was born in 1965. B: Iris was born in 1937. C: Tom was born in 1959. D: Dean was born in 1909. How many years older is D than A?",
+  "newPrompt": "Fictional Oakhaven family. A: Ella is 5. B: Iris is 33. C: Tom is 11. D: Dean is 61. How many years older is D than A?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Dean was born in 1924. B: Iris was born in 1948. C: Tom was born in 1975. D: Ella was born in 1977. How many years older is A than B?",
+  "newPrompt": "Fictional Oakhaven family. A: Dean is 59. B: Iris is 35. C: Tom is 8. D: Ella is 6. How many years older is A than B?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Dean was born in 1924. B: Iris was born in 1948. C: Tom was born in 1975. D: Ella was born in 1977. How many years older is B than C?",
+  "newPrompt": "Fictional Oakhaven family. A: Dean is 59. B: Iris is 35. C: Tom is 8. D: Ella is 6. How many years older is B than C?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Dean was born in 1924. B: Iris was born in 1948. C: Tom was born in 1975. D: Ella was born in 1977. How many years older is C than D?",
+  "newPrompt": "Fictional Oakhaven family. A: Dean is 59. B: Iris is 35. C: Tom is 8. D: Ella is 6. How many years older is C than D?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Dean was born in 1924. B: Iris was born in 1948. C: Tom was born in 1975. D: Ella was born in 1977. How many years older is A than D?",
+  "newPrompt": "Fictional Oakhaven family. A: Dean is 59. B: Iris is 35. C: Tom is 8. D: Ella is 6. How many years older is A than D?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Iris was born in 1962. B: Dean was born in 1939. C: Ella was born in 1995. D: Tom was born in 1988. How many years older is B than A?",
+  "newPrompt": "Fictional Oakhaven family. A: Iris is 40. B: Dean is 63. C: Ella is 7. D: Tom is 14. How many years older is B than A?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Iris was born in 1962. B: Dean was born in 1939. C: Ella was born in 1995. D: Tom was born in 1988. How many years older is A than D?",
+  "newPrompt": "Fictional Oakhaven family. A: Iris is 40. B: Dean is 63. C: Ella is 7. D: Tom is 14. How many years older is A than D?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Iris was born in 1962. B: Dean was born in 1939. C: Ella was born in 1995. D: Tom was born in 1988. How many years older is D than C?",
+  "newPrompt": "Fictional Oakhaven family. A: Iris is 40. B: Dean is 63. C: Ella is 7. D: Tom is 14. How many years older is D than C?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Fictional Oakhaven family. A: Iris was born in 1962. B: Dean was born in 1939. C: Ella was born in 1995. D: Tom was born in 1988. How many years older is B than C?",
+  "newPrompt": "Fictional Oakhaven family. A: Iris is 40. B: Dean is 63. C: Ella is 7. D: Tom is 14. How many years older is B than C?",
+  "reason": "improve20-n-nov1 (audit4 a2): Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
+ },
+ {
+  "subject": "history",
+  "level": 3,
+  "oldPrompt": "Mom Dana was born in 1959 and Wren was born in 1985. How many years older is Mom Dana than Wren?",
+  "newPrompt": "Dad Max is 40 and Tia is 8. How many years older is Dad Max than Tia?",
+  "reason": "improve20-n-nov1 (audit4 a2): Try-it; Grade 2 level; years older is asked with ages (a subtraction within 100, 2.NBT.5), not 4-digit birth years."
  }
 ];
 export const ANSWER_ID_RENAMES=new Map(QUESTION_REVISIONS.map(r=>[`${r.subject}-${r.level}-${hash(r.oldPrompt)}`,`${r.subject}-${r.level}-${hash(r.newPrompt)}`]));

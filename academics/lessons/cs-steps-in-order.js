@@ -7,15 +7,15 @@ export default {
  title:"Steps in order",goal:"Some steps must come before others. A plan works when those steps are in the right order; other steps can sometimes swap.",points:20,
  skills:{"next":"What comes next","first":"What comes first","order":"Why order matters"},
  steps:[
- {skill:"first",say:"Our plan is a list of steps to follow in order, one at a time. Some computer programs can also run tasks at the same time.",pic:[{"t":"timeline","events":["step 1","step 2","step 3"]}]},
- {skill:"first",say:"To post a letter you write it, fold it, put it in the envelope, seal it, then add a stamp.",pic:[{"t":"timeline","events":["write it","fold it","put it in","seal it","stamp it"]}],
-  check:{"prompt":"When you wash your hands, which of these steps comes first?","answer":"wet your hands","options":["wet your hands","rub on soap","rinse the soap off"],"hint":"The soap lathers on wet hands, and there is nothing to rinse until the soap is on.","pic":{"t":"timeline","events":["wet your hands","soap","rinse","dry"]}}},
- {skill:"order",say:"To mail a letter inside an envelope, put the letter in before sealing it. Otherwise you would need to reopen the envelope.",pic:[{"t":"pair","a":"put it in","b":"seal it"}]},
- {skill:"next",say:"To plant a seed: dig a hole, drop the seed in, cover it with soil, then water it.",pic:[{"t":"timeline","events":["dig","drop in","cover","water"]}],
+ {skill:"first",say:"Our plan is a list of steps. We do them in order, one at a time. Some computer programs can do jobs at the same time, too.",pic:[{"t":"timeline","events":["step 1","step 2","step 3"]}]},
+ {skill:"first",say:"Here is how to post a letter. Write it and fold it. Put it in the envelope. Seal it. Then add a stamp.",pic:[{"t":"timeline","events":["write it","fold it","put it in","seal it","stamp it"]}],
+  check:{"prompt":"When you wash your hands, which of these steps comes first?","answer":"wet your hands","options":["wet your hands","rub on soap","rinse the soap off"],"hint":"Soap works on wet hands. You rinse after the soap is on.","pic":{"t":"timeline","events":["wet your hands","soap","rinse","dry"]}}},
+ {skill:"order",say:"Put the letter in before you seal the envelope. If not, you would have to open it again.",pic:[{"t":"pair","a":"put it in","b":"seal it"}]},
+ {skill:"next",say:"To plant a seed, dig a hole. Drop the seed in. Cover it with soil. Then water it.",pic:[{"t":"timeline","events":["dig","drop in","cover","water"]}],
   check:{prompt:"In posting a letter, what comes straight after you seal it?",answer:"add a stamp",options:["add a stamp","fold it","write it"],hint:"Remember the letter plan: write, fold, put it in, seal, then the last step.",pic:{"t":"timeline","events":["seal it","?"]}}},
- {skill:"order",say:"In this planting plan, put the seed in the hole before covering it. Some seeds can sprout on the surface, so being on top does not always prevent growth.",pic:[{"t":"pair","a":"drop in","b":"cover"}],
+ {skill:"order",say:"In this plan, drop the seed in before you cover the hole. Some seeds can grow on top of the soil. This plan puts the seed under the soil.",pic:[{"t":"pair","a":"drop in","b":"cover"}],
   check:{prompt:"Why can't you cover the hole before dropping the seed in?",answer:"the seed would be left on top",options:["the seed would be left on top","it would grow faster","it makes no difference"],hint:"Think about where the seed ends up.",pic:{"t":"pair","a":"cover","b":"drop in"}}},
- {skill:"next",say:"Find the step you are on, and the next one is the one that needs it done.",pic:[{"t":"timeline","events":["now","next"]}]}],
+ {skill:"next",say:"Find the step you are on. The next step is the one that needs it done.",pic:[{"t":"timeline","events":["now","next"]}]}],
  items(add){
   const _SKIP=new Set(["In posting a letter, what comes straight after you fold it?","In planting a seed, what comes first?","Why can't you cover the hole before dropping the seed in?"]),_add=add;
   add=(s,p,a,pic,why,acc)=>{if(!_SKIP.has(String(p)))_add(s,p,a,pic,why,acc);};

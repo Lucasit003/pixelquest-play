@@ -7,15 +7,15 @@ export default {
  title:"True or false",goal:"A computer checks whether something is true before it decides.",points:20,
  skills:{"true":"True statements","false":"False statements","check":"Checking first"},
  steps:[
- {skill:"true",say:"A true statement is something that is correct.  For example, 'Birds have feathers' is true.",pic:[{"t":"rule","cond":"Do birds have feathers?","yes":"true","no":"false"}],eq:"Birds have feathers",
+ {skill:"true",say:"A true statement is correct. 'Birds have feathers' is true.",pic:[{"t":"rule","cond":"Do birds have feathers?","yes":"true","no":"false"}],eq:"Birds have feathers",
   check:{prompt:"On a sunny day with no clouds, is 'The sky is blue' true or false?",answer:"true",options:["true","false"],hint:"Think about the sky on a clear, sunny day. Is the sentence correct?",pic:{"t":"word","base":"sky","suffix":"is blue","solve":true}}},
- {skill:"false",say:"A false statement is something that is not correct.  For example, 'Dogs can fly' is false because dogs cannot fly.",pic:[{"t":"rule","cond":"Can dogs fly?","yes":"true","no":"false"}],eq:"Dogs can fly"},
- {skill:"check",say:"Before a computer decides what to do, it checks if something is true.  If 'it is raining' is true, it can decide to close the window.",pic:[{"t":"rule","cond":"Is it raining?","yes":"close the window","no":"leave it open"}],eq:"If it is raining, close the window",
-  check:{prompt:"The rule says: if it is raining, close the window. It is raining. Should the window be closed?",answer:"yes",options:["yes","no"],hint:"The rule is true, so the computer does what it says.",pic:{"t":"matter","jars":[{"state":"liquid","hide":true},{"state":"liquid"}]}}},
- {skill:"true",say:"Another true statement is 'The sun is a star'.  The sun is the star closest to Earth, so this is true.",pic:[{"t":"rule","cond":"Is the sun a star?","yes":"true","no":"false"}],eq:"The sun is a star"},
- {skill:"false",say:"An example of a false statement is 'The sun is cold'.  The sun is very hot, and its light warms the Earth.",pic:[{"t":"rule","cond":"Is the sun cold?","yes":"true","no":"false"}],eq:"The sun is cold",
-  check:{"prompt":"Look back: is the sentence 'Dogs can fly' true or false?","answer":"false","options":["false","true"],"hint":"Dogs have no wings and cannot fly, so the sentence is not correct.","pic":{"t":"word","base":"Dogs can fly"}}},
- {skill:"check",say:"Checking if something is true or false helps a computer make the right decisions.  For example, if you have enough cookies, it might decide to share them.",pic:[{"t":"rule","cond":"Are there enough cookies?","yes":"share them","no":"bake more"}],eq:"If you have enough cookies, share them"}],
+ {skill:"false",say:"A false statement is not correct. 'Dogs can fly' is false. Dogs cannot fly.",pic:[{"t":"rule","cond":"Can dogs fly?","yes":"true","no":"false"}],eq:"Dogs can fly"},
+ {skill:"check",say:"A computer checks if something is true. Then it decides what to do. Is 'it is raining' true? Then it can close the window.",pic:[{"t":"rule","cond":"Is it raining?","yes":"close the window","no":"leave it open"}],eq:"If it is raining, close the window",
+  check:{prompt:"The rule says: if it is raining, close the window. It is raining. Should the window be closed?",answer:"yes",options:["yes","no"],hint:"It is raining, so the rule says to close the window.",pic:{"t":"matter","jars":[{"state":"liquid","hide":true},{"state":"liquid"}]}}},
+ {skill:"true",say:"'The sun is a star' is true. The sun is the star closest to Earth.",pic:[{"t":"rule","cond":"Is the sun a star?","yes":"true","no":"false"}],eq:"The sun is a star"},
+ {skill:"false",say:"'The sun is cold' is false. The sun is very hot. Its light warms the Earth.",pic:[{"t":"rule","cond":"Is the sun cold?","yes":"true","no":"false"}],eq:"The sun is cold",
+  check:{"prompt":"Look back: is the sentence 'Dogs can fly' true or false?","answer":"false","options":["false","true"],"hint":"Dogs have no wings. They cannot fly. So the sentence is not correct.","pic":{"t":"word","base":"Dogs can fly"}}},
+ {skill:"check",say:"True or false checks help a computer choose. Is 'there are enough cookies' true? Then it might choose to share them.",pic:[{"t":"rule","cond":"Are there enough cookies?","yes":"share them","no":"bake more"}],eq:"If you have enough cookies, share them"}],
  items(add){
   const _SKIP=new Set(["Is 'Birds have feathers' true or false?","The rule says: if it is raining, close the window. It is raining. Should the window be closed?","Is 'The sun is cold' true?"]),_add=add;
   add=(s,p,a,pic,why,acc)=>{if(!_SKIP.has(String(p)))_add(s,p,a,pic,why,acc);};

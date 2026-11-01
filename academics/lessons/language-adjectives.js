@@ -7,14 +7,14 @@ export default {
  title:"Describing words",goal:"An adjective tells you more about a noun.",points:20,
  skills:{"spot":"Spotting adjectives","use":"Using them","sort":"Adjective or noun"},
  steps:[
- {skill:"spot",say:"An adjective describes a noun.  For example, in 'big dog', 'big' is an adjective that tells us more about 'dog'.",pic:[{"t":"pair","a":"big","b":"dog"}],eq:"big dog"},
- {skill:"spot",say:"In 'red ball', 'red' is an adjective that describes 'ball'.  It tells us the color of the ball.",pic:[{"t":"pair","a":"red","b":"ball"}],eq:"red ball",
+ {skill:"spot",say:"An adjective describes a noun. In 'big dog', 'big' is the adjective. It tells us more about the dog.",pic:[{"t":"pair","a":"big","b":"dog"}],eq:"big dog"},
+ {skill:"spot",say:"In 'red ball', 'red' describes the ball. It tells us its color.",pic:[{"t":"pair","a":"red","b":"ball"}],eq:"red ball",
   check:{prompt:"What is the adjective in 'blue sky'?",answer:"blue",options:["blue","sky","blue sky"],hint:"An adjective describes a noun. In 'blue sky', 'blue' describes 'sky'.",pic:{"t":"word","base":"blue sky"}}},
- {skill:"use",say:"You can use adjectives to make your descriptions more interesting.  For example, instead of just saying 'dog', you can say 'big, fluffy dog'.",pic:[{"t":"pair","a":"fluffy","b":"dog"}],eq:"big fluffy dog"},
- {skill:"use",say:"Adjectives can describe things in many ways.  For example, 'fast car' tells us how the car moves, and 'old house' tells us how old the house is.",pic:[{"t":"pair","a":"fast","b":"car"}],eq:"fast car",
+ {skill:"use",say:"Adjectives make what you say more fun. Don't just say 'dog'. Say 'big, fluffy dog'.",pic:[{"t":"pair","a":"fluffy","b":"dog"}],eq:"big fluffy dog"},
+ {skill:"use",say:"Adjectives tell us many things. 'Fast car' tells how the car moves. 'Old house' tells how old the house is.",pic:[{"t":"pair","a":"fast","b":"car"}],eq:"fast car",
   check:{prompt:"What is the noun in 'tall tree'?",answer:"tree",options:["tree","tall","tall tree"],hint:"An adjective describes a noun. In 'tall tree', 'tree' is the noun.",pic:{"t":"word","base":"tall tree"}}},
- {skill:"sort",say:"Now, let's sort words into adjectives and nouns.  'Cat' is a noun, and 'black' is an adjective that describes the cat.",pic:[{"t":"pair","a":"black","b":"cat"}],eq:"black cat"},
- {skill:"sort",say:"In 'happy children', 'happy' is an adjective that describes the children, and 'children' is a noun.",pic:[{"t":"pair","a":"happy","b":"children"}],eq:"happy children",
+ {skill:"sort",say:"Now let's sort words. 'Cat' is a noun. 'Black' is an adjective. It describes the cat.",pic:[{"t":"pair","a":"black","b":"cat"}],eq:"black cat"},
+ {skill:"sort",say:"In 'happy children', 'happy' is the adjective. 'Children' is the noun.",pic:[{"t":"pair","a":"happy","b":"children"}],eq:"happy children",
   check:{prompt:"Is 'quick' an adjective or a noun?",answer:"adjective",options:["adjective","noun","quickly"],hint:"An adjective describes a noun. 'Quick' describes how something moves.",pic:{"t":"word","base":"quick fox"}}}],
  items(add){
   const _SKIP=new Set(["What is the adjective in 'blue sky'?","What is the noun in 'tall tree'?","Is 'quick' an adjective or a noun?"]),_add=add;

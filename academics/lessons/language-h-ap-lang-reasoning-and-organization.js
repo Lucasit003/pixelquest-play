@@ -220,9 +220,10 @@ steps:[
 progression:{requires:['language-h-ap-lang-claims-and-evidence'],operations:2,demand:'Read arguments closely for how they are reasoned and arranged: follow the line of reasoning, name the methods of development and patterns of organization, read the relationships that transitions show, see how writers handle counterarguments and qualify claims, and explain how sequence, position and proportion create emphasis.'},
 items(add){
  const seen=new Set(TRY);
- const put=(skill,prompt,answer,pic,explanation,accept)=>{if(seen.has(prompt))return;seen.add(prompt);add(skill,prompt,answer,pic,explanation,accept);};
+ const put=(skill,prompt,answer,pic,explanation,accept,key)=>{if(seen.has(prompt))return;seen.add(prompt);add(skill,prompt,answer,pic,explanation,accept,key);};
  ROWS.forEach(([skill,key,q,right,wrong,why],k)=>{const c=choose(right,wrong,k);
   if(!key){put(skill,`${q} ${c.text}. ${ask(c.n)}`,c.letter,null/* 25 Oct: no picture; it only repeated the question in tiny type */,why,[right,dot(right)]);return;}
   const [src,lines]=P(key),text=lines.join(' ');
-  put(skill,`${src}: “${text}” ${q} ${c.text}. ${ask(c.n)}`,c.letter,pass(src,lines),why,[right,dot(right)]);});
+  /* improve20-n-nov1 (audit4 a12): a passage already in curly quotes is not wrapped again (““…”” read as doubled marks); its id keeps the old wrapped text (academics/lessons.js idOf key) */
+  {const was=`${src}: “${text}” ${q} ${c.text}. ${ask(c.n)}`;if(text.startsWith('“'))put(skill,`${src}: ${text} ${q} ${c.text}. ${ask(c.n)}`,c.letter,pass(src,lines),why,[right,dot(right)],was);else put(skill,was,c.letter,pass(src,lines),why,[right,dot(right)]);}});
 }};

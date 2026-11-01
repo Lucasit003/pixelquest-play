@@ -10,11 +10,11 @@ export default {
  {skill:"land",say:"Mountains are tall landforms.",pic:[{"t":"tiles","seq":["mountain","mountain","mountain"]}],eq:"Mountains are land.",
   check:{prompt:"Land or water: mountain?",answer:"land",options:["land","water"],hint:"Mountains are tall landforms.",pic:{"t":"tiles","seq":["mountain","mountain","mountain"]}}},
  {skill:"land",say:"Plains are flat landforms.",pic:[{"t":"tiles","seq":["plain","plain","plain"]}],eq:"Plains are land."},
- {skill:"water",say:"Oceans are large bodies of water.",pic:[{"t":"tiles","seq":["ocean","ocean","ocean"]}],eq:"Oceans are water.",
+ {skill:"water",say:"Oceans are huge areas of salt water.",pic:[{"t":"tiles","seq":["ocean","ocean","ocean"]}],eq:"Oceans are water.",
   check:{"prompt":"Look back: are plains land or water?","answer":"land","options":["land","water"],"hint":"Plains are flat landforms.","pic":{"t":"pair","a":"plains","b":"?"}}},
- {skill:"water",say:"Rivers are flowing bodies of water.",pic:[{"t":"tiles","seq":["river","river","river"]}],eq:"Rivers are water."},
+ {skill:"water",say:"A river is water that flows.",pic:[{"t":"tiles","seq":["river","river","river"]}],eq:"Rivers are water."},
  {skill:"tell",say:"Mountains are land, but oceans are water.",pic:[{"t":"tiles","seq":["mountain","ocean","mountain","ocean"]}],eq:"Mountains are land, oceans are water.",
-  check:{prompt:"Land or water: river?",answer:"water",options:["water","land"],hint:"Rivers are flowing bodies of water.",pic:{"t":"tiles","seq":["river","river","river"]}}},
+  check:{prompt:"Land or water: river?",answer:"water",options:["water","land"],hint:"A river is water that flows.",pic:{"t":"tiles","seq":["river","river","river"]}}},
  {skill:"tell",say:"Plains are land, but rivers are water.",pic:[{"t":"tiles","seq":["plain","river","plain","river"]}],eq:"Plains are land, rivers are water."}],
  items(add){
   /* 28 Oct (elfact): every why in this topic started with a lower-case letter ("dog is living."); each now starts with a capital. */

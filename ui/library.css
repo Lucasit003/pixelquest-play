@@ -979,3 +979,28 @@ html.m-mode dialog:is([data-view=placement],[data-view=lesson-quiz]) .question-r
 html.m-mode dialog:is([data-view=placement],[data-view=lesson-quiz]).pic-zoomed .question-reading>.quiz-zoom{position:fixed!important;inset:0;width:auto;height:auto;margin:0;z-index:30;border:0;border-radius:0;background:rgba(14,12,26,.96);cursor:zoom-out}
 html.m-mode dialog:is([data-view=placement],[data-view=lesson-quiz]).pic-zoomed .question-reading>.quiz-zoom>svg{display:none}
 html.m-mode dialog:is([data-view=placement],[data-view=lesson-quiz]).pic-zoomed .question-reading>#quiz-pic{position:fixed!important;inset:0!important;margin:auto!important;z-index:31!important;width:min(calc(100vw - 16px),calc((100dvh - 16px)*640/280))!important;height:auto!important;max-width:none!important;max-height:none!important;cursor:zoom-out}
+/* improve20-n-nov1 #17 (audit4 a1): the young lesson card, Elementary grades 2-3 (main.js marks .lesson[data-young]). The caption that
+   teaches is at least 20px and the Try-it at least 18px with bigger answer tiles; on a laptop-sized window the guide and its caption take
+   the whole left column and the Try-it sits under the picture in the right column, where the card was empty (fitLessonPic sizes the
+   picture so both fit). On a phone youngPhoneFit (main.js) narrows the picture until the Try-it is above the fold. Grades 4-5, Middle
+   and High School keep their layout. */
+html dialog[data-view=lesson] .lesson[data-young] .lesson-body .lesson-say{font-size:max(20px,var(--fs));line-height:1.3}
+html dialog[data-view=lesson] .lesson[data-young] .lesson-body>.lesson-check>p{font-size:max(18px,var(--fs));line-height:1.3}
+html dialog[data-view=lesson] .lesson[data-young] .lesson-body>.lesson-check .lesson-answers [data-answer]{font-size:max(18px,var(--fs));min-height:48px;min-width:96px}
+html:not(.m-mode) dialog[data-view=lesson] .lesson[data-young] .lesson-body:not(.wide-check):has(>.lesson-check)>.edu-guide-row{grid-column:1;grid-row:1/span 2}
+html:not(.m-mode) dialog[data-view=lesson] .lesson[data-young] .lesson-body:not(.wide-check):has(>.lesson-check)>.lesson-visual{grid-column:2;grid-row:1}
+html:not(.m-mode) dialog[data-view=lesson] .lesson[data-young] .lesson-body:not(.wide-check):has(>.lesson-check)>.lesson-check{grid-column:2;grid-row:2}
+/* the right column never gets narrower than the Try-it needs (380px), however small fitLessonPic tries the picture, so a smaller picture
+   always leaves more room (the fit's search assumes that) */
+html:not(.m-mode) dialog[data-view=lesson] .lesson[data-young] .lesson-body:not(.wide-check):has(>.lesson-check){grid-template-columns:minmax(0,1fr) max(var(--pic-w,380px),380px)}
+/* phone: Read to me and Narration sit side by side beside the caption, not stacked, so a two-line caption's card is two lines tall */
+html.m-mode dialog[data-view=lesson] .lesson[data-young] .edu-speech .edu-voice{flex-direction:row;align-items:flex-start}
+/* the last phone fallback (youngPhoneFit, young-tight): caption 18px, the Try-it's question back to 16px (its tiles stay 44px touch targets) and
+   the two cards' padding trimmed, so a three-line caption and a long Try-it still meet on a 740x360 screen */
+html.m-mode dialog[data-view=lesson] .lesson[data-young] .lesson-body.young-tight .lesson-say{font-size:18px;line-height:1.2;margin:0}
+html.m-mode dialog[data-view=lesson] .lesson[data-young] .lesson-body.young-tight>.lesson-check>p{font-size:16px;line-height:1.25;margin:0 0 4px}
+html.m-mode dialog[data-view=lesson] .lesson[data-young] .lesson-body.young-tight>.lesson-check{padding-top:4px;padding-bottom:3px}
+html.m-mode dialog[data-view=lesson] .lesson[data-young] .lesson-body.young-tight .edu-speech{padding-top:4px;padding-bottom:4px}
+html.m-mode dialog[data-view=lesson] .lesson[data-young] .lesson-body.young-tight{row-gap:3px}
+/* phone side-answers on a young card: the answer tiles sit beside the Try-it's question (not under it), so the card is one row shorter */
+html.m-mode dialog[data-view=lesson] .lesson[data-young] .lesson-body.side-answers.wide-check>.lesson-check>.lesson-answers{grid-column:3;grid-row:1;grid-template-columns:repeat(auto-fit,minmax(96px,auto));max-width:46vw;margin:0}

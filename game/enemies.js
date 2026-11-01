@@ -300,7 +300,7 @@ export const ENEMY_TYPES={
      is exhausted (a long opening); ash ghouls claw up from the dunes. Heroic: a longer storm. Legendary: Pillar Form twice. */
   half:'The ash rises with me!',phaseShift:{at:.5,line:'The ash rises with me!',speed:1.2,cd:.7,tint:'#ff7a3a',title:'THE ASH STORM RISES'},attacks:[
   {name:'burning claws',state:'attack',kind:'melee',range:30,band:10,cd:2.2,windup:.6,dmg:1.2},
-  {name:'ash storm',state:'cast',kind:'dark',dur:6,range:400,cd:17,windup:.8,label:'ASH STORM',banner:'THE ASH HIDES HIM!',bossOnly:true,heroic:{dur:8}},
+  {name:'ash storm',state:'cast',kind:'dark',dur:6,range:400,cd:17,windup:.8,label:'ASH STORM',sig:true,banner:'THE ASH HIDES HIM!',bossOnly:true,heroic:{dur:8}},
   {name:'pillar form',state:'special',kind:'pillar',dur:3,speed:28,radius:18,every:1.6,maxHits:2,range:220,cd:9,windup:.8,dmg:.7,recover:2,label:'PILLAR FORM',bossOnly:true,legendary:{then:'pillar form',maxHits:1}},
   {name:'hellfire',state:'attack2',kind:'projectile',fx:'fx-hellfire',range:280,cd:3.2,windup:.6,dmg:1.05,speed:120,count:2,spread:14},
   {name:'ash ghouls rise',state:'cast',kind:'summon',key:'ash-ghoul',count:2,max:2,range:400,cd:13,windup:.7,fx:'fx-dust',phase:2,label:'ASH GHOULS RISE'}]},
@@ -316,7 +316,7 @@ export const ENEMY_TYPES={
   {name:'coral sweep',state:'attack',kind:'melee',range:62,band:12,cd:2.6,windup:.65,dmg:1.25},
   {name:'tide ring',state:'special',kind:'wave',shape:'ring',speed:95,reach:190,th:8,fx:'fx-col-ice',range:200,cd:6.5,windup:.75,dmg:1,label:'TIDE RING',heroic:{count:2,gap:.8,dmg:.85}},
   {name:'geyser line',state:'attack2',kind:'line',fx:'fx-geyser',count:5,gap:28,radius:15,range:220,cd:5,windup:.7,dmg:1.05},
-  {name:'high tide',state:'cast',kind:'zone',area:'lower',dur:12,slow:.35,flood:true,tint:'#3f9fe0',fx:'fx-spark-ice',range:400,cd:16,windup:.8,phase:2,label:'HIGH TIDE',banner:'THE TIDE RISES!',bossOnly:true,legendary:{phase:0}},
+  {name:'high tide',state:'cast',kind:'zone',area:'lower',dur:12,slow:.35,flood:true,tint:'#3f9fe0',fx:'fx-spark-ice',range:400,cd:16,windup:.8,phase:2,label:'HIGH TIDE',sig:true,banner:'THE TIDE RISES!',bossOnly:true,legendary:{phase:0}},
   {name:'undertow',state:'cast',kind:'undertow',dur:1.8,pull:34,range:260,cd:8,windup:.7,then:'coral sweep',label:'UNDERTOW',bossOnly:true},
   {name:'call the wisps',state:'cast',kind:'summon',key:'wisp',count:2,max:3,range:400,cd:10,windup:.7,fx:'fx-geyser',label:'CALL THE WISPS'}]},
  'wisp-mother':{name:'The Wisp Mother',sprite:'pl-wisp-mother',boss:true,hp:1020,atk:33,def:15,speed:36,scale:1,ai:'boss',band:10,kbResist:.85,weakness:'holy',
@@ -328,7 +328,7 @@ export const ENEMY_TYPES={
      Heroic: the brood comes back once. Legendary: two lures at once. */
   half:'Shine, my little lights!',phaseShift:{at:.5,line:'Shine, my little lights!',speed:1.2,cd:.7,tint:'#9ff4ff',title:'THE FEN LIGHTS UP'},attacks:[
   {name:'pale arc',state:'attack',kind:'melee',range:90,band:10,cd:2.2,windup:.6,dmg:1.2},
-  {name:'lantern brood',state:'cast',kind:'summon',key:'lantern-wisp',count:3,max:3,link:true,orbit:true,linkColor:'#bff6ff',range:400,cd:14,windup:.75,fx:'fx-spark-holy',fxs:'twinkle',uses:1,label:'LANTERN BROOD',banner:'POP THE LANTERNS!',bossOnly:true,heroic:{uses:2}},
+  {name:'lantern brood',state:'cast',kind:'summon',key:'lantern-wisp',count:3,max:3,link:true,orbit:true,linkColor:'#bff6ff',range:400,cd:14,windup:.75,fx:'fx-spark-holy',fxs:'twinkle',uses:1,label:'LANTERN BROOD',sig:true,banner:'POP THE LANTERNS!',bossOnly:true,heroic:{uses:2}},
   {name:'mist veil',state:'special',kind:'vanish',to:'lantern',appear:.8,radius:24,out:.35,puff:'fx-aura-ice',fx:'fx-col-holy',range:320,cd:6.5,windup:.65,dmg:1.1,recover:.5,label:'MIST VEIL',bossOnly:true},
   {name:'marsh wind',state:'attack2',kind:'aoe',at:'player',fx:'fx-tornado',radius:18,range:300,cd:4.2,windup:.65,dmg:.9,push:60},
   {name:'will-o\'-lure',state:'cast',kind:'lure',drift:1.2,fuse:1,radius:20,fx:'fx-marsh-gas',lightFx:'fx-spark-holy',range:300,cd:5.5,windup:.6,dmg:1.15,label:'WILL-O\'-LURE',legendary:{count:2,spread:56}},
@@ -345,7 +345,7 @@ export const ENEMY_TYPES={
   {name:'echo',state:'cast',kind:'echo',range:300,cd:6.5,windup:.9,dmg:1.05,recover:.9,label:'ECHO',heroic:{lead:true}},
   {name:'shadow step',state:'walk',kind:'dash',range:170,cd:6,windup:.65,dmg:1.1,speed:280,band:12,trail:{fx:'fx-col-shadow',delay:1,radius:16,dmg:.85},label:'SHADOW STEP'},
   {name:'shadow flame',state:'special',kind:'melee',range:64,band:14,impact:'fx-aura-shadow',cd:4.5,windup:.7,dmg:1.3,label:'SHADOW FLAME'},
-  {name:'mirror split',state:'attack2',kind:'split',count:1,hp:.05,fx:'fx-aura-shadow',range:400,cd:18,windup:.8,phase:2,label:'MIRROR SPLIT',banner:'ONLY THE REAL ONE HAS A SHADOW!',bossOnly:true,legendary:{count:2,max:2}}]},
+  {name:'mirror split',state:'attack2',kind:'split',count:1,hp:.05,fx:'fx-aura-shadow',range:400,cd:18,windup:.8,phase:2,label:'MIRROR SPLIT',sig:true,banner:'ONLY THE REAL ONE HAS A SHADOW!',bossOnly:true,legendary:{count:2,max:2}}]},
  'crystal-golem':{name:'The Crystal Golem',sprite:'pl-crystal-golem',boss:true,hp:1000,atk:33,def:21,speed:26,scale:1,ai:'boss',band:14,kbResist:1,weakness:'storm',
   taunts:['I fell from the sky. You\'ll fall too.','Let my starlight blind you!'],intro:'A fallen star made me. I will shine forever!',defeat:'Shattered... into a thousand sparkles.',
   fact:F('science','Quartz is one of the most common minerals in Earth\'s crust. Most of the sand on beaches is made of tiny bits of it.'),
@@ -359,7 +359,7 @@ export const ENEMY_TYPES={
   {name:'crystal ram',state:'walk',kind:'dash',range:240,speed:230,cd:4.4,windup:.75,dmg:1.25,band:14,bonk:1.8,label:'CRYSTAL RAM'},
   {name:'crystal spikes',state:'attack2',kind:'line',fx:'fx-crystal-spike',count:6,gap:24,radius:12,range:200,cd:4,windup:.7,dmg:1.1},
   {name:'starfall',state:'cast',kind:'aoe',at:'player',fx:'fx-bolt-holy',hs:'blast',fall:true,fallFx:'fx-bolt-holy',delay:.6,count:3,spread:46,radius:16,range:300,cd:5,windup:.75,dmg:1.05,label:'STARFALL',legendary:{then:'crystal ram'}},
-  {name:'prism pylons',state:'special',kind:'summon',key:'prism-pylon',spots:'sides',count:2,max:2,link:true,linkColor:'#e2c4ff',range:400,cd:20,windup:.8,fx:'fx-aura-arcane',uses:1,label:'PRISM PYLONS',banner:'BREAK THE PYLONS!',bossOnly:true,heroic:{uses:2},legendary:{uses:1}},
+  {name:'prism pylons',state:'special',kind:'summon',key:'prism-pylon',spots:'sides',count:2,max:2,link:true,linkColor:'#e2c4ff',range:400,cd:20,windup:.8,fx:'fx-aura-arcane',uses:1,label:'PRISM PYLONS',sig:true,banner:'BREAK THE PYLONS!',bossOnly:true,heroic:{uses:2},legendary:{uses:1}},
   {name:'shard burst',state:'cast',kind:'aoe',at:'self',radius:54,impact:'fx-aura-ice',cd:6,windup:.7,dmg:1.1,forced:true,onMash:{hits:6,window:2.2},label:'SHARD BURST'}]},
  lich:{name:'The Choir Lich',sprite:'pl-choir-lich',boss:true,hp:1080,atk:34,def:15,speed:30,scale:1,ai:'boss',band:12,kbResist:.85,keep:60,weakness:'fire',
   taunts:['Sing with us, hero. Everyone does.','Your voice will suit my choir.'],intro:'My choir needs one more voice. Yours!',defeat:'The song... is over.',
@@ -405,7 +405,7 @@ export const ENEMY_TYPES={
   half:'Now you will see me truly awake!',phaseShift:{at:.5,line:'Now you will see me truly awake!',state:'fly',speed:1.3,cd:.65,dmg:1.15,tint:'#6dff8a',title:'THE SLEEPER WAKES'},attacks:[
   {name:'tentacle lash',state:'attack',kind:'melee',range:90,band:12,cd:2.6,windup:.65,dmg:1.25},
   {name:'tentacle grab',state:'attack2',kind:'aoe',at:'player',fx:'fx-tentacle',radius:16,range:300,cd:5.2,windup:.75,dmg:.9,pull:40,hold:.8,label:'TENTACLE GRAB',heroic:{count:2,spread:50}},
-  {name:'ink darkness',state:'cast',kind:'dark',dur:6,eye:'#7dff9a',range:400,cd:18,windup:.8,label:'INK DARKNESS',banner:'STAY IN THE LIGHT!',bossOnly:true},
+  {name:'ink darkness',state:'cast',kind:'dark',dur:6,eye:'#7dff9a',range:400,cd:18,windup:.8,label:'INK DARKNESS',sig:true,banner:'STAY IN THE LIGHT!',bossOnly:true},
   {name:'abyss wave',state:'special',kind:'sweep',len:200,dur:1,band:8,fx:'fx-abyss-beam',from:'far',cd:4.4,windup:.8,dmg:1.3,label:'ABYSS WAVE',legendary:{back:true}},
   {name:'deep dive',state:'cast',kind:'leap',radius:40,range:220,cd:5,windup:.85,dmg:1.3,air:.9,impact:'fx-explosion',phase:2},
   {name:'dream echoes',state:'attack2',kind:'pick',label:'DREAM ECHOES',range:300,cd:5,windup:.8,phase:2,options:[

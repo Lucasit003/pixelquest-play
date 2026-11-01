@@ -7,8 +7,8 @@ export default {
  title:"School then and now",goal:"Classrooms long ago (about a hundred years ago or earlier) had things we rarely see today, and newer things do many of those jobs now. Real schools vary.",points:20,
  skills:{"then":"School long ago","now":"School today","swap":"What replaced what"},
  steps:[
- {skill:"then",say:"Long ago, many children wrote on a slate with a piece of chalk, and wiped it clean to start again.",pic:[{"t":"pair","a":"a slate","b":"chalk"}]},
- {skill:"then",say:"Ink came in a pot on the desk, and the pen was dipped into it.",pic:[{"t":"pair","a":"an inkwell","b":"a dipping pen"}],
+ {skill:"then",say:"Long ago, many children wrote on a slate with chalk. They wiped it clean to start again. Older children wrote in ink. The ink sat in a little pot called an inkwell.",pic:[{"t":"pair","a":"a slate","b":"chalk"}]},
+ {skill:"then",say:"To write in ink, a child dipped a pen into the ink. The child wrote a few words. Then the pen went back for more ink.",pic:[{"t":"pair","a":"an inkwell","b":"a dipping pen"}],
   check:{prompt:"What did children dip their pens into long ago?",answer:"an inkwell",options:["an inkwell","a tablet","a water bottle"],hint:"It was a little pot of ink on the desk.",pic:{"t":"pair","a":"a pen","b":null}}},
  {skill:"now",say:"Today a child writes with a ballpoint pen, and types on a tablet or a computer.",pic:[{"t":"pair","a":"a ballpoint pen","b":"a tablet"}]},
  {skill:"now",say:"The classroom is warmed by heating, not by a coal stove in the corner.",pic:[{"t":"pair","a":"a coal stove","b":"heating"}],

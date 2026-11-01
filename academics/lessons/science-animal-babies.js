@@ -11,7 +11,7 @@ export default {
  {skill:"grown",say:"The baby grows up to look like its parent.  A kitten grows up to be a cat.",pic:[{"t":"pair","a":"kitten","b":"cat"}],eq:"kitten: cat",
   check:{prompt:"Look back: a foal grows up to look like its parent. What will it be?",answer:"a horse",options:["a horse","a cat","a dog"],hint:"A foal is a baby horse, so it grows up to be a horse.",pic:{"t":"pair","a":"foal","b":null,"fill":"a horse"}}},
  {skill:"match",say:"Let's match the baby animals with their parents.  A puppy is the baby of a dog.",pic:[{"t":"pair","a":"dog","b":"puppy"}],eq:"dog: puppy"},
- {skill:"match",say:"A baby rabbit is called a bunny.  It grows up to be a rabbit.",pic:[{"t":"pair","a":"rabbit","b":"bunny"}],eq:"rabbit: bunny",
+ {skill:"match",say:"A baby rabbit is called a kit (people often say bunny). It grows up to be a rabbit.",pic:[{"t":"pair","a":"rabbit","b":"bunny"}],eq:"rabbit: bunny",
   check:{prompt:"Look back: what is the baby of a dog called?",answer:"puppy",options:["puppy","kitten","chick"],hint:"Look back: a puppy is the baby of a dog.",pic:{"t":"pair","a":"dog","b":null,"fill":"puppy"}}},
  {skill:"match",say:"A baby chicken is called a chick.  It grows up to be a chicken.",pic:[{"t":"pair","a":"chicken","b":"chick"}],eq:"chicken: chick"},
  {skill:"match",say:"A baby fish is called a fry.  It grows up to be a fish.",pic:[{"t":"pair","a":"fish","b":"fry"}],eq:"fish: fry",

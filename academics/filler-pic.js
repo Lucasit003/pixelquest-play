@@ -35,6 +35,10 @@ export function fillerPart(q,p){
  {const P=' '+norm(q?.prompt)+' ',words=norm(lines.join(' ')).split(' ').filter(Boolean);
   if(p.t==='passages'&&WORD_TITLES.includes(p.title)&&words.length&&words.length<=3&&!lines.some(l=>l.includes('_'))&&lines.every(l=>P.includes(' '+norm(l)+' ')))return true;}
  /* the question re-typed: every word of the card, in order, is in the prompt, and the card holds the question itself */
+ /* improve20-n-nov1 (audit4 a12): a quoted source whose title and every line the prompt already prints in full ("Charles Dickens, A Christmas Carol
+    (1843): “Oh! But he was…” How does…") only re-types the prompt beside it, at about 6 px once scaled into the side panel. High School only (level 5): an Elementary or Middle
+    School record list stays, as cards are easier for a young reader to scan than one long prompt */
+ {const P=' '+norm(q?.prompt)+' ';if(p.t==='passages'&&q?.level===5&&p.title&&P.includes(' '+norm(p.title)+' ')&&lines.every(l=>norm(l)&&P.includes(' '+norm(l)+' ')))return true;}
  if(p.t==='passages'&&!RETYPE_TITLES.includes(p.title))return false;
  const raw=lines.join(' '),j=norm(raw);return !!j&&raw.includes('?')&&(' '+norm(q?.prompt)+' ').includes(' '+j+' ');
 }

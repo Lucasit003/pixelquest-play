@@ -14,7 +14,7 @@ export default {
  {skill:"sort",say:"Fish live in water.  They breathe through gills and swim with fins.  A shark is a fish.",pic:[{"t":"tiles","seq":["dog","cat","elephant","chicken","eagle","sparrow","fish","insect","reptile"]}],eq:"Sort: mammals, birds, fish, insects, reptiles",
   check:{prompt:"Which group is the chicken in?",answer:"bird",options:["bird","mammal","reptile"],hint:"Chickens have feathers and lay eggs.",pic:{"t":"tiles","seq":["chicken"]}}},
  {skill:"sort",say:"Remember, mammals have fur or hair and usually give birth to live young.  Birds have feathers and lay eggs.",pic:[{"t":"tiles","seq":["dog","cat","elephant","chicken","eagle","sparrow","fish","insect","reptile"]}],eq:"Sort: mammals, birds, fish, insects, reptiles",
-  check:{prompt:"Which group is the shark in?",answer:"fish",options:["fish","mammal","reptile"],hint:"Fish live in water and have scales.",pic:{"t":"tiles","seq":["fish"]}}},
+  check:{prompt:"Which group is the shark in?",answer:"fish",options:["fish","mammal","reptile"],hint:"Fish live in water. They breathe with gills and swim with fins.",pic:{"t":"tiles","seq":["fish"]}}},
  {skill:"sort",say:"Insects have six legs, like ants and bees.  Reptiles have dry, scaly skin, like snakes and lizards.",pic:[{"t":"tiles","seq":["dog","cat","elephant","chicken","eagle","sparrow","fish","insect","reptile"]}],eq:"Sort: mammals, birds, fish, insects, reptiles"}],
  items(add){
   const _SKIP=new Set(["Which group is the dog in?","Which group is the chicken in?","Which group is the shark in?"]),_add=add;
