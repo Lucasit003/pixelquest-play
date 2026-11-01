@@ -9,6 +9,9 @@
    shadow frames. Buttons, inputs and bars are left to style.css, so they match every other screen.
    If a skin image is missing, the browser falls back to the plain border colour given beside it.
    Colours and fonts come from the skin's custom properties (--skin-*, --u), with fallbacks. */
+/* improve20-f-nov1 #12: the one Grade 3-5 line in the lesson card, and its button across the actions */
+dialog[data-view=library] .edu-next .edu-grade-line{margin:6px 0 0;font-size:var(--fs);line-height:1.35;color:#3b2410;font-weight:700}
+html:not(.m-mode) dialog[data-view=library] .edu-next-actions>.edu-grade-go{flex-basis:100%}
 :root{
  --edu-u:var(--u,2px);
  --edu-font:var(--skin-font,var(--pixel-font,'Pixel Operator',var(--serif,Georgia,serif)));

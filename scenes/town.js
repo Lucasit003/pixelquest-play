@@ -687,7 +687,7 @@ function beatDue(trigger, S, p) {
 }
 function fire(b) {
   seenBeats().push(b.id);
-  H.events.push({id: b.id, speaker: b.speaker, lines: [...b.say]});
+  H.events.push({id: b.id, speaker: b.speaker, lines: [...b.say], ...(b.cine ? {cine: true} : {})});
 }
 /* Owner, 8 Oct: "make conversation with npcs happen when u press a button near them". A story beat spoken by someone
    who stands in Oakhaven waits until the player walks up to them and presses the talk key; while it waits they wear

@@ -49,3 +49,8 @@ export function markFirstCast(s,id){const h=H(s);(h.firstCast||(h.firstCast=[]))
 export function skipAheadDue(s,subject,rung,checkable){if(!checkable||(s?.placement?.[subject]|0)>0)return false;const g=s?.schoolGrade;return g==null||g===0||rung<g;}
 /* improve20-w-nov1 #13: a pet's "+N%" shows the first `max` times per pet per save; true = show it now (counted) */
 export function notePetTip(s,key,max){const h=H(s),t=h.petTips||(h.petTips={});if((t[key]|0)>=max)return false;t[key]=(t[key]|0)+1;return true;}
+/* improve20-f-nov1 #13 (audit5 #17): the beginner "Tap the ability buttons" tip still showed at hero level 9 (a save that never set
+   settings.castTip). It is retired once castTip is set, once the save has cast abilities TIP_CASTS times in all (hints.casts), or once
+   chapter 1 is cleared (CHAPTER1_END, the Elderwood finale). */
+export const TIP_CASTS=3,CHAPTER1_END='e8';
+export const abilityTipRetired=s=>!!s?.settings?.castTip||Object.values(s?.hints?.casts||{}).reduce((t,n)=>t+(n|0),0)>=TIP_CASTS||!!s?.levels?.[CHAPTER1_END]?.done;

@@ -29,6 +29,9 @@ import {adviceLevel} from './tiers.js';
 /* How much practice to suggest before the next adventure. The test still needs practiceNeeded (lessons.js: 10 on a save's first topic, 25 after). */
 export const PRACTICE_FIRST=10;
 const lessonDone=save=>Object.values(save?.lessons||{}).some(l=>l?.done);
+/* improve20-f-nov1 #9: the topic whose lesson is done but whose quiz has never been sat (lessons[id].sat, set when a quiz ends with at
+   least one answer, even 0 right; or a score above 0; or passed), most recent first; null once any finished lesson's quiz was sat */
+export const firstQuizDue=save=>{const ts=TOPICS.filter(t=>save?.lessons?.[t.id]?.done);if(!ts.length||ts.some(t=>save.lessons[t.id].sat===true||(save.lessons[t.id].quiz|0)>0||testReady(save,t).quiz))return null;return ts.sort((a,b)=>(save.lessons[b.id].at||0)-(save.lessons[a.id].at||0))[0];};
 /* An ability the hero earned (gate above zero): the slice's payoff. */
 const earned=save=>(ABILITIES[save?.hero]||[]).some(a=>a.gate>0&&unlocked(save,a));
 /* The hero's next locked power, lowest gate first. */
@@ -107,14 +110,21 @@ export function nextStep(save,{room}={}){goalSave=save;
  if(a&&abilityMastery(save,a.subject)+1e-8>=a.gate){const n=adventure(save)||pad(levelById('e1'));return {...n,id:'level-up',text:`Fight foes and finish adventures to earn XP toward hero level ${xpLevel(a)} for ${a.name}. ${n.text}`};}
  if(levelDone(save,'e3')||!TOPICS.some(t=>!mastered(save,t)&&topicInSchoolMode(save,t)&&topicOpen(save,t)))return adventure(save)||endGoal(save);
  if(!lessonDone(save)&&!earned(save))return {id:'first-lesson',text:room==='library'?(subject?`Start your first ${subject} lesson.`:'Choose a study area to start your first lesson.'):(subject?`Visit the Library for your first ${subject} lesson.`:'Visit the Library for your first lesson.'),target:{kind:'library'}};
- if(!levelDone(save,'e1'))return {id:'goblin-camp',text:'Take the south gate to Goblin Camp.',target:{kind:'pad',id:'e1'}};
+ /* improve20-f-nov1 #9 (audit5 #1): a fight comes right after the first lesson AND its quiz (it came after the lesson alone, and the quiz
+    card then pointed at practice, so a new kid met about 30 answers before a second fight). Until the first quiz is sat the goal is that
+    quiz; then Goblin Camp; then practice (the practice step names the power it awakens). Only the suggested order changes: mastery, the
+    10-practice rule and the test are untouched, and nothing here unlocks anything. */
+ if(!levelDone(save,'e1')){const t=!earned(save)&&firstQuizDue(save);if(t)return {id:'quiz',text:`Take the quiz on “${t.title}” at the Library, then try your new skills.`,target:{kind:'library'}};
+  return {id:'goblin-camp',text:`Try your new skills: ${levelById('e1')?.name||'Goblin Camp'}.`,target:{kind:'pad',id:'e1'}};}
  if(!earned(save)&&a){
   const t=inProgress(save,a.subject);
   if(!t)return {id:'start-lesson',text:`Start ${/^[aeiou]/i.test(subject||'')?'an':'a'} ${subject} lesson at the Library.`/* exploit4-oct27: it read "Start a English lesson" */,target:{kind:'library'}};
   const r=testReady(save,t);
   /* polish-oct29 (#10): once a quiz was sat but not passed the goal says what passing takes (it kept saying "Take the quiz") */
   if(!r.quiz){const best=save.lessons?.[t.id]?.quiz|0,need=Math.ceil(PASS*QUIZ_SIZE-1e-9);return {id:'quiz',text:best>0?`Pass the quiz on “${t.title}” at the Library (${need} of ${QUIZ_SIZE} right).`:`Take the quiz on “${t.title}” at the Library.`,target:{kind:'library'}};}
-  if(r.practice<PRACTICE_FIRST)return {id:'practice',text:(n=>`Practice ${n} more question${n===1?'':'s'} at the Library, then ${r.needed<=PRACTICE_FIRST?'take the mastery test':'try the next level'}.`)(PRACTICE_FIRST-r.practice)/* first-hour playtest 24 Oct: "(8/25). After 10" read as two goals; follow6-oct29: a first topic is test-ready at 10, so the test comes next */,target:{kind:'library'}};
+  /* improve20-f-nov1 #9: the practice goal names the power it leads to and one count, "(n/10)" (first-hour playtest 24 Oct: "(8/25). After 10"
+     read as two goals, so it is the one count toward PRACTICE_FIRST); the result card and the Library say what comes after (the test on a first topic, follow6-oct29) */
+  if(r.practice<PRACTICE_FIRST)return {id:'practice',text:`Practise to awaken ${a.name} at the Library (${r.practice}/${PRACTICE_FIRST}).`,target:{kind:'library'}};
   /* follow6-oct29 (lead, under the owner's 26 Oct delegation and 29 Oct "first topic only"): once the topic is test-ready the
      goal is the mastery test (ability 2 is the big reward), before Slime Bog; the result card already said so */
   if(r.ready)return {id:'earn-power',text:`Take the mastery test on “${t.title}” at the Library.`,target:{kind:'library'}};

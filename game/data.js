@@ -3,7 +3,7 @@ export const SUBJECTS={math:{name:'Math',color:'#6b9eff',stat:'Magic'},cs:{name:
 export const LEVELS=['Middle School','High School','College'];
 export const CLASSES={
 warrior:{name:'Warrior',color:'#bacbdc',hp:140,mp:40,atk:22,def:14,mag:6,speed:62,crit:.06,resource:'Stamina',signature:'Momentum',mechanic:'momentum',blurb:'Stay close. Build Momentum with each hit, then spend it in a crushing blow.',weapon:'sword'},
-mage:{name:'Mage',color:'#aa92ff',hp:125,mp:120,atk:9,def:12,mag:26,speed:66,crit:.06,resource:'Mana',signature:'Arcane Flow',mechanic:'flow',blurb:'Charge spells with Ember Dart. Spend Arcane Flow in a storm of fire.',weapon:'staff',ranged:true},
+mage:{name:'Mage',color:'#aa92ff',hp:125,mp:120,atk:9,def:12,mag:26,speed:66,crit:.06,resource:'Mana',signature:'Arcane Flow',mechanic:'flow',blurb:'Charge spells with Arcane Bolt. Spend Arcane Flow in a storm of fire.',weapon:'staff',ranged:true},
 rogue:{name:'Rogue',color:'#ca84df',hp:100,mp:60,atk:20,def:8,mag:10,speed:78,crit:.16,resource:'Energy',signature:'Exposure',mechanic:'exposure',blurb:'Expose a target with Backstab. Strike fast, vanish, and finish the job.',weapon:'dagger'},
 ranger:{name:'Ranger',color:'#7bd39b',hp:120,mp:70,atk:19,def:11,mag:12,speed:72,crit:.1,resource:'Focus',signature:'Hunter’s Mark',mechanic:'mark',blurb:'Fight at a distance. Control the field with traps and precise arrows.',weapon:'bow',ranged:true},
 paladin:{name:'Paladin',color:'#f1cd72',hp:150,mp:80,atk:18,def:18,mag:16,speed:58,crit:.06,resource:'Mana',signature:'Divine Guard',mechanic:'guard',blurb:'Absorb damage in your shield. Return it as the light of dawn.',weapon:'hammer'},

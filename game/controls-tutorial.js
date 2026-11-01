@@ -2,8 +2,10 @@ import {nudgeTier,nudgeWanted} from './hints.js';
 import {ABILITIES} from './abilities.js';
 import {unlocked} from './math.js';
 import {activeLoadout} from '../academics/awakening.js';
-/* settings is field-tolerant in v8. Mark on entry, so skipping, leaving and reloading never replay it. */
-export function beginControls(s,id,tier,ability=false){if(id!=='home'||s.settings.controlsSeen)return null;s.settings.controlsSeen=true;if(s.levels?.e1?.done)return null;return {steps:['move','attack','interact','dodge','heavy',...(ability?['ability']:[])],index:0};}
+/* settings is field-tolerant in v8. Mark on entry, so skipping, leaving and reloading never replay it.
+   improve20-f-nov1 #11 (audit5 #12): "Tap J for a basic blast" showed in town with nothing to hit. Town teaches moving and using things;
+   attack, dodge and heavy wait (TIP_WHEN: fight) until the first wave is on, and Interact is done on entering a level (tickControls). */
+export function beginControls(s,id,tier,ability=false){if(id!=='home'||s.settings.controlsSeen)return null;s.settings.controlsSeen=true;if(s.levels?.e1?.done)return null;return {steps:['move','interact','attack','dodge','heavy',...(ability?['ability']:[])],index:0};}
 export function advanceControls(t,action){if(t&&t.steps[t.index]===action)t.index++;return t&&t.index<t.steps.length?t:null;}
 
 /* A hint stays until the player does the thing (r3 playtest: 8 s was gone before a child read it). HINT_WAIT is only a
@@ -28,7 +30,7 @@ export function tickAbilityNudge(w,dt,show){const boss=w.enemies.find(e=>e.boss&
    combat (tickControls). */
 const hasAbility=s=>!!s&&activeLoadout(s).some(id=>{const a=id&&(ABILITIES[s.hero]||[]).find(x=>x.id===id);return !!a&&unlocked(s,a);});
 export const tipContext=(w,s)=>{const level=!!w?.level;return {town:w?.zone==='town'&&!level,level,fight:level&&!['walk','go'].includes(w?.flow),ability:hasAbility(s)};};
-export const TIP_WHEN=Object.freeze({move:()=>true,attack:()=>true,dodge:()=>true,heavy:()=>true,interact:()=>true,ability:c=>c.ability,run:c=>c.town,jump:c=>c.town});
+export const TIP_WHEN=Object.freeze({move:()=>true,attack:c=>c.fight,dodge:c=>c.fight,heavy:c=>c.fight,interact:()=>true,ability:c=>c.ability,run:c=>c.town,jump:c=>c.town});
 export const TIP_LOCKED=Object.freeze({ability:c=>!c.ability});
 const stepOf=t=>t?.steps?.[t.index];
 export const tipWaits=(t,c)=>{const k=stepOf(t);return !!k&&!!c&&!!TIP_WHEN[k]&&!TIP_WHEN[k](c);};

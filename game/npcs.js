@@ -133,6 +133,11 @@ for (const key of new Set(Object.values(RESTORED_BY).flat())) if (VILLAGERS[key]
 export const STORY = [
   {id: 'wake', trigger: 'new-game', room: 'home', at: 'Sleep', speaker: 'Home',
     say: ['Morning light. The bells of Oakhaven are ringing.', 'From the window you see thorns curling along the edge of the Elderwood. The Thorn King is stirring.', 'Shouts from the south gate. Goblins! Go and see.']},
+  /* improve20-f-nov1 #11 (audit5 #12): the "why" before "Goblins at the south gate!": two captions over the town the first time a new
+     game steps out of Home (cine: played on the cinematic plate by main.js townCine, not as a dialogue box). Only after 'wake', so an
+     older save never sees it. */
+  {id: 'arrival', trigger: 'enter', room: 'village', speaker: 'Oakhaven', cine: true, when: {step: 'prologue', seen: 'wake'},
+    say: ['Every night the Thorn King’s brambles creep closer to Oakhaven.', 'This morning, goblins reached the south gate. Oakhaven needs a hero!']},
   {id: 'plaza', trigger: 'near', room: 'village', x: 1478, y: 1150, r: 150, speaker: 'Bess', when: {step: 'prologue', notSeen: 'plaza-2'},
     say: ['Morning! You’re the new adventurer? Goblins are at the south gate!', 'Down the road past the fountain. The guards need help.']},
   /* the same corner of the plaza once the gate is done: point at the Library instead (S3-5) */

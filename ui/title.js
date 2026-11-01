@@ -21,7 +21,7 @@ import {drawHeroBust} from '../gfx/actors/hero-sprites.js';
 /* every class is playable (owner, 8 Oct: "get all the characters done"); a class listed here only if it ever needs locking again */
 export const SLICE=['warrior','mage','rogue','ranger','paladin','berserker','summoner'];
 export function lockCards(root){root.querySelectorAll('[data-class]').forEach(el=>{if(SLICE.includes(el.dataset.class)||el.classList.contains('coming-soon'))return;el.classList.add('coming-soon');el.setAttribute('aria-disabled','true');el.insertAdjacentHTML('beforeend',`<span class="soon">${icon('key',{size:32})}Coming soon</span>`);});}
-export const FANTASY={warrior:'Fight up close with a sword and shield. Hits build Momentum: power for stronger attacks.',mage:'Cast spells from far away. Ember Dart builds Arcane Flow: power for stronger spells. Dodge to stay safe.',
+export const FANTASY={warrior:'Fight up close with a sword and shield. Hits build Momentum: power for stronger attacks.',mage:'Cast spells from far away. Arcane Bolt builds Arcane Flow: power for stronger spells. Dodge to stay safe.',
  rogue:'Fight up close with quick strikes. Backstab weakens enemies. Learn Vanish to hide from danger.',ranger:'Shoot arrows from far away. Learn Hunter’s Mark to make your shots hurt more, and traps to stop enemies.',
  paladin:'Fight with a hammer. Shields build Divine Guard: power for a stronger strike. Learn to heal yourself too.',berserker:'Fight up close with a heavy axe. Rage makes hits stronger when health is low. Heal to stay safe.',summoner:'Shoot spirit bolts. Learn to place totems: magic helpers that attack enemies or protect you.'};
 /* improve20-y-nov1 #5 (audit4 #24): one line a 7-year-old can read for each class, shown first in the hero detail (the role line's place);
@@ -31,7 +31,7 @@ export const KID_LINE={warrior:'Big shield, big sword. Hit hard up close!',mage:
 export const resourceLine=c=>`${c.resource} is the energy your abilities use. It fills back up by itself.`;
 export const CLASS_STYLE={warrior:['Close-range fighter','Sword & shield · High health'],mage:['Long-distance spells','Magic spells · Hits groups'],rogue:['Fast close-range fighter','Quick strikes · Backstab · Vanish'],ranger:['Long-distance hunter','Bow attacks · Mark targets · Traps'],paladin:['Defensive fighter','Heavy hammer · Shields · Healing'],berserker:['Heavy close-range fighter','Axe attacks · Strong hits · Rage'],summoner:['Spirit caller','Spirit bolts · Magic helpers · Totems']};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-export function titleScreen({started=false,cards='',hero='warrior',begin,learner=activeProfile()?.name,schoolMode=null,heroNames={},schoolGrade=null}={}){
+export function titleScreen({started=false,cards='',hero='warrior',begin,learner=activeProfile()?.name,schoolMode=null,heroNames={},schoolGrade=null,today=''}={}){
  const c=CLASSES[hero]||CLASSES.warrior;
  return `<div class="title-screen" data-step="title" data-saved="${esc(hero)}">
 <canvas class="title-bg" width="480" height="270" aria-hidden="true"></canvas>
@@ -43,6 +43,7 @@ export function titleScreen({started=false,cards='',hero='warrior',begin,learner
   <button data-title="settings">Settings</button>
   <button data-title="credits">Credits</button>
  </nav>
+ ${started&&today?today:''}
  <button class="ghost learner" data-title="learners" aria-label="Switch learner">${icon('key',{size:32})}<span data-learner-name>${esc(learner||'Player 1')}</span><small>Switch</small></button>
  <p class="title-foot">Learning unlocks your powers</p>
 </div>
