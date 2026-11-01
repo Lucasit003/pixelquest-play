@@ -3602,3 +3602,9 @@ dialog[data-view=help] #modal-content{display:flex;flex-direction:column;overflo
 .herocard-panel .keepsakes{align-self:stretch;justify-content:center}
 :root.m-mode .herocard-panel .keepsakes{grid-column:1/-1;gap:4px 10px;margin:0}:root.m-mode .keepsakes label{font-size:13px}:root.m-mode .keepsakes p{display:none}:root.m-mode .keepsakes .pixel-select{min-width:130px}
 :root.m-mode .herocard-panel:has(.keepsakes) canvas{width:min(64vw,calc((100vh - 225px)*1.9))}
+/* owner Nov 1: in fullscreen on a short or zoomed-in screen (about 640 px tall or less) the "Prepare your adventure" card cut off below the
+   grade row and could not scroll, so the Start button never showed. The card's right column now scrolls on desktop too (phones already
+   did), and the Start button stays pinned at its bottom edge. */
+html:not(.m-mode) .title-screen[data-step=setup] .er-detail.hero-detail{grid-template-rows:minmax(0,1fr);min-height:0}
+html:not(.m-mode) .title-screen[data-step=setup] .er-stats{min-height:0;max-height:100%;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
+.title-screen[data-step=setup] .hero-setup #begin{position:sticky;bottom:0;z-index:1}

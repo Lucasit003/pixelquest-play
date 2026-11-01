@@ -2,7 +2,7 @@
    ability of the current hero with its icon, its hotbar key when equipped, what it does in plain words, its cost and
    cooldown. Pure: main.js passes the ability list, the loadout, the readiness test and the icon renderer.
    Damage numbers are left out on purpose: real damage scales with the hero's stats, so a quoted base number would be wrong. */
-import {stats,abilityGuard,runeMul,runeRank} from '../game/math.js';
+import {stats,abilityGuard,runeMul,runeRank,unlocked} from '../game/math.js';
 import {CLASSES} from '../game/data.js';
 import {ABILITIES} from '../game/abilities.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -17,6 +17,10 @@ export function abilityNumbers(save,a){
  /* kidfix-b-oct31: with the ability's rune rank, as combat gives it */const hp=stats(save,c).hp,out={},rm=runeMul(runeRank(save,a.id));
  if(a.shield>0)out.shield=Math.ceil(abilityGuard(a.shield,hp,c.hp)*rm);
  if(a.heal>0)out.heal=Math.round(abilityGuard(a.heal,hp,c.hp)*rm);
+ /* improve20-r7c-nov1 #2 (audit6 #12): a card's claim is true today. marks: the hero owns an ability that marks a foe (only Hunter's Mark
+    does), so "+50% on a marked foe" shows from then on; flow: the hero owns an ability that fills a Flow-style bar, so a spender
+    says it uses the bar (before that the bar stays empty and a spender is just its shot). */
+ const own=ABILITIES[save.hero]||[];out.marks=own.some(b=>b.kind==='mark'&&unlocked(save,b));out.flow=own.some(b=>b.buildStacks>0&&unlocked(save,b));
  return out;
 }
 /* classes-oct28 (every class played): many cards read the same ("A close-range hit." for seven different moves) and the
@@ -31,7 +35,8 @@ function lineParts(a,nums){
   case 'melee':head=a.finisher?'A heavy close-range finisher':a.range>=36?'A wide close-range swing':'A close-range hit';break;
   case 'aoe':head=a.trap?'Sets a trap in front of you for 8 s':a.id==='rampage'?'Charges forward and hits every foe there':a.aheadUnits?'Hits every foe in front of you':'Hits every foe around you';break;
   case 'projectile':head=a.cd<=1?(a.homing?'A quick, cheap homing shot from far away':'A quick, cheap shot from far away'):a.homing?'A homing shot from far away':'A shot from far away';break;
-  case 'chain':head=`Strikes up to ${Math.max(2,a.count|0)} foes in a chain${a.fromTotems?' from each totem (from you with none)':''}`;break;
+  /* improve20-r7c-nov1 #2: without the mark line Volley and Thornvine read the same, so each says what it looks like */
+  case 'chain':head=a.id==='volley'?`Shoots arrows at up to ${Math.max(2,a.count|0)} foes`:a.id==='thornvine'?`A thorny vine hops between up to ${Math.max(2,a.count|0)} foes`:`Strikes up to ${Math.max(2,a.count|0)} foes in a chain${a.fromTotems?' from each totem (from you with none)':''}`;break;
   case 'heal':head=`Heals ${nums?.heal??Math.round(a.heal)} health`;break;
   case 'mark':head=`Marks a foe: +50% damage for ${sec(a.duration)}`;break;
   case 'aura':head=`A circle of light on the ground: you take less damage inside it for ${sec(a.duration)}`;break;
@@ -47,14 +52,15 @@ function lineParts(a,nums){
  if(a.primesExposed)rest.push('your first strike leaves the foe Exposed');
  if(a.consumesExposed)rest.push(`×${+a.consumesExposed} on an Exposed foe`);
  if(a.executeBelow)rest.push(`double damage below ${Math.round(a.executeBelow*100)}% health`);
- if(a.benefitsFromMark||CLASS_OF[a.id]==='ranger'&&a.branch==='Precision'&&a.kind!=='mark')rest.push('+50% on a marked foe');
+ if(nums?.marks&&(a.benefitsFromMark||CLASS_OF[a.id]==='ranger'&&a.branch==='Precision'&&a.kind!=='mark'))rest.push('+50% on a marked foe');
  if(a.momentumGain>1&&sig==='Momentum')rest.push(`builds ${a.momentumGain} Momentum`);
  if(a.holdStacks&&sig)rest.push(`keeps your ${sig}`);
  if(a.guardSpend)rest.push(a.guardSpend>=1?`spends all your ${sig} for a bigger hit`:`spends ${Math.round(a.guardSpend*100)}% of your ${sig} for a bigger hit`);
  if(a.kind==='buff'&&a.shield>0&&CLASSES[CLASS_OF[a.id]]?.mechanic==='guard')rest.push(`blocked damage fills your ${sig}`);
  if(a.selfHpCost)rest.push(`costs ${Math.round(a.selfHpCost*100)}% of your health`);
- if(sig&&a.buildStacks>0)rest.push(`builds ${sig}`);
- if(sig&&a.spendStacks)rest.push(a.stackBonus>0?`spends ${sig} for a bigger hit`:`spends ${sig}`);
+ /* improve20-r7c-nov1 #2: the Mage's Flow in kid words ("Arcane Flow" read as jargon to a Grade 2 kid); the HUD bar is labelled "Flow" */
+ if(sig&&a.buildStacks>0)rest.push(sig==='Arcane Flow'?'fills your Flow bar (a fuller bar makes Fireball hit harder)':`builds ${sig}`);
+ if(sig&&a.spendStacks&&(!nums||nums.flow!==false||CLASSES[CLASS_OF[a.id]]?.mechanic!=='flow'))rest.push(sig==='Arcane Flow'?'uses your Flow bar for a bigger hit':a.stackBonus>0?`spends ${sig} for a bigger hit`:`spends ${sig}`);
  return {head,rest};
 }
 export function abilityLine(a,nums=null){const {head,rest}=lineParts(a,nums);return [head,...rest].join(' · ');}

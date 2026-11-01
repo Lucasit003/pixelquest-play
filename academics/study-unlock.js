@@ -130,6 +130,15 @@ export function stepsLine(save,t){
  const g=topicStage(save,t);
  return `Lesson${g.lesson?' ✓':''} · Quiz${g.quiz?' ✓':''} · Practice ${g.practice}/${g.needed}${g.practice>=g.needed?' ✓':''} · Test${g.stage==='done'?' ✓':''}`;
 }
+/* improve20-r7c-nov1 #3 (audit6 #21): "Master 1 more Money topic" read as a NEW topic to a kid halfway through one. When a topic on
+   an ability's road is under way (its lesson begun, or past it), every card that names this goal says so in the same words:
+   "Finish Counting coins: practice 4/10, then the test → Ember Dart", with "(then N more topics)" when the road is longer.
+   route: lessonsToUnlock(save,a) (or a learningRoad's {lessons:remaining,topics,reachable}). Read-only; null when nothing is under way. */
+export function topicUnderWay(save,route){if(!route?.reachable||!(route.lessons>0))return null;
+ for(const id of route.topics||[]){const t=TOPICS.find(x=>x.id===id);if(!t||mastered(save,t))continue;const g=topicStage(save,t),r=save.lessons?.[t.id]||{};if(g.stage!=='lesson'||r.at>0||r.reached>0)return {topic:t,stage:g};}return null;}
+export function finishSteps(g){return g.stage==='lesson'?'the lesson, the quiz, practice, then the test':g.stage==='quiz'?`pass the quiz, practice ${g.practice}/${g.needed}, then the test`:g.stage==='practice'?`practice ${g.practice}/${g.needed}, then the test`:'take the mastery test';}
+export function finishLine(save,a,route=lessonsToUnlock(save,a)){const w=topicUnderWay(save,route);if(!w)return null;const n=route.lessons-1;
+ return `Finish ${w.topic.title}: ${finishSteps(w.stage)} → ${a.name}${n>0?` (then ${n} more topic${n===1?'':'s'})`:''}`;}
 /* One short line for an ability: what is left, in topics and hero levels. A topic is mastered by its lesson,
    quiz, practice and test, so the line says so instead of "1 lesson" (playtest S2-3: that took 38 answers). */
 export function goalLine(save,a){
@@ -137,6 +146,7 @@ export function goalLine(save,a){
  const l=lessonsToUnlock(save,a),lv=Math.max(0,xpLevel(a)-(save.level||1)),lvText=lv?` (and\u00a0hero\u00a0level\u00a0${xpLevel(a)})`:'';/* no-break spaces: the line never wraps to leave a lone "2)" (polish, 19 Oct) */
  if(l.lessons===0)return lv?`Fight foes and finish adventures to earn XP toward hero level ${xpLevel(a)} → ${a.name}`:`${a.name} is ready.`;
  if(!l.reachable)return `Keep training ${SUBJECTS[a.subject]?.name||a.subject} → ${a.name}${lvText}`;
+ {const f=finishLine(save,a,l);if(f)return f+lvText;}
  if(l.lessons===1){const t=TOPICS.find(x=>x.id===l.topics[0]);return `Master 1 topic: ${stepsLine(save,t)} → ${a.name}${lvText}`;}
  return `Master ${l.lessons} topics → ${a.name}${lvText}`;
 }

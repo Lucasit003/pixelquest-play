@@ -3,7 +3,7 @@
    earned or the real unlock rules report (study-unlock.js), so the screen never promises what the game does not do.
    Styling: dist/ui/library.css, "Lessons polish". */
 import {praise} from './edu-narration.js';
-import {lessonsToUnlock,nextLesson} from '../academics/study-unlock.js';
+import {lessonsToUnlock,nextLesson,finishLine} from '../academics/study-unlock.js';
 import {SUBJECTS,CLASSES} from '../game/data.js';
 import {abilityWhat,abilityNumbers} from './ability-panel.js';
 import {ABILITIES} from '../game/abilities.js';
@@ -41,6 +41,8 @@ export function unlockNeed(save,a){
  const study=l.reachable?`master ${l.lessons} more ${sub} topic${l.lessons===1?'':'s'}`:`keep training ${sub} at the Library`;
  if(unlocked(save,a))return {line:`${a.name} is unlocked!`,knowledge:true,level:true};
  if(know&&!levelOk)return {line:`Reach hero level ${lvNeed} to use ${a.name}: ${wins}. Your knowledge is ready.`,knowledge:true,level:false};
+ /* improve20-r7c-nov1 #3: a topic under way is named with its next step, as on the defeat card */const fin=!know&&finishLine(save,a,l);
+ if(fin)return {line:levelOk?`${fin}. Your hero level is ready.`:`${fin}, and reach hero level ${lvNeed} (${wins}).`,knowledge:false,level:levelOk};
  if(!know&&levelOk)return {line:`${study[0].toUpperCase()+study.slice(1)} to use ${a.name}${l.reachable?' (lesson, quiz, practice and test)':''}. Your hero level is ready.`,knowledge:false,level:true};
  return {line:`To use ${a.name}: ${study} and reach hero level ${lvNeed} (${wins}).`,knowledge:false,level:false};
 }

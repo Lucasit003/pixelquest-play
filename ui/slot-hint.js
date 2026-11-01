@@ -6,13 +6,15 @@ import {ABILITIES} from '../game/abilities.js';
 import {SUBJECTS} from '../game/data.js';
 import {unlocked,xpLevel} from '../game/math.js';
 import {activeLoadout,awakened} from '../academics/awakening.js';
-import {lessonsToUnlock} from '../academics/study-unlock.js';
+import {lessonsToUnlock,finishLine} from '../academics/study-unlock.js';
 
 /* What an ability still needs, as one short line: "Reach hero level 6 + master 2 more Math topics". */
 export function needLine(save,a){
  const lv=xpLevel(a),levelLeft=(save.level||1)<lv,l=lessonsToUnlock(save,a),sub=SUBJECTS[a.subject]?.name||a.subject,parts=[];
  if(levelLeft)parts.push(`${parts.length?'reach':'Reach'} hero level ${lv}`);
- if(l.lessons>0&&l.reachable)parts.push(`${parts.length?'master':'Master'} ${l.lessons} more ${sub} topic${l.lessons===1?'':'s'}`);
+ const fin=l.lessons>0&&finishLine(save,a,l);/* improve20-r7c-nov1 #3: a topic under way is named */
+ if(fin)parts.push(parts.length?fin[0].toLowerCase()+fin.slice(1):fin);
+ else if(l.lessons>0&&l.reachable)parts.push(`${parts.length?'master':'Master'} ${l.lessons} more ${sub} topic${l.lessons===1?'':'s'}`);
  else if(!l.reachable)parts.push(`${parts.length?'keep':'Keep'} studying ${sub}`);
  return parts.join(' + ');}
 /* The locked ability the hero is closest to: fewest topics to master, then the lowest hero level (main.js nextUnlock's order). */

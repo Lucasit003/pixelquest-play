@@ -948,6 +948,11 @@ html:not([data-text="125"]):not([data-text="150"]):not(.m-mode) dialog .library-
    the top-right corner where a table's last heading and the title end */
 html.m-mode dialog:is([data-view=placement],[data-view=lesson-quiz]):not(.pic-zoomed) .question-reading>.quiz-zoom{position:relative;top:auto;margin-right:-8px}
 html.m-mode dialog:is([data-view=placement],[data-view=lesson-quiz]).pic-zoomed .question-reading>.quiz-zoom{margin:0!important}
+/* improve20-r7c-nov1 #4 (audit6 #22): Middle and High School steps read at 20px (Pixel Operator at 20px reads like a 15px sans; 16px read
+   like 12-13px in a 260px column), and a long step's text has a "more" button (ui/lesson-more.js) */
+html dialog[data-view=lesson] .lesson[data-older] .lesson-body .lesson-say{font-size:calc(var(--fs,16px)*1.25);line-height:1.4}
+html.m-mode dialog[data-view=lesson] .lesson[data-older] .lesson-body .lesson-say{font-size:calc(var(--fs,16px)*1.125);line-height:1.3}
+html dialog[data-view=lesson] .lesson-say .lesson-more{display:inline;min-height:0!important;min-width:0!important;height:auto;padding:0 6px!important;margin:0;border:0!important;background:none!important;box-shadow:none;font:inherit;line-height:inherit;vertical-align:baseline;color:var(--edu-gold-dark,#7a4f12)!important;text-decoration:underline;cursor:pointer}
 /* oct26-phonelesson: phone lesson legibility (docs/playtest/oct26-phonelesson). The lesson sheet takes the whole screen like every other
    phone sheet (it was 92dvh, 29-31px lost). The picture column is exactly as wide as the picture (min-content): a long equation line above
    the picture used to set the column to its full length and squeeze the step's text to one word a line (AP Micro, APUSH). main.js
@@ -1034,3 +1039,8 @@ html.m-mode dialog[data-view=lesson] .lesson[data-young] .lesson-body.young-row.
 /* improve20-g-nov1 #16: on a phone the young card puts Read to me and Narration side by side (lane N), so the caption's float spacer is
    as wide as that row and one button tall; the 68x76 stacked spacer let the caption run under the buttons */
 html.m-mode dialog[data-view=lesson].lesson-compact .lesson[data-young] .edu-speech>.lesson-say::before{width:98px;height:48px}
+/* improve20-r7c-nov1 #7: youngPhoneFit's last step (young-snug, after young-row): lines closer and a 2px gap, tiles still 44px */
+html.m-mode dialog[data-view=lesson] .lesson[data-young] .lesson-body.young-snug .lesson-say{line-height:1.08}
+html.m-mode dialog[data-view=lesson] .lesson[data-young] .lesson-body.young-snug>.lesson-check>p{line-height:1.1;margin:0 0 2px}
+html.m-mode dialog[data-view=lesson] .lesson[data-young] .lesson-body.young-snug{row-gap:2px}
+html.m-mode dialog[data-view=lesson] .lesson[data-young] .lesson-body.young-snug .edu-speech{padding-top:3px;padding-bottom:3px}

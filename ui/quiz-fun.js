@@ -5,7 +5,8 @@
    Calm by design: no timers, nothing counts down, and a wrong answer only tilts the guide's head (as in the lesson); its card is
    unchanged. Pure markup builders and two small DOM touches; no save writes, no scoring, no XP of their own. Styling: style.css,
    "quizfun-oct29". */
-import {askedPic} from '../academics/placement.js';
+import {askedPic,givesAway} from '../academics/placement.js';
+import {COIN} from '../gfx/lesson-art.js';
 import {NOUN_ART,NOUN_ANIM,describe} from '../gfx/lesson-art.js';
 import {questionPictureHTML} from './question-picture.js';
 import {GUIDE_NAME} from './edu-narration.js';
@@ -22,10 +23,24 @@ const GUIDE_SRC=new URL('./portraits/archivist.png',import.meta.url).href;
 export function quizPic(q){
  const a=askedPic(q);if(!a)return null;
  if(Array.isArray(a)||!a.hint)return questionPictureHTML(a)?{spec:a,derived:false}:null;
+ {const m=modelPic(q,a);if(m)return {spec:m,derived:true};}
  if(a.t!=='word'||typeof a.base!=='string'||!(NOUN_ART[a.base]||NOUN_ANIM[a.base]))return null;
  if(low(a.base)===low(q.answer))return null;
  return {spec:{t:'word',base:a.base,...(a.n?{n:a.n}:{})},derived:true};
 }
+/* improve20-r7c-nov1 #6 (Grade 2-3 quiz pictures): a math item whose only picture is its worked answer (a hint) shows the PROBLEM instead,
+   drawn by the same exact-number renderers, never the result: the coins being counted (two or more, the answer their total, so no single
+   coin's printed value is the answer), the starting blocks of a subtraction (no trade drawn), or an empty number line up to 20 to count along, with
+   the start and the end the question names but no jumps (so the step size is not drawn). Each one is checked with givesAway (placement.js),
+   the rule placement checks use. Prompts, ids and lesson pictures are untouched. Returns the spec or null. */
+const nums=s=>(String(s).match(/-?\d+(\.\d+)?/g)||[]).map(Number);
+export function modelPic(q,a){
+ if(!q||!a?.hint||Array.isArray(a))return null;const n=Number(q.answer),ok=p=>p&&!givesAway(q,p)?p:null;if(!Number.isFinite(n))return null;
+ if(a.t==='coins'){const list=(a.coins||[]).filter(k=>COIN[k]);if(list.length<2||list.reduce((s,k)=>s+COIN[k].c,0)!==n||list.some(k=>COIN[k].c===n))return null;return ok({t:'coins',coins:list});}
+ if(a.t==='blocks'){if(a.regroup||a.h)return null;const v=(a.ten||0)*10+(a.one||0);if(!nums(q.prompt).includes(v))return null;return ok({t:'blocks',ten:a.ten||0,one:a.one||0});}
+ if(a.t==='line'){if(a.back||!(a.jumps>0)||!(a.hop>0))return null;const from=+a.from||0,end=from+a.jumps*a.hop,said=nums(q.prompt);if(said.includes(n)||end>a.max||a.max>20)return null;/* up to 20 every whole number has a tick, so the start and the end sit on one */
+  const p={t:'line',max:a.max,jumps:0,...(from?{from}:{}),...(said.includes(end)?{mark:end}:{})};return ok(p);}
+ return null;}
 export function quizPicHTML(p){
  if(!p)return '';
  return p.derived?`<canvas id="quiz-pic" width="640" height="280" role="img" aria-label="${esc(describe(p.spec))}"></canvas>`:questionPictureHTML(p.spec);

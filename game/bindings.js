@@ -4,7 +4,13 @@ export const ACTION_LABELS={up:'Move up',down:'Move down',left:'Move left',right
 export const abilityKeys=s=>[1,2,3,4].map(i=>s.settings.bindings['ability'+i]);
 /* Keep older custom bindings; give newly introduced actions an unused key. */
 export function normalizeBindings(saved={}){const out={};for(const a of Object.keys(DEFAULT_BINDINGS)){const k=saved[a];if(typeof k==='string'&&k.length&&k.length<=16)out[a]=k.toLowerCase();}for(const [a,k]of Object.entries(DEFAULT_BINDINGS))if(!out[a])out[a]=[k,...'abcdefghijklmnopqrstuvwxyz0123456789',...['f6','f7','f8','f9','f10']].find(v=>!Object.values(out).includes(v));return out;}
-export function bindingError(bindings,action,key){if(['escape','enter','arrowup','arrowdown','arrowleft','arrowright','control','alt','meta','capslock','dead','unidentified'].includes(key))return 'That key is used for navigation. Choose another key.';const used=Object.keys(ACTION_LABELS).find(a=>a!==action&&bindings[a]===key);return used?`That key is already used for ${ACTION_LABELS[used]}. Choose another.`:'';}
+const NAV_KEYS=['escape','enter','arrowup','arrowdown','arrowleft','arrowright','control','alt','meta','capslock','dead','unidentified'];
+/* owner Nov 1 (a player's note, "like Fortnite"): a key that another action already uses is taken anyway, and the two actions swap keys, so
+   nobody has to free a key first. Only a swap that would hand Escape (or another navigation key) to an action is still refused. */
+export const bindingClash=(bindings,action,key)=>Object.keys(ACTION_LABELS).find(a=>a!==action&&bindings[a]===key)||'';
+export function bindingError(bindings,action,key){if(NAV_KEYS.includes(key))return 'That key is used for navigation. Choose another key.';const used=bindingClash(bindings,action,key);return used&&NAV_KEYS.includes(bindings[action])?`That key is already used for ${ACTION_LABELS[used]}. Choose another.`:'';}
+/* Sets the key and returns the action that swapped onto this action's old key ('' when the key was free). */
+export function applyBinding(bindings,action,key){const used=bindingClash(bindings,action,key),old=bindings[action];bindings[action]=key;if(used)bindings[used]=old;return used;}
 /* oct24-progress (playtest r3): a Ranger looses a Power Shot and a Mage or Summoner a Power Blast; only melee heroes swing */
 export const heavyName=s=>s?.hero==='ranger'?'Power Shot':['mage','summoner'].includes(s?.hero)?'Power Blast':'Power Swing';
 /* improve20-q-oct31 (audit2 #22): the basic attack named for the class, as heavyName is ("Tap J for a basic swing" read wrong for a Ranger's arrow) */
