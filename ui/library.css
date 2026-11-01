@@ -931,6 +931,17 @@ dialog[data-view=library] .course-row+.course-row{padding-top:calc(14*var(--edu-
 .m-mode .placement-moment .pm-banner{width:192px;height:40px;margin:0;padding-bottom:6px;font-size:16px;letter-spacing:1px;background-size:192px 48px;background-position:center -4px}
 .m-mode .placement-moment :is(.pm-lead,.pm-opens,.pm-scores){font-size:14px;line-height:1.25;margin:0}
 .m-mode .result[data-kind=placement]>.pm-note{font-size:13px;margin:0 0 4px}
+/* improve20-y-nov1 #5 (audit4 #24): the Library's ability card body reads at 18 px on a desktop (it was 16 px Pixel Operator, about
+   12 px to the eye), and its first-time gloss lines sit under the count and the badge count */
+html:not(.m-mode) .library-content .am-goal :is(.am-goal-what,.road-count,.am-goal-line,.road-badges,.am-goal-checks){font-size:18px;line-height:1.3}
+.am-goal .road-count .road-gloss{display:block;margin-left:0;font-size:inherit;opacity:.85}
+.am-goal .road-badges .road-gloss{font-size:inherit;opacity:.85}
+html:not([data-text="125"]):not([data-text="150"]):not(.m-mode) dialog .library-content .am-goal small{font-size:18px}
+.am-goal .road-badges .road-gloss{margin:0;display:inline}
+/* improve20-y-nov1 #8: the phone zoom button rides the picture's bottom-right frame corner (main.js quizZoom sets its top margin), not
+   the top-right corner where a table's last heading and the title end */
+html.m-mode dialog:is([data-view=placement],[data-view=lesson-quiz]):not(.pic-zoomed) .question-reading>.quiz-zoom{position:relative;top:auto;margin-right:-8px}
+html.m-mode dialog:is([data-view=placement],[data-view=lesson-quiz]).pic-zoomed .question-reading>.quiz-zoom{margin:0!important}
 /* oct26-phonelesson: phone lesson legibility (docs/playtest/oct26-phonelesson). The lesson sheet takes the whole screen like every other
    phone sheet (it was 92dvh, 29-31px lost). The picture column is exactly as wide as the picture (min-content): a long equation line above
    the picture used to set the column to its full length and squeeze the step's text to one word a line (AP Micro, APUSH). main.js

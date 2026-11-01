@@ -8,9 +8,12 @@ import {loadSprite,spriteImage,spriteMeta,spriteReady,releaseSprite,loadedSprite
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const TIER_NAME={normal:'Normal',heroic:'Heroic',legendary:'Legendary'};
 const later=(f,ms)=>{const h=setTimeout(f,ms);h?.unref?.();return h;};
-export const PLAQUE_W=176,PLAQUE_H=148;
+/* improve20-y-nov1 #6 (audit4 #25): the bosses filled about 100 px of a 176x148 plaque (tall figures in a wide window, a third of its area).
+   The plaque is taller now (176x196) and its window fits the boss to about 80% of the frame's height and up to 80% of its width; the canvas
+   is drawn at PQ_RES (2x), so a fractional nearest-neighbour scale lands on half pixels and the boss's pixels stay even. */
+export const PLAQUE_W=176,PLAQUE_H=196,PQ_RES=2;
 export function trophyHallHTML(s){const list=trophies(s),n=trophyCount(s);
- return `<p class="subtle trophy-count">${n} of ${TROPHY_TOTAL} bosses beaten. Win on Heroic for a silver frame, on Legendary for gold.</p><div class="trophy-grid" role="list">${list.map(t=>`<div class="trophy ${t.won?'trophy-won trophy-'+t.metal:'trophy-dark'}" role="listitem" data-trophy="${esc(t.id)}"><canvas class="trophy-art" data-trophy-sprite="${esc(t.sprite)}" data-metal="${t.metal||''}" width="${PLAQUE_W}" height="${PLAQUE_H}" aria-hidden="true"></canvas>${t.won?`<h3>${esc(t.name)}</h3><p class="trophy-meta">${t.grade?`<img src="ui/skin/run/${gradeFile(t.grade)}.png" alt="" width="20" height="20"> Best grade ${esc(t.grade)} · `:''}${TIER_NAME[t.tier]} clear</p><p class="trophy-line">“${esc(t.line)}”</p>`:`<h3>?</h3><p class="trophy-meta">${esc(t.level)}</p><p class="trophy-line subtle">Beat this boss to hang its plaque.</p>`}</div>`).join('')}</div>`;}
+ return `<p class="subtle trophy-count">${n} of ${TROPHY_TOTAL} bosses beaten. Win on Heroic for a silver frame, on Legendary for gold.</p><div class="trophy-grid" role="list">${list.map(t=>`<div class="trophy ${t.won?'trophy-won trophy-'+t.metal:'trophy-dark'}" role="listitem" data-trophy="${esc(t.id)}"><canvas class="trophy-art" data-trophy-sprite="${esc(t.sprite)}" data-metal="${t.metal||''}" width="${PLAQUE_W*PQ_RES}" height="${PLAQUE_H*PQ_RES}" aria-hidden="true"></canvas>${t.won?`<h3>${esc(t.name)}</h3><p class="trophy-meta">${t.grade?`<img src="ui/skin/run/${gradeFile(t.grade)}.png" alt="" width="20" height="20"> Best grade ${esc(t.grade)} · `:''}${TIER_NAME[t.tier]} clear</p><p class="trophy-line">“${esc(t.line)}”</p>`:`<h3>?</h3><p class="trophy-meta">${esc(t.level)}</p><p class="trophy-line subtle">Beat this boss to hang its plaque.</p>`}</div>`).join('')}</div>`;}
 
 /* 9-slice at whole scale k, edges stretched (the card's edges are plain) */
 function nine(c,im,x,y,w,h,[t,r,b,l],k){const W=im.width,H=im.height,mw=W-l-r,mh=H-t-b,d=(sx,sy,sw,sh,dx,dy,dw,dh)=>{if(sw>0&&sh>0&&dw>0&&dh>0)c.drawImage(im,sx,sy,sw,sh,dx,dy,dw,dh);};
@@ -40,12 +43,12 @@ const boxes={};
 function idleBox(id){if(boxes[id])return boxes[id];const im=spriteImage(id),m=spriteMeta(id);if(!im||!m)return null;const st=m.states.idle||Object.values(m.states)[0],[w,h]=m.cell,cv=mk(w,h),g=cv.getContext('2d',{willReadFrequently:true});g.drawImage(im,0,st.row*h,w,h,0,0,w,h);
  const d=g.getImageData(0,0,w,h).data;let x0=w,y0=h,x1=-1,y1=-1;for(let y=0;y<h;y++)for(let x=0;x<w;x++)if(d[(y*w+x)*4+3]>24){if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y;}
  return boxes[id]=x1<0?{cv,x:0,y:0,w,h}:{cv,x:x0,y:y0,w:x1-x0+1,h:y1-y0+1};}
-export function paintPlaque(cv,card,id,metal){const g=cv.getContext('2d');g.imageSmoothingEnabled=false;g.clearRect(0,0,cv.width,cv.height);g.drawImage(plaqueFrame(card,metal),0,0);
+export function paintPlaque(cv,card,id,metal){const g=cv.getContext('2d');g.setTransform?.(1,0,0,1,0,0);g.imageSmoothingEnabled=false;g.clearRect(0,0,cv.width,cv.height);const r=cv.width/PLAQUE_W||1;g.setTransform?.(r,0,0,r,0,0);g.imageSmoothingEnabled=false;g.drawImage(plaqueFrame(card,metal),0,0);
  const b=spriteReady(id)?idleBox(id):null;if(!b){if(!metal)mark(g);return false;}
- const BW=PLAQUE_W-40,BH=PLAQUE_H-48,k=Math.min(BW/b.w,BH/b.h,2),dw=Math.round(b.w*k),dh=Math.round(b.h*k),dx=Math.round((PLAQUE_W-dw)/2),dy=Math.round(PLAQUE_H-16-dh);
+ const BW=PLAQUE_W-36,BH=PLAQUE_H-40,k=Math.min(BW/b.w,BH/b.h,3),q=v=>Math.round(v*r)/r,dw=q(b.w*k),dh=q(b.h*k),dx=q((PLAQUE_W-dw)/2),dy=q(PLAQUE_H-16-dh);
  if(metal){g.drawImage(b.cv,b.x,b.y,b.w,b.h,dx,dy,dw,dh);return true;}
  /* unbeaten: the boss's own shape, filled dark, with a "?" */
- const sc=mk(dw,dh),sg=sc.getContext('2d');sg.imageSmoothingEnabled=false;sg.drawImage(b.cv,b.x,b.y,b.w,b.h,0,0,dw,dh);sg.globalCompositeOperation='source-in';sg.fillStyle='#07080b';sg.fillRect(0,0,dw,dh);g.globalAlpha=.9;g.drawImage(sc,dx,dy);g.globalAlpha=1;mark(g);return true;}
+ const sc=mk(Math.round(dw*r),Math.round(dh*r)),sg=sc.getContext('2d');sg.imageSmoothingEnabled=false;sg.drawImage(b.cv,b.x,b.y,b.w,b.h,0,0,sc.width,sc.height);sg.globalCompositeOperation='source-in';sg.fillStyle='#07080b';sg.fillRect(0,0,sc.width,sc.height);g.globalAlpha=.9;g.drawImage(sc,dx,dy,dw,dh);g.globalAlpha=1;mark(g);return true;}
 function mark(g){g.font='bold 40px "Pixel Operator", monospace';g.textAlign='center';g.textBaseline='middle';g.fillStyle='#000';g.fillText('?',PLAQUE_W/2+2,PLAQUE_H/2+8);g.fillStyle='#e9dcb6';g.fillText('?',PLAQUE_W/2,PLAQUE_H/2+6);}
 /* browser: load the card once, then each plaque's atlas when it scrolls into view; repaint until ready; release on close */
 export function wireTrophyHall(root){const cvs=[...root.querySelectorAll('[data-trophy-sprite]')];if(!cvs.length)return;const before=new Set(loadedSprites()),mine=new Set();

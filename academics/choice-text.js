@@ -58,6 +58,15 @@ function namedThings(prompt,letters){
  const pick=words[0].find(w=>words.every(ws=>ws.some(x=>x.toLowerCase()===w.toLowerCase()))&&!/^(answer|choose|pick|type|select|and|or|than|between|is|was|from|to|of|the|option|options)$/i.test(w));
  if(!pick)return null;const W=pick[0].toUpperCase()+pick.slice(1).toLowerCase();return letters.map(L=>`${W} ${L}`);
 }
+/* improve20-y-nov1 #8 (lane M's note): quiz (not Try-it) buttons for "Shop A ... Shop B: A or B?" said bare "A" and "B". The same rule
+   names them ("Shop A", "Shop B"); a prompt that names nothing before its letters but asks "Which slope ...: A or B?" gives "Slope A".
+   Labels only: the graded value stays the letter and the prompt is untouched. null when nothing names them. */
+const NOT_A_THING=/^(has|have|had|is|are|was|were|does|do|did|of|one|ones|letter|the|option|options|answer|choice|choices|sentence|statement|claim|line|text|version|can|will|would|could|should)$/i;
+export function letterNames(prompt,letters){
+ const p=String(prompt||'');if(!letters?.length||!letters.every(isLetter))return null;const named=namedThings(p,letters);if(named)return named;
+ const m=new RegExp(`\\bwhich\\s+([a-z]{3,})\\b[^?:]*:?\\s*${letters.slice(0,-1).join('\\s*,\\s*')}\\s*,?\\s+or\\s+${letters[letters.length-1]}\\s*\\?\\s*$`,'i').exec(p);
+ if(!m||NOT_A_THING.test(m[1]))return null;const W=m[1][0].toUpperCase()+m[1].slice(1).toLowerCase();return letters.map(L=>`${W} ${L}`);
+}
 export function letterButtons(check,id=''){
  const opts=(check?.options||[]).map(String);if(!opts.length||!opts.every(isLetter))return null;
  const letters=[...opts].sort(),texts=optionTexts(check.prompt,letters),named=texts?null:namedThings(check.prompt,letters),own=TRYIT_LABELS[id];

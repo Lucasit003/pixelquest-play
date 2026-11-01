@@ -22,6 +22,8 @@ export function runDrops(st){const out=[],seen=new Set(),add=(kind,id)=>{if(!id|
    the time and "NEW BEST TIME" under the NEXT GOAL bar. From COMPACT_AT chips the phone strip goes compact: each chip is its icon and
    its number only (a gear piece or jewel, which has no number, is its icon), its words in the title; the desktop card keeps its words. */
 export const COMPACT_AT=4;
+/* improve20-y-nov1 #1: the phone caption's short name drops the owner ("Bog King’s Waders" -> "Waders"), so three finds fit one line at 667 px */
+export const shortName=n=>String(n||'').replace(/^[^,]*?['’]s\s+(?=\S)/,'')||String(n||'');
 /** The strip. won: "You got" or, on a defeat, "You kept". loot: resultLoot's list ({icon,label,quiet?}); gear: [{name,img}]; starsAll: the save's stars in all.
  * icon(name) gives an <img>; starIcon is the star's <img>. */
 /* improve20-x-nov1 #20c (audit4 #11): riftBonus is the Rift's first-win gold, already inside `gold`, named in the gold chip so gold is not shown
@@ -35,7 +37,10 @@ export function youGotHTML({won=true,gold=0,xp=0,riftBonus=0,shard='',loot=[],ge
   ...gear.map(g=>item('gear',g.img||icon('chest'),'',g.name,' level-loot-item')),
   ...(stars>0?[item('stars',starIcon,`+${stars}`,`${stars>1?'stars':'star'}${starsAll?` · ${starsAll} in all`:''}`)]:[])];
  if(!parts.length)return '';
- return `<div class="you-got level-rewards${parts.length>=COMPACT_AT?' you-got-compact':''}" data-you-got><small class="you-got-label">${won?'You got':'You kept'}</small><div class="you-got-row">${parts.join('')}</div></div>`;
+ /* improve20-y-nov1 #1 (audit4 #17): a compact phone strip shows a gear piece or jewel as its icon only, so a kid could not tell what the
+    run found. One caption under the strip names them ("Found: Jelly Pendant, Bog Waders"); it shows only on a compact phone strip */
+ const compact=parts.length>=COMPACT_AT,found=compact&&gear.length?`<p class="you-got-found" data-found title="${esc(gear.map(g=>g.name).join(', '))}">Found: ${gear.map(g=>esc(shortName(g.name))).join(', ')}</p>`:'';
+ return `<div class="you-got level-rewards${compact?' you-got-compact':''}" data-you-got><small class="you-got-label">${won?'You got':'You kept'}</small><div class="you-got-row">${parts.join('')}</div>${found}</div>`;
 }
 
 /* improve20-t-oct31: with the run's jewels and the meter's payout on the strip, five chips or more wrap to a second row; on a short
@@ -55,5 +60,7 @@ dialog[data-view=result] .you-got-item small{font-size:calc(var(--fs) * .85);col
 .m-mode dialog[data-view=result] .you-got-compact .you-got-item:not(:has(strong)) .you-got-text{display:none}
 .m-mode dialog[data-view=result] .you-got-compact .you-got-item:not(:has(strong)){padding:2px 4px}
 .m-mode dialog[data-view=result] .you-got-compact .you-got-row{flex-wrap:nowrap;gap:4px 6px}
+dialog[data-view=result] .you-got-found{display:none;margin:0;max-width:100%;text-align:center;font-size:14px;line-height:1.2;color:#e9dcc0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.m-mode dialog[data-view=result] .you-got-compact .you-got-found{display:block}
 @media(max-height:500px) and (min-width:600px){.m-mode dialog[data-view=result] .level-result>.you-got{grid-column:2;grid-row:1;align-self:start;margin:2px 0 4px}
  .m-mode dialog[data-view=result] .level-result>.level-result-body{grid-row:2 / 8;max-height:calc(100dvh - 228px)}}`;

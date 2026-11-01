@@ -56,9 +56,11 @@ export const BARRACKS_CSS = `.grid.barracks-grid{grid-template-columns:repeat(au
 .comp-hero .comp-bar-label{opacity:.9}
 .comp-hero .comp-head>button{align-self:flex-start;min-width:200px}
 .comp-hero .comp-wage{margin:0}
-.comp-rules>summary{cursor:pointer;min-height:36px;display:flex;align-items:center;font-weight:700;color:#e3b85a}
+.comp-rules>summary{cursor:pointer;min-height:40px;display:flex;align-items:center;gap:6px;font-weight:700;font-size:18px;color:#e3b85a;text-decoration:underline;text-underline-offset:3px}
+.comp-rules>summary::before{content:'▸'}.comp-rules[open]>summary::before{content:'▾'}
 .comp-rules .comp-facts{margin-bottom:6px}
 html.m-mode .comp-hero .comp-big{width:120px;height:120px}
+html.m-mode .comp-hero .comp-head{gap:2px}html.m-mode .comp-hero .comp-top{align-items:flex-start}html.m-mode .comp-rules>summary{min-height:30px}html.m-mode .comp-hero{padding-top:8px;padding-bottom:6px}
 html.m-mode .barracks-grid .comp-hero h3.comp-name{font-size:calc(var(--fs,16px) * 1.4)!important}
 .barracks-grid .barracks-note{margin:0;align-self:start}
 :where(.pad-companion,.pad-quest){margin:6px 0 0;display:flex;align-items:center;gap:6px}

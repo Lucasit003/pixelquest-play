@@ -4,6 +4,8 @@
    inside the map, starting with the one hubMapHtml chose. DOM only; reads nothing from the save. */
 const SPOTS=[['',''],['pq-map-you-left',''],['','pq-map-you-bottom'],['pq-map-you-left','pq-map-you-bottom'],['','pq-map-you-top'],['pq-map-you-left','pq-map-you-top'],['pq-map-you-above',''],['pq-map-you-below','']];
 const hit=(a,b)=>Math.max(0,Math.min(a.right,b.right)-Math.max(a.left,b.left))*Math.max(0,Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top));
+/** The whole fit, in order: names, then "You" clear of them, then the names again round "You", then "You" once more. */
+export function fitMap(root){const a=fitMapLabels(root);fitMapYou(root);if(!a)return null;const b=fitMapLabels(root),y=fitMapYou(root);return {names:b,you:y};}
 export function fitMapYou(root){const map=root?.querySelector?.('.pq-village-map'),you=map?.querySelector('.pq-map-you');if(!you)return null;
  const frame=map.getBoundingClientRect();if(!frame.width)return null;const marks=[...map.querySelectorAll('.pq-map-mark,.pq-map-name')].map(m=>m.getBoundingClientRect());
  const keep=you.className.replace(/\s*pq-map-you-(?:left|top|bottom|above|below)\b/g,''),cost=()=>{const r=you.getBoundingClientRect(),pad={left:r.left-2,right:r.right+2,top:r.top-2,bottom:r.bottom+2};return marks.reduce((n,m)=>n+hit(pad,m),0)+(r.left<frame.left||r.right>frame.right||r.top<frame.top||r.bottom>frame.bottom?1e6:0);};
@@ -15,12 +17,22 @@ export function fitMapYou(root){const map=root?.querySelector?.('.pq-village-map
    no icon, badge or other name and stays inside the map, else the one that covers least. The next goal's name goes first; a second
    pass lets every name move again now that all the others are down. Run it before fitMapYou, which then keeps "You" clear of the
    names too. DOM only; reads nothing from the save. */
-export const NAME_SIDES=['','pq-name-above','pq-name-right','pq-name-left','pq-name-below-e','pq-name-below-w','pq-name-above-e','pq-name-above-w'];
-export function fitMapLabels(root){const map=root?.querySelector?.('.pq-village-map');if(!map)return null;const frame=map.getBoundingClientRect();if(!frame.width)return null;
- const marks=[...map.querySelectorAll('.pq-map-mark')],fixed=[...marks,...map.querySelectorAll('.map-ability-badge')].map(m=>m.getBoundingClientRect()),names=marks.map(()=>null),side=marks.map(()=>'');
+/* improve20-y-nov1 #3 (audit4 #21): "You" covered "Home", the Library's ability badge sat on the Inn and "Next: Gate" sat on the Barracks.
+   Now: a badge whose box touches another place's icon is crowded and hides (the key names the next ability anyway); the goal icon's glow
+   counts as part of it; "You" is an obstacle for the names, so after "You" moves the names are laid out again round it; and two more
+   spots lift a name a row clear of its icon on a short stem (above-far, below-far), for the gate at the map's edge between two places. */
+export const NAME_SIDES=['','pq-name-above','pq-name-right','pq-name-left','pq-name-below-e','pq-name-below-w','pq-name-above-e','pq-name-above-w','pq-name-above-far','pq-name-below-far'];
+const grow=(r,n)=>({left:r.left-n,right:r.right+n,top:r.top-n,bottom:r.bottom+n});
+/** Hide the next-ability badge when it touches another place's icon. Returns how many were hidden. */
+export function hideCrowdedBadges(map){let n=0;const marks=[...map.querySelectorAll('.pq-map-mark')];
+ for(const b of map.querySelectorAll('.map-ability-badge')){b.classList.remove('is-crowded');b.style.removeProperty('display');const r=b.getBoundingClientRect();if(!r.width)continue;const own=b.closest('.pq-map-mark');
+  if(marks.some(m=>m!==own&&hit(grow(r,2),m.getBoundingClientRect())>0)){b.classList.add('is-crowded');b.style.display='none';n++;}}
+ return n;}
+export function fitMapLabels(root){const map=root?.querySelector?.('.pq-village-map');if(!map)return null;const frame=map.getBoundingClientRect();if(!frame.width)return null;hideCrowdedBadges(map);
+ const marks=[...map.querySelectorAll('.pq-map-mark')],fixed=[...marks.map(m=>m.classList.contains('pq-map-goal')?grow(m.getBoundingClientRect(),3):m.getBoundingClientRect()),...[...map.querySelectorAll('.map-ability-badge,.pq-map-you')].filter(e=>e.style.display!=='none').map(m=>m.getBoundingClientRect())],owner=[...marks,...[...map.querySelectorAll('.map-ability-badge,.pq-map-you')].filter(e=>e.style.display!=='none').map(e=>e.closest('.pq-map-mark'))],names=marks.map(()=>null),side=marks.map(()=>'');
  const order=marks.map((m,i)=>i).sort((a,b)=>marks[b].classList.contains('pq-map-goal')-marks[a].classList.contains('pq-map-goal'));
  const set=(m,c)=>{for(const k of NAME_SIDES)if(k)m.classList.toggle(k,k===c);};
- const cost=(i,r)=>{const pad={left:r.left-1,right:r.right+1,top:r.top-1,bottom:r.bottom+1};return fixed.reduce((t,o)=>t+hit(pad,o),0)+names.reduce((t,o,k)=>t+(k!==i&&o?hit(pad,o):0),0)+(r.left<frame.left||r.right>frame.right||r.top<frame.top||r.bottom>frame.bottom?1e6:0);};
+ const cost=(i,r)=>{const pad={left:r.left-1,right:r.right+1,top:r.top-1,bottom:r.bottom+1};return fixed.reduce((t,o,k)=>t+(owner[k]===marks[i]?0:hit(pad,o)),0)+names.reduce((t,o,k)=>t+(k!==i&&o?hit(pad,o):0),0)+(r.left<frame.left||r.right>frame.right||r.top<frame.top||r.bottom>frame.bottom?1e6:0);};
  const place=i=>{const m=marks[i],name=m.querySelector('.pq-map-name');if(!name)return;let best=side[i],low=Infinity,rect=null;
   for(const c of NAME_SIDES){set(m,c);const r=name.getBoundingClientRect(),n=cost(i,r);if(n<low){low=n;best=c;rect=r;}if(!n)break;}
   set(m,best);side[i]=best;names[i]=rect;};

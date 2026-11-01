@@ -452,6 +452,8 @@ function optionFor(S, p) {
   const tutor = tutorSubject(S, p);
   if (tutor) { const who = nameOf(p.props.key, p.name); return {label: `${who}: ${SUBJECT_LABEL[tutor]}`, panel: 'library', subject: tutor, keeper: who, talk: {key: p.props.key, name: who}}; }
   if (p.type === 'npc-spot' && TALK_PANEL[p.props?.key]) { const key = p.props.key, who = nameOf(key, p.name), panel = TALK_PANEL[key]; return {label: `${who}: ${PANEL_LABEL[panel]}`, panel, keeper: who, talk: {key, name: who}}; }
+  /* improve20-y-nov1 #7 (lane K): once a companion travels with you the roster board no longer says "Hire a companion" */
+  if (act === 'barracks' && H.save?.party?.with) return {label: 'Check the roster board', panel: act};
   if (act) return {label: act === 'guild' || act === 'alchemist' ? PANEL_LABEL[act] : pr.label || p.name || PANEL_LABEL[act], panel: act};
   if (p.type === 'npc-spot') { const key = p.props?.key, who = nameOf(key, p.name); return {label: `Talk to ${who}`, talk: {key, name: who, fallback: p.props?.talk}}; }
   if (p.type === 'interact') return {label: pr.label || p.name, say: pr.text ?? flavor(p.name)};
