@@ -1,4 +1,5 @@
 import {waveGroups} from '../game/stage.js';
+import {makeEnemy as rosterEnemy} from '../game/roster.js';
 /* Normal chapters 2/3: teach a signature early, then repeat it with a fully warned follow-up below 65%.
    Spawn-local edits: higher tiers, roster masters and academic progression are unchanged. */
 export const NORMAL_SEQUENCES={m1:['fire fan','firefall'],m2:['forge eruption','core laser'],m3:['dive under','fire-breath arc'],m4:['flame wall','ember rush'],m5:['imp swarm','fire rain'],m6:['glass spikes','void wave'],m7:['meteor rain','hellfire'],mx1:['pillar form','ash storm'],v1:['tide ring','undertow'],v2:['lantern brood','mist veil'],v3:['mirror split','echo'],v4:['starfall','crystal ram'],v5:['frost seeker','frost nova'],v6:['rift step','crystal blade'],v7:['tentacle grab','abyss wave'],vx1:['night wind','wing swoop']};
@@ -41,7 +42,16 @@ export function normalBoss(w,e){if(w.tierKey==='normal'&&['e7','e8'].includes(w.
     time are unchanged. Sim (--only=v7 --isolated --recommended-level, 24 runs, seeds 1-3): --skill=good ends at 60% (was 63%), kid 0 deaths */
  if(w.level.id==='v7')e.attacks=e.attacks.map(a=>a.name==='tentacle grab'?{...a,count:2,spread:50,hold:0,windup:1.2,recover:1.8,label:'Two tentacles! Leave the circles!'}:a.name==='abyss wave'?{...a,len:88,windup:1.8,dur:1.2,recover:2.4,label:'Abyss wave! Move to the green lane!',then:'abyss wave',thenPhase:2}:a.name==='ink darkness'?{...a,dur:3,banner:null}:a);
  return e;}
-export function normalTick(w,e){if(!e.normalPacing||!e.brain)return;const b=e.brain,phase=b.phase||1;if(e.normalPhase===phase||!['move','recover'].includes(b.mode))return;e.normalPhase=phase;const [call,then]=NORMAL_SEQUENCES[w.level.id];b.force=call;if(phase===2)e.attacks=e.attacks.map(a=>a.name===call?{...a,then}:a);}
+/* improve20-l-oct31 (5): the Normal final boss was still gentle for a good player (sim --skill=good ended v7 near 60% health). In phase
+   two each Abyss Wave's tell also calls one of the level's own boss adds (levels.js bossAdds: a Deep One) from the far side, at most
+   two alive, so the wave's lane and a foe on the ground have to be watched together. No boss turn is spent, no warning is shorter,
+   no HP or attack changes; they pay no XP or gold (combat.js kill), so a long phase two is never a farm. Sim (--only=v7 --isolated --recommended-level --gear=plain, 24 runs, seeds 1-3): good damage taken 49 > 59%
+   (with --potions=never it ends at 54% health, was 58%); kid 0 deaths with the game's potions. */
+export const DEEP_CALL={max:2};
+export function deepCall(w,e){const b=e.brain;if(w.level?.id!=='v7'||!e.boss||!e.normalPacing||!b||(b.phase||1)!==2||b.mode!=='tele'||b.atk?.name!=='abyss wave'||e.deepFor===b.atk)return;e.deepFor=b.atk;
+ const key=(w.level.bossAdds||['deep-one'])[0],alive=w.enemies.filter(o=>o.summoner===e&&o.deepCall&&o.hp>0).length;if(alive>=DEEP_CALL.max||!w.spawn)return;
+ const B=w.bounds(),x=w.player.x<(B.x0+B.x1)/2?Math.min(B.x1-20,w.player.x+180):Math.max(B.x0+20,w.player.x-180);const o=w.spawn({...rosterEnemy(key,{tier:e.tier||1}),summoner:e},x,w.player.y)||w.enemies[w.enemies.length-1];Object.assign(o,{summoned:true,deepCall:true,noReward:true,entered:true});}
+export function normalTick(w,e){if(!e.normalPacing||!e.brain)return;deepCall(w,e);const b=e.brain,phase=b.phase||1;if(e.normalPhase===phase||!['move','recover'].includes(b.mode))return;e.normalPhase=phase;const [call,then]=NORMAL_SEQUENCES[w.level.id];b.force=call;if(phase===2)e.attacks=e.attacks.map(a=>a.name===call?{...a,then}:a);}
 
 export function normalEnemy(w,e){if(!pacedNormal(w)||e.boss)return e;e.attacks=(e.attacks||[]).map(a=>({...a,fullTell:true,windup:Math.max(.55,(a.windup||.7)*.9),cd:a.cd*.8}));return e;}
 

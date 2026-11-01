@@ -29,10 +29,12 @@ export function pilotBlock(w,e,a){if(!w.level?.encounter||!(e.pilotArmour||e.pil
  if(e.pilotOpen>w.time)return false;
  /* improve20-a-oct31 #3: a PERFECT dodge (boss-moves.js perfectDodge: a roll started within 0.2 s of the hit) leaves the boss Exposed for 2 s, and his armour is open for it too. Before, armour blocked every basic hit unless a heavy or an ability cracked it, so a player who only dodged and swung could dodge forever and never hurt the Goblin King on Heroic or Legendary */
  if(e.pilotArmour&&e.exposedBy==='perfect'&&e.exposed>0)return false;if(!e.pilotArmour&&Math.sign(w.player.x-e.x)!==(e.pilotFacing||e.facing||1))return false;
- if(w.time-(e.pilotSaid??-9)>.3){e.pilotSaid=w.time;w.text('Blocked!',e.x,e.y-34,'#b8dfff');w.burst(e.x,e.y,'#d9ecf5',8,'spark');sfx('blocked');}if(a.basic&&!a.heavy)blockedHint(w);return true;}
+ if(w.time-(e.pilotSaid??-9)>.3){e.pilotSaid=w.time;const first=e.pilotGuard&&!w.guardTaught;if(first)w.guardTaught=true;w.text(first?'HIT FROM BEHIND!':'Blocked!',e.x,e.y-34,first?'#ffe49a':'#b8dfff');w.burst(e.x,e.y,'#d9ecf5',8,'spark');sfx('blocked');}if(a.basic&&!a.heavy)blockedHint(w,e.pilotGuard?'guard':'armour');return true;}
 
 /* Count contacts, not targets in one swing. Transient per fight; no save or combat changes. */
-export function blockedHint(w){const t=w.time,h=w.blockHint??={hits:[],next:-Infinity};h.hits=h.hits.filter(at=>t-at<=4);if(h.hits.at(-1)!==t)h.hits.push(t);if(h.hits.length<3||t<h.next)return false;h.hits=[];h.next=t+30;w.events.armourHint?.();return true;}
+/* improve20-l-oct31 (4): a shield foe's blocks name its own answer (walk round behind it), not the boss armour's; the first block of
+   a fight already says HIT FROM BEHIND! over the foe */
+export function blockedHint(w,kind='armour'){const t=w.time,h=w.blockHint??={hits:[],next:-Infinity};h.hits=h.hits.filter(at=>t-at<=4);if(h.hits.at(-1)!==t)h.hits.push(t);if(h.hits.length<3||t<h.next)return false;h.hits=[];h.next=t+30;w.events.armourHint?.(kind);return true;}
 
 /* Resolve tier overrides before the authored contract, so they cannot replace its one-time call or warning floor.
    Keep transformed bodies and inherited duo moves on that same contract; never mutate nested roster data. */

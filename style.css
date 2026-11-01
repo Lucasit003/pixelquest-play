@@ -2953,6 +2953,12 @@ dialog[data-view=lesson-quiz] .question:has(#quiz-feedback:not(:empty)) .tile-al
  #modal[data-view=lesson-cheer] .cheer-stage{height:84px;margin:6px auto 0}#modal[data-view=lesson-cheer] .cheer-stage .topic-art,#modal[data-view=lesson-cheer] .cheer-stage .ta-body,#modal[data-view=lesson-cheer] .cheer-stage canvas,#modal[data-view=lesson-cheer] .cheer-stage img{width:80px;height:80px}#modal[data-view=lesson-cheer] .test-cheer .am-score{margin:4px 0}}
 /* once answered (the card's compact state), the scene steps down like the guide does, so the question keeps more width */
 #modal#modal[data-view=lesson-quiz] .question.qf:has(#quiz-feedback:not(:empty)) .pd-canvas{width:132px;height:75px}
+/* improve20-l-oct31 (6): answered with a question picture on a desktop, Read to me took its own column between the question and the
+   picture, so the question wrapped to three short lines (five for a long one). It goes under the question, as before answering. */
+@media(min-height:501px){html:not(.m-mode) #modal#modal[data-view=lesson-quiz] .question.qf:has(#quiz-feedback:not(:empty))>.question-reading:has(>:is(#quiz-pic,.question-text-card)){grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"top top pic" "guide say pic" "guide read pic"}html:not(.m-mode) #modal#modal[data-view=lesson-quiz] .question.qf:has(#quiz-feedback:not(:empty))>.question-reading:has(>:is(#quiz-pic,.question-text-card))>.edu-read{align-self:start;justify-self:start}}
+/* improve20-l-oct31 (6): on a short screen the answered card had no room for the "test is open" note's line under the answer line
+   (it scrolled inside the card, cut in half). The note only follows a right answer the child just tapped, so the kept tile steps aside. */
+@media(max-height:500px){#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(.test-open-note)>#quiz-form{display:none}}
 /* ---------- improve20-c-oct31: earned pets, the Trophy Hall, the hero show card, the unlock preview, Skip ahead ---------- */
 .pet-card.pet-locked .pet-portrait{filter:grayscale(.85) brightness(.55)}
 .pet-card.pet-locked h3,.pet-card.pet-locked>p{color:var(--muted)}

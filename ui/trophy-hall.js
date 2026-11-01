@@ -19,9 +19,17 @@ function nine(c,im,x,y,w,h,[t,r,b,l],k){const W=im.width,H=im.height,mw=W-l-r,mh
 const mk=(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c;};
 const frames={};
 /* the card frame tinted to a metal: hue and saturation from the tint, light and shade from the art ('color' blend), alpha kept */
+/* gold is a gradient map over the art's own light and shade (dark amber to pale gold), not a flat hue: a 'color' blend kept the card's
+   low brown luminance and read mustard beside the bright silver (improve20-l-oct31) */
+export const GOLD_STOPS=[[0,[112,62,8]],[.34,[222,158,30]],[.6,[252,208,64]],[1,[255,248,196]]];
+export function goldShade(t){t=Math.max(0,Math.min(1,t));let i=1;while(i<GOLD_STOPS.length-1&&t>GOLD_STOPS[i][0])i++;const [a,ca]=GOLD_STOPS[i-1],[b,cb]=GOLD_STOPS[i],f=(t-a)/(b-a||1);return ca.map((v,k)=>Math.round(v+(cb[k]-v)*f));}
+function goldMap(g){const {width:W,height:H}=g.canvas,im=g.getImageData(0,0,W,H),d=im.data;let lo=1,hi=0;const L=i=>(.299*d[i]+.587*d[i+1]+.114*d[i+2])/255;
+ for(let i=0;i<d.length;i+=4)if(d[i+3]>8){const l=L(i);if(l<lo)lo=l;if(l>hi)hi=l;}
+ for(let i=0;i<d.length;i+=4)if(d[i+3]>8){const c=goldShade((L(i)-lo)/((hi-lo)||1));d[i]=c[0];d[i+1]=c[1];d[i+2]=c[2];}
+ g.putImageData(im,0,0);}
 export function plaqueFrame(card,metal){const key=metal||'dark';if(frames[key])return frames[key];const cv=mk(PLAQUE_W,PLAQUE_H),g=cv.getContext('2d');g.imageSmoothingEnabled=false;nine(g,card,0,0,PLAQUE_W,PLAQUE_H,[10,8,8,8],2);
  const base=mk(PLAQUE_W,PLAQUE_H);base.getContext('2d').drawImage(cv,0,0);
- if(metal){g.globalCompositeOperation='color';g.fillStyle=METAL_TINT[metal];g.fillRect(0,0,PLAQUE_W,PLAQUE_H);g.globalCompositeOperation=metal==='bronze'?'multiply':'screen';g.globalAlpha=metal==='bronze'?.25:metal==='gold'?.38:.22;g.fillRect(0,0,PLAQUE_W,PLAQUE_H);g.globalAlpha=1;}
+ if(metal==='gold')goldMap(g);else if(metal){g.globalCompositeOperation='color';g.fillStyle=METAL_TINT[metal];g.fillRect(0,0,PLAQUE_W,PLAQUE_H);g.globalCompositeOperation=metal==='bronze'?'multiply':'screen';g.globalAlpha=metal==='bronze'?.25:metal==='gold'?.38:.22;g.fillRect(0,0,PLAQUE_W,PLAQUE_H);g.globalAlpha=1;}
  else{g.globalCompositeOperation='multiply';g.fillStyle='#5a5f6a';g.fillRect(0,0,PLAQUE_W,PLAQUE_H);}
  g.globalCompositeOperation='destination-in';g.drawImage(base,0,0);g.globalCompositeOperation='source-over';
  /* the window behind the boss: a dark wall so every sprite reads */
