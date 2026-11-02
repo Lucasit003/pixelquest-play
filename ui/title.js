@@ -10,7 +10,7 @@ import {nextLesson} from '../academics/study-unlock.js';
 import {portrait} from '../gfx/world.js';
 import {loadSprite} from '../gfx/actors/sprites.js';
 import {sfx,playMusic} from '../core/audio.js';
-import {openCredits} from './credits-screen.js';
+import {fullscreenOption,toggleFullscreen,isFullscreen,toggleHowTo} from './fullscreen.js';import {openCredits} from './credits-screen.js';
 import {irisOpen} from './juice.js';
 import {icon} from './icons.js';
 import {activeProfile,needsWhoPlays,takeAutoContinue} from './profiles.js';
@@ -49,7 +49,8 @@ export function titleScreen({started=false,cards='',hero='warrior',begin,learner
  </nav>
  ${started&&today?today:''}
  <button class="ghost learner" data-title="learners" aria-label="Switch learner">${icon('key',{size:32})}<span data-learner-name>${esc(learner||'Player 1')}</span><small>Switch</small></button>
- <p class="title-foot">Learning unlocks your powers</p>
+ ${fullscreenOption()&&!isFullscreen()?'<button type="button" class="ghost title-fs" data-title="fullscreen">Full screen</button>':''}
+  <p class="title-foot">Learning unlocks your powers</p>
 </div>
 <div class="select-pane">
  <div class="select-head"><button class="ghost back" data-title="back" aria-label="Back to the title screen">‹ Back</button><div><span class="eyebrow">${started?'YOUR KNOWLEDGE STAYS WITH YOU':'WELCOME TO OAKHAVEN'}</span><h2 data-select-heading>Choose your hero</h2><span class="select-progress" data-select-progress>1 / 3 · HERO</span></div></div>
@@ -192,6 +193,8 @@ export function wireTitle(api={}){
   else if(k==='back'){if(root.dataset.step==='setup'){if(openLook())step('look');else step('select');}else if(root.dataset.step==='look')step('select');else{resetPick();step('title');}}
   else if(k==='settings')api.settings?.();
   else if(k==='credits')openCredits();
+   /* fullscreen-view-nov1 (owner): phones get a Full screen button on the title; an iPhone, which has no page fullscreen, gets the home-screen how-to */
+   else if(k==='fullscreen'){if(fullscreenOption()==='api'){toggleFullscreen();setTimeout(()=>{b.hidden=isFullscreen();},300);}else toggleHowTo(b);}
   else if(k==='learners')openProfiles();
  });
  /* Escape in the hero select goes back to the menu (main.js keeps the welcome panel open). */

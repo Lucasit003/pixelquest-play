@@ -43,4 +43,13 @@ export function armStartFullscreen(getSave){
  };
  armed=fire;w.addEventListener('click',fire,true);w.addEventListener('keydown',fire,true);
 }
+/* fullscreen-view-nov1 (owner, 1 Nov: "make a fix that makes it a full screen button"): an iPhone cannot put a web page in fullscreen
+   (Safari dropped the API on iPhone in iOS 17.4; WebKit bug 212934 is WONTFIX), so there the Full screen button explains the home-screen
+   app, which plays edge to edge with no Safari bars. 'api': the browser can go fullscreen (desktop, Android, iPad); 'home': iPhone Safari,
+   not installed yet; null: already the installed app, or no way at all. */
+export const standalone=()=>{const w=globalThis.window;try{return w?.navigator?.standalone===true||!!w?.matchMedia?.('(display-mode: standalone)').matches||!!w?.matchMedia?.('(display-mode: fullscreen)').matches;}catch{return false;}};
+export function fullscreenOption(){if(fullscreenSupported())return 'api';return /iPhone|iPod/.test(globalThis.navigator?.userAgent||'')&&!standalone()?'home':null;}
+export const HOME_HOWTO='<p class="fs-howto" role="note"><b>Full screen on iPhone:</b> Safari can\'t hide its bars for a website. Tap <b>Share</b>, then <b>Add to Home Screen</b>, and open PixelQuest from its new icon. It fills the whole screen, like an app.</p>';
+/* Shows the how-to after the button once (a second press hides it). */
+export function toggleHowTo(btn){const n=btn?.nextElementSibling;if(n?.classList?.contains('fs-howto')){n.remove();return false;}btn?.insertAdjacentHTML?.('afterend',HOME_HOWTO);return true;}
 export const fullscreenLabel=()=>isFullscreen()?'Exit fullscreen':'Fullscreen';

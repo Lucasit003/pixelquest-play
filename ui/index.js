@@ -6,7 +6,7 @@ import {unlockAudio,playMusic,duck,musicKey,setDirected,sfx,getSoundtrack,levelM
 import {setSheetWorld,installSheetKeys,sheetOpen} from './sheet.js';
 import {applySettings} from './settings.js';
 import {initScale,rescale} from './scale.js';
-import {armStartFullscreen,fullscreenSupported,toggleFullscreen,fullscreenLabel} from './fullscreen.js';
+import {armStartFullscreen,fullscreenSupported,toggleFullscreen,fullscreenLabel,fullscreenOption,toggleHowTo} from './fullscreen.js';
 import {initMobile} from './mobile.js';
 import {areaTitle,levelUpBanner,celebrate,installToastHold} from './juice.js';
 import {titleOpen} from './title.js';
@@ -134,11 +134,11 @@ function director(){
  later(director,250);
 }
 export {levelUpBanner as onLevelUp};
-export function pauseExtrasHTML(inTown){return `${fullscreenSupported()?`<button id="pause-fullscreen" class="fs-toggle">${fullscreenLabel()}</button>`:''}<button id="pause-stats">Stats</button><button id="pause-credits">Credits</button>${inTown?'<button id="pause-title">Title screen</button>':''}`;}
+export function pauseExtrasHTML(inTown){return `${fullscreenSupported()?`<button id="pause-fullscreen" class="fs-toggle">${fullscreenLabel()}</button>`:fullscreenOption()==='home'?'<button id="pause-fullscreen" class="fs-toggle" data-fs="home">Full screen</button>':''}<button id="pause-stats">Stats</button><button id="pause-credits">Credits</button>${inTown?'<button id="pause-title">Title screen</button>':''}`;}
 export function wirePauseExtras({save,welcome}){
  const d=globalThis.document;
  d.querySelector('#pause-stats')?.addEventListener('click',()=>openStats(save()));
- {const b=d.querySelector('#pause-fullscreen');b?.addEventListener('click',()=>{toggleFullscreen();setTimeout(()=>{b.innerHTML=`${fullscreenLabel()}`;},250);});}
+ {const b=d.querySelector('#pause-fullscreen');b?.addEventListener('click',()=>{if(b.dataset.fs==='home'){toggleHowTo(b);return;}toggleFullscreen();setTimeout(()=>{b.innerHTML=`${fullscreenLabel()}`;},250);});}
  d.querySelector('#pause-credits')?.addEventListener('click',()=>openCredits());
  d.querySelector('#pause-title')?.addEventListener('click',()=>welcome?.());
 }

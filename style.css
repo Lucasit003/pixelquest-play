@@ -3648,8 +3648,7 @@ html:not(.m-mode) dialog[data-home] .modal-head{padding:2px 0 8px;margin-bottom:
 .m-mode .inv-doll.gear-doll{grid-template-columns:64px 144px 64px;gap:4px 6px}
 .m-mode .gear-doll .inv-hero{width:144px;height:144px}
 @media (max-width:760px){html:not(.m-mode) .inv{grid-template-columns:1fr}}
-/* ownernotes-b-nov1 #2: Town view is a desktop setting (a phone's view is already as wide as its screen allows at 2x) */
-.m-mode :is(.town-view-row,.town-view-note){display:none}
+/* fullscreen-view-nov1: phones show it again as "View" (Close / Normal / Far sets the phone canvas resolution, ui/scale.js shortPhoneFit) */
 @media (max-height:760px){html:not(.m-mode) dialog[data-home] .modal-head p{display:none}html:not(.m-mode) dialog[data-home] .modal-head{padding-bottom:4px}}
 .gear-doll .inv-stats div{padding:2px 0 4px}
 /* ownernotes-b-nov1 #3 (owner: "the potion bottle in the inventory slides a little bit and isn't centred"): every button drops 2 px while
@@ -3770,3 +3769,10 @@ html.m-mode,html.m-mode body{overflow:hidden;overscroll-behavior:none}
 #ios-tip.show{opacity:1;transform:translate(-50%,0)}
 #ios-tip b{font-weight:700;color:#ffe9a8}
 #ios-tip button{flex:none;min-width:56px;min-height:36px;padding:2px 12px;font:700 15px var(--ui)}
+/* fullscreen-view-nov1 (owner: "a full screen button"): the title's Full screen button (phones only), and the iPhone home-screen how-to it,
+   Settings > Display > Screen and the Pause menu open (ui/fullscreen.js HOME_HOWTO) */
+.title-fs{display:none}
+.m-mode .title-pane .title-fs{display:inline-flex;position:absolute;right:max(8px,env(safe-area-inset-right));top:max(8px,env(safe-area-inset-top));z-index:3;min-height:36px;padding:4px 12px;font:700 14px var(--ui);background:rgba(12,14,30,.82);border:2px solid #e7c77e88;border-radius:4px;color:var(--ink)}
+.m-mode .title-pane .title-fs+.fs-howto{position:absolute;right:max(8px,env(safe-area-inset-right));top:calc(max(8px,env(safe-area-inset-top)) + 44px);z-index:3;max-width:min(300px,calc(100vw - 32px))}
+.fs-howto{grid-column:1/-1;margin:6px 0;padding:8px 10px;background:rgba(12,14,30,.92);border:2px solid #e7c77e;border-radius:4px;color:#fff3d6;font:400 14px/18px var(--ui);text-align:left;text-transform:none;letter-spacing:0}
+.fs-howto b{font-weight:700;color:#ffe9a8}
