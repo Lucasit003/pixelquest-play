@@ -165,21 +165,23 @@ function playBuffer(b,{gain=.38,rate=1,pan=0}={}){
 export const SFX_NAMES=[...Object.keys(Z),'cast'];
 /* The ZzFX recipe behind a sound, and its samples rendered without the per-play pitch jitter.
    Pure (no AudioContext), so tests and tools can inspect the sound design. */
-export function sfxParams(name,arg){return name==='cast'?CAST[CAST[arg]?arg:'arcane']:Z[name]||null;}
+export function sfxParams(name,arg){return name==='cast'||name==='bolt'?CAST[CAST[arg]?arg:'arcane']:Z[name]||null;}
 export function renderSfx(name,arg,rate=44100){const p=sfxParams(name,arg);if(!p)return new Float32Array(0);const q=[...p];q[1]=0;const r=ZZFX.sampleRate;ZZFX.sampleRate=rate;try{return ZZFX.buildSamples(...q);}finally{ZZFX.sampleRate=r;}}
 /* Call sites say what happened; this table decides what it sounds like. step raises the swing pitch
    through a combo; opts.pan places the sound left or right of the hero. */
 export function sfx(name,arg,opts={}){
- probe('sfx',name==='cast'?'cast.'+arg:name);
+ probe('sfx',name==='cast'||name==='bolt'?name+'.'+arg:name);
  if(!enabled||!ctx())return;
  resume();
  try{
-  const key=name==='cast'?'cast.'+(CAST[arg]?arg:'arcane'):name;
-  const params=name==='cast'?CAST[CAST[arg]?arg:'arcane']:Z[name];if(!params)return;
+  /* ownernotes-c-nov1: 'bolt' is the Mage's basic shot: the staff element's own spell sound (CAST), played 7 dB under the ability
+     cast and pitched up so a stream of light bolts stays bright and quick (opts.heavy, Power Blast, plays lower and fuller) */
+  const spell=name==='cast'||name==='bolt',el=CAST[arg]?arg:'arcane',key=spell?name+'.'+el+(name==='bolt'&&opts.heavy?'.heavy':''):name;
+  const params=spell?CAST[el]:Z[name];if(!params)return;
   /* The same sound fired twice inside 30 ms is one sound louder; skip the double. */
   const now=ac.currentTime;if(now-(lastPlayed.get(key)||-1)<.03)return;lastPlayed.set(key,now);
-  const rate=(name==='swing'&&typeof arg==='number'?Math.pow(1.08,arg):1)*(1+(Math.random()-.5)*.06);
-  playBuffer(bufferFor(key,params),{gain:.38*dbGain(SFX_LEVEL[key]),rate,pan:opts.pan||0});if(isTell(key))tellDuck();
+  const rate=(name==='swing'&&typeof arg==='number'?Math.pow(1.08,arg):name==='bolt'?(opts.heavy?.92:1.22):1)*(1+(Math.random()-.5)*.06);
+  playBuffer(bufferFor(key,params),{gain:.38*dbGain(name==='bolt'?(SFX_LEVEL['cast.'+el]||0)-(opts.heavy?3:7):SFX_LEVEL[key]),rate,pan:opts.pan||0});if(isTell(key))tellDuck();
  }catch{}
 }
 /* Old entry points, kept for existing call sites and tests. */

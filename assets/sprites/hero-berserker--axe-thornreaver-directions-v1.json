@@ -1,0 +1,298 @@
+{
+  "image": "hero-berserker--axe-thornreaver-directions-v1.png",
+  "cell": [
+    112,
+    100
+  ],
+  "anchor": [
+    57,
+    79
+  ],
+  "faces": "right",
+  "scale": 1,
+  "states": {
+    "idle-south": {
+      "row": 0,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "walk-south": {
+      "row": 1,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    },
+    "idle-north": {
+      "row": 2,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "walk-north": {
+      "row": 3,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    }
+  },
+  "source": "pixellab",
+  "unmodified": false,
+  "sourcePixelsUnmodified": true,
+  "credit": "PixelQuest original character (the Berserker holding the Thornreaver), made with PixelLab (pixellab.ai) for PixelQuest. North/south walks per the owner note of 1 November 2026 (every hero walks up and down).",
+  "contract": "art/heroes/berserker-w/axe-thornreaver/directions.json",
+  "sources": [
+    {
+      "state": "idle-south",
+      "frame": 0,
+      "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/rotations/south.png",
+      "sha256": "638b3ea73900a7702e9608110bc2133e9094366bef9fc36f00b86cb2f9dbf098",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        19
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 0,
+      "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/walk-south/0.png",
+      "sha256": "9f66c603b02e497152e3dda0cac5bf678b26bc78b2d192c16b348fc0cb3058c7",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 1,
+      "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/walk-south/1.png",
+      "sha256": "8d3d3ab63ccf74a021478b807c1925e7770e962319ddf11718c7ec235eae3c21",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 2,
+      "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/walk-south/2.png",
+      "sha256": "a8b2c3f8289b2cfa2143d67ec4b62ac9d9ece563d241989014781ec6ba823c93",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 3,
+      "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/walk-south/3.png",
+      "sha256": "7a388f180937f6d58f68e8e164156bf554e946d08ea33a6304833704ab9dfa66",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 4,
+      "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/walk-south/4.png",
+      "sha256": "fbf627b758504d9c845791b105d009e501d0cb83528951e26ffd805ed8fecf8e",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 5,
+      "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/walk-south/5.png",
+      "sha256": "c0a19985cb626eb5b2c831fd08dd7858b8c3688657bcdc12876ee5efa73cec52",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 6,
+      "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/walk-south/6.png",
+      "sha256": "e588c839e101beea225001a0663fcf9c866d3e32e6d65d9d1f52c7dd78dd543e",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 7,
+      "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/walk-south/7.png",
+      "sha256": "0469ca5b63448a612634f1bcb51ff409c283f8848592bf5cb82eba0837c6140a",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "idle-north",
+      "frame": 0,
+      "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/rotations/north.png",
+      "sha256": "a21facd7505ca14819e1d05561d55c906853ab319a7b2a3cd92869c623dfd8d1",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        20
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 0,
+      "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/walk-north/0.png",
+      "sha256": "54302440847b2315aed7edf3c6be4fa6312a5475338f7798994f3fa16de1722a",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 1,
+      "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/walk-north/1.png",
+      "sha256": "c3b71c40c86b4f4bed1d165b12f7244c9d398a0d21a8e1a27074454779f37d2b",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 2,
+      "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/walk-north/2.png",
+      "sha256": "1574662aaca890d88146c59b0391fb57af4336251c28ececbb9fac90bb1b10b9",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 3,
+      "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/walk-north/3.png",
+      "sha256": "c64941ec3e6146a58d01b238988aacb056191ca857cc9e9483b5c0ecff557bd2",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 4,
+      "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/walk-north/4.png",
+      "sha256": "26c7cc7eb9b803f3ceabe882b061b57300cc7087e074ab0722256b73b527e5d7",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 5,
+      "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/walk-north/5.png",
+      "sha256": "336e6f21cd5eb14916ca76c6bee7961348714e72269e35bb80f9a5079a9be138",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 6,
+      "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/walk-north/6.png",
+      "sha256": "6c19346fbb4ee57e93f471c7cb6a09393379d19b3579929e0eb79d6cc9c79a31",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 7,
+      "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/walk-north/7.png",
+      "sha256": "c30d4cad9e5101acc524e64e2f79ea6262e216fc9b0e8a550fef9e6c698c9930",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    }
+  ]
+}

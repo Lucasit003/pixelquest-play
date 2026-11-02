@@ -1,0 +1,298 @@
+{
+  "image": "hero-mage--staff-moltencore-directions-v1.png",
+  "cell": [
+    112,
+    100
+  ],
+  "anchor": [
+    57,
+    79
+  ],
+  "faces": "right",
+  "scale": 1,
+  "states": {
+    "idle-south": {
+      "row": 0,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "walk-south": {
+      "row": 1,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    },
+    "idle-north": {
+      "row": 2,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "walk-north": {
+      "row": 3,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    }
+  },
+  "source": "pixellab",
+  "unmodified": false,
+  "sourcePixelsUnmodified": true,
+  "credit": "PixelQuest original character (the Mage holding the Molten Core Staff), made with PixelLab (pixellab.ai) for PixelQuest. North/south walks per the owner note of 1 November 2026 (every hero walks up and down).",
+  "contract": "art/heroes/mage-w/staff-moltencore/directions.json",
+  "sources": [
+    {
+      "state": "idle-south",
+      "frame": 0,
+      "file": "art/heroes/mage-w/staff-moltencore/pixellab/rotations/south.png",
+      "sha256": "7b7f7d8d37f61a3108784189e1fd4fa82706f9cd842185bdfe92aa6bf6e8dc81",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        19
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 0,
+      "file": "art/heroes/mage-w/staff-moltencore/pixellab/walk-south/0.png",
+      "sha256": "c98c83a35ccbeef810ef3ea5f20eec99247670d2d769c96d406786c7d041eefd",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 1,
+      "file": "art/heroes/mage-w/staff-moltencore/pixellab/walk-south/1.png",
+      "sha256": "3bdf43599e0cc4277dc2744e23f909d444177d748fe59c0f4ae74cefba6bfe8b",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 2,
+      "file": "art/heroes/mage-w/staff-moltencore/pixellab/walk-south/2.png",
+      "sha256": "bb3f1d83cfa3379baee9c660094d84c95ab81c88ba28fa253a67b1d2839424b8",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 3,
+      "file": "art/heroes/mage-w/staff-moltencore/pixellab/walk-south/3.png",
+      "sha256": "84b76d92c166f5117a6c84807f8e86f7f276746d421dab825c3de1c81ecf67b2",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 4,
+      "file": "art/heroes/mage-w/staff-moltencore/pixellab/walk-south/4.png",
+      "sha256": "2a66813f1674706fd17b246ec3efa635c81d88d4643e1f6ce8040ef71d82f908",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 5,
+      "file": "art/heroes/mage-w/staff-moltencore/pixellab/walk-south/5.png",
+      "sha256": "c447ee2dfc9c8d2de4928648e20f84210365f35df4320181acf2f6b1f93f1439",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 6,
+      "file": "art/heroes/mage-w/staff-moltencore/pixellab/walk-south/6.png",
+      "sha256": "7f6b3dffa6a3067e8cb4169f52904d27e998eeedee471cfcba2a4659a2d486c1",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 7,
+      "file": "art/heroes/mage-w/staff-moltencore/pixellab/walk-south/7.png",
+      "sha256": "ba1145ce8f9b7f21f3f6656ee2bcb88aa05bff225929a428146753eaac9d09b5",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "idle-north",
+      "frame": 0,
+      "file": "art/heroes/mage-w/staff-moltencore/pixellab/rotations/north.png",
+      "sha256": "a850849ca13d9f695b3d9087a612aa9861a06b5e97632957a6ab6275dbfe6c4a",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        20
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 0,
+      "file": "art/heroes/mage-w/staff-moltencore/pixellab/walk-north/0.png",
+      "sha256": "b3e9aaa1c436d295d7b58e0f1f8362baed584c5c45ba970a70a7c864ddc684a0",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 1,
+      "file": "art/heroes/mage-w/staff-moltencore/pixellab/walk-north/1.png",
+      "sha256": "f12fd45a5cce3482d5181b53c9125032e6197cc0f2459ee5e64690f88122d9fe",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 2,
+      "file": "art/heroes/mage-w/staff-moltencore/pixellab/walk-north/2.png",
+      "sha256": "d70cf1674b6044b182c2d6808ae2b828666a0cc44ed69b03c412c608f66e2fa5",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 3,
+      "file": "art/heroes/mage-w/staff-moltencore/pixellab/walk-north/3.png",
+      "sha256": "4ed3de9f4cba207405a3fd5d84be40db62fd0c4cab11aba09abc3afb657e3833",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 4,
+      "file": "art/heroes/mage-w/staff-moltencore/pixellab/walk-north/4.png",
+      "sha256": "d51842a7d8cc2bd5cf8cff4e72ebf49ee40aa7987a43f63cc38c5f8ec9beae32",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 5,
+      "file": "art/heroes/mage-w/staff-moltencore/pixellab/walk-north/5.png",
+      "sha256": "09d80eb79afafae6e75163eba27b5862fda01dc416e966bdad78921598b17675",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 6,
+      "file": "art/heroes/mage-w/staff-moltencore/pixellab/walk-north/6.png",
+      "sha256": "98ac0f971c23cc52c3ccc452353fe2aceaf7e0ce6086c9ac002e53201aeb0fec",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 7,
+      "file": "art/heroes/mage-w/staff-moltencore/pixellab/walk-north/7.png",
+      "sha256": "04f8407929952d0ca99bbcc89ef1a1af32eee72776c3164a11bc628aeb92226d",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    }
+  ]
+}

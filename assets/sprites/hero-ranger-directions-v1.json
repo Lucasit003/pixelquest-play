@@ -17,17 +17,29 @@
       "fps": 5,
       "loop": true
     },
-    "idle-north": {
+    "walk-south": {
       "row": 1,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    },
+    "idle-north": {
+      "row": 2,
       "frames": 1,
       "fps": 5,
+      "loop": true
+    },
+    "walk-north": {
+      "row": 3,
+      "frames": 8,
+      "fps": 12,
       "loop": true
     }
   },
   "source": "pixellab",
   "unmodified": false,
   "sourcePixelsUnmodified": true,
-  "credit": "PixelQuest original character, made with PixelLab (pixellab.ai) for PixelQuest. Front and back standing views for the character creator (owner, 15 October 2026).",
+  "credit": "PixelQuest original character, made with PixelLab (pixellab.ai) for PixelQuest. Front and back standing views (15 October 2026) and north/south walks (owner note, 1 November 2026: every hero walks up and down).",
   "contract": "art/heroes/ranger/directions.json",
   "sources": [
     {
@@ -45,6 +57,118 @@
       ]
     },
     {
+      "state": "walk-south",
+      "frame": 0,
+      "file": "art/heroes/ranger/pixellab/walk-south/0.png",
+      "sha256": "d974877580bbe71279ca82a78121aa03941c148aba0ab1c833fe2da0d4a4e847",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 1,
+      "file": "art/heroes/ranger/pixellab/walk-south/1.png",
+      "sha256": "d01dc8bc0470ff4ac4ef812ba1dce1ba9d4ccf84049de3076edea28c0e95bca5",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 2,
+      "file": "art/heroes/ranger/pixellab/walk-south/2.png",
+      "sha256": "e43986bf39363b4bb6880a84fc7628543e3af485a3882993dffce5eddeef7fcd",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 3,
+      "file": "art/heroes/ranger/pixellab/walk-south/3.png",
+      "sha256": "bdf64169bc319983251f257302567f95cb1fed561040b89b0a35af84c1725f63",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 4,
+      "file": "art/heroes/ranger/pixellab/walk-south/4.png",
+      "sha256": "fa03c6eb9a19567197914ea0ff5ed33a42fcf708ef3e273d5e84626f6294aa5d",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 5,
+      "file": "art/heroes/ranger/pixellab/walk-south/5.png",
+      "sha256": "8fff170c5b75e931b30b1cbd36c34d011596a01446390a1b405122a51cf300fe",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 6,
+      "file": "art/heroes/ranger/pixellab/walk-south/6.png",
+      "sha256": "4a128dc1badf09694b5391395b4e1a3e4421bbe84c7147b95ce67ff63828854e",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 7,
+      "file": "art/heroes/ranger/pixellab/walk-south/7.png",
+      "sha256": "f1fe1520c9cd5387353ca2f3dd43a06deaee7839435014a6f41db78e9b0a4034",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
       "state": "idle-north",
       "frame": 0,
       "file": "art/heroes/ranger/pixellab/rotations/north.png",
@@ -56,6 +180,118 @@
       "offset": [
         26,
         20
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 0,
+      "file": "art/heroes/ranger/pixellab/walk-north/0.png",
+      "sha256": "7cb03d1a49d6bb4adf8c6ee2a93a8066d661e2d1fd1fe59cddba1bc384cc4498",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 1,
+      "file": "art/heroes/ranger/pixellab/walk-north/1.png",
+      "sha256": "f9e9279ea8a25fa82e9bbf64ebe4e8de702d8bd0d200bb439920628d9b5fd0af",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 2,
+      "file": "art/heroes/ranger/pixellab/walk-north/2.png",
+      "sha256": "714ea0ea710a5504804addac03743dfec7340ea1ffc4f0826bee95b1006cf4a7",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 3,
+      "file": "art/heroes/ranger/pixellab/walk-north/3.png",
+      "sha256": "b6dda4f628790697ddf5fc05af3ca5db2b0f89b67919da85705262bae2f2225b",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 4,
+      "file": "art/heroes/ranger/pixellab/walk-north/4.png",
+      "sha256": "0321cae761c31ba329a1ff0e3ea21db98e93b91bdbbf3521e1cf5634cfb98085",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 5,
+      "file": "art/heroes/ranger/pixellab/walk-north/5.png",
+      "sha256": "e5e6d7907dcc09b7348cfc7821a6c437025fb03c31435705065c5ead8b3e5b1a",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 6,
+      "file": "art/heroes/ranger/pixellab/walk-north/6.png",
+      "sha256": "08233782703d0b81755a45ed6e82c5d4e30e2417494f3ce55d0c96197ae59c62",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 7,
+      "file": "art/heroes/ranger/pixellab/walk-north/7.png",
+      "sha256": "5902f2d9df254843498a7d60ff1d44813035b233623959751690b0c729bc89a6",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
       ]
     }
   ]

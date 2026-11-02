@@ -17,17 +17,29 @@
       "fps": 5,
       "loop": true
     },
-    "idle-north": {
+    "walk-south": {
       "row": 1,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    },
+    "idle-north": {
+      "row": 2,
       "frames": 1,
       "fps": 5,
+      "loop": true
+    },
+    "walk-north": {
+      "row": 3,
+      "frames": 8,
+      "fps": 12,
       "loop": true
     }
   },
   "source": "pixellab",
   "unmodified": false,
   "sourcePixelsUnmodified": true,
-  "credit": "PixelQuest original character, made with PixelLab (pixellab.ai) for PixelQuest. Front and back standing views for the character creator (owner, 15 October 2026).",
+  "credit": "PixelQuest original character, made with PixelLab (pixellab.ai) for PixelQuest. Front and back standing views (15 October 2026) and north/south walks (owner note, 1 November 2026: every hero walks up and down).",
   "contract": "art/heroes/mage/directions.json",
   "sources": [
     {
@@ -45,6 +57,118 @@
       ]
     },
     {
+      "state": "walk-south",
+      "frame": 0,
+      "file": "art/heroes/mage/pixellab/walk-south/0.png",
+      "sha256": "e669f96ca17d7a8f28fdd2d12c9c67d3b2026c9acdf143f45eb354a18399e217",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 1,
+      "file": "art/heroes/mage/pixellab/walk-south/1.png",
+      "sha256": "5bcd3d75bfd8ff20daf4a81a1c11385f2ec6c6f03be2347393af178d816f6a55",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 2,
+      "file": "art/heroes/mage/pixellab/walk-south/2.png",
+      "sha256": "ab5def2cec2dd38dc44c45a0698a8189fa86ff0a6fc72d301d05d75b2e5e7ae0",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 3,
+      "file": "art/heroes/mage/pixellab/walk-south/3.png",
+      "sha256": "629c80baa358abbabc23f6b449035b6ef6680562fcf54b0a079b66db13618ee1",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 4,
+      "file": "art/heroes/mage/pixellab/walk-south/4.png",
+      "sha256": "8e57008ad9de4c341a7f835bbc13930ae4274f2eb0333098763ad43cbea145ab",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 5,
+      "file": "art/heroes/mage/pixellab/walk-south/5.png",
+      "sha256": "707f9e933073a37b09398e9f815f23af2cdb90d970254491d305d9b10e4e4613",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 6,
+      "file": "art/heroes/mage/pixellab/walk-south/6.png",
+      "sha256": "0c9a6ffb7318d5e647cf39dc6b4a3479e13ed45a0e7698cb96376688adb8b6b1",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 7,
+      "file": "art/heroes/mage/pixellab/walk-south/7.png",
+      "sha256": "cc004a7758f6920eb5d2dc91dd0fb9f78ab0dc3473f390bf16dc4c995e828167",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
       "state": "idle-north",
       "frame": 0,
       "file": "art/heroes/mage/pixellab/rotations/north.png",
@@ -56,6 +180,118 @@
       "offset": [
         26,
         20
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 0,
+      "file": "art/heroes/mage/pixellab/walk-north/0.png",
+      "sha256": "19a29c92cdba4a2445685f03d306140e188bc8260ab0daf64ce98d161534bb23",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 1,
+      "file": "art/heroes/mage/pixellab/walk-north/1.png",
+      "sha256": "701c13aec3db8b42b9b5b2c6180031156b8d040269decfeccbb1d0af3b2e143c",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 2,
+      "file": "art/heroes/mage/pixellab/walk-north/2.png",
+      "sha256": "7b0ffded986fa6defaa338f0b7502a5a218a5acb994d9a27167fa8f188fc1bd6",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 3,
+      "file": "art/heroes/mage/pixellab/walk-north/3.png",
+      "sha256": "b0b01f7c58c102407b902efa625a6779eecb4d0176cca048a25b8a950ed92256",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 4,
+      "file": "art/heroes/mage/pixellab/walk-north/4.png",
+      "sha256": "1f8956eb6ded8865ea6e3fb3e0aeb5bb7a94e7cce7dc5b10e2c31f3e2488cb84",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 5,
+      "file": "art/heroes/mage/pixellab/walk-north/5.png",
+      "sha256": "f76ab8986dadc477596d2ef44ceb12f0266a54d4e4b724b62d8997ebe654b08f",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 6,
+      "file": "art/heroes/mage/pixellab/walk-north/6.png",
+      "sha256": "241a344054d180ed43959dc9c97533f627c342509a197bdb4b44f9d98b93e891",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 7,
+      "file": "art/heroes/mage/pixellab/walk-north/7.png",
+      "sha256": "b932304d111374e5213db202cdcada2c5ecd251ec7ed48f814750856dab909f4",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
       ]
     }
   ]

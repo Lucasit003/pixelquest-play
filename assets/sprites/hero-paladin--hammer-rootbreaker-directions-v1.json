@@ -1,0 +1,298 @@
+{
+  "image": "hero-paladin--hammer-rootbreaker-directions-v1.png",
+  "cell": [
+    112,
+    100
+  ],
+  "anchor": [
+    57,
+    79
+  ],
+  "faces": "right",
+  "scale": 1,
+  "states": {
+    "idle-south": {
+      "row": 0,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "walk-south": {
+      "row": 1,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    },
+    "idle-north": {
+      "row": 2,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "walk-north": {
+      "row": 3,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    }
+  },
+  "source": "pixellab",
+  "unmodified": false,
+  "sourcePixelsUnmodified": true,
+  "credit": "PixelQuest original character (the Paladin holding the Rootbreaker Maul), made with PixelLab (pixellab.ai) for PixelQuest. North/south walks per the owner note of 1 November 2026 (every hero walks up and down).",
+  "contract": "art/heroes/paladin-w/hammer-rootbreaker/directions.json",
+  "sources": [
+    {
+      "state": "idle-south",
+      "frame": 0,
+      "file": "art/heroes/paladin-w/hammer-rootbreaker/pixellab/rotations/south.png",
+      "sha256": "7b0906674ace67a54a0615f52bc823d5f8f3285680e9ddbcc3f185ba674a731c",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        19
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 0,
+      "file": "art/heroes/paladin-w/hammer-rootbreaker/pixellab/walk-south/0.png",
+      "sha256": "413d62ade1ace83850e851687a12caa0917be2e46fde657d0c8bed9731229c95",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 1,
+      "file": "art/heroes/paladin-w/hammer-rootbreaker/pixellab/walk-south/1.png",
+      "sha256": "87c5a40c26f66ef1b3cfdadf39de6a16236ba3fc45876ed65a46f7c4208c660d",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 2,
+      "file": "art/heroes/paladin-w/hammer-rootbreaker/pixellab/walk-south/2.png",
+      "sha256": "c02c1a56849252a525d268ac3429de4ad6c9eecfd588658ab3f3f68f4766403e",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 3,
+      "file": "art/heroes/paladin-w/hammer-rootbreaker/pixellab/walk-south/3.png",
+      "sha256": "6496e4295ea72f762c1fb98d38ed8bc070749b2eec8594673130912662a6f135",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 4,
+      "file": "art/heroes/paladin-w/hammer-rootbreaker/pixellab/walk-south/4.png",
+      "sha256": "593e9d5ab8d01214a48c8bab2b1eeed2d2f82e9a7e018abbd85e1e530358debc",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 5,
+      "file": "art/heroes/paladin-w/hammer-rootbreaker/pixellab/walk-south/5.png",
+      "sha256": "3e664fc19b0ec69ea09d8db92be53d8ee5771cd097c2d9a31c4dbaf6ffe6b800",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 6,
+      "file": "art/heroes/paladin-w/hammer-rootbreaker/pixellab/walk-south/6.png",
+      "sha256": "3fdec9483667a9dfd8168ab876341d27f0bf28a71898909a98d49ea0c38163e3",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 7,
+      "file": "art/heroes/paladin-w/hammer-rootbreaker/pixellab/walk-south/7.png",
+      "sha256": "5e7e3b849935d3e2107b5a76a7d29df14bc6033e35d791110bd53b04a5d106bb",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "idle-north",
+      "frame": 0,
+      "file": "art/heroes/paladin-w/hammer-rootbreaker/pixellab/rotations/north.png",
+      "sha256": "0c48993fd10301bc2eff5996e73b6fa55c13a4cb093a5231f12fc0ff87a9bf18",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        20
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 0,
+      "file": "art/heroes/paladin-w/hammer-rootbreaker/pixellab/walk-north/0.png",
+      "sha256": "4e17cf49e6024e16c0830042a80f6b0568a96c36663a465efebeaf41d05b8ea6",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 1,
+      "file": "art/heroes/paladin-w/hammer-rootbreaker/pixellab/walk-north/1.png",
+      "sha256": "43608f679473f035f23cbd0503361e254f99aa18b88a58eab2a4e8ecb744cb2c",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 2,
+      "file": "art/heroes/paladin-w/hammer-rootbreaker/pixellab/walk-north/2.png",
+      "sha256": "c0e20db775172cb8b5d4c037f2e063900f74e3b8ac7527b9eeb5d01b93d702a1",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 3,
+      "file": "art/heroes/paladin-w/hammer-rootbreaker/pixellab/walk-north/3.png",
+      "sha256": "130eb0ae691e10cc514170d0ebc15f7b381f22b41d4763fbd4f85442fbbda78c",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 4,
+      "file": "art/heroes/paladin-w/hammer-rootbreaker/pixellab/walk-north/4.png",
+      "sha256": "6a38cef8608a131f3635119976746d7f6bdc7341e83db15c456302c95a97483c",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 5,
+      "file": "art/heroes/paladin-w/hammer-rootbreaker/pixellab/walk-north/5.png",
+      "sha256": "16d9c051c09a55da4b52fbcd6cb7da3757682e2f7a438d622e69ad9c04e9a67e",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 6,
+      "file": "art/heroes/paladin-w/hammer-rootbreaker/pixellab/walk-north/6.png",
+      "sha256": "4dc6ecd00331b6074a123cfeb9f689df4f7483b0ec9604b587b2446cea9e42f4",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 7,
+      "file": "art/heroes/paladin-w/hammer-rootbreaker/pixellab/walk-north/7.png",
+      "sha256": "d652a19be9ae3f49e521ea90758f51d8b920c00d892ffb1f6b12878f496cb36f",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    }
+  ]
+}

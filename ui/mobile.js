@@ -67,10 +67,15 @@ async function startJoystick(){
   /* review round 2: the stick appears under the thumb anywhere in the left zone (Brawl Stars; a fixed stick makes the thumb
      hunt for it) and a ghost of it rests bottom-left, so it can still always be seen */
   const h=win().innerHeight||0;
-  joy=nipple.create({zone,mode:'dynamic',color:'#e7c77e',size:h>=720?180:h>=560?150:112,threshold:.08,fadeTime:90,dynamicPage:true});
-  joy.on('start',()=>zone.classList.add('joy-on'));
-  joy.on('move',(e,data)=>{if(!data?.vector)return;steer(data.vector.x,data.vector.y,data.force||0);});
-  joy.on('end',()=>{zone.classList.remove('joy-on');releaseAll();});
+  /* ownernotes-c-nov1: the live stick is the skin's ring and knob (style.css), so nipplejs's own circles are made clear; the knob's
+     push direction and force go to --jx/--jy/--jf on the stick for the rim glow, and it fades out over 160 ms */
+  joy=nipple.create({zone,mode:'dynamic',color:'transparent',size:h>=720?180:h>=560?150:112,threshold:.08,fadeTime:160,dynamicPage:true});
+  const size=h>=720?180:h>=560?150:112,glow=(x,y,f)=>{const n=zone.querySelector('.nipple:last-of-type');if(!n)return;n.style.setProperty('--jx',x.toFixed(3));n.style.setProperty('--jy',y.toFixed(3));n.style.setProperty('--jf',f.toFixed(3));
+   /* the knob travels 44% of the ring's radius, so it stays seated in the ring's well instead of riding over the rim (steering still reads nipplejs's full vector) */
+   const k=n.querySelector('.front');if(k)k.style.transform=`translate(${(x*f*size*.22).toFixed(1)}px,${(y*f*size*.22).toFixed(1)}px)`;};
+  joy.on('start',()=>{zone.classList.add('joy-on');glow(0,0,0);});
+  joy.on('move',(e,data)=>{if(!data?.vector)return;steer(data.vector.x,data.vector.y,data.force||0);glow(data.vector.x,-data.vector.y,Math.min(1,data.force||0));});
+  joy.on('end',()=>{zone.classList.remove('joy-on');releaseAll();glow(0,0,0);});
  }catch(err){
   /* No joystick script: fall back to the d-pad buttons, which main.js already wires. */
   doc().documentElement.classList.add('m-dpad');

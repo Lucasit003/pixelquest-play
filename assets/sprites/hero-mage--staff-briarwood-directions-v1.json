@@ -1,0 +1,298 @@
+{
+  "image": "hero-mage--staff-briarwood-directions-v1.png",
+  "cell": [
+    112,
+    100
+  ],
+  "anchor": [
+    57,
+    79
+  ],
+  "faces": "right",
+  "scale": 1,
+  "states": {
+    "idle-south": {
+      "row": 0,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "walk-south": {
+      "row": 1,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    },
+    "idle-north": {
+      "row": 2,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "walk-north": {
+      "row": 3,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    }
+  },
+  "source": "pixellab",
+  "unmodified": false,
+  "sourcePixelsUnmodified": true,
+  "credit": "PixelQuest original character (the Mage holding the Briarwood Staff), made with PixelLab (pixellab.ai) for PixelQuest. North/south walks per the owner note of 1 November 2026 (every hero walks up and down).",
+  "contract": "art/heroes/mage-w/staff-briarwood/directions.json",
+  "sources": [
+    {
+      "state": "idle-south",
+      "frame": 0,
+      "file": "art/heroes/mage-w/staff-briarwood/pixellab/rotations/south.png",
+      "sha256": "c907527e029169b978caa4a0bd1815db17c7aed20d3e3ce1409af4873dc4411b",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        19
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 0,
+      "file": "art/heroes/mage-w/staff-briarwood/pixellab/walk-south/0.png",
+      "sha256": "6b6555591458fa79abd1867cc664719e61a2d66aedc83dfc924d35b67185e474",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 1,
+      "file": "art/heroes/mage-w/staff-briarwood/pixellab/walk-south/1.png",
+      "sha256": "cba3ce7d067e43d827487fdf470e9f393070ce2f6d3677462f6ba6e56db9914c",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 2,
+      "file": "art/heroes/mage-w/staff-briarwood/pixellab/walk-south/2.png",
+      "sha256": "fa5320055e40262adbdeecccbe123c8a7a1468579a0d9bb6439ee14f34d3a75a",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 3,
+      "file": "art/heroes/mage-w/staff-briarwood/pixellab/walk-south/3.png",
+      "sha256": "54570e1bb2542e195c5cf7f9576ee99a36fe0c41f08a255c38fb7412f9dc5f1e",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 4,
+      "file": "art/heroes/mage-w/staff-briarwood/pixellab/walk-south/4.png",
+      "sha256": "88b586f76b46f5abd3360c83d0958f91baa3e3d1ed83b747a1bbee917a152b5a",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 5,
+      "file": "art/heroes/mage-w/staff-briarwood/pixellab/walk-south/5.png",
+      "sha256": "60422ae4ec19fa3049b66ca4c63aec61bceb9f51efc948f4fd56f19348d3d6c5",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 6,
+      "file": "art/heroes/mage-w/staff-briarwood/pixellab/walk-south/6.png",
+      "sha256": "c279fef51b73dc8c1d37964c10bfcb038325c9db3cd8fe7b983161a3c27bdc16",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 7,
+      "file": "art/heroes/mage-w/staff-briarwood/pixellab/walk-south/7.png",
+      "sha256": "cfe52cd3cefd2e12a960a3ca17740b5297c7fa0ae0733d5797eadac18b62258a",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "idle-north",
+      "frame": 0,
+      "file": "art/heroes/mage-w/staff-briarwood/pixellab/rotations/north.png",
+      "sha256": "909611f9c5898c0c22ef773526dbdc4f1a50571b0b64d13e232305b98d634be2",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        20
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 0,
+      "file": "art/heroes/mage-w/staff-briarwood/pixellab/walk-north/0.png",
+      "sha256": "f1ce37e48b89405772e141427fac355577c6908dc17fd65409e8547ba713eb30",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 1,
+      "file": "art/heroes/mage-w/staff-briarwood/pixellab/walk-north/1.png",
+      "sha256": "a0d75bf9fb69259e9f0eae1758f573c70d9d936d18ac6aaec3805ac056a795d5",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 2,
+      "file": "art/heroes/mage-w/staff-briarwood/pixellab/walk-north/2.png",
+      "sha256": "d5862c0ad9550460e027a04df5aabb260a2a339767f4dd52841f998a9dd7a854",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 3,
+      "file": "art/heroes/mage-w/staff-briarwood/pixellab/walk-north/3.png",
+      "sha256": "1f22ec39447e9aeb1581823e1dac99db8ea9981ae68ac7005e0d9508e14b49e7",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 4,
+      "file": "art/heroes/mage-w/staff-briarwood/pixellab/walk-north/4.png",
+      "sha256": "f3faa99d42bad6ac800108daa96f75227f29fdcbc3cbc3bb9bf5f791ee293b9a",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 5,
+      "file": "art/heroes/mage-w/staff-briarwood/pixellab/walk-north/5.png",
+      "sha256": "70d9e59fe7ab09a07bc250baf02dcd7004476df6ef62d85d5dd66e3e868a3cbd",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 6,
+      "file": "art/heroes/mage-w/staff-briarwood/pixellab/walk-north/6.png",
+      "sha256": "05e35e791e2f3a9de7e00c7ea80afe0dd8c9673dc2ddce0eb5f579e92a306edc",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 7,
+      "file": "art/heroes/mage-w/staff-briarwood/pixellab/walk-north/7.png",
+      "sha256": "d127dc10dc5a173416437498026b42c4cd959510b27f8dee9fd54ca791e40eab",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    }
+  ]
+}

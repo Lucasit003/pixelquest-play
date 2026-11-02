@@ -1,0 +1,298 @@
+{
+  "image": "hero-mage--staff-shop-3-directions-v1.png",
+  "cell": [
+    112,
+    100
+  ],
+  "anchor": [
+    57,
+    79
+  ],
+  "faces": "right",
+  "scale": 1,
+  "states": {
+    "idle-south": {
+      "row": 0,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "walk-south": {
+      "row": 1,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    },
+    "idle-north": {
+      "row": 2,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "walk-north": {
+      "row": 3,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    }
+  },
+  "source": "pixellab",
+  "unmodified": false,
+  "sourcePixelsUnmodified": true,
+  "credit": "PixelQuest original character (the Mage holding the Astral Spire), made with PixelLab (pixellab.ai) for PixelQuest. North/south walks per the owner note of 1 November 2026 (every hero walks up and down).",
+  "contract": "art/heroes/mage-w/staff-shop-3/directions.json",
+  "sources": [
+    {
+      "state": "idle-south",
+      "frame": 0,
+      "file": "art/heroes/mage-w/staff-shop-3/pixellab/rotations/south.png",
+      "sha256": "a1ed8c010f3549b4f4f22819e570c04fd2d27835b2532d87365bf808b46a87cf",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        19
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 0,
+      "file": "art/heroes/mage-w/staff-shop-3/pixellab/walk-south/0.png",
+      "sha256": "b7a75d01c405c97d59868d4a026733b900edeaaba466ade361e9115b1ed00862",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 1,
+      "file": "art/heroes/mage-w/staff-shop-3/pixellab/walk-south/1.png",
+      "sha256": "94ccb101ec69e7a0ed26182686eec62305d1b49ff8a30a7389c9077670c162a3",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 2,
+      "file": "art/heroes/mage-w/staff-shop-3/pixellab/walk-south/2.png",
+      "sha256": "1342df9793d137229f08fab2bdf84471c4b8981f3305d5b28e848e860c2f9d57",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 3,
+      "file": "art/heroes/mage-w/staff-shop-3/pixellab/walk-south/3.png",
+      "sha256": "ff9346638b789e4a05141f7d2c04129cbee441f01e779cecb0271b39a01ebcab",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 4,
+      "file": "art/heroes/mage-w/staff-shop-3/pixellab/walk-south/4.png",
+      "sha256": "97c1fba4c382576f3ed3e6135dda61b8c1ef9a6219905edfa493cdda59c540ae",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 5,
+      "file": "art/heroes/mage-w/staff-shop-3/pixellab/walk-south/5.png",
+      "sha256": "cbe68a2e5e24b58610cb050e0fa9929160e1905c843f6c9d2f94c67110640f22",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 6,
+      "file": "art/heroes/mage-w/staff-shop-3/pixellab/walk-south/6.png",
+      "sha256": "b80efd9e3acfa15f0e5fece684023ca2f50194a0beda57307dd2f133b70fd3da",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 7,
+      "file": "art/heroes/mage-w/staff-shop-3/pixellab/walk-south/7.png",
+      "sha256": "34b95f07d3fbe796b19d1aa5a8e42c44f9e4b2883b1dce71aea90ff56a14cfa8",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "idle-north",
+      "frame": 0,
+      "file": "art/heroes/mage-w/staff-shop-3/pixellab/rotations/north.png",
+      "sha256": "e24724fe34544dee9852ad79acd12343fcca0536d0c975a38371a0e341caac9f",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        20
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 0,
+      "file": "art/heroes/mage-w/staff-shop-3/pixellab/walk-north/0.png",
+      "sha256": "891028e2c89f301d727d1495fddae534c9141ad8683d13b5db0d98495195c317",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 1,
+      "file": "art/heroes/mage-w/staff-shop-3/pixellab/walk-north/1.png",
+      "sha256": "7ec04d199d921ee184b6fb750b835849d33fb33adabe2cdde3220baff8efd957",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 2,
+      "file": "art/heroes/mage-w/staff-shop-3/pixellab/walk-north/2.png",
+      "sha256": "c7761a5bac1fe654fe8b6ca5bc2ff7842e2ca5e6a1973258c37834358e0227c8",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 3,
+      "file": "art/heroes/mage-w/staff-shop-3/pixellab/walk-north/3.png",
+      "sha256": "d1aae6662787c5940547d7c5b5d2df118bfd96a8d9c3078607ab88c3cca26e27",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 4,
+      "file": "art/heroes/mage-w/staff-shop-3/pixellab/walk-north/4.png",
+      "sha256": "e63aff53b3127330f129703e89fac0be710632c32e85cedbc1dd6ce844315484",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 5,
+      "file": "art/heroes/mage-w/staff-shop-3/pixellab/walk-north/5.png",
+      "sha256": "6a171a58eadf3c10175108e504b0f14e492e10adb6a0262704eab17b8b7cc35c",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 6,
+      "file": "art/heroes/mage-w/staff-shop-3/pixellab/walk-north/6.png",
+      "sha256": "87ccab5604529953ae4784defccbe4a74e2d4134348234eb08bd780febdbf22e",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 7,
+      "file": "art/heroes/mage-w/staff-shop-3/pixellab/walk-north/7.png",
+      "sha256": "045a69c5019ab16e37f0730bdb6e9405d2473e106ee30a60274914eb55ac4bbb",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    }
+  ]
+}

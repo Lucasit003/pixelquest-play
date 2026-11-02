@@ -1,6 +1,7 @@
 /* Supplementary, original PixelLab locomotion. Base atlases retain every combat pose and weapon anchor. */
-/* Every class (15 Oct): the Warrior's walks north/south; the others carry standing front/back views only, for the creator
-   and the class select (heroRenderPose never turns the town hero without a walk row). */
+/* Every class and body walks north/south (the Warrior since 12-15 Oct, the other six classes and both bodies since 1 Nov,
+   ownernotes-c-nov1), in town and in levels; the same atlases carry the standing front/back views for the creator and the class
+   select. heroRenderPose still never turns a hero onto an atlas without a walk row in that direction. */
 export const HERO_DIRECTION_ATLASES=Object.freeze(Object.fromEntries(['warrior','mage','rogue','ranger','paladin','berserker','summoner'].map(c=>[c,`hero-${c}-directions-v1`])));
 /* Body variants (14 Oct): art/heroes/<class>-<body>/ baked as hero-<class>-<body> (tools/pixellab-hero.mjs <class>-f),
    the same class design, moves and timings on another body. A save picks one per class with s.heroBody[class]='f';

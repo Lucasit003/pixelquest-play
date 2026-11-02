@@ -17,17 +17,29 @@
       "fps": 5,
       "loop": true
     },
-    "idle-north": {
+    "walk-south": {
       "row": 1,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    },
+    "idle-north": {
+      "row": 2,
       "frames": 1,
       "fps": 5,
+      "loop": true
+    },
+    "walk-north": {
+      "row": 3,
+      "frames": 8,
+      "fps": 12,
       "loop": true
     }
   },
   "source": "pixellab",
   "unmodified": false,
   "sourcePixelsUnmodified": true,
-  "credit": "PixelQuest original character, female body, made with PixelLab (pixellab.ai) for PixelQuest. Front and back standing views for the character creator (owner, 15 October 2026).",
+  "credit": "PixelQuest original character, female body, made with PixelLab (pixellab.ai) for PixelQuest. Front and back standing views (15 October 2026) and north/south walks (owner note, 1 November 2026: every hero walks up and down).",
   "contract": "art/heroes/mage-f/directions.json",
   "sources": [
     {
@@ -45,6 +57,118 @@
       ]
     },
     {
+      "state": "walk-south",
+      "frame": 0,
+      "file": "art/heroes/mage-f/pixellab/walk-south/0.png",
+      "sha256": "57a8e923d4b747bd85ac77654c9c557cbf307525e7bdba61f51d2ca17bb21c62",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 1,
+      "file": "art/heroes/mage-f/pixellab/walk-south/1.png",
+      "sha256": "48814f0e026681fb286ba119411166cf85729faf7ae495aa3b50c765a651ff7f",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 2,
+      "file": "art/heroes/mage-f/pixellab/walk-south/2.png",
+      "sha256": "8a187fcf153380add28e3b994f2730c17ace67bc376a0439def715270cac5596",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 3,
+      "file": "art/heroes/mage-f/pixellab/walk-south/3.png",
+      "sha256": "16eb7a7ba80dac7ac7704710c5ebe713a870714cc189a9b729798da4dd83ae32",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 4,
+      "file": "art/heroes/mage-f/pixellab/walk-south/4.png",
+      "sha256": "2b74e97aa00171db628d5aa4e6f18a49492314014a23354ce7341fc553c40780",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 5,
+      "file": "art/heroes/mage-f/pixellab/walk-south/5.png",
+      "sha256": "eb2e33162f2d2d2fb229ecb5a80a39c1a3347161e250d21cc77502f68336d830",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 6,
+      "file": "art/heroes/mage-f/pixellab/walk-south/6.png",
+      "sha256": "4336364a4f095fa0dcb7a9e02849f766205e8583c76e4e800f240d168b24b06d",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 7,
+      "file": "art/heroes/mage-f/pixellab/walk-south/7.png",
+      "sha256": "8537465871435e6c0fdf7a11ceecd99d409a98b85df643bf725c23fb63fe5a18",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
       "state": "idle-north",
       "frame": 0,
       "file": "art/heroes/mage-f/pixellab/rotations/north.png",
@@ -56,6 +180,118 @@
       "offset": [
         26,
         20
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 0,
+      "file": "art/heroes/mage-f/pixellab/walk-north/0.png",
+      "sha256": "d17392e4208e772ff3800f71f7d37e2cad58ae58b95611d6f4ba1eb72e3a8585",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 1,
+      "file": "art/heroes/mage-f/pixellab/walk-north/1.png",
+      "sha256": "54272a89cc1c2ef072ae0d69c3a136436dad0d19a4ccebc5874f325dba03df69",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 2,
+      "file": "art/heroes/mage-f/pixellab/walk-north/2.png",
+      "sha256": "3ccc4c842fbc5f3bc341b70e2c033905b49a6c8936f5c775654b8f594fdfc772",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 3,
+      "file": "art/heroes/mage-f/pixellab/walk-north/3.png",
+      "sha256": "809e00d89fc6ff5a73cb29978836779e0f9cdafc6464ffda84a67b2d5ded3dbd",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 4,
+      "file": "art/heroes/mage-f/pixellab/walk-north/4.png",
+      "sha256": "e50cb001ef031c6f954d63fdb83b49763322cd36888c0f9109b2e1a638201fc5",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 5,
+      "file": "art/heroes/mage-f/pixellab/walk-north/5.png",
+      "sha256": "c2cef21e129e175cb7eb8fcf510daa1e08e5dc3bb4ee63581677d633891caee9",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 6,
+      "file": "art/heroes/mage-f/pixellab/walk-north/6.png",
+      "sha256": "7df5700f82b3b024dcdb7aef598d75ea7611055e12c7e7fbc12ee08fbd253724",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 7,
+      "file": "art/heroes/mage-f/pixellab/walk-north/7.png",
+      "sha256": "4077ede4e8ba2665f6c03578de2ca57de33779dd5752bd66931571d0bb8c1aa9",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
       ]
     }
   ]

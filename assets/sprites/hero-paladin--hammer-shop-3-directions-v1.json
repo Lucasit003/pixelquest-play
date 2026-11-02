@@ -1,0 +1,298 @@
+{
+  "image": "hero-paladin--hammer-shop-3-directions-v1.png",
+  "cell": [
+    112,
+    100
+  ],
+  "anchor": [
+    57,
+    79
+  ],
+  "faces": "right",
+  "scale": 1,
+  "states": {
+    "idle-south": {
+      "row": 0,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "walk-south": {
+      "row": 1,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    },
+    "idle-north": {
+      "row": 2,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "walk-north": {
+      "row": 3,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    }
+  },
+  "source": "pixellab",
+  "unmodified": false,
+  "sourcePixelsUnmodified": true,
+  "credit": "PixelQuest original character (the Paladin holding the Light of Creation), made with PixelLab (pixellab.ai) for PixelQuest. North/south walks per the owner note of 1 November 2026 (every hero walks up and down).",
+  "contract": "art/heroes/paladin-w/hammer-shop-3/directions.json",
+  "sources": [
+    {
+      "state": "idle-south",
+      "frame": 0,
+      "file": "art/heroes/paladin-w/hammer-shop-3/pixellab/rotations/south.png",
+      "sha256": "c66dd32789d0d0ee01d3dd8bc2907f9479afe0d3b68c1881bb4655a32f152976",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        19
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 0,
+      "file": "art/heroes/paladin-w/hammer-shop-3/pixellab/walk-south/0.png",
+      "sha256": "0c76317198c487b3d1cc7eaf6a75563d94fac5342c345bf1c8b5cbaf02d3dd22",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 1,
+      "file": "art/heroes/paladin-w/hammer-shop-3/pixellab/walk-south/1.png",
+      "sha256": "cc9c7f6c301f414a5022edd9f2a6599456b39e05d408daade8c9274420833325",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 2,
+      "file": "art/heroes/paladin-w/hammer-shop-3/pixellab/walk-south/2.png",
+      "sha256": "7f0d7d579b889289b378cf51dee658e790af9016610480060ff8bf140c7684dd",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 3,
+      "file": "art/heroes/paladin-w/hammer-shop-3/pixellab/walk-south/3.png",
+      "sha256": "69aaa16ee5efaa9c9f837cd35b9eb34d22fe7075cba36f198981c5f3dafea933",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 4,
+      "file": "art/heroes/paladin-w/hammer-shop-3/pixellab/walk-south/4.png",
+      "sha256": "edfb68435321c84ce78cd39a4c8c47aa2bec208b231bb2d67789a979bacc40f0",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 5,
+      "file": "art/heroes/paladin-w/hammer-shop-3/pixellab/walk-south/5.png",
+      "sha256": "65b0f2e8489aa7a2a5e898addd0f1972f7a08a67e349167eee2080399ec17f46",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 6,
+      "file": "art/heroes/paladin-w/hammer-shop-3/pixellab/walk-south/6.png",
+      "sha256": "0ae78762eac3f21fcf71a6407898010bf10bece5696a389369ed1493bbdf1db3",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 7,
+      "file": "art/heroes/paladin-w/hammer-shop-3/pixellab/walk-south/7.png",
+      "sha256": "9ea0c4014b3a704afabdde9b04802895ee0a587586201381251601c645acec88",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "idle-north",
+      "frame": 0,
+      "file": "art/heroes/paladin-w/hammer-shop-3/pixellab/rotations/north.png",
+      "sha256": "90770a93596e816bea103b70ee03fe2f0a7f471abc11ea7af6908242b7e34232",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        20
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 0,
+      "file": "art/heroes/paladin-w/hammer-shop-3/pixellab/walk-north/0.png",
+      "sha256": "114acb3c9f53ef951710eba90d65f2609c78013a4fb01f80c55e23661e290e8c",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 1,
+      "file": "art/heroes/paladin-w/hammer-shop-3/pixellab/walk-north/1.png",
+      "sha256": "a3458470bd5aa6d885682ce4f53b0bcfb6b030319ab414e3600a09da04296692",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 2,
+      "file": "art/heroes/paladin-w/hammer-shop-3/pixellab/walk-north/2.png",
+      "sha256": "53e131ed0a6a26bac61447cc0bc51ab05d1c13fbd59276e788a2f080bcc3bc08",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 3,
+      "file": "art/heroes/paladin-w/hammer-shop-3/pixellab/walk-north/3.png",
+      "sha256": "af3100742af8bb446bc6cf537addcdc3272c297f9cf83543af3035a9df9d9d6d",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 4,
+      "file": "art/heroes/paladin-w/hammer-shop-3/pixellab/walk-north/4.png",
+      "sha256": "901ca4e436955b3063f8dfa0a96325fd818256aa0d8be3563ff19b5e03cf143a",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 5,
+      "file": "art/heroes/paladin-w/hammer-shop-3/pixellab/walk-north/5.png",
+      "sha256": "123d09aa609105ebc7687acf6b97e0a684917e0177635fabd608d4bff2c7aca3",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 6,
+      "file": "art/heroes/paladin-w/hammer-shop-3/pixellab/walk-north/6.png",
+      "sha256": "dd76422fe0d65e2ac34e1e6dcb3400bfbbb717316c82c3b9ff07251462433a8c",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 7,
+      "file": "art/heroes/paladin-w/hammer-shop-3/pixellab/walk-north/7.png",
+      "sha256": "859ff11b0c0d1122e4227c38cc266e77affecddae2310bb73ab7eb91c7b9e298",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    }
+  ]
+}

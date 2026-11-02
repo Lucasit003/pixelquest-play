@@ -1,0 +1,298 @@
+{
+  "image": "hero-rogue--dagger-thornfang-directions-v1.png",
+  "cell": [
+    112,
+    100
+  ],
+  "anchor": [
+    57,
+    79
+  ],
+  "faces": "right",
+  "scale": 1,
+  "states": {
+    "idle-south": {
+      "row": 0,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "walk-south": {
+      "row": 1,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    },
+    "idle-north": {
+      "row": 2,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "walk-north": {
+      "row": 3,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    }
+  },
+  "source": "pixellab",
+  "unmodified": false,
+  "sourcePixelsUnmodified": true,
+  "credit": "PixelQuest original character (the Rogue holding the Thornfang), made with PixelLab (pixellab.ai) for PixelQuest. North/south walks per the owner note of 1 November 2026 (every hero walks up and down).",
+  "contract": "art/heroes/rogue-w/dagger-thornfang/directions.json",
+  "sources": [
+    {
+      "state": "idle-south",
+      "frame": 0,
+      "file": "art/heroes/rogue-w/dagger-thornfang/pixellab/rotations/south.png",
+      "sha256": "ce94a6deb9bb5e50d55922e1b84157b1571a62b5bb19d34396a1b1f6ef5767f3",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        19
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 0,
+      "file": "art/heroes/rogue-w/dagger-thornfang/pixellab/walk-south/0.png",
+      "sha256": "993a92bdfa0b501846f12f413eeaed3259cc4fcb0f99bd31068457cbc0d5e7fc",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 1,
+      "file": "art/heroes/rogue-w/dagger-thornfang/pixellab/walk-south/1.png",
+      "sha256": "85b9459d5c34db5083bfaef3395ed662a3290b846d4b25029e351b94f11174a3",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 2,
+      "file": "art/heroes/rogue-w/dagger-thornfang/pixellab/walk-south/2.png",
+      "sha256": "208a7afad700df9b552a8517e7a9783d90a1785df647424019b9bbc11e4cebbc",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 3,
+      "file": "art/heroes/rogue-w/dagger-thornfang/pixellab/walk-south/3.png",
+      "sha256": "5dfc364e322462f963761c10a963569edda163952fde47d499365f6384d42468",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 4,
+      "file": "art/heroes/rogue-w/dagger-thornfang/pixellab/walk-south/4.png",
+      "sha256": "ec0aa827335bb9500c63d3c889c9dcf0717cf7908d8b3ee972a029eae95bc9cf",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 5,
+      "file": "art/heroes/rogue-w/dagger-thornfang/pixellab/walk-south/5.png",
+      "sha256": "73993594379fce4466fde32974876e90f32eda7f231d914f7bdf9030ddbd3da8",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 6,
+      "file": "art/heroes/rogue-w/dagger-thornfang/pixellab/walk-south/6.png",
+      "sha256": "6ac4ad08abd9a4ab91bf3a502e190784403fd0edd82026df3f52246a5aada699",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 7,
+      "file": "art/heroes/rogue-w/dagger-thornfang/pixellab/walk-south/7.png",
+      "sha256": "60001c3089a1988472389a7adf0d1da691f555db0eb14ba3e31bb94383527ccb",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "idle-north",
+      "frame": 0,
+      "file": "art/heroes/rogue-w/dagger-thornfang/pixellab/rotations/north.png",
+      "sha256": "8436d03b87c95b7c7e8daf76e67b0e15af015aafa376f0fb80cd930806eb8d73",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        20
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 0,
+      "file": "art/heroes/rogue-w/dagger-thornfang/pixellab/walk-north/0.png",
+      "sha256": "2746560e9ee1e311cfed1ea97bae3ff5a57d6473669ae836049939697dbe8a08",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 1,
+      "file": "art/heroes/rogue-w/dagger-thornfang/pixellab/walk-north/1.png",
+      "sha256": "58c1ff927fb1c03bbe18371037927825a92da0386f6805869dbadbc19eeb8a48",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 2,
+      "file": "art/heroes/rogue-w/dagger-thornfang/pixellab/walk-north/2.png",
+      "sha256": "7fc5ff1c41724c856f288b21402bfcc4f6992518ea1d6e1d0bd5db76b9cc268e",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 3,
+      "file": "art/heroes/rogue-w/dagger-thornfang/pixellab/walk-north/3.png",
+      "sha256": "46f91f45d120997bc9feb0addf3ac8e0aee572848424a4c6eb4e5b7e6f4cb3ab",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 4,
+      "file": "art/heroes/rogue-w/dagger-thornfang/pixellab/walk-north/4.png",
+      "sha256": "c858aa3d8c1b00b6bb3d64161068ae2a2ac0b770d2d00d2e3ab2cd2ae26f5711",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 5,
+      "file": "art/heroes/rogue-w/dagger-thornfang/pixellab/walk-north/5.png",
+      "sha256": "9b11c6f6ffe048f42f1b1f6117c24fec1e5d9c04bbd7fe8c9afb2fa021919c23",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 6,
+      "file": "art/heroes/rogue-w/dagger-thornfang/pixellab/walk-north/6.png",
+      "sha256": "75480aaf8b4aabd1584a03fef126ae051155ffc74eae78e5bc74f0400b904960",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 7,
+      "file": "art/heroes/rogue-w/dagger-thornfang/pixellab/walk-north/7.png",
+      "sha256": "89fa9c25ba882adb6c46d8c7ee02b96fe584f84f65dbeb75c91e0c79adfc270b",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    }
+  ]
+}

@@ -1162,8 +1162,16 @@ dialog[data-view=library] #modal-content[data-school-mode=high] [data-stage=midd
 .m-mode #joy-ghost{display:block;position:absolute;left:max(24px,calc(env(safe-area-inset-left) + 12px));bottom:24px;width:var(--joy,112px);height:var(--joy,112px);background:url(ui/skin/touch/joy-base.png) center/contain no-repeat;image-rendering:pixelated;opacity:.6;pointer-events:none;transition:opacity .12s}
 .m-mode #joy-ghost i{position:absolute;left:25%;top:25%;width:50%;height:50%;background:url(ui/skin/touch/joy-knob.png) center/contain no-repeat;image-rendering:pixelated}
 .m-mode #joy-zone.joy-on #joy-ghost{opacity:0}
-.m-mode #joy-zone .nipple .back{background:url(ui/skin/touch/joy-base.png) center/contain no-repeat!important;opacity:1!important;border-radius:0!important;image-rendering:pixelated}
-.m-mode #joy-zone .nipple .front{background:url(ui/skin/touch/joy-knob.png) center/contain no-repeat!important;opacity:1!important;border-radius:0!important;image-rendering:pixelated}
+/* ownernotes-c-nov1 (owner: "make the joystick look a little bit better on mobile"): the live stick is the skin's own ring and knob with
+   a soft ground shadow; it pops up under the thumb, the knob presses in (scale, so nipplejs's translate still places it), a warm glow
+   leans toward the push and brightens with force (--jx/--jy/--jf from ui/mobile.js), and it fades out on release (fadeTime 160) */
+.m-mode #joy-zone .nipple .back{background:url(ui/skin/touch/joy-base.png) center/contain no-repeat!important;opacity:.96!important;border-radius:50%!important;image-rendering:pixelated;filter:drop-shadow(0 5px 6px rgba(8,5,3,.55));animation:joy-pop .17s cubic-bezier(.2,.9,.3,1.25) both}
+.m-mode #joy-zone .nipple .back::after{content:'';position:absolute;inset:13%;border-radius:50%;pointer-events:none;background:radial-gradient(circle at calc(50% + var(--jx,0)*46%) calc(50% + var(--jy,0)*46%),rgba(255,226,150,calc(.85*var(--jf,0))) 0,rgba(255,200,110,calc(.4*var(--jf,0))) 30%,rgba(255,200,110,0) 62%);box-shadow:inset calc(var(--jx,0)*-8px) calc(var(--jy,0)*-8px) calc(14px*var(--jf,0)) rgba(255,214,130,calc(.7*var(--jf,0)))}
+.m-mode #joy-zone .nipple .front{background:url(ui/skin/touch/joy-knob.png) center/contain no-repeat!important;opacity:1!important;border-radius:50%!important;image-rendering:pixelated;filter:drop-shadow(0 4px 3px rgba(8,5,3,.6)) brightness(1.06);scale:.9;animation:joy-press .14s ease-out both}
+@keyframes joy-pop{from{scale:.78;opacity:0}to{scale:1;opacity:.96}}
+@keyframes joy-press{from{scale:1.04;filter:drop-shadow(0 7px 4px rgba(8,5,3,.5)) brightness(1.15)}to{scale:.9;filter:drop-shadow(0 4px 3px rgba(8,5,3,.6)) brightness(1.06)}}
+.m-mode #joy-ghost{filter:drop-shadow(0 4px 5px rgba(8,5,3,.45))}
+@media (prefers-reduced-motion:reduce){.m-mode #joy-zone .nipple :is(.back,.front){animation:none}}
 @media (min-height:560px){.m-mode #joy-zone{--joy:150px}}
 @media (min-height:720px){.m-mode #joy-zone{--joy:180px}}
 .m-mode #m-menu button img{width:32px;height:32px;image-rendering:pixelated;pointer-events:none}

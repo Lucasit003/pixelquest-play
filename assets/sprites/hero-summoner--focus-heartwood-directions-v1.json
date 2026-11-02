@@ -1,0 +1,298 @@
+{
+  "image": "hero-summoner--focus-heartwood-directions-v1.png",
+  "cell": [
+    112,
+    100
+  ],
+  "anchor": [
+    57,
+    79
+  ],
+  "faces": "right",
+  "scale": 1,
+  "states": {
+    "idle-south": {
+      "row": 0,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "walk-south": {
+      "row": 1,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    },
+    "idle-north": {
+      "row": 2,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "walk-north": {
+      "row": 3,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    }
+  },
+  "source": "pixellab",
+  "unmodified": false,
+  "sourcePixelsUnmodified": true,
+  "credit": "PixelQuest original character (the Summoner holding the Heartwood Focus), made with PixelLab (pixellab.ai) for PixelQuest. North/south walks per the owner note of 1 November 2026 (every hero walks up and down).",
+  "contract": "art/heroes/summoner-w/focus-heartwood/directions.json",
+  "sources": [
+    {
+      "state": "idle-south",
+      "frame": 0,
+      "file": "art/heroes/summoner-w/focus-heartwood/pixellab/rotations/south.png",
+      "sha256": "b6b237119b9db75e3ec27c3c9a9d09f4adf2c599fdd674cb2682a82d200850ea",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        19
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 0,
+      "file": "art/heroes/summoner-w/focus-heartwood/pixellab/walk-south/0.png",
+      "sha256": "51c123e8e1fc1669e147743e7040b63983ac13e6048502c4a4ab9526edefa0d8",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 1,
+      "file": "art/heroes/summoner-w/focus-heartwood/pixellab/walk-south/1.png",
+      "sha256": "96af72c46c1e906128b4abc17cc69fdc1de83f153ec305915db9274f9532e1cc",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 2,
+      "file": "art/heroes/summoner-w/focus-heartwood/pixellab/walk-south/2.png",
+      "sha256": "702d8322c4ef9c673703b2787e6f4283e47fb740511553fc526cdcb768bb2b76",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 3,
+      "file": "art/heroes/summoner-w/focus-heartwood/pixellab/walk-south/3.png",
+      "sha256": "edb4cf2bcac70c2bb2349c918f4982079c4c4ed1146c22cb3294413fcdddbd4d",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 4,
+      "file": "art/heroes/summoner-w/focus-heartwood/pixellab/walk-south/4.png",
+      "sha256": "79be1fd4e5cc8dd0ca6be9e6996021351ab881e663fce4bdcbc039c43565f928",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 5,
+      "file": "art/heroes/summoner-w/focus-heartwood/pixellab/walk-south/5.png",
+      "sha256": "8e77400671d02472ee63c3739b7fa21fb41c63c4ad91304a4909e09c6bffe581",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 6,
+      "file": "art/heroes/summoner-w/focus-heartwood/pixellab/walk-south/6.png",
+      "sha256": "6afb523de4ca3017559bbd55fa0697a41e1b1dcb2415702370e34b60fb3ebdce",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 7,
+      "file": "art/heroes/summoner-w/focus-heartwood/pixellab/walk-south/7.png",
+      "sha256": "524b475ad4abd804976a289e40706de301c65df0378f6f2f876ec42c629e7a7b",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "idle-north",
+      "frame": 0,
+      "file": "art/heroes/summoner-w/focus-heartwood/pixellab/rotations/north.png",
+      "sha256": "ea9fcd3b34cee5e91ec5d8f8c881e3e36461578903d6e4eb29b802d14e913bb3",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        20
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 0,
+      "file": "art/heroes/summoner-w/focus-heartwood/pixellab/walk-north/0.png",
+      "sha256": "a8a74cb74796d90730ccaedaa089fc22b4b9df7a796d4257c7190d87f12178d0",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 1,
+      "file": "art/heroes/summoner-w/focus-heartwood/pixellab/walk-north/1.png",
+      "sha256": "2c7413a1fbd5835d42acf7b05256f11fa87f88ec9802dedbfe241c53de7acce4",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 2,
+      "file": "art/heroes/summoner-w/focus-heartwood/pixellab/walk-north/2.png",
+      "sha256": "0f7354647a7cf78b543ec52c416cba677d794c4a234603576334abb8a4cfaaf6",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 3,
+      "file": "art/heroes/summoner-w/focus-heartwood/pixellab/walk-north/3.png",
+      "sha256": "4e1acf8e8e0ac4aa72e96d023d68e3678e2df78bcd11a4250a2820b5fe0d6107",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 4,
+      "file": "art/heroes/summoner-w/focus-heartwood/pixellab/walk-north/4.png",
+      "sha256": "29af29615645a79e65c630588627ff59710024b92ba2b0a31bac3bbb2b9c4d64",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 5,
+      "file": "art/heroes/summoner-w/focus-heartwood/pixellab/walk-north/5.png",
+      "sha256": "0345aa06bc28c5ad8472b242326264c598444ddaf396b71ddb5b3a39439d6eca",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 6,
+      "file": "art/heroes/summoner-w/focus-heartwood/pixellab/walk-north/6.png",
+      "sha256": "8c278c696b0f87390ef49eda5d63c25b9a62670e6c4611cfafb606a7c37d603e",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 7,
+      "file": "art/heroes/summoner-w/focus-heartwood/pixellab/walk-north/7.png",
+      "sha256": "81765552a8c6651bdfb5c47c154dc93125a0cf623b47ef866a22de42f1edc000",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    }
+  ]
+}

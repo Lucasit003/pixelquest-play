@@ -17,17 +17,29 @@
       "fps": 5,
       "loop": true
     },
-    "idle-north": {
+    "walk-south": {
       "row": 1,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    },
+    "idle-north": {
+      "row": 2,
       "frames": 1,
       "fps": 5,
+      "loop": true
+    },
+    "walk-north": {
+      "row": 3,
+      "frames": 8,
+      "fps": 12,
       "loop": true
     }
   },
   "source": "pixellab",
   "unmodified": false,
   "sourcePixelsUnmodified": true,
-  "credit": "PixelQuest original character, female body, made with PixelLab (pixellab.ai) for PixelQuest. Front and back standing views for the character creator (owner, 15 October 2026).",
+  "credit": "PixelQuest original character, female body, made with PixelLab (pixellab.ai) for PixelQuest. Front and back standing views (15 October 2026) and north/south walks (owner note, 1 November 2026: every hero walks up and down).",
   "contract": "art/heroes/berserker-f/directions.json",
   "sources": [
     {
@@ -45,6 +57,118 @@
       ]
     },
     {
+      "state": "walk-south",
+      "frame": 0,
+      "file": "art/heroes/berserker-f/pixellab/walk-south/0.png",
+      "sha256": "8ec35f01453ccec74603096f347a800fd00d7a1e4cc8865e87a3036d53576487",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 1,
+      "file": "art/heroes/berserker-f/pixellab/walk-south/1.png",
+      "sha256": "976ad552298ab0899c264230ebc84166f7e825c1e49e2553b7f8449640e4432b",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 2,
+      "file": "art/heroes/berserker-f/pixellab/walk-south/2.png",
+      "sha256": "c9be66cf14a4c6c91aa5f1d2330c8ee1fc76d2224a335a672fa52c23280297ef",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 3,
+      "file": "art/heroes/berserker-f/pixellab/walk-south/3.png",
+      "sha256": "81c5c2759147afcc2138fedd3f597b8ae51b966a51d4b9f4a73facb6959cffa8",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 4,
+      "file": "art/heroes/berserker-f/pixellab/walk-south/4.png",
+      "sha256": "1b8b1c954c3861f8e1f0033a96f54f67d4939848356efcc9b958483770aa194f",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 5,
+      "file": "art/heroes/berserker-f/pixellab/walk-south/5.png",
+      "sha256": "a90f3764a9130d2e9b66099db2cef44c8cbe6f8e49d813c81ffa22c501deb5ab",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 6,
+      "file": "art/heroes/berserker-f/pixellab/walk-south/6.png",
+      "sha256": "a1542b91a6663c8d7f66976ca9e366ddfa7bcb74a0e02b8cde29e4482cc9e15a",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 7,
+      "file": "art/heroes/berserker-f/pixellab/walk-south/7.png",
+      "sha256": "eed94eeb5151d0752e6ddb20ea6c5b6b3d72342e89b79d6e4ebb0b040b32acb5",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
       "state": "idle-north",
       "frame": 0,
       "file": "art/heroes/berserker-f/pixellab/rotations/north.png",
@@ -56,6 +180,118 @@
       "offset": [
         26,
         20
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 0,
+      "file": "art/heroes/berserker-f/pixellab/walk-north/0.png",
+      "sha256": "788a7b0d576b7a1fd266dce7842d7b57429e3343894f73b86d5b293aeb5df1d6",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 1,
+      "file": "art/heroes/berserker-f/pixellab/walk-north/1.png",
+      "sha256": "b7dc09e621c9c82b887ad4a1381774f1b42cede1930ddc55b00a7ecdd14cebc6",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 2,
+      "file": "art/heroes/berserker-f/pixellab/walk-north/2.png",
+      "sha256": "c3d6e70a230c62522c62bafa6be9e427b21b0755c962973c30f0d2c088e84221",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 3,
+      "file": "art/heroes/berserker-f/pixellab/walk-north/3.png",
+      "sha256": "56a918b19c0092a11d5a88f0e3ddc13378908741cbc740a14b7a20be95584bee",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 4,
+      "file": "art/heroes/berserker-f/pixellab/walk-north/4.png",
+      "sha256": "d8175fcf661a07400b7768bbe566c65adb6ab074be0d231f2959fa969d85a659",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 5,
+      "file": "art/heroes/berserker-f/pixellab/walk-north/5.png",
+      "sha256": "1d3dac47b1961b27cc64dbb932828cc83ec6765b4d3736a75e4af8b1e4b64f76",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 6,
+      "file": "art/heroes/berserker-f/pixellab/walk-north/6.png",
+      "sha256": "97fd4e0d6700c521b4d111cd02b8ea1380f4f048bacf56add2d5d8965ecf878d",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 7,
+      "file": "art/heroes/berserker-f/pixellab/walk-north/7.png",
+      "sha256": "af5825fa1ee146ebefe76c8e7291669a4f77e19fc2d74fe98624db057d6007e2",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
       ]
     }
   ]

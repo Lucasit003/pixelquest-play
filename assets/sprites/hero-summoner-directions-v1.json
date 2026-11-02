@@ -17,17 +17,29 @@
       "fps": 5,
       "loop": true
     },
-    "idle-north": {
+    "walk-south": {
       "row": 1,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    },
+    "idle-north": {
+      "row": 2,
       "frames": 1,
       "fps": 5,
+      "loop": true
+    },
+    "walk-north": {
+      "row": 3,
+      "frames": 8,
+      "fps": 12,
       "loop": true
     }
   },
   "source": "pixellab",
   "unmodified": false,
   "sourcePixelsUnmodified": true,
-  "credit": "PixelQuest original character, made with PixelLab (pixellab.ai) for PixelQuest. Front and back standing views for the character creator (owner, 15 October 2026).",
+  "credit": "PixelQuest original character, made with PixelLab (pixellab.ai) for PixelQuest. Front and back standing views (15 October 2026) and north/south walks (owner note, 1 November 2026: every hero walks up and down).",
   "contract": "art/heroes/summoner/directions.json",
   "sources": [
     {
@@ -45,6 +57,118 @@
       ]
     },
     {
+      "state": "walk-south",
+      "frame": 0,
+      "file": "art/heroes/summoner/pixellab/walk-south/0.png",
+      "sha256": "9c5c4c3763088bad893272eb3118662e23ef31c08b048b9f3833f21c892cfe41",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 1,
+      "file": "art/heroes/summoner/pixellab/walk-south/1.png",
+      "sha256": "d5ac14db396534ba6e7d5c3c76321233e5970441105b78b8c09fb54c25372e2d",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 2,
+      "file": "art/heroes/summoner/pixellab/walk-south/2.png",
+      "sha256": "79470d6eba1398adad5c42801b8b38f61993c996fefe431531f4819ee7c5cffb",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 3,
+      "file": "art/heroes/summoner/pixellab/walk-south/3.png",
+      "sha256": "4c63d15c8b168269e5b74cb64bbad8e8ca25adf04422b9e614e3b042958048a5",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 4,
+      "file": "art/heroes/summoner/pixellab/walk-south/4.png",
+      "sha256": "96eb9295203038247944f069db6a22f3c1c83ba01bffb6a191ed1eebc8dcef59",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 5,
+      "file": "art/heroes/summoner/pixellab/walk-south/5.png",
+      "sha256": "d54651aaed84d680270a1984e778d7e80b6f3e16c839d2633f86dd182ef9c73b",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 6,
+      "file": "art/heroes/summoner/pixellab/walk-south/6.png",
+      "sha256": "0e1540ff0491f6b50142cd1d4b2338cf3da8aa1654ddbf3d075429a804114208",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 7,
+      "file": "art/heroes/summoner/pixellab/walk-south/7.png",
+      "sha256": "782076a524f79e600fac7105f696f42fa4eef41c6722a224b350e3869506c8b4",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
       "state": "idle-north",
       "frame": 0,
       "file": "art/heroes/summoner/pixellab/rotations/north.png",
@@ -56,6 +180,118 @@
       "offset": [
         26,
         20
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 0,
+      "file": "art/heroes/summoner/pixellab/walk-north/0.png",
+      "sha256": "706b7fb9ce0fde72db4a23ea77664dceaa5b27d50eb3b1736be77d3206627511",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 1,
+      "file": "art/heroes/summoner/pixellab/walk-north/1.png",
+      "sha256": "e744b5e226f5413548821516ad3a531985afc4812498d2ab3314a23936c6b503",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 2,
+      "file": "art/heroes/summoner/pixellab/walk-north/2.png",
+      "sha256": "5bf6d04ac50ed6e51c1a7e472041fc0dfca89d25b44b9aed6fb202a694135989",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 3,
+      "file": "art/heroes/summoner/pixellab/walk-north/3.png",
+      "sha256": "46df9a18812a03b79885888bf66352d7611fb2bdbb58ff429398fe69d6f869f6",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 4,
+      "file": "art/heroes/summoner/pixellab/walk-north/4.png",
+      "sha256": "1810ab23572063186d1b91474d8b5d2e02b2cbc26adf2a0be6ce6b2fd7f3e4d0",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 5,
+      "file": "art/heroes/summoner/pixellab/walk-north/5.png",
+      "sha256": "352e7a0e5a99c7fe78d8d1d1e69836f0204344b5e7baacc18946811c4c26b6ad",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 6,
+      "file": "art/heroes/summoner/pixellab/walk-north/6.png",
+      "sha256": "9440ceb60c531702440bc83035f7bef5d6457cb30c7df0230633af5eb0debe04",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 7,
+      "file": "art/heroes/summoner/pixellab/walk-north/7.png",
+      "sha256": "246981fc453707ad4cb85496b7af85a8e6e44abaecae128a8374f51a6819afe4",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
       ]
     }
   ]

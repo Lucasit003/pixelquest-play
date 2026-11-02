@@ -17,17 +17,29 @@
       "fps": 5,
       "loop": true
     },
-    "idle-north": {
+    "walk-south": {
       "row": 1,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    },
+    "idle-north": {
+      "row": 2,
       "frames": 1,
       "fps": 5,
+      "loop": true
+    },
+    "walk-north": {
+      "row": 3,
+      "frames": 8,
+      "fps": 12,
       "loop": true
     }
   },
   "source": "pixellab",
   "unmodified": false,
   "sourcePixelsUnmodified": true,
-  "credit": "PixelQuest original character, made with PixelLab (pixellab.ai) for PixelQuest. Front and back standing views for the character creator (owner, 15 October 2026).",
+  "credit": "PixelQuest original character, made with PixelLab (pixellab.ai) for PixelQuest. Front and back standing views (15 October 2026) and north/south walks (owner note, 1 November 2026: every hero walks up and down).",
   "contract": "art/heroes/rogue/directions.json",
   "sources": [
     {
@@ -45,6 +57,118 @@
       ]
     },
     {
+      "state": "walk-south",
+      "frame": 0,
+      "file": "art/heroes/rogue/pixellab/walk-south/0.png",
+      "sha256": "28886f81c890e11c26db4187442bb7e8f248cdcf0729f348e9d09157801a8523",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 1,
+      "file": "art/heroes/rogue/pixellab/walk-south/1.png",
+      "sha256": "1642f34729df79a88b2f2055ea147cdddef959923e77eaf41eb19a8d54129f6a",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 2,
+      "file": "art/heroes/rogue/pixellab/walk-south/2.png",
+      "sha256": "8c5283fa0fb0febae59bba2a77ca2b1de59368811f2b9af4d37843db96e6fd2c",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 3,
+      "file": "art/heroes/rogue/pixellab/walk-south/3.png",
+      "sha256": "6b69f20e72c785d65960d6c437181873d2f6d996bd4daab838276e177c6e98c4",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 4,
+      "file": "art/heroes/rogue/pixellab/walk-south/4.png",
+      "sha256": "cf9135bf9390cee615b0f3a6e393835023bd67cf8b6a64e56f01c4e22465afc2",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 5,
+      "file": "art/heroes/rogue/pixellab/walk-south/5.png",
+      "sha256": "395c9ebb9344c5843b30c661c9f256097d0c7d1c8303c471620a1c47f74daeef",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 6,
+      "file": "art/heroes/rogue/pixellab/walk-south/6.png",
+      "sha256": "9f47d8e57830ebefbf1dde3cc85cec109b53259c4eb61a8d391678eb5fcd894d",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 7,
+      "file": "art/heroes/rogue/pixellab/walk-south/7.png",
+      "sha256": "78f8be057e18d29d30186683dc80e65fec26b358a20a9c6d13ab560298fdbebd",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
       "state": "idle-north",
       "frame": 0,
       "file": "art/heroes/rogue/pixellab/rotations/north.png",
@@ -56,6 +180,118 @@
       "offset": [
         26,
         20
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 0,
+      "file": "art/heroes/rogue/pixellab/walk-north/0.png",
+      "sha256": "c8d9833233f0b9b1d1b6ccf4567676c19138ffdd5bb63380d2968382a7a82776",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 1,
+      "file": "art/heroes/rogue/pixellab/walk-north/1.png",
+      "sha256": "84142174815188217fedc0d89612d16ab822e47ff45ecec862850bf1df18bf94",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 2,
+      "file": "art/heroes/rogue/pixellab/walk-north/2.png",
+      "sha256": "22ad0144c8c0522398228e149368c52be0eaeba8bb16f03462e7dd31577d595b",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 3,
+      "file": "art/heroes/rogue/pixellab/walk-north/3.png",
+      "sha256": "5ff196a788faf92cc3f0a9f1c1647e4680baf37896903531fb1bc3488e66d078",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 4,
+      "file": "art/heroes/rogue/pixellab/walk-north/4.png",
+      "sha256": "95b15ba2deb978fd8c743af613def45f32e78eccda954753404a16e34595b5d0",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 5,
+      "file": "art/heroes/rogue/pixellab/walk-north/5.png",
+      "sha256": "a416b34430f81a095d36d0dc7c128e7d3c08f933ad7df81f91e66853e5131065",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 6,
+      "file": "art/heroes/rogue/pixellab/walk-north/6.png",
+      "sha256": "2f72969b2918ea000c0a7345766a5f42ef9b5bf7dbf460edd47d2784e7998e62",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 7,
+      "file": "art/heroes/rogue/pixellab/walk-north/7.png",
+      "sha256": "7ba91484cfdcac2cc7e7318ae805b368f83acbb1543ba69979e22da2d660bc1d",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
       ]
     }
   ]

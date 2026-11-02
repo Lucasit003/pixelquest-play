@@ -1,0 +1,298 @@
+{
+  "image": "hero-ranger--bow-briarthorn-directions-v1.png",
+  "cell": [
+    112,
+    100
+  ],
+  "anchor": [
+    57,
+    79
+  ],
+  "faces": "right",
+  "scale": 1,
+  "states": {
+    "idle-south": {
+      "row": 0,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "walk-south": {
+      "row": 1,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    },
+    "idle-north": {
+      "row": 2,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "walk-north": {
+      "row": 3,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    }
+  },
+  "source": "pixellab",
+  "unmodified": false,
+  "sourcePixelsUnmodified": true,
+  "credit": "PixelQuest original character (the Ranger holding the Briarthorn Longbow), made with PixelLab (pixellab.ai) for PixelQuest. North/south walks per the owner note of 1 November 2026 (every hero walks up and down).",
+  "contract": "art/heroes/ranger-w/bow-briarthorn/directions.json",
+  "sources": [
+    {
+      "state": "idle-south",
+      "frame": 0,
+      "file": "art/heroes/ranger-w/bow-briarthorn/pixellab/rotations/south.png",
+      "sha256": "1dddcdde64dfd2aa473ac2c303be2fdd4c740423cb6510d1c1dcc97201f90430",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        19
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 0,
+      "file": "art/heroes/ranger-w/bow-briarthorn/pixellab/walk-south/0.png",
+      "sha256": "33ffaf0fcb8da7233210fa972b580e109171ee757caa55bd62c3a4dae3f83df4",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 1,
+      "file": "art/heroes/ranger-w/bow-briarthorn/pixellab/walk-south/1.png",
+      "sha256": "3f3bb5601c9963b9b372db88227052de091d6665e4f6a4b2221a82190930b1de",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 2,
+      "file": "art/heroes/ranger-w/bow-briarthorn/pixellab/walk-south/2.png",
+      "sha256": "df9c39a9c756c67c3c47f033175c92b49b9812d5580304df6d3b514d4b988ce1",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 3,
+      "file": "art/heroes/ranger-w/bow-briarthorn/pixellab/walk-south/3.png",
+      "sha256": "bd20d7c33ea5d88422d837ab378457cab2c676379425ef4f66282505b078e49c",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 4,
+      "file": "art/heroes/ranger-w/bow-briarthorn/pixellab/walk-south/4.png",
+      "sha256": "bb1c60476e72c0894c87eab665cd8eb1bd8655113c7db983c1a408dbd36c3a87",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 5,
+      "file": "art/heroes/ranger-w/bow-briarthorn/pixellab/walk-south/5.png",
+      "sha256": "df9bd89b622c6602a4f126975d4df79e09778ace68ce761198c6467c8822e3b9",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 6,
+      "file": "art/heroes/ranger-w/bow-briarthorn/pixellab/walk-south/6.png",
+      "sha256": "42ed006151adf059700771313fef0073748e987862d27f704af10b7592c0ec82",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 7,
+      "file": "art/heroes/ranger-w/bow-briarthorn/pixellab/walk-south/7.png",
+      "sha256": "306d7ddeee3141c20b4d10f97fb2ca222accbe7a5e67270e6361475823228d0b",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "idle-north",
+      "frame": 0,
+      "file": "art/heroes/ranger-w/bow-briarthorn/pixellab/rotations/north.png",
+      "sha256": "fa8c713ed6396078748e9071bb3ebe075a81ac74b9ed16dff8358f39676a6069",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        20
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 0,
+      "file": "art/heroes/ranger-w/bow-briarthorn/pixellab/walk-north/0.png",
+      "sha256": "2ce1a8e1c6c1af19490d44cf0fbe7d09a20ad07a5b67942b3dce57f34b9467e1",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 1,
+      "file": "art/heroes/ranger-w/bow-briarthorn/pixellab/walk-north/1.png",
+      "sha256": "95c894b946cd6d0d861dbbb47e9e52498d316f203aecd511203c1e182d8caecb",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 2,
+      "file": "art/heroes/ranger-w/bow-briarthorn/pixellab/walk-north/2.png",
+      "sha256": "73bbea6bce96b5f3b97b4ef6b20c37a3ad3b9e55070a0cb3eb59be8a75ec9213",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 3,
+      "file": "art/heroes/ranger-w/bow-briarthorn/pixellab/walk-north/3.png",
+      "sha256": "50926f61e6dba2a1648b97177d5f3d02297533613c7873a5dae3f3ca5317bd28",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 4,
+      "file": "art/heroes/ranger-w/bow-briarthorn/pixellab/walk-north/4.png",
+      "sha256": "ded1f9f7391dbc4421eb024dba8a6bf8e259a530ad46963f91ea84419239b2fd",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 5,
+      "file": "art/heroes/ranger-w/bow-briarthorn/pixellab/walk-north/5.png",
+      "sha256": "c7ed8ff33f73d970fae6b43f09ccfbf46be465ce18e944306aecdb556ef3a2af",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 6,
+      "file": "art/heroes/ranger-w/bow-briarthorn/pixellab/walk-north/6.png",
+      "sha256": "32cd0b3384cd36bef6500c8ec0a1d4b9396925e3dba28a0da77e302448455afa",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 7,
+      "file": "art/heroes/ranger-w/bow-briarthorn/pixellab/walk-north/7.png",
+      "sha256": "d71f0e9708b9d0a11a35cddf39b2493d6e4d1825f962853cc4ee457dbd4b43c4",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    }
+  ]
+}
