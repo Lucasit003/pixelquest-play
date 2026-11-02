@@ -60,6 +60,11 @@ export function hubFit(vw,vh,{zoom=1,dpr=1,pp=false,close=[BASE_W,BASE_H]}={}){
  const w=Math.max(64,Math.min(Math.round(tw),Math.floor(vw/sc+1e-6))),h=Math.max(64,Math.min(Math.round(th),Math.floor(vh/sc+1e-6))),height=Math.round(h*sc);
  return {scale:sc,integer,view:[w,h],width:Math.round(w*sc),height,hud:hudZoom(height,dpr)};}
 /* main.js calls this every frame: the canvas swaps between the town's view and the level view when the zone changes, before the frame runs */
+/* short-view-nov1 (the owner's iPhone in Safari: the address and tab bars leave about 852x283): at 2x a phone that short showed only 141
+   world rows. Under SHORT_ROWS rows at 2x the scale drops to the largest whole number of DEVICE pixels per world pixel that still shows
+   SHORT_ROWS rows, so every game pixel stays the same size and crisp (5 device px on a 3x iPhone: 169 rows). Null when 2x shows enough. */
+export const SHORT_ROWS=160;
+export function shortPhoneFit(vw,vh,dpr=1){if(!(vw>0&&vh>0)||Math.floor(vh/2)>=SHORT_ROWS)return null;const n=Math.floor(vh*dpr/SHORT_ROWS),sc=n/dpr;if(!(sc>=1.25&&sc<2))return null;const w=Math.min(BASE_W,Math.floor(vw/sc+1e-6)),h=Math.min(BASE_H,Math.floor(vh/sc+1e-6));return {scale:sc,integer:true,view:[w,h],width:Math.round(w*sc),height:Math.round(h*sc)};}
 export function syncZone(){const t=!!townRef();if(t!==lastTown){lastTown=t;rescale();}}
 export function rescale(){
  const d=globalThis.document,w=globalThis.window;if(!d||!w)return;
@@ -76,7 +81,7 @@ export function rescale(){
     map keeps the full 480x270 at the largest whole number that fits. Desktop: 480x270. */
  const root=d.documentElement,mapOpen=root.classList.contains('map-open');
  let fitted=null;
- if(mobile&&pp&&!mapOpen){const k=Math.max(2,Math.ceil(vw/BASE_W),Math.ceil(vh/BASE_H)),w=Math.min(BASE_W,Math.floor(vw/k)),h=Math.min(BASE_H,Math.floor(vh/k));fitted={scale:k,integer:true,view:[w,h],width:w*k,height:h*k};}
+ if(mobile&&pp&&!mapOpen){const k=Math.max(2,Math.ceil(vw/BASE_W),Math.ceil(vh/BASE_H)),w=Math.min(BASE_W,Math.floor(vw/k)),h=Math.min(BASE_H,Math.floor(vh/k));fitted={scale:k,integer:true,view:[w,h],width:w*k,height:h*k};if(k===2)fitted=shortPhoneFit(vw,vh,dpr)||fitted;}
  /* ready2fix-oct30 #13: a squarer desktop window (4:3, 5:4, 3:2; not 16:10) letterboxed the 16:9 stage with bars of up to a quarter of
     the screen. Like a touch tablet, the VIEW narrows instead: the full 270 rows fill the window height and the canvas is as many
     columns as fit (never under DESK_MIN_W, so a near-square window keeps a small bar). One uniform scale, so pixels never stretch;
