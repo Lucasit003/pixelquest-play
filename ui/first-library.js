@@ -56,4 +56,6 @@ export function placementOpens(save,subject,stage,name=subject){
    card and a second "You're in Grade 3: find your level" box half below the fold. One line in the card and one button instead. True to the
    check: it asks PLACEMENT_PER_GRADE questions for each of its grades, has no timer, and only ever raises a placement (placement.js). */
 export function gradeLine(save,subject,name=subject,warm=2){const g=save?.schoolGrade;if(save?.schoolMode!=='elementary'||!(g>2)||g>5)return null;const gs=placementGrades(subject,'elementary');if(!gs.length)return null;
- return {grade:g,questions:gs.length*PLACEMENT_PER_GRADE,text:`You picked Grade ${g}. Take a short check (${gs.length*PLACEMENT_PER_GRADE} questions, no timer) to start at your level, or warm up with Grade ${warm}.`,button:'Take the check'};}
+ /* improve20-r9d-nov1 #6 (audit8 a19): "Repeating patterns · Grade 2 warm-up" with the check as the second button was the "is this a baby game?"
+   moment for a 9-year-old. The check is the main button and names the grade; the warm-up lesson stays one tap away (warmButton). */
+ return {grade:g,warm,questions:gs.length*PLACEMENT_PER_GRADE,text:`You picked Grade ${g}. A short check (${gs.length*PLACEMENT_PER_GRADE} questions, no timer) starts you at your level. It only opens lessons.`,button:`Show what you know: Grade ${g} check`,warmButton:`Grade ${warm} warm-up`};}

@@ -373,10 +373,14 @@ export function cornerNudge(S, px, py, fx, fy, ax, ay, step) {
 /* People stand their ground (playtest 14 Oct: the hero walked straight into Gran Mabel and stood inside her). A small
    footprint round each standing villager and room keeper blocks a step that comes closer; stepping away is always
    allowed, so a hero placed on someone can walk off. Walkers wait for the hero instead (walkerTick). */
-const PERSON = {hw: 18, hh: 7};
+/* improve20-r9e-nov1 #2 (audit8 a10): at 844x390 the hero stood inside Brannoc's sprite. The footprint is wider and reaches further in front
+   (where the hero is drawn over the person) than behind; a room keeper's (behind a counter) is widest. Talk reach (28 for people,
+   DOOR_REACH 30 for keepers) is still met from the edge of it. */
+const PERSON = {hw: 18, hh: 7, front: 13, back: 7, room: {hw: 22, front: 16}};
 export function personAhead(S, x0, y0, x1, y1) {
   S.people ??= [...(S.figures ?? []), ...S.points.filter(q => q.type === 'npc-spot')].map(q => [q.x, q.y]);
-  for (const [x, y] of [...S.people, ...crewHere(S).map(m => [m.x, m.y])]) if (Math.abs(x1 - x) < PERSON.hw && Math.abs(y1 - y) < PERSON.hh && Math.hypot(x1 - x, (y1 - y) * 2) < Math.hypot(x0 - x, (y0 - y) * 2)) return true;
+  const hw = S.room ? PERSON.room.hw : PERSON.hw, front = S.room ? PERSON.room.front : PERSON.front;
+  for (const [x, y] of [...S.people, ...crewHere(S).map(m => [m.x, m.y])]) if (Math.abs(x1 - x) < hw && y1 - y < front && y - y1 < PERSON.back && Math.hypot(x1 - x, (y1 - y) * 2) < Math.hypot(x0 - x, (y0 - y) * 2)) return true;
   return false;
 }
 /* improve20-r8b-nov1 #6 (audit7 d23: walking out by the south gate, the hero went under the gatehouse roof and behind the hotbar, only
@@ -756,6 +760,18 @@ export function personBeat(name) {
 /* improve20-k-nov1 #5: where each person in this room is drawn, as fractions of the view ({l, r, t, b}), so main.js can fade a HUD plate
    that would cover one (the Barracks captain sat under the goal plate on a phone) */
 export function hubHeads() { const S = current(), v = H.view; if (!S?.room || !v || H.fade) return []; return [...S.figures, ...crewHere(S)].map(f => ({l: (f.x - 14 - v.ox) / VIEW_W, r: (f.x + 14 - v.ox) / VIEW_W, t: (f.y - 60 - v.oy) / VIEW_H, b: (f.y - v.oy) / VIEW_H})); }
+/* improve20-r9e-nov1 #2: the person (a keeper, a villager, a hired companion) whose drawn body, x +-16 and 60 px tall, the station's default
+   bubble (about 80 x 24 px, its foot 70 px over the station) would cover, if any: {x, y, top}, top being where the bubble's foot goes,
+   4 px over the head or over the subject plate drawn above it (the plates of the last frame, world units) */
+export function promptPerson(S, q) {
+  if (!S || !q || q.type === 'npc-spot') return null;
+  const foot = Math.min(q.y, q.sy ?? q.y) - 70, hit = f => Math.abs(f.x - q.x) < 16 + 40 && f.y - 60 < foot && f.y > foot - 24;
+  const f = [...(S.figures ?? []), ...S.points.filter(p => p.type === 'npc-spot'), ...crewHere(S)].filter(hit).sort((a, b) => Math.abs(a.x - q.x) - Math.abs(b.x - q.x))[0];
+  if (!f) return null;
+  let top = f.y - 64;
+  for (const pl of H.plates || []) if (pl.x < f.x + 40 && pl.x + pl.w > f.x - 40 && pl.y < top && pl.y + pl.h > top - 30) top = Math.min(top, pl.y - 3);
+  return {x: f.x, y: f.y, top};
+}
 /** The interact prompt for the HUD: {text} or null. */
 export function hubPrompt() {
   if (H.placing && FURN[H.placing]) { const hang = !!placingSpot()?.wall; return {text: `${hang ? 'Hang' : 'Place'} the ${FURN[H.placing].name.toLowerCase()}${hang ? ' on the wall' : ''} (Escape puts it away)`}; }
@@ -768,8 +784,12 @@ export function hubPrompt() {
   const box = q.box && v ? [(q.box.x0 - v.ox) / VIEW_W, (q.box.y0 - v.oy) / VIEW_H, (q.box.x1 - v.ox) / VIEW_W] : null;
   /* improve20-k-nov1 #5: a talker's drawn body ({l, r, t, b} fractions): main.js slides the bubble beside him when it would cover him (a phone
      clamps the bubble under the goal plate, which put it over the Barracks captain) */
-  const body = v && q.type === 'npc-spot' ? {l: (q.x - 16 - v.ox) / VIEW_W, r: (q.x + 16 - v.ox) / VIEW_W, t: (q.y - 60 - v.oy) / VIEW_H, b: (q.y - v.oy) / VIEW_H} : null;
-  return v ? {text: H.near.o.label, at: [(q.x - v.ox) / VIEW_W, (Math.min(q.y, q.sy ?? q.y) - 70 - v.oy) / VIEW_H], ...(box ? {box} : {}), ...(body ? {body} : {})} : {text: H.near.o.label};
+  /* improve20-r9e-nov1 #2 (audit8 a10): "Study Coding" sat on Tinker Pip's face: a station's bubble (a table, a counter) went 70 px above the
+     station, which is where its keeper's head is. When someone stands under the bubble (promptPerson), it goes above that person's head,
+     and above their subject plate when there is one ("CODING"), and the person is passed as the body main.js keeps clear */
+  const P = v ? promptPerson(current(), q) : null, ax = P ? P.x : q.x, ay = P ? P.top : Math.min(q.y, q.sy ?? q.y) - 70, who = P ?? (q.type === 'npc-spot' ? q : null);
+  const body = v && who ? {l: (who.x - 16 - v.ox) / VIEW_W, r: (who.x + 16 - v.ox) / VIEW_W, t: (who.y - 60 - v.oy) / VIEW_H, b: (who.y - v.oy) / VIEW_H} : null;
+  return v ? {text: H.near.o.label, at: [(ax - v.ox) / VIEW_W, (ay - v.oy) / VIEW_H], ...(box ? {box} : {}), ...(body ? {body} : {})} : {text: H.near.o.label};
 }
 
 /**
@@ -858,7 +878,7 @@ export const hubScene = key => scene(key);
 export const ROUTE = {reach: 150, near: 20, pad: 2, slide: -.87};
 /* pad: extra clearance each side, so a keyboard's eight directions (which never follow the line exactly) still get past the corner */
 /* people stand their ground (personAhead), so the route walks round them as it does round walls */
-const personAt = (S, x, y, pad = 1) => { S.people ??= [...(S.figures ?? []), ...S.points.filter(q => q.type === 'npc-spot')].map(q => [q.x, q.y]); return S.people.some(([px, py]) => Math.abs(x - px) < PERSON.hw + 4 * pad && Math.abs(y - py) < PERSON.hh + 3 * pad); };
+const personAt = (S, x, y, pad = 1) => { S.people ??= [...(S.figures ?? []), ...S.points.filter(q => q.type === 'npc-spot')].map(q => [q.x, q.y]); /* improve20-r9e-nov1 #2: the same footprint personAhead keeps (wider in a room, longer in front) */const hw = S.room ? PERSON.room.hw : PERSON.hw, front = S.room ? PERSON.room.front : PERSON.front; return S.people.some(([px, py]) => Math.abs(x - px) < hw + 4 * pad && y - py < front + 3 * pad && py - y < PERSON.back + 3 * pad); };
 /* a straight line only has to clear the space a villager really keeps (personAhead); the planned route keeps a little more */
 const walkBlocked = (S, x, y) => footBlocked(S, x, y) || personAt(S, x, y, 0);
 export function lineClear(S, x0, y0, x1, y1, pad = 0) { const n = Math.ceil(Math.hypot(x1 - x0, y1 - y0) / 4); for (let i = 1; i <= n; i++) { const t = i / n, x = x0 + (x1 - x0) * t, y = y0 + (y1 - y0) * t; if (walkBlocked(S, x, y) || pad && (walkBlocked(S, x - pad, y) || walkBlocked(S, x + pad, y) || walkBlocked(S, x, y - pad) || walkBlocked(S, x, y + pad))) return false; } return true; }

@@ -241,6 +241,16 @@ export const levelFogged=l=>!!l&&!!SLICE&&!SLICE.includes(l.chapter);
 /* Since the difficulty ladder (14 Oct) this is an assist, separate from the per-level tiers and multiplied on top of
    them: Story is the gentler default, Standard the original Heroic numbers. The saved keys stay 'easy' and 'heroic'. */
 export const DIFFICULTY={easy:{hp:.9,atk:1.8,label:'Story',hint:'easier'},heroic:{hp:1.25,atk:2.6,label:'Standard',hint:'the full challenge'}};
-export const difficultyOf=save=>DIFFICULTY[save?.settings?.difficulty]||DIFFICULTY.easy;
+/* improve20-r9d-nov1 #4 (audit8 a6): a new Middle or High School save starts on Standard (owner, 14 Oct), and the phone prologue was lost at 1:21
+   while an Elementary player on Story won it. The prologue and e1 use Story numbers until the save first wins them, whatever the setting or
+   the school stage; a replay after that win uses the setting. fightKey is the key a level's fight uses ('easy' Story, 'heroic' Standard). */
+export const FIRST_FIGHTS=Object.freeze(['prologue','e1']);
+export const storyFirst=(save,id)=>FIRST_FIGHTS.includes(id)&&!levelDone(save,id);
+export const fightKey=(save,id)=>storyFirst(save,id)?'easy':save?.settings?.difficulty==='heroic'?'heroic':'easy';
+export const difficultyOf=(save,id)=>id?DIFFICULTY[fightKey(save,id)]:DIFFICULTY[save?.settings?.difficulty]||DIFFICULTY.easy;
+/* After a loss in the first three levels on Standard, one offer to switch to Story ("Make fights easier?"); declined or taken, never again.
+   s.settings.easierOffer: undefined (not asked), 'taken' or 'declined' (additive in v9, core/save.js normalize). Learning is untouched. */
+export const EASIER_LEVELS=Object.freeze(['prologue','e1','e2']);
+export const easierOfferDue=(save,id)=>EASIER_LEVELS.includes(id)&&save?.settings?.difficulty==='heroic'&&!save?.settings?.easierOffer;
 export const RESOLVE_STEP=.1,RESOLVE_MAX=.5;
 export const resolveOf=(save,id)=>save?.settings?.resolve===false?0:Math.min(RESOLVE_MAX,RESOLVE_STEP*Math.max(0,save?.levels?.[id]?.resolve|0));

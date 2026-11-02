@@ -2,6 +2,7 @@
    roster boa..."). clearOfCard(a,c,width) takes the prompt's and the card's rects (stage coordinates, {left,top,right,bottom})
    and the stage width; it returns null when they are already apart (8 px gap), else where the prompt goes: {x} = its new centre,
    sliding sideways to the nearer side of the card that has room, or {y} = its new bottom edge, under the card, when neither side has. */
-export function clearOfCard(a,c,width,g=8){if(!(a.left<c.right+g&&a.right>c.left-g&&a.top<c.bottom+g&&a.bottom>c.top-g))return null;
- const hw=(a.right-a.left)/2,cx=a.left+hw,fits=x=>x-hw>=g&&x+hw<=width-g,xs=[Math.floor(c.left-g-hw),Math.ceil(c.right+g+hw)].filter(fits).sort((p,q)=>Math.abs(p-cx)-Math.abs(q-cx));
+/* improve20-r9e-nov1 #2: minX, a left bound (on a phone, the hero plate's right edge) the slide must not cross */
+export function clearOfCard(a,c,width,g=8,minX=0){if(!(a.left<c.right+g&&a.right>c.left-g&&a.top<c.bottom+g&&a.bottom>c.top-g))return null;
+ const hw=(a.right-a.left)/2,cx=a.left+hw,fits=x=>x-hw>=Math.max(g,minX)&&x+hw<=width-g,xs=[Math.floor(c.left-g-hw),Math.ceil(c.right+g+hw)].filter(fits).sort((p,q)=>Math.abs(p-cx)-Math.abs(q-cx));
  return xs.length?{x:xs[0]}:{y:Math.round(c.bottom+g+(a.bottom-a.top))};}

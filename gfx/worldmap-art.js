@@ -133,7 +133,7 @@ function tintedUi(art,name,i=0){if(!ready(art.ui))return null;const f=cell(art,n
  const d=g.getImageData(0,0,w,h);for(let p=0;p<d.data.length;p+=4){if(!d.data[p+3])continue;const l=(d.data[p]*.3+d.data[p+1]*.59+d.data[p+2]*.11)/170;d.data[p]=Math.min(255,RIFT_TINT[0]*l);d.data[p+1]=Math.min(255,RIFT_TINT[1]*l);d.data[p+2]=Math.min(255,RIFT_TINT[2]*l);}g.putImageData(d,0,0);return riftCache[key]=cv;}
 function drawRift(c,v,art,t){const {x,y}=v.rift,P=MAPS[v.chapter].pad||[9,4],pulse=.55+.3*Math.sin(t*Math.PI*2/1.6);c.save();c.fillStyle='#3b1f5c';pixEllipse(c,x,y,P[0]+1,P[1]+1);c.globalAlpha=pulse;c.fillStyle='#b77cff';pixEllipse(c,x,y,P[0],P[1]);c.globalAlpha=1;
  /* improve20-k-nov1 #4: the portal is PixelLab art (assets/worldmap/rift-portal.png, 32x40, 1 Nov); the glow, pulse and sparkle stay code effects. The tinted star is the fallback while it loads */const pt=riftPortal();if(ready(pt)){c.imageSmoothingEnabled=false;c.drawImage(pt,x-16,y-36);}else{const star=tintedUi(art,'icon-sparkle');if(star)c.drawImage(star,x-10,y-24+Math.round(Math.sin(t*3)*1.5),20,20);}const sp=tintedUi(art,'sparkle',frameIndex(art,'sparkle',t));if(sp)c.drawImage(sp,x-13,y-26);
- const lb=v.touch?v.rift.label:`${v.rift.label} (${v.rift.key})`,w=textWidth(lb)+8;c.fillStyle='rgba(28,14,44,.78)';c.fillRect(Math.round(x-w/2),y+6,Math.round(w),15);text(c,lb,x,y+5,{color:'#e9d6ff',align:'center'});c.restore();}
+ const lb=riftLabel(v),w=textWidth(lb)+8;c.fillStyle='rgba(28,14,44,.78)';c.fillRect(Math.round(x-w/2),y+6,Math.round(w),15);text(c,lb,x,y+5,{color:'#e9d6ff',align:'center'});c.restore();}
 /* A clean half-size token: about 24 px tall, comparable to the huts and stop flags. */
 let heroCv=null;export const HERO_K=.5;
 function drawSmallHero(c,v,t){heroCv||=makeCanvas(160,128);const g=heroCv.getContext('2d');g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,160,128);g.imageSmoothingEnabled=false;
@@ -206,7 +206,11 @@ export function placeBoardCard(v,w,h,strict=false,next=true,corners=false){const
 /* Polish 24 Oct: every stop the player can walk to next is protected too. A tap or click walks the road to any open stop,
    so that is every open stop on the board, not only the focused stop's road neighbours. */
 /* improve20-r-oct31: the Rift portal and its name plate are kept clear too */
-export function boardNextRects(v){const id=v.focusId||v.sel;return [...(v.nodes||[]).filter(n=>n.id!==id&&!['locked','soon'].includes(n.state)).map(n=>({x:n.x-18,y:n.y-28,w:40,h:40})),...(v.rift?[{x:v.rift.x-28,y:v.rift.y-28,w:56,h:50}]:[])];}
+/* improve20-r9e-nov1 #7 (audit8 a18): "The Rift (R" -- the card's keep-clear box was 56 px wide, narrower than the portal's name plate,
+   so the level card could cover the plate's end. The box now spans the plate (its measured width) as well as the portal. */
+export const riftLabel=v=>v.touch?v.rift.label:`${v.rift.label} (${v.rift.key})`;
+export function riftRect(v){const pw=Math.max(56,Math.ceil(textWidth(riftLabel(v)))+14);return {x:Math.round(v.rift.x-pw/2),y:v.rift.y-28,w:pw,h:52};}
+export function boardNextRects(v){const id=v.focusId||v.sel;return [...(v.nodes||[]).filter(n=>n.id!==id&&!['locked','soon'].includes(n.state)).map(n=>({x:n.x-18,y:n.y-28,w:40,h:40})),...(v.rift?[riftRect(v)]:[])];}
 /* Protect the half-size hero, selected stop/flag, and the local approach to both. */
 export function boardFocusRects(v){const points=[v.hero,(v.nodes||[]).find(n=>n.id===(v.focusId||v.sel))].filter(Boolean),rects=points.map(p=>({x:p.x-18,y:p.y-28,w:40,h:40}));
  for(const [a,b] of ROADS[v.chapter]||[])for(const [x,y] of pathPoints(v.chapter,a,b))if(points.some(p=>Math.hypot(x-p.x,y-p.y)<24))rects.push({x:x-10,y:y-8,w:20,h:16});return rects;}

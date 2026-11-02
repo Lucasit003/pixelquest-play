@@ -1992,7 +1992,7 @@ html:not(.m-mode) dialog[data-view=result] :is(.level-reward strong,.level-stat 
 .gear-doll .inv-stats{grid-template-columns:repeat(5,1fr)}
 .gear-score dd{color:var(--gold,#e7c77e)}
 .gear-stars{display:inline-block;color:#ffd35a;font:700 12px/1 var(--ui);letter-spacing:-1px;text-shadow:0 1px 0 #000}
-.inv-cell .gear-stars{position:absolute;left:2px;bottom:1px;font-size:9px}
+.inv-cell .gear-stars{position:absolute;left:2px;bottom:1px;font-size:10px}
 .inv-cell.new::before{content:'';position:absolute;left:3px;top:3px;width:7px;height:7px;border-radius:50%;background:#7fd36b;box-shadow:0 0 0 2px #0d0806}
 .gear-lines{list-style:none;margin:4px 0;padding:0;display:grid;gap:2px}
 .gear-lines li{font:700 calc(var(--fs) * .95)/1.2 var(--ui)}
@@ -2268,7 +2268,7 @@ dialog:is([data-view=placement],[data-view=lesson-quiz]) .question:has(#quiz-for
 /* Oct 19: the "1 free / level" note sat on the ability bar for the whole level (b12). It is a tooltip now: it shows
    only while the potion slot is hovered or focused, and never takes pointer events from the HUD. */
 #hud-potion[data-free]:not([data-free=""])::before{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .15s ease-out,visibility 0s .15s;bottom:calc(100% + 4px);z-index:5}
-#hud-potion[data-free]:not([data-free=""]):is(:hover,:focus-visible)::before{opacity:1;visibility:visible;transition:opacity .15s ease-out}
+/* improve20-r9d-nov1 #5: shown for its 5 s once per save (main.js free-tip-on), not on hover or focus */#hud-potion.free-tip-on[data-free]:not([data-free=""])::before{opacity:1;visibility:visible;transition:opacity .15s ease-out}
 /* Oct 19 result screen: the stars and the run grade are one tidy rating row, and the rewards (loot, hero level, new
    ability, stars, next tier, bounty, record) sit with the gold and XP above Details. */
 dialog[data-view=result] .level-starline{gap:14px;min-height:40px}
@@ -3776,3 +3776,130 @@ html.m-mode,html.m-mode body{overflow:hidden;overscroll-behavior:none}
 .m-mode .title-pane .title-fs+.fs-howto{position:absolute;right:max(8px,env(safe-area-inset-right));top:calc(max(8px,env(safe-area-inset-top)) + 44px);z-index:3;max-width:min(300px,calc(100vw - 32px))}
 .fs-howto{grid-column:1/-1;margin:6px 0;padding:8px 10px;background:rgba(12,14,30,.92);border:2px solid #e7c77e;border-radius:4px;color:#fff3d6;font:400 14px/18px var(--ui);text-align:left;text-transform:none;letter-spacing:0}
 .fs-howto b{font-weight:700;color:#ffe9a8}
+
+/* improve20-r9d-nov1 #1 (audit8 a2): on a phone the Getting started card is a one-line strip along the top edge, between the hero panel and the
+   Map/Journal/Menu buttons (ui/controls-tutorial.js stripBox sets its left and width), so it covers neither the fight nor the HUD */
+.m-mode #controls-tutorial.strip{top:calc(6px + env(safe-area-inset-top));right:auto;transform:none;width:auto;display:flex;align-items:center;gap:8px;padding:2px 3px 2px 10px;font-size:14px;line-height:1.2;white-space:nowrap;box-sizing:border-box}
+.m-mode #controls-tutorial.strip strong{flex:0 0 auto;font-size:13px;color:#d6ac59}
+.m-mode #controls-tutorial.strip p{margin:0;flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.m-mode #controls-tutorial.strip button{flex:0 0 auto;min-width:44px;min-height:44px;padding:2px 8px;font-size:13px}
+.m-mode #controls-tutorial.strip.next-wave p{color:#cfe3ff}
+/* improve20-r9d-nov1 #2: the empty-answer hint in place of the browser's bubble (ui/answer-choices.js installEmptyHint) */
+.answer-hint{grid-column:1/-1;order:3;margin:2px 0 0;padding:4px 10px;justify-self:start;background:#2a1c14;border:2px solid #d6ac59;color:#ffe9b0;font:16px/1.3 var(--ui,sans-serif)}
+.answer-hint.pulse{animation:pq-hint-pop .25s ease-out}@keyframes pq-hint-pop{from{transform:translateY(-3px);opacity:.4}to{transform:none;opacity:1}}
+html[data-motion=reduced] .answer-hint.pulse{animation:none}
+/* improve20-r9d-nov1 #3 (audit8 a5): on a phone a long question (a Middle School table's setup) pushed the typing box and Check below the
+   sheet. In phone mode the answer row (the box and Check, or the answer buttons) and the row under it are a footer that always shows; the
+   question scrolls above them inside its own box. Practice, the quiz and the mastery test share this card; the lesson's Try-it is below. */
+html.m-mode #modal#modal#modal#modal#modal[data-view=lesson-quiz] #modal-content{overflow:hidden}
+html.m-mode #modal#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf.qf:has(#quiz-feedback:empty){flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+html.m-mode #modal#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf.qf:has(#quiz-feedback:empty)>.question-reading{flex:0 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+html.m-mode #modal#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf.qf:has(#quiz-feedback:empty)>:is(#quiz-form,.modal-actions){flex:none}
+/* a pinned card (ui/quiz-fit.js .q-pin, a question too tall for the phone sheet) puts "Take a break" beside Check, so the question gets that
+   row's room, and fades its last line while more of it is below (.q-more, set on scroll) */
+html.m-mode #modal#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf.qf.q-pin:has(#quiz-feedback:empty){display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:minmax(0,1fr) auto;column-gap:10px;align-content:stretch}
+html.m-mode #modal#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf.qf.q-pin:has(#quiz-feedback:empty)>.question-reading{grid-column:1/-1;grid-row:1}
+html.m-mode #modal#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf.qf.q-pin:has(#quiz-feedback:empty)>#quiz-form{grid-column:1;grid-row:2;margin-top:6px}
+html.m-mode #modal#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf.qf.q-pin:has(#quiz-feedback:empty)>.modal-actions{grid-column:2;grid-row:2;margin:6px 0 0;padding:0;border:0}
+html.m-mode #modal#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf.qf.q-pin:has(#quiz-feedback:empty)>#quiz-feedback{display:none}
+html.m-mode #modal#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf.qf.q-pin.q-more:has(#quiz-feedback:empty)>.question-reading{-webkit-mask-image:linear-gradient(#000 calc(100% - 22px),transparent);mask-image:linear-gradient(#000 calc(100% - 22px),transparent)}
+.m-mode #hud-potion.free-tip-on[data-free]:not([data-free=""])::before{white-space:normal;width:min(300px,40vw);text-align:left}
+/* improve20-r9d-nov1 review: on phones the Grade check button reads "Grade 4 check" (the sentence above says what it is), so the check, the
+   warm-up and Read to me fit one row; on short phones (360 and Safari's 283) the steps line steps aside for the grade line, so the buttons
+   are never under the sheet's edge */
+html.m-mode dialog[data-view=library] .edu-grade-go .gl-lead{display:none}
+@media (max-height:370px){html.m-mode dialog[data-view=library] .edu-next-text:has(.edu-grade-line) .edu-next-goal{display:none}}
+
+/* ---------- improve20-r9e-nov1: phone and UI polish ---------- */
+/* #4 (audit8 a12): on a phone the Mage's blurb ran off the bottom and "Choose this hero" was half off-screen (all of it at 740x360). The
+   hero step now fits the screen like the look step: the detail column takes the pane's height, the blurb scrolls, the button stays pinned */
+.m-mode .title-screen[data-step=select] .select-pane{overflow:hidden;justify-content:flex-start}
+.m-mode .title-screen[data-step=select] .select-pane .hero-select.er{flex:1 1 auto;min-height:0}
+.m-mode .title-screen[data-step=select] .select-pane .hero-select.er .er-list{max-height:100%;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+.m-mode .title-screen[data-step=select] .select-pane .er-detail.hero-detail{height:100%;min-height:0;overflow:hidden}
+.m-mode .title-screen[data-step=select] .er-stats{height:100%;max-height:100%;min-height:0;box-sizing:border-box;align-self:stretch;display:flex;flex-direction:column;overflow:hidden}
+.m-mode .title-screen[data-step=select] .er-stats>*{flex:none}
+.m-mode .title-screen[data-step=select] .er-stats>.fantasy{flex:0 1 auto;min-height:48px;overflow-y:auto;overscroll-behavior:contain;padding-right:4px}
+.m-mode .title-screen[data-step=select] .er-stats>.hero-pick-actions{margin-top:auto;padding-top:4px}
+.m-mode .title-screen[data-step=select] .er-stats>.fantasy{padding-bottom:14px;-webkit-mask-image:linear-gradient(#000 calc(100% - 16px),transparent);mask-image:linear-gradient(#000 calc(100% - 16px),transparent)}
+/* at 667x375 the 292 px stage ran over the detail panel: it shrinks with its column, keeping its shape */
+.m-mode .title-screen[data-step=select] .select-pane .er-detail.hero-detail[data-hero] .er-stage{width:min(292px,100%);height:auto;min-height:0;aspect-ratio:292/228;max-height:100%}
+.m-mode .title-screen[data-step=select] .select-pane .er-stage .er-hero.detail-sprite{width:calc(100% - 12px);height:auto;aspect-ratio:280/216}
+/* #3 (audit8 a11): on a phone five smith cards sat in a row with their names under the "More below" fade. Buy and Craft become a 2-column
+   list: icon, name, gain (the trade line, else the badge, else the kind) and the price or button; a tap opens the full card (main.js smithRows) */
+@media(max-height:500px){
+ html.m-mode dialog[data-view=smith] .smith-stock:is([data-tab=buy],[data-tab=craft]) .gear-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;align-items:start}
+ html.m-mode dialog[data-view=smith] .smith-stock:is([data-tab=buy],[data-tab=craft]) .gear-card:not(.open){display:grid;grid-template-columns:36px minmax(0,1fr) auto;grid-template-rows:auto auto;grid-template-areas:"ico name price" "ico gain price";align-items:center;column-gap:8px;row-gap:0;min-height:52px;padding:6px 26px 6px 8px;cursor:pointer}
+ html.m-mode dialog[data-view=smith] .smith-stock:is([data-tab=buy],[data-tab=craft]) .gear-card:not(.open)>*{display:none}
+ html.m-mode dialog[data-view=smith] .smith-stock:is([data-tab=buy],[data-tab=craft]) .gear-card:not(.open)::after{content:'▾';position:absolute;right:8px;top:50%;transform:translateY(-50%);font:700 14px/1 var(--ui);color:var(--gold-2,#f0d48a)}
+ html.m-mode dialog[data-view=smith] .smith-stock:is([data-tab=buy],[data-tab=craft]) .gear-card:not(.open)>.smith-ico{display:flex;grid-area:ico;width:36px;height:36px;margin:0;border-width:2px}
+ html.m-mode dialog[data-view=smith] .smith-stock:is([data-tab=buy],[data-tab=craft]) .gear-card:not(.open)>.smith-ico .gear-ico{width:28px;height:28px}
+ html.m-mode dialog[data-view=smith] .smith-stock:is([data-tab=buy],[data-tab=craft]) .gear-card:not(.open)>h3{display:block;grid-area:name;margin:0;font-size:16px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ html.m-mode dialog[data-view=smith] .smith-stock:is([data-tab=buy],[data-tab=craft]) .gear-card:not(.open)>.gear-trade,
+ html.m-mode dialog[data-view=smith] .smith-stock:is([data-tab=buy],[data-tab=craft]) .gear-card:not(.open):not(:has(>.gear-trade))>.gear-up-badge,
+ html.m-mode dialog[data-view=smith] .smith-stock:is([data-tab=buy],[data-tab=craft]) .gear-card:not(.open):not(:has(>.gear-trade,>.gear-up-badge))>.tag{display:block;grid-area:gain;margin:0;font-size:14px;line-height:1.2;overflow-wrap:anywhere;text-align:left}
+ html.m-mode dialog[data-view=smith] .smith-stock:is([data-tab=buy],[data-tab=craft]) .gear-card:not(.open)>.gear-card-top{display:flex;grid-area:price;margin:0}
+ html.m-mode dialog[data-view=smith] .smith-stock:is([data-tab=buy],[data-tab=craft]) .gear-card:not(.open)>.gear-card-top>:not(button,.subtle,.gear-locked){display:none}
+ html.m-mode dialog[data-view=smith] .smith-stock:is([data-tab=buy],[data-tab=craft]) .gear-card:not(.open)>.gear-card-top button{min-height:36px;margin:0;padding:2px 8px}
+ html.m-mode dialog[data-view=smith] .smith-stock:is([data-tab=buy],[data-tab=craft]) .gear-card:not(.open)>.gear-card-top>.subtle{margin:0;font-size:14px}
+ html.m-mode dialog[data-view=smith] .smith-stock:is([data-tab=buy],[data-tab=craft]) .gear-card:not(.open):has(.gear-locked)>.gear-card-top{grid-area:gain;min-width:0}
+ html.m-mode dialog[data-view=smith] .smith-stock:is([data-tab=buy],[data-tab=craft]) .gear-card:not(.open):has(.gear-locked)>:is(.gear-trade,.gear-up-badge,.tag){display:none}
+ html.m-mode dialog[data-view=smith] .smith-stock:is([data-tab=buy],[data-tab=craft]) .gear-card:not(.open)>.gear-card-top>.gear-locked{margin:0;padding:0;border:0;background:none;box-shadow:none;font-size:14px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ html.m-mode dialog[data-view=smith] .smith-stock[data-tab=craft] .gear-card:not(.open)>button{display:block;grid-area:price;min-height:36px;margin:0;padding:2px 10px}
+ html.m-mode dialog[data-view=smith] .smith-stock:is([data-tab=buy],[data-tab=craft]) .gear-card.open{grid-column:1/-1}
+ html.m-mode dialog[data-view=smith] .smith-stock:is([data-tab=buy],[data-tab=craft]) .gear-card.open>h3{cursor:pointer}
+ html.m-mode dialog[data-view=smith] .smith-stock:is([data-tab=buy],[data-tab=craft]) .gear-card:focus-visible{outline:2px solid var(--gold-2,#f0d48a);outline-offset:1px}
+}
+/* #5 (audit8 a13): result cards. A desktop card is header / scrolling middle / NEXT GOAL / buttons (main.js resultFrame): the VICTORY
+   ribbon, name, stars and grade stay in view, and nothing can run under the NEXT GOAL strip, which no longer floats over the middle */
+html:not(.m-mode) dialog[data-view=result] #modal-content:has(>.level-result>.result-mid){display:flex;flex-direction:column;overflow:hidden}
+html:not(.m-mode) dialog[data-view=result] #modal-content>.level-result:has(>.result-mid){display:flex;flex-direction:column;flex:1 1 auto;min-height:0;max-height:100%}
+html:not(.m-mode) dialog[data-view=result] #modal-content>.level-result:has(>.result-mid)>:not(.result-mid){flex:none}
+html:not(.m-mode) dialog[data-view=result] #modal-content>.level-result>.result-mid{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--gold-deep) transparent;padding:0 4px}
+html:not(.m-mode) dialog[data-view=result] #modal-content .level-result:has(>.result-mid)>:is(.result-goal,.modal-actions){position:static;bottom:auto;box-shadow:none}
+html:not(.m-mode) dialog[data-view=result] #modal-content .level-result:has(>.result-mid)>.result-goal{margin-top:2px}
+dialog[data-view=result] :is(.result-mid,.level-result-body).more-below{-webkit-mask-image:linear-gradient(#000 calc(100% - 28px),transparent);mask-image:linear-gradient(#000 calc(100% - 28px),transparent)}
+/* the folded highlights: "More: 2 more notes" opens the tier, recipe and star-rule lines in place */
+dialog[data-view=result] .level-highlights>.level-more{width:100%;margin:2px 0 0}
+dialog[data-view=result] .level-highlights>.level-more>summary{cursor:pointer;list-style:none;width:max-content;max-width:100%;margin:0 auto;padding:2px 12px;border:1px solid #e3b85a88;border-radius:10px;background:#2a2f5c;font:700 15px/20px var(--ui);color:#f1e6cc}
+dialog[data-view=result] .level-highlights>.level-more>summary::-webkit-details-marker{display:none}
+dialog[data-view=result] .level-highlights>.level-more>summary::after{content:' ▾'}
+dialog[data-view=result] .level-highlights>.level-more[open]>summary::after{content:' ▴'}
+dialog[data-view=result] .level-highlights>.level-more>.level-record{margin-top:4px}
+html:not(.m-mode) dialog[data-view=result] .level-result.result-packed>.result-mid>.result-chests{flex-wrap:nowrap;gap:6px;margin:2px 0}
+/* phones: the NEXT GOAL strip had grid row 8, the stretchy spare row, so a card that let it flow (v1) squeezed it to 0 px under the
+   buttons, and a sticky strip floated over the reward column (m7). The reward column is now one box (main.js resultFrame .result-side):
+   You got over the rewards, which scroll; the header runs down the left; NEXT GOAL and the buttons span the bottom, over nothing */
+@media(max-height:500px) and (min-width:600px){
+ .m-mode dialog[data-view=result] #modal-content>.level-result:has(>.result-side):not(:has(#result-extra:not([hidden]))){height:100%}
+ .m-mode dialog[data-view=result] #modal-content>.level-result:has(>.result-side){grid-template-rows:repeat(8,auto) minmax(0,1fr) auto auto auto;align-content:stretch}
+ .m-mode dialog[data-view=result] #modal-content .level-result:has(>.result-side)>.rating-key{grid-column:1;grid-row:7}
+ .m-mode dialog[data-view=result] #modal-content .level-result:has(>.result-side)>.grade-next{grid-column:1;grid-row:8}
+ .m-mode dialog[data-view=result] #modal-content .level-result:has(>.result-side)>.level-line{grid-column:1;grid-row:9;align-self:start}
+ .m-mode dialog[data-view=result] #modal-content .level-result>.result-side{grid-column:2;grid-row:1 / 10;display:flex;flex-direction:column;min-height:0;min-width:0}
+ .m-mode dialog[data-view=result] #modal-content .level-result>.result-side>.you-got{flex:none;margin:2px 0 4px}
+ .m-mode dialog[data-view=result] #modal-content .level-result>.result-side>.level-result-body{flex:1 1 auto;min-height:0;max-height:none;overflow-y:auto;align-self:stretch;align-items:flex-start;margin:0}
+ .m-mode dialog[data-view=result] #modal-content .level-result:has(>.result-side)>.result-goal{grid-row:10;position:static;bottom:auto}
+ .m-mode dialog[data-view=result] #modal-content .level-result:has(>.result-side)>.result-goal::after{display:none}
+ .m-mode dialog[data-view=result] #modal-content .level-result:has(>.result-side)>#result-extra{grid-row:11}
+ .m-mode dialog[data-view=result] #modal-content .level-result:has(>.result-side)>.modal-actions{grid-row:12;position:static}
+ .m-mode dialog[data-view=result] #modal-content .level-result:has(>.result-side)>.rating-key{display:none}
+}
+@media(max-height:380px) and (min-width:600px){
+ .m-mode dialog[data-view=result] #modal-content .level-result:has(>.result-side)[data-outcome=won] .victory-title{height:40px;background-size:192px 48px;background-position:center -4px;font-size:18px}
+ .m-mode dialog[data-view=result] #modal-content .level-result:has(>.result-side)>.grade-next{font-size:14px;line-height:1.2;margin:0}
+}
+/* #1 hero card: the stats as HTML beside the picture (10 px minimum; the canvas stays for Save and Share; the pixel font at its 16 px cell) */
+.herocard-row{display:flex;gap:14px;align-items:stretch;justify-content:center;max-width:100%}.herocard-row canvas{min-width:0;align-self:center}.herocard-panel:has(.keepsakes) .herocard-row canvas{width:min(100%,900px,calc((100vh - 490px)*1.9))}
+.herocard-stats{flex:0 1 300px;min-width:220px;margin:0;padding:6px 12px;display:flex;flex-direction:column;gap:3px;align-self:center;max-height:calc((100vh - 470px)*1.9*630/1200 + 30px);color:var(--parch-ink,#3b2a1a);background:#f1e2bf;border:3px solid #8a6a3a;border-radius:4px;font-size:16px;line-height:1.15;overflow:auto}
+.herocard-stats>div{display:flex;flex-wrap:wrap;align-items:baseline;column-gap:8px}.herocard-stats dt{font-weight:700;color:#7a5a30}.herocard-stats dd{margin:0}.herocard-stats .hcs-subj{flex:1 0 100%}
+.herocard-stats .hcs-name dt{display:none}.herocard-stats .hcs-name dd{display:flex;flex-direction:column}.herocard-stats .hcs-name em{font-style:normal;color:#6a4a20}
+.herocard-stats small{font-size:16px;color:#6a4a20}.herocard-stats small::before{content:"· "}.hcs-subj{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}.hcs-subj>span{display:flex;justify-content:space-between;gap:6px;border-left:4px solid var(--c,#888);padding-left:5px}
+html.m-mode .herocard-panel{grid-template-columns:auto minmax(0,1fr)}html.m-mode .herocard-row{grid-row:span 2;gap:8px}
+html.m-mode .herocard-panel .herocard-row canvas,html.m-mode .herocard-panel:has(.keepsakes) .herocard-row canvas{width:min(36vw,calc((100vh - 225px)*1.9))}
+html.m-mode .herocard-stats{flex:0 0 200px;min-width:0;padding:4px 8px;gap:3px;line-height:1.05}html.m-mode .hcs-subj{grid-template-columns:1fr}
+/* 852x283 (iPhone Safari landscape with its bars showing): the title menu fits, the next-ability chip stays clear of the joystick ghost */
+@media(max-height:320px){.title-pane{padding:6px 12px}html.m-mode .title-pane .logo{transform:none;margin-bottom:6px}html .title-pane .logo-word{width:calc(var(--w,0)*2px);height:calc(var(--h,0)*2px)}html .title-pane .logo-crest{width:calc(60*var(--u));height:calc(24*var(--u));margin-bottom:-2px}html .title-pane .logo-sub{margin-top:2px}.title-menu{gap:3px}
+ html.m-mode.in-town #next-unlock.peek:not(.open){top:calc(env(safe-area-inset-top,0px) + 62px);left:calc(max(8px,env(safe-area-inset-left,0px)) + 238px)} .m-mode .title-screen[data-step=select] .select-head .select-progress,.m-mode .title-screen[data-step=select] .select-head .eyebrow{display:none}.m-mode .title-screen[data-step=select] .select-pane{padding-top:4px;padding-bottom:4px}.m-mode .title-screen[data-step=select] .select-pane .hero-select.er{margin-top:0}
+ .m-mode .title-screen[data-step=select] .er-stats>.fantasy{min-height:24px}.m-mode .title-screen[data-step=select] .er-stats{padding-top:6px;padding-bottom:6px} .m-mode dialog[data-view=result] #modal-content .level-result:has(>.result-side)>:is(.victory-cheer,.level-tier){display:none}.m-mode dialog[data-view=result] #modal-content .level-result:has(>.result-side)>.level-starline{transform:scale(.8);margin:-4px 0}.m-mode dialog[data-view=result] #modal-content .level-result:has(>.result-side)>.result-goal{padding-block:2px;font-size:14px;line-height:1.15}.m-mode dialog[data-view=result] #modal-content .level-result:has(>.result-side)>.modal-actions{margin-top:2px}
+ .m-mode :is(.smith-tab-help,.smith-show-line){display:none}.m-mode #modal-content>.modal-head{margin-bottom:0}.m-mode #modal-content>.gear-next{padding-block:2px;margin-bottom:2px}}

@@ -6,7 +6,10 @@
    silhouette, GHOST). Effects only; no new figure. */
 import {enemyTop} from '../scenes/enemy-ai.js';
 import {spriteMeta} from './actors/sprites.js';
-export const XRAY={color:'#fff1a6',fill:'rgba(55,83,102,.5)',share:.15,w:140,h:120,up:96,box:{half:10,top:44}};
+/* improve20-r9f-nov1 #2 (audit8 a8: Moltar still hid the hero; only the pale outline's few pixels over his body showed, and his cleaver
+   and flames covered the rest): once a real share of the hero is covered, his WHOLE 1 px outline is drawn on top in near-white at about
+   70%, not only the part over the boss, so the player always sees where he stands; the see-through dark fill stays on the covered part. */
+export const XRAY={color:'rgba(255,250,228,.72)',fill:'rgba(55,83,102,.5)',share:.15,w:140,h:120,up:96,box:{half:10,top:44}};
 /* the bosses and elites drawn over the hero this frame: nearer the camera than him, and their body crosses his box */
 export function heroCovers(state){const p=state?.player;if(!p||!state.level||p.hp<=0&&!p.down)return [];const B=XRAY.box,hx0=p.x-B.half,hx1=p.x+B.half,hy0=p.y-(p.z||0)-B.top,hy1=p.y;
  return (state.enemies||[]).filter(e=>(e.boss||e.elite)&&e.hp>0&&!e.decoy&&!(e.entering>0)&&e.y>p.y&&!(e.alpha===0)).filter(e=>{const m=spriteMeta(e.sprite),k=Math.max(1,e.scale||1),top=enemyTop(e),half=Math.max((e.y-top)*.32,(m?.width?m.width*.38:(m?.shadow?.[0]||16))*k);return e.x-half<hx1&&e.x+half>hx0&&top<hy1&&e.y>hy0;});}
@@ -27,10 +30,11 @@ export function drawHeroXray(c,state,drawHero,drawCover){const over=heroCovers(s
  /* grow the body by one pixel for the outline, then fill the inside with the see-through dark */
  edge.setTransform(1,0,0,1,0,0);edge.globalCompositeOperation='source-over';edge.clearRect(0,0,W,H);edge.drawImage(cv,0,0);
  g.globalCompositeOperation='source-over';for(const [dx,dy] of [[-1,0],[1,0],[0,-1],[0,1]])g.drawImage(ed,dx,dy);g.globalCompositeOperation='destination-out';g.drawImage(ed,0,0);
- edge.globalCompositeOperation='source-in';edge.fillStyle=XRAY.fill;edge.fillRect(0,0,W,H);g.globalCompositeOperation='source-over';g.drawImage(ed,0,0);
- g.globalCompositeOperation='destination-in';g.drawImage(mk,0,0);g.globalCompositeOperation='source-over';
+ /* the see-through fill only where the boss covers him; the outline ring (g) stays whole */
+ edge.globalCompositeOperation='destination-in';edge.drawImage(mk,0,0);
  /* a hero only brushed by a boss's edge is plainly visible: draw him only when a real share of him is covered */
- const after=g.getImageData(0,0,W,H).data;let hid=0;for(let i=3;i<after.length;i+=4)if(after[i])hid++;if(hid<body*XRAY.share)return false;
+ const after=edge.getImageData(0,0,W,H).data;let hid=0;for(let i=3;i<after.length;i+=4)if(after[i])hid++;if(hid<body*XRAY.share)return false;
+ edge.globalCompositeOperation='source-in';edge.fillStyle=XRAY.fill;edge.fillRect(0,0,W,H);edge.globalCompositeOperation='source-over';g.globalCompositeOperation='source-over';g.drawImage(ed,0,0);
  c.drawImage(cv,bx,by);return true;}
 /* the last outline canvas, for tests and shot tools */
 export const xrayCanvas=()=>cv;

@@ -25690,6 +25690,20 @@ export const QUESTION_REVISIONS=[
   "oldPrompt": "\"Every friday, the twins visit Oakhaven.\" Which word needs a capital letter: every, friday or oakhaven?",
   "newPrompt": "\"Every friday, the twins visit Oakhaven.\" Which word is missing its capital letter: Every, friday or Oakhaven?",
   "reason": "improve20-d-nov1: Every and Oakhaven need capital letters too (they have them); only friday is missing one, so the question asks which word is missing its capital and shows the options as written. Try-it."
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "What is the strongest type of intermolecular force between molecules of liquid HCl? A: London dispersion forces only, B: dipole-dipole attractions, C: hydrogen bonding. Answer A, B or C.",
+  "newPrompt": "Molecules of HCl and of F₂ have the same number of electrons (18). Which type of intermolecular force acts between HCl molecules but not between F₂ molecules? A: London dispersion forces, B: dipole-dipole attractions, C: hydrogen bonding. Answer A, B or C.",
+  "reason": "improve20-r9f-nov1 (audit8 fact check): \"the strongest force in liquid HCl\" was keyed dipole-dipole, but in such small polar molecules London dispersion contributes more of the attraction (Atkins & de Paula, Physical Chemistry: HCl dispersion about 17 kJ/mol against dipole-dipole about 3 kJ/mol). The item now asks which force the polar molecule has that a nonpolar molecule with the same number of electrons does not (dipole-dipole: still the keyed answer)."
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "What is the strongest type of intermolecular force between molecules of liquid CH₃OCH₃? A: London dispersion forces only, B: dipole-dipole attractions, C: hydrogen bonding. Answer A, B or C.",
+  "newPrompt": "Molecules of CH₃OCH₃ and of C₃H₈ (propane) have the same number of electrons (26). Which type of intermolecular force acts between CH₃OCH₃ molecules but not between C₃H₈ (propane) molecules? A: London dispersion forces, B: dipole-dipole attractions, C: hydrogen bonding. Answer A, B or C.",
+  "reason": "improve20-r9f-nov1 (audit8 fact check): \"the strongest force in liquid CH₃OCH₃\" was keyed dipole-dipole, but in such small polar molecules London dispersion contributes more of the attraction (Atkins & de Paula, Physical Chemistry: HCl dispersion about 17 kJ/mol against dipole-dipole about 3 kJ/mol). The item now asks which force the polar molecule has that a nonpolar molecule with the same number of electrons does not (dipole-dipole: still the keyed answer)."
  }
 ];
 export const ANSWER_ID_RENAMES=new Map(QUESTION_REVISIONS.map(r=>[`${r.subject}-${r.level}-${hash(r.oldPrompt)}`,`${r.subject}-${r.level}-${hash(r.newPrompt)}`]));

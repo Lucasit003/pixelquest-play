@@ -210,3 +210,11 @@ function endGoal(save){
  /* oct24-endgame: the last word points at the last level, not back to the first */const last=LEVELS.find(l=>gameFinale(l.id))||levelById('e1');
  return {id:'replay',text:`Every adventure goal is complete! Replay ${last.name} on Legendary with a different loadout whenever you like.`,target:{kind:'pad',id:last.id,tier:'legendary'}};}
 export const nextStepLevel=save=>{const n=nextStep(save),t=(n.then||n).target;return t.kind==='pad'?levelById(t.id):null;};
+/* improve20-r9f-nov1 #5 (audit8: after losing v3 or v7 the defeat card's NEXT GOAL read "Next adventure: The Deep Below"): after a loss the
+   main next step is the level just lost, by name, on its tier (the Rift says so), unless the defeat flow has something that ranks higher:
+   an offer the caller passes (opts.offer, e.g. a "Make fights easier?" step) or an empty potion bag (nextStep's 'potions' step).
+   A win, or an arena run, keeps nextStep. Pure: reads the save, writes nothing. */
+export function retryStep(save,{id,tier='normal',rift=false,boss=false}={}){const l=levelById(id);if(!l)return null;const k=TIERS[tier]?tier:'normal';
+ const text=rift?`Try this week's Rift again: ${l.name}.`:boss?`Try ${l.name} again: the boss fight is waiting.`:`Try ${l.name} again${k!=='normal'?` on ${TIERS[k].label}`:''}.`;
+ return {id:'retry-'+l.id,text,target:{kind:'pad',id:l.id,...(k!=='normal'?{tier:k}:{})},retry:true};}
+export function resultGoal(save,{won,id,tier='normal',rift=false,boss=false,arena=false,offer=null}={}){const n=nextStep(save);if(won||arena)return n;if(offer?.text)return offer;if(n.id==='potions')return n;return retryStep(save,{id,tier,rift,boss})||n;}

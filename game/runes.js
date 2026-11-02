@@ -40,6 +40,11 @@ export const runesShown=s=>runePoints(s)>0&&ownedAbilities(s).length>0;
 export const runeRoom=s=>ownedAbilities(s).some(a=>runeRank(s,a.id)<RUNE_MAX);
 /* how many free runes the current hero can place right now (the rest wait, banked, for the next ability) */
 export const runesPlaceable=s=>Math.min(runesFree(s),ownedAbilities(s).reduce((t,a)=>t+RUNE_MAX-runeRank(s,a.id),0));
+/* improve20-r9e-nov1 #6 (audit8 a17): the HUD said "12 runes are ready" (placeable) while Home → Abilities said "13 runes to place" (free).
+   One tally and one wording everywhere: place = what fits in owned abilities now, saved = the rest, waiting for the next ability (or spare once
+   every ability of this hero is owned). "12 runes to place · 1 saved for your next ability" */
+export function runeTally(s){const free=runesFree(s),place=runesPlaceable(s),all=(ABILITIES[s?.hero]||[]).length,own=ownedAbilities(s).length;return {free,place,saved:free-place,full:all>0&&own>=all};}
+export function runeCountText(s,{where=''}={}){const {place,saved,full}=runeTally(s);return `${place} ${place===1?'rune':'runes'} to place${where}${saved>0?` · ${saved} ${full?'spare: every ability is at III':'saved for your next ability'}`:''}`;}
 export function cleanRunes(v,s){const out={};if(!v||typeof v!=='object'||Array.isArray(v))return out;
  for(const [id,n] of Object.entries(v).slice(0,64)){const k=Math.floor(Number(n));if(!BY_ID[id]||!(k>0)||!owns(s,BY_ID[id]))continue;out[id]=Math.min(RUNE_MAX,k);}
  const pts=runePoints(s);for(const h of new Set(Object.keys(out).map(id=>HERO_OF[id]))){let over=Object.keys(out).filter(id=>HERO_OF[id]===h).reduce((t,id)=>t+out[id],0)-pts;const ids=Object.keys(out).filter(id=>HERO_OF[id]===h).reverse();

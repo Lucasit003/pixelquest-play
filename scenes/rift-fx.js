@@ -14,4 +14,4 @@ export const riftDealt=(w,a)=>hasMod(w,'glass')&&!a?.ally?RIFT_MODS.glass.dealt:
 export const riftPotions=w=>hasMod(w,'thrifty')?RIFT_MODS.thrifty.potions:0;
 /* Thrifty: what the potion just healed (instantly, or the regeneration still to come) is halved */
 export function riftPotion(w,hp0,r){if(!hasMod(w,'thrifty')||!r?.ok)return r;const p=w.player,k=RIFT_MODS.thrifty.heal;p.hp=hp0+(p.hp-hp0)*k;if(p.potionRegen>0)p.potionRegen*=k;r.message=`${r.message} · Thrifty: half healing`;return r;}
-export function riftEnd(w,won,runR,time){if(!w.rift||!w.level)return null;return riftFinish(w.save,{won,level:w.level.id,grade:runR?.grade||null,time});}
+export function riftEnd(w,won,runR,time){if(!w.rift||!w.level)return null;return riftFinish(w.save,{won,level:w.level.id,tier:w.tierKey||'normal',grade:runR?.grade||null,time});}

@@ -96,7 +96,15 @@ items(add){/* Round 11 (17 Oct): a pool rounding instruction never asks for more
  const STR2={...STRONG,'SiH₄':0,'GeH₄':0,'F₂':0,'Cl₂':0,'Ne':0,'Kr':0};
  const keyOf=f=>STR2[f]*1000+ELEC[f];
  /* 3.1 intermolecular forces */
- ['CH₄','HCl','NH₃','CO₂','CH₃OCH₃','CH₃OH'].forEach((f,i)=>{const right=CLS[STRONG[f]],c=choose(right,CLS.filter(x=>x!==right),i);
+ /* improve20-r9f-nov1 #6 (audit8 fact check): "the strongest force in liquid HCl" was keyed dipole-dipole, but in HCl London dispersion
+    contributes more of the attraction than the dipole does (Atkins & de Paula, Physical Chemistry, interaction-energy contributions:
+    HCl dispersion about 17 kJ/mol against dipole-dipole about 3 kJ/mol), and the same holds for small polar molecules such as
+    dimethyl ether. The two polar molecules now ask a question that is true whatever the sizes: which force the polar molecule has that a
+    nonpolar molecule of about the same size (the same number of electrons) does not. Both have dispersion; neither has H on N, O or F. */
+ const PARTNER={'HCl':['F₂','18'],'CH₃OCH₃':['C₃H₈ (propane)','26']},EXTRA=['dipole-dipole attractions','London dispersion forces','hydrogen bonding'];
+ ['CH₄','HCl','NH₃','CO₂','CH₃OCH₃','CH₃OH'].forEach((f,i)=>{if(PARTNER[f]){const [o,n]=PARTNER[f],right=EXTRA[0],c=choose(right,EXTRA.slice(1),i);
+   put('imf',`Molecules of ${f} and of ${o} have the same number of electrons (${n}). Which type of intermolecular force acts between ${f} molecules but not between ${o} molecules? ${c.text}. Answer A, B or C.`,c.letter,board('Compare the two',[`${f}: polar`,`${o}: nonpolar`,'is H bonded to N, O or F?']),`${f} is polar and ${o} is not, so only ${f} has dipole-dipole attractions. London dispersion forces act between the molecules of both, and neither has H bonded to N, O or F, so neither forms hydrogen bonds.`,[right]);return;}
+  const right=CLS[STRONG[f]],c=choose(right,CLS.filter(x=>x!==right),i);
   put('imf',`What is the strongest type of intermolecular force between molecules of liquid ${f}? ${c.text}. Answer A, B or C.`,c.letter,board('Look at the molecule',[`species: ${f}`,'is it polar?','is H bonded to N, O or F?']),`The strongest force that ${f} can form is ${right}: hydrogen bonding needs H on N, O or F, dipole-dipole needs a polar molecule, and dispersion forces act in every substance.`,[right]);});
  [[['CH₄','SiH₄','GeH₄'],'highest'],[['F₂','Cl₂','Br₂'],'highest'],[['CH₃OH','C₂H₆','HCl'],'highest'],[['Ne','Ar','Kr'],'highest'],[['NH₃','PH₃','CH₄'],'lowest'],[['F₂','Cl₂','Br₂'],'lowest']].forEach(([set,dir],i)=>{
   const sorted=[...set].sort((a,b)=>keyOf(a)-keyOf(b)),right=dir==='highest'?sorted[2]:sorted[0],c=choose(right,set.filter(x=>x!==right),i);

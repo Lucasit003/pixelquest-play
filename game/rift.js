@@ -8,9 +8,9 @@
    cleaned by normalize() (cleanRift). `week` is the ISO week key ('2026-W44'), so a new year never matches an old week; `level` is the
    week's pick, settled the first time the week is seen, so clearing another level mid-week never swaps the Rift under the player.
    Pure: callers pass the save and the date. Combat side: scenes/rift-fx.js. */
-import {LEVELS,levelById,levelDone,tiered,levelReward} from './levels.js';
+import {LEVELS,CHAPTERS,levelById,levelDone,tiered,levelReward,tierOpen} from './levels.js';
 import {waveGroups} from './stage.js';
-import {killGold,pickMod} from './tiers.js';
+import {killGold,pickMod,tierGold,tierKey,TIER_KEYS} from './tiers.js';
 import {ENEMY_TYPES} from './enemies.js';
 import {gradeRank,GRADE_KEYS} from './grade.js';
 /* Each modifier reuses an existing system and reads in one line. */
@@ -27,11 +27,18 @@ export const RIFT_OPEN='e8',SHARDS_PER_TIER=4;
 export function isoWeek(date=new Date()){const d=new Date(date.getFullYear(),date.getMonth(),date.getDate()),day=(d.getDay()+6)%7;d.setDate(d.getDate()-day+3);const year=d.getFullYear(),jan4=new Date(year,0,4),week=1+Math.round(((d-jan4)/864e5-3+(jan4.getDay()+6)%7)/7);return {year,week,key:`${year}-W${String(week).padStart(2,'0')}`};}
 export const weekNumber=key=>{const m=/^(\d{4})-W(\d{2})$/.exec(String(key||''));return m?+m[2]:0;};
 export const riftOpen=s=>levelDone(s,RIFT_OPEN);
-/* The pool: every map level (tiered: kind 'level', not hidden) cleared on Normal, in LEVELS order (a fixed ordering). */
-export const riftPool=s=>LEVELS.filter(l=>tiered(l)&&levelDone(s,l.id)).map(l=>l.id);
+/* improve20-r9f-nov1 #3 (audit8 a14: a level-19 hero who had finished the game drew Goblin Camp on Normal, for +1 shard and +97 gold
+   while holding 2,067): the pool is the NEWEST chapter the save has cleared a level in (its map levels cleared on Normal, in LEVELS
+   order), and the run is on the highest tier the save has opened for the week's level (Heroic after its Normal clear, Legendary after
+   its Heroic clear). Still picked from the calendar week alone. */
+const chapterIx=id=>CHAPTERS.findIndex(c=>c.id===levelById(id)?.chapter);
+export const riftPool=s=>{const done=LEVELS.filter(l=>tiered(l)&&levelDone(s,l.id));const top=Math.max(-1,...done.map(l=>chapterIx(l.id)));return done.filter(l=>chapterIx(l.id)===top).map(l=>l.id);};
+export const riftTierFor=(s,id)=>[...TIER_KEYS].reverse().find(k=>tierOpen(s,id,k))||'normal';
+/* the storm modifier brings Heroic hazards to a Normal run; on Heroic or Legendary the level has its own, so the next modifier stands in */
+export const riftModsAt=(week,k)=>{const m=riftModsFor(week);if(tierKey(k)==='normal'||!m.includes('storm'))return m;const alt=RIFT_ORDER.find(x=>x!=='storm'&&!m.includes(x));return m.map(x=>x==='storm'?alt:x);};
 export const riftModsFor=week=>{const i=((week|0)*7)%RIFT_ORDER.length;return [RIFT_ORDER[i],RIFT_ORDER[(i+1)%RIFT_ORDER.length]];};
 /* The pick for a week from the save's pool alone: week % pool.length, and modifiers (week*7) % 6 and the next one. Null with nothing cleared. */
-export function riftPick(s,date=new Date()){const w=isoWeek(date),pool=riftPool(s);if(!pool.length)return null;return {week:w.key,n:w.week,level:pool[w.week%pool.length],mods:riftModsFor(w.week)};}
+export function riftPick(s,date=new Date()){const w=isoWeek(date),pool=riftPool(s);if(!pool.length)return null;const level=pool[w.week%pool.length],tier=riftTierFor(s,level);return {week:w.key,n:w.week,level,tier,mods:riftModsAt(w.week,tier)};}
 export const emptyRift=()=>({week:null,level:null,best:null,shards:0,last:null,lastTime:null});
 const cleanGrade=g=>GRADE_KEYS.includes(g)?g:null,cleanTime=t=>Number.isFinite(+t)&&+t>0&&+t<1e6?Math.round(+t*10)/10:null,weekKey=k=>/^\d{4}-W\d{2}$/.test(String(k||''))?String(k):null;
 const cleanBest=b=>{if(!b||typeof b!=='object')return null;const time=cleanTime(b.time);return time==null?null:{grade:cleanGrade(b.grade),time};};
@@ -42,10 +49,18 @@ export function cleanRift(v){const r=emptyRift();if(!v||typeof v!=='object'||Arr
    leaves `last` as it was, and nothing at all counts the weeks between. The week's level is kept while it is still cleared. */
 export function riftWeek(s,date=new Date()){const r=s.rift=cleanRift(s.rift),pick=riftPick(s,date);if(!pick)return null;
  if(r.week!==pick.week){if(r.week&&r.best&&r.level)r.last={week:r.week,level:r.level,grade:r.best.grade,time:r.best.time};r.week=pick.week;r.level=pick.level;r.best=null;}
- if(!r.level||!levelDone(s,r.level))r.level=pick.level;return {...pick,level:r.level};}
-/* Gold equal to a Normal replay of the level: the replay's quarter clear reward plus half-rate kill gold for its Normal roster and boss. Fixed. */
-export function riftGold(l){l=typeof l==='string'?levelById(l):l;if(!l||l.kind!=='level')return 0;let g=Math.round(levelReward(l,'normal')/4);
- for(const w of l.waves||[])for(const e of waveGroups(w).flat()){const d=typeof e==='string'?{}:e;g+=killGold({elite:d.elite||d.mod},true);}if(l.boss)g+=killGold({boss:true},true);return g;}
+ /* improve20-r9f-nov1 #3: a week settled on an older chapter (a save from before this change, or a new chapter reached mid-week) moves to
+    the newest one until the week's Rift is won; once won, it stays */
+ if(!r.level||!levelDone(s,r.level)||!r.best&&chapterIx(r.level)<chapterIx(pick.level))r.level=pick.level;const tier=riftTierFor(s,r.level);return {...pick,level:r.level,tier,mods:riftModsAt(pick.n,tier)};}
+/* improve20-r9f-nov1 #3: the first win of a week pays gold sized like the game's late rewards: half the level's first-clear gold on the
+   Rift's tier plus half-rate kill gold for its roster and boss (as a replay pays), scaled by the tier's gold rate (Heroic 1.75x, Legendary 2.5x). The typical
+   save after the Sleeper (level 19) gets several hundred on Heroic, about half a late smith item, where the old Normal-replay sum was
+   +97. Fixed and shown in advance; nothing random. Shards: 1 on Normal, 2 on Heroic, 3 on Legendary (they only count toward the
+   cosmetic Rift Walker title). */
+export const RIFT_SHARDS={normal:1,heroic:2,legendary:3};
+export const riftShards=k=>RIFT_SHARDS[tierKey(k)]||1;
+export function riftGold(l,k='normal'){l=typeof l==='string'?levelById(l):l;if(!l||l.kind!=='level')return 0;let kills=0;
+ for(const w of l.waves||[])for(const e of waveGroups(w).flat()){const d=typeof e==='string'?{}:e;kills+=killGold({elite:d.elite||d.mod},true);}if(l.boss)kills+=killGold({boss:true},true);return Math.round(levelReward(l,k)/2)+tierGold(kills,k);}
 const ROMAN=['I','II','III','IV','V','VI','VII','VIII','IX','X'];
 export const riftTier=shards=>Math.floor(Math.max(0,shards|0)/SHARDS_PER_TIER);
 export const riftTitle=s=>{const t=riftTier(s?.rift?.shards);return t?`Rift Walker ${ROMAN[t-1]||t}`:null;};
@@ -54,12 +69,13 @@ export const shardsToNext=s=>SHARDS_PER_TIER-(Math.max(0,s?.rift?.shards|0)%SHAR
 export const betterRift=(a,b)=>!b||gradeRank(a.grade)>gradeRank(b.grade)||gradeRank(a.grade)===gradeRank(b.grade)&&a.time<b.time;
 /* A Rift run ends. Only a win of this week's level counts: it updates this week's best and, the first time in a week, pays one shard and
    riftGold (the caller banks the gold). A fall pays nothing extra and changes nothing here. Returns what the result card shows. */
-export function riftFinish(s,{won,level,grade=null,time,date=new Date()}){const pick=riftWeek(s,date),r=s.rift,prevTime=r.lastTime;if(!pick||level!==r.level)return null;
+export function riftFinish(s,{won,level,tier='normal',grade=null,time,date=new Date()}){const pick=riftWeek(s,date),r=s.rift,prevTime=r.lastTime;if(!pick||level!==r.level)return null;
  const t=cleanTime(time),run={grade:cleanGrade(grade),time:t};if(t!=null)r.lastTime=t;if(!won||t==null)return {won:!!won,paid:false,gold:0,shards:r.shards,newBest:false,prevTime,best:r.best,week:r.week};
- const first=!r.best,newBest=!first&&betterRift(run,r.best),tierBefore=riftTier(r.shards);if(first||newBest)r.best=run;let gold=0;if(first){r.shards++;gold=riftGold(level);}
- return {won:true,paid:first,gold,shards:r.shards,newBest,first,prevTime,best:r.best,week:r.week,title:riftTier(r.shards)>tierBefore?riftTitle(s):null};}
-/* The run's sanitised modifier set (World.startLevel): only this week's level, on Normal, with two known modifiers. */
-export function riftRun(opts,id,k){if(!opts||k!=='normal'||opts.level!==id)return null;const mods=(Array.isArray(opts.mods)?opts.mods:[]).filter(m=>RIFT_MODS[m]).slice(0,2);return mods.length?{week:weekKey(opts.week),level:id,mods}:null;}
+ const first=!r.best,newBest=!first&&betterRift(run,r.best),tierBefore=riftTier(r.shards);if(first||newBest)r.best=run;let gold=0;const won_=first?riftShards(tier):0;if(first){r.shards+=won_;gold=riftGold(level,tier);}
+ return {won:true,paid:first,gold,shardsWon:won_,tier:tierKey(tier),shards:r.shards,newBest,first,prevTime,best:r.best,week:r.week,title:riftTier(r.shards)>tierBefore?riftTitle(s):null};}
+/* The run's sanitised modifier set (World.startLevel): only this week's level, on the tier the pick names (opts.tier, Normal when
+   absent: improve20-r9f-nov1 #3), with two known modifiers. */
+export function riftRun(opts,id,k){if(!opts||opts.level!==id||tierKey(k)!==k||(opts.tier||'normal')!==k)return null;const mods=(Array.isArray(opts.mods)?opts.mods:[]).filter(m=>RIFT_MODS[m]).slice(0,2);return mods.length?{week:weekKey(opts.week),level:id,mods,...(k==='normal'?{}:{tier:k})}:null;}
 export const hasMod=(w,key)=>!!w?.rift?.mods?.includes(key);
 /* ---- the modifiers, each on its own existing system ---- */
 /* Elite rush: each wave's last group gains one modified elite of the wave's first regular type, or (a wave of only a mini-boss) the level's

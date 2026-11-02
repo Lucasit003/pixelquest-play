@@ -8,7 +8,13 @@ import {activeLoadout} from '../academics/awakening.js';
 /* libraryfirst-nov1: a Library-first game (its first power wakes at the Library before the prologue) passes ability=true, and the ability step
    comes right after the first attack, so the power's key is taught on the prologue's first goblins, before the boss closes the card */
 export function beginControls(s,id,tier,ability=false){if(id!=='home'||s.settings.controlsSeen)return null;s.settings.controlsSeen=true;if(s.levels?.e1?.done)return null;return {steps:['move','interact','attack',...(ability?['ability']:[]),'dodge','heavy'],index:0};}
-export function advanceControls(t,action){if(t&&t.steps[t.index]===action)t.index++;return t&&t.index<t.steps.length?t:null;}
+/* improve20-r9d-nov1 #1 (audit8 a2): an action done ahead of its step (a dodge during the attack step, the power cast before its turn) is
+   remembered in t.done, and its step is passed over when the card gets there, so the card never asks for something already done. */
+export function advanceControls(t,action){if(!t)return null;if(action&&t.steps.indexOf(action)>t.index&&!(t.done||=[]).includes(action))t.done.push(action);if(t.steps[t.index]===action)t.index++;while(t.index<t.steps.length&&t.done?.includes(t.steps[t.index]))t.index++;return t.index<t.steps.length?t:null;}
+/* A fight step (attack, dodge, heavy, the power) needs a foe. With none alive in a level (the wave is cleared, the next not yet in), the
+   card says "Next wave:" and its clock waits (ui/controls-tutorial.js), so it is never an order that cannot be carried out. */
+export const FOE_STEPS=Object.freeze(['attack','dodge','heavy','ability']);
+export const waitsForFoe=(t,w)=>!!t&&!!w?.level&&FOE_STEPS.includes(t.steps?.[t.index])&&!(w.enemies||[]).some(e=>e.hp>0&&!e.ally);
 
 /* A hint stays until the player does the thing (r3 playtest: 8 s was gone before a child read it). HINT_WAIT is only a
    safety net for a player who never tries; age counts on-screen time only, so a hint never runs out behind a panel. */

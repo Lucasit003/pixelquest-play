@@ -51,3 +51,11 @@ export function tileFormHTML(q,tiles,{form='quiz-form',input='quiz-answer',check
  if(!tiles?.length)return '';
  return `<form id="${form}" class="choice-form tile-form" data-choice-form data-tiles><input type="hidden" id="${input}" value=""><div class="answers choice-answers tile-answers" role="group" aria-label="Answer tiles">${tiles.map((x,i)=>`<button type="button" data-answer="${esc(x.value)}"><span class="tag" aria-hidden="true">${i+1}</span><span class="choice-text">${esc(x.label)}</span></button>`).join('')}</div><p class="subtle choice-keys">Tap an answer, or press 1-${tiles.length}.</p><p class="tile-alt"><button type="button" class="tile-type" data-type-instead>Type it instead</button></p><button type="submit" id="${check}" hidden>Check</button></form>`;
 }
+
+/* improve20-r9d-nov1 #2 (audit8 a3): an empty Check popped Chrome's raw grey "Please fill out this field" bubble (the answer boxes were
+   `required`). The boxes are not required now; an empty answer is stopped here, before the screen's own submit handler, and a game-styled
+   line says what to do: "Type your answer first" under a typing box, "Pick one" on a tap form. It goes as soon as the child types or taps.
+   Nothing is graded and nothing is recorded for an empty answer, exactly as before. */
+export const EMPTY_TYPE='Type your answer first',EMPTY_PICK='Pick one';
+export function emptyAnswer(form){const i=form?.querySelector?.('#quiz-answer,#answer,#field-answer');if(!i||i.disabled||String(i.value||'').trim())return null;return form.matches('[data-choice-form]')||i.type==='hidden'?EMPTY_PICK:EMPTY_TYPE;}
+export function installEmptyHint(doc){doc.addEventListener('submit',e=>{const form=e.target,msg=emptyAnswer(form);if(!msg)return;e.preventDefault();e.stopImmediatePropagation();let p=form.querySelector('.answer-hint');if(!p){p=doc.createElement('p');p.className='answer-hint';p.setAttribute('role','status');const i=form.querySelector('#quiz-answer,#answer,#field-answer');(i.type==='hidden'?form.querySelector('.answers')||i:i).after(p);i.addEventListener('input',()=>p.remove(),{once:true});}p.textContent=msg;p.classList.remove('pulse');void p.offsetWidth;p.classList.add('pulse');if(msg===EMPTY_TYPE)form.querySelector('#quiz-answer,#answer,#field-answer')?.focus({preventScroll:true});},true);}

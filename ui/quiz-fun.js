@@ -24,6 +24,9 @@ export function quizPic(q){
  const a=askedPic(q);if(!a)return null;
  if(Array.isArray(a)||!a.hint)return questionPictureHTML(a)?{spec:a,derived:false}:null;
  {const m=modelPic(q,a);if(m)return {spec:m,derived:true};}
+ /* improve20-r9d-nov1 #2 (audit8 a3): a pattern item's tiles (its worked answer, kept for after an answer) are drawn without the answer: the
+    same row with its blank as a dashed "?" (gfx/lesson-art.js tiles draws a fill only when solving). The row is the prompt's own words. */
+ if(a.t==='tiles'&&Array.isArray(a.seq)&&a.seq.length)return {spec:{t:'tiles',seq:[...a.seq]},derived:true};
  if(a.t!=='word'||typeof a.base!=='string'||!(NOUN_ART[a.base]||NOUN_ANIM[a.base]))return null;
  if(low(a.base)===low(q.answer))return null;
  return {spec:{t:'word',base:a.base,...(a.n?{n:a.n}:{})},derived:true};

@@ -43,7 +43,8 @@ export function closeSheet(){
 /* While the sheet is up, keys belong to it: Escape closes it, everything else is kept from main.js. */
 export function installSheetKeys(win=globalThis){
  win.addEventListener?.('keydown',e=>{
-  if(!sheetOpen())return;
+  /* improve20-r9f-nov1 #1: the grown-up gate (ui/parent-gate.js) stacks over the sheet and handles its own keys */
+  if(!sheetOpen()||e.target?.closest?.('#parent-gate'))return;
   if(e.key==='Escape'){e.preventDefault();closeSheet();e.stopImmediatePropagation();return;}
   /* Keys typed inside the sheet (a name field) reach their target, then stop at the dialog (below);
      keys aimed anywhere else never reach the game. */

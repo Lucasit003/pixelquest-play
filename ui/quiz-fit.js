@@ -16,7 +16,7 @@ export function fitQuestion(doc=globalThis.document){
  if(!q||!r||!mc||busy)return null;busy=true;
  try{
   const win=doc.defaultView,phone=doc.documentElement.classList.contains('m-mode')||win.innerHeight<=500,form=q.querySelector(':scope>#quiz-form');
-  q.classList.remove('q-room','q-dense','q-stack','q-flow');r.classList.remove('q-fit');r.style.removeProperty('--q-fs');
+  q.classList.remove('q-room','q-dense','q-stack','q-flow','q-pin','q-more');r.classList.remove('q-fit');r.style.removeProperty('--q-fs');
   /* too tall: the reading scrolls inside itself, the dialog clips or scrolls, or a part of the question lies over an answer or a button */
   const box=e=>e.getBoundingClientRect(),hit=(a,b)=>a.left<b.right-4&&b.left<a.right-4&&a.top<b.bottom-4&&b.top<a.bottom-4,scrolls=e=>/auto|scroll/.test(win.getComputedStyle(e).overflowY);
   const over=()=>{if(scrolls(r)&&r.scrollHeight>r.clientHeight+1)return true;if(mc.scrollHeight>mc.clientHeight+1)return true;
@@ -32,7 +32,10 @@ export function fitQuestion(doc=globalThis.document){
    /* a computer: still too tall beside its picture, the question takes the full width and the picture goes under it */
    if(over()&&!phone&&r.querySelector(':scope>:is(#quiz-pic,.question-text-card)')){q.classList.add('q-stack');step='stack';for(const fs of STACK.filter(v=>v<base)){r.style.setProperty('--q-fs',fs+'px');r.classList.add('q-fit');step='stack-'+fs;if(!over())break;}}
    /* still too tall: the dialog scrolls once; a phone then keeps its normal type, since the smaller one no longer buys a screen */
-   if(over()){q.classList.add('q-flow');step='flow';if(phone){r.classList.remove('q-fit');r.style.removeProperty('--q-fs');}}
+   /* improve20-r9d-nov1 #3 (audit8 a5): in phone mode the dialog no longer scrolls (the answer row went below the sheet): the answer row and
+      the row under it are pinned (style.css) and the question scrolls inside its own box above them, at its fitted type (.q-pin) */
+   if(over()&&doc.documentElement.classList.contains('m-mode')){q.classList.add('q-pin');step='pin';const more=()=>q.classList.toggle('q-more',r.scrollTop+r.clientHeight<r.scrollHeight-2);r.onscroll=more;more();}
+   else if(over()){q.classList.add('q-flow');step='flow';if(phone){r.classList.remove('q-fit');r.style.removeProperty('--q-fs');}}
   }
   q.dataset.fit=String(step);watch(q,mc,doc);return step;
  }finally{busy=false;}

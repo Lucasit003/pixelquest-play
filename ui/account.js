@@ -1,6 +1,6 @@
 /* Grown-ups account block and the newer-cloud card (accounts-nov1). Parent accounts only: the block sits in Settings ->
-   Grown-ups behind the same two-second hold as the learning record (ui/edu-report.js wireHold), so a child does not
-   wander in. Learners stay the local nickname profiles (ui/profiles.js); the child never types an email.
+   Grown-ups behind the one grown-up gate (ui/parent-gate.js, improve20-r9f-nov1 #1), as the learning record is, so a child
+   does not wander in; Sign out and Delete for good ask the gate again, since the block can be left open. Learners stay the local nickname profiles (ui/profiles.js); the child never types an email.
    - Empty cloud-config.js: "Cloud saves are coming soon" and no network call at all.
    - Signed out: email -> Send code -> 6-digit code -> Sign in, with plain errors (wrong, expired, too many tries, offline).
      The email is held only in this closure until sign-in; the stored session keeps it masked.
@@ -9,7 +9,7 @@
    Styles: ui/account.css, linked once like library.css. */
 import {maskEmail} from '../core/cloud.js';
 import {currentCloud,signedIn,syncStatus,onSyncStatus,reconcile,flush,clearSync,initSync,useCloudCopy,keepDeviceCopy} from './account-sync.js';
-import {wireHold} from './edu-report.js';
+import {openParentGate} from './parent-gate.js';
 import {openSheet,closeSheet,sheetHeader} from './sheet.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function ensureAccountStyles(doc=globalThis.document){
@@ -27,7 +27,7 @@ export function statusLine(st=syncStatus()){
  if(st.state==='error')return 'The last sync did not finish. It will try again.';
  return st.last?`Last synced ${when(st.last)}.`:'Not synced yet.';
 }
-export const accountGateHTML=()=>`<h4>Account and cloud saves</h4><p class="subtle">A grown-up can sign in by email to keep a safe copy of every learner’s progress and carry on from another device. Playing never needs an account.</p><button type="button" id="acct-open" class="edu-grownups" aria-describedby="acct-open-help">Account and cloud saves</button><small id="acct-open-help" class="subtle">Hold for two seconds to open.</small><div id="acct-block" class="acct" hidden></div>`;
+export const accountGateHTML=()=>`<h4>Account and cloud saves</h4><p class="subtle">A grown-up can sign in by email to keep a safe copy of every learner’s progress and carry on from another device. Playing never needs an account.</p><button type="button" id="acct-open" class="edu-grownups" aria-describedby="acct-open-help">Account and cloud saves</button><small id="acct-open-help" class="subtle">A grown-up answers a quick sum to open it.</small><div id="acct-block" class="acct" hidden></div>`;
 /* view: {step:'email'|'code', email, msg, err, del} */
 export function accountHTML(view={},c=currentCloud()){
  const note=`<p class="subtle acct-privacy">${PRIVACY_NOTE}</p>`,msg=`<p id="acct-msg" class="acct-msg${view.err?' is-error':''}" role="status" aria-live="polite">${esc(view.msg||'')}</p>`;
@@ -54,20 +54,20 @@ export function renderAccount(el,view={}){
  $('#acct-resend')?.addEventListener('click',()=>send(view.email));
  $('#acct-back')?.addEventListener('click',()=>again({step:'email',msg:'',err:false}));
  $('#acct-sync')?.addEventListener('click',async()=>{busy($('#acct-sync'),true);const st=$('#acct-status');if(st)st.textContent='Syncing…';await flush();const r=await reconcile({onNewer:showNewerCard});renderAccount(el,{msg:r.ok?(r.added?.length?`Brought down ${r.added.join(', ')}.`:'All saves are synced.'):errText(r.error),err:!r.ok});});
- $('#acct-out')?.addEventListener('click',async()=>{busy($('#acct-out'),true);await flush();await c.signOut();clearSync();renderAccount(el,{msg:'Signed out. Saves on this device are kept.'});});
+ $('#acct-out')?.addEventListener('click',()=>openParentGate({why:'Signing out is for grown-ups.',onPass:async()=>{busy($('#acct-out'),true);await flush();await c.signOut();clearSync();renderAccount(el,{msg:'Signed out. Saves on this device are kept.'});}}));
  $('#acct-del')?.addEventListener('click',()=>again({del:true,msg:''}));
  $('#acct-del-cancel')?.addEventListener('click',()=>again({del:false}));
  const dt=$('#acct-del-text'),go=$('#acct-del-go');
  dt?.addEventListener('input',()=>{go.disabled=dt.value.trim()!=='DELETE';});
- go?.addEventListener('click',async()=>{if(dt.value.trim()!=='DELETE')return;busy(go,true);const r=await c.deleteAccount();
-  if(r.ok){clearSync();renderAccount(el,{msg:'The account and its cloud saves are deleted. Saves on this device are kept.'});}else again({del:true,msg:errText(r.error),err:true});});
+ go?.addEventListener('click',()=>{if(dt.value.trim()!=='DELETE')return;openParentGate({why:'Deleting the account is for grown-ups.',onPass:async()=>{busy(go,true);const r=await c.deleteAccount();
+  if(r.ok){clearSync();renderAccount(el,{msg:'The account and its cloud saves are deleted. Saves on this device are kept.'});}else again({del:true,msg:errText(r.error),err:true});}});});
  dt?.focus?.();
  const stop=onSyncStatus(()=>{if(!el.isConnected){stop();return;}const st=el.querySelector('#acct-status');if(st)st.textContent=statusLine();});
 }
-/* Settings -> Grown-ups: the hold opens the block in place. */
-export function wireAccountGate(root){
+/* Settings -> Grown-ups: the grown-up gate opens the block in place. */
+export function wireAccountGate(root,{rng}={}){
  const b=root?.querySelector?.('#acct-open'),el=root?.querySelector?.('#acct-block');if(!b||!el)return false;ensureAccountStyles(root.ownerDocument||globalThis.document);
- return wireHold(b,()=>{b.hidden=true;const h=root.querySelector('#acct-open-help');if(h)h.hidden=true;renderAccount(el);el.querySelector('input,button')?.focus?.();});
+ b.addEventListener('click',e=>{e.preventDefault();openParentGate({doc:root.ownerDocument||globalThis.document,rng,why:'Accounts and cloud saves are for grown-ups.',onPass:()=>{b.hidden=true;const h=root.querySelector('#acct-open-help');if(h)h.hidden=true;renderAccount(el);el.querySelector('input,button')?.focus?.();}});});return true;
 }
 /* The newer-cloud card: one at a time; closing it without a choice changes nothing (it asks again next boot). */
 const cardQueue=[];let cardOpen=false;

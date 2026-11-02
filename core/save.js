@@ -162,7 +162,7 @@ const frac=(v,a,b)=>Math.max(a,Math.min(b,Number(v)||0));
  if(from>=6&&Array.isArray(value.starPass))s.starPass=[...new Set(value.starPass.filter(id=>typeof id==='string'&&starGate(levelById(id))))];
  else if(from<6)s.starPass=LEVELS.filter(l=>starGate(l)&&l.requires.some(r=>levelDone(s,r))).map(l=>l.id);
  // Kind-failure settings (8 Oct): Easy unless Heroic was chosen; Hero's Resolve on unless switched off.
- if(!['easy','heroic'].includes(s.settings.difficulty))s.settings.difficulty='easy';s.settings.resolve=s.settings.resolve!==false;/* improve20-j-nov1 #4: the free potion was explained once (additive, v9) */s.settings.freePotionSeen=s.settings.freePotionSeen===true;
+ if(!['easy','heroic'].includes(s.settings.difficulty))s.settings.difficulty='easy';s.settings.resolve=s.settings.resolve!==false;/* improve20-j-nov1 #4: the free potion was explained once (additive, v9) */s.settings.freePotionSeen=s.settings.freePotionSeen===true;/* improve20-r9d-nov1 #4: the one "Make fights easier?" answer (additive, v9) */if(!['taken','declined'].includes(s.settings.easierOffer))delete s.settings.easierOffer;
  for(const l of Object.values(s.levels))if(l.resolve!==undefined)l.resolve=n(l.resolve,0,99);
  if(value.levels)for(const [id,l] of Object.entries(value.levels))if(s.levels[id]&&Number.isFinite(+l?.resolve))s.levels[id].resolve=n(l.resolve,0,99);
  // The prologue arrived on 8 Oct: anyone who had already played on (a cleared contract or level, or a lesson)

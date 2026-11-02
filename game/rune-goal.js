@@ -5,11 +5,12 @@
    Read-only: nothing here changes what unlocks an ability. */
 import {SUBJECTS} from './data.js';
 import {learningRoad} from '../academics/learning-road.js';
-import {runesPlaceable,runeRoom,runesShown} from './runes.js';
+import {runesPlaceable,runeRoom,runesShown,runeCountText} from './runes.js';
 export const RUNE_EARN='Master 1 more topic: earn a rune';
-export const runePlaceText=n=>`${n===1?'A rune is':`${n} runes are`} ready: place ${n===1?'it':'them'} at Home → Abilities`;
+/* improve20-r9e-nov1 #6: the same count and words as Home → Abilities (runes.js runeCountText) */
+export const runePlaceText=s=>runeCountText(s,{where:' at Home → Abilities'});
 /* {kind:'place'|'earn', text} or null; null until the save has its first rune and an ability to hold it (improve20-q-oct31, runesShown) */
-export function runeLead(s){if(!s||!runesShown(s)||!runeRoom(s))return null;const n=runesPlaceable(s);return n>0?{kind:'place',text:runePlaceText(n)}:{kind:'earn',text:RUNE_EARN};}
+export function runeLead(s){if(!s||!runesShown(s)||!runeRoom(s))return null;const n=runesPlaceable(s);return n>0?{kind:'place',text:runePlaceText(s)}:{kind:'earn',text:RUNE_EARN};}
 /* the ability gate as topic dots: one dot per topic on the road, filled for those mastered (counted when the road is long) */
 export function gateDots(s,road=learningRoad(s)){if(!road||road.sleeping||!road.reachable||road.knowledge)return null;const a=road.ability,sub=SUBJECTS[a.subject]?.name||a.subject,{done,total}=road;
  const dots=total<=10?'●'.repeat(done)+'○'.repeat(Math.max(0,total-done)):`${done}/${total}`;return `${a.name} ${dots} ${sub}`;}

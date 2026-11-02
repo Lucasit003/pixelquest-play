@@ -8,11 +8,12 @@
    - A certificate for every finished grade. Print with the browser (print CSS in library.css shows
      only the report).
 
-   Children don't wander in by accident: the Grown-ups button must be held for two seconds. The hold
-   is a CSS animation (no JavaScript timer); letting go early cancels it.
+   Children don't wander in by accident: the Grown-ups button opens the grown-up gate (ui/parent-gate.js,
+   improve20-r9f-nov1 #1); only a right answer opens the record.
 
    Integrator: settings HTML gets grownupsButtonHTML(); after rendering, wireGrownupsButton(root, save). */
 import {TOPICS,POOL,mastered,topicOpen,stageName,rungOf,gradeTopics,grades} from '../academics/lessons.js';
+import {guardButton} from './parent-gate.js';
 import {ABILITIES} from '../game/abilities.js';
 import {SUBJECTS,CLASSES} from '../game/data.js';
 import {unlocked,abilityMastery} from '../game/math.js';
@@ -64,19 +65,10 @@ export function openReportCard(save,doc=globalThis.document){
  return el;
 }
 
-/* The hold-to-open button: the fill animation runs while it is held; its end opens the report. */
-export const grownupsButtonHTML=()=>`<button type="button" id="edu-grownups" class="edu-grownups" aria-describedby="edu-grownups-help">Grown-ups</button><small id="edu-grownups-help" class="subtle">Hold for two seconds to open the learning record.</small>`;
-export function wireGrownupsButton(root,save,{onOpen}={}){
+/* improve20-r9f-nov1 #1: the grown-ups button opens the one grown-up gate (ui/parent-gate.js); a right answer opens the report. The
+   two-second hold it replaced (wireHold) is gone: any child could do it. */
+export const grownupsButtonHTML=()=>`<button type="button" id="edu-grownups" class="edu-grownups" aria-describedby="edu-grownups-help">Grown-ups</button><small id="edu-grownups-help" class="subtle">A grown-up answers a quick sum to open the learning record.</small>`;
+export function wireGrownupsButton(root,save,{onOpen,rng}={}){
  const b=root?.querySelector?.('#edu-grownups');if(!b)return false;
- return wireHold(b,()=>{const el=openReportCard(save,root.ownerDocument);onOpen?.(el);});
-}
-/* The two-second hold on any button with class edu-grownups (accounts-nov1: the account block uses the same door). */
-export function wireHold(b,done){
- if(!b)return false;
- const start=e=>{e.preventDefault?.();b.classList.add('holding');},stop=()=>b.classList.remove('holding');
- b.addEventListener('pointerdown',start);for(const ev of ['pointerup','pointerleave','pointercancel','blur'])b.addEventListener(ev,stop);
- /* Keyboard: hold Space or Enter the same way. */
- b.addEventListener('keydown',e=>{if((e.key===' '||e.key==='Enter')&&!e.repeat){e.preventDefault();start(e);}});b.addEventListener('keyup',e=>{if(e.key===' '||e.key==='Enter')stop();});
- b.addEventListener('animationend',()=>{if(!b.classList.contains('holding'))return;stop();done();});
- return true;
+ return guardButton(b,()=>{const el=openReportCard(save,root.ownerDocument);onOpen?.(el);},{why:'The learning record is for grown-ups.',rng});
 }

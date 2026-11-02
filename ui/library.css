@@ -602,6 +602,10 @@ dialog[data-view=library] .edu-next-actions button.primary:hover:not(:disabled){
 .adventure-power .road-icon .ico{--s:32px!important}
 .adventure-power .road strong{font-size:20px}
 .adventure-power .road .am-goal-checks{display:none}
+/* improve20-r9e-nov1 #8: in the Journal's ability card the icon's charge ring (it reaches 10 px past the icon) ran into the rune callout
+   beside it, and the callout's pale cyan text sat on parchment. The callout takes the whole top row; the icon and its lines start below it */
+.adventure-power .road>.road-rune{grid-column:1/-1;grid-row:1;margin:0 0 6px;color:#1f5a68;background:#7ff0ff33;border-left-color:#2b8ea0}
+.adventure-power .road:has(>.road-rune)>.road-icon{grid-row:2/span 3;align-self:start;margin-top:8px}
 /* improve20-m-nov1 (R3, audit3 #9): the 24 Oct rules that hid the TOPIC MASTERED card and the seal whenever the road card celebrated
    are gone. A first mastery opens with .mastery-moment (ui/answer-moment.js): the seal over the victory sunburst, the victory banner,
    the topic, what it brings closer and the rune; then the XP chips, the buttons and the road card. The road card's own rune lead and

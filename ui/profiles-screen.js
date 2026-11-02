@@ -1,9 +1,9 @@
 /* The learner picker (v2:ui): who is playing on this device. Opened from the title screen and from
    Settings. Switching saves the current learner and reloads straight into the chosen one. */
 import {CLASSES} from '../game/data.js';
-import {readProfiles,profileSummary,switchProfile,addProfile,renameProfile,deleteProfile,markAutoContinue,profileRaw,nameMatches} from './profiles.js';
+import {readProfiles,profileSummary,switchProfile,addProfile,renameProfile,deleteProfile,markAutoContinue,profileRaw} from './profiles.js';
 import {drawHeroBust} from '../gfx/actors/hero-sprites.js';
-import {wireHold} from './edu-report.js';
+import {openParentGate} from './parent-gate.js';
 import {openSheet,sheetHeader,closeSheet} from './sheet.js';
 import {icon} from './icons.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -34,22 +34,21 @@ export function openProfiles(){
 }
 
 /* improve20-r8c-nov1 #2 (audit7 d14): Remove was two taps ("Remove? Yes"), with no grown-up check and no undo. It now opens a grown-up
-   check under the row: export the save first (a .json file the Settings import reads back), then either type the learner's name or hold
-   the grown-up button for two seconds (the same hold as Settings -> Grown-ups, edu-report.js wireHold). Only then is it deleted. */
+   check under the row: export the save first (a .json file the Settings import reads back), then press Remove. improve20-r9f-nov1 #1 (audit8 a4):
+   the name box showed the name as its placeholder and the hold was child-proof only on paper, so Remove now opens the one grown-up
+   gate (ui/parent-gate.js); only a right answer deletes. */
 const fileName=n=>`pixelquest-${String(n||'learner').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'learner'}-save.json`;
 export function exportLearner(id,name,doc=globalThis.document){const raw=profileRaw(id);if(!raw||!doc)return false;try{const url=URL.createObjectURL(new Blob([raw],{type:'application/json'})),a=doc.createElement('a');a.href=url;a.download=fileName(name);doc.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);return true;}catch{return false;}}
-export const removeGateHTML=(name,hasSave)=>`<div class="learner-remove" role="group" aria-label="Remove ${esc(name)}"><p><strong>Remove ${esc(name)}?</strong> This deletes ${esc(name)}’s heroes and progress on this device. It cannot be undone.</p>${hasSave?`<button type="button" data-act="export">Export ${esc(name)}’s save first</button>`:''}<label class="learner-remove-type">A grown-up types the name to confirm <input data-remove-name maxlength="20" autocomplete="off" placeholder="${esc(name)}" aria-label="Type ${esc(name)} to confirm"></label><div class="learner-remove-acts"><button type="button" data-act="remove-typed" class="danger" disabled>Remove</button><span class="subtle">or</span><button type="button" data-act="remove-hold" class="learner-hold">Grown-up: hold to remove</button><button type="button" data-act="remove-cancel" class="ghost">Keep ${esc(name)}</button></div></div>`;
+export const removeGateHTML=(name,hasSave)=>`<div class="learner-remove" role="group" aria-label="Remove ${esc(name)}"><p><strong>Remove ${esc(name)}?</strong> This deletes ${esc(name)}’s heroes and progress on this device. It cannot be undone.</p>${hasSave?`<button type="button" data-act="export">Export ${esc(name)}’s save first</button>`:''}<p class="subtle learner-remove-type">A grown-up answers a quick sum to remove.</p><div class="learner-remove-acts"><button type="button" data-act="remove-gate" class="danger">Remove ${esc(name)}</button><button type="button" data-act="remove-cancel" class="ghost">Keep ${esc(name)}</button></div></div>`;
 function openRemove(d,id){
  const row=d.querySelector(`.learner-row[data-id="${id}"]`),p=readProfiles().list.find(x=>x.id===id);if(!row||!p)return;
  d.querySelectorAll('.learner-remove').forEach(x=>x.remove());row.insertAdjacentHTML('afterend',`<li class="learner-remove-li">${removeGateHTML(p.name,!!profileRaw(id))}</li>`);
  const g=row.nextElementSibling,msg=t=>{const m=d.querySelector('#learner-msg');if(m)m.textContent=t;},gone=()=>{if(deleteProfile(id)){openProfiles();globalThis.document.querySelector('#learner-msg').textContent=`${p.name} was removed from this device.`;}};
- const inp=g.querySelector('[data-remove-name]'),go=g.querySelector('[data-act="remove-typed"]');
- inp.addEventListener('input',()=>{go.disabled=!nameMatches(p.name,inp.value);});inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();if(!go.disabled)gone();}});
- go.addEventListener('click',()=>{if(nameMatches(p.name,inp.value))gone();});
+ const go=g.querySelector('[data-act="remove-gate"]');
+ go.addEventListener('click',()=>openParentGate({why:`Removing ${p.name} deletes their progress on this device.`,onPass:gone}));
  g.querySelector('[data-act="export"]')?.addEventListener('click',()=>msg(exportLearner(id,p.name)?`${p.name}’s save was saved as a file. Settings → Load a save file brings it back.`:'The save could not be exported here.'));
  g.querySelector('[data-act="remove-cancel"]').addEventListener('click',()=>{g.remove();msg('');});
- wireHold(g.querySelector('[data-act="remove-hold"]'),gone);
- inp.focus({preventScroll:true});g.scrollIntoView?.({block:'nearest'});
+ go.focus({preventScroll:true});g.scrollIntoView?.({block:'nearest'});
 }
 /* improve20-r8c-nov1 #2: "Who is playing?" before Continue, with two or more learners. One big tap per learner: their hero's bust, name,
    hero and level. The learner already loaded carries straight on (onContinue); another learner switches, and the title that boots next
