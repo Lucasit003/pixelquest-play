@@ -56,3 +56,8 @@ export function travelPickerHTML(list,{here=null,town=null,tab:want=null,touch=f
  const folds=[fold('town',list.town,here,open==='town'),...reached.map(c=>fold(c.id,c.stops,here,open===c.id))].join('');
  return `<div class="travel-picker travel-atlas"><div class="travel-side"><p class="travel-lead"><span class="travel-free">Free</span> ${list.count} ${list.count===1?'place':'places'} unlocked.<span class="travel-how"> ${touch?'Tap':'Pick'} a place on the map to go there.</span></p>`
   +`<div class="travel-tabs" role="tablist" aria-label="Regions">${tabs}</div>${folds}</div><div class="travel-boards">${boards}</div></div>`;}
+/* improve20-r10b-nov2 #10 (kid sims nov2: the hint was 25 words and replaced after about 5 s): the "New: fast travel" line is short, names
+   the key (or the Map button on a phone), stays TRAVEL_HINT_MS, and a new key or tap lifts it once it has been up TRAVEL_LIFT_MS */
+export const TRAVEL_HINT_MS=8000,TRAVEL_LIFT_MS=3000;
+export const travelHintText=(touch,key='M')=>touch?'New: fast travel! Tap Map, then Fast travel.':`New: fast travel! Press ${key}, then Fast travel.`;
+export const travelLiftDue=(at,now)=>at>0&&now-at>=TRAVEL_LIFT_MS;

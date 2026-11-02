@@ -11,6 +11,7 @@
 import {enemyTop} from '../scenes/enemy-ai.js';
 import {STAGE,BEATS,REBIRTH} from '../game/stage.js';
 import {drawPixelText} from '../ui/canvas-ui.js';
+import {wayAlpha} from '../ui/stage-banners.js';
 import {potionCount} from '../game/potions.js';
 import {clearLabelAt} from '../scenes/tier-fx.js';
 import {firstFlashAlpha,FIRST_BANNER} from '../scenes/rune-fx.js';
@@ -29,6 +30,7 @@ export function drawBanner(c,b){
  if(b.kind==='intro'){say(c,b.title,240,130,16,PARCH);say(c,b.sub,240,148,8,GOLD);}
  else if(b.kind==='wave'){say(c,b.title,240,b.y,10,PARCH);}
  else if(b.kind==='cleared'){say(c,b.title,240,b.y,14,GOLD);}
+ else if(b.kind==='go'&&b.way){for(let i=0;i<3;i++){c.globalAlpha=(b.alpha??1)*wayAlpha(b.phase,i);say(c,'>',R(b.x)+i*14,b.y,12,GOLD,'left');}}
  else if(b.kind==='go'){say(c,b.title,R(b.x),b.y,12,PARCH,'right');}
  else if(b.kind==='boss'){const off=R((1-b.slide)*-18);c.globalAlpha*=b.slide;say(c,b.title,240-off,168,12,PARCH);say(c,b.sub,240+off,183,8,GOLD);if(b.line)say(c,b.line,240,200,8,PARCH);}
  else if(b.kind==='victory'){say(c,b.title,240,118,22,GOLD);}
@@ -82,7 +84,12 @@ export function stageBanners(w){if(!w?.level)return [];const f=w.flow,k=w.flowT|
  if(wood||out.some(b=>b.kind==='quote'||b.step==='potion')){const obstacles=(w.enemies||[]).filter(e=>e.hp>0).map(e=>({left:e.x-(w.camX||0)-48,right:e.x-(w.camX||0)+48,top:enemyTop(e)-(w.camTop||0)-12,bottom:e.y-(w.camTop||0)+6}));for(const r of [...(w.tierFx?.current?.islands||[w.tierFx?.current?.safe]),...(w.enemies||[]).filter(e=>e.hp>0&&['tele','act'].includes(e.brain?.mode)).map(e=>e.brain.safeLane)].filter(Boolean)){/* the CLEAR word, where it is drawn (tier-fx.js clearLabelAt) */const at=clearLabelAt(w,r),x=at.x-(w.camX||0),y=at.y-3-(w.camTop||0);obstacles.push({left:x-20,right:x+20,top:y-8,bottom:y+8});}if(pl)obstacles.push({left:pl.x-(w.camX||0)-22,right:pl.x-(w.camX||0)+22,top:pl.y-(w.camTop||0)-54-(pl.z||0),bottom:pl.y-(w.camTop||0)+6});if(STAGE.camH>=240)obstacles.push({left:0,right:STAGE.camW,top:(w.layout?.floorTop??144)-(w.camTop||0),bottom:STAGE.camH});for(const b of out)if(b.kind==='quote'||b.step==='danger'||b.step==='potion'){b.obstacles=obstacles;if(b.step==='danger'&&pl)b.hardObstacles=[{left:pl.x-(w.camX||0)-22,right:pl.x-(w.camX||0)+22,top:pl.y-(w.camTop||0)-54-(pl.z||0),bottom:pl.y-(w.camTop||0)+6}];if(b.step==='danger')b.teleRects=teleRects(w);b.maxWidth=260;b.compact=true;b.mobileAvoid=true;if(b.phone&&b.kind==='quote'){b.maxWidth=STAGE.camW-16;b.limits=[300,240];b.y=30;}/* improve20-f-nov1 #13: the phone potion prompt is one line at the top centre under the boss bar: clear of the HUD only, never wrapped round a foe */if(b.step==='potion'){if(phoneQ){b.obstacles=[];b.compact=false;}b.maxWidth=STAGE.camW-8;}}}
 
  /* GO → is the in-level next-step marker: up whenever the way on is to walk right */
- if(((f==='go'&&k>=BEATS.clear)||(f==='walk'&&k>1.2&&!step))&&(Math.floor(k*2.5)%2===0||!w.motion))out.push({kind:'go',title:'GO →',x:452+(w.motion?R(Math.sin(k*6)*3):0),y:134,alpha:1});
+ /* improve20-r10b-nov2 #14 (kid sims nov2: Mia, Theo and Zoe stood in empty lanes between waves; the next wave waits for the hero to walk
+    to its trigger, with no timer): after EMPTY_LANE_CUE s with no foe up, GO stops blinking and three code-drawn chevrons pulse just
+    ahead of the hero, pointing the way on (a 'go' banner, so toasts never wait for it) */
+ const lull=f==='go'?k-BEATS.clear:f==='walk'&&!step?k:-1,lane=lull>=EMPTY_LANE_CUE&&!!pl&&!w.enemies?.some?.(e=>e.hp>0&&!e.ally)&&!!w.nextArena?.();
+ if(((f==='go'&&k>=BEATS.clear)||(f==='walk'&&k>1.2&&!step))&&(Math.floor(k*2.5)%2===0||!w.motion||lane))out.push({kind:'go',title:'GO →',x:452+(w.motion?R(Math.sin(k*6)*3):0),y:134,alpha:1});
+ if(lane)out.push({kind:'go',way:true,title:'→',x:Math.max(8,Math.min(STAGE.camW-72,R(pl.x-(w.camX||0)+26))),y:R(pl.y-(w.camTop||0)-30-(pl.z||0)),phase:w.motion===false?null:k,alpha:1});
  if(f==='bossintro'){const e=w.boss||w.enemies.find(x=>x.boss);if(e)out.push({kind:'boss',title:(w.level.bossName||e.name).toUpperCase(),sub:w.level.name.toUpperCase(),line:e.intro||'',
   slide:Math.min(1,Math.max(0,(k-.25)/.35)),open:Math.min(1,k/.3),alpha:1,enemy:e.key});}
  /* a second life: the risen form's own name card, its title as the subtitle and its line under it */
@@ -100,18 +107,21 @@ export function stageBanners(w){if(!w?.level)return [];const f=w.flow,k=w.flowT|
    queue's clock for QUEUED_SHARE of its own time (total time stays close to before). One that has waited BANNER_STALE s is dropped. A sticky
    instruction ("DEFEAT THE BACKUP FIRST") shows only while nothing else is up, and a danger warning (which already hides them) pauses all.
    Pure over w.bannerQ; the same frame asked twice gives the same answer. */
-export const BANNER_STALE=3,QUEUED_SHARE=.8;
+/* improve20-r10b-nov2 #9 (kid sims nov2: "CALLS FOR BACKUP" drew over the potion prompt): one banner ends, BANNER_GAP s of nothing, then the
+   next (stale after BANNER_STALE s of waiting, raised from 3 so the boss's quote still follows its 2 s rally call and the gap). The potion
+   prompt is the one tip that matters most at low health: while it is up a top banner waits (a live one keeps its own clock underneath). */
+export const EMPTY_LANE_CUE=6,BANNER_STALE=4,QUEUED_SHARE=.8,BANNER_GAP=1.2;
 export function queueBanners(w,out){const now=w.run?.time??w.time??0,Q=w.bannerQ&&w.bannerQ.level===w.level?.id?w.bannerQ:(w.bannerQ={level:w.level?.id,cur:null,wait:[],seen:new Map()});
  const isA=b=>b.prio>0||b.sticky,cand=out.filter(b=>b.prio>0),sticky=out.filter(b=>b.sticky),id=b=>b.kind+':'+b.title,rest=out.filter(b=>!isA(b));
- if(now<(Q.now??-1)-1e-9){Q.cur=null;Q.wait=[];Q.seen.clear();}Q.now=now;
+ if(now<(Q.now??-1)-1e-9){Q.cur=null;Q.wait=[];Q.seen.clear();Q.ended=null;}Q.now=now;
  for(const [k,t] of Q.seen)if(now-t>1&&!cand.some(b=>id(b)===k))Q.seen.delete(k);
- for(const b of cand.filter(b=>!Q.seen.has(id(b))).sort((x,y)=>y.prio-x.prio)){const k=id(b);if(!Q.cur)Q.cur={id:k,start:now,live:true};else if(Q.cur.id!==k&&!Q.wait.some(x=>x.id===k))Q.wait.push({id:k,b,first:now});}
+ for(const b of cand.filter(b=>!Q.seen.has(id(b))).sort((x,y)=>y.prio-x.prio)){const k=id(b);if(!Q.cur&&!(now-(Q.ended??-1e9)<BANNER_GAP))Q.cur={id:k,start:now,live:true};else if(Q.cur?.id!==k&&!Q.wait.some(x=>x.id===k))Q.wait.push({id:k,b,first:now});}
  for(const b of cand)Q.seen.set(id(b),now);
  if(rest.some(b=>b.step==='danger'))return rest;
  const live=b=>cand.find(x=>id(x)===b);
- if(Q.cur){const c=Q.cur;if(c.live){const b=live(c.id);if(!b)Q.cur=null;}else if(now-c.start>=c.dur)Q.cur=null;}
- if(!Q.cur){Q.wait=Q.wait.filter(x=>now-x.first<=BANNER_STALE).sort((a,b)=>b.b.prio-a.b.prio||a.first-b.first);const n=Q.wait.shift();if(n){const b=live(n.id);Q.cur=b&&now-n.first<.05?{id:n.id,start:now,live:true}:{id:n.id,start:now,live:false,b:n.b,dur:(n.b.dur||2)*QUEUED_SHARE};}}
- const c=Q.cur;if(!c)return [...rest,...sticky];
+ if(Q.cur){const c=Q.cur;if(c.live){const b=live(c.id);if(!b){Q.cur=null;Q.ended=now;}}else if(now-c.start>=c.dur){Q.cur=null;Q.ended=now;}}
+ if(!Q.cur&&!(now-(Q.ended??-1e9)<BANNER_GAP)){Q.wait=Q.wait.filter(x=>now-x.first<=BANNER_STALE).sort((a,b)=>b.b.prio-a.b.prio||a.first-b.first);const n=Q.wait.shift();if(n){const b=live(n.id);Q.cur=b&&now-n.first<.05?{id:n.id,start:now,live:true}:{id:n.id,start:now,live:false,b:n.b,dur:(n.b.dur||2)*QUEUED_SHARE};}}
+ const c=Q.cur;if(rest.some(b=>b.step==='potion'))return rest;if(!c)return Q.wait.length||now-(Q.ended??-1e9)<BANNER_GAP?rest:[...rest,...sticky];
  if(c.live)return [...rest,live(c.id)];
  const a=now-c.start,b={...c.b,alpha:Math.max(0,Math.min(1,c.b.kind==='quote'?1:a/.2,(c.dur-a)/.3))};return [...rest,b];}
 /* combatpolish-oct28: the ground a telegraph covers this frame, in camera pixels (the boss's markers, as scenes/tier-fx.js softMarker

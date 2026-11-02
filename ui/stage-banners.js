@@ -7,6 +7,8 @@ import {loadCanvasUI,drawPanel,drawPixelText,measurePixelText,drawSkin} from './
 import {STAGE} from '../game/stage.js';
 const PARCH='#f1e4c0',GOLD='#e8c47a',INK='#3a2817',DARK='#1a0f0b';
 const R=Math.round;
+/* improve20-r10b-nov2 #14: the empty-lane chevrons light one after another (a steady 0.85 with Reduce motion) */
+export const wayAlpha=(phase,i)=>phase==null?.85:.5+.5*Math.max(0,Math.sin(phase*4-i*.9));
 /* DOM HUD plates keep their CSS size while the canvas can scale fractionally. Convert their
    rendered rectangles into camera pixels. Ignore elements outside this canvas or not displayed. */
 export function bannerHudRects(canvasRect,rects,W,H){
@@ -150,6 +152,9 @@ export function stageBanner(c,b){
  }else if(b.kind==='intro'){
   const w=fitW(Math.max(BW(b.title)*2,BW(b.sub))+48),t=Y(98);
   ok=plank(c,'plank',cx,t,w,62)&&drawSkin(c,'crest',cx,t-14,{align:'center'})&&text(c,b.title,cx,t+30,{scale:2,bold:true,color:PARCH})&&text(c,b.sub,cx,t+48,{color:GOLD});
+ }else if(b.kind==='go'&&b.way){
+  /* improve20-r10b-nov2 #14: the empty-lane cue, three chevrons ahead of the hero (gfx/stage-view.js) */
+  const a0=c.globalAlpha;for(let i=0;i<3;i++){c.globalAlpha=a0*wayAlpha(b.phase,i);ok=drawSkin(c,'tip-right',R(b.x)+i*22,R(b.y)-7,{scale:2})&&ok;}c.globalAlpha=a0;
  }else if(b.kind==='go'){
   /* GO sits at the right edge of the view, whatever its width (the runtime's x assumes 480); oct25-exploit: on phones it also keeps
      off the Map/Journal/Menu buttons (at 740x360 it was drawn under them) */

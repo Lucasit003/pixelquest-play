@@ -10,7 +10,8 @@
      field gets every ability it already owns listed (core/save.js), so only a newly unlocked ability gets the moment.
    s.schoolGrade (2-5, 6-8 for Middle School since improve20-z-nov1, 9-12 for High School since improve20-r8c-nov1, 0 for "Not sure", null when never asked) is the title flow's optional grade hint. It never sets a placement.
    Pure: callers pass the save. */
-export const NUDGE_STOP=10,LOW_HP_HELPS=2,LOW_HP=.3,SCHOOL_GRADES=[2,3,4,5,6,7,8,9,10,11,12];
+/* improve20-r10b-nov2 #12: the tip retires after 3 casts (was 10; "press 1 for Precision Shot" still showed in e1 once it was in use) */
+export const NUDGE_STOP=3,LOW_HP_HELPS=2,LOW_HP=.3,SCHOOL_GRADES=[2,3,4,5,6,7,8,9,10,11,12];
 /* improve20-z-nov1 #2: Middle School asks the grade too (6-8); the Elementary-only helpers below read 2-5 */
 export const ELEMENTARY_GRADES=[2,3,4,5],MIDDLE_GRADES=[6,7,8];
 export const emptyHints=()=>({casts:{},lowHp:0,defeat:0,petPointer:false,offered:[],firstCast:[],petTips:{}});

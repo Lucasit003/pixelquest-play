@@ -3,7 +3,27 @@
    max(3 s, 60 ms a character), as before. The hold is kept by message, so a key line that a banner interrupts and
    that comes back from the queue gets its full time again. When the key line takes the toast over, a message already
    showing (a level's "This visit: ... mini-boss") goes back to the front of the queue, right after it, instead of being lost. */
-export const toastMs=(message,hold)=>hold?.get(message)||Math.max(3000,String(message??'').length*60);
+/* improve20-r10b-nov2 #8: and never under about 1 s per 4 words (a short line with long words read too fast) */
+export const toastMs=(message,hold)=>hold?.get(message)||Math.max(3000,String(message??'').length*60,(String(message??'').match(/\S+/g)||[]).length*250);
 export function requeueShowing(queue,showing,next,max=3){if(showing&&showing!==next&&!queue.includes(showing)){queue.unshift(showing);if(queue.length>max)queue.pop();}return queue;}
 /* A message that asks to show at once (an armour or ability hint) waits while a held message is still within its hold. */
 export const heldUp=({shown,text,message,hold,now,free})=>!!(shown&&hold?.has(text)&&text!==message&&!hold.has(message)&&now<free);
+/* improve20-r10b-nov2 (kid sims nov2, items 8 and 13).
+   Level tips: the boss tips (armour, blue guards) and the level's "This visit" line. Once one is up it stays for its read time under the fight
+   banners (a stage banner used to hide it and put it back in the queue, so "Plain hits glance off..." showed 6 times for under 2.5 s each).
+   A boss tip shows once per level visit (until the hero is back in town) and never twice within TIP_GAP ms. */
+/* (on a phone the visit line is its short form, game/draft.js: "The Imp Warchief mini-boss · Blessing of Life shrine") */
+export const LEVEL_TIP=/^(Plain hits glance off|Break blue guards|This visit:|Echoes of )|( mini-boss| shrine)( · |$)/,BOSS_TIP=/^(Plain hits glance off|Break blue guards)/,TIP_GAP=30000;
+export function tipAllowed(seen,message,visit,now){if(!BOSS_TIP.test(String(message??'')))return true;const o=seen.get(message);return !o||(o.visit!==visit&&now-o.at>=TIP_GAP);}
+export function markTip(seen,message,visit,now){if(BOSS_TIP.test(String(message??'')))seen.set(message,{visit,at:now});}
+/* The same line again soon after it was shown in full ("Secret 2/3" twice) is merged into the first: dropped within DUP_MS of its end. */
+export const DUP_MS=12000;
+export const recentDup=(done,message,now)=>done.has(message)&&now-done.get(message)<DUP_MS;
+/* The queue keeps at most `max` lines. When it overflows, the oldest line that is only a tip or a reminder goes, never a reward, an unlock
+   or a found secret (IMPORTANT_TOAST); only when every line is one of those does the oldest go. Duplicates by text merge. Returns the dropped line. */
+export const IMPORTANT_TOAST=/^(Earned by learning|Found: |Save imported|Secret|Daily goal done|Level \d+ reached|New: )|unlocked|again: \+\d+ gold/i;
+export function pushToast(queue,message,max=3){if(queue.includes(message))return null;queue.push(message);if(queue.length<=max)return null;let i=queue.findIndex(m=>!IMPORTANT_TOAST.test(m));if(i<0)i=0;return queue.splice(i,1)[0];}
+/* improve20-r10b-nov2 #13: a line a fight banner takes down after it has been up long enough to read (READ_MS_WORD a word, at least 1.5 s)
+   is done; only one cut short goes back in the queue (a secret's line came back a second time 3 s later) */
+export const READ_MS_WORD=300;
+export const readEnough=(message,shownMs)=>shownMs>=Math.max(1500,(String(message??'').match(/\S+/g)||[]).length*READ_MS_WORD);
