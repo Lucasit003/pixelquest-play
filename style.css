@@ -3763,3 +3763,10 @@ dialog[data-view=result] .level-highlights :is(.level-recipe,.level-keepsake) st
 dialog[data-view=unlock] .edu-unlock.edu-unlock>:is(.ui-fx,.edu-unlock-rays,.edu-awaken-ring){z-index:0!important;left:var(--fx-x,108px);top:var(--fx-y,97px)}
 dialog[data-view=unlock] .edu-unlock.edu-unlock>:is(.ui-fx,.edu-unlock-rays){mix-blend-mode:screen;opacity:.55}
 @media(max-height:700px){dialog[data-view=unlock] .edu-unlock.edu-unlock>:is(.ui-fx,.edu-unlock-rays,.edu-awaken-ring){left:var(--fx-x,99px);top:var(--fx-y,81px)}}
+/* ios-landscape-nov1: phones never scroll the page under the fixed stage (iPhone Safari kept a scroll offset after turning the phone), and the
+   one-time iPhone "Add to Home Screen" tip (ui/mobile.js iosTip) */
+html.m-mode,html.m-mode body{overflow:hidden;overscroll-behavior:none}
+#ios-tip{position:fixed;left:50%;top:max(8px,env(safe-area-inset-top));z-index:60;display:flex;align-items:center;gap:10px;width:max-content;max-width:min(560px,calc(100vw - 32px));padding:6px 6px 6px 12px;background:rgba(12,14,30,.94);border:2px solid #e7c77e;border-radius:4px;color:#fff3d6;font:400 14px/18px var(--ui);transform:translate(-50%,-6px);opacity:0;transition:opacity .25s,transform .25s}
+#ios-tip.show{opacity:1;transform:translate(-50%,0)}
+#ios-tip b{font-weight:700;color:#ffe9a8}
+#ios-tip button{flex:none;min-width:56px;min-height:36px;padding:2px 12px;font:700 15px var(--ui)}

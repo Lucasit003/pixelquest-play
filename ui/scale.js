@@ -24,7 +24,7 @@ export const viewZoom=s=>VIEWS[viewKey(s)];
 export function initScale(getSave,{town}={}){
  saveRef=getSave||saveRef;if(typeof town==='function')townRef=town;
  const w=globalThis.window;if(!w?.addEventListener)return;
- w.addEventListener('resize',rescale);w.addEventListener('orientationchange',()=>setTimeout(rescale,120));
+ w.addEventListener('resize',rescale);w.addEventListener('orientationchange',()=>{setTimeout(rescale,120);setTimeout(rescale,500);});
  w.visualViewport?.addEventListener?.('resize',rescale);
  globalThis.document?.addEventListener?.('fullscreenchange',()=>setTimeout(rescale,0));
  rescale();
@@ -65,7 +65,10 @@ export function rescale(){
  const d=globalThis.document,w=globalThis.window;if(!d||!w)return;
  const stage=d.querySelector('#stage'),cv=d.querySelector('#world');if(!stage||!cv)return;
  const mobile=d.documentElement.classList.contains('m-mode'),s=saveRef(),pp=pixelPerfect(s,mobile);
- const vw=w.visualViewport?.width||w.innerWidth||0,vh=w.visualViewport?.height||w.innerHeight||0;if(!vw||!vh)return;
+ /* ios-landscape-nov1 (owner on an iPhone, 1 Nov: turned sideways in Safari the game "doesnt center"): the phone stage is position:fixed, so it
+    fills the LAYOUT viewport; a pinch or Safari's rotation zoom shrinks only the visual viewport, and a canvas sized from that sat off-centre in
+    the bigger box. Phones read the layout viewport (innerWidth/innerHeight), desktop keeps the visual one. */
+ const vv=mobile?null:w.visualViewport,vw=(mobile?w.innerWidth:vv?.width||w.innerWidth)||0,vh=(mobile?w.innerHeight:vv?.height||w.innerHeight)||0;if(!vw||!vh)return;
  const dpr=w.devicePixelRatio||1;
  /* Phones (playtest 3): the game's VIEW shrinks instead of cropping. The canvas becomes floor(screen/k) world
     pixels (370x180 at 740x360, 422x195 at 844x390) shown at an exact k = 2 (3 on tablets), and the cameras

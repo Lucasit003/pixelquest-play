@@ -94,6 +94,24 @@ function orient(){
  if(p){if(wasPaused===null){wasPaused=!!w.paused;w.paused=true;releaseAll();}}
  else if(wasPaused!==null){if(!doc().querySelector('#modal')?.open)w.paused=wasPaused;wasPaused=null;}
 }
+/* ios-landscape-nov1 (owner, 1 Nov, playing in iPhone Safari): an iPhone has no fullscreen API, so Safari's bars stay over the game; the
+   home-screen app (manifest.webmanifest, display fullscreen) plays edge to edge. One tip per device, never inside the installed app, never
+   over a panel or the turn-your-device card, gone on OK or after 14 s. */
+export function iosTipWanted(w=win()){try{const n=w?.navigator||{},ua=n.userAgent||'';if(!/iPhone|iPod/.test(ua))return false;
+ if(n.standalone===true||w.matchMedia?.('(display-mode: standalone)').matches||w.matchMedia?.('(display-mode: fullscreen)').matches)return false;
+ return w.localStorage?.getItem('pq.iosTip')!=='1';}catch{return false;}}
+function iosTip(){
+ const w=win(),d=doc();if(!iosTipWanted(w))return;
+ let tries=0;const t=setInterval(()=>{
+  if(++tries>600){clearInterval(t);return;}
+  if(portrait()||d.querySelector('dialog[open]')||d.querySelector('#ios-tip'))return;
+  clearInterval(t);try{w.localStorage.setItem('pq.iosTip','1');}catch{}
+  const el=d.createElement('div');el.id='ios-tip';el.setAttribute('role','status');
+  el.innerHTML='<span><b>Play full screen:</b> tap <b>Share</b>, then <b>Add to Home Screen</b>, and open PixelQuest from its icon.</span><button type="button">OK</button>';
+  el.querySelector('button').addEventListener('click',()=>el.remove());d.body.appendChild(el);
+  setTimeout(()=>el.classList.add('show'),30);setTimeout(()=>el.remove(),14000);
+ },1000);
+}
 function tryFullscreen(){
  const el=doc().documentElement;
  if(doc().fullscreenElement||!el.requestFullscreen)return;
@@ -110,7 +128,7 @@ export function initMobile({world}={}){
  on=true;getWorld=()=>world;
  doc().documentElement.classList.add('m-mode');
  buildControls();startJoystick();
- w.addEventListener('resize',orient);w.addEventListener('orientationchange',()=>setTimeout(orient,150));orient();
+ w.addEventListener('resize',orient);w.addEventListener('orientationchange',()=>{setTimeout(orient,150);setTimeout(()=>{try{w.scrollTo(0,0);}catch{}},300);});orient();iosTip();
  w.addEventListener('blur',releaseAll);doc().addEventListener('visibilitychange',()=>{if(doc().hidden)releaseAll();});
  doc().addEventListener('pointerdown',tryFullscreen,{once:true});
  /* pressed feedback for the thumb buttons (main.js cancels the pointer's default, so :active is unreliable on touch) */
