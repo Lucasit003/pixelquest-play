@@ -15,6 +15,12 @@ import {irisOpen} from './juice.js';
 import {icon} from './icons.js';
 import {activeProfile,needsWhoPlays,takeAutoContinue} from './profiles.js';
 import {openProfiles,openWhoPlays} from './profiles-screen.js';
+import {openParentGate} from './parent-gate.js';
+/* landing-nov2: the page for parents and teachers (dist/parents.html). Same site, but it leaves the game screen, so it sits behind the
+   grown-up gate; it opens in a new tab where it can (a run in progress stays put), else in this one. */
+export const GROWNUPS_PAGE='parents.html';
+export function openGrownupsPage(doc=globalThis.document){const win=doc?.defaultView;if(!win)return false;const url=new URL(GROWNUPS_PAGE,win.location.href).href;let w=null;try{w=win.open(url,'_blank');}catch{}if(w){try{w.opener=null;}catch{}return true;}win.location.href=url;return true;}
+export function grownupsGate(doc=globalThis.document,opts={}){return openParentGate({...opts,doc,why:'This page tells parents and teachers what PixelQuest teaches and how it keeps children safe.',onPass:()=>openGrownupsPage(doc)});}
 import {creatorHTML,wireCreator,customised,creatorStyles,drawCreatorFigure,previewPose,attackLen} from './creator.js';
 import {drawHeroBust} from '../gfx/actors/hero-sprites.js';
 /* One line of fantasy per class: what playing it feels like. */
@@ -50,6 +56,7 @@ export function titleScreen({started=false,cards='',hero='warrior',begin,learner
  ${started&&today?today:''}
  <button class="ghost learner" data-title="learners" aria-label="Switch learner">${icon('key',{size:32})}<span data-learner-name>${esc(learner||'Player 1')}</span><small>Switch</small></button>
  ${fullscreenOption()&&!isFullscreen()?'<button type="button" class="ghost title-fs" data-title="fullscreen">Full screen</button>':''}
+ <button type="button" class="ghost title-grownups" data-title="grownups">For grown-ups</button>
   <p class="title-foot">Learning unlocks your powers</p>
 </div>
 <div class="select-pane">
@@ -196,6 +203,7 @@ export function wireTitle(api={}){
    /* fullscreen-view-nov1 (owner): phones get a Full screen button on the title; an iPhone, which has no page fullscreen, gets the home-screen how-to */
    else if(k==='fullscreen'){if(fullscreenOption()==='api'){toggleFullscreen();setTimeout(()=>{b.hidden=isFullscreen();},300);}else toggleHowTo(b);}
   else if(k==='learners')openProfiles();
+  else if(k==='grownups')grownupsGate(d);
  });
  /* Escape in the hero select goes back to the menu (main.js keeps the welcome panel open). */
  root.addEventListener('keydown',e=>{

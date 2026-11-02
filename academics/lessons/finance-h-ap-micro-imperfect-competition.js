@@ -62,7 +62,7 @@ const tbtab=t=>tab(`The ${t[0]}`,[['units','1, 2, 3, 4, 5, 6'],['price',t[2].map
 const tbq=t=>[1,2,3,4,5,6].filter(n=>mrT(t[2],n)>t[3]).length;
 /* price discrimination: [seller, unit, a, b, m, F] again; the first is worked */
 const PD=[['theater','seats',40,1,8,100],['concert promoter','tickets',50,2,10,100],['private tutor','lessons',72,3,12,60],['airline on a route with no rival','seats',90,5,20,200],['tailor with no local rival','suits',100,4,36,80]];
-const ppd=m=>`A fictional ${m[0]} has market power and faces the demand curve P = ${m[2]} - ${m[3]}Q, with P in dollars a unit and Q in ${m[1].trim()} a day (a whole number). Its marginal cost is a constant ${$(m[4])} a unit and its fixed cost is ${$(m[5])} a day. It practices perfect price discrimination, charging each buyer the most that buyer is willing to pay.`;
+const ppd=m=>`A fictional ${m[0]} has market power and faces the demand curve P = ${m[2]} - ${m[3]}Q, with P in dollars a unit and Q in ${m[1].trim()} a day. Its marginal cost is a constant ${$(m[4])} a unit and its fixed cost is ${$(m[5])} a day. It practices perfect price discrimination (treat demand as a smooth line, so its revenue is the area under the demand curve), charging each buyer the most that buyer is willing to pay.`;
 const ptab=m=>tab(`The ${m[0]}`,[['demand',`P = ${m[2]} - ${m[3]}Q`],['marginal cost',$(m[4])],['fixed cost',$(m[5])]]);
 const ppdQ=m=>(m[2]-m[4])/m[3],ppdR=m=>(m[2]+m[4])/2*ppdQ(m),ppdP=m=>ppdR(m)-m[4]*ppdQ(m)-m[5];
 /* two groups: [seller, unit, a1, b1, a2, b2, m] */

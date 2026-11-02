@@ -3911,3 +3911,47 @@ html.m-mode .herocard-stats{flex:0 0 200px;min-width:0;padding:4px 8px;gap:3px;l
  html.m-mode.in-town #next-unlock.peek:not(.open){top:calc(env(safe-area-inset-top,0px) + 62px);left:calc(max(8px,env(safe-area-inset-left,0px)) + 238px)} .m-mode .title-screen[data-step=select] .select-head .select-progress,.m-mode .title-screen[data-step=select] .select-head .eyebrow{display:none}.m-mode .title-screen[data-step=select] .select-pane{padding-top:4px;padding-bottom:4px}.m-mode .title-screen[data-step=select] .select-pane .hero-select.er{margin-top:0}
  .m-mode .title-screen[data-step=select] .er-stats>.fantasy{min-height:24px}.m-mode .title-screen[data-step=select] .er-stats{padding-top:6px;padding-bottom:6px} .m-mode dialog[data-view=result] #modal-content .level-result:has(>.result-side)>:is(.victory-cheer,.level-tier){display:none}.m-mode dialog[data-view=result] #modal-content .level-result:has(>.result-side)>.level-starline{transform:scale(.8);margin:-4px 0}.m-mode dialog[data-view=result] #modal-content .level-result:has(>.result-side)>.result-goal{padding-block:2px;font-size:14px;line-height:1.15}.m-mode dialog[data-view=result] #modal-content .level-result:has(>.result-side)>.modal-actions{margin-top:2px}
  .m-mode :is(.smith-tab-help,.smith-show-line){display:none}.m-mode #modal-content>.modal-head{margin-bottom:0}.m-mode #modal-content>.gear-next{padding-block:2px;margin-bottom:2px}}
+/* improve20-r9a-nov1: the Hall of Echoes (ui/hall-ui.js): chapters x rungs, the chosen rung's details, and the run's cards */
+.hall-card{display:flex;flex-direction:column;gap:8px;margin:4px 0 8px}
+.hall-grid{display:flex;flex-direction:column;gap:6px}
+.hall-row{display:grid;grid-template-columns:minmax(7em,1fr) repeat(3,minmax(0,1.6fr));gap:6px;align-items:stretch}
+.hall-ch{align-self:center;font-weight:bold;color:#f2dfb0}
+.hall-rung{display:flex;align-items:center;gap:6px;min-height:44px;padding:4px 8px;text-align:left;justify-content:flex-start}
+.hall-rung span{display:flex;flex-direction:column;line-height:1.1;min-width:0}
+.hall-rung small{opacity:.85}
+.hall-rung.sel{outline:3px solid #f2c25a;outline-offset:1px}
+.hall-rung[data-state=locked]{opacity:.6}
+.hall-rung[data-state=keepsake] small,.hall-rung[data-state=cleared] small{color:#bfe8a0}
+.hall-icon{image-rendering:pixelated;flex:none}
+.hall-detail p{margin:4px 0}
+.hall-reward{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.hall-chip{display:inline-flex;align-items:center;gap:6px;padding:2px 12px 2px 4px;border:2px solid #f2c25a;border-radius:18px;background:#4a3312;color:#ffeccb}
+.hall-chip.ks{border-color:#b9a4ff;background:#2e2350}
+.hall-chip.got{opacity:.85}
+.hall-k,.hall-note,.hall-ks,.hall-lock{opacity:.9}
+.hall-step{display:flex;flex-direction:column;gap:6px}
+html.m-mode .hall-row{grid-template-columns:5.5em repeat(3,minmax(0,1fr));gap:4px}
+html.m-mode .hall-rung{padding:2px 4px;gap:4px;min-height:40px}
+html.m-mode .hall-rung .hall-icon{width:24px;height:24px}
+html.m-mode .hall-rules,html.m-mode .hall-ks,html.m-mode .hall-boss-list,html.m-mode dialog[data-view=hall] .modal-head p{display:none}
+html.m-mode .hall-rung{min-height:34px;padding:1px 4px}
+html.m-mode .hall-rung span{flex-direction:row;flex-wrap:wrap;gap:0 6px;align-items:baseline}
+html.m-mode .hall-card{gap:4px;margin:0 0 4px}
+html.m-mode .hall-grid{gap:3px}
+html.m-mode .hall-detail p{margin:2px 0}
+html.m-mode .hall-chip{padding:0 8px 0 2px}
+html.m-mode .hall-chip img{width:24px;height:24px}
+html.m-mode dialog[data-view=hall] .modal-actions{position:sticky;bottom:0;margin:0;padding:4px 0;background:var(--panel-bg,#1d2240);z-index:2}
+html.m-mode .hall-rung b,html.m-mode .hall-rung small{white-space:nowrap;font-size:.92em}
+@media (max-height:370px){html.m-mode .hall-detail .hall-note,html.m-mode .hall-k{display:none}html.m-mode .hall-rung{min-height:30px}}
+html.m-mode .hall-rung[data-state=locked] small{display:none}
+@media (max-height:370px){html.m-mode .hall-what{display:none}}
+
+/* landing-nov2: "For grown-ups" (the page for parents and teachers, behind the grown-up gate). A quiet text button in the title's free
+   top-left corner (the learner sits bottom-left, Full screen top-right on phones, Today's goals bottom-right), and a line in Settings ->
+   Grown-ups. */
+.title-pane .title-grownups{position:absolute;left:max(16px,env(safe-area-inset-left));top:max(12px,env(safe-area-inset-top));z-index:3;min-height:32px;padding:2px 10px;font:400 var(--fs)/1 var(--ui);letter-spacing:0;text-transform:none;color:var(--muted);background:#140e0b99;border:2px solid #6b4a2a99}
+.title-pane .title-grownups:hover,.title-pane .title-grownups:focus-visible{color:var(--ink);border-color:var(--gold-deep)}
+.m-mode .title-pane .title-grownups{left:max(8px,env(safe-area-inset-left));top:max(8px,env(safe-area-inset-top));min-height:36px;font-size:14px}
+.grownups-page{margin:12px 0 0}
+.grownups-page button{min-height:40px;padding:4px 10px;text-align:left;text-transform:none;letter-spacing:0;color:var(--gold);text-decoration:underline;text-underline-offset:3px}

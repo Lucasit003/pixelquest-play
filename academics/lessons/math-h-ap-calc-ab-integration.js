@@ -122,7 +122,7 @@ items(add){
   ['r(t) is the rate, in liters per hour, at which water leaks from a tank. What does the integral from 2 to 5 of r(t) dt measure?','the liters that leak out from t = 2 to t = 5',['the leak rate at t = 5','how fast the leak rate is changing']],
   [`v(t) is a runner's velocity in meters per second. What does the integral from 0 to 10 of |v(t)| dt measure?`,'the total meters run in the first 10 seconds',[`the runner's position at t = 10`,`the runner's top speed`]],
   ['Part of the graph of a rate lies below the t-axis. How does that part count in the integral of the rate?','it subtracts from the total',['it adds to the total','it does not count']]].forEach(([q,right,wrong],k)=>{const c=choose(right,wrong,k+1);
-  put('accumulate',`${q} ${c.text}. Answer A, B or C.`,c.letter,tab('Accumulation',[['question','what the integral measures']],['']),`An integral of a rate is the net change it builds up, with parts below the axis subtracting: ${right}.`,[right]);});
+  put('accumulate',`${q} ${c.text}. Answer A, B or C.`,c.letter,tab('Accumulation',[['question','what the integral measures']],['']),`${q.includes('|v(t)|')?'The integral of |v| counts every part as positive, so it measures total distance, not net change':'An integral of a rate is the net change it builds up, with parts below the axis subtracting'}: ${right}.`,[right]);});
  /* riemann: midpoint sums from functions and from tables, and which sums run over or under */
  for(const [ts,a,b,n] of [[[[1,2]],0,4,2],[[[1,2]],0,6,3],[[[2,1],[1,0]],0,4,2],[[[1,3]],0,4,2],[[[-1,2],[16,0]],0,4,4],[[[1,2],[1,0]],1,5,2]]){
   const dx=(b-a)/n,mids=Array.from({length:n},(_,i)=>a+(i+0.5)*dx),S=dx*mids.reduce((s,x)=>s+at(ts,x),0);

@@ -33,7 +33,7 @@ steps:[
   check:{prompt:tryIt(TRY[0]),answer:11,options:[11,30,1],hint:'Multiplying powers of the same base adds the exponents: 5 + 6.',pic:tab('Same base',[['x⁵ · x⁶','xⁿ']],['Simplify'])}},
  {skill:'power',say:'A power of a power multiplies the exponents. (x³)⁵ means x³ five times, so it has 3 + 3 + 3 + 3 + 3 = 15 factors of x, and (x³)⁵ = x¹⁵.',eq:'(x^m)^n = x^(mn)',
   pic:{t:'board',title:'A power of a power',lines:['(x³)⁵ = x³ · x³ · x³ · x³ · x³','= x³ˣ⁵','= x¹⁵'],why:['five copies of x³','3 × 5',''],box:true}},
- {skill:'power',say:'A power of a product raises every factor in the brackets: (3x⁴)² = 3² · (x⁴)² = 9x⁸. Remember to raise the number in front too; leaving it as 3x⁸ is the most common slip.',eq:'(3x⁴)² = 9x⁸',
+ {skill:'power',say:'A power of a product raises every factor in the brackets: (3x⁴)² = 3² · (x⁴)² = 9x⁸. Remember to raise the number in front too; leaving it as 3x⁸ is a very common slip.',eq:'(3x⁴)² = 9x⁸',
   pic:{t:'board',title:'A power of a product',lines:['(3x⁴)² = 3² · (x⁴)²','= 9x⁸'],why:['raise every factor','3² = 9 and 4 × 2 = 8'],box:true},
   check:{prompt:tryIt(TRY[1]),answer:12,options:[12,7,64],hint:'A power of a power multiplies the exponents: 4 × 3.',pic:tab('Power of a power',[['(x⁴)³','xⁿ']],['Simplify'])}},
  {skill:'special',say:'Any nonzero number to the power 0 is 1. The quotient rule shows why: x⁴ ÷ x⁴ = x⁴⁻⁴ = x⁰, and any nonzero number divided by itself is 1. So 11⁰ = 1, and so is every other nonzero base to the power 0.',eq:'x⁰ = 1 (x ≠ 0)',

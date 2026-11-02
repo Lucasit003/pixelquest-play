@@ -8,6 +8,7 @@
    heroCardModel(save) is pure; drawHeroCard(canvas, model, art, heroCanvas) draws with whatever images it is given
    (tests/herocard-oct27.test.js runs it under @napi-rs/canvas); the panel helpers at the end are browser-only. */
 import {riftTitle} from '../game/rift.js';
+import {keepsakes as hallKeepsakes,keepsakeName,ROMAN as HALL_ROMAN} from '../game/hall.js';
 import {CLASSES,SUBJECTS} from '../game/data.js';
 import {ABILITIES} from '../game/abilities.js';
 import {unlocked} from '../game/math.js';
@@ -31,13 +32,14 @@ export function heroCardModel(s={}){
  const subjects=Object.entries(SUBJECTS).map(([id,v])=>({id,name:v.name,color:v.color,icon:SUBJECT_ICON[id]||'book-open',count:TOPICS.filter(t=>t.subject===id&&mastered(s,t)).length}));
  return {hero,name:typed||c.name,className:c.name,level:Math.max(1,s.level|0),stars:totalStars(s),maxStars:maxStars(),
   furthest:last?{id:last.id,name:last.name,chapter:CHAPTERS.find(ch=>ch.id===last.chapter)?.name||''}:null,
-  abilities,awake:abilities.filter(a=>a.on).length,subjects,topics:subjects.reduce((t,x)=>t+x.count,0),url:PLAY_URL,title:GAME_TITLE,subtitle:GAME_SUB,honour:[heroTitle(s),riftTitle(s)].filter(Boolean).join(' · ')||null,/* improve20-r7a-nov1 #8: a worn daily backdrop (game/prizes.js), as its path under dist/ui/ */backdrop:(b=>b?b.img.replace(/^ui\//,''):null)(backdropOf(s))};}
+  abilities,awake:abilities.filter(a=>a.on).length,subjects,topics:subjects.reduce((t,x)=>t+x.count,0),url:PLAY_URL,title:GAME_TITLE,subtitle:GAME_SUB,honour:[heroTitle(s),riftTitle(s)].filter(Boolean).join(' · ')||null,/* improve20-r7a-nov1 #8: a worn daily backdrop (game/prizes.js), as its path under dist/ui/ */backdrop:(b=>b?b.img.replace(/^ui\//,''):null)(backdropOf(s)),/* improve20-r9a-nov1: the Hall of Echoes keepsakes (game/hall.js), one line a chapter: "Elderwood Echo I, II" */keepsakes:hallLines(s)};}
+export function hallLines(s){const by=new Map();for(const k of hallKeepsakes(s)){if(!by.has(k.chapter))by.set(k.chapter,[]);by.get(k.chapter).push(k.rung);}return [...by].map(([ch,rs])=>keepsakeName(ch,rs[0]).replace(/ I+$/,'')+' '+rs.map(r=>HALL_ROMAN[r-1]).join(', '));}
 const ICON_AB=Object.fromEntries(ABILITY_ICON_IDS.map((n,i)=>[n,i]));
 const ICON_IX=Object.fromEntries(ICON_NAMES.map((n,i)=>[n,i]));
 
 /* every skin file the card may draw, relative to dist/ui/ */
 export const CARD_ART=['skin/keyart.webp','skin/pl-frame.png','skin/pl-window.png','skin/pl-parchment.png','skin/pl-card-plain.png','skin/pl-plate.png','skin/divider.png','skin/star-gold.png','skin/icons.png','skin/ability-icons.png',
- 'skin/rewards/scroll.png','skin/uiicons/swords.png',...[...PRIZE_BACKDROPS,...CHAPTER_BACKDROPS].map(b=>b[2].replace(/^ui\//,'')),...new Set(Object.values(SUBJECT_ICON).map(n=>ownIconURL(n)?.replace(/^ui\//,'')).filter(Boolean))];
+ 'skin/rewards/scroll.png','skin/uiicons/swords.png','skin/pl-icons/tier-star.png',...[...PRIZE_BACKDROPS,...CHAPTER_BACKDROPS].map(b=>b[2].replace(/^ui\//,'')),...new Set(Object.values(SUBJECT_ICON).map(n=>ownIconURL(n)?.replace(/^ui\//,'')).filter(Boolean))];
 /* an icon by name: our own PixelLab file when there is one, else its cell in the 32 px strip */
 function iconArt(art,ic){if(ic.strip==='ability')return [art['skin/ability-icons.png'],ic.i*32];const own=ownIconURL(ic.name)?.replace(/^ui\//,'');if(own&&art[own])return [art[own],0];return [art['skin/icons.png'],(ICON_IX[ic.name]??ICON_IX.sparkle)*32];}
 const blit=(c,im,sx,sy,sw,sh,dx,dy,dw,dh)=>{if(im&&sw>0&&sh>0&&dw>0&&dh>0)c.drawImage(im,sx,sy,sw,sh,dx,dy,dw,dh);};
@@ -62,6 +64,8 @@ export function drawHeroCard(cv,m,art={},hero=null){if(cv.width!==CARD_W||cv.hei
  const g=c.createLinearGradient(0,L.y+L.h*.45,0,L.y+L.h);g.addColorStop(0,'rgba(16,24,42,0)');g.addColorStop(1,'rgba(16,24,42,.82)');c.fillStyle=g;c.fillRect(L.x,L.y,L.w,L.h);
  const foot=L.y+L.h-44;c.fillStyle='rgba(10,8,6,.45)';c.beginPath();c.ellipse(L.x+L.w/2,foot-6,78,16,0,0,Math.PI*2);c.fill();
  if(hero)c.drawImage(hero,Math.round(L.x+L.w/2-hero.width/2),Math.round(foot-hero.height));
+ /* improve20-r9a-nov1: the Hall of Echoes keepsakes, a small trophy row at the top of the picture (cosmetic, no power) */
+ if(m.keepsakes?.length){const ks=m.keepsakes,h=30+ks.length*26,bx=L.x+40,bw=L.w-80;c.fillStyle='rgba(16,12,8,.72)';c.fillRect(bx,L.y+36,bw,h);text(c,'HALL OF ECHOES',bx+12,L.y+58,{size:16,bold:true,color:'#f2c25a'});const st=art['skin/pl-icons/tier-star.png'];ks.forEach((ln,i)=>{const yy=L.y+66+i*26;if(st)blit(c,st,0,0,32,32,bx+10,yy,24,24);text(c,ln,bx+40,yy+19,{size:16,bold:true,color:CREAM,max:bw-50});});}
  c.restore();
  nine(c,art['skin/pl-window.png'],L.x,L.y,L.w,L.h,[19,19,19,19],2,false);
  /* right: the record on parchment */

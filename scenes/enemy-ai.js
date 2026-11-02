@@ -107,7 +107,7 @@ function buildMarkers(e,a,w){const p=w.player,f=e.facing,b=bounds(w),band=bandOf
   case 'beam':out.push({shape:'box',x0:e.x,x1:e.x+f*a.len,y:e.y,band});break;
   case 'dash':out.push({shape:'box',x0:e.x,x1:f>0?b.x1:b.x0,y:e.y,band});break;
   case 'projectile':out.push({shape:'box',x0:e.x+f*8,x1:e.x+f*34,y:e.y,band:4,hide:true});break;
-  case 'leap':circ(p.x,p.y,a.radius);break;
+  case 'leap':circ(p.x,standY(e,w,p.y),a.radius);break;
   case 'line':for(let i=0;i<a.count;i++)circ(e.x+f*(a.gap*(i+1)),e.y+(p.y-e.y)*(i+1)/a.count,a.radius);break;
   /* summons come from the arena's own places: its two sides (pylons), its edges (a drill line marching in), or beside the boss */
   case 'summon':for(let i=0;i<(a.count||1);i++){if(a.spots==='ember-gate')circ((e.emberGate=((e.brain?.used?.[a.name]||0)%2))?Math.min(b.x1-80,(w.camX??b.x0)+STAGE.camW-80):Math.max(b.x0+80,(w.camX??b.x0)+80),(b.y0+b.y1)/2+(i%2?12:-12),12);else if(a.spots==='pilot-side')circ(clampN((w.camX??b.x0)+64,b.x0+64,b.x1-100)+i*24,(b.y0+b.y1)/2+(i%2?12:-12),12);else if(a.spots==='sides')circ(i%2?b.x1-64:b.x0+64,(b.y0+b.y1)/2+(i%2?10:-10),8);else if(a.spots==='edge')circ(i%2?b.x1-6:b.x0+6,clampN(p.y+(i%2?12:-12),b.y0,b.y1),8);else circ(e.x+f*(26+i*22)*(i%2?-1:1),e.y+(i%2?10:-10),8);}if(!a.visibleTell)out.forEach(m=>m.hide=true);break;
@@ -289,6 +289,7 @@ function step(e,w,dt,mover){_world=w;const b=brain(e,w);
  const B=bounds(w);e.x=clampN(e.x,B.x0,B.x1);e.y=clampN(e.y,B.y0,B.y1);
  /* On a belt-scroll stage the camera shows y from viewTop down. A tall boss walking to the far edge of the floor would lose
     its head off the top of the view, so tall actors keep to the near part of the band (their own top stays on screen). */
+ if(e.stand){e.y=standY(e,w,e.y);return;}
  if(w.viewTop!==undefined||typeof w.encounter!=='function'){const top=w.viewTop??(w.layout?Math.max(0,w.layout.floorBottom-(STAGE.viewH-STAGE.hudBottom)):STAGE.height-STAGE.viewH),h=(metaOf(e.sprite)?.height||40)*(e.scale||1)+(e.z||0);e.y=Math.max(e.y,Math.min(B.y1,top+h*.92));}}
 export const ENEMY_AI=Object.fromEntries(Object.entries(MOVERS).map(([k,m])=>[k,(e,w,dt)=>step(e,w,dt,m)]));
 /* combat.js's World.enemyAI seam: drive a sprite enemy once its atlas has loaded (until then, and in node tests without
@@ -318,6 +319,9 @@ function drawLob(c,f,t){const q=lobPoint(f,-f.t);shadow(c,q.x,q.y,3+3*q.k,1.5+1.
 /* Top of an enemy's head in world units (for hp bars and labels): from its atlas height, scale and flight height. */
 /* A chapter mini-boss fought as an elite draws at its own eliteDraw (game/enemies.js, about 1.4x the hero's height); the
    picture only, never its reach or body (bodyR and the move ranges read e.scale and the data). */
+/* improve20-r9a-nov1: a boss with a stand band (enemies.js cthulhu stand:[lo,hi]) keeps its feet between lo and hi units from the floor's
+   near edge (bounds y1), so a 2x boss stays whole on screen; its leap lands there too, so the marker shows where it lands */
+export function standY(e,w,y){const s=e?.stand;if(!s)return y;const B=bounds(w);return clampN(y,Math.max(B.y0,B.y1+s[0]),Math.max(B.y0,B.y1+s[1]));}
 export const enemyRenderScale=e=>e.boss||e.decoy?Math.max(1,Math.floor((e.scale||1)+1e-6)):e.elite&&e.eliteDraw?e.eliteDraw:Math.max(.65,Math.round((e.scale||1)*.68*100)/100);
 /* improve20-r7b-nov1 #4: half the drawn body width (the atlas's `width` at its render scale) */
 export const bodyHalf=e=>Math.round(((e&&metaOf(e.sprite)?.width)||44)*enemyRenderScale(e||{})/2);

@@ -1,0 +1,57 @@
+/* The Hall of Echoes (improve20-r9a-nov1, IMPROVE20_ROUND9 lane R9A d6): a post-game boss gauntlet. It opens once the save has beaten
+   the final story boss (levels.js gameFinale, the same level finale.js FINALE_LEVEL names). Each chapter has three rungs; a rung is that
+   chapter's story bosses (main-path boss levels, no side paths, no prologue) fought back to back in their own boss arenas, at the hero's
+   own power. Rung I plays them on Normal numbers ("Standard"), II on Heroic, III on Legendary (game/tiers.js, no new tables). Health
+   carries over from one boss to the next with a fixed heal of HALL_HEAL of max health between them; potions are allowed (the one free
+   potion comes once, at the first boss, and what is left of it carries on). A fall ends the rung: nothing is lost and it can be tried
+   again at once.
+   Rewards: the FIRST clear of a rung pays a fixed amount of gold and Essence (the gear material, 'elite-shard'), shown before the
+   fight; a repeat clear pays nothing. A fight in the Hall pays no kill gold, kill XP, drops, chests or level records (World.finish and
+   World.kill skip them for a Hall run), so the Hall is never a farm.
+   Keepsakes: clearing a rung without drinking a potion earns that rung's keepsake ("Elderwood Echo I"), cosmetic only: a row on the
+   hero card and the Hall screen. Nothing random, no timers, no streaks; nothing here unlocks an ability (unlocked() never reads s.hall).
+   Save (additive within v9, core/save.js normalize -> cleanHall): s.hall = {cleared:{'<chapter>:<rung>':true}, keepsakes:{...same keys}}.
+   Pure: functions that write the save say so. */
+import {LEVELS,CHAPTERS,levelDone,levelReward,tiered,gameFinale} from './levels.js';
+import {FREE_POTIONS} from './potions.js';
+export const HALL_HEAL=.35,RUNGS=[1,2,3],RUNG_TIER={1:'normal',2:'heroic',3:'legendary'},RUNG_LABEL={1:'Standard',2:'Heroic',3:'Legendary'},ROMAN=['I','II','III'];
+export const HALL_FINAL=LEVELS.find(l=>gameFinale(l.id))?.id||null;
+export const ESSENCE_KEY='elite-shard';
+export const hallOpen=s=>!!HALL_FINAL&&levelDone(s,HALL_FINAL);
+/* a chapter's story bosses in play order: its main-path boss levels */
+export const hallBosses=ch=>LEVELS.filter(l=>l.chapter===ch&&tiered(l)&&!l.optional&&l.boss).map(l=>l.id);
+export const HALL_CHAPTERS=CHAPTERS.map(c=>c.id).filter(ch=>hallBosses(ch).length);
+const key=(ch,r)=>`${ch}:${r}`,okKey=k=>{const [ch,r]=String(k).split(':');return HALL_CHAPTERS.includes(ch)&&RUNGS.includes(+r);};
+export const emptyHall=()=>({cleared:{},keepsakes:{}});
+export function cleanHall(v){const h=emptyHall();if(!v||typeof v!=='object'||Array.isArray(v))return h;for(const f of ['cleared','keepsakes']){const o=v[f];if(o&&typeof o==='object'&&!Array.isArray(o))for(const k of Object.keys(o))if(o[k]===true&&okKey(k))h[f][k]=true;}return h;}
+const H=s=>s.hall&&typeof s.hall==='object'&&s.hall.cleared&&s.hall.keepsakes?s.hall:(s.hall=cleanHall(s.hall));
+export const rungCleared=(s,ch,r)=>!!s?.hall?.cleared?.[key(ch,r)];
+export const hasKeepsake=(s,ch,r)=>!!s?.hall?.keepsakes?.[key(ch,r)];
+/* a rung opens once the Hall is open and the rung below it in the same chapter is cleared */
+export const rungOpen=(s,ch,r)=>hallOpen(s)&&HALL_CHAPTERS.includes(ch)&&RUNGS.includes(r)&&(r===1||rungCleared(s,ch,r-1));
+export const rungState=(s,ch,r)=>hasKeepsake(s,ch,r)?'keepsake':rungCleared(s,ch,r)?'cleared':rungOpen(s,ch,r)?'open':'locked';
+const chName=ch=>(CHAPTERS.find(c=>c.id===ch)?.name||ch).replace(/^The /,'');
+export const keepsakeName=(ch,r)=>`${chName(ch)} Echo ${ROMAN[r-1]}`;
+/* the first-clear reward, fixed and shown in advance: the gold of a first clear of the chapter's last story level on the rung's tier
+   (Elderwood 200/350/500, Emberkeep 340/595/850, the Veilmoor 480/840/1200) and 2 Essence a rung step (2/4/6) */
+export function rungReward(ch,r){const last=hallBosses(ch).at(-1),l=LEVELS.find(x=>x.id===last);return {gold:l?levelReward(l,RUNG_TIER[r]):0,essence:2*r};}
+/* every keepsake this save holds, in chapter and rung order: [{chapter,rung,name}] */
+export const keepsakes=s=>HALL_CHAPTERS.flatMap(ch=>RUNGS.filter(r=>hasKeepsake(s,ch,r)).map(r=>({chapter:ch,rung:r,name:keepsakeName(ch,r)})));
+/* ---- one rung, as a run ---- */
+/* -> the run state, or null when the rung is not open */
+export function startRung(s,ch,r){if(!rungOpen(s,ch,r))return null;return {chapter:ch,rung:r,tier:RUNG_TIER[r],bosses:hallBosses(ch),i:0,hp:1,drunk:0,free:FREE_POTIONS};}
+/* the health share the next boss starts with: what was left plus HALL_HEAL, never above full */
+export const hallCarry=hp=>Math.min(1,Math.max(0,+hp||0)+HALL_HEAL);
+/* One boss fight of the run ended. fight = {won, hp (share of max health left), drunk (potions drunk in it), free (free potions left)}.
+   Mutates the run; -> 'next' (another boss waits), 'won' (the rung is cleared) or 'lost'. */
+export function hallStep(run,{won,hp=0,drunk=0,free=0}={}){if(!run||run.done)return run?.done||'lost';run.drunk+=Math.max(0,drunk|0);run.free=Math.max(0,free|0);
+ if(!won){run.done='lost';return 'lost';}run.i++;if(run.i>=run.bosses.length){run.done='won';return 'won';}run.hp=hallCarry(hp);return 'next';}
+/* A cleared rung: records it, pays the first clear (writes s.gold and s.gear.mats) and grants the keepsake for a clear with no potions.
+   -> {first, gold, essence, keepsake (a name when this clear had no potions), keepsakeNew}. A lost run changes nothing. */
+export function hallFinish(s,run){if(!run||run.done!=='won')return null;const h=H(s),k=key(run.chapter,run.rung),first=!h.cleared[k];h.cleared[k]=true;let gold=0,essence=0;
+ if(first){const rw=rungReward(run.chapter,run.rung);gold=rw.gold;essence=rw.essence;s.gold=(s.gold|0)+gold;s.gear??={};s.gear.mats??={};s.gear.mats[ESSENCE_KEY]=(s.gear.mats[ESSENCE_KEY]|0)+essence;}
+ const clean=run.drunk===0,keepsakeNew=clean&&!h.keepsakes[k];if(clean)h.keepsakes[k]=true;
+ return {first,gold,essence,keepsake:clean?keepsakeName(run.chapter,run.rung):null,keepsakeNew};}
+/* the finale card's line (finale.js finaleNext) */
+export function hallLeft(s){if(!hallOpen(s))return null;const all=HALL_CHAPTERS.length*RUNGS.length,done=HALL_CHAPTERS.reduce((t,ch)=>t+RUNGS.filter(r=>rungCleared(s,ch,r)).length,0);
+ return done>=all?null:`The Hall of Echoes: every chapter's bosses back to back, three rungs each (${done} of ${all} cleared). Its door is on the Veilmoor map.`;}

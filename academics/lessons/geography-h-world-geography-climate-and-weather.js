@@ -98,7 +98,7 @@ const angleFig=()=>scene('Noon sun angle at 40° N: the same beam, spread over m
 const koppenFig=()=>scene('Five broad Koppen groups (simplified)',d=>{
  const cells=[['A  Tropical','coldest month','18 °C or more',3],['B  Dry','evaporation','beats rain',0],['C  Temperate','coldest month','-3 to 18 °C',2],['D  Continental','coldest month','under -3 °C',1],['E  Polar','warmest month','under 10 °C',4]];
  cells.forEach(([a,b,c,col],k)=>{const x=50+k*110;d.box(x,96,100,90,col);d.note(x+50,118,a,col);d.note(x+50,146,b,0);d.note(x+50,166,c,0);});
- d.note(320,70,'Check E first, then A, then cold winters (D); the rest are C',4);d.note(320,222,'Versions differ: some use 0 °C, not -3 °C. Each group has subtypes.',0);});
+ d.note(320,70,'If not dry (B): check E, then A, then D; the rest are C',4);d.note(320,222,'Versions differ: some use 0 °C, not -3 °C. Each group has subtypes.',0);});
 const monsoonFig=()=>scene('A monsoon rain year (fictional station, wet season Jun to Sep)',d=>{
  const Y=p=>220-p*0.28;
  d.line(90,80,90,220,0,0,false,2);d.line(90,220,540,220,0,0,false,2);

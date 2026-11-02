@@ -138,7 +138,7 @@ causation:[
 };
 const TRY=[
  ['Which Andean empire built a vast road network linking its lands around 1491?','the Inca Empire',['the Mexica Empire','the Mississippian state'],'Inca roads linked the Andes, and the capital was Cusco.',table('A road network','Society','Fact',[['Inca','Andean roads and quipu'],['Mexica','tribute from conquered peoples'],['Pueblo','adobe villages']])],
- ['Which food first came to Europe from the Americas?','the tomato',['the olive','the grape'],'Olives and grapes are old Mediterranean crops; tomatoes crossed the Atlantic after 1492.',table('Crop origins','Food','Origin',[['Tomato','Americas'],['Olive','Mediterranean'],['Wheat','Southwest Asia']])],
+ ['Which of these foods came to Europe from the Americas?','the tomato',['the olive','the grape'],'Olives and grapes are old Mediterranean crops; tomatoes crossed the Atlantic after 1492.',table('Crop origins','Food','Origin',[['Tomato','Americas'],['Olive','Mediterranean'],['Wheat','Southwest Asia']])],
  ['Which confederacy of Native peoples lived in the Chesapeake region when Jamestown was founded in 1607?','the Powhatan',['the Haudenosaunee','the Pueblo'],'The Powhatan confederacy lived near Jamestown; the Haudenosaunee lived farther north.',table('Native peoples and the English','Place','Peoples',[['Chesapeake','Powhatan'],['Northeast','Haudenosaunee'],['Southwest','Pueblo']])]];
 const check=i=>{const [q,right,wrong,hint,pic]=TRY[i],c=choose(right,wrong,i);return {prompt:`Try it: ${q[0].toLowerCase()+q.slice(1)} ${c.text}. Answer A, B or C.`,answer:c.letter,options:['A','B','C'],hint,pic};};
 export default {

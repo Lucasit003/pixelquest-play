@@ -50,8 +50,10 @@ self.addEventListener('message',e=>{if(e.data?.type!=='cache'||!Array.isArray(e.
 
 /* accounts-nov1: sign-in and cloud-save calls (Supabase /auth/v1 and /rest/v1) always go to the network, never the cache */
 export const isCloudCall=url=>{try{return /\/(auth|rest)\/v1(\/|$)/.test(new URL(url).pathname);}catch{return false;}};
+/* landing-nov2: a navigation is the game (index.html) unless it names another page of the site (parents.html, the page for grown-ups) */
+export const navPath=url=>{const p=pathOf(url);return p&&/^[a-z0-9-]+\.html$/i.test(p)?p:'index.html';};
 self.addEventListener('fetch',e=>{const req=e.request;if(req.method!=='GET'||isCloudCall(req.url))return;
- const p=req.mode==='navigate'?'index.html':pathOf(req.url);if(!p||p==='sw.js')return;
+ const p=req.mode==='navigate'?navPath(req.url):pathOf(req.url);if(!p||p==='sw.js')return;
  e.respondWith(respond(req,p));});
 async function respond(req,p){const c=await caches.open(isClip(p)?CLIPS:CACHE),key=keyOf(p);let hit=await c.match(key);
  if(!hit){try{const r=await fetch(req.mode==='navigate'?key:req);if(r.status===200&&r.type==='basic')c.put(key,r.clone()).catch(()=>{});return r;}

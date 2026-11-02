@@ -39,7 +39,7 @@ items(add){
    let fails=0;v.sites.forEach((s,k)=>{if(j===0&&c===0&&s[0]==='E')return;const pass=score(s,set)===set.length;if(!pass&&fails++>=Math.max(1,ok.length))return;
     add('test',`${S} Does site ${s[0]} meet all of ${C}? Answer yes or no.`,pass?'yes':'no',P,pass?`Site ${s[0]} passes all ${set.length}.`:`Site ${s[0]} fails: ${set.filter(([,t])=>!t(s)).map(x=>x[0]).join('; ')}.`);});
    /* Counting suitable sites, and naming one when exactly one passes. */
-   add('count',`${S} How many sites meet all of ${C}?`,ok.length,P,ok.length?`Only ${and(ok.map(s=>`site ${s[0]}`))} pass every test.`:'No site passes every test.');
+   add('count',`${S} How many sites meet all of ${C}?`,ok.length,P,ok.length?`Only ${and(ok.map(s=>`site ${s[0]}`))} ${ok.length===1?'passes':'pass'} every test.`:'No site passes every test.');
    if(ok.length===1)add('count',`${S} Which site is the only one that meets all of ${C}?`,ok[0][0],P,`Only site ${ok[0][0]} passes every test.`,[`site ${ok[0][0].toLowerCase()}`]);
    /* Scores and the best site. */
    v.sites.forEach((s,k)=>{if((k+c)%2||(j===0&&c===4&&s[0]==='D'))return;

@@ -25704,6 +25704,167 @@ export const QUESTION_REVISIONS=[
   "oldPrompt": "What is the strongest type of intermolecular force between molecules of liquid CH₃OCH₃? A: London dispersion forces only, B: dipole-dipole attractions, C: hydrogen bonding. Answer A, B or C.",
   "newPrompt": "Molecules of CH₃OCH₃ and of C₃H₈ (propane) have the same number of electrons (26). Which type of intermolecular force acts between CH₃OCH₃ molecules but not between C₃H₈ (propane) molecules? A: London dispersion forces, B: dipole-dipole attractions, C: hydrogen bonding. Answer A, B or C.",
   "reason": "improve20-r9f-nov1 (audit8 fact check): \"the strongest force in liquid CH₃OCH₃\" was keyed dipole-dipole, but in such small polar molecules London dispersion contributes more of the attraction (Atkins & de Paula, Physical Chemistry: HCl dispersion about 17 kJ/mol against dipole-dipole about 3 kJ/mol). The item now asks which force the polar molecule has that a nonpolar molecule with the same number of electrons does not (dipole-dipole: still the keyed answer)."
+ },
+ {
+  "subject": "science",
+  "level": 4,
+  "oldPrompt": "A fictional lab label reads NaCl. How many atoms in all are in one molecule of NaCl?",
+  "newPrompt": "A fictional lab label reads NaCl. How many atoms in all does the formula NaCl show?",
+  "reason": "factsweep-nov2: WRONG: same fix for m1835 KCl (science-4-1esymld), m1814 CaCO3 (science-4-16942bx), m1848 Fe2O3 (science-4-1njvr11), m1860 Al2O3 (science-4-2bmaqh), m1879 MgO (science-4-lf5u11) Source: standard chemistry (NGSS MS-PS1-1 'extended structures'): ionic compounds form lattices, not molecules"
+ },
+ {
+  "subject": "science",
+  "level": 4,
+  "oldPrompt": "A fictional lab label reads Fe₂O₃. How many atoms in all are in one molecule of Fe₂O₃?",
+  "newPrompt": "A fictional lab label reads Fe₂O₃. How many atoms in all does the formula Fe₂O₃ show?",
+  "reason": "factsweep-nov2: WRONG: ionic compound called a molecule Source: standard chemistry: Fe2O3 is ionic"
+ },
+ {
+  "subject": "science",
+  "level": 4,
+  "oldPrompt": "A fictional lab label reads CaCO₃. How many atoms in all are in one molecule of CaCO₃?",
+  "newPrompt": "A fictional lab label reads CaCO₃. How many atoms in all does the formula CaCO₃ show?",
+  "reason": "factsweep-nov2: WRONG: ionic compound called a molecule Source: standard chemistry: CaCO3 is ionic"
+ },
+ {
+  "subject": "science",
+  "level": 4,
+  "oldPrompt": "A fictional lab label reads MgO. How many atoms in all are in one molecule of MgO?",
+  "newPrompt": "A fictional lab label reads MgO. How many atoms in all does the formula MgO show?",
+  "reason": "factsweep-nov2: WRONG: ionic compound called a molecule; related explanations of the other atom items (e.g. 'Each molecule of NaCl', 'One molecule of Fe2O3') now say 'formula unit' (explanation only, no prompt change); step 0 notes the salt case Source: standard chemistry: MgO is ionic"
+ },
+ {
+  "subject": "science",
+  "level": 4,
+  "oldPrompt": "A fictional lab label reads Al₂O₃. How many atoms in all are in one molecule of Al₂O₃?",
+  "newPrompt": "A fictional lab label reads Al₂O₃. How many atoms in all does the formula Al₂O₃ show?",
+  "reason": "factsweep-nov2: WRONG: ionic compound called a molecule Source: standard chemistry: Al2O3 is ionic"
+ },
+ {
+  "subject": "science",
+  "level": 4,
+  "oldPrompt": "A fictional lab label reads KCl. How many atoms in all are in one molecule of KCl?",
+  "newPrompt": "A fictional lab label reads KCl. How many atoms in all does the formula KCl show?",
+  "reason": "factsweep-nov2: WRONG: ionic compound called a molecule Source: standard chemistry: KCl is ionic"
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "Fictional numbers alive from a cohort of 1,000 at equal fifths of the maximum lifespan are 1000, 800, 610, 400, 210, 0. Which survivorship curve type does this pattern resemble? A: Type I, B: Type II, C: Type III. Answer A, B or C.",
+  "newPrompt": "Fictional numbers alive from a cohort of 1,000 at equal fifths of the maximum lifespan are 1000, 600, 360, 216, 130, 78. Which survivorship curve type does this pattern resemble? A: Type I, B: Type II, C: Type III. Answer A, B or C.",
+  "reason": "factsweep-nov2: WRONG: The Type II cohort (1000, 800, 610, 400, 210, 0) lost about the same NUMBER each fifth, which is not Type II; now about the same SHARE (40 percent) dies each fifth (1000, 600, 360, 216, 130, 78), as the lesson step and its curve picture define Type II. Source: AP Environmental Science CED 3.4 survivorship curves; derivation: 600/1000 = 360/600 = 216/360 = 0.6"
+ },
+ {
+  "subject": "cs",
+  "level": 5,
+  "oldPrompt": "There is no file named zip.txt. Code: Scanner sc = new Scanner(new File(\"zip.txt\")); System.out.println(sc.nextLine()); What happens when the code is compiled and run? A: prints null, B: FileNotFoundException, C: NoSuchElementException. Answer A, B or C.",
+  "newPrompt": "There is no file named zip.txt. The code is inside a main method declared throws IOException. Code: Scanner sc = new Scanner(new File(\"zip.txt\")); System.out.println(sc.nextLine()); What happens when the code is compiled and run? A: prints null, B: FileNotFoundException, C: NoSuchElementException. Answer A, B or C.",
+  "reason": "factsweep-nov2: AMBIGUOUS: Asked what happens when the code is compiled and run, but new Scanner(new File(...)) throws a checked exception, so without a throws clause it does not compile (the same topic teaches this); the code is now inside a main method declared throws IOException. Source: Java SE API, Scanner(File) throws FileNotFoundException; JLS 11.2 (checked exceptions must be caught or declared)"
+ },
+ {
+  "subject": "finance",
+  "level": 5,
+  "oldPrompt": "A fictional private tutor has market power and faces the demand curve P = 72 - 3Q, with P in dollars a unit and Q in lessons a day (a whole number). Its marginal cost is a constant $12 a unit and its fixed cost is $60 a day. It practices perfect price discrimination, charging each buyer the most that buyer is willing to pay. How many lessons a day does it sell?",
+  "newPrompt": "A fictional private tutor has market power and faces the demand curve P = 72 - 3Q, with P in dollars a unit and Q in lessons a day. Its marginal cost is a constant $12 a unit and its fixed cost is $60 a day. It practices perfect price discrimination (treat demand as a smooth line, so its revenue is the area under the demand curve), charging each buyer the most that buyer is willing to pay. How many lessons a day does it sell?",
+  "reason": "factsweep-nov2: AMBIGUOUS: '(a whole number)' invited a discrete sum that disagrees with the area-based keys; answers unchanged, 11 ids change (10 items + 1 step check) Source: derivation: keys use the triangle/trapezoid area (P=72-3Q, MC 12, FC 60: 0.5*20*60-60 = 540, gain 300); a student pricing whole units one by one gets 570-60 = 510 (gain 270). Same gap for P=100-4Q, MC 36: 432 vs 400"
+ },
+ {
+  "subject": "finance",
+  "level": 5,
+  "oldPrompt": "A fictional tailor with no local rival has market power and faces the demand curve P = 100 - 4Q, with P in dollars a unit and Q in suits a day (a whole number). Its marginal cost is a constant $36 a unit and its fixed cost is $80 a day. It practices perfect price discrimination, charging each buyer the most that buyer is willing to pay. How many suits a day does it sell?",
+  "newPrompt": "A fictional tailor with no local rival has market power and faces the demand curve P = 100 - 4Q, with P in dollars a unit and Q in suits a day. Its marginal cost is a constant $36 a unit and its fixed cost is $80 a day. It practices perfect price discrimination (treat demand as a smooth line, so its revenue is the area under the demand curve), charging each buyer the most that buyer is willing to pay. How many suits a day does it sell?",
+  "reason": "factsweep-nov2: AMBIGUOUS: '(a whole number)' invited a discrete sum that disagrees with the area-based keys; answers unchanged, 11 ids change (10 items + 1 step check) Source: derivation: keys use the triangle/trapezoid area (P=72-3Q, MC 12, FC 60: 0.5*20*60-60 = 540, gain 300); a student pricing whole units one by one gets 570-60 = 510 (gain 270). Same gap for P=100-4Q, MC 36: 432 vs 400"
+ },
+ {
+  "subject": "finance",
+  "level": 5,
+  "oldPrompt": "A fictional concert promoter has market power and faces the demand curve P = 50 - 2Q, with P in dollars a unit and Q in tickets a day (a whole number). Its marginal cost is a constant $10 a unit and its fixed cost is $100 a day. It practices perfect price discrimination, charging each buyer the most that buyer is willing to pay. What is its total revenue per day, in dollars?",
+  "newPrompt": "A fictional concert promoter has market power and faces the demand curve P = 50 - 2Q, with P in dollars a unit and Q in tickets a day. Its marginal cost is a constant $10 a unit and its fixed cost is $100 a day. It practices perfect price discrimination (treat demand as a smooth line, so its revenue is the area under the demand curve), charging each buyer the most that buyer is willing to pay. What is its total revenue per day, in dollars?",
+  "reason": "factsweep-nov2: AMBIGUOUS: '(a whole number)' invited a discrete sum that disagrees with the area-based keys; answers unchanged, 11 ids change (10 items + 1 step check) Source: derivation: keys use the triangle/trapezoid area (P=72-3Q, MC 12, FC 60: 0.5*20*60-60 = 540, gain 300); a student pricing whole units one by one gets 570-60 = 510 (gain 270). Same gap for P=100-4Q, MC 36: 432 vs 400"
+ },
+ {
+  "subject": "finance",
+  "level": 5,
+  "oldPrompt": "A fictional tailor with no local rival has market power and faces the demand curve P = 100 - 4Q, with P in dollars a unit and Q in suits a day (a whole number). Its marginal cost is a constant $36 a unit and its fixed cost is $80 a day. It practices perfect price discrimination, charging each buyer the most that buyer is willing to pay. What is its total revenue per day, in dollars?",
+  "newPrompt": "A fictional tailor with no local rival has market power and faces the demand curve P = 100 - 4Q, with P in dollars a unit and Q in suits a day. Its marginal cost is a constant $36 a unit and its fixed cost is $80 a day. It practices perfect price discrimination (treat demand as a smooth line, so its revenue is the area under the demand curve), charging each buyer the most that buyer is willing to pay. What is its total revenue per day, in dollars?",
+  "reason": "factsweep-nov2: AMBIGUOUS: '(a whole number)' invited a discrete sum that disagrees with the area-based keys; answers unchanged, 11 ids change (10 items + 1 step check) Source: derivation: keys use the triangle/trapezoid area (P=72-3Q, MC 12, FC 60: 0.5*20*60-60 = 540, gain 300); a student pricing whole units one by one gets 570-60 = 510 (gain 270). Same gap for P=100-4Q, MC 36: 432 vs 400"
+ },
+ {
+  "subject": "finance",
+  "level": 5,
+  "oldPrompt": "A fictional concert promoter has market power and faces the demand curve P = 50 - 2Q, with P in dollars a unit and Q in tickets a day (a whole number). Its marginal cost is a constant $10 a unit and its fixed cost is $100 a day. It practices perfect price discrimination, charging each buyer the most that buyer is willing to pay. What is its economic profit per day, in dollars?",
+  "newPrompt": "A fictional concert promoter has market power and faces the demand curve P = 50 - 2Q, with P in dollars a unit and Q in tickets a day. Its marginal cost is a constant $10 a unit and its fixed cost is $100 a day. It practices perfect price discrimination (treat demand as a smooth line, so its revenue is the area under the demand curve), charging each buyer the most that buyer is willing to pay. What is its economic profit per day, in dollars?",
+  "reason": "factsweep-nov2: AMBIGUOUS: '(a whole number)' invited a discrete sum that disagrees with the area-based keys; answers unchanged, 11 ids change (10 items + 1 step check) Source: derivation: keys use the triangle/trapezoid area (P=72-3Q, MC 12, FC 60: 0.5*20*60-60 = 540, gain 300); a student pricing whole units one by one gets 570-60 = 510 (gain 270). Same gap for P=100-4Q, MC 36: 432 vs 400"
+ },
+ {
+  "subject": "finance",
+  "level": 5,
+  "oldPrompt": "A fictional private tutor has market power and faces the demand curve P = 72 - 3Q, with P in dollars a unit and Q in lessons a day (a whole number). Its marginal cost is a constant $12 a unit and its fixed cost is $60 a day. It practices perfect price discrimination, charging each buyer the most that buyer is willing to pay. What is its economic profit per day, in dollars?",
+  "newPrompt": "A fictional private tutor has market power and faces the demand curve P = 72 - 3Q, with P in dollars a unit and Q in lessons a day. Its marginal cost is a constant $12 a unit and its fixed cost is $60 a day. It practices perfect price discrimination (treat demand as a smooth line, so its revenue is the area under the demand curve), charging each buyer the most that buyer is willing to pay. What is its economic profit per day, in dollars?",
+  "reason": "factsweep-nov2: AMBIGUOUS: '(a whole number)' invited a discrete sum that disagrees with the area-based keys; answers unchanged, 11 ids change (10 items + 1 step check) Source: derivation: keys use the triangle/trapezoid area (P=72-3Q, MC 12, FC 60: 0.5*20*60-60 = 540, gain 300); a student pricing whole units one by one gets 570-60 = 510 (gain 270). Same gap for P=100-4Q, MC 36: 432 vs 400"
+ },
+ {
+  "subject": "finance",
+  "level": 5,
+  "oldPrompt": "A fictional airline on a route with no rival has market power and faces the demand curve P = 90 - 5Q, with P in dollars a unit and Q in seats a day (a whole number). Its marginal cost is a constant $20 a unit and its fixed cost is $200 a day. It practices perfect price discrimination, charging each buyer the most that buyer is willing to pay. What is its economic profit per day, in dollars?",
+  "newPrompt": "A fictional airline on a route with no rival has market power and faces the demand curve P = 90 - 5Q, with P in dollars a unit and Q in seats a day. Its marginal cost is a constant $20 a unit and its fixed cost is $200 a day. It practices perfect price discrimination (treat demand as a smooth line, so its revenue is the area under the demand curve), charging each buyer the most that buyer is willing to pay. What is its economic profit per day, in dollars?",
+  "reason": "factsweep-nov2: AMBIGUOUS: '(a whole number)' invited a discrete sum that disagrees with the area-based keys; answers unchanged, 11 ids change (10 items + 1 step check) Source: derivation: keys use the triangle/trapezoid area (P=72-3Q, MC 12, FC 60: 0.5*20*60-60 = 540, gain 300); a student pricing whole units one by one gets 570-60 = 510 (gain 270). Same gap for P=100-4Q, MC 36: 432 vs 400"
+ },
+ {
+  "subject": "finance",
+  "level": 5,
+  "oldPrompt": "A fictional private tutor has market power and faces the demand curve P = 72 - 3Q, with P in dollars a unit and Q in lessons a day (a whole number). Its marginal cost is a constant $12 a unit and its fixed cost is $60 a day. It practices perfect price discrimination, charging each buyer the most that buyer is willing to pay. How many more dollars of profit a day does it earn than it would by charging one price to all buyers?",
+  "newPrompt": "A fictional private tutor has market power and faces the demand curve P = 72 - 3Q, with P in dollars a unit and Q in lessons a day. Its marginal cost is a constant $12 a unit and its fixed cost is $60 a day. It practices perfect price discrimination (treat demand as a smooth line, so its revenue is the area under the demand curve), charging each buyer the most that buyer is willing to pay. How many more dollars of profit a day does it earn than it would by charging one price to all buyers?",
+  "reason": "factsweep-nov2: AMBIGUOUS: '(a whole number)' invited a discrete sum that disagrees with the area-based keys; answers unchanged, 11 ids change (10 items + 1 step check) Source: derivation: keys use the triangle/trapezoid area (P=72-3Q, MC 12, FC 60: 0.5*20*60-60 = 540, gain 300); a student pricing whole units one by one gets 570-60 = 510 (gain 270). Same gap for P=100-4Q, MC 36: 432 vs 400"
+ },
+ {
+  "subject": "finance",
+  "level": 5,
+  "oldPrompt": "A fictional tailor with no local rival has market power and faces the demand curve P = 100 - 4Q, with P in dollars a unit and Q in suits a day (a whole number). Its marginal cost is a constant $36 a unit and its fixed cost is $80 a day. It practices perfect price discrimination, charging each buyer the most that buyer is willing to pay. How many more dollars of profit a day does it earn than it would by charging one price to all buyers?",
+  "newPrompt": "A fictional tailor with no local rival has market power and faces the demand curve P = 100 - 4Q, with P in dollars a unit and Q in suits a day. Its marginal cost is a constant $36 a unit and its fixed cost is $80 a day. It practices perfect price discrimination (treat demand as a smooth line, so its revenue is the area under the demand curve), charging each buyer the most that buyer is willing to pay. How many more dollars of profit a day does it earn than it would by charging one price to all buyers?",
+  "reason": "factsweep-nov2: AMBIGUOUS: '(a whole number)' invited a discrete sum that disagrees with the area-based keys; answers unchanged, 11 ids change (10 items + 1 step check) Source: derivation: keys use the triangle/trapezoid area (P=72-3Q, MC 12, FC 60: 0.5*20*60-60 = 540, gain 300); a student pricing whole units one by one gets 570-60 = 510 (gain 270). Same gap for P=100-4Q, MC 36: 432 vs 400"
+ },
+ {
+  "subject": "finance",
+  "level": 5,
+  "oldPrompt": "A fictional airline on a route with no rival has market power and faces the demand curve P = 90 - 5Q, with P in dollars a unit and Q in seats a day (a whole number). Its marginal cost is a constant $20 a unit and its fixed cost is $200 a day. It practices perfect price discrimination, charging each buyer the most that buyer is willing to pay. What is consumer surplus under perfect price discrimination, in dollars?",
+  "newPrompt": "A fictional airline on a route with no rival has market power and faces the demand curve P = 90 - 5Q, with P in dollars a unit and Q in seats a day. Its marginal cost is a constant $20 a unit and its fixed cost is $200 a day. It practices perfect price discrimination (treat demand as a smooth line, so its revenue is the area under the demand curve), charging each buyer the most that buyer is willing to pay. What is consumer surplus under perfect price discrimination, in dollars?",
+  "reason": "factsweep-nov2: AMBIGUOUS: '(a whole number)' invited a discrete sum that disagrees with the area-based keys; answers unchanged, 11 ids change (10 items + 1 step check) Source: derivation: keys use the triangle/trapezoid area (P=72-3Q, MC 12, FC 60: 0.5*20*60-60 = 540, gain 300); a student pricing whole units one by one gets 570-60 = 510 (gain 270). Same gap for P=100-4Q, MC 36: 432 vs 400"
+ },
+ {
+  "subject": "history",
+  "level": 4,
+  "oldPrompt": "Which description fits the heavenly horses: prized horses from the Ferghana valley, a religion carried to China by monks or an explosive powder first used in fireworks?",
+  "newPrompt": "Which description fits the heavenly horses: prized horses from the Ferghana valley, a religion carried to China by monks or an explosive powder for fireworks and weapons?",
+  "reason": "factsweep-nov2: LOOSE: 'first used in fireworks' is a popular but uncertain claim; prompts of 'Which description fits ...' items containing it changed Source: https://www.britannica.com/technology/gunpowder (early Chinese uses included incendiary weapons as well as fireworks; which came first is not settled)"
+ },
+ {
+  "subject": "history",
+  "level": 4,
+  "oldPrompt": "Which description fits Buddhism: an explosive powder first used in fireworks, a roadside inn for caravans or a religion carried to China by monks?",
+  "newPrompt": "Which description fits Buddhism: an explosive powder for fireworks and weapons, a roadside inn for caravans or a religion carried to China by monks?",
+  "reason": "factsweep-nov2: LOOSE: 'first used in fireworks' is a popular but uncertain claim; prompts of 'Which description fits ...' items containing it changed Source: https://www.britannica.com/technology/gunpowder (early Chinese uses included incendiary weapons as well as fireworks; which came first is not settled)"
+ },
+ {
+  "subject": "history",
+  "level": 4,
+  "oldPrompt": "Which description fits gunpowder: a two-humped camel used in caravans, an explosive powder first used in fireworks or a roadside inn for caravans?",
+  "newPrompt": "Which description fits gunpowder: a two-humped camel used in caravans, an explosive powder for fireworks and weapons or a roadside inn for caravans?",
+  "reason": "factsweep-nov2: LOOSE: 'first used in fireworks' is a popular but uncertain claim; prompts of 'Which description fits ...' items containing it changed Source: https://www.britannica.com/technology/gunpowder (early Chinese uses included incendiary weapons as well as fireworks; which came first is not settled)"
+ },
+ {
+  "subject": "history",
+  "level": 5,
+  "oldPrompt": "Try it: which food first came to Europe from the Americas? A: the olive, B: the tomato, C: the grape. Answer A, B or C.",
+  "newPrompt": "Try it: which of these foods came to Europe from the Americas? A: the olive, B: the tomato, C: the grape. Answer A, B or C.",
+  "reason": "factsweep-nov2: AMBIGUOUS: \"Which food first came to Europe\" could be read as which arrived earliest; only the tomato came from the Americas, so the Try-it now asks which of these foods came from the Americas. Source: Britannica, Columbian exchange"
+ },
+ {
+  "subject": "finance",
+  "level": 5,
+  "oldPrompt": "Try it: a fictional theatre with no rival in town has market power and faces the demand curve P = 40 - 1Q, with P in dollars a unit and Q in seats a day (a whole number). Its marginal cost is a constant $8 a unit and its fixed cost is $100 a day. It practices perfect price discrimination, charging each buyer the most that buyer is willing to pay. How many seats a day does it sell?",
+  "newPrompt": "Try it: a fictional theatre with no rival in town has market power and faces the demand curve P = 40 - 1Q, with P in dollars a unit and Q in seats a day. Its marginal cost is a constant $8 a unit and its fixed cost is $100 a day. It practices perfect price discrimination (treat demand as a smooth line, so its revenue is the area under the demand curve), charging each buyer the most that buyer is willing to pay. How many seats a day does it sell?",
+  "reason": "factsweep-nov2: AMBIGUOUS: '(a whole number)' invited a discrete sum that disagrees with the area-based keys; answers unchanged, 11 ids change (10 items + 1 step check) Source: derivation: keys use the triangle/trapezoid area (P=72-3Q, MC 12, FC 60: 0.5*20*60-60 = 540, gain 300); a student pricing whole units one by one gets 570-60 = 510 (gain 270). Same gap for P=100-4Q, MC 36: 432 vs 400"
  }
 ];
 export const ANSWER_ID_RENAMES=new Map(QUESTION_REVISIONS.map(r=>[`${r.subject}-${r.level}-${hash(r.oldPrompt)}`,`${r.subject}-${r.level}-${hash(r.newPrompt)}`]));

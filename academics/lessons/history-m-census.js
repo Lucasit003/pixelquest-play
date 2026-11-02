@@ -18,7 +18,7 @@ goal:'Use a series of census counts to find how much a population changed, its p
 points:20,
 skills:{change:'Change between censuses',rate:'Rates of growth',per:'Per-person figures'},
 steps:[
- {skill:'change',say:'A census counts everyone in a place on one day, usually every ten years. A series of censuses shows how a place grew or shrank. In fictional Ashcombe the population went from 2,000 in 1800 to 2,500 in 1810, a rise of 2,500 - 2,000 = 500.',eq:'2,500 - 2,000 = 500',pic:pic(C[0])},
+ {skill:'change',say:'A census counts everyone in a place on one day, in many countries every ten years. A series of censuses shows how a place grew or shrank. In fictional Ashcombe the population went from 2,000 in 1800 to 2,500 in 1810, a rise of 2,500 - 2,000 = 500.',eq:'2,500 - 2,000 = 500',pic:pic(C[0])},
  {skill:'change',say:'Compare any two censuses by subtracting, and watch for falls as well as rises: Bellmoor grew to 12,500 in 1870 but fell to 11,000 by 1880, a drop of 12,500 - 11,000 = 1,500.',eq:'12,500 - 11,000 = 1,500',pic:pic(C[1]),
   check:{prompt:'Try it: a census of the fictional town of Ashcombe counted 3,000 people in 1820 and 4,800 people in 1840. By how many people did the population grow from 1820 to 1840?',answer:1800,options:[1800,7800,900],hint:'Take the 1820 count from the 1840 count.',pic:{t:'setups',title:'Fictional Ashcombe census',head:'Year',rows:[['1820','3,000'],['1840','4,800']],cols:['People']}}},
  {skill:'rate',say:'A percent change makes growth comparable between big and small places: divide the change by the earlier count and multiply by 100. Ashcombe’s rise of 500 from 2,000 is 500 ÷ 2,000 × 100 = 25%.',eq:'500 ÷ 2,000 × 100 = 25',pic:pic(C[0])},

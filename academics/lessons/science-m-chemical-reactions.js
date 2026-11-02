@@ -22,6 +22,8 @@ const EQ=[
 for(const E of EQ)if(!same(sideAtoms(E.L),sideAtoms(E.R)))throw new Error(`not balanced: ${eqn(E)}`);
 const sides=(E,b)=>({t:'setups',title:'A chemical equation',head:'',rows:[['left side',eqn({L:E.L,R:[]},b).replace(/ → $/,'')],['right side',eqn({L:[],R:E.R},b-E.L.length).replace(/^ → /,'')]],cols:['Terms']});
 const FORM=['H₂O','CO₂','O₂','CH₄','NaCl','Fe₂O₃','NH₃','C₆H₁₂O₆','CaCO₃','MgO','H₂O₂','Al₂O₃','C₃H₈','SO₃','KCl'];
+/* Salts such as NaCl are crystals, not separate molecules: their formula gives the smallest repeating group of ions. */
+const IONIC=new Set(['NaCl','Fe₂O₃','CaCO₃','MgO','Al₂O₃','KCl']);const unit=f=>IONIC.has(f)?'formula unit':'molecule';
 const label=(c,f)=>({t:'setups',title:'A fictional lab label',head:'',rows:[['label',`${c===1?'':c}${f}`]],cols:['Reads']});
 export default {
 id:'science-m-chemical-reactions',subject:'science',level:4,grade:8,standard:'NGSS MS-PS1-5',
@@ -30,7 +32,7 @@ goal:'Count the atoms a chemical formula stands for, use the conservation of mas
 points:20,
 skills:{atoms:'Counting atoms',mass:'Mass is conserved',balance:'Balanced equations'},
 steps:[
- {skill:'atoms',say:'All matter is made of atoms. A chemical formula lists the atoms in one molecule: the small number after a symbol counts that kind of atom, and a symbol with no small number counts 1. H₂O has 2 hydrogen atoms and 1 oxygen atom, 3 atoms in all.',pic:{t:'setups',title:'One molecule of H₂O',head:'Atom',rows:[['hydrogen, H','2'],['oxygen, O','1']],cols:['Count']}},
+ {skill:'atoms',say:'All matter is made of atoms. A chemical formula lists the atoms in one molecule (for a crystal such as salt, NaCl, it lists the smallest repeating group): the small number after a symbol counts that kind of atom, and a symbol with no small number counts 1. H₂O has 2 hydrogen atoms and 1 oxygen atom, 3 atoms in all.',pic:{t:'setups',title:'One molecule of H₂O',head:'Atom',rows:[['hydrogen, H','2'],['oxygen, O','1']],cols:['Count']}},
  {skill:'atoms',say:'A big number in front, the coefficient, counts whole molecules, so it multiplies every atom in the formula. 3CO₂ is 3 molecules of carbon dioxide: 3 × 1 = 3 carbon atoms and 3 × 2 = 6 oxygen atoms.',eq:'3CO₂: 3 carbon, 6 oxygen',pic:{t:'setups',title:'3CO₂',head:'Atom',rows:[['carbon, C','3 × 1 = 3'],['oxygen, O','3 × 2 = 6']],cols:['Count']},
   check:{prompt:'Try it: a fictional lab label reads 2H₂O. How many hydrogen atoms does 2H₂O stand for?',answer:4,options:[4,2,3],hint:'The 2 in front multiplies the 2 hydrogen atoms in each molecule.',pic:label(2,'H₂O')}},
  {skill:'mass',say:'In a chemical reaction the atoms of the starting substances, the reactants, rearrange into new substances, the products. No atom is made or destroyed, so in a sealed container the total mass before a reaction equals the total mass after it.',pic:{t:'setups',title:'A sealed flask',head:'',rows:[['before the reaction','reactants'],['after the reaction','products, the same mass']],cols:['Holds']}},
@@ -46,10 +48,10 @@ items(add){
  /* Atoms of one element in a labelled amount (the Try-it's hydrogen in 2H₂O is left out). */
  FORM.forEach((f,j)=>{const els=Object.keys(atoms(f));
   for(const c of [[2,4],[3,5],[2,3],[4,5],[3,4]][j%5]){const el=els[(i++)%els.length];if(c===2&&f==='H₂O'&&el==='H')continue;const n=termAtoms([c,f])[el];
-   add('atoms',`A fictional lab label reads ${c}${f}. How many ${NAME[el]} atoms does ${c}${f} stand for?`,n,label(c,f),`Each molecule of ${f} has ${atoms(f)[el]} ${NAME[el]} atom${atoms(f)[el]===1?'':'s'}, so ${c} molecules have ${c} × ${atoms(f)[el]} = ${n}.`);}
+   add('atoms',`A fictional lab label reads ${c}${f}. How many ${NAME[el]} atoms does ${c}${f} stand for?`,n,label(c,f),`Each ${unit(f)} of ${f} has ${atoms(f)[el]} ${NAME[el]} atom${atoms(f)[el]===1?'':'s'}, so ${c} ${unit(f)}s have ${c} × ${atoms(f)[el]} = ${n}.`);}
   const all=Object.values(atoms(f)).reduce((a,b)=>a+b,0),c=[2,3,4,5][j%4];
-  add('atoms',`A fictional lab label reads ${f}. How many atoms in all are in one molecule of ${f}?`,all,label(1,f),`Add the atoms: ${Object.entries(atoms(f)).map(([e,n])=>`${n} ${NAME[e]}`).join(', ')}, ${all} in all.`);
-  add('atoms',`A fictional lab label reads ${c}${f}. How many atoms in all does ${c}${f} stand for?`,c*all,label(c,f),`One molecule of ${f} has ${all} atoms, so ${c} molecules have ${c} × ${all} = ${c*all}.`);});
+  add('atoms',`A fictional lab label reads ${f}. ${IONIC.has(f)?`How many atoms in all does the formula ${f} show?`:`How many atoms in all are in one molecule of ${f}?`}`,all,label(1,f),`Add the atoms: ${Object.entries(atoms(f)).map(([e,n])=>`${n} ${NAME[e]}`).join(', ')}, ${all} in all.`);
+  add('atoms',`A fictional lab label reads ${c}${f}. How many atoms in all does ${c}${f} stand for?`,c*all,label(c,f),`One ${unit(f)} of ${f} has ${all} atoms, so ${c} ${unit(f)}s have ${c} × ${all} = ${c*all}.`);});
  /* Mass in sealed and open containers, with fictional substances. */
  [[30,12],[45,25],[8,64],[56,32],[14,6],[72,48],[19,81],[100,35]].forEach(([a,b],j)=>{
   add('mass',`In a fictional sealed flask, ${a} g of substance A reacts with ${b} g of substance B, and both are used up completely. What is the total mass of the products, in grams?`,a+b,{t:'setups',title:'A fictional sealed flask',head:'',rows:[['substance A',`${a} g`],['substance B',`${b} g`],['products','?']],cols:['Mass']},`No atoms are made or destroyed, so the products have ${a} + ${b} = ${a+b} g.`);

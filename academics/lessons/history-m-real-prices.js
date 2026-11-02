@@ -17,7 +17,7 @@ goal:'Read a price index, turn a past price into another year’s money, and com
 points:20,
 skills:{index:'Reading a price index',convert:'Converting prices',compare:'Comparing in real terms'},
 steps:[
- {skill:'index',say:'Prices rise over time, so a price from long ago cannot be compared straight with one today. A price index tracks the cost of a typical basket of goods. It is set to 100 in a base year: in fictional Vellmark, 1950 = 100, and the index was 50 in 1920, so things cost half as much then.',pic:pic()},
+ {skill:'index',say:'Prices usually rise over time, so a price from long ago cannot be compared straight with one today. A price index tracks the cost of a typical basket of goods. It is set to 100 in a base year: in fictional Vellmark, 1950 = 100, and the index was 50 in 1920, so things cost half as much then.',pic:pic()},
  {skill:'index',say:'The percent change in the index measures inflation between two years. From 1920 to 1950 Vellmark’s index went from 50 to 100, a rise of 100 - 50 = 50, which is 50 ÷ 50 × 100 = 100%: prices doubled. From 1920 to 1930 the index fell, and so did prices.',eq:'50 ÷ 50 × 100 = 100',pic:pic(),
   check:{prompt:'Try it: in fictional Vellmark, a price index set to 100 in 1950 was 100 in 1950 and 125 in 1960. By what percent did prices rise from 1950 to 1960?',answer:25,options:[25,125,20],hint:'The index rose by 25 from 100.',pic:pic([['1950','100'],['1960','125']])}},
  {skill:'convert',say:'A nominal price is the price as written at the time. To turn it into another year’s money, multiply by the later index and divide by the earlier one. Bread at 0.2 crowns in 1920 is 0.2 × 100 ÷ 50 = 0.4 crowns in 1950 money.',eq:'0.2 × 100 ÷ 50 = 0.4',pic:pic([['1920','50'],['1950','100']])},

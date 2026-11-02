@@ -55,12 +55,17 @@ ${subj}${certs?`<section class="edu-rc-certs"><h3>Certificates</h3>${certs}</sec
 export function openReportCard(save,doc=globalThis.document){
  if(!doc?.body)return null;
  doc.getElementById('edu-report')?.remove();
- const el=doc.createElement('div');el.id='edu-report';el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');el.setAttribute('aria-label',"Grown-ups' report card");
+ /* landing-nov2 follow-up: opened from Settings (a modal <dialog> in the top layer) a plain div sat behind it, whatever its z-index. The
+    report is its own modal <dialog> now, so it stacks above whatever dialog is open; jsdom and old browsers fall back to an open attribute. */
+ const el=doc.createElement('dialog');el.id='edu-report';el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');el.setAttribute('aria-label',"Grown-ups' report card");
  el.innerHTML=`<div class="edu-rc-bar"><button type="button" class="primary" data-edu-print>Print</button><button type="button" data-edu-rc-close>Close</button></div>${reportCardHTML(save)}`;
  doc.body.append(el);
+ if(typeof el.showModal==='function'){try{el.showModal();}catch{el.setAttribute('open','');}}else el.setAttribute('open','');
+ const shut=()=>{try{el.close?.();}catch{}el.remove();};
  el.querySelector('[data-edu-print]').onclick=()=>{try{doc.defaultView?.print?.();}catch{}};
- el.querySelector('[data-edu-rc-close]').onclick=()=>el.remove();
- el.addEventListener('keydown',e=>{if(e.key==='Escape'){e.stopPropagation();el.remove();}});
+ el.querySelector('[data-edu-rc-close]').onclick=shut;
+ el.addEventListener('cancel',e=>{e.preventDefault();shut();});
+ el.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();shut();}});
  el.querySelector('[data-edu-print]').focus?.();
  return el;
 }

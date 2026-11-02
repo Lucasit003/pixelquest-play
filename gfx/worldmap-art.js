@@ -134,6 +134,12 @@ function tintedUi(art,name,i=0){if(!ready(art.ui))return null;const f=cell(art,n
 function drawRift(c,v,art,t){const {x,y}=v.rift,P=MAPS[v.chapter].pad||[9,4],pulse=.55+.3*Math.sin(t*Math.PI*2/1.6);c.save();c.fillStyle='#3b1f5c';pixEllipse(c,x,y,P[0]+1,P[1]+1);c.globalAlpha=pulse;c.fillStyle='#b77cff';pixEllipse(c,x,y,P[0],P[1]);c.globalAlpha=1;
  /* improve20-k-nov1 #4: the portal is PixelLab art (assets/worldmap/rift-portal.png, 32x40, 1 Nov); the glow, pulse and sparkle stay code effects. The tinted star is the fallback while it loads */const pt=riftPortal();if(ready(pt)){c.imageSmoothingEnabled=false;c.drawImage(pt,x-16,y-36);}else{const star=tintedUi(art,'icon-sparkle');if(star)c.drawImage(star,x-10,y-24+Math.round(Math.sin(t*3)*1.5),20,20);}const sp=tintedUi(art,'sparkle',frameIndex(art,'sparkle',t));if(sp)c.drawImage(sp,x-13,y-26);
  const lb=riftLabel(v),w=textWidth(lb)+8;c.fillStyle='rgba(28,14,44,.78)';c.fillRect(Math.round(x-w/2),y+6,Math.round(w),15);text(c,lb,x,y+5,{color:'#e9d6ff',align:'center'});c.restore();}
+/* improve20-r9a-nov1: the Hall of Echoes' door: the Legendary tier crest (PixelLab, ui/skin/pl-icons/tier-legendary.png) over a gold pad ring
+   like the stops', with its name and key under it; the pulse is a code effect */
+let hCrest=null;const hallCrest=()=>{if(hCrest||typeof Image==='undefined')return hCrest;hCrest=new Image();hCrest.decoding='async';hCrest.src=new URL('../ui/skin/pl-icons/tier-legendary.png',import.meta.url).href;return hCrest;};
+function drawHall(c,v,art,t){const {x,y}=v.hall,P=MAPS[v.chapter].pad||[9,4],pulse=v.reduced?.7:.55+.3*Math.sin(t*Math.PI*2/2.2);c.save();c.fillStyle='#4a3312';pixEllipse(c,x,y,P[0]+1,P[1]+1);c.globalAlpha=pulse;c.fillStyle='#f2c25a';pixEllipse(c,x,y,P[0],P[1]);c.globalAlpha=1;
+ const im=hallCrest();if(ready(im)){c.imageSmoothingEnabled=false;c.drawImage(im,x-16,y-32);}
+ const lb=v.touch?v.hall.label:`${v.hall.label} (${v.hall.key})`,w=textWidth(lb)+8;c.fillStyle='rgba(40,26,8,.8)';c.fillRect(Math.round(x-w/2),y+6,Math.round(w),15);text(c,lb,x,y+5,{color:'#ffe7b0',align:'center'});c.restore();}
 /* A clean half-size token: about 24 px tall, comparable to the huts and stop flags. */
 let heroCv=null;export const HERO_K=.5;
 function drawSmallHero(c,v,t){heroCv||=makeCanvas(160,128);const g=heroCv.getContext('2d');g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,160,128);g.imageSmoothingEnabled=false;
@@ -163,6 +169,7 @@ function drawBoard(c,v,art,S,t){if(v.reduced)t=0;const {x:ox,y:oy}=camera(v.chap
  /* improve20-k-nov1 #2: an active quest's pad wears the town quest giver's own talk marker (ui/skin/packicons3/town-markers.png, frame 0), bobbing as it does in town */
  for(const n of v.nodes)if(n.quest){const im=questMarker();if(!ready(im))continue;const bob=v.reduced?0:Math.floor(t*2.5)%2;c.save();c.imageSmoothingEnabled=false;c.drawImage(im,0,0,32,32,Math.round(n.x)+4,Math.round(n.y)-32-bob,24,24);c.restore();}
  if(v.rift)drawRift(c,v,art,t);
+ if(v.hall)drawHall(c,v,art,t);
  drawSmallHero(c,v,t);
  if(v.reveal)drawReveal(c,art,v.reveal,t);if(v.burst)blit(c,art,'sparkle',v.burst.x,v.burst.y+12,{i:Math.floor(v.burst.t*24)});}
 /* The one sign: the stop's name at the bottom centre, a small Enter key beside it when the stop can be entered; Home on the
@@ -210,7 +217,7 @@ export function placeBoardCard(v,w,h,strict=false,next=true,corners=false){const
    so the level card could cover the plate's end. The box now spans the plate (its measured width) as well as the portal. */
 export const riftLabel=v=>v.touch?v.rift.label:`${v.rift.label} (${v.rift.key})`;
 export function riftRect(v){const pw=Math.max(56,Math.ceil(textWidth(riftLabel(v)))+14);return {x:Math.round(v.rift.x-pw/2),y:v.rift.y-28,w:pw,h:52};}
-export function boardNextRects(v){const id=v.focusId||v.sel;return [...(v.nodes||[]).filter(n=>n.id!==id&&!['locked','soon'].includes(n.state)).map(n=>({x:n.x-18,y:n.y-28,w:40,h:40})),...(v.rift?[riftRect(v)]:[])];}
+export function boardNextRects(v){const id=v.focusId||v.sel;return [...(v.nodes||[]).filter(n=>n.id!==id&&!['locked','soon'].includes(n.state)).map(n=>({x:n.x-18,y:n.y-28,w:40,h:40})),...(v.rift?[riftRect(v)]:[]),...(v.hall?[{x:v.hall.x-34,y:v.hall.y-28,w:68,h:50}]:[])];}
 /* Protect the half-size hero, selected stop/flag, and the local approach to both. */
 export function boardFocusRects(v){const points=[v.hero,(v.nodes||[]).find(n=>n.id===(v.focusId||v.sel))].filter(Boolean),rects=points.map(p=>({x:p.x-18,y:p.y-28,w:40,h:40}));
  for(const [a,b] of ROADS[v.chapter]||[])for(const [x,y] of pathPoints(v.chapter,a,b))if(points.some(p=>Math.hypot(x-p.x,y-p.y)<24))rects.push({x:x-10,y:y-8,w:20,h:16});return rects;}

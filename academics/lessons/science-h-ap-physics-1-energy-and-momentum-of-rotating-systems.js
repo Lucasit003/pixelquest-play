@@ -3606,7 +3606,7 @@ const sections=[
     "1/2",
     "2",
     "1/4",
-    "Circular speed squared scales as 1/r. Increasing the radius by 4 makes the speed half; the transfer requires an energy change and is not a gravity-only circular transition."
+    "Circular speed squared scales as 1/r. Making the radius 4 times larger halves the speed; the transfer requires an energy change and is not a gravity-only circular transition."
    ],
    [
     "For two circular orbits of radii r and 4r around the same fixed central mass, what is the ratio of the larger orbit's period to the smaller orbit's period?",

@@ -52,7 +52,7 @@ export const FACTS={
   {id:'sr-t3',name:'porcelain',from:'China',what:'fine ceramic fired at very high heat'},
   {id:'sr-t4',name:'the heavenly horses',from:'Central Asia',what:'prized horses from the Ferghana valley'},
   {id:'sr-t5',name:'Buddhism',from:'India',what:'a religion carried to China by monks'},
-  {id:'sr-t6',name:'gunpowder',from:'China',what:'an explosive powder first used in fireworks'},
+  {id:'sr-t6',name:'gunpowder',from:'China',what:'an explosive powder for fireworks and weapons'},
   {id:'sr-t7',name:'a caravanserai',what:'a roadside inn for caravans'},
   {id:'sr-t8',name:'the Bactrian camel',what:'a two-humped camel used in caravans'},
   {id:'sr-t9',name:'a paiza',what:'a Mongol pass that protected travellers'},

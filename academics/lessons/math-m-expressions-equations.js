@@ -32,7 +32,7 @@ items(add){
  const seen=new Set();
  SHAPES.forEach(([show,val],s)=>{for(const p of [2,3,4,5,6,7])for(const x of [2,3,4,5,6]){const q=((p*3+x*5+s*7)%11)+1;const e=show(p,q),v=val(p,q,x);if(v<=0||seen.has(e+x))continue;seen.add(e+x);
   if((p+x+s)%2)continue;
-  add('evaluate',`What is the value of ${e} when x = ${x}?`,v,{t:'setups',title:'Evaluate the expression',head:'Given',rows:[['expression',e],['x',`${x}`]],cols:['Value']},`Put ${x} in place of x: ${e.replace(/x/g,`(${x})`)} = ${v}, doing powers first, then multiplication, then addition and subtraction.`);}});
+  add('evaluate',`What is the value of ${e} when x = ${x}?`,v,{t:'setups',title:'Evaluate the expression',head:'Given',rows:[['expression',e],['x',`${x}`]],cols:['Value']},`Put ${x} in place of x: ${e.replace(/x/g,`(${x})`)} = ${v}, doing brackets first, then powers, then multiplication, then addition and subtraction.`);}});
  /* Solving: x + p = q, x - p = q, px = q and x/p = q, each built from its solution. */
  const VARS=['n','m','y','k','a','w'];let i=0;
  for(const sol of [4,7,9,12,15,18,23,31])for(const p of [3,5,6,8,11,14]){const v=VARS[i++%VARS.length],form=(sol+p)%4;

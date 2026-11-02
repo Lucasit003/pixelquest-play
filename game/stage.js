@@ -65,6 +65,7 @@ export const chapterBiome=key=>String(key||'forest').split('-')[0];
 /* v2:biomes -- per-level geometry baked from the Tiled level maps (art/tiled/levels, tools/bake-biome-maps.mjs): width, walkable band, collision grid, spawn, boss arena and secrets. */
 export {STAGE_MAPS,stageMap,stageBlocked} from './stage-maps.js';
 import {stageMap,stageBlocked} from './stage-maps.js';
+import {poolAt,hasPool} from './sleeper-pool.js';
 
 /* ---- level geometry from the baked maps ---------------------------------------------------------------------- */
 /* Every pad can start: a level's art always comes from a baked map (its own, or its family's). Kept as a seam. */
@@ -94,6 +95,8 @@ export function levelGeometry(level){
     playable band ends at its floor gap, so feet, foes, hazards and pickups stay out of the bottom strip under the thumbs */
  geo.artBottom=geo.floorBottom;geo.floorBottom=phoneNearEdge(geo);
  geo.blocked=(x,y)=>x>=0&&x<geo.width&&stageBlocked(key,x,y);
+ /* improve20-r9a-nov1: the Sleeper's flooded arena (game/sleeper-pool.js): deep water blocks like a wall, shallow water slows the hero */
+ geo.shallow=()=>false;if(hasPool(key)){const base=geo.blocked;geo.blocked=(x,y)=>base(x,y)||poolAt(key,x,y)==='deep';geo.shallow=(x,y)=>poolAt(key,x,y)==='shallow';}
  if(sm.spawn)geo.spawn={x:sm.spawn[0],y:Math.max(geo.floorTop+4,Math.min(geo.floorBottom-2,sm.spawn[1]))};
  geo.secrets=(sm.secrets||[]).map(o=>({id:String(o.id??`${Math.round(o.x)},${Math.round(o.y)}`),x:o.x,y:Math.max(geo.floorTop+4,Math.min(geo.floorBottom-2,o.y)),loot:o.loot||'gold',name:o.name||'Secret'}));
  if(level.kind==='arena'){geo.arena={x0:sm.arena?.[0]??0,x1:sm.arena?.[1]??geo.width,trigger:0};return geo;}

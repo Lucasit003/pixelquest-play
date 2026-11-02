@@ -407,7 +407,15 @@ export const ENEMY_TYPES={
   {name:'moon dust',state:'attack',kind:'projectile',fx:'fx-eye-bolt',range:260,cd:3.2,windup:.6,dmg:1,speed:100,count:3,spread:16},
   {name:'night wind',state:'special',kind:'aoe',at:'player',fx:'fx-tornado',radius:16,count:2,spread:44,range:300,cd:4.4,windup:.7,dmg:1.15},
   {name:'little lights',state:'cast',kind:'summon',key:'wisp',count:2,max:3,range:400,cd:9,windup:.7,fx:'fx-portal',phase:2}]},
- cthulhu:{name:'The Sleeper in the Deep',sprite:'pl-sleeper',boss:true,hp:1200,atk:36,def:18,speed:30,scale:1,ai:'boss',band:14,kbResist:1,weakness:'holy',
+ cthulhu:{name:'The Sleeper in the Deep',sprite:'pl-sleeper',boss:true,hp:1200,atk:36,def:18,speed:30,
+  /* improve20-r9a-nov1 (R9A d19): he is drawn at a whole 2x (240 px tall, nearest neighbour; enemy-ai enemyRenderScale), his body and
+     hitbox grow with him (combat.js bodyR/reachR read scale), and the moves that come from his body grow to match what is drawn: the
+     lash reaches as far as his drawn tentacle (the attack frame's reach, 94 px at 1x) and the dive lands his whole body. To keep the
+     fight as fair as before, the lash's tell is longer and it comes less often, and the dive's tell is longer. He is too tall to stand
+     at the back of the floor (his head would leave the screen), so he keeps to the front of the band (stand: feet between 21 and 10
+     units above its near edge, enemy-ai standY), clear of his flooded pool (game/sleeper-pool.js), and every move still reaches the
+     whole floor, so nothing is dodged only by standing in the water. */
+  scale:2,stand:[-21,-10],ai:'boss',band:24,kbResist:1,weakness:'holy',
   taunts:['So small. So brave. So far from home.','Look into the deep. It looks back.'],intro:'You woke me from a thousand-year dream.',defeat:'Back... to sleep... in the deep...',
   fact:F('science','The colossal squid has the biggest eyes of any known animal, each about the size of a football.'),
   /* moveset (v7, the final exam): Tentacle Grab bursts from a marked spot, drags the hero toward him and holds (roll out);
@@ -416,11 +424,11 @@ export const ENEMY_TYPES={
      line, the Demon's falling meteors, the Drowned Priest's tide ring) in turn. Heroic: grabs in pairs. Legendary: the wave
      sweeps back again. */
   half:'Now you will see me truly awake!',phaseShift:{at:.5,line:'Now you will see me truly awake!',state:'fly',speed:1.3,cd:.65,dmg:1.15,tint:'#6dff8a',title:'THE SLEEPER WAKES'},attacks:[
-  {name:'tentacle lash',state:'attack',kind:'melee',range:90,band:12,cd:2.6,windup:.65,dmg:1.25},
+  {name:'tentacle lash',state:'attack',kind:'melee',range:170,band:22,cd:3,windup:.85,dmg:1.25},
   {name:'tentacle grab',state:'attack2',kind:'aoe',at:'player',fx:'fx-tentacle',radius:16,range:300,cd:5.2,windup:.75,dmg:.9,pull:40,hold:.8,label:'TENTACLE GRAB',heroic:{count:2,spread:50}},
   {name:'ink darkness',state:'cast',kind:'dark',dur:6,eye:'#7dff9a',range:400,cd:18,windup:.8,label:'INK DARKNESS',sig:true,banner:'STAY IN THE LIGHT!',bossOnly:true},
   {name:'abyss wave',state:'special',kind:'sweep',len:200,dur:1,band:8,fx:'fx-abyss-beam',from:'far',cd:4.4,windup:.8,dmg:1.3,label:'ABYSS WAVE',legendary:{back:true}},
-  {name:'deep dive',state:'cast',kind:'leap',radius:40,range:220,cd:5,windup:.85,dmg:1.3,air:.9,impact:'fx-explosion',phase:2},
+  {name:'deep dive',state:'cast',kind:'leap',radius:64,range:220,cd:5,windup:.95,dmg:1.3,air:.9,impact:'fx-explosion',phase:2},
   {name:'dream echoes',state:'attack2',kind:'pick',label:'DREAM ECHOES',range:300,cd:5,windup:.8,phase:2,options:[
    {kind:'line',state:'attack2',fx:'fx-earth-spike',count:7,gap:24,radius:13,range:240,windup:.8,dmg:1.15,label:'DREAM ECHO: THORN LINE'},
    {kind:'aoe',at:'player',state:'cast',fx:'fx-explosion',fall:true,fallFx:'fx-fireball',delay:.6,count:3,spread:50,radius:18,range:300,windup:.8,dmg:1.1,label:'DREAM ECHO: METEORS'},
