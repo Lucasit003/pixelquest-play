@@ -25865,6 +25865,34 @@ export const QUESTION_REVISIONS=[
   "oldPrompt": "Try it: a fictional theatre with no rival in town has market power and faces the demand curve P = 40 - 1Q, with P in dollars a unit and Q in seats a day (a whole number). Its marginal cost is a constant $8 a unit and its fixed cost is $100 a day. It practices perfect price discrimination, charging each buyer the most that buyer is willing to pay. How many seats a day does it sell?",
   "newPrompt": "Try it: a fictional theatre with no rival in town has market power and faces the demand curve P = 40 - 1Q, with P in dollars a unit and Q in seats a day. Its marginal cost is a constant $8 a unit and its fixed cost is $100 a day. It practices perfect price discrimination (treat demand as a smooth line, so its revenue is the area under the demand curve), charging each buyer the most that buyer is willing to pay. How many seats a day does it sell?",
   "reason": "factsweep-nov2: AMBIGUOUS: '(a whole number)' invited a discrete sum that disagrees with the area-based keys; answers unchanged, 11 ids change (10 items + 1 step check) Source: derivation: keys use the triangle/trapezoid area (P=72-3Q, MC 12, FC 60: 0.5*20*60-60 = 540, gain 300); a student pricing whole units one by one gets 570-60 = 510 (gain 270). Same gap for P=100-4Q, MC 36: 432 vs 400"
+ },
+ {
+  "subject": "math",
+  "level": 5,
+  "oldPrompt": "A fictional homogeneity study has observed counts [[18,22,20],[22,18,20]]. Rows are independent random samples; columns are three or two response categories. All conditions hold. Find the chi-square statistic. Round to 1 decimal place.",
+  "newPrompt": "A fictional homogeneity study has observed counts [[18,22,20],[22,18,20]]. Each row is an independent random sample from a different population; the columns are the three categories of one response variable. All conditions hold. Find the chi-square statistic. Round to 1 decimal place.",
+  "reason": "followups-nov2: TEMPLATE GLITCH: 'columns are three or two response categories' was a template slip; the stem now says each row is an independent sample from a different population and names how many categories the response variable has (the chi-square test for homogeneity, AP Statistics CED Unit 8, topics 8.5-8.6); same counts and key. Source: College Board AP Statistics Course and Exam Description (Unit 8)"
+ },
+ {
+  "subject": "math",
+  "level": 5,
+  "oldPrompt": "A fictional homogeneity study has observed counts [[35,25],[20,40]]. Rows are independent random samples; columns are three or two response categories. All conditions hold. Find the chi-square statistic. Round to 4 decimals.",
+  "newPrompt": "A fictional homogeneity study has observed counts [[35,25],[20,40]]. Each row is an independent random sample from a different population; the columns are the two categories of one response variable. All conditions hold. Find the chi-square statistic. Round to 4 decimals.",
+  "reason": "followups-nov2: TEMPLATE GLITCH: 'columns are three or two response categories' was a template slip; the stem now says each row is an independent sample from a different population and names how many categories the response variable has (the chi-square test for homogeneity, AP Statistics CED Unit 8, topics 8.5-8.6); same counts and key. Source: College Board AP Statistics Course and Exam Description (Unit 8)"
+ },
+ {
+  "subject": "math",
+  "level": 5,
+  "oldPrompt": "A fictional homogeneity study has observed counts [[16,24,20],[24,16,20],[20,20,20]]. Rows are independent random samples; columns are three or two response categories. All conditions hold. Find the chi-square statistic. Round to 1 decimal place.",
+  "newPrompt": "A fictional homogeneity study has observed counts [[16,24,20],[24,16,20],[20,20,20]]. Each row is an independent random sample from a different population; the columns are the three categories of one response variable. All conditions hold. Find the chi-square statistic. Round to 1 decimal place.",
+  "reason": "followups-nov2: TEMPLATE GLITCH: 'columns are three or two response categories' was a template slip; the stem now says each row is an independent sample from a different population and names how many categories the response variable has (the chi-square test for homogeneity, AP Statistics CED Unit 8, topics 8.5-8.6); same counts and key. Source: College Board AP Statistics Course and Exam Description (Unit 8)"
+ },
+ {
+  "subject": "geography",
+  "level": 5,
+  "oldPrompt": "The two national languages of Canada are A: English and Spanish, B: English and French, C: French and Portuguese. Answer A, B or C.",
+  "newPrompt": "The two official languages of Canada are A: English and Spanish, B: English and French, C: French and Portuguese. Answer A, B or C.",
+  "reason": "followups-nov2: WRONG TERM: Canada's two languages are its official languages (Official Languages Act, R.S.C. 1985, c. 31 (4th Supp.); Canadian Charter of Rights and Freedoms s. 16(1): 'English and French are the official languages of Canada'); same answer. Source: https://laws-lois.justice.gc.ca/eng/acts/o-3.01/"
  }
 ];
 export const ANSWER_ID_RENAMES=new Map(QUESTION_REVISIONS.map(r=>[`${r.subject}-${r.level}-${hash(r.oldPrompt)}`,`${r.subject}-${r.level}-${hash(r.newPrompt)}`]));

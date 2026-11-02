@@ -25,6 +25,10 @@ const key=(ch,r)=>`${ch}:${r}`,okKey=k=>{const [ch,r]=String(k).split(':');retur
 export const emptyHall=()=>({cleared:{},keepsakes:{}});
 export function cleanHall(v){const h=emptyHall();if(!v||typeof v!=='object'||Array.isArray(v))return h;for(const f of ['cleared','keepsakes']){const o=v[f];if(o&&typeof o==='object'&&!Array.isArray(o))for(const k of Object.keys(o))if(o[k]===true&&okKey(k))h[f][k]=true;}return h;}
 const H=s=>s.hall&&typeof s.hall==='object'&&s.hall.cleared&&s.hall.keepsakes?s.hall:(s.hall=cleanHall(s.hall));
+/* followups-nov2 (a real rung timed in tools/balance-sim.mjs --hall): a Hall-only scale on boss health, per chapter and rung, for the
+   long chapters. Story levels never read it (combat.js applies it only to a Hall fight's bosses). Missing = 1. */
+export const HALL_BOSS_HP=Object.freeze({'elderwood:1':.6,'elderwood:2':1.3});
+export const hallBossHp=(ch,r)=>HALL_BOSS_HP[key(ch,r)]??1;
 export const rungCleared=(s,ch,r)=>!!s?.hall?.cleared?.[key(ch,r)];
 export const hasKeepsake=(s,ch,r)=>!!s?.hall?.keepsakes?.[key(ch,r)];
 /* a rung opens once the Hall is open and the rung below it in the same chapter is cleared */

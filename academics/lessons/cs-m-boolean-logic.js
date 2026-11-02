@@ -21,7 +21,8 @@ const given=env=>Object.entries(env).map(([k,v])=>`${k} is ${v}`).join(' and ');
 const vars=(toks,env)=>({t:'setups',title:show(toks),head:'Variable',rows:Object.keys(env).filter(k=>toks.some(t=>t.v===k)).map(k=>[k,String(env[k])]),cols:['Value']});
 const TF=b=>b?['true',['yes']]:['false',['no']];
 /* The working shown in an explanation: each comparison's value, grouped the way the order rule groups them. */
-const each=(toks,env)=>toks.filter(t=>typeof t!=='string').map(t=>`${show([t])} is ${OPS[t.op](env[t.v],t.n)}`).filter((s,i,a)=>a.indexOf(s)===i).join(', ');
+/* followups-nov2: a chain joined by one word (no order rule) lists every comparison in the prompt's order, a repeat included, so the list matches the working (x ≥ 11 and y > 0 and x ≥ 11 lists three); the order items keep one line per distinct comparison. */
+const each=(toks,env,all)=>toks.filter(t=>typeof t!=='string').map(t=>`${show([t])} is ${OPS[t.op](env[t.v],t.n)}`).filter((s,i,a)=>all||a.indexOf(s)===i).join(', ');
 const working=(toks,env)=>{const g=split(toks,'or').map(h=>split(h,'and').map(t=>t[0]==='not'?`not ${OPS[t[1].op](env[t[1].v],t[1].n)}`:String(OPS[t[0].op](env[t[0].v],t[0].n))));return g.map(h=>h.length>1&&g.length>1?`(${h.join(' and ')})`:h.join(' and ')).join(' or ');};
 /* The lesson's examples and the Try-its; the Try-it questions are kept out of the pool. */
 const TA=[[C('x','<',4),'and',C('y','>',6)],{x:2,y:9}],TB=[[C('x','>',6),'or',C('y','>',5),'and',C('x','<',4)],{x:9,y:2}],TC=[C('x','<',3),'or',C('x','>',8)];
@@ -56,7 +57,7 @@ items(add){
   for(let i=0;got<want&&i<20000;i++){const s=i%shapes.length,[x,y]=VALS[pick(VALS.length)],env={x,y},toks=shapes[s](()=>cmp('x',env),()=>cmp('y',env)),val=truth(toks,env),p=tfPrompt(toks,env,order);
    if(seen.has(p)||t[s]+f[s]>=quota||(val?t[s]-f[s]:f[s]-t[s])>=1)continue;seen.add(p);val?t[s]++:f[s]++;got++;
    const [a,acc]=TF(val),slipped=order&&slip(toks,env)!==val;
-   add(skill,p,a,vars(toks,env),`${each(toks,env)}. `+(order?`Then not, then and, then or: ${working(toks,env)} = ${a}.${slipped?' Reading strictly left to right would give the wrong answer here.':''}`:`${toks.includes('and')?'and needs every part true':'or needs at least one part true'}: ${working(toks,env)} = ${a}.`),acc);}};
+   add(skill,p,a,vars(toks,env),`${each(toks,env,!order)}. `+(order?`Then not, then and, then or: ${working(toks,env)} = ${a}.${slipped?' Reading strictly left to right would give the wrong answer here.':''}`:`${toks.includes('and')?'and needs every part true':'or needs at least one part true'}: ${working(toks,env)} = ${a}.`),acc);}};
  /* And and or with two or three comparisons, all joined by the same word, so the order never matters. */
  pool('combine',[(X,Y)=>[X(),'and',Y()],(X,Y)=>[X(),'or',Y()],(X,Y)=>[X(),'and',Y(),'and',X()],(X,Y)=>[Y(),'or',X(),'or',Y()]],40,false);
  /* Mixed conditions: six shapes, each one a left-to-right reading can get wrong for some values. */

@@ -46,13 +46,20 @@ export const lessonLoaded=id=>loaded.has(id);
 export async function loadLesson(id){if(loaded.has(id))return TOPICS.find(t=>t.id===id);if(pending.has(id))return pending.get(id);
  const path=LESSON_PATHS[id];if(!path)throw new Error(`Unknown lesson: ${id}`);
  const task=loadPools().then(()=>import(new URL(path,import.meta.url).href)).then(m=>{const i=TOPICS.findIndex(t=>t.id===id),t=EAGER?(TOPICS[i]=m.default):Object.assign(TOPICS[i],m.default);install(t);loaded.add(id);return t;}).finally(()=>pending.delete(id));pending.set(id,task);return task;}
+/* followups-nov2 (FACTSWEEP_NOV2 note): a numeric item that asks for N significant figures shows its key with N of them. The stored
+   number dropped trailing zeros (21 for 21.0, 5.2 for 5.20); the key becomes that text, still graded as a number (numeric stays true, so
+   "21" and "21.0" both pass by value), and the last standalone copy of the short form in the explanation is padded the same way. */
+const SIG_ASK=/\bround(?:ed)? to (two|three|four|2|3|4) significant figures\b/i,SIG_N={two:2,three:3,four:4};
+export function sigShown(prompt,answer,explanation){const m=SIG_ASK.exec(prompt||'');if(!m||typeof answer!=='number'||!Number.isFinite(answer))return {answer,explanation};const n=SIG_N[m[1].toLowerCase()]||+m[1],s=answer.toPrecision(n),short=String(answer);
+ if(/e/i.test(s)||s===short||Number(s)!==answer)return {answer,explanation};const re=new RegExp(`(?<![\\d.])${short.replace('.','\\.')}(?![\\d]|\\.\\d)`,'g');let last=-1;for(const x of String(explanation||'').matchAll(re))last=x.index;
+ return {answer:s,explanation:last<0?explanation:explanation.slice(0,last)+s+explanation.slice(last+short.length)};}
 function install(t){
  {const st=STAGES[stageOf(t)];if(t.level!==st.level||!t.id.startsWith(`${t.subject}-${st.tag}-`))throw new Error(`lessons: ${t.id} must be level ${st.level} with a -${st.tag}- id for grade ${t.grade}`);}
  const ids=[];
  /* improve20-n-nov1: an item may pass the text its id was first hashed from (key), so a prompt that only lost a doubled quote mark keeps its
     id and retirement; the item then carries it as idText, and its id is subject-level-hash(idText) (tests/improve20-n-nov1.test.js) */
- t.items((skill,prompt,answer,pic,explanation,accept,key)=>{const id=idOf(t,key??prompt);claim(id,t.id);
-  items[id]=Object.freeze({id,subject:t.subject,level:t.level,topic:t.id,skill,prompt,answer,numeric:typeof answer==='number',pic,explanation,...(accept?.length?{accept:Object.freeze([...accept])}:{}),...(key!=null&&key!==prompt?{idText:key}:{})});ids.push(id);});
+ t.items((skill,prompt,answer,pic,explanation,accept,key)=>{const id=idOf(t,key??prompt);claim(id,t.id);const numeric=typeof answer==='number';({answer,explanation}=sigShown(prompt,answer,explanation));
+  items[id]=Object.freeze({id,subject:t.subject,level:t.level,topic:t.id,skill,prompt,answer,numeric,pic,explanation,...(accept?.length?{accept:Object.freeze([...accept])}:{}),...(key!=null&&key!==prompt?{idText:key}:{})});ids.push(id);});
  t.steps.forEach((s,i)=>{if(!s.check)return;const id=idOf(t,s.check.prompt);claim(id,`${t.id} step ${i}`);
   checks[id]=Object.freeze({id,subject:t.subject,level:t.level,topic:t.id,skill:s.skill,step:i,...s.check,numeric:typeof s.check.answer==='number'});});
  if(JSON.stringify(ids)!==JSON.stringify(pool[t.id]))throw new Error(`Stale lesson catalog: ${t.id}`);}

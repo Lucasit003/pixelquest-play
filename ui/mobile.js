@@ -12,6 +12,11 @@ import {STAGE} from '../game/stage.js';
 let on=false,joy=null,held=new Set(),getWorld=()=>null,rotateEl=null,wasPaused=null;
 const doc=()=>globalThis.document,win=()=>globalThis.window;
 export const mobileMode=()=>on;
+/* tablets-nov2: a tablet is a touch screen at least TABLET_MIN css px on its short side (iPad mini 1024x768, Air 1180x820, Pro 1366x1024,
+   Android 1280x800, iPad Safari with its bars 1180x740); phones in landscape are 430 px tall at most. style.css "tablets-nov2" matches it
+   with (min-height:600px) */
+export const TABLET_MIN=600;
+export const tabletSize=(w,h)=>Math.min(+w||0,+h||0)>=TABLET_MIN;
 export function wantsMobile(w=win()){
  if(!w)return false;
  try{if(/[?&]mobile=1\b/.test(w.location?.search||''))return true;if(/[?&]mobile=0\b/.test(w.location?.search||''))return false;}catch{}

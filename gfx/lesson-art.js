@@ -368,6 +368,9 @@ const mathFont=(t,f,b=1)=>{const o=t.font;t.font=o.replace(/(\d+(?:\.\d+)?)px/,(
    gets under PHONE_TEXT px. */
 export const PHONE_TEXT=280;
 export const phonePicWidth=(room,textW,eqH=0,bw=6)=>{const cap=Math.max(200,Math.min(PIC_W+bw,textW-PHONE_TEXT));return Math.min(cap,Math.floor((Math.max(90,room-eqH)-bw)*PIC_W/PIC_H+bw));};
+/* tablets-nov2: a tablet lesson (ui/mobile.js tabletSize) stacks the step's text, the picture and the Try-it in one column, so the picture
+   takes the body's whole width (textW) as far as the room left under the text (room less otherH) allows, never past twice the art's size */
+export const tabletPicWidth=(room,textW,otherH=0,bw=6)=>Math.max(200,Math.min(Math.floor(textW),2*PIC_W+bw,Math.floor((Math.max(140,room-otherH)-bw)*PIC_W/PIC_H+bw)));
 /* oct26-phonelesson: 12 (was 11). With the bigger phone picture (main.js phonePic) most labels need no more growth than they had at 11. */
 export const LABEL_MIN=12;
 /* the factor for a label of em px (picture units) on a canvas drawn at unit CSS px per picture unit; 1 off a phone (unit 0) */
