@@ -106,7 +106,12 @@ const HERO_OF=Object.fromEntries(Object.entries(CLASSES).map(([k,c])=>[c.weapon,
 const T=[];
 /* the smith's weapon line: the existing names and icons. Prices raised 24 Oct (docs/playtest/oct24-polish/ECONOMY.md):
    Elderwood's line now takes about one level's first-clear gold per piece instead of all of it after e1. */
-const W_RAR=['common','uncommon','rare','rare'],W_CH=[1,1,2,3],W_STATS=[{power:3},{power:5,crit:.02},{power:12,crit:.03},{power:17,crit:.03}],W_PRICE=[0,450,900,2000];
+const W_RAR=['common','uncommon','rare','rare'],W_CH=[1,1,2,3],W_STATS=[{power:3},{power:5,crit:.02},{power:12,crit:.03},{power:17,crit:.03}],W_PRICE=[0,450,350,400];
+/* improve20-r11c-nov2 #3 (audit9 a12): each chapter's smith weapon is its arrival buy. The typical saves arrive at Emberkeep with 391 gold
+   (typical-ember, level 9) and in the Veilmoor with 453 (typical-v3, level 15), wearing the Elderwood Blade; their armour is at the gear
+   limit (GEAR_SHARE_CAP), so the chapter's weapon is the only real step. At 900 and 2000 it was out of reach (the typical kid never bought
+   Kingsbane, even with 1,359 gold at v7), so Emberbrand is 350 and Kingsbane 400. The mid-chapter lines (MID_LINE, MID_LINE2) and the
+   chests keep their prices as the gold to save for. Stats unchanged. */
 for(const f of FAMILIES)for(let t=0;t<4;t++)T.push({id:`${f}-shop-${t}`,name:WEAPONS[f][t],slot:'weapon',family:f,rarity:W_RAR[t],chapter:W_CH[t],stats:W_STATS[t],shop:W_PRICE[t],shopTier:t,icon:`${f}-${t}`});
 /* the class chest line (chest only; each fits its own class) */
 const C_STATS=[{def:2},{def:5,hp:10},{def:8,hp:20},{def:12,hp:30}],C_PRICE=[0,350,700,1700];

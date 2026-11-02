@@ -19,7 +19,8 @@
    a B about three times in four, the careful kid bot (default) an A about two times in three, and S+ stays rare (7%).
    Owner, 14 Oct (provisional): the grade is shown BESIDE the time stars; stars are still earned from time. GRADE_STARS is
    the switch for the later change (stars from the grade); while it is false nothing reads gradeStars. */
-export const GRADE_STARS=false;
+/* improve20-r11a-nov2 #5 (audit9 a8): switched on. Stars come from the grade (game/levels.js runStars); see gradeStars below. */
+export const GRADE_STARS=true;
 export const GRADES=[['S+',297],['S',290],['A',258],['B',210],['C',140],['D',0]];
 export const GRADE_KEYS=GRADES.map(g=>g[0]);
 export const gradeOf=total=>(GRADES.find(([,min])=>total>=min)||GRADES[GRADES.length-1])[0];
@@ -28,8 +29,14 @@ export const gradeRank=g=>g?GRADE_KEYS.length-1-GRADE_KEYS.indexOf(g):-1;
 export const betterGrade=(a,b)=>gradeRank(a)>=gradeRank(b)?a:b;
 /* the asset name of a grade's badge (ui/skin/run/grade-*.png) */
 export const gradeFile=g=>`grade-${String(g||'d').toLowerCase().replace('+','plus')}`;
-/* For the later switch (owner decision 1a): a win is 1 star, A 2, S and S+ 3. Unused while GRADE_STARS is false. */
-export const gradeStars=g=>!g?0:gradeRank(g)>=gradeRank('S')?3:g==='A'?2:1;
+/* Stars from the grade (GRADE_STARS). Owner decision 1a sketched a win 1, A 2, S and S+ 3; improve20-r11a-nov2 #5 measured it first
+   (tools/balance-sim.mjs, Normal campaign, 7 classes): the scrappy kid (--bot=masher --skill=.5 --find=0) wins mostly B (its Paladin
+   mostly C), so 1a gave it 10-13 stars before m1's 15-star gate and 18-24 before v1's 35: the gates would close on it. So every ordinary
+   win is 2: S and S+ 3 (a clean run), A, B and C 2 (a scrappy win), D 1 (a win that nearly fell). Measured: the kid bot gets 3 on 54% and
+   2 on 46% of its wins, the good bot 70/30, the scrappy kid 2 on 98%; every bot reaches m1's gate on the main road (16+ of 15), and v1's
+   (35+ on the main road for the kid and good bots; the scrappy kid had 30, so v1's gate went 35 -> 30 at merge: a struggling kid must not be
+   stuck at a chapter gate; better grades and Heroic replays still add stars, as v1's gate line says). */
+export const gradeStars=g=>!g?0:gradeRank(g)>=gradeRank('S')?3:gradeRank(g)>=gradeRank('C')?2:1;
 export const NEED_SECRETS={normal:1,heroic:2,legendary:3};
 export const KO_COST=15,HP_COST=50,HP_COST_CAP=80,FAST=.5,ABILITY_SHARE=1/3,BONUS_CAP=10,ELITE_BONUS=2,ELITE_BONUS_CAP=6;
 export const BONUS={mimic:3,seal:3,blessing:2,noPotion:2};

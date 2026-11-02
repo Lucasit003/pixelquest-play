@@ -1,7 +1,7 @@
 import {veilPrepare,veilMarkers,veilEnd,veilOverlay,veilSafe} from './veilmoor.js';
 import {emberPrepare,emberMarkers,emberEnd} from './emberkeep.js';
 import {woodEnd} from './elderwood.js';
-import {softMarker,safeLane,escapeRoute} from './tier-fx.js';
+import {softMarker,safeLane,escapeRoute,visibleColumn} from './tier-fx.js';
 import {applyMod,keepOf} from '../game/tiers.js';
 import {canBeginThreat} from './encounter-budget.js';
 import {echoCue} from './normal-pacing.js';
@@ -413,7 +413,7 @@ export function enemyLayer(c,w,t){const out=w.level?.encounter?.readable?[{y:1e9
  for(const e of w.enemies)if(e.pillar&&e.hp>0&&e.brain?.atk?.kind==='pillar')pillarRing(c,e,e.brain,t);
  for(const e of w.enemies){const b=e.brain;if(!b||e.hp<=0||!b.markers?.length)continue;
   if(e.normalPacing||w.level?.encounter?.readable)safeLane(c,b.safeLane,!w.level?.encounter?.veilmoor,w);
-  const prog=b.mode==='tele'?Math.min(1,b.t/Math.max(.01,b.teleDur)):1;for(const m of b.markers)marker(c,e.normalPacing||w.level?.encounter?{...m,soft:true,lane:(e.normalPacing||w.level.encounter.readable)&&m.shape==='box',age:b.mode==='tele'?b.t:b.teleDur,warn:b.teleDur,motion:w.motion}:m,prog,t);}
+  const prog=b.mode==='tele'?Math.min(1,b.t/Math.max(.01,b.teleDur)):1;for(const m0 of b.markers){const m=visibleColumn(w,m0);marker(c,e.normalPacing||w.level?.encounter?{...m,soft:true,lane:(e.normalPacing||w.level.encounter.readable)&&m.shape==='box',age:b.mode==='tele'?b.t:b.teleDur,warn:b.teleDur,motion:w.motion}:m,prog,t);}}
  /* a vanished boss's decoy exits, drawn dimmer than the real one (Heroic and up) */
  for(const e of w.enemies){const b=e.brain;if(!b||e.hp<=0||b.mode!=='act'||b.atk?.kind!=='vanish')continue;if(!w.level?.encounter?.veilmoor)for(const m of b.decoys||[])marker(c,m,1,t);
   const gate=b.atk.gate;if(gate&&!e.fade)for(const m of [...(b.markers||[]),...(b.decoys||[])])out.push({y:m.y-1,draw:()=>drawSprite(c,gate,'rise',Math.min(.45,b.t*.6),m.x,m.y,{alpha:m.dim?.45:1})});}

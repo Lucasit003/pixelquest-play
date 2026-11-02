@@ -73,7 +73,7 @@ function postGame(save,q=null){const ch=[...CHAPTERS].reverse().map(c=>c.id),of=
  for(const c of ch)for(const l of of(c))if(tierOpen(save,l.id,'heroic')&&!tierDone(save,l.id,'heroic'))return tierPad(l,'heroic');
  for(const c of ch)for(const l of of(c))if(tierOpen(save,l.id,'legendary')&&!tierDone(save,l.id,'legendary'))return tierPad(l,'legendary');
  /* endgame-oct29: a side path never cleared on Normal (vx1, mx1, ex1, ex2 are off the main road) was offered as "Try for 3 stars in Bandit Road on Normal"; it is a new adventure, so it says so */
- for(const c of ch)for(const k of TIER_KEYS)for(const l of of(c))if(tierOpen(save,l.id,k)&&starsOf(save,l.id,k)<3)return !tierDone(save,l.id,k)?(k==='normal'?pad(l):tierPad(l,k)):{...tierPad(l,k),text:`Try for 3 stars in ${l.name} on ${TIERS[k].label}: ${k==='legendary'?'beat its 3-star time with no fall':'beat its par time'} on the map card.`};
+ for(const c of ch)for(const k of TIER_KEYS)for(const l of of(c))if(tierOpen(save,l.id,k)&&starsOf(save,l.id,k)<3)return !tierDone(save,l.id,k)?(k==='normal'?pad(l):tierPad(l,k)):{...tierPad(l,k),text:`Try for 3 stars in ${l.name} on ${TIERS[k].label}: ${k==='legendary'?'an S grade, under its 3-star time with no fall':'win it with an S grade (few hits, the secret found)'}.`};
  return showpieceStep(save);}
 /* Villager quests (docs/design/COMPANIONS_AND_OAKHAVEN.md §5.5), live chains only (today Wil's): a hand-in waiting in town comes
    before the next main-road pad; an active quest's clear step and then a newly opened quest come once the main road is done or
@@ -138,9 +138,9 @@ function adventure(save){
  /* improve20-r8a-nov1 #2: after the ending the post-game road decides, Wil's quest in its place there; a Showpiece never outranks content */
  if(gameCleared(save))return postGame(save,q);
  if(q){const n=questStep(q);if(!gate)return n;const g=starsShort(save,gate.id);return {...n,text:`${n.text.replace(/[.!]\s*$/,'')} (${gate.name} needs ${g.need}★: ${g.need-g.have} more).`,starGate:gate.id};}
- if(gate){const g=starsShort(save,gate.id),src=starSource(save,gate.id);if(src){const l=src.level,k=src.tier,n=tierPad(l,k);return {...n,id:'stars-'+gate.id,text:`${gate.name} needs ${g.need} stars (you have ${g.have}). ${src.done?'Beat the 3-star time in':'Clear'} ${l.name} on ${TIERS[k].label} for more.`};}}
+ if(gate){const g=starsShort(save,gate.id),src=starSource(save,gate.id);if(src){const l=src.level,k=src.tier,n=tierPad(l,k);return {...n,id:'stars-'+gate.id,text:`${gate.name} needs ${g.need} stars (you have ${g.have}). ${src.done?'Win a better grade in':'Clear'} ${l.name} on ${TIERS[k].label} for more.`};}}
  for(const optional of [false,true])for(const k of TIER_KEYS)for(const l of playable().filter(l=>!!l.optional===optional))if(tierOpen(save,l.id,k)&&!tierDone(save,l.id,k))return tierPad(l,k);
- for(const k of TIER_KEYS)for(const l of playable())if(tierOpen(save,l.id,k)&&starsOf(save,l.id,k)<3)return {...tierPad(l,k),text:`Try for 3 stars in ${l.name} on ${TIERS[k].label}: ${k==='legendary'?'beat its 3-star time with no fall':'beat its par time'} on the map card.`};
+ for(const k of TIER_KEYS)for(const l of playable())if(tierOpen(save,l.id,k)&&starsOf(save,l.id,k)<3)return {...tierPad(l,k),text:`Try for 3 stars in ${l.name} on ${TIERS[k].label}: ${k==='legendary'?'an S grade, under its 3-star time with no fall':'win it with an S grade (few hits, the secret found)'}.`};
  return null;
 }
 /* improve20-r7a-nov1 #11 (audit6 #19: 1,036 gold by minute 40 with nothing pointing at what to buy): once a boss has fallen and the hero holds

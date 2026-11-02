@@ -3,7 +3,7 @@
    runs a rung: one boss after another through main.js startLevel, an interlude card between bosses, and a card at the end (a fall or a
    clear). Art: the existing PixelLab tier icons (ui/skin/pl-icons/tier-*.png) and reward icons; no new art. */
 import {CHAPTERS,levelById} from '../game/levels.js';
-import {HALL_CHAPTERS,RUNGS,RUNG_LABEL,ROMAN,HALL_HEAL,hallBosses,rungState,rungOpen,rungReward,keepsakeName,keepsakes,startRung,hallStep,hallFinish,hallOpen} from '../game/hall.js';
+import {HALL_CHAPTERS,RUNGS,RUNG_LABEL,ROMAN,hallHeal,hallBosses,rungState,rungOpen,rungReward,keepsakeName,keepsakes,startRung,hallStep,hallFinish,hallOpen} from '../game/hall.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const ICON={1:'tier-normal',2:'tier-heroic',3:'tier-legendary'};
 const pic=(n,size=32)=>`<img class="hall-icon" src="ui/skin/pl-icons/${n}.png" width="${size}" height="${size}" alt="" draggable="false">`;
@@ -12,7 +12,7 @@ const bossName=id=>{const l=levelById(id);return l?.plate||String(l?.bossName||'
 const STATE={keepsake:'Keepsake won',cleared:'Cleared',open:'Open',locked:'Locked'};
 /* the first open rung not cleared yet, else the first rung */
 export function hallDefault(s){for(const ch of HALL_CHAPTERS)for(const r of RUNGS)if(rungState(s,ch,r)==='open')return {chapter:ch,rung:r};return {chapter:HALL_CHAPTERS[0],rung:1};}
-export function hallHTML(s,sel=hallDefault(s),{coin='',gem=''}={}){const pct=Math.round(HALL_HEAL*100);
+export function hallHTML(s,sel=hallDefault(s),{coin='',gem=''}={}){const pct=Math.round(hallHeal(sel?.rung)*100);/* hallfair-nov2: the heal is per rung */
  const grid=HALL_CHAPTERS.map(ch=>`<div class="hall-row" role="row"><span class="hall-ch" role="rowheader">${esc(chName(ch))}</span>${RUNGS.map(r=>{const st=rungState(s,ch,r),on=sel&&sel.chapter===ch&&sel.rung===r;
   return `<button type="button" class="hall-rung${on?' sel':''}" role="gridcell" data-hall="${ch}:${r}" data-state="${st}" aria-pressed="${on}"${st==='locked'?' aria-disabled="true"':''}>${pic(st==='locked'?'tier-lock':ICON[r])}<span><b>${ROMAN[r-1]} · ${RUNG_LABEL[r]}</b><small>${STATE[st]}</small></span>${st==='keepsake'?pic('tier-star',16):''}</button>`;}).join('')}</div>`).join('');
  let det='';if(sel){const {chapter:ch,rung:r}=sel,st=rungState(s,ch,r),bs=hallBosses(ch),rw=rungReward(ch,r);

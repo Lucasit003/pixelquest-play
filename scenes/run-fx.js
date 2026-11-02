@@ -99,10 +99,14 @@ export function runLayer(w,c,t){const out=[];if(!w.draft||!w.layout)return out;c
   drawSprite(c,'mimic',m.state==='wake'?'hurt':'idle',still?0:t,m.x+shake,m.y,{facing:w.player.x<m.x?-1:1,scale:enemyRenderScale({scale:1})});}});
  return out;}
 /* ---- the end of a run: grade, best grade, Delver XP, chests, the Boss Meter and tasks ---- */
+/* improve20-r11a-nov2 #5: the run's score and grade alone (pure: no record written), so combat's finish can give the grade to recordLevel,
+   whose stars now come from it (game/levels.js runStars); runFinish scores the same way */
+export function runScore(w,won,{time}){const l=levelById(w.level?.id);if(!w.draft||!l)return null;const k=w.tierKey||'normal';
+ return scoreRun({won,time:time+(w.run.carry||0),par:levelParFor(l,k),tier:k,waves:won?w.layout.arenas.length:Math.min(w.wave|0,w.layout.arenas.length),wavesTotal:w.layout.arenas.length,
+  knockouts:w.run.knockouts|0,lost:(w.run.lostCarry||0)+netLost(w.run)/Math.max(1,w.player.maxHp),found:[...w.found].filter(id=>w.draft.active.includes(id)).length,elites:w.run.elites|0,mimic:w.run.mimic,seal:w.run.seal,blessing:w.run.blessing,potions:w.run.drank?1:0,abilities:w.run.damage>0?(w.run.abilDamage||0)/w.run.damage:null});}
 export function runFinish(w,won,{time,gold}){const l=levelById(w.level?.id);if(!w.draft||!l)return null;const s=w.save,k=w.tierKey||'normal';
  const top=s.levels[l.id],r=k==='normal'?top:top?.tiers?.[k];if(!r)return null;r.best??={time:null,score:0};
- const sc=scoreRun({won,time:time+(w.run.carry||0),par:levelParFor(l,k),tier:k,waves:won?w.layout.arenas.length:Math.min(w.wave|0,w.layout.arenas.length),wavesTotal:w.layout.arenas.length,
-  knockouts:w.run.knockouts|0,lost:(w.run.lostCarry||0)+netLost(w.run)/Math.max(1,w.player.maxHp),found:[...w.found].filter(id=>w.draft.active.includes(id)).length,elites:w.run.elites|0,mimic:w.run.mimic,seal:w.run.seal,blessing:w.run.blessing,potions:w.run.drank?1:0,abilities:w.run.damage>0?(w.run.abilDamage||0)/w.run.damage:null});
+ const sc=runScore(w,won,{time});
  const prevBest=r.best.grade||null,rift=!!w.rift,newBest=!rift&&!!sc.grade&&gradeRank(sc.grade)>gradeRank(prevBest);if(newBest)r.best.grade=sc.grade;/* improve20-r8a-nov1 #4: the best grade's run remembers what to improve (world-map card) */if(!rift&&sc.grade&&gradeRank(sc.grade)>=gradeRank(r.best.grade)){const tp=gradeTip(sc);if(tp&&tp.part!=='bonus')r.best.tip=tp.part;else delete r.best.tip;}
  /* a Rift run never sets the level's best grade, so it never pays the first-best Delver bonus either */
  const advBefore=adventurerLevel(s).level;const delve=awardRun(s,l,{won,grade:sc.grade,tier:k,prevBest:rift&&sc.grade&&gradeRank(sc.grade)>gradeRank(prevBest)?sc.grade:prevBest,progress:(w.run.waves||0)/Math.max(1,w.layout.arenas.length)});

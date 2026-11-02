@@ -72,11 +72,16 @@ function softBand(c,m,prog,live,o={}){const x=Math.min(m.x0,m.x1),width=Math.abs
    arena hazard's markers, CLEAR lane and islands. main.js fades the hotbar or a phone button a danger lane passes under (combat.js follow()
    reads the same CLEAR lanes inline, to keep a CLEAR column between a phone's controls). */
 const laneBox=m=>m&&m.shape==='box'&&Number.isFinite(m.band)?{x0:Math.min(m.x0,m.x1),x1:Math.max(m.x0,m.x1),y0:m.y-m.band,y1:m.y+m.band}:null;
-export function liveLanes(w){const out=[],safe=[];for(const e of w?.enemies||[]){const b=e.brain;if(e.hp<=0||!b||!['tele','act'].includes(b.mode))continue;for(const m of b.markers||[]){const r=laneBox(m);if(r)out.push(r);}if(b.safeLane)safe.push(b.safeLane);}
+export function liveLanes(w){const out=[],safe=[];for(const e of w?.enemies||[]){const b=e.brain;if(e.hp<=0||!b||!['tele','act'].includes(b.mode))continue;for(const m of b.markers||[]){const r=laneBox(visibleColumn(w,m));if(r)out.push(r);}if(b.safeLane)safe.push(b.safeLane);}
  const z=w?.tierFx?.current;if(z){for(const m of z.markers||[z.marker]){const r=laneBox(m);if(r)out.push(r);}for(const r of z.islands||[z.safe])if(r)safe.push(r);}
  return {danger:out,safe,all:[...out,...safe]};}
 /* Only trim the drawing to the visible safe ground; combat keeps the original corridor. */
 export function visibleSafeLane(w,r){if(!r)return null;const top=w?.camTop||0,bottom=top+(w?.hudClearBottom??STAGE.camH-STAGE.hudBottom)-4,y0=Math.max(r.y0,top+4),y1=Math.min(r.y1,bottom);return y1-y0>=12?{...r,y0,y1}:null;}
+/* improve20-r11c-nov2 #4 (audit9 a15, shot 23): a column lane (the Sleeper's abyss wave spans the whole arena floor) reached into the
+   hotbar band. Its drawing stops on the floor above the hotbar (w.hudClearBottom, main.js clearLaneRoom), as the CLEAR lane's does;
+   only columns taller than CLIP_TALL are trimmed, so a low row lane always shows its whole hit area. Combat keeps the original box. */
+export const CLIP_TALL=60;
+export function visibleColumn(w,m){if(!m||m.shape!=='box'||!Number.isFinite(m.band)||m.band*2<=CLIP_TALL)return m;const top=(w?.camTop||0)+4,bottom=(w?.camTop||0)+(w?.hudClearBottom??STAGE.camH-STAGE.hudBottom)-4,y0=Math.max(m.y-m.band,top),y1=Math.min(m.y+m.band,bottom);return y1-y0>=12?{...m,y:(y0+y1)/2,band:(y1-y0)/2}:m;}
 /* oct24-ember-econ (playtest ch2 shot 17): the CLEAR word sat in the lane's middle, which is where the hero stands once they
    reach it, so it drew over the hero. It keeps the middle unless the hero covers it; then it moves along the lane beside the
    hero (toward the middle when both sides fit), else under the hero's feet or over the head, still inside the lane. */

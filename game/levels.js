@@ -15,6 +15,7 @@
 // Map positions live in game/worldmap-layout.js (worldmap agent), keyed by these ids.
 import {stageWidth} from './stage.js';
 import {TIER_KEYS,tierOf,tierKey,tierPar,tierGold,tierXP,starsFor,STAR_PAR,STAR_CLEAN} from './tiers.js';
+import {GRADE_STARS,gradeStars} from './grade.js';
 export const CHAPTERS=[
  {id:'elderwood',name:'Elderwood',biome:'forest',blurb:'Goblins, orcs and old things in the wood.',
   pool:['goblin','slime','orc','orc-rogue','skeleton'],elites:['goblin-king','orc-warlord','minotaur']},
@@ -103,7 +104,7 @@ export const LEVELS=[
   blurb:'Grey dunes outside the walls. Nothing grows; things still walk.',
   waves:[['ash-ghoul','skeleton','skeleton'],{groups:[['ash-ghoul'],['ash-ghoul','skeleton'],['ash-ghoul','skeleton']],side:'both'}],bossAdds:['ash-ghoul','ash-ghoul']},
  // --- The Veilmoor: seven boss levels, a trader, an arena and a side path. Tiers 16-22.
- {id:'v1',chapter:'veilmoor',kind:'level',name:'Drowned Shrine',biome:'mystic-shrine',floor:'shrine-pond',boss:'drowned-priest',bossName:'The Drowned Priest',mini:'prism-sentinel',requires:['m7'],tier:16,gap:1,stars:35,
+ {id:'v1',chapter:'veilmoor',kind:'level',name:'Drowned Shrine',biome:'mystic-shrine',floor:'shrine-pond',boss:'drowned-priest',bossName:'The Drowned Priest',mini:'prism-sentinel',requires:['m7'],tier:16,gap:1,stars:30,
   blurb:'Steps down into still violet water. Someone still keeps the shrine.',
   waves:[['drowned-thrall','slime'],{groups:[['drowned-thrall','wisp'],['drowned-thrall','wisp']],side:'both'},['cultist','drowned-thrall','drowned-thrall']],bossAdds:['drowned-thrall','drowned-thrall']},
  {id:'v2',chapter:'veilmoor',kind:'level',name:'Glimmer Fen',biome:'mystic-fen',floor:'fen-pond',boss:'wisp-mother',bossName:'The Wisp Mother',mini:'abyss-herald',requires:['v1'],tier:17,gap:1.3,
@@ -163,7 +164,7 @@ export const starGate=l=>l?.stars|0;
 export function starGateMet(save,l){const need=starGate(l);if(!need)return true;if(TIER_KEYS.some(k=>tierDone(save,l.id,k))||save?.starPass?.includes?.(l.id))return true;return totalStars(save)>=need;}
 /* {need,have} when the pad's requirements are done but its star gate is not; else null. */
 export function starsShort(save,id){const l=levelById(id);if(!l||!starGate(l)||starGateMet(save,l))return null;if(!(l.requires.length===0||l.requires.some(r=>levelDone(save,r))))return null;return {need:starGate(l),have:totalStars(save)};}
-export const starGateText=g=>g?`Needs ${g.need}★ — you have ${g.have}★. Replay earlier levels on Heroic or Legendary, or beat their par times, for more stars.`:'';
+export const starGateText=g=>g?`Needs ${g.need}★ — you have ${g.have}★. Replay earlier levels on Heroic or Legendary, or win them with a better grade, for more stars.`:'';
 /* The last level on the main road of the last chapter: winning it finishes the adventure (playtest oct14: beating the
    final boss used to end on an ordinary result card). Side paths never count. */
 export const gameFinale=id=>{const last=CHAPTERS[CHAPTERS.length-1]?.id,l=levelById(id);return !!l&&l.kind==='level'&&!l.optional&&!l.hidden&&l.chapter===last&&!LEVELS.some(o=>o.chapter===last&&o.kind==='level'&&!o.optional&&o.requires.includes(id));};
@@ -211,11 +212,18 @@ export const arenaTier=(level,n)=>(level.chapter==='emberkeep'?9:level.chapter==
    time includes the time spent before any wave retry, and a run with a knockout (a retried wave) earns at most 2 stars. */
 /* A Rift of the Week run (game/rift.js; round 2 review) counts as a play but leaves the Normal record alone: its modifiers change the
    level's difficulty, so its time, stars, score and grade live in s.rift only. */
-export function recordLevel(save,id,{won,time,score,tier,knockouts=0,rift=false}){const l=levelById(id),k=tiered(l)?tierKey(tier):'normal';save.levels??={};
+/* improve20-r11a-nov2 #5 (audit9 a8): every first clear in audit9 gave 3 stars (48 of 48) beside grades from B down, because the pars are
+   generous (balance-sim: the kid, good and scrappy-kid bots won 3 time stars on 100% of their Normal clears). Stars now come from the run
+   grade (GRADE_STARS, game/grade.js gradeStars: S/S+ 3, A/B/C 2, D 1), so the card shows one rating: 3 for a clean run, 2 for a scrappy win.
+   A run with a knockout still earns 2 at most. Legendary keeps its mastery rule too (STAR_CLEAN: under par x STAR_PAR with no fall), so
+   there the lower of the two counts. With no grade (a caller that does not grade, an old tool) the time rule stands. recordLevel only
+   ever raises a record's stars, so no save loses stars it has. */
+export function runStars(l,k,{time,knockouts=0,grade=null}={}){const cap=knockouts>0?2:3,t=Math.min(cap,levelStarsFor(l,k,time));if(!GRADE_STARS||!grade)return t;const g=Math.min(cap,Math.max(1,gradeStars(grade)));return cleanStars(l,k)?Math.min(t,g):g;}
+export function recordLevel(save,id,{won,time,score,tier,knockouts=0,rift=false,grade=null}){const l=levelById(id),k=tiered(l)?tierKey(tier):'normal';save.levels??={};
  const top=save.levels[id]??={done:false,best:{time:null,score:0},plays:0};
  const r=k==='normal'?top:((top.tiers??={})[k]??={done:false,best:{time:null,score:0},plays:0,stars:0});r.best??={time:null,score:0};
- r.plays=(r.plays|0)+1;/* improve20-z-nov1 #4: a won level turns the suggested goal back to learning (game/next-step.js chargeStep) */if(won&&l?.kind==='level')save.goalTurn='learn';/* improve20-r8a-nov1 #3: wins since e5, for the Wil nudge (next-step.js wilNudge) */if(won&&l?.kind==='level'&&(id==='e5'||save.levels.e5?.done))save.questNudge=(save.questNudge|0)+1;if(rift)return {first:false,recordTime:false,recordScore:false,stars:won&&l?.kind==='level'?Math.min(knockouts>0?2:3,levelStarsFor(l,k,time)):0,newStars:0,tier:k,rift:true};const first=won&&!r.done&&l?.kind==='level';
- const stars=won&&l?.kind==='level'?Math.min(knockouts>0?2:3,levelStarsFor(l,k,time)):0,newStars=stars>(r.stars|0)?stars-(r.stars|0):0;if(newStars)r.stars=stars;
+ r.plays=(r.plays|0)+1;/* improve20-z-nov1 #4: a won level turns the suggested goal back to learning (game/next-step.js chargeStep) */if(won&&l?.kind==='level')save.goalTurn='learn';/* improve20-r8a-nov1 #3: wins since e5, for the Wil nudge (next-step.js wilNudge) */if(won&&l?.kind==='level'&&(id==='e5'||save.levels.e5?.done))save.questNudge=(save.questNudge|0)+1;if(rift)return {first:false,recordTime:false,recordScore:false,stars:won&&l?.kind==='level'?runStars(l,k,{time,knockouts,grade}):0,newStars:0,tier:k,rift:true};const first=won&&!r.done&&l?.kind==='level';
+ const stars=won&&l?.kind==='level'?runStars(l,k,{time,knockouts,grade}):0,newStars=stars>(r.stars|0)?stars-(r.stars|0):0;if(newStars)r.stars=stars;
  const recordTime=won&&l?.kind==='level'&&(r.best.time==null||time<r.best.time);if(recordTime)r.best.time=Math.round(time*10)/10;
  const recordScore=score>(r.best.score|0);if(recordScore){r.best.score=score;if(l?.kind==='arena')r.best.time=Math.round(time*10)/10;}
  if(l?.kind==='arena'?r.best.score>=ARENA_GOAL:won)r.done=true;
