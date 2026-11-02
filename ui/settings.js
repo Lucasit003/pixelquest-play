@@ -8,8 +8,9 @@ import {keyLabel} from './controls.js';
      settings.pixelPerfect                   bool, desktop default false (fill the window); true = whole numbers, letterboxed
      settings.startFullscreen                bool, default true (ask for fullscreen on the first title-screen click/key)
      settings.view                           'close' | 'normal' | 'far' (ownernotes-b-nov1: the town view on desktop; default 'normal')
-     settings.textSize                       100 | 125 | 150 (panels, dialogue, toasts, the quiz question, the HUD, goal plate and controls strip; clamped on phones) */
-import {setVolume,sfx,setSoundtrack,SOUNDTRACKS,DEFAULT_SOUNDTRACK} from '../core/audio.js';
+     settings.textSize                       100 | 125 | 150 (panels, dialogue, toasts, the quiz question, the HUD, goal plate and controls strip; clamped on phones)
+     settings.ambience                       bool, default true (ambience-nov2: the ambient beds, core/ambience-audio.js; they also follow Play sound effects) */
+import {setVolume,sfx,setSoundtrack,SOUNDTRACKS,DEFAULT_SOUNDTRACK,enableAmbience} from '../core/audio.js';
 import {rescale,pixelPerfect,VIEWS,viewKey} from './scale.js';
 import {fullscreenSupported,startFullscreen,toggleFullscreen,fullscreenLabel,fullscreenOption,toggleHowTo} from './fullscreen.js';
 import {encodeSave,decodeSave,importThroughMain,saveCodeSupported} from './savecode.js';
@@ -21,7 +22,7 @@ export function volumeOf(s){const v=s?.settings?.volume||{};const n=(x,d)=>Numbe
 export const reducedMotion=s=>s?.settings?.reducedMotion??prefersReduced();
 export function applySettings(s){
  setSoundtrack(s?.settings?.soundtrack);
- const v=volumeOf(s);setVolume({master:v.master/100,music:v.music/100,sfx:v.sfx/100});
+ const v=volumeOf(s);setVolume({master:v.master/100,music:v.music/100,sfx:v.sfx/100});enableAmbience(s?.settings?.ambience!==false);
  const root=globalThis.document?.documentElement;if(root){root.dataset.motion=reducedMotion(s)?'reduced':'full';root.dataset.text=String(textSize(s));}
  rescale();
 }
@@ -49,6 +50,7 @@ export function wireUiSettings(s,persist,root=globalThis.document){
   el.oninput=()=>{const k=el.dataset.volume,val=+el.value;s.settings.volume={...volumeOf(s),[k]:val};el.setAttribute('aria-valuetext',val+'%');const o=el.parentElement.querySelector('output');if(o)o.textContent=val+'%';applySettings(s);};
   el.onchange=()=>{persist();sfx(el.dataset.volume==='music'?'ui.move':'pickup');};
  });
+ /* ambience-nov2: Play ambience (settings.ambience) */const am=root.querySelector('#ambience');if(am)am.onchange=()=>{s.settings.ambience=am.checked;applySettings(s);persist();};
  const rm=root.querySelector('#reduced-motion');if(rm)rm.onchange=()=>{s.settings.reducedMotion=rm.checked;applySettings(s);persist();};
  const is=root.querySelector('#integer-scale');if(is)is.onchange=()=>{s.settings.pixelPerfect=is.checked;s.settings.integerScale=is.checked;applySettings(s);persist();};
  const sf=root.querySelector('#start-fullscreen');if(sf)sf.onchange=()=>{s.settings.startFullscreen=sf.checked;persist();};

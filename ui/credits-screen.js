@@ -6,7 +6,7 @@ import {playMusic,currentMusic} from '../core/audio.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 /* endfollow-oct29: one thank-you line opens the credits, before the licence list */
 export const CREDITS_THANKS='Thank you for playing, and for learning along the way. And thank you to the artists, musicians and coders below, who shared their work with us.';
-const SECTIONS=[['art','World, characters and effects'],['ui','Interface and icons'],['audio','Music and jingles'],['font','Typeface'],['code','Code']];
+const SECTIONS=[['art','World, characters and effects'],['ui','Interface and icons'],['audio','Music, jingles and ambience'],['font','Typeface'],['code','Code']];
 export function creditsHTML(c=CREDITS){
  const group=(list)=>list.map(a=>`<li><strong>${esc(a.author)}</strong><span>${a.packs.map(p=>`${esc(p.name)}${p.required?' <em class="req">CC BY</em>':''}`).join(' · ')}</span></li>`).join('');
  return `<div class="credits"><div class="credits-crest" aria-hidden="true"></div><p class="credits-title">PixelQuest<span>The Thorn Kingdom</span></p><p class="credits-thanks">${esc(CREDITS_THANKS)}</p>`+

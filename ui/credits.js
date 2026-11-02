@@ -873,6 +873,39 @@ export const CREDITS={
    ]
   },
   {
+   "author": "gmason",
+   "packs": [
+    {
+     "name": "underwater or space engine rumble",
+     "licence": "CC0",
+     "url": "https://opengameart.org/content/underwater-or-space-engine-rumble",
+     "required": false
+    }
+   ]
+  },
+  {
+   "author": "isaiah658",
+   "packs": [
+    {
+     "name": "Ambient Bird Sounds",
+     "licence": "CC0",
+     "url": "https://opengameart.org/content/ambient-bird-sounds",
+     "required": false
+    }
+   ]
+  },
+  {
+   "author": "JaggedStone",
+   "packs": [
+    {
+     "name": "Loopable Dungeon Ambience",
+     "licence": "CC0",
+     "url": "https://opengameart.org/content/loopable-dungeon-ambience",
+     "required": false
+    }
+   ]
+  },
+  {
    "author": "Jonathan Shaw",
    "packs": [
     {
@@ -1234,6 +1267,17 @@ export const CREDITS={
    ]
   },
   {
+   "author": "LokiF",
+   "packs": [
+    {
+     "name": "Swamp Environment Audio",
+     "licence": "CC0",
+     "url": "https://opengameart.org/content/swamp-environment-audio",
+     "required": false
+    }
+   ]
+  },
+  {
    "author": "Matthew Pablo",
    "packs": [
     {
@@ -1245,12 +1289,45 @@ export const CREDITS={
    ]
   },
   {
+   "author": "PagDev",
+   "packs": [
+    {
+     "name": "Fireplace Sound loop",
+     "licence": "CC0",
+     "url": "https://opengameart.org/content/fireplace-sound-loop",
+     "required": false
+    }
+   ]
+  },
+  {
    "author": "Pixel-boy & AAA",
    "packs": [
     {
      "name": "Ninja Adventure Asset Pack",
      "licence": "CC0 1.0",
      "url": "https://pixel-boy.itch.io/ninja-adventure-asset-pack",
+     "required": false
+    }
+   ]
+  },
+  {
+   "author": "Some Weirdo",
+   "packs": [
+    {
+     "name": "windy ambient noise",
+     "licence": "CC0",
+     "url": "https://opengameart.org/content/windy-ambient-noise",
+     "required": false
+    }
+   ]
+  },
+  {
+   "author": "Wolfgang_",
+   "packs": [
+    {
+     "name": "Crickets Ambient Noise - loopable",
+     "licence": "CC0",
+     "url": "https://opengameart.org/content/crickets-ambient-noise-loopable",
      "required": false
     }
    ]

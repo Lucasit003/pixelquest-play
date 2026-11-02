@@ -11,6 +11,8 @@ import {armStartFullscreen,fullscreenSupported,toggleFullscreen,fullscreenLabel,
 import {initMobile} from './mobile.js';
 import {areaTitle,levelUpBanner,celebrate,installToastHold} from './juice.js';
 import {titleOpen} from './title.js';
+import {ambienceKey,setAmbience} from '../core/ambience-audio.js';
+import {hubState} from '../scenes/town.js';
 import {openStats} from './stats.js';
 import {openCredits} from './credits-screen.js';
 import {fillIcons} from './icons.js';
@@ -124,6 +126,8 @@ function director(){
   else if(override)key=override;
   else if(w){/* a lost fight leaves the boss alive: once the level has ended, the boss track gives way to the area's own (playtest 14 Oct pass 2) */const boss=!w.ended&&w.enemies?.some?.(e=>e.boss&&e.hp>0);const own=w.level?.kind==='level'&&getSoundtrack()!=='classic';/* every level and every boss has its own track (owner, 14 Oct) */key=boss?(own?bossMusicKey(w.level.id):'boss'):own?levelMusicKey(w.level.id):musicKey(w.biome||w.scene||w.zone||'town');}
   if(key)playMusic(key);
+  /* ambience-nov2: the place's ambient bed (core/ambience-audio.js), none in menus, lessons, quizzes or the Library */
+  try{setAmbience(ambienceKey({title:titleOpen(),view,sheet:sheetOpen(),map:d.documentElement.classList.contains('map-open'),world:w,room:w&&!w.level?hubState()?.room:null}));}catch{}
   const R=d.documentElement,was=R.className;
   R.classList.toggle('in-town',!!w&&w.zone==='town'&&!w.level);R.classList.toggle('in-level',!!w?.level);
   R.classList.toggle('map-open',d.querySelector('#hud')?.style.visibility==='hidden');

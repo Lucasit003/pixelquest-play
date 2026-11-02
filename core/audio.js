@@ -17,7 +17,7 @@
      setVolume({master, music, sfx}), getVolume(), duck(on), voiceDuck(on) */
 import {ZZFX} from '../ui/vendor/zzfx.js';
 
-let ac=null,master,limiter,sfxBus,musicBus,duckGain,tellGain,enabled=true,musicOn=true,ducked=false,voiced=false;
+let ac=null,master,limiter,sfxBus,musicBus,ambBus,duckGain,tellGain,enabled=true,musicOn=true,ambOn=true,ducked=false,voiced=false;
 const vol={master:.92,music:.55,sfx:.8};
 const AC=()=>globalThis.AudioContext||globalThis.webkitAudioContext;
 
@@ -28,7 +28,7 @@ function ctx(){
  limiter=ac.createDynamicsCompressor();
  limiter.threshold.value=-12;limiter.knee.value=6;limiter.ratio.value=10;limiter.attack.value=.003;limiter.release.value=.16;
  master=ac.createGain();sfxBus=ac.createGain();musicBus=ac.createGain();duckGain=ac.createGain();tellGain=ac.createGain();
- sfxBus.connect(master);musicBus.connect(duckGain).connect(tellGain).connect(master);master.connect(limiter).connect(ac.destination);
+ /* ambience-nov2: the ambient beds (core/ambience-audio.js) share the music's duck stages */ambBus=ac.createGain();ambBus.connect(duckGain);sfxBus.connect(master);musicBus.connect(duckGain).connect(tellGain).connect(master);master.connect(limiter).connect(ac.destination);
  ZZFX.audioContext=ac;ZZFX.sampleRate=ac.sampleRate;
  applyVolume(0);
  return ac;
@@ -44,13 +44,18 @@ export function unlockAudio(target=globalThis){
 function applyVolume(t=.08){
  if(!ac)return;
  const now=ac.currentTime,set=(node,v)=>{node.gain.cancelScheduledValues(now);node.gain.setTargetAtTime(v,now,Math.max(.001,t));};
- set(master,vol.master);set(sfxBus,enabled?vol.sfx:0);set(musicBus,musicOn?vol.music:0);set(duckGain,voiced?VOICE_DUCK:ducked?.4:1);
+ set(master,vol.master);set(sfxBus,enabled?vol.sfx:0);set(musicBus,musicOn?vol.music:0);set(ambBus,enabled&&ambOn?vol.sfx:0);set(duckGain,voiced?VOICE_DUCK:ducked?.4:1);
 }
 const clamp01=v=>Math.max(0,Math.min(1,Number(v)));
 export function setVolume(v={}){for(const k of ['master','music','sfx'])if(v[k]!==undefined&&!Number.isNaN(Number(v[k])))vol[k]=clamp01(v[k]);applyVolume();}
 export function getVolume(){return {...vol};}
 export function enable(v){enabled=!!v;applyVolume();}
 export function enableMusic(v){musicOn=!!v;applyVolume();if(musicOn&&wanted&&!wanted.live)playMusic(wanted.key);}
+/* ambience-nov2: the beds follow the sound-effects switch and slider, and their own Settings switch (settings.ambience). ambienceGraph()
+   is null until the first gesture has unlocked audio (iOS), and while sound or ambience is off, so nothing loads then. */
+export function enableAmbience(v){ambOn=!!v;applyVolume();}
+export const ambienceAllowed=()=>enabled&&ambOn;
+export function ambienceGraph(){if(!enabled||!ambOn||!activated()||!ctx())return null;resume();return {ac,bus:ambBus,duck:duckGain,gate:musicGate};}
 /* Pull the music down while a panel or the pause menu is up. */
 export function duck(on){if(ducked===!!on)return;ducked=!!on;applyVolume(.25);}
 /* ownernotes-b-nov1 #6: while the lesson voice reads (a Kokoro clip or the browser voice), the music dips further, to a quarter,
@@ -246,7 +251,7 @@ function load(k){
  decoded.set(source,p);while(decoded.size>2)decoded.delete(decoded.keys().next().value);return p;
 }
 /* MP3 frames carry encoder delay and padding: silence at both ends that would click at the loop point. */
-function trim(buf){
+export function trim(buf){
  const d=buf.getChannelData(0),n=d.length,eps=.0008;let a=0,b=n-1;
  while(a<n&&Math.abs(d[a])<eps)a++;while(b>a&&Math.abs(d[b])<eps)b--;
  return {start:Math.min(a,n-1)/buf.sampleRate,end:Math.max(b,a+1)/buf.sampleRate};
@@ -315,6 +320,7 @@ export function sting(key){
   const now=ac.currentTime,d=t.buf.duration;
   musicBus.gain.cancelScheduledValues(now);musicBus.gain.setTargetAtTime(musicOn?vol.music*.25:0,now,.05);
   musicBus.gain.setTargetAtTime(musicOn?vol.music:0,now+d*.85,.4);
+  /* ambience-nov2: the bed dips with the music */const amb=enabled&&ambOn?vol.sfx:0;ambBus.gain.cancelScheduledValues(now);ambBus.gain.setTargetAtTime(amb*.25,now,.05);ambBus.gain.setTargetAtTime(amb,now+d*.85,.4);
  });
 }
 /* main.js still calls this every half second with the world zone. Once the UI's music director is
