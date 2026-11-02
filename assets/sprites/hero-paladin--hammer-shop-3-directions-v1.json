@@ -23,17 +23,29 @@
       "fps": 12,
       "loop": true
     },
-    "idle-north": {
+    "roll-south": {
       "row": 2,
+      "frames": 8,
+      "fps": 25,
+      "loop": false
+    },
+    "idle-north": {
+      "row": 3,
       "frames": 1,
       "fps": 5,
       "loop": true
     },
     "walk-north": {
-      "row": 3,
+      "row": 4,
       "frames": 8,
       "fps": 12,
       "loop": true
+    },
+    "roll-north": {
+      "row": 5,
+      "frames": 8,
+      "fps": 25,
+      "loop": false
     }
   },
   "source": "pixellab",
@@ -169,6 +181,118 @@
       ]
     },
     {
+      "state": "roll-south",
+      "frame": 0,
+      "file": "art/heroes/paladin-w/hammer-shop-3/pixellab/roll-south/0.png",
+      "sha256": "14eaed30a1a61cbd0df10bcad2aba08c5126495f919195db689979f4654da9e6",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        10,
+        3
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 1,
+      "file": "art/heroes/paladin-w/hammer-shop-3/pixellab/roll-south/1.png",
+      "sha256": "b3938520ccc26e37e94a4a4d1ddf8b27f6e0c3dbef415e8fcb2cf650aca48aa2",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        10,
+        3
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 2,
+      "file": "art/heroes/paladin-w/hammer-shop-3/pixellab/roll-south/2.png",
+      "sha256": "776e7163aff0690f9a8b6c5e1d442f1a0fdfb8f426e33295e00e23a4a86c3c35",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        10,
+        3
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 3,
+      "file": "art/heroes/paladin-w/hammer-shop-3/pixellab/roll-south/3.png",
+      "sha256": "f208c0f320681ff6790e36560f9272ca1c0d70a4a0b2a6258d21465888f278fd",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        10,
+        3
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 4,
+      "file": "art/heroes/paladin-w/hammer-shop-3/pixellab/roll-south/4.png",
+      "sha256": "a183812c9fbf1cbed38fa93db7a0f945cc79a70b20b921675d6c6af74b625dd9",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        10,
+        3
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 5,
+      "file": "art/heroes/paladin-w/hammer-shop-3/pixellab/roll-south/5.png",
+      "sha256": "94ec9b5f1fd2b374c643c418260f77bd03120d7955886d4361b28abd096d7c1c",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        10,
+        3
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 6,
+      "file": "art/heroes/paladin-w/hammer-shop-3/pixellab/roll-south/6.png",
+      "sha256": "a8b9d72e6a242cfcf8da5536d20d22641b4faf6714d0871edf7b0b3a0e771a1a",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        10,
+        3
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 7,
+      "file": "art/heroes/paladin-w/hammer-shop-3/pixellab/roll-south/7.png",
+      "sha256": "b5bf2af90b5e66233302e2c9265fc58a77df4aca59413465366670965a78cde2",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        10,
+        3
+      ]
+    },
+    {
       "state": "idle-north",
       "frame": 0,
       "file": "art/heroes/paladin-w/hammer-shop-3/pixellab/rotations/north.png",
@@ -292,6 +416,118 @@
       "offset": [
         9,
         2
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 0,
+      "file": "art/heroes/paladin-w/hammer-shop-3/pixellab/roll-north/0.png",
+      "sha256": "a235d5e5888249413922663a427d039dd854c2294fa3ea7884d2d54979629d72",
+      "size": [
+        92,
+        88
+      ],
+      "offset": [
+        12,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 1,
+      "file": "art/heroes/paladin-w/hammer-shop-3/pixellab/roll-north/1.png",
+      "sha256": "3fe74cd9c7c1a8a105beaa7f69daa8f690a5d4b3a5bf40952675b412decdc66f",
+      "size": [
+        92,
+        88
+      ],
+      "offset": [
+        12,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 2,
+      "file": "art/heroes/paladin-w/hammer-shop-3/pixellab/roll-north/2.png",
+      "sha256": "bdb7152d64a8f972a1d2da01981d5a204dd58cc8ee92c4ea4578af656d4a521d",
+      "size": [
+        92,
+        88
+      ],
+      "offset": [
+        12,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 3,
+      "file": "art/heroes/paladin-w/hammer-shop-3/pixellab/roll-north/3.png",
+      "sha256": "068f97088441c56bfdbf94a045bd1daff720ab91808ea4f78d9be8fdea61c2c5",
+      "size": [
+        92,
+        88
+      ],
+      "offset": [
+        12,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 4,
+      "file": "art/heroes/paladin-w/hammer-shop-3/pixellab/roll-north/4.png",
+      "sha256": "aa9ca6ee7548790ddfe742874d5bb9bca677091f1e5ca2df2aa952866b4143df",
+      "size": [
+        92,
+        88
+      ],
+      "offset": [
+        12,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 5,
+      "file": "art/heroes/paladin-w/hammer-shop-3/pixellab/roll-north/5.png",
+      "sha256": "fa427e099869cf196977fed1ac6bf6923fb64bde63138124944f1bcd26fe1482",
+      "size": [
+        92,
+        88
+      ],
+      "offset": [
+        12,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 6,
+      "file": "art/heroes/paladin-w/hammer-shop-3/pixellab/roll-north/6.png",
+      "sha256": "fbc9500e12d03dcdfb8aedd04de425efd5431169e09de9754f61db360f4d9a90",
+      "size": [
+        92,
+        88
+      ],
+      "offset": [
+        12,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 7,
+      "file": "art/heroes/paladin-w/hammer-shop-3/pixellab/roll-north/7.png",
+      "sha256": "1655bb5d90497f205bae7a112a4de6c532b539546fe5f2b6c4c665810024dba8",
+      "size": [
+        92,
+        88
+      ],
+      "offset": [
+        12,
+        8
       ]
     }
   ]

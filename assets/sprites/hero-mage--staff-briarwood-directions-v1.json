@@ -23,17 +23,29 @@
       "fps": 12,
       "loop": true
     },
-    "idle-north": {
+    "roll-south": {
       "row": 2,
+      "frames": 8,
+      "fps": 25,
+      "loop": false
+    },
+    "idle-north": {
+      "row": 3,
       "frames": 1,
       "fps": 5,
       "loop": true
     },
     "walk-north": {
-      "row": 3,
+      "row": 4,
       "frames": 8,
       "fps": 12,
       "loop": true
+    },
+    "roll-north": {
+      "row": 5,
+      "frames": 8,
+      "fps": 25,
+      "loop": false
     }
   },
   "source": "pixellab",
@@ -169,6 +181,118 @@
       ]
     },
     {
+      "state": "roll-south",
+      "frame": 0,
+      "file": "art/heroes/mage-w/staff-briarwood/pixellab/roll-south/0.png",
+      "sha256": "438133537c2c58d892cb69d3946982d06350795a08b663be0c88776d0244808f",
+      "size": [
+        80,
+        88
+      ],
+      "offset": [
+        18,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 1,
+      "file": "art/heroes/mage-w/staff-briarwood/pixellab/roll-south/1.png",
+      "sha256": "0b5a6776792c0d35d9564e8b678849c52f05fcbe79f25f9d19910dd02c22d31e",
+      "size": [
+        80,
+        88
+      ],
+      "offset": [
+        18,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 2,
+      "file": "art/heroes/mage-w/staff-briarwood/pixellab/roll-south/2.png",
+      "sha256": "d41f2c6a7d23a6d506d25a582beddcfe5f55efbc2f93a61b5cf419efdb974a5d",
+      "size": [
+        80,
+        88
+      ],
+      "offset": [
+        18,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 3,
+      "file": "art/heroes/mage-w/staff-briarwood/pixellab/roll-south/3.png",
+      "sha256": "e703fc4768a5d967f94a76bce02e37bc6c659cb1499b2fa8f469dd97361cd785",
+      "size": [
+        80,
+        88
+      ],
+      "offset": [
+        18,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 4,
+      "file": "art/heroes/mage-w/staff-briarwood/pixellab/roll-south/4.png",
+      "sha256": "25a45385bbf46a027aa153dc1f4fee3f9bde6addd5ecd0e2902ca136889ef6fa",
+      "size": [
+        80,
+        88
+      ],
+      "offset": [
+        18,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 5,
+      "file": "art/heroes/mage-w/staff-briarwood/pixellab/roll-south/5.png",
+      "sha256": "c85d41982341191bbd8d4caf1ecd30bc864b366e56da84995d87473687c80ada",
+      "size": [
+        80,
+        88
+      ],
+      "offset": [
+        18,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 6,
+      "file": "art/heroes/mage-w/staff-briarwood/pixellab/roll-south/6.png",
+      "sha256": "2c674bcf27974a6ebbe4e978f5cc7c4ff0ecd9bab4977edbc6dc39cb3a729d91",
+      "size": [
+        80,
+        88
+      ],
+      "offset": [
+        18,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 7,
+      "file": "art/heroes/mage-w/staff-briarwood/pixellab/roll-south/7.png",
+      "sha256": "c6a94495086745fc2d089d7a8fc7c39ab85e3b17760dc9141200ca07e7170280",
+      "size": [
+        80,
+        88
+      ],
+      "offset": [
+        18,
+        7
+      ]
+    },
+    {
       "state": "idle-north",
       "frame": 0,
       "file": "art/heroes/mage-w/staff-briarwood/pixellab/rotations/north.png",
@@ -292,6 +416,118 @@
       "offset": [
         9,
         2
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 0,
+      "file": "art/heroes/mage-w/staff-briarwood/pixellab/roll-north/0.png",
+      "sha256": "87a9a4f4fad4c6056372004c961191bd59868f571a7c4b3cfb95375d92e00c90",
+      "size": [
+        84,
+        92
+      ],
+      "offset": [
+        16,
+        6
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 1,
+      "file": "art/heroes/mage-w/staff-briarwood/pixellab/roll-north/1.png",
+      "sha256": "e183e23940ecf5d38db02c66a9532ba4e199930d1494518d6a311ce6f767c834",
+      "size": [
+        84,
+        92
+      ],
+      "offset": [
+        16,
+        6
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 2,
+      "file": "art/heroes/mage-w/staff-briarwood/pixellab/roll-north/2.png",
+      "sha256": "b1b05e28ba6b54731483689aaa0bb1d67db0dcd79e4f04c782d2c79e6a2ff7e8",
+      "size": [
+        84,
+        92
+      ],
+      "offset": [
+        16,
+        6
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 3,
+      "file": "art/heroes/mage-w/staff-briarwood/pixellab/roll-north/3.png",
+      "sha256": "4dc298479b2fe8618f9494a31410718c768384b3cac83ade582fc4eea7b2f296",
+      "size": [
+        84,
+        92
+      ],
+      "offset": [
+        16,
+        6
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 4,
+      "file": "art/heroes/mage-w/staff-briarwood/pixellab/roll-north/4.png",
+      "sha256": "34347508b720361f8741aa36e01d69a19cd387397689cc6ee4850c5ad147f85a",
+      "size": [
+        84,
+        92
+      ],
+      "offset": [
+        16,
+        6
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 5,
+      "file": "art/heroes/mage-w/staff-briarwood/pixellab/roll-north/5.png",
+      "sha256": "5813849a2b271855d34b1ca26ab74c25d831bc4bdbb3d0ed4b6c076f21121ec4",
+      "size": [
+        84,
+        92
+      ],
+      "offset": [
+        16,
+        6
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 6,
+      "file": "art/heroes/mage-w/staff-briarwood/pixellab/roll-north/6.png",
+      "sha256": "1f0bfe9c800b7970a74d7cc2b35bb218f8431147cb1e1ca6b877aaf0f8a4c433",
+      "size": [
+        84,
+        92
+      ],
+      "offset": [
+        16,
+        6
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 7,
+      "file": "art/heroes/mage-w/staff-briarwood/pixellab/roll-north/7.png",
+      "sha256": "adf743fc0388eedbb4f012b5b296502e539fc438e83db610d201c7e2f1e10979",
+      "size": [
+        84,
+        92
+      ],
+      "offset": [
+        16,
+        6
       ]
     }
   ]

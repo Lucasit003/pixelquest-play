@@ -23,17 +23,29 @@
       "fps": 12,
       "loop": true
     },
-    "idle-north": {
+    "roll-south": {
       "row": 2,
+      "frames": 8,
+      "fps": 25,
+      "loop": false
+    },
+    "idle-north": {
+      "row": 3,
       "frames": 1,
       "fps": 5,
       "loop": true
     },
     "walk-north": {
-      "row": 3,
+      "row": 4,
       "frames": 8,
       "fps": 12,
       "loop": true
+    },
+    "roll-north": {
+      "row": 5,
+      "frames": 8,
+      "fps": 25,
+      "loop": false
     }
   },
   "source": "pixellab",
@@ -169,6 +181,118 @@
       ]
     },
     {
+      "state": "roll-south",
+      "frame": 0,
+      "file": "art/heroes/warrior-f/pixellab/roll-south/0.png",
+      "sha256": "26cb8c39d584a20ad83beb5688bf80141cc3e430428ea2dac0cb807abf11dc9d",
+      "size": [
+        84,
+        88
+      ],
+      "offset": [
+        15,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 1,
+      "file": "art/heroes/warrior-f/pixellab/roll-south/1.png",
+      "sha256": "b46129c7cfd63d7622be42d94f2df8a1cc258ab2b8726fb017c8f7d6fcd275d2",
+      "size": [
+        84,
+        88
+      ],
+      "offset": [
+        15,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 2,
+      "file": "art/heroes/warrior-f/pixellab/roll-south/2.png",
+      "sha256": "ba6334a610a5155421747769fb53af5dbefbef327543c9d59e62c16ca926f52e",
+      "size": [
+        84,
+        88
+      ],
+      "offset": [
+        15,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 3,
+      "file": "art/heroes/warrior-f/pixellab/roll-south/3.png",
+      "sha256": "81f86b3ee6e8e57be21f7faa7cdef18b13519ba69a71c55709d210d98956b6fc",
+      "size": [
+        84,
+        88
+      ],
+      "offset": [
+        15,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 4,
+      "file": "art/heroes/warrior-f/pixellab/roll-south/4.png",
+      "sha256": "49c1c4f41d85cba48774b8a9f91755a20735b0d49ae1bb4d76c9aad723b26719",
+      "size": [
+        84,
+        88
+      ],
+      "offset": [
+        15,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 5,
+      "file": "art/heroes/warrior-f/pixellab/roll-south/5.png",
+      "sha256": "cb479779b7a9783906e6825333dfc5391bc6147e315bbe38046263ec6cb97682",
+      "size": [
+        84,
+        88
+      ],
+      "offset": [
+        15,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 6,
+      "file": "art/heroes/warrior-f/pixellab/roll-south/6.png",
+      "sha256": "d5087938855c290de897b58601e79caf86e4a5de12efc55804b9d334e4484b34",
+      "size": [
+        84,
+        88
+      ],
+      "offset": [
+        15,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 7,
+      "file": "art/heroes/warrior-f/pixellab/roll-south/7.png",
+      "sha256": "45f8da68ea61dd2d7155e369a736f82613e2b6e97e2e119fdc6703a68a8573d0",
+      "size": [
+        84,
+        88
+      ],
+      "offset": [
+        15,
+        7
+      ]
+    },
+    {
       "state": "idle-north",
       "frame": 0,
       "file": "art/heroes/warrior-f/pixellab/rotations/north.png",
@@ -292,6 +416,118 @@
       "offset": [
         9,
         4
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 0,
+      "file": "art/heroes/warrior-f/pixellab/roll-north/0.png",
+      "sha256": "1f912d4e0de854cc925a80367b22434ebb78157d874c235377bf98b6747f4b5b",
+      "size": [
+        84,
+        88
+      ],
+      "offset": [
+        16,
+        9
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 1,
+      "file": "art/heroes/warrior-f/pixellab/roll-north/1.png",
+      "sha256": "933893b4e0738264280180ea320457292182788c8e453c981afe08bb2f3d540a",
+      "size": [
+        84,
+        88
+      ],
+      "offset": [
+        16,
+        9
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 2,
+      "file": "art/heroes/warrior-f/pixellab/roll-north/2.png",
+      "sha256": "a3f16447e6e3a1295744789fbe056a3e63b9eb7ed8044b33a7b977ab4115c81f",
+      "size": [
+        84,
+        88
+      ],
+      "offset": [
+        16,
+        9
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 3,
+      "file": "art/heroes/warrior-f/pixellab/roll-north/3.png",
+      "sha256": "531d0df2acbb53cbd58ef3c1bef109553ebeff702d985f93535f31275ae3c62b",
+      "size": [
+        84,
+        88
+      ],
+      "offset": [
+        16,
+        9
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 4,
+      "file": "art/heroes/warrior-f/pixellab/roll-north/4.png",
+      "sha256": "ed830a36f9566346a87eccba3294247fa04d8ec8df31b8460b9ab3e048e93698",
+      "size": [
+        84,
+        88
+      ],
+      "offset": [
+        16,
+        9
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 5,
+      "file": "art/heroes/warrior-f/pixellab/roll-north/5.png",
+      "sha256": "992c71676d6f25c724c42d8ecf226911f9d7723001b89af128954daabeb8cd73",
+      "size": [
+        84,
+        88
+      ],
+      "offset": [
+        16,
+        9
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 6,
+      "file": "art/heroes/warrior-f/pixellab/roll-north/6.png",
+      "sha256": "e38f9e169b4d7471151a102325af9d71a339febb36c2a6913ee0320f0e20a0c1",
+      "size": [
+        84,
+        88
+      ],
+      "offset": [
+        16,
+        9
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 7,
+      "file": "art/heroes/warrior-f/pixellab/roll-north/7.png",
+      "sha256": "3b956847483822ed0ef945e38770f897b92815bea1cba24e1274bf98fe796bbe",
+      "size": [
+        84,
+        88
+      ],
+      "offset": [
+        16,
+        9
       ]
     }
   ]

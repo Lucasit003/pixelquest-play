@@ -126,10 +126,14 @@ function petPoseAt(base,g){if(!(g>=0))return null;const P=petPoseFor(base.id),st
    straight up or down looked like a sideways roll that slid. A roll within ROLL_UPDOWN of straight up or down now plays the directions
    atlas' own north or south stride at roll speed (ROLL_STRIDE x the walk), facing the way it goes; its afterimages (combat.js trails, copies of
    the hero) and dust follow it the same way. Diagonal and sideways rolls keep the roll art. Pictures from the existing atlases only. */
+/* roll-nov2 (round 9 #9): a real tumble toward and away from the camera. Each body and drawn weapon now has its own PixelLab roll,
+   `roll-south` / `roll-north` on its directions atlas (8 frames at 25 fps, the side roll's .32 s, not looping; tools/import-hero-roll.mjs);
+   heroRenderPose plays it from the dodge's own clock. The stride above stays the fallback for an atlas without a roll state. */
 export const ROLL_UPDOWN=.8,ROLL_STRIDE=2.6;
 export const rollSuffix=a=>a?.dodge>0&&Math.abs(a.dy||0)>=ROLL_UPDOWN?(a.dy<0?'north':'south'):null;
 export function heroRenderPose(a,base,directional,time=0){const pose=heroState(a,base.meta,time),fallback={...base,...pose,facing:a.facing<0?-1:1};
- if(directional&&pose.state==='dodge'){const sx=rollSuffix(a),S=directional.meta.states,st=sx&&(S['run-'+sx]?'run-'+sx:S['walk-'+sx]?'walk-'+sx:null);return st?{...directional,state:st,t:pose.t*ROLL_STRIDE,facing:1}:fallback;}
+ if(directional&&pose.state==='dodge'){const sx=rollSuffix(a),S=directional.meta.states;if(sx&&S['roll-'+sx])return{...directional,state:'roll-'+sx,t:pose.t,facing:1};
+  const st=sx&&(S['run-'+sx]?'run-'+sx:S['walk-'+sx]?'walk-'+sx:null);return st?{...directional,state:st,t:pose.t*ROLL_STRIDE,facing:1}:fallback;}
  const pet=a.petting&&!a.moving&&pose.state==='idle'?petPoseAt(base,patAge(time)):null;if(pet)return{...base,...pet,facing:a.facing<0?1:-1};
  if(!directional||!['idle','walk','run'].includes(pose.state))return fallback;
  const direction=a.moving?a.direction:(a.lastDirection||a.direction),suffix=direction==='down'?'south':direction==='up'?'north':null;

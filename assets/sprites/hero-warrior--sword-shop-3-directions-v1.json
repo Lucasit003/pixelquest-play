@@ -23,17 +23,29 @@
       "fps": 12,
       "loop": true
     },
-    "idle-north": {
+    "roll-south": {
       "row": 2,
+      "frames": 8,
+      "fps": 25,
+      "loop": false
+    },
+    "idle-north": {
+      "row": 3,
       "frames": 1,
       "fps": 5,
       "loop": true
     },
     "walk-north": {
-      "row": 3,
+      "row": 4,
       "frames": 8,
       "fps": 12,
       "loop": true
+    },
+    "roll-north": {
+      "row": 5,
+      "frames": 8,
+      "fps": 25,
+      "loop": false
     }
   },
   "source": "pixellab",
@@ -169,6 +181,118 @@
       ]
     },
     {
+      "state": "roll-south",
+      "frame": 0,
+      "file": "art/heroes/warrior-w/sword-shop-3/pixellab/roll-south/0.png",
+      "sha256": "eb673d00d7dac5ef20f47f5a69ea49c38ec40f07a697572fbbc5ff5d4bf5b66e",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        10,
+        3
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 1,
+      "file": "art/heroes/warrior-w/sword-shop-3/pixellab/roll-south/1.png",
+      "sha256": "c4be5ea766075138fc6d6610d8d707dea151446ef6b5ba4e2cc5c4fad245cdab",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        10,
+        3
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 2,
+      "file": "art/heroes/warrior-w/sword-shop-3/pixellab/roll-south/2.png",
+      "sha256": "865e801313ff1d2555611fe4aef9d3bf5e20847d4aed104ac98bb13f3be68097",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        10,
+        3
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 3,
+      "file": "art/heroes/warrior-w/sword-shop-3/pixellab/roll-south/3.png",
+      "sha256": "8652a228d2d6b3b87d81d81a8c64830d90af4006aa23723327e53f6eb6cbc779",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        10,
+        3
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 4,
+      "file": "art/heroes/warrior-w/sword-shop-3/pixellab/roll-south/4.png",
+      "sha256": "412c86a8358a03eb303916998ff962d23eaba510fc29dd10196331314ed759a9",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        10,
+        3
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 5,
+      "file": "art/heroes/warrior-w/sword-shop-3/pixellab/roll-south/5.png",
+      "sha256": "811f72dbf94f76f7ee2d91070d2f2d36b211f565e563fddc4c9f5128e2841969",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        10,
+        3
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 6,
+      "file": "art/heroes/warrior-w/sword-shop-3/pixellab/roll-south/6.png",
+      "sha256": "78115b74e0ece90e6bc841b37ae35537768f9c6d61b87130de2f062fee885c59",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        10,
+        3
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 7,
+      "file": "art/heroes/warrior-w/sword-shop-3/pixellab/roll-south/7.png",
+      "sha256": "b5cc889cf5da0d3a7f8e22cec26f979b9ba788ea4aa698c2de88dbf1ccfa0c47",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        10,
+        3
+      ]
+    },
+    {
       "state": "idle-north",
       "frame": 0,
       "file": "art/heroes/warrior-w/sword-shop-3/pixellab/rotations/north.png",
@@ -292,6 +416,118 @@
       "offset": [
         9,
         2
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 0,
+      "file": "art/heroes/warrior-w/sword-shop-3/pixellab/roll-north/0.png",
+      "sha256": "336b77fe920d460cad496d4219003b8e2b2ef9fe7bb05f1fa5a3d304b3433de9",
+      "size": [
+        100,
+        84
+      ],
+      "offset": [
+        8,
+        10
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 1,
+      "file": "art/heroes/warrior-w/sword-shop-3/pixellab/roll-north/1.png",
+      "sha256": "9c29c4d9ad7b673377cf0dfddfeda082d1b10f8718cb21c33dc9c6f8ad7b059d",
+      "size": [
+        100,
+        84
+      ],
+      "offset": [
+        8,
+        10
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 2,
+      "file": "art/heroes/warrior-w/sword-shop-3/pixellab/roll-north/2.png",
+      "sha256": "a026e0452d467b4f61d74335b0bea41e22d830e76dff17fddfcb5bf657db9927",
+      "size": [
+        100,
+        84
+      ],
+      "offset": [
+        8,
+        10
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 3,
+      "file": "art/heroes/warrior-w/sword-shop-3/pixellab/roll-north/3.png",
+      "sha256": "094766befbc06ee9da32369b03562824848e609b01f6015cd9986fe010539476",
+      "size": [
+        100,
+        84
+      ],
+      "offset": [
+        8,
+        10
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 4,
+      "file": "art/heroes/warrior-w/sword-shop-3/pixellab/roll-north/4.png",
+      "sha256": "a71adfe9e0aa0781fe47ceb1107eee1e8f0271a020fe9708844332b598a094d2",
+      "size": [
+        100,
+        84
+      ],
+      "offset": [
+        8,
+        10
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 5,
+      "file": "art/heroes/warrior-w/sword-shop-3/pixellab/roll-north/5.png",
+      "sha256": "105b3b1a00d9abf23dcbf336e86656880fa6fbe8b4aff5e0053c8d100f598c7e",
+      "size": [
+        100,
+        84
+      ],
+      "offset": [
+        8,
+        10
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 6,
+      "file": "art/heroes/warrior-w/sword-shop-3/pixellab/roll-north/6.png",
+      "sha256": "34e2eca2b4a9575248d152c79922aeeb59c9b91f28fbd283588d8749ffac465a",
+      "size": [
+        100,
+        84
+      ],
+      "offset": [
+        8,
+        10
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 7,
+      "file": "art/heroes/warrior-w/sword-shop-3/pixellab/roll-north/7.png",
+      "sha256": "c77491aa7915a464548498e9f3bc93784e6d3ceb9c0083a52aa12e0fc70c93e8",
+      "size": [
+        100,
+        84
+      ],
+      "offset": [
+        8,
+        10
       ]
     }
   ]

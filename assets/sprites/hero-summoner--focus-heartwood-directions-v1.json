@@ -23,17 +23,29 @@
       "fps": 12,
       "loop": true
     },
-    "idle-north": {
+    "roll-south": {
       "row": 2,
+      "frames": 8,
+      "fps": 25,
+      "loop": false
+    },
+    "idle-north": {
+      "row": 3,
       "frames": 1,
       "fps": 5,
       "loop": true
     },
     "walk-north": {
-      "row": 3,
+      "row": 4,
       "frames": 8,
       "fps": 12,
       "loop": true
+    },
+    "roll-north": {
+      "row": 5,
+      "frames": 8,
+      "fps": 25,
+      "loop": false
     }
   },
   "source": "pixellab",
@@ -169,6 +181,118 @@
       ]
     },
     {
+      "state": "roll-south",
+      "frame": 0,
+      "file": "art/heroes/summoner-w/focus-heartwood/pixellab/roll-south/0.png",
+      "sha256": "3c1b69f3e47c06ad0c640e1205643e25da92943d0c1b11262a8fdeb459ba06d5",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 1,
+      "file": "art/heroes/summoner-w/focus-heartwood/pixellab/roll-south/1.png",
+      "sha256": "e038f37b193615594349f4595cb1c2415db05cecdc89fbdd0081c5dc00d30c64",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 2,
+      "file": "art/heroes/summoner-w/focus-heartwood/pixellab/roll-south/2.png",
+      "sha256": "5fb3f7793a9f6d4c8a2de415cf8612eeb69198f2dfb5d2736a3f559ad8dbb502",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 3,
+      "file": "art/heroes/summoner-w/focus-heartwood/pixellab/roll-south/3.png",
+      "sha256": "5f28a5d607d4137ee28ca760bf639fdcd08693f3ccfcc0d367d514371477e599",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 4,
+      "file": "art/heroes/summoner-w/focus-heartwood/pixellab/roll-south/4.png",
+      "sha256": "b9087f4abe1a7c14452814031943d3182c5c7c19168d2f86bc1be2ecdac2e434",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 5,
+      "file": "art/heroes/summoner-w/focus-heartwood/pixellab/roll-south/5.png",
+      "sha256": "6ee392fb2d5a72bb53f73f9e803be02078fbf0d2ffef68d6f3517377fd0ac508",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 6,
+      "file": "art/heroes/summoner-w/focus-heartwood/pixellab/roll-south/6.png",
+      "sha256": "4cf15a673ba8c73b8990a6b2e6f12837df10087f1909ab45e592e5738d09a114",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 7,
+      "file": "art/heroes/summoner-w/focus-heartwood/pixellab/roll-south/7.png",
+      "sha256": "27ce105085f1b99a6157edf5a0da2cdeb4691bb6a988fd235857d49a99caaef5",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        7
+      ]
+    },
+    {
       "state": "idle-north",
       "frame": 0,
       "file": "art/heroes/summoner-w/focus-heartwood/pixellab/rotations/north.png",
@@ -292,6 +416,118 @@
       "offset": [
         9,
         2
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 0,
+      "file": "art/heroes/summoner-w/focus-heartwood/pixellab/roll-north/0.png",
+      "sha256": "2930722ea7e3d140f14eb233abef2e105ad28406318bb3fb01bc7dfefa8eac3a",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 1,
+      "file": "art/heroes/summoner-w/focus-heartwood/pixellab/roll-north/1.png",
+      "sha256": "931b6b9536964ede55e424be5b0add1d17b8a667e0e1858dc1afa7afeba77a0b",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 2,
+      "file": "art/heroes/summoner-w/focus-heartwood/pixellab/roll-north/2.png",
+      "sha256": "3a703eb012d6126d949ed0e7ffbf1de4eec607fadc22dd718f06bf7662b65321",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 3,
+      "file": "art/heroes/summoner-w/focus-heartwood/pixellab/roll-north/3.png",
+      "sha256": "973a76356d66c65fc92df67dfd88c7f71d19658821607cc457c72959c0524b33",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 4,
+      "file": "art/heroes/summoner-w/focus-heartwood/pixellab/roll-north/4.png",
+      "sha256": "262faea83a8448b55d0f5c3adf298caa87420d40a926bc804c9a64ccd135d197",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 5,
+      "file": "art/heroes/summoner-w/focus-heartwood/pixellab/roll-north/5.png",
+      "sha256": "e589070d97984a1075f8be28e390615495f169add4983ef850a3c0a0e3597761",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 6,
+      "file": "art/heroes/summoner-w/focus-heartwood/pixellab/roll-north/6.png",
+      "sha256": "b3d13e64a584c00cb9b719a4e8a312b39966b2be6cd85f4f03a45283e0d5c158",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 7,
+      "file": "art/heroes/summoner-w/focus-heartwood/pixellab/roll-north/7.png",
+      "sha256": "4fb1473f53bb52f3c8a11e0b2da8af9413fd95960adde208cd89c428eb96e230",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        8
       ]
     }
   ]

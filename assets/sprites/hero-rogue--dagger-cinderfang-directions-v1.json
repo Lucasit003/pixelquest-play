@@ -23,17 +23,29 @@
       "fps": 12,
       "loop": true
     },
-    "idle-north": {
+    "roll-south": {
       "row": 2,
+      "frames": 8,
+      "fps": 25,
+      "loop": false
+    },
+    "idle-north": {
+      "row": 3,
       "frames": 1,
       "fps": 5,
       "loop": true
     },
     "walk-north": {
-      "row": 3,
+      "row": 4,
       "frames": 8,
       "fps": 12,
       "loop": true
+    },
+    "roll-north": {
+      "row": 5,
+      "frames": 8,
+      "fps": 25,
+      "loop": false
     }
   },
   "source": "pixellab",
@@ -169,6 +181,118 @@
       ]
     },
     {
+      "state": "roll-south",
+      "frame": 0,
+      "file": "art/heroes/rogue-w/dagger-cinderfang/pixellab/roll-south/0.png",
+      "sha256": "60b2afda01ee77115b65f372a373de6d5776f9ad8c9d3d5446d4989866d94c6b",
+      "size": [
+        84,
+        92
+      ],
+      "offset": [
+        16,
+        5
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 1,
+      "file": "art/heroes/rogue-w/dagger-cinderfang/pixellab/roll-south/1.png",
+      "sha256": "9eae3a7c386abc0aa0b039d6a6fc1ff5f1f0b1ebd0e88b1d9627e04c50aa6f1e",
+      "size": [
+        84,
+        92
+      ],
+      "offset": [
+        16,
+        5
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 2,
+      "file": "art/heroes/rogue-w/dagger-cinderfang/pixellab/roll-south/2.png",
+      "sha256": "f3e754b28b275283b6970fffab085dadaf90fbd7a0a89f3d18d54b7ae85dfe04",
+      "size": [
+        84,
+        92
+      ],
+      "offset": [
+        16,
+        5
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 3,
+      "file": "art/heroes/rogue-w/dagger-cinderfang/pixellab/roll-south/3.png",
+      "sha256": "568250859fecf6a600d28c4d6d95017557481a052937b8b5b955129969c3608c",
+      "size": [
+        84,
+        92
+      ],
+      "offset": [
+        16,
+        5
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 4,
+      "file": "art/heroes/rogue-w/dagger-cinderfang/pixellab/roll-south/4.png",
+      "sha256": "2a1eb22229e3e86cf7f7b4aa8da9ce2832c975e97596fe54079b2c23e10356af",
+      "size": [
+        84,
+        92
+      ],
+      "offset": [
+        16,
+        5
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 5,
+      "file": "art/heroes/rogue-w/dagger-cinderfang/pixellab/roll-south/5.png",
+      "sha256": "2a40fc458928afe852f7e311e674de79ce3dbe374a16086e2fba154c362d5723",
+      "size": [
+        84,
+        92
+      ],
+      "offset": [
+        16,
+        5
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 6,
+      "file": "art/heroes/rogue-w/dagger-cinderfang/pixellab/roll-south/6.png",
+      "sha256": "586ab16a91276e016e91ca77d16f5fac987d1c3ea2e6af0370087d45a8b02077",
+      "size": [
+        84,
+        92
+      ],
+      "offset": [
+        16,
+        5
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 7,
+      "file": "art/heroes/rogue-w/dagger-cinderfang/pixellab/roll-south/7.png",
+      "sha256": "ed69c7c3a42e73b0e9b3ca1d3f0f273c7e28ea5257435d839eac6bc766ff8ec0",
+      "size": [
+        84,
+        92
+      ],
+      "offset": [
+        16,
+        5
+      ]
+    },
+    {
       "state": "idle-north",
       "frame": 0,
       "file": "art/heroes/rogue-w/dagger-cinderfang/pixellab/rotations/north.png",
@@ -292,6 +416,118 @@
       "offset": [
         9,
         2
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 0,
+      "file": "art/heroes/rogue-w/dagger-cinderfang/pixellab/roll-north/0.png",
+      "sha256": "590fff6a4b75120c3a986e12ae527336726b2142c7d518094041ea29e11540e4",
+      "size": [
+        96,
+        88
+      ],
+      "offset": [
+        10,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 1,
+      "file": "art/heroes/rogue-w/dagger-cinderfang/pixellab/roll-north/1.png",
+      "sha256": "88e94d6c65722539b86e1acd1208948dedd42093d29967000c5852a207e21fec",
+      "size": [
+        96,
+        88
+      ],
+      "offset": [
+        10,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 2,
+      "file": "art/heroes/rogue-w/dagger-cinderfang/pixellab/roll-north/2.png",
+      "sha256": "f46606d06c1cc203edb5665aababf2a27b9c52c12ee45def0c67b50a824db962",
+      "size": [
+        96,
+        88
+      ],
+      "offset": [
+        10,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 3,
+      "file": "art/heroes/rogue-w/dagger-cinderfang/pixellab/roll-north/3.png",
+      "sha256": "f15ab988814211dda9ababb493013baa34b3e5f76ee7612f2270ec2a58b883ed",
+      "size": [
+        96,
+        88
+      ],
+      "offset": [
+        10,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 4,
+      "file": "art/heroes/rogue-w/dagger-cinderfang/pixellab/roll-north/4.png",
+      "sha256": "0dabc0ba15aa1ec5232af654e27c03a8bc20142cea6712376610e157b1a9fb68",
+      "size": [
+        96,
+        88
+      ],
+      "offset": [
+        10,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 5,
+      "file": "art/heroes/rogue-w/dagger-cinderfang/pixellab/roll-north/5.png",
+      "sha256": "15995e6db8fe1e2b65312f06c1ecc94bd2e69b71064d1e4f116eff54b7d11eab",
+      "size": [
+        96,
+        88
+      ],
+      "offset": [
+        10,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 6,
+      "file": "art/heroes/rogue-w/dagger-cinderfang/pixellab/roll-north/6.png",
+      "sha256": "465c5200259b6dfbc491cf3c6dec459cd36a0ce0e30df4fad44596cf84518e24",
+      "size": [
+        96,
+        88
+      ],
+      "offset": [
+        10,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 7,
+      "file": "art/heroes/rogue-w/dagger-cinderfang/pixellab/roll-north/7.png",
+      "sha256": "ca0ee5a08b630b3adc265293840f9a593c345770231ed9a3a32c6207db3664a5",
+      "size": [
+        96,
+        88
+      ],
+      "offset": [
+        10,
+        8
       ]
     }
   ]

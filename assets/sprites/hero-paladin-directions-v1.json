@@ -23,17 +23,29 @@
       "fps": 12,
       "loop": true
     },
-    "idle-north": {
+    "roll-south": {
       "row": 2,
+      "frames": 8,
+      "fps": 25,
+      "loop": false
+    },
+    "idle-north": {
+      "row": 3,
       "frames": 1,
       "fps": 5,
       "loop": true
     },
     "walk-north": {
-      "row": 3,
+      "row": 4,
       "frames": 8,
       "fps": 12,
       "loop": true
+    },
+    "roll-north": {
+      "row": 5,
+      "frames": 8,
+      "fps": 25,
+      "loop": false
     }
   },
   "source": "pixellab",
@@ -169,6 +181,118 @@
       ]
     },
     {
+      "state": "roll-south",
+      "frame": 0,
+      "file": "art/heroes/paladin/pixellab/roll-south/0.png",
+      "sha256": "eded332937e5e06fc1ac28041ac5fcb4d58f3ad758ea221651b4a2e0eeccfa06",
+      "size": [
+        92,
+        88
+      ],
+      "offset": [
+        12,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 1,
+      "file": "art/heroes/paladin/pixellab/roll-south/1.png",
+      "sha256": "50780be6b3b3d99862fc507b2d79465b903ef1e61f7b3d385be41a694676c678",
+      "size": [
+        92,
+        88
+      ],
+      "offset": [
+        12,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 2,
+      "file": "art/heroes/paladin/pixellab/roll-south/2.png",
+      "sha256": "0dc448023747b24e9b9950a90b8c505438fa372096ffab9b81712d1b9b3f2959",
+      "size": [
+        92,
+        88
+      ],
+      "offset": [
+        12,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 3,
+      "file": "art/heroes/paladin/pixellab/roll-south/3.png",
+      "sha256": "4b4ea66fda372ffa992c2a4343a0a5bb95faa26801ce70cdf25df0e6d1537fad",
+      "size": [
+        92,
+        88
+      ],
+      "offset": [
+        12,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 4,
+      "file": "art/heroes/paladin/pixellab/roll-south/4.png",
+      "sha256": "bda78aad5d4e1f0cf8db502919eafd185c01860199fef44c316aa58457d336ae",
+      "size": [
+        92,
+        88
+      ],
+      "offset": [
+        12,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 5,
+      "file": "art/heroes/paladin/pixellab/roll-south/5.png",
+      "sha256": "365431e1c534a22b41ef2e888d83f26f68ca1cd3ab9f19c1caf04c3e670c0050",
+      "size": [
+        92,
+        88
+      ],
+      "offset": [
+        12,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 6,
+      "file": "art/heroes/paladin/pixellab/roll-south/6.png",
+      "sha256": "50fe91ae7b4d087a83031f454ad92c4ea9d38345d3083bdb2121fb45d22fd19b",
+      "size": [
+        92,
+        88
+      ],
+      "offset": [
+        12,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 7,
+      "file": "art/heroes/paladin/pixellab/roll-south/7.png",
+      "sha256": "acacbd7c0e2204c6039607058f704f1ce86e83b85835803c83947ab4e284a409",
+      "size": [
+        92,
+        88
+      ],
+      "offset": [
+        12,
+        7
+      ]
+    },
+    {
       "state": "idle-north",
       "frame": 0,
       "file": "art/heroes/paladin/pixellab/rotations/north.png",
@@ -292,6 +416,118 @@
       "offset": [
         9,
         2
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 0,
+      "file": "art/heroes/paladin/pixellab/roll-north/0.png",
+      "sha256": "ca642fa73fe0c667d5c3652358c5a5b8bb371ae764b61a14ac8906cf721477fa",
+      "size": [
+        88,
+        88
+      ],
+      "offset": [
+        14,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 1,
+      "file": "art/heroes/paladin/pixellab/roll-north/1.png",
+      "sha256": "3d27a5283a88bf718c07af745b2ce5dc82d485513e8216aff3f771e5a2b6fe39",
+      "size": [
+        88,
+        88
+      ],
+      "offset": [
+        14,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 2,
+      "file": "art/heroes/paladin/pixellab/roll-north/2.png",
+      "sha256": "f5f41729d9457c76db5f9ced6e810ceb49f8130d55eeb7b35f8fb36504617dad",
+      "size": [
+        88,
+        88
+      ],
+      "offset": [
+        14,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 3,
+      "file": "art/heroes/paladin/pixellab/roll-north/3.png",
+      "sha256": "114d92210a4d180223760f9cab1f626fa724d4ff5294956a1501059aab23222a",
+      "size": [
+        88,
+        88
+      ],
+      "offset": [
+        14,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 4,
+      "file": "art/heroes/paladin/pixellab/roll-north/4.png",
+      "sha256": "16cccc22026cf8fd04c2fbbad6a099fda81c6ffbac75a242e60384bc595fb8f9",
+      "size": [
+        88,
+        88
+      ],
+      "offset": [
+        14,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 5,
+      "file": "art/heroes/paladin/pixellab/roll-north/5.png",
+      "sha256": "d5d13730574aa7fc0a94a50c0164f1335a8d1506522b447ec2d832a18e61cf7d",
+      "size": [
+        88,
+        88
+      ],
+      "offset": [
+        14,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 6,
+      "file": "art/heroes/paladin/pixellab/roll-north/6.png",
+      "sha256": "433477be7e3c43c41fd02597d6ae171e7642eb6c527c6a741a5637bf93ea93e1",
+      "size": [
+        88,
+        88
+      ],
+      "offset": [
+        14,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 7,
+      "file": "art/heroes/paladin/pixellab/roll-north/7.png",
+      "sha256": "3aa026cda5a0db028f08b9fb47f0e86c6e1b1fdb8dfda436a0d7ff143a456449",
+      "size": [
+        88,
+        88
+      ],
+      "offset": [
+        14,
+        8
       ]
     }
   ]

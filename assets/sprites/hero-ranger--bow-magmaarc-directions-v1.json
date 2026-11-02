@@ -23,17 +23,29 @@
       "fps": 12,
       "loop": true
     },
-    "idle-north": {
+    "roll-south": {
       "row": 2,
+      "frames": 8,
+      "fps": 25,
+      "loop": false
+    },
+    "idle-north": {
+      "row": 3,
       "frames": 1,
       "fps": 5,
       "loop": true
     },
     "walk-north": {
-      "row": 3,
+      "row": 4,
       "frames": 8,
       "fps": 12,
       "loop": true
+    },
+    "roll-north": {
+      "row": 5,
+      "frames": 8,
+      "fps": 25,
+      "loop": false
     }
   },
   "source": "pixellab",
@@ -169,6 +181,118 @@
       ]
     },
     {
+      "state": "roll-south",
+      "frame": 0,
+      "file": "art/heroes/ranger-w/bow-magmaarc/pixellab/roll-south/0.png",
+      "sha256": "2a1837d888f5b8af76f291a0ffb4f632d7a87debab418308a617b7d83634bdbf",
+      "size": [
+        84,
+        88
+      ],
+      "offset": [
+        16,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 1,
+      "file": "art/heroes/ranger-w/bow-magmaarc/pixellab/roll-south/1.png",
+      "sha256": "00eb87e91e4c3ad293ab5c9d31272321b388799587849ac5c0930f3c9331bafa",
+      "size": [
+        84,
+        88
+      ],
+      "offset": [
+        16,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 2,
+      "file": "art/heroes/ranger-w/bow-magmaarc/pixellab/roll-south/2.png",
+      "sha256": "88f606c9e00fe26389639578a04cddd83fab84603f733a26be8f4f1b5b86f9a1",
+      "size": [
+        84,
+        88
+      ],
+      "offset": [
+        16,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 3,
+      "file": "art/heroes/ranger-w/bow-magmaarc/pixellab/roll-south/3.png",
+      "sha256": "72fa06a4690abe7e5b8ab60eb3ca3d433f63c22c64fd4f25eb57532eada8934a",
+      "size": [
+        84,
+        88
+      ],
+      "offset": [
+        16,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 4,
+      "file": "art/heroes/ranger-w/bow-magmaarc/pixellab/roll-south/4.png",
+      "sha256": "7e89d455384350c767881e2d12a74e8136c93832b2175125a3ef9a26acdceb5e",
+      "size": [
+        84,
+        88
+      ],
+      "offset": [
+        16,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 5,
+      "file": "art/heroes/ranger-w/bow-magmaarc/pixellab/roll-south/5.png",
+      "sha256": "3975147c1e699a9b3379c352305dd29e10ee8488d7f950ee6ff80055198cd3e4",
+      "size": [
+        84,
+        88
+      ],
+      "offset": [
+        16,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 6,
+      "file": "art/heroes/ranger-w/bow-magmaarc/pixellab/roll-south/6.png",
+      "sha256": "3e709ff9aea39a8f1532406fa87a803fcccf4e92922a133349ae5f526fc74e86",
+      "size": [
+        84,
+        88
+      ],
+      "offset": [
+        16,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 7,
+      "file": "art/heroes/ranger-w/bow-magmaarc/pixellab/roll-south/7.png",
+      "sha256": "104a8f9ac84e4a4fc4bf81fae0c496c837d7b72db6f28932fa691f721774a3dc",
+      "size": [
+        84,
+        88
+      ],
+      "offset": [
+        16,
+        7
+      ]
+    },
+    {
       "state": "idle-north",
       "frame": 0,
       "file": "art/heroes/ranger-w/bow-magmaarc/pixellab/rotations/north.png",
@@ -292,6 +416,118 @@
       "offset": [
         9,
         2
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 0,
+      "file": "art/heroes/ranger-w/bow-magmaarc/pixellab/roll-north/0.png",
+      "sha256": "4d4f121dbf1cab5054417b3e09f4de57c9810a46eabc3d2de11b67236e809747",
+      "size": [
+        76,
+        96
+      ],
+      "offset": [
+        20,
+        4
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 1,
+      "file": "art/heroes/ranger-w/bow-magmaarc/pixellab/roll-north/1.png",
+      "sha256": "88c19c7f637488bead5f0f8c879ecf0f9a447f84ab885a5e011ca0a666d4d8bf",
+      "size": [
+        76,
+        96
+      ],
+      "offset": [
+        20,
+        4
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 2,
+      "file": "art/heroes/ranger-w/bow-magmaarc/pixellab/roll-north/2.png",
+      "sha256": "9bb63043a46dab51c48bf9c79ba5547de5743262df60c554f9f73197bd39ea15",
+      "size": [
+        76,
+        96
+      ],
+      "offset": [
+        20,
+        4
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 3,
+      "file": "art/heroes/ranger-w/bow-magmaarc/pixellab/roll-north/3.png",
+      "sha256": "96bee0f7b068d56aab17b605bc1ad8d1e1bcea8270270fa24e457a45e5de7b78",
+      "size": [
+        76,
+        96
+      ],
+      "offset": [
+        20,
+        4
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 4,
+      "file": "art/heroes/ranger-w/bow-magmaarc/pixellab/roll-north/4.png",
+      "sha256": "0a098db6c49c0352a275ad892886c509f55a509d6631c5122c6bdcd73422cf62",
+      "size": [
+        76,
+        96
+      ],
+      "offset": [
+        20,
+        4
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 5,
+      "file": "art/heroes/ranger-w/bow-magmaarc/pixellab/roll-north/5.png",
+      "sha256": "566029c6908646c6cfec1ae68c607cc3b8cb5ec409a5044da400324b4cbec504",
+      "size": [
+        76,
+        96
+      ],
+      "offset": [
+        20,
+        4
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 6,
+      "file": "art/heroes/ranger-w/bow-magmaarc/pixellab/roll-north/6.png",
+      "sha256": "57c90f2e5a3faedda1a68cf7008eb3ec4cb44739429883a062d7fbb494515ea5",
+      "size": [
+        76,
+        96
+      ],
+      "offset": [
+        20,
+        4
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 7,
+      "file": "art/heroes/ranger-w/bow-magmaarc/pixellab/roll-north/7.png",
+      "sha256": "78346dd1568d794dc5d7f5ec56f9044edefd06b8d181ed372f52f1377a326d51",
+      "size": [
+        76,
+        96
+      ],
+      "offset": [
+        20,
+        4
       ]
     }
   ]

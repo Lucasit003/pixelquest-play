@@ -23,17 +23,29 @@
       "fps": 12,
       "loop": true
     },
-    "idle-north": {
+    "roll-south": {
       "row": 2,
+      "frames": 8,
+      "fps": 25,
+      "loop": false
+    },
+    "idle-north": {
+      "row": 3,
       "frames": 1,
       "fps": 5,
       "loop": true
     },
     "walk-north": {
-      "row": 3,
+      "row": 4,
       "frames": 8,
       "fps": 12,
       "loop": true
+    },
+    "roll-north": {
+      "row": 5,
+      "frames": 8,
+      "fps": 25,
+      "loop": false
     }
   },
   "source": "pixellab",
@@ -169,6 +181,118 @@
       ]
     },
     {
+      "state": "roll-south",
+      "frame": 0,
+      "file": "art/heroes/summoner-w/focus-shop-3/pixellab/roll-south/0.png",
+      "sha256": "faeaef480b859fdf46af30a79b547d2fa6c9beb2e561bca478250cc85b7c3b6e",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 1,
+      "file": "art/heroes/summoner-w/focus-shop-3/pixellab/roll-south/1.png",
+      "sha256": "2b11a0d1d7b43efee9530b02073a0fea69c1d5ebec0bd5a2378268363138c698",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 2,
+      "file": "art/heroes/summoner-w/focus-shop-3/pixellab/roll-south/2.png",
+      "sha256": "a6e25daa71118b10a2bf51913c62dadce25a0a818e953f7a47be1413ca4524f4",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 3,
+      "file": "art/heroes/summoner-w/focus-shop-3/pixellab/roll-south/3.png",
+      "sha256": "109724ca0ac506cf322c7d669db2d05dfb0586539a919ca5096cec347fd78dc7",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 4,
+      "file": "art/heroes/summoner-w/focus-shop-3/pixellab/roll-south/4.png",
+      "sha256": "f2b4c84bd1ec3acb17f9151d25631913dd5a50b4e89312e11ead01207497d674",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 5,
+      "file": "art/heroes/summoner-w/focus-shop-3/pixellab/roll-south/5.png",
+      "sha256": "275cccd67e91a693a154ed200ffaaebbc38fe979f595b23a5d8d7234ae890fed",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 6,
+      "file": "art/heroes/summoner-w/focus-shop-3/pixellab/roll-south/6.png",
+      "sha256": "e7db13b6f5831f40925415f5081fdb5427b76a123dd73b750db9f71ca0710d01",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 7,
+      "file": "art/heroes/summoner-w/focus-shop-3/pixellab/roll-south/7.png",
+      "sha256": "625d0b8b8b75612d3316edbeffdd6a580cf866a472771d1ceab7a44aca5963c1",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        7
+      ]
+    },
+    {
       "state": "idle-north",
       "frame": 0,
       "file": "art/heroes/summoner-w/focus-shop-3/pixellab/rotations/north.png",
@@ -292,6 +416,118 @@
       "offset": [
         9,
         2
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 0,
+      "file": "art/heroes/summoner-w/focus-shop-3/pixellab/roll-north/0.png",
+      "sha256": "2cc6c76ce05817ca65cbac3865cf129b3052dd11a31b4ac18b496f748ee01616",
+      "size": [
+        72,
+        88
+      ],
+      "offset": [
+        22,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 1,
+      "file": "art/heroes/summoner-w/focus-shop-3/pixellab/roll-north/1.png",
+      "sha256": "c68d63f874fad255f67eaf5aad6cc9a15e0100044483af045abb84bd062c3768",
+      "size": [
+        72,
+        88
+      ],
+      "offset": [
+        22,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 2,
+      "file": "art/heroes/summoner-w/focus-shop-3/pixellab/roll-north/2.png",
+      "sha256": "e0275384aa3c0c1312f0e6a4608d7175dcecd3e0f337cd970be14d83f5bbcd3b",
+      "size": [
+        72,
+        88
+      ],
+      "offset": [
+        22,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 3,
+      "file": "art/heroes/summoner-w/focus-shop-3/pixellab/roll-north/3.png",
+      "sha256": "ff80a18f9b3100e1b4d80fc900db552f85bd0087b2928fe81624f2974e41aae1",
+      "size": [
+        72,
+        88
+      ],
+      "offset": [
+        22,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 4,
+      "file": "art/heroes/summoner-w/focus-shop-3/pixellab/roll-north/4.png",
+      "sha256": "3383517141072004cf672489a789d72fbd8b26c356467500511fd265fd738897",
+      "size": [
+        72,
+        88
+      ],
+      "offset": [
+        22,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 5,
+      "file": "art/heroes/summoner-w/focus-shop-3/pixellab/roll-north/5.png",
+      "sha256": "2fea67fc6f47866e4d57cfd9a8efcc9c84c661a7ab346632e2e2d5d9f7af1579",
+      "size": [
+        72,
+        88
+      ],
+      "offset": [
+        22,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 6,
+      "file": "art/heroes/summoner-w/focus-shop-3/pixellab/roll-north/6.png",
+      "sha256": "13bfba6c1e566b31578c1fea909712eb37868661409c16e2d3de83084aefcb02",
+      "size": [
+        72,
+        88
+      ],
+      "offset": [
+        22,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 7,
+      "file": "art/heroes/summoner-w/focus-shop-3/pixellab/roll-north/7.png",
+      "sha256": "b19ad3383597594784c42aca806e9c5a2afe01f6fcedd8c90413962c496c75cc",
+      "size": [
+        72,
+        88
+      ],
+      "offset": [
+        22,
+        8
       ]
     }
   ]

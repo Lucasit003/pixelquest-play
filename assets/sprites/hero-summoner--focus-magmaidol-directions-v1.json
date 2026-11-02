@@ -23,17 +23,29 @@
       "fps": 12,
       "loop": true
     },
-    "idle-north": {
+    "roll-south": {
       "row": 2,
+      "frames": 8,
+      "fps": 25,
+      "loop": false
+    },
+    "idle-north": {
+      "row": 3,
       "frames": 1,
       "fps": 5,
       "loop": true
     },
     "walk-north": {
-      "row": 3,
+      "row": 4,
       "frames": 8,
       "fps": 12,
       "loop": true
+    },
+    "roll-north": {
+      "row": 5,
+      "frames": 8,
+      "fps": 25,
+      "loop": false
     }
   },
   "source": "pixellab",
@@ -169,6 +181,118 @@
       ]
     },
     {
+      "state": "roll-south",
+      "frame": 0,
+      "file": "art/heroes/summoner-w/focus-magmaidol/pixellab/roll-south/0.png",
+      "sha256": "02a4c4e51bfdd55bffc2c7749052147bf0e6852fa628943161454082a5d85f1c",
+      "size": [
+        72,
+        88
+      ],
+      "offset": [
+        22,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 1,
+      "file": "art/heroes/summoner-w/focus-magmaidol/pixellab/roll-south/1.png",
+      "sha256": "355bf907fc5082c0766adf7473f42fe69f97ff15ecd652a6e7d16fc1b1138a30",
+      "size": [
+        72,
+        88
+      ],
+      "offset": [
+        22,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 2,
+      "file": "art/heroes/summoner-w/focus-magmaidol/pixellab/roll-south/2.png",
+      "sha256": "69ed2bbb66d2a10e77a2cded6e2a59a9aa0cc6d160842a30c19e823faa1a5bcf",
+      "size": [
+        72,
+        88
+      ],
+      "offset": [
+        22,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 3,
+      "file": "art/heroes/summoner-w/focus-magmaidol/pixellab/roll-south/3.png",
+      "sha256": "e0853365364985d892982cf7342972ed43151658f6c55ed374ad20d4cbbbf292",
+      "size": [
+        72,
+        88
+      ],
+      "offset": [
+        22,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 4,
+      "file": "art/heroes/summoner-w/focus-magmaidol/pixellab/roll-south/4.png",
+      "sha256": "39b368e8d22c227f7855106eaa6784d5cb520c78d4bdebd0f9e96dd7109ff275",
+      "size": [
+        72,
+        88
+      ],
+      "offset": [
+        22,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 5,
+      "file": "art/heroes/summoner-w/focus-magmaidol/pixellab/roll-south/5.png",
+      "sha256": "f8c452de9c1ec2aad32fc763833d2ff4c9e4db36e1ca66fe0785f08e908ed912",
+      "size": [
+        72,
+        88
+      ],
+      "offset": [
+        22,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 6,
+      "file": "art/heroes/summoner-w/focus-magmaidol/pixellab/roll-south/6.png",
+      "sha256": "2f1ce2e620288ed8d361b187d9c85a94ecbadf9fe8a8da7ce03f25d6f091ee85",
+      "size": [
+        72,
+        88
+      ],
+      "offset": [
+        22,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 7,
+      "file": "art/heroes/summoner-w/focus-magmaidol/pixellab/roll-south/7.png",
+      "sha256": "f2aa7d978063efd8d7048c2cd6abba9db0eb939b775f25813673f821300dec48",
+      "size": [
+        72,
+        88
+      ],
+      "offset": [
+        22,
+        7
+      ]
+    },
+    {
       "state": "idle-north",
       "frame": 0,
       "file": "art/heroes/summoner-w/focus-magmaidol/pixellab/rotations/north.png",
@@ -292,6 +416,118 @@
       "offset": [
         9,
         2
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 0,
+      "file": "art/heroes/summoner-w/focus-magmaidol/pixellab/roll-north/0.png",
+      "sha256": "eff8527212f1d455b948be5355d8e9d4b9a6b7ead0d41e61cec8d1b0823f0af4",
+      "size": [
+        68,
+        88
+      ],
+      "offset": [
+        24,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 1,
+      "file": "art/heroes/summoner-w/focus-magmaidol/pixellab/roll-north/1.png",
+      "sha256": "ef9a860438d6018a40fbfade13aa603850cc231d3056e8549787004594ab0a37",
+      "size": [
+        68,
+        88
+      ],
+      "offset": [
+        24,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 2,
+      "file": "art/heroes/summoner-w/focus-magmaidol/pixellab/roll-north/2.png",
+      "sha256": "110fc9d63b559143140d49c15eac2aa14b727e1e2cb2de77f8b810e634307fb3",
+      "size": [
+        68,
+        88
+      ],
+      "offset": [
+        24,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 3,
+      "file": "art/heroes/summoner-w/focus-magmaidol/pixellab/roll-north/3.png",
+      "sha256": "04ef08fb6b50611c0f02bde66e27e221eba1de2bfcec3a35689f8ce66ea0aaf1",
+      "size": [
+        68,
+        88
+      ],
+      "offset": [
+        24,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 4,
+      "file": "art/heroes/summoner-w/focus-magmaidol/pixellab/roll-north/4.png",
+      "sha256": "4a58624acc99b39a2bf8727f77679837e02b5d888cc8595127c5d0a3c6e941e9",
+      "size": [
+        68,
+        88
+      ],
+      "offset": [
+        24,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 5,
+      "file": "art/heroes/summoner-w/focus-magmaidol/pixellab/roll-north/5.png",
+      "sha256": "b7f872bc0c5f6bedc7f39cff82cc92d72589124d552b805146c021a5b22dccb1",
+      "size": [
+        68,
+        88
+      ],
+      "offset": [
+        24,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 6,
+      "file": "art/heroes/summoner-w/focus-magmaidol/pixellab/roll-north/6.png",
+      "sha256": "0350ebd17b8b13a31409b639c9cd748da49430a435095c7c9c9724681e42ff25",
+      "size": [
+        68,
+        88
+      ],
+      "offset": [
+        24,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 7,
+      "file": "art/heroes/summoner-w/focus-magmaidol/pixellab/roll-north/7.png",
+      "sha256": "ff107332affefbf780db83e8a6f0e60fdc49dfa87869fa6a5907e0928acf05ec",
+      "size": [
+        68,
+        88
+      ],
+      "offset": [
+        24,
+        8
       ]
     }
   ]

@@ -23,17 +23,29 @@
       "fps": 12,
       "loop": true
     },
-    "idle-north": {
+    "roll-south": {
       "row": 2,
+      "frames": 8,
+      "fps": 25,
+      "loop": false
+    },
+    "idle-north": {
+      "row": 3,
       "frames": 1,
       "fps": 5,
       "loop": true
     },
     "walk-north": {
-      "row": 3,
+      "row": 4,
       "frames": 8,
       "fps": 12,
       "loop": true
+    },
+    "roll-north": {
+      "row": 5,
+      "frames": 8,
+      "fps": 25,
+      "loop": false
     }
   },
   "source": "pixellab",
@@ -169,6 +181,118 @@
       ]
     },
     {
+      "state": "roll-south",
+      "frame": 0,
+      "file": "art/heroes/rogue-w/dagger-shop-3/pixellab/roll-south/0.png",
+      "sha256": "523e574d539fa3eb6a4163c16cd474fea05653f8e65df1380e1d4ab8603bfd02",
+      "size": [
+        92,
+        96
+      ],
+      "offset": [
+        12,
+        3
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 1,
+      "file": "art/heroes/rogue-w/dagger-shop-3/pixellab/roll-south/1.png",
+      "sha256": "2b993f52e9eaa882111f61765fcebf759892b878955cb18db9da8824ef694e00",
+      "size": [
+        92,
+        96
+      ],
+      "offset": [
+        12,
+        3
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 2,
+      "file": "art/heroes/rogue-w/dagger-shop-3/pixellab/roll-south/2.png",
+      "sha256": "b26d114cc15b94217933245f97a59cc5698a98841ad9b543dde31d4ee43bf432",
+      "size": [
+        92,
+        96
+      ],
+      "offset": [
+        12,
+        3
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 3,
+      "file": "art/heroes/rogue-w/dagger-shop-3/pixellab/roll-south/3.png",
+      "sha256": "cb30da35b5414bfdf91c971059516fca0d8dc74538517d5d8a858de83a8befb8",
+      "size": [
+        92,
+        96
+      ],
+      "offset": [
+        12,
+        3
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 4,
+      "file": "art/heroes/rogue-w/dagger-shop-3/pixellab/roll-south/4.png",
+      "sha256": "3d21b40dcf386e5f3ec7f01f78196fbbf23b8ce64a2108b144eac0d7d85c3232",
+      "size": [
+        92,
+        96
+      ],
+      "offset": [
+        12,
+        3
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 5,
+      "file": "art/heroes/rogue-w/dagger-shop-3/pixellab/roll-south/5.png",
+      "sha256": "4c78172c7125383ae6a217cc906451792a804cc7ef126203613c0f595598c4d3",
+      "size": [
+        92,
+        96
+      ],
+      "offset": [
+        12,
+        3
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 6,
+      "file": "art/heroes/rogue-w/dagger-shop-3/pixellab/roll-south/6.png",
+      "sha256": "295c1db518c87b65d9993bcd2e9f505726c2e2c87bcefee95c48d680009eca8b",
+      "size": [
+        92,
+        96
+      ],
+      "offset": [
+        12,
+        3
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 7,
+      "file": "art/heroes/rogue-w/dagger-shop-3/pixellab/roll-south/7.png",
+      "sha256": "cf414dd7fa0b807049903d6da8a3d2c54b0db3e0e61406ea72106b6bc78cf784",
+      "size": [
+        92,
+        96
+      ],
+      "offset": [
+        12,
+        3
+      ]
+    },
+    {
       "state": "idle-north",
       "frame": 0,
       "file": "art/heroes/rogue-w/dagger-shop-3/pixellab/rotations/north.png",
@@ -292,6 +416,118 @@
       "offset": [
         9,
         2
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 0,
+      "file": "art/heroes/rogue-w/dagger-shop-3/pixellab/roll-north/0.png",
+      "sha256": "b0f7697fa13091b723eaa1865937bc459c2b4d6c905db109f7c1d2a1f284dfbc",
+      "size": [
+        92,
+        88
+      ],
+      "offset": [
+        12,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 1,
+      "file": "art/heroes/rogue-w/dagger-shop-3/pixellab/roll-north/1.png",
+      "sha256": "6916a4072a52b35a02639e4a6c9cfb9b206142b657e1a67fcaadaea609e4dad0",
+      "size": [
+        92,
+        88
+      ],
+      "offset": [
+        12,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 2,
+      "file": "art/heroes/rogue-w/dagger-shop-3/pixellab/roll-north/2.png",
+      "sha256": "e07a02a73dfe5a06fa9c35442772e54b6202d00ea1d0d39545330fdf15b97928",
+      "size": [
+        92,
+        88
+      ],
+      "offset": [
+        12,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 3,
+      "file": "art/heroes/rogue-w/dagger-shop-3/pixellab/roll-north/3.png",
+      "sha256": "42828b005bca63191df1d30b7a7f52926d4741fcd5bd66c606a1252d2053811d",
+      "size": [
+        92,
+        88
+      ],
+      "offset": [
+        12,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 4,
+      "file": "art/heroes/rogue-w/dagger-shop-3/pixellab/roll-north/4.png",
+      "sha256": "0d770797b0f8c77b5f293f953f15967b800ba8f906723e14c6a17659819b230d",
+      "size": [
+        92,
+        88
+      ],
+      "offset": [
+        12,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 5,
+      "file": "art/heroes/rogue-w/dagger-shop-3/pixellab/roll-north/5.png",
+      "sha256": "852fe029adb9f5f9aa00b8dc7016fd0500c7375b8c6ed11fe5c0adfea0f04cba",
+      "size": [
+        92,
+        88
+      ],
+      "offset": [
+        12,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 6,
+      "file": "art/heroes/rogue-w/dagger-shop-3/pixellab/roll-north/6.png",
+      "sha256": "56863b7a97713774cbb4188b40e0c02904982810749059e35525006066f0fb12",
+      "size": [
+        92,
+        88
+      ],
+      "offset": [
+        12,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 7,
+      "file": "art/heroes/rogue-w/dagger-shop-3/pixellab/roll-north/7.png",
+      "sha256": "8b641aa00146571fd6c514420f4657ff4a2c09f6bd3033ef3d3147857bc86ffe",
+      "size": [
+        92,
+        88
+      ],
+      "offset": [
+        12,
+        8
       ]
     }
   ]

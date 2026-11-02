@@ -23,17 +23,29 @@
       "fps": 12,
       "loop": true
     },
-    "idle-north": {
+    "roll-south": {
       "row": 2,
+      "frames": 8,
+      "fps": 25,
+      "loop": false
+    },
+    "idle-north": {
+      "row": 3,
       "frames": 1,
       "fps": 5,
       "loop": true
     },
     "walk-north": {
-      "row": 3,
+      "row": 4,
       "frames": 8,
       "fps": 12,
       "loop": true
+    },
+    "roll-north": {
+      "row": 5,
+      "frames": 8,
+      "fps": 25,
+      "loop": false
     }
   },
   "source": "pixellab",
@@ -169,6 +181,118 @@
       ]
     },
     {
+      "state": "roll-south",
+      "frame": 0,
+      "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/roll-south/0.png",
+      "sha256": "23387159fac993f64bb0947ea8a85b09f659dc163b48874f9997d32742c3e5c7",
+      "size": [
+        88,
+        88
+      ],
+      "offset": [
+        14,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 1,
+      "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/roll-south/1.png",
+      "sha256": "d860f8041568bbde8ec4ffaa6e98a77bab11e5120abccff29f0f557d676a0f14",
+      "size": [
+        88,
+        88
+      ],
+      "offset": [
+        14,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 2,
+      "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/roll-south/2.png",
+      "sha256": "9ec1174535d3b3af99b2e7d1f2aef03684495fcddf37d2cc38174236e7872639",
+      "size": [
+        88,
+        88
+      ],
+      "offset": [
+        14,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 3,
+      "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/roll-south/3.png",
+      "sha256": "8f4ea1296b20f61b16725e55da261b5ade11571918614827ba5029718df789ab",
+      "size": [
+        88,
+        88
+      ],
+      "offset": [
+        14,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 4,
+      "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/roll-south/4.png",
+      "sha256": "8c1c3656c68a19c6a2092a0be24e863c0cadbce3528c5cd0a2c641854c1d14b3",
+      "size": [
+        88,
+        88
+      ],
+      "offset": [
+        14,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 5,
+      "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/roll-south/5.png",
+      "sha256": "8200a1f83115878bb43490649252b62fa4338599784cc53e3ca0ea247e40c293",
+      "size": [
+        88,
+        88
+      ],
+      "offset": [
+        14,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 6,
+      "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/roll-south/6.png",
+      "sha256": "7675086ba41113fa07f0d3c8187fbe0e0cd36a7aa20db27c420230b462e3f0cc",
+      "size": [
+        88,
+        88
+      ],
+      "offset": [
+        14,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 7,
+      "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/roll-south/7.png",
+      "sha256": "f474ae8226804aba85dbd05bd12e4af22e5f9d28ca32f2788b953193253b0ce3",
+      "size": [
+        88,
+        88
+      ],
+      "offset": [
+        14,
+        7
+      ]
+    },
+    {
       "state": "idle-north",
       "frame": 0,
       "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/rotations/north.png",
@@ -292,6 +416,118 @@
       "offset": [
         9,
         2
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 0,
+      "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/roll-north/0.png",
+      "sha256": "88e06a2b48319276161b730d8cfb1f819e06a15559fc42642282258775164866",
+      "size": [
+        88,
+        88
+      ],
+      "offset": [
+        14,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 1,
+      "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/roll-north/1.png",
+      "sha256": "bf97e77e3c8225857a72322aac9db8f8b8c2e5c9f605678a028d60f383d61084",
+      "size": [
+        88,
+        88
+      ],
+      "offset": [
+        14,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 2,
+      "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/roll-north/2.png",
+      "sha256": "c8639081ecaf5ec8bfbd402644f05da91565268684028b7b236c10ce03c8a054",
+      "size": [
+        88,
+        88
+      ],
+      "offset": [
+        14,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 3,
+      "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/roll-north/3.png",
+      "sha256": "f6c6be6789e31395ebfc08ee0462ddac689b8cd2556c3ac1133225eec9729635",
+      "size": [
+        88,
+        88
+      ],
+      "offset": [
+        14,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 4,
+      "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/roll-north/4.png",
+      "sha256": "71f1e9df89761bf513e3b4fbc51dc8f584cd929b8ce361eea841e88cd0d961d2",
+      "size": [
+        88,
+        88
+      ],
+      "offset": [
+        14,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 5,
+      "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/roll-north/5.png",
+      "sha256": "88e88e726fe82b38a930a806a0bc2a4340660a28fcaf486de6fdf0449a2e6434",
+      "size": [
+        88,
+        88
+      ],
+      "offset": [
+        14,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 6,
+      "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/roll-north/6.png",
+      "sha256": "7dfe74ff456c9a18f18111786336f03ba8d1709c7d5cb768fa9e4827e8675994",
+      "size": [
+        88,
+        88
+      ],
+      "offset": [
+        14,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 7,
+      "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/roll-north/7.png",
+      "sha256": "9b71762f83921a42d34182bfcf5d5214dfeccf29b8045523a0e654026638236f",
+      "size": [
+        88,
+        88
+      ],
+      "offset": [
+        14,
+        8
       ]
     }
   ]

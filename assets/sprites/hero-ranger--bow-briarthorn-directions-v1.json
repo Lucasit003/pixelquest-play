@@ -23,17 +23,29 @@
       "fps": 12,
       "loop": true
     },
-    "idle-north": {
+    "roll-south": {
       "row": 2,
+      "frames": 8,
+      "fps": 25,
+      "loop": false
+    },
+    "idle-north": {
+      "row": 3,
       "frames": 1,
       "fps": 5,
       "loop": true
     },
     "walk-north": {
-      "row": 3,
+      "row": 4,
       "frames": 8,
       "fps": 12,
       "loop": true
+    },
+    "roll-north": {
+      "row": 5,
+      "frames": 8,
+      "fps": 25,
+      "loop": false
     }
   },
   "source": "pixellab",
@@ -169,6 +181,118 @@
       ]
     },
     {
+      "state": "roll-south",
+      "frame": 0,
+      "file": "art/heroes/ranger-w/bow-briarthorn/pixellab/roll-south/0.png",
+      "sha256": "edf1ed723cbe7d842f937566625102d2affc01ee3418e001bac844b9d223181f",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 1,
+      "file": "art/heroes/ranger-w/bow-briarthorn/pixellab/roll-south/1.png",
+      "sha256": "221a136ce2f9197c988e3c148052c8530b1d89a27600b6b25c6dfd6a900a920b",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 2,
+      "file": "art/heroes/ranger-w/bow-briarthorn/pixellab/roll-south/2.png",
+      "sha256": "b87244bde411e9a2ef266acf0f04a994b1e591b0eb793fd367f0a770ce8e9aa3",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 3,
+      "file": "art/heroes/ranger-w/bow-briarthorn/pixellab/roll-south/3.png",
+      "sha256": "a056b165cff0d1c82e8ae9bab91e6c3d035a3090081f0d6397b10314a0886a44",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 4,
+      "file": "art/heroes/ranger-w/bow-briarthorn/pixellab/roll-south/4.png",
+      "sha256": "bb8291fa97e2779909ebe0b403ecd6cb415380139a20edc330f3a52430514fff",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 5,
+      "file": "art/heroes/ranger-w/bow-briarthorn/pixellab/roll-south/5.png",
+      "sha256": "c90b92c60f4842c2e36e8e37ba5494679727eb99361023987e63293809ef798a",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 6,
+      "file": "art/heroes/ranger-w/bow-briarthorn/pixellab/roll-south/6.png",
+      "sha256": "64b438d183017c19b0ad9a860f5b2e521298c6c95d44c601560af3c327605040",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 7,
+      "file": "art/heroes/ranger-w/bow-briarthorn/pixellab/roll-south/7.png",
+      "sha256": "cc069ca2a824153472480c239e568381b9e73e8dbde47662a7104535aae64b6a",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        7
+      ]
+    },
+    {
       "state": "idle-north",
       "frame": 0,
       "file": "art/heroes/ranger-w/bow-briarthorn/pixellab/rotations/north.png",
@@ -292,6 +416,118 @@
       "offset": [
         9,
         2
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 0,
+      "file": "art/heroes/ranger-w/bow-briarthorn/pixellab/roll-north/0.png",
+      "sha256": "56ece9e3924f233dc1813025876de91a1e08f16e5d1a5c45d802c4cd0540eed1",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 1,
+      "file": "art/heroes/ranger-w/bow-briarthorn/pixellab/roll-north/1.png",
+      "sha256": "0cf3ffbb1f7d7f7981c31114b4c7ec04d6ac2a54277a12d1789f9c9a1815f129",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 2,
+      "file": "art/heroes/ranger-w/bow-briarthorn/pixellab/roll-north/2.png",
+      "sha256": "1eb2363c0a0ae6c05e532434bd4db476cba8a5223d462f77c5cc2e6e1839291e",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 3,
+      "file": "art/heroes/ranger-w/bow-briarthorn/pixellab/roll-north/3.png",
+      "sha256": "4a8a5d5e9f47c4a11a9b2dd0279884e204c9f77d04c93bfd411daccddbad9fe2",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 4,
+      "file": "art/heroes/ranger-w/bow-briarthorn/pixellab/roll-north/4.png",
+      "sha256": "7887de52c4ffcde4c28a8059695af6ab8402008ec77051c660c94dd83f6a55fa",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 5,
+      "file": "art/heroes/ranger-w/bow-briarthorn/pixellab/roll-north/5.png",
+      "sha256": "e55884e07435608a7c3ae58ba31ef6f843049d972257866c6369d4eff0a64664",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 6,
+      "file": "art/heroes/ranger-w/bow-briarthorn/pixellab/roll-north/6.png",
+      "sha256": "a8dcf97faba0aa796ce12ed8d2458c02d2df47cbc9e6c12ea0bc3709b3785954",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 7,
+      "file": "art/heroes/ranger-w/bow-briarthorn/pixellab/roll-north/7.png",
+      "sha256": "2171c0aa132b84aea178db459c7c5edda382c7127f7072bc5fd01abbfd607e8f",
+      "size": [
+        76,
+        88
+      ],
+      "offset": [
+        20,
+        8
       ]
     }
   ]

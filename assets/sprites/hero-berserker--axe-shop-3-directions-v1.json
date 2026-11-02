@@ -23,17 +23,29 @@
       "fps": 12,
       "loop": true
     },
-    "idle-north": {
+    "roll-south": {
       "row": 2,
+      "frames": 8,
+      "fps": 25,
+      "loop": false
+    },
+    "idle-north": {
+      "row": 3,
       "frames": 1,
       "fps": 5,
       "loop": true
     },
     "walk-north": {
-      "row": 3,
+      "row": 4,
       "frames": 8,
       "fps": 12,
       "loop": true
+    },
+    "roll-north": {
+      "row": 5,
+      "frames": 8,
+      "fps": 25,
+      "loop": false
     }
   },
   "source": "pixellab",
@@ -169,6 +181,118 @@
       ]
     },
     {
+      "state": "roll-south",
+      "frame": 0,
+      "file": "art/heroes/berserker-w/axe-shop-3/pixellab/roll-south/0.png",
+      "sha256": "a238805dfa389b68e392d8076a4a84d6bbfce20fbd7b96853e5204a6ff41c2a9",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        10,
+        3
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 1,
+      "file": "art/heroes/berserker-w/axe-shop-3/pixellab/roll-south/1.png",
+      "sha256": "a718004edd6fc43427314ae30c1889b475d0e3df6db10aa973db6168365ce7d5",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        10,
+        3
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 2,
+      "file": "art/heroes/berserker-w/axe-shop-3/pixellab/roll-south/2.png",
+      "sha256": "a479d89b48c8e1fb8b3a73deb2d4b6406c725dbcc2c6d04527ff30191bd0419a",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        10,
+        3
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 3,
+      "file": "art/heroes/berserker-w/axe-shop-3/pixellab/roll-south/3.png",
+      "sha256": "97c3b83952950bc141859836f1e990299db1a68ba2a65f3421b3f61e770f5a3b",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        10,
+        3
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 4,
+      "file": "art/heroes/berserker-w/axe-shop-3/pixellab/roll-south/4.png",
+      "sha256": "706b8d563f7e8cb5b0ca53594c24ca2ba448c5dbf2aeb318002851718bbf37f7",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        10,
+        3
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 5,
+      "file": "art/heroes/berserker-w/axe-shop-3/pixellab/roll-south/5.png",
+      "sha256": "f4401fb45a3de2598f604228ea0498500a01b5e77669470f914d929c13bb6ab8",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        10,
+        3
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 6,
+      "file": "art/heroes/berserker-w/axe-shop-3/pixellab/roll-south/6.png",
+      "sha256": "b2c9b33275b56346cabc6d95d48051373db9b2e8fcee65d9d830ba95a844c0bb",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        10,
+        3
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 7,
+      "file": "art/heroes/berserker-w/axe-shop-3/pixellab/roll-south/7.png",
+      "sha256": "59167dc99a9a839db1ad5c9ceeecccbb9c5d6676611f0fcc5684893bd8734c2c",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        10,
+        3
+      ]
+    },
+    {
       "state": "idle-north",
       "frame": 0,
       "file": "art/heroes/berserker-w/axe-shop-3/pixellab/rotations/north.png",
@@ -292,6 +416,118 @@
       "offset": [
         9,
         2
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 0,
+      "file": "art/heroes/berserker-w/axe-shop-3/pixellab/roll-north/0.png",
+      "sha256": "951cfa0b7304cec1db112f10dc7e8c06c23ecacc5643bf1799dc6e36d462d908",
+      "size": [
+        96,
+        88
+      ],
+      "offset": [
+        10,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 1,
+      "file": "art/heroes/berserker-w/axe-shop-3/pixellab/roll-north/1.png",
+      "sha256": "be173e61f2e9d033e3e4b3ac7b9102b75691a36d4f007cc9bb712d15e187f2b6",
+      "size": [
+        96,
+        88
+      ],
+      "offset": [
+        10,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 2,
+      "file": "art/heroes/berserker-w/axe-shop-3/pixellab/roll-north/2.png",
+      "sha256": "78f4c9b4f25ca3493bc04f615a0871100449216f2744ebe756f0c393a8c198a7",
+      "size": [
+        96,
+        88
+      ],
+      "offset": [
+        10,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 3,
+      "file": "art/heroes/berserker-w/axe-shop-3/pixellab/roll-north/3.png",
+      "sha256": "f30894d4c5ce77a2ebb8b79c16f75d742573171fdc213698779859c5e1964833",
+      "size": [
+        96,
+        88
+      ],
+      "offset": [
+        10,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 4,
+      "file": "art/heroes/berserker-w/axe-shop-3/pixellab/roll-north/4.png",
+      "sha256": "b836e1c683eca24210c3bc82e682f6a7d20b07d60932c8da23843b223ae38443",
+      "size": [
+        96,
+        88
+      ],
+      "offset": [
+        10,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 5,
+      "file": "art/heroes/berserker-w/axe-shop-3/pixellab/roll-north/5.png",
+      "sha256": "d3665229972ef62d921e7bded7fe24a09968e8a07c464d12e5e85a4a8243fd2f",
+      "size": [
+        96,
+        88
+      ],
+      "offset": [
+        10,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 6,
+      "file": "art/heroes/berserker-w/axe-shop-3/pixellab/roll-north/6.png",
+      "sha256": "aa3a8bf3bc3a76d83ed66e6bdc54ed638cb14023afc52db32b616c35ad18cc9c",
+      "size": [
+        96,
+        88
+      ],
+      "offset": [
+        10,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 7,
+      "file": "art/heroes/berserker-w/axe-shop-3/pixellab/roll-north/7.png",
+      "sha256": "244bdeca109743a9bca1128050f65d42419426954085573319b1b9c51c626e3f",
+      "size": [
+        96,
+        88
+      ],
+      "offset": [
+        10,
+        8
       ]
     }
   ]

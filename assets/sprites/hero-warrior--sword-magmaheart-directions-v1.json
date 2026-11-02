@@ -23,17 +23,29 @@
       "fps": 12,
       "loop": true
     },
-    "idle-north": {
+    "roll-south": {
       "row": 2,
+      "frames": 8,
+      "fps": 25,
+      "loop": false
+    },
+    "idle-north": {
+      "row": 3,
       "frames": 1,
       "fps": 5,
       "loop": true
     },
     "walk-north": {
-      "row": 3,
+      "row": 4,
       "frames": 8,
       "fps": 12,
       "loop": true
+    },
+    "roll-north": {
+      "row": 5,
+      "frames": 8,
+      "fps": 25,
+      "loop": false
     }
   },
   "source": "pixellab",
@@ -169,6 +181,118 @@
       ]
     },
     {
+      "state": "roll-south",
+      "frame": 0,
+      "file": "art/heroes/warrior-w/sword-magmaheart/pixellab/roll-south/0.png",
+      "sha256": "53040ea827bc79e868add3d6740694427f1965abed090b8d976a0e6b8b42c59f",
+      "size": [
+        96,
+        92
+      ],
+      "offset": [
+        10,
+        5
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 1,
+      "file": "art/heroes/warrior-w/sword-magmaheart/pixellab/roll-south/1.png",
+      "sha256": "4994a16200b6a819a992f3b16441bddd5048e07c42b70328f87684b8b03595ea",
+      "size": [
+        96,
+        92
+      ],
+      "offset": [
+        10,
+        5
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 2,
+      "file": "art/heroes/warrior-w/sword-magmaheart/pixellab/roll-south/2.png",
+      "sha256": "d1b9f705f2f08764ab79b3021af22c33b2481d4d0264bc96108d3810fe2e9c55",
+      "size": [
+        96,
+        92
+      ],
+      "offset": [
+        10,
+        5
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 3,
+      "file": "art/heroes/warrior-w/sword-magmaheart/pixellab/roll-south/3.png",
+      "sha256": "e02c54dba1990810f11ea51b7ccd5f624af8c0f7794d60c86acb501d261e8b0e",
+      "size": [
+        96,
+        92
+      ],
+      "offset": [
+        10,
+        5
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 4,
+      "file": "art/heroes/warrior-w/sword-magmaheart/pixellab/roll-south/4.png",
+      "sha256": "0ad4825cc832a176bd33fca646283369b25ec29dfc9c2084688aa767a00b960e",
+      "size": [
+        96,
+        92
+      ],
+      "offset": [
+        10,
+        5
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 5,
+      "file": "art/heroes/warrior-w/sword-magmaheart/pixellab/roll-south/5.png",
+      "sha256": "b36e5967495d3777c0afdd8e23413dc60202c6c48b0e95123accf07685ec9371",
+      "size": [
+        96,
+        92
+      ],
+      "offset": [
+        10,
+        5
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 6,
+      "file": "art/heroes/warrior-w/sword-magmaheart/pixellab/roll-south/6.png",
+      "sha256": "9de5f01ec1cfe5e1da168f774a9e736af89a149618f28b1e9ba2b202a81fb30c",
+      "size": [
+        96,
+        92
+      ],
+      "offset": [
+        10,
+        5
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 7,
+      "file": "art/heroes/warrior-w/sword-magmaheart/pixellab/roll-south/7.png",
+      "sha256": "93351381c40e4da7d77dd01bddb14990444552cb9f0b8c6da2ecbe480077c39f",
+      "size": [
+        96,
+        92
+      ],
+      "offset": [
+        10,
+        5
+      ]
+    },
+    {
       "state": "idle-north",
       "frame": 0,
       "file": "art/heroes/warrior-w/sword-magmaheart/pixellab/rotations/north.png",
@@ -292,6 +416,118 @@
       "offset": [
         9,
         2
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 0,
+      "file": "art/heroes/warrior-w/sword-magmaheart/pixellab/roll-north/0.png",
+      "sha256": "a5b1a1599ca45f26054c84209105beb58644a9504834401bb56d928960a4fce8",
+      "size": [
+        96,
+        84
+      ],
+      "offset": [
+        10,
+        10
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 1,
+      "file": "art/heroes/warrior-w/sword-magmaheart/pixellab/roll-north/1.png",
+      "sha256": "ddf457be72d8dce1cc5678d35e5a446bdca02f29f20e332ef644955d59f88855",
+      "size": [
+        96,
+        84
+      ],
+      "offset": [
+        10,
+        10
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 2,
+      "file": "art/heroes/warrior-w/sword-magmaheart/pixellab/roll-north/2.png",
+      "sha256": "64320116a1b41a0413f66cd3819dc7cef94f97b6e8f892894b08daef99dc3ddb",
+      "size": [
+        96,
+        84
+      ],
+      "offset": [
+        10,
+        10
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 3,
+      "file": "art/heroes/warrior-w/sword-magmaheart/pixellab/roll-north/3.png",
+      "sha256": "ee73936101fd5b0cc41d12548b2085a10ac964a77aae26db07d45e9a3f174d56",
+      "size": [
+        96,
+        84
+      ],
+      "offset": [
+        10,
+        10
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 4,
+      "file": "art/heroes/warrior-w/sword-magmaheart/pixellab/roll-north/4.png",
+      "sha256": "d18569be05d326018c50387bb57c06d49131d0e4ae4773fcd8a8dce020f4aca2",
+      "size": [
+        96,
+        84
+      ],
+      "offset": [
+        10,
+        10
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 5,
+      "file": "art/heroes/warrior-w/sword-magmaheart/pixellab/roll-north/5.png",
+      "sha256": "8c8c1361342e174643038ed671bf6a993b39cdb4cd812eced79824237d76bbcb",
+      "size": [
+        96,
+        84
+      ],
+      "offset": [
+        10,
+        10
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 6,
+      "file": "art/heroes/warrior-w/sword-magmaheart/pixellab/roll-north/6.png",
+      "sha256": "6b8cab955072309d2bc125197e3f5b1ff3a182827bc356fb4ca407363f861670",
+      "size": [
+        96,
+        84
+      ],
+      "offset": [
+        10,
+        10
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 7,
+      "file": "art/heroes/warrior-w/sword-magmaheart/pixellab/roll-north/7.png",
+      "sha256": "cab807974a953ed979e4d892a55ac41660ef7619e1236035a0d6e02059b79766",
+      "size": [
+        96,
+        84
+      ],
+      "offset": [
+        10,
+        10
       ]
     }
   ]

@@ -23,17 +23,29 @@
       "fps": 12,
       "loop": true
     },
-    "idle-north": {
+    "roll-south": {
       "row": 2,
+      "frames": 8,
+      "fps": 25,
+      "loop": false
+    },
+    "idle-north": {
+      "row": 3,
       "frames": 1,
       "fps": 5,
       "loop": true
     },
     "walk-north": {
-      "row": 3,
+      "row": 4,
       "frames": 8,
       "fps": 12,
       "loop": true
+    },
+    "roll-north": {
+      "row": 5,
+      "frames": 8,
+      "fps": 25,
+      "loop": false
     }
   },
   "source": "pixellab",
@@ -169,6 +181,118 @@
       ]
     },
     {
+      "state": "roll-south",
+      "frame": 0,
+      "file": "art/heroes/paladin-w/hammer-rootbreaker/pixellab/roll-south/0.png",
+      "sha256": "699f4fce356ba9eb7d8f6d9f7757462ee3a32a51f841e63d6f03eb9370c2751e",
+      "size": [
+        96,
+        88
+      ],
+      "offset": [
+        10,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 1,
+      "file": "art/heroes/paladin-w/hammer-rootbreaker/pixellab/roll-south/1.png",
+      "sha256": "cccc696fe10291f0641042bdc132dcef308f815d3ddb6737a5fe870374409d17",
+      "size": [
+        96,
+        88
+      ],
+      "offset": [
+        10,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 2,
+      "file": "art/heroes/paladin-w/hammer-rootbreaker/pixellab/roll-south/2.png",
+      "sha256": "38b933a74e1cad1ee27367f5095c6a6dfc6b58300edb86f4ea004fddf48840b2",
+      "size": [
+        96,
+        88
+      ],
+      "offset": [
+        10,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 3,
+      "file": "art/heroes/paladin-w/hammer-rootbreaker/pixellab/roll-south/3.png",
+      "sha256": "9877a2802989ff19909a082a7509431c00a597f5cd3384a32a711c4c2ba51e0f",
+      "size": [
+        96,
+        88
+      ],
+      "offset": [
+        10,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 4,
+      "file": "art/heroes/paladin-w/hammer-rootbreaker/pixellab/roll-south/4.png",
+      "sha256": "83e8da44922c3834cf28d7d4a3a3bbf26868e977580adca3da8d6643d06b5acd",
+      "size": [
+        96,
+        88
+      ],
+      "offset": [
+        10,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 5,
+      "file": "art/heroes/paladin-w/hammer-rootbreaker/pixellab/roll-south/5.png",
+      "sha256": "5af5e5ccdd2b46f27c2997c819c78369b5c2bc3aa23cfd3a08a10f18d93fa6cb",
+      "size": [
+        96,
+        88
+      ],
+      "offset": [
+        10,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 6,
+      "file": "art/heroes/paladin-w/hammer-rootbreaker/pixellab/roll-south/6.png",
+      "sha256": "065415ec06c48c0be7e8e0e74b8c31fb24d4e795d04d4654d05ac43e7b760183",
+      "size": [
+        96,
+        88
+      ],
+      "offset": [
+        10,
+        7
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 7,
+      "file": "art/heroes/paladin-w/hammer-rootbreaker/pixellab/roll-south/7.png",
+      "sha256": "57029752a1ca5eed21e2061b80a7445aa926ae7f0232b4749be71f2cb6d35445",
+      "size": [
+        96,
+        88
+      ],
+      "offset": [
+        10,
+        7
+      ]
+    },
+    {
       "state": "idle-north",
       "frame": 0,
       "file": "art/heroes/paladin-w/hammer-rootbreaker/pixellab/rotations/north.png",
@@ -292,6 +416,118 @@
       "offset": [
         9,
         2
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 0,
+      "file": "art/heroes/paladin-w/hammer-rootbreaker/pixellab/roll-north/0.png",
+      "sha256": "510d78a61c4e6a6df7acb37a5e076f6d01877f72b74c3cb87a259e151be81147",
+      "size": [
+        92,
+        88
+      ],
+      "offset": [
+        12,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 1,
+      "file": "art/heroes/paladin-w/hammer-rootbreaker/pixellab/roll-north/1.png",
+      "sha256": "b9c3584c54ecbb5e22a8f8ecb6ff22c9a869a7126fa69b8481851cccee1c2582",
+      "size": [
+        92,
+        88
+      ],
+      "offset": [
+        12,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 2,
+      "file": "art/heroes/paladin-w/hammer-rootbreaker/pixellab/roll-north/2.png",
+      "sha256": "6b3e6a4281cfc3df8e0074cde9a70ce790842320cc7d0fb22de08140256bde79",
+      "size": [
+        92,
+        88
+      ],
+      "offset": [
+        12,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 3,
+      "file": "art/heroes/paladin-w/hammer-rootbreaker/pixellab/roll-north/3.png",
+      "sha256": "645164f920b7ed69b1c355c47afdaec907016eca9df1d0aa58dc1a8332f8b173",
+      "size": [
+        92,
+        88
+      ],
+      "offset": [
+        12,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 4,
+      "file": "art/heroes/paladin-w/hammer-rootbreaker/pixellab/roll-north/4.png",
+      "sha256": "f6b9496520665ccf10f8d023bb35b103e172f9bffc51b2a384a92e13229f3372",
+      "size": [
+        92,
+        88
+      ],
+      "offset": [
+        12,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 5,
+      "file": "art/heroes/paladin-w/hammer-rootbreaker/pixellab/roll-north/5.png",
+      "sha256": "82f3987dafb4e845238eb05d29c394adecbc66d609fdcce192af4dc588621573",
+      "size": [
+        92,
+        88
+      ],
+      "offset": [
+        12,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 6,
+      "file": "art/heroes/paladin-w/hammer-rootbreaker/pixellab/roll-north/6.png",
+      "sha256": "74a7022c9de62b78624f0880fff28c92b53c0cb5052068618419ee89f0685a35",
+      "size": [
+        92,
+        88
+      ],
+      "offset": [
+        12,
+        8
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 7,
+      "file": "art/heroes/paladin-w/hammer-rootbreaker/pixellab/roll-north/7.png",
+      "sha256": "35a7f0deaf75f93e109c3e4088ac6b722a45038ea929bd9a025897071a0bef71",
+      "size": [
+        92,
+        88
+      ],
+      "offset": [
+        12,
+        8
       ]
     }
   ]

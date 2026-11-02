@@ -23,17 +23,29 @@
       "fps": 12,
       "loop": true
     },
-    "idle-north": {
+    "roll-south": {
       "row": 2,
+      "frames": 8,
+      "fps": 25,
+      "loop": false
+    },
+    "idle-north": {
+      "row": 3,
       "frames": 1,
       "fps": 5,
       "loop": true
     },
     "walk-north": {
-      "row": 3,
+      "row": 4,
       "frames": 8,
       "fps": 12,
       "loop": true
+    },
+    "roll-north": {
+      "row": 5,
+      "frames": 8,
+      "fps": 25,
+      "loop": false
     }
   },
   "source": "pixellab",
@@ -169,6 +181,118 @@
       ]
     },
     {
+      "state": "roll-south",
+      "frame": 0,
+      "file": "art/heroes/warrior-w/sword-thornroot/pixellab/roll-south/0.png",
+      "sha256": "35a33492c7bb6ed1a76cc91cc329821e93bc4cde9c5c73c8946d35d885cb2f68",
+      "size": [
+        88,
+        92
+      ],
+      "offset": [
+        14,
+        5
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 1,
+      "file": "art/heroes/warrior-w/sword-thornroot/pixellab/roll-south/1.png",
+      "sha256": "52f212d2d7cf7847dc3e3256567b459564c46f2bd3e83254ca6306f28ef65d99",
+      "size": [
+        88,
+        92
+      ],
+      "offset": [
+        14,
+        5
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 2,
+      "file": "art/heroes/warrior-w/sword-thornroot/pixellab/roll-south/2.png",
+      "sha256": "9883f8f0809b061401f96e95073ea126fdf88fe2e91215635a962ebbad44380d",
+      "size": [
+        88,
+        92
+      ],
+      "offset": [
+        14,
+        5
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 3,
+      "file": "art/heroes/warrior-w/sword-thornroot/pixellab/roll-south/3.png",
+      "sha256": "f901877d4f1c86ba38fd7d9e47d4145176ac7835013a8ad9c402ef151121842e",
+      "size": [
+        88,
+        92
+      ],
+      "offset": [
+        14,
+        5
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 4,
+      "file": "art/heroes/warrior-w/sword-thornroot/pixellab/roll-south/4.png",
+      "sha256": "4a1d6af7c44bf7fec63b7d0e870105a2e6600619b805433e90e419366fdf434c",
+      "size": [
+        88,
+        92
+      ],
+      "offset": [
+        14,
+        5
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 5,
+      "file": "art/heroes/warrior-w/sword-thornroot/pixellab/roll-south/5.png",
+      "sha256": "f8d37c9f2555f19503267a84828567c96cac3415876a5b7fb8cfb25213993eba",
+      "size": [
+        88,
+        92
+      ],
+      "offset": [
+        14,
+        5
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 6,
+      "file": "art/heroes/warrior-w/sword-thornroot/pixellab/roll-south/6.png",
+      "sha256": "e5f4ad799e9136e3db4228e6a3a37fb62ad402582602ca77cd1e7b0666159aa2",
+      "size": [
+        88,
+        92
+      ],
+      "offset": [
+        14,
+        5
+      ]
+    },
+    {
+      "state": "roll-south",
+      "frame": 7,
+      "file": "art/heroes/warrior-w/sword-thornroot/pixellab/roll-south/7.png",
+      "sha256": "4f34bb15804e556da7a0eea70be3985282900c965cfbc507952451a98dd1b55b",
+      "size": [
+        88,
+        92
+      ],
+      "offset": [
+        14,
+        5
+      ]
+    },
+    {
       "state": "idle-north",
       "frame": 0,
       "file": "art/heroes/warrior-w/sword-thornroot/pixellab/rotations/north.png",
@@ -292,6 +416,118 @@
       "offset": [
         9,
         2
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 0,
+      "file": "art/heroes/warrior-w/sword-thornroot/pixellab/roll-north/0.png",
+      "sha256": "cc4b57d924601f7054f891549af6b1a7e075ad141b635c016e57f30ce05d9d5f",
+      "size": [
+        96,
+        84
+      ],
+      "offset": [
+        10,
+        10
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 1,
+      "file": "art/heroes/warrior-w/sword-thornroot/pixellab/roll-north/1.png",
+      "sha256": "216ad527bc70c5548d56655ad9c63f9943f28ac19eaacb6e19933def600dcdea",
+      "size": [
+        96,
+        84
+      ],
+      "offset": [
+        10,
+        10
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 2,
+      "file": "art/heroes/warrior-w/sword-thornroot/pixellab/roll-north/2.png",
+      "sha256": "d6484761b4cb07972d54cdb6b59c30d6336a4f6d650aa76aec54c4a7f653dec3",
+      "size": [
+        96,
+        84
+      ],
+      "offset": [
+        10,
+        10
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 3,
+      "file": "art/heroes/warrior-w/sword-thornroot/pixellab/roll-north/3.png",
+      "sha256": "14c3efdb76b4cdfa075ab0fff092731055591755db60394c3661e62c67ac495d",
+      "size": [
+        96,
+        84
+      ],
+      "offset": [
+        10,
+        10
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 4,
+      "file": "art/heroes/warrior-w/sword-thornroot/pixellab/roll-north/4.png",
+      "sha256": "85d77cbb5ae7df24313cd63f2bf9c4092ced0bdf43e46473d390a94d533bc5f5",
+      "size": [
+        96,
+        84
+      ],
+      "offset": [
+        10,
+        10
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 5,
+      "file": "art/heroes/warrior-w/sword-thornroot/pixellab/roll-north/5.png",
+      "sha256": "d816a0276edd3b81d360d30f4d1d387ba63e75a4c9da98ffe1d696c8e85b79d5",
+      "size": [
+        96,
+        84
+      ],
+      "offset": [
+        10,
+        10
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 6,
+      "file": "art/heroes/warrior-w/sword-thornroot/pixellab/roll-north/6.png",
+      "sha256": "acfcd8c1f6b0fca094ab8b65f9c3c859c34572642086023442385a6c5b50a255",
+      "size": [
+        96,
+        84
+      ],
+      "offset": [
+        10,
+        10
+      ]
+    },
+    {
+      "state": "roll-north",
+      "frame": 7,
+      "file": "art/heroes/warrior-w/sword-thornroot/pixellab/roll-north/7.png",
+      "sha256": "ea05a94c0bfd753b1d41fb1653b3b669d7255bfa0e1fca70ab9564f2eb5ab90d",
+      "size": [
+        96,
+        84
+      ],
+      "offset": [
+        10,
+        10
       ]
     }
   ]
