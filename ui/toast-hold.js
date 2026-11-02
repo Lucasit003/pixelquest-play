@@ -4,7 +4,11 @@
    that comes back from the queue gets its full time again. When the key line takes the toast over, a message already
    showing (a level's "This visit: ... mini-boss") goes back to the front of the queue, right after it, instead of being lost. */
 /* improve20-r10b-nov2 #8: and never under about 1 s per 4 words (a short line with long words read too fast) */
-export const toastMs=(message,hold)=>hold?.get(message)||Math.max(3000,String(message??'').length*60,(String(message??'').match(/\S+/g)||[]).length*250);
+/* improve20-r12c-nov2 #6 (kidsim2 #12: Zoe, reading about 70 words a minute, lost 14 toasts and Nia 8; max(3 s, 60 ms a character) is
+   200-240 words a minute): outside a fight a toast stays max(KID_FLOOR, KID_MS a character); in a fight (`fight`, main.js toastFight) the
+   old timing stands, so fight lines never sit over the action longer than before. A held message keeps its hold. */
+export const KID_MS=90,KID_FLOOR=4000;
+export const toastMs=(message,hold,fight=false)=>hold?.get(message)||(fight?Math.max(3000,String(message??'').length*60,(String(message??'').match(/\S+/g)||[]).length*250):Math.max(KID_FLOOR,String(message??'').length*KID_MS,(String(message??'').match(/\S+/g)||[]).length*250));
 export function requeueShowing(queue,showing,next,max=3){if(showing&&showing!==next&&!queue.includes(showing)){queue.unshift(showing);if(queue.length>max)queue.pop();}return queue;}
 /* A message that asks to show at once (an armour or ability hint) waits while a held message is still within its hold. */
 export const heldUp=({shown,text,message,hold,now,free})=>!!(shown&&hold?.has(text)&&text!==message&&!hold.has(message)&&now<free);
@@ -13,7 +17,9 @@ export const heldUp=({shown,text,message,hold,now,free})=>!!(shown&&hold?.has(te
    banners (a stage banner used to hide it and put it back in the queue, so "Plain hits glance off..." showed 6 times for under 2.5 s each).
    A boss tip shows once per level visit (until the hero is back in town) and never twice within TIP_GAP ms. */
 /* (on a phone the visit line is its short form, game/draft.js: "The Imp Warchief mini-boss · Blessing of Life shrine") */
-export const LEVEL_TIP=/^(Plain hits glance off|Break blue guards|This visit:|Echoes of )|( mini-boss| shrine)( · |$)/,BOSS_TIP=/^(Plain hits glance off|Break blue guards)/,TIP_GAP=30000;
+/* improve20-r12c-nov2 #7 (kidsim2 #13): the retry potion line ("+1 health potion for this try") is a level tip too; main.js raises it once
+   per try, after the level's title and boss cards (RETRY_POTION) */
+export const LEVEL_TIP=/^(Plain hits glance off|Break blue guards|This visit:|Echoes of |\+1 health potion for this try)|( mini-boss| shrine)( · |$)/,BOSS_TIP=/^(Plain hits glance off|Break blue guards)/,TIP_GAP=30000;
 export function tipAllowed(seen,message,visit,now){if(!BOSS_TIP.test(String(message??'')))return true;const o=seen.get(message);return !o||(o.visit!==visit&&now-o.at>=TIP_GAP);}
 export function markTip(seen,message,visit,now){if(BOSS_TIP.test(String(message??'')))seen.set(message,{visit,at:now});}
 /* The same line again soon after it was shown in full ("Secret 2/3" twice) is merged into the first: dropped within DUP_MS of its end. */

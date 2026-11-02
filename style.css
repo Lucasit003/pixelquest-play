@@ -425,6 +425,11 @@ dialog[data-view=welcome] #modal-content{padding:0;overflow:hidden;height:100%}
 .title-menu button{width:100%;min-height:48px;font-size:var(--fs);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;letter-spacing:1px;text-transform:uppercase}
 .title-menu button small{font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink-2)}
 .title-menu button:focus-visible{outline-offset:2px}
+/* improve20-r12c-nov2 #1: the returning player's recap under the hero's name on Continue (game/recap.js); one or two short lines, smaller */
+.title-menu button small.title-recap{display:flex;flex-direction:column;align-items:center;font-size:14px;line-height:1.3;margin-top:4px;padding:0 6px;color:var(--ink-1,#f3e6c8)}
+.title-menu button small.title-recap span{display:block;white-space:normal;text-wrap:balance}
+/* a short phone: the Next line only (the town greeting carries both) */
+@media(max-height:420px){.title-menu button small.title-recap{font-size:13px;margin-top:1px}.title-menu button small.title-recap .recap-last{display:none}}
 .title-foot{position:absolute;bottom:16px;margin:0;color:var(--faint);letter-spacing:2px;text-transform:uppercase}
 .select-pane{justify-content:flex-start;overflow:auto;padding:24px 32px}
 .select-head{display:flex;align-items:center;gap:16px;width:min(1180px,100%);margin-bottom:10px}

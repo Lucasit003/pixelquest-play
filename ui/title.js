@@ -41,14 +41,14 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 export const STAGES=Object.freeze([['elementary','Elementary School','grades 2-5'],['middle','Middle School','grades 6-8'],['high','High School','grades 9-12']]);
 export const GRADE_ROWS=Object.freeze({elementary:[2,3,4,5,0],middle:[6,7,8,0],/* improve20-r8c-nov1 #1: High School says its grade too (academics/course-grades.js picks the first course) */high:[9,10,11,12,0]});
 export const gradeOptsHTML=(stage,picked)=>(GRADE_ROWS[stage]||[]).map(g=>`<button type="button" role="radio" data-grade="${g}" aria-checked="${picked===g}" class="${picked===g?'picked':''}">${g?'Grade '+g:'Not sure'}</button>`).join('');
-export function titleScreen({started=false,cards='',hero='warrior',begin,learner=activeProfile()?.name,schoolMode=null,heroNames={},schoolGrade=null,today=''}={}){
+export function titleScreen({started=false,cards='',hero='warrior',begin,learner=activeProfile()?.name,schoolMode=null,heroNames={},schoolGrade=null,today='',recap=''}={}){
  const c=CLASSES[hero]||CLASSES.warrior,stageNow=schoolMode||(started?'elementary':'');
  return `<div class="title-screen" data-step="title" data-saved="${esc(hero)}">
 <canvas class="title-bg" width="480" height="270" aria-hidden="true"></canvas>
 <div class="title-pane">
  <div class="logo" role="img" aria-label="PixelQuest: The Thorn Kingdom"><span class="logo-crest" aria-hidden="true"></span><canvas class="logo-word" data-logo="PIXELQUEST" aria-hidden="true"></canvas><span class="logo-sub" aria-hidden="true"><i></i><canvas data-logo="THE THORN KINGDOM" data-weight="400" data-ramp="sub"></canvas><i></i></span></div>
  <nav class="title-menu" aria-label="Main menu">
-  ${started?`<button class="primary" data-title="continue">Continue<small>${esc(heroNames[hero]||c.name)}</small></button>`:''}
+  ${started?`<button class="primary" data-title="continue">Continue<small>${esc(heroNames[hero]||c.name)}</small>${/* improve20-r12c-nov2 #1: where the hero left off (game/recap.js) */recap?`<small class="title-recap" data-recap aria-label="${esc(recap)}">${String(recap).split(' · ').map((b,i)=>`<span class="recap-${i?'next':'last'}">${esc(b)}</span>`).join('')}</small>`:''}</button>`:''}
   <button ${started?'':'class="primary"'} data-title="new">${started?'Choose hero':'New game'}</button>
   <button data-title="settings">Settings</button>
   <button data-title="credits">Credits</button>

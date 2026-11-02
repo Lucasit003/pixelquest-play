@@ -39,7 +39,7 @@ export function runStart(w,l,k,prev){const s=w.save;w.draft=null;w.shrine=null;w
  if(!drafted(l)||w.arena){w.found=new Set(saved);return null;}
  const key=stageKey(l),L=w.layout,fy=y=>Math.max(L.floorTop+4,Math.min(L.floorBottom-2,y));
  const all=[...L.secrets.map(x=>({...x,chest:true})),...(SECRET_SPOTS[key]||[]).map(x=>({id:x.id,x:x.x,y:fy(x.y),loot:x.loot,name:'Hidden cache',hidden:true}))];
- s.delve??=emptyDelve();let d=prev?.draft;if(!d){d=draftRun(l,k,s.delve.runs|0,all.map(x=>({id:x.id,chest:!!x.chest})));s.delve.runs=(s.delve.runs|0)+1;}
+ s.delve??=emptyDelve();let d=prev?.draft;if(!d){d=draftRun(l,k,s.delve.runs|0,all.map(x=>({id:x.id,chest:!!x.chest})),{replay:!!s.levels?.[l.id]?.done}/* improve20-r12c-nov2 #4: a first Normal run follows the chapter's mini plan */);s.delve.runs=(s.delve.runs|0)+1;}
  if(w.level.encounter)d=compatibleDraft(d);w.draft=d;{const waves=draftWaves(w.level.waves||[],d,!!w.level.encounter);if(waves!==w.level.waves)w.level={...w.level,waves};}
  L.allSecrets=all;L.secrets=all.filter(x=>d.active.includes(x.id)&&x.id!==d.mimic);
  w.found=new Set(prev?.found||[]);

@@ -41,7 +41,12 @@ export function rewardPreview(s,l,k){const done=tierDone(s,l.id,k),gold=levelRew
    Heroic.") or the hero is HEROIC_LEAD_OVER or more levels above the level's Normal band (tiers.js adviceLevel). Only the overlevelled case
    (lead:true) also makes Heroic the picker's first choice: a hero near the band keeps Normal first. The result card's own nudge
    (next-step.js overlevelled) is unchanged. */
-export const HEROIC_LEAD_OVER=8;
-export function heroicLead(s,id){const l=levelById(id);if(!l||!tiered(l)||!levelOpen(s,id)||!tierOpen(s,id,'heroic')||tierDone(s,id,'heroic'))return null;const over=(s?.level|0)-adviceLevel(l,'normal'),lead=over>=HEROIC_LEAD_OVER;
- if(starsOf(s,id,'normal')>=3)return {kind:'stars',over,lead,text:'All stars earned: try Heroic.'};
- return lead?{kind:'over',over,lead,text:`You are ${over} levels above ${l.name}. Try Heroic for a real fight.`}:null;}
+/* improve20-r12c-nov2 #2 (kidsim2 #5: mid and late saves won 26 of 26 with 0 deaths, and the lead never fired on a mid save): the lead now comes
+   from HEROIC_LEAD_OVER = 5 levels over the band (it was 8), or on a level's second Normal clear (`again`: Normal won and played at least
+   twice, so the run being offered or the one just won is at least the second time through). The win card's "Try Heroic" primary reads
+   this same rule (main.js heroicNudge); a learning lead on the card (round 12 lane A) still comes first there. Pure. */
+export const HEROIC_LEAD_OVER=5;
+export const secondClear=(s,id)=>{const r=s?.levels?.[id];return !!r?.done&&(r.plays|0)>=2;};
+export function heroicLead(s,id){const l=levelById(id);if(!l||!tiered(l)||!levelOpen(s,id)||!tierOpen(s,id,'heroic')||tierDone(s,id,'heroic'))return null;const over=(s?.level|0)-adviceLevel(l,'normal'),high=over>=HEROIC_LEAD_OVER,again=secondClear(s,id),lead=high||again,card=high?`You are ${over} levels above ${l.name}. Try it on Heroic for a real fight.`:again?`You have cleared ${l.name}. Try it on Heroic for a real fight.`:null/* the win card's line */;
+ if(starsOf(s,id,'normal')>=3)return {kind:'stars',over,lead,text:'All stars earned: try Heroic.',card};
+ return high?{kind:'over',over,lead,text:`You are ${over} levels above ${l.name}. Try Heroic for a real fight.`,card}:again?{kind:'again',over,lead,text:`You have cleared ${l.name}. Try Heroic for a real fight.`,card}:null;}

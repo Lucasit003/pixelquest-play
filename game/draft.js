@@ -25,7 +25,19 @@ const pick=(r,a)=>a[Math.floor(r()*a.length)%a.length];
 /* Which levels get a draft: shown map levels on any tier. The prologue and Goblin Camp (gentle) only get the secrets. */
 export const drafted=l=>!!l&&l.kind==='level'&&!l.hidden;
 /* spots: [{id, chest}] -- chests are the map's visible secret chests and are always active. */
-export function draftRun(level,tier='normal',runs=0,spots=[]){
+/* improve20-r12c-nov2 #4 (kidsim2 #15: "Grubnak returns! (mini-boss)" on e2, e3 and e4). Two causes on Normal: (1) a boss counted as "later"
+   if he appeared in ANY later level, so the Orc Warlord (e3's boss, e6's partner) was barred from e4 and Grubnak was the only choice on e2,
+   e3 and e4; now a boss is barred only before the level where he is first met (firstMet). (2) the pick was random per run. On a level's first
+   Normal run (the chapter run; `replay` false) the mini now follows chapterMinis: down the chapter's main road, each level takes the fair
+   elite used least so far in the chapter, never the one the level before had; when the only fair elite is the one the level before had,
+   that level has no mini-boss (the wave keeps its own enemies, so the encounter budget only ever goes down). A level with its own `mini`
+   (Emberkeep, Veilmoor) keeps it. Replays and the harder tiers keep the random pick for variety. */
+const firstMet=(chapter,type)=>{const ts=LEVELS.filter(o=>o.kind==='level'&&o.chapter===chapter&&(o.boss===type||o.duo===type)).map(o=>o.tier);return ts.length?Math.min(...ts):-Infinity;};
+export function fairMinis(level,tier='normal'){const ch=CHAPTERS.find(c=>c.id===level?.chapter)||CHAPTERS[0];if(!ch.elites?.length)return [];const own=(level.mini?[level.mini]:ch.elites).filter(k=>k!==level.boss&&k!==level.duo),fair=tier==='normal'?own.filter(k=>firstMet(level.chapter,k)<=level.tier):own;return fair.length?fair:own.length?own:ch.elites;}
+export function chapterMinis(chapter){const road=LEVELS.filter(o=>o.chapter===chapter&&drafted(o)&&!o.gentle&&!o.optional&&o.waves?.length).sort((a,b)=>a.tier-b.tier),used={},out={};let prev=null;
+ for(const l of road){if(l.mini){out[l.id]=l.mini;prev=l.mini;used[l.mini]=(used[l.mini]|0)+1;continue;}const c=fairMinis(l,'normal').filter(k=>k!==prev);const k=c.sort((a,b)=>(used[a]|0)-(used[b]|0))[0]||null;out[l.id]=k;if(k)used[k]=(used[k]|0)+1;prev=k;}
+ return out;}
+export function draftRun(level,tier='normal',runs=0,spots=[],{replay=false}={}){
  const out={seed:0,mini:null,active:[],blessing:null,mimic:null,echo:[],seal:false};if(!level)return out;
  const seed=seedOf(`${runs|0}:${level.id}:${tier}`),r=rng(seed);out.seed=seed;
  const chests=spots.filter(s=>s.chest).map(s=>s.id),hidden=spots.filter(s=>!s.chest).map(s=>s.id);
@@ -35,7 +47,7 @@ export function draftRun(level,tier='normal',runs=0,spots=[]){
  const ch=CHAPTERS.find(c=>c.id===level.chapter)||CHAPTERS[0],waves=level.waves||[];
  /* oct24-progress (playtest r3 F16): on Normal the mini-boss is never a boss the child has not reached yet (e3 drew e4's Minotaur,
     whose Bestiary page then opened a level early); harder tiers are played after the whole chapter, so they keep the pool */
- if(waves.length&&ch.elites?.length){const later=new Set(tier==='normal'?LEVELS.filter(o=>o.kind==='level'&&o.chapter===level.chapter&&o.tier>level.tier).flatMap(o=>[o.boss,o.duo]).filter(Boolean):[]),own=(level.mini?[level.mini]:ch.elites).filter(k=>k!==level.boss&&k!==level.duo),fair=own.filter(k=>!later.has(k));const type=pick(r,fair.length?fair:own.length?own:ch.elites);out.mini={wave:Math.floor(r()*waves.length)%waves.length,type,mod:tier==='normal'?null:pick(r,MOD_KEYS)};}
+ if(waves.length&&ch.elites?.length){const rolled=pick(r,fairMinis(level,tier)),plan=tier==='normal'&&!replay&&!level.optional?chapterMinis(level.chapter):null,type=plan&&level.id in plan?plan[level.id]:rolled,wave=Math.floor(r()*waves.length)%waves.length,mod=tier==='normal'?null:pick(r,MOD_KEYS);if(type)out.mini={wave,type,mod};}
  if(r()<1/BLESSING_ODDS)out.blessing=pick(r,BLESSING_KEYS);else r();
  const hiddenActive=out.active.filter(id=>hidden.includes(id));
  if(tier!=='normal'&&hiddenActive.length&&r()<1/MIMIC_ODDS)out.mimic=pick(r,hiddenActive);

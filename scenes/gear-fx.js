@@ -5,6 +5,7 @@
    The World calls these hooks; each reads this.base.gear (stats() puts gearBonus there). Visuals reuse the World's own
    effects (ring, burst, nova, slash): no new art is drawn in code. */
 import {TRICKS,TRICK_CAP,TRICK_ICD,bossMat,rollGear,ITEM,MATS,SETS,SET_PIECES,rarityOf} from '../game/gear.js';
+import {WEAR_LINE} from '../game/wear.js';
 import {sfx} from '../core/audio.js';
 import {topSubject} from '../game/math.js';
 const d2=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
@@ -59,7 +60,7 @@ export function gearKill(w,e){const g=G(w);if(g.effects?.bone&&ready(w,'bone',10
   w.effect('line',x,e.y+24,{tx:x,ty:e.y-70,element:'holy',life:.9,max:.9});w.effect('ring',x,e.y,{radius:30,color:col,ground:true,life:.7,max:.7});
   w.text(it.name,x,e.y-58-i*14,col,true);sfx('pickup');
   const own=it.set?SET_PIECES[it.set].filter(k=>w.save.gear.owned[k]).length:0;
-  w.events.toast?.(`Found: ${it.name} (${rarityOf(it.rarity).name})!${it.set?` ${SETS[it.set].name} set: ${own} of 3.`:''} Wear it from your Inventory.`);});
+  /* improve20-r12c-nov2 #9: not for the last boss, whose victory card lists the drop (World.cardDrop) */if(!w.cardDrop?.(e))w.events.toast?.(`Found: ${it.name} (${rarityOf(it.rarity).name})!${it.set?` ${SETS[it.set].name} set: ${own} of 3.`:''} ${WEAR_LINE}`);});
  /* a boss's materials rise over it, so the steady road to crafting is visible too */
  if(e?.boss)Object.entries(got.mats).forEach(([m,k],i)=>w.text(`+${k} ${MATS[m].name}`,e.x,e.y-34+i*12,'#ffe39a'));
  if(w.run)for(const [m,k] of Object.entries(got.mats))w.run.mats=(w.run.mats||{}),w.run.mats[m]=(w.run.mats[m]||0)+k;

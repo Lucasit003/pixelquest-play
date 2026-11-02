@@ -79,7 +79,7 @@ function heroStateRaw(a,meta,time){const S=meta.states,age=Number.isFinite(a.ani
  if(a.knock>0)return{state:'hurt',t:Math.min(age,dur(S.hurt)-.001)};
  if(a.wind>0||a.blocking)return{state:'block',t:time};
  if((a.z||0)>.5)return{state:(a.vz||0)>0?'jump':'fall',t:time};
- if(a.moving)return{state:a.running?'run':'walk',t:Number.isFinite(a.walkAge)?a.walkAge:time};
+ if(a.moving)return{state:a.running||a.striding?'run':'walk',t:Number.isFinite(a.walkAge)?a.walkAge:time};
  return{state:'idle',t:time};}
 
 /* ownernotes-a-nov1 (owner, 1 Nov: "make the pet cat, when you pet it, actually be an animation of you petting the cat"): "Pet <name>"
