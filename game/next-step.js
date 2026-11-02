@@ -122,6 +122,7 @@ export function chargeStep(save){if(save?.goalTurn!=='learn'||!earned(save)||gam
 export function wilNudge(save){if(save?.goalTurn!=='learn'||!levelDone(save,'e5')||gameCleared(save))return null;const n=save.questNudge|0;if(n<1||(n-1)%3)return null;
  const q=nextQuestStep(save,questLive);if(!q||q.rank==='handin'||QUESTS[q.quest]?.companion!=='wil')return null;const qs=questStep(q);return {...qs,text:`${qs.text.replace(/[.!]\s*$/,'')}: Wil, a new companion, can join you.`,nudge:true};}
 /* a goal after a fresh charge that is an adventure on the map: "Try your new skills" leads it */
+/* improve20-r10a-nov2 #5: a mastery that opened no ability sets goalTurn 'go' (main.js): the adventure still comes next, without "Try your new skills" */
 const tryNew=(save,n)=>{if(save?.goalTurn!=='fight'||!earned(save)||n?.target?.kind!=='pad')return n;const l=levelById(n.target.id);
  return {...n,text:n.id==='level-'+n.target.id&&l?`Try your new skills at ${l.name}.`:`Try your new skills! ${n.text}`,tryNew:true};};
 function adventure(save){
@@ -184,8 +185,12 @@ export function nextStep(save,{room}={}){goalSave=save;
     card then pointed at practice, so a new kid met about 30 answers before a second fight). Until the first quiz is sat the goal is that
     quiz; then Goblin Camp; then practice (the practice step names the power it awakens). Only the suggested order changes: mastery, the
     10-practice rule and the test are untouched, and nothing here unlocks anything. */
- if(!levelDone(save,'e1')){const t=!earned(save)&&firstQuizDue(save);if(t)return {id:'quiz',text:`Take the quiz on “${t.title}” at the Library, then try your new skills.`,target:{kind:'library'}};
-  return {id:'goblin-camp',text:`Try your new skills: ${levelById('e1')?.name||'Goblin Camp'}.`,target:{kind:'pad',id:'e1'}};}
+ /* improve20-r10a-nov2 #5/#7 (kid sims: Theo's first real fight came at 13.6 minutes, Ava's never in 18; Zoe's card said "Try your new skills" with
+    no new skill): on the Library-first opening the power is already awake and tried in the prologue, so after the first lesson the goal is
+    Goblin Camp at once, in plain words; its quiz, practice and test follow after the fight (the order only; every gate is unchanged). An older
+    save, whose first lesson wakes its first ability, keeps the quiz-then-fight order and its wording. */
+ if(!levelDone(save,'e1')){const lib=libraryOpening(save),t=!lib&&!earned(save)&&firstQuizDue(save);if(t)return {id:'quiz',text:`Take the quiz on “${t.title}” at the Library, then try your new skills.`,target:{kind:'library'}};
+  return {id:'goblin-camp',text:lib?`Next adventure: ${levelById('e1')?.name||'Goblin Camp'}.`:`Try your new skills: ${levelById('e1')?.name||'Goblin Camp'}.`,target:{kind:'pad',id:'e1'}};}
  if(!earned(save)&&a){
   const t=inProgress(save,a.subject);
   if(!t)return {id:'start-lesson',text:`Start ${/^[aeiou]/i.test(subject||'')?'an':'a'} ${subject} lesson at the Library.`/* exploit4-oct27: it read "Start a English lesson" */,target:{kind:'library'}};

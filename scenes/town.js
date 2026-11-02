@@ -72,6 +72,10 @@ const ROOM_KEYS = () => [...new Set(Object.keys(ROOMS).map(k => ROOM_ALIAS[k] ??
    snagged on the table walking up to the door and the top bench sat under him at the door. The set is taken out (pack art, only hidden,
    found by its baked place and size like the Barracks lot) and its footprint in the collision grid is opened. */
 export const LIBRARY_YARD = {hide: s => s[3] === 116 && s[4] === 94 && Math.abs(s[1] - 937) < 4 && Math.abs(s[2] - 1179) < 4, open: [[936, 1228, 1064, 1272]]};
+/* improve20-r10a-nov2 #2 (kid sims: the Gate -> Library walk took Theo and Zoe 135-193 s and froze arrow followers): the route runs under the big
+   tree between the Lantern Inn and the Weaponsmith, through a line of trunk/root cells with one-cell (8 px) slots. A held push toward the arrow
+   caught on the slot's edges and bounced. Under the canopy (no trunk is drawn there) the cells above and below the slot open, so the pass is 48 px tall. */
+export const TREE_GAP = [[1284, 1488, 1304, 1536]];
 export const BARRACKS = {door: 6972, img: 'barracks.png', x: 1205, y: 1950, base: 2170,
   swap: s => s[3] === 174 && s[4] === 248 && Math.abs(s[1] - 1226) < 4 && Math.abs(s[2] - 1912) < 4,
   step: s => s[5] === 2163 && (Math.abs(s[1] - 1227) < 2 || Math.abs(s[1] - 1373) < 2),
@@ -247,7 +251,7 @@ export function blockedAt(S, x, y) {
   if (gx < 0 || gy < 0 || gx >= c.w || gy >= c.h) return true;
   const i = gy * c.w + gx;
   if (restoreOf(S).block.has(i)) return true;
-  if (S.key === 'village' && LIBRARY_YARD.open.some(([x0, y0, x1, y1]) => x >= x0 && x < x1 && y >= y0 && y < y1)) return false;
+  if (S.key === 'village' && (LIBRARY_YARD.open.some(([x0, y0, x1, y1]) => x >= x0 && x < x1 && y >= y0 && y < y1) || TREE_GAP.some(([x0, y0, x1, y1]) => x >= x0 && x < x1 && y >= y0 && y < y1))) return false;
   if (S.key === 'barracks') { const inR = r => x >= r[0] && x < r[2] && y >= r[1] && y < r[3]; if (BARRACKS.roomBlock.some(inR)) return true; }
   if (S.key === 'village' && BARRACKS.block.some(([x0, y0, x1, y1]) => x >= x0 && x < x1 && y >= y0 && y < y1)) return true;
   if (S.key === 'home' && houseBlock(S).has(i)) return true;
@@ -553,7 +557,12 @@ function enter(room, door) {
    reach, so the E the tutorial asked for next took him straight back in. He now comes out a few steps straight down from the door (beside it, or along the lane, only if that is blocked), the first
    free spot whose distance to the door (scored as nearest() scores it) is clear of the 30 px reach; failing that, the stand spot. */
 export const DOOR_REACH = 30;
-export function doorReach(q, x, y) { return Math.min(Math.hypot(x - q.sx, y - q.sy) * 1.25, Math.hypot(x - q.x, (y - q.y) * 1.3), q.front ? Math.hypot(x - q.front[0], y - q.front[1]) * 1.25 : Infinity, q.talkFrom ? Math.hypot(x - q.talkFrom[0], y - q.talkFrom[1]) * 1.25 : Infinity); }
+/* improve20-r10a-nov2 #1 (kid sims: Ava stood 21 px below the Library's stand spot and 13 px to the side, the walk route's "arrived" ring,
+   and got no prompt for 60 s): a building's door is reached more easily from the side than straight on. Its stand-spot term weighs the
+   sideways distance by DOOR_SIDE (and the whole by DOOR_ENTER), so anywhere within ROUTE.near of the stand spot offers the door; people,
+   desks and stations keep the round reach. */
+export const DOOR_SIDE = .7, DOOR_ENTER = 1.15;
+export function doorReach(q, x, y) { return Math.min(q.type === 'entrance' ? Math.hypot((x - q.sx) * DOOR_SIDE, y - q.sy) * DOOR_ENTER : Math.hypot(x - q.sx, y - q.sy) * 1.25, Math.hypot(x - q.x, (y - q.y) * 1.3), q.front ? Math.hypot(x - q.front[0], y - q.front[1]) * 1.25 : Infinity, q.talkFrom ? Math.hypot(x - q.talkFrom[0], y - q.talkFrom[1]) * 1.25 : Infinity); }
 export function outsideDoor(V, q) {
   const ok = (x, y) => !footBlocked(V, x, y) && doorReach(q, x, y) >= DOOR_REACH + 4;
   for (const dx of [0, -8, 8, -16, 16]) for (let dy = 26; dy <= 64; dy += 2) if (ok(q.sx + dx, q.sy + dy)) return [q.sx + dx, q.sy + dy];
@@ -879,7 +888,7 @@ export function hubGuidanceTarget(target, subject) {
    target, the label and "arrived" are unchanged; only where the arrow points. Cached per hero cell, so it costs nothing per frame. */
 /** The decoded scene for a room key (for tests and tools). */
 export const hubScene = key => scene(key);
-export const ROUTE = {reach: 150, near: 20, pad: 2, slide: -.87};
+export const ROUTE = {reach: 150, near: 20, pad: 2, slide: -.87, min: 16};
 /* pad: extra clearance each side, so a keyboard's eight directions (which never follow the line exactly) still get past the corner */
 /* people stand their ground (personAhead), so the route walks round them as it does round walls */
 const personAt = (S, x, y, pad = 1) => { S.people ??= [...(S.figures ?? []), ...S.points.filter(q => q.type === 'npc-spot')].map(q => [q.x, q.y]); /* improve20-r9e-nov1 #2: the same footprint personAhead keeps (wider in a room, longer in front) */const hw = S.room ? PERSON.room.hw : PERSON.hw, front = S.room ? PERSON.room.front : PERSON.front; return S.people.some(([px, py]) => Math.abs(x - px) < hw + 4 * pad && y - py < front + 3 * pad && py - y < PERSON.back + 3 * pad); };
@@ -943,6 +952,11 @@ export function routeAim(S, px, py, tx, ty) {
   let best = null; for (const pad of [ROUTE.pad, 0]) { let L = 0, q = path[0]; for (const p of path) { L += Math.hypot(p.x - q.x, p.y - q.y); q = p; if (L > ROUTE.reach) break; const d = Math.hypot(p.x - px, p.y - py); if (d > 6 && lineClear(S, px, py, p.x, p.y, pad) && keyWalk(S, px, py, p.x, p.y)) best = p; } if (best && Math.hypot(best.x - px, best.y - py) > 12) break; }
   /* squeezed into a gap narrower than a route cell: the open eight-way step that lands nearest the goal */
   if (!best) best = keyEscape(S, path, px, py) || path[Math.min(path.length - 1, 3)];
+  /* improve20-r10a-nov2 #2 (kid sims: Leo stuck about 10 minutes by the Weaponsmith's fence posts south-west of the square, Theo and Zoe 135-193 s
+     on the Gate -> Library walk): squeezed between two posts, the farthest clear point could sit 4-7 px from the hero, so the arrow
+     spun and a held push toward it (a thumb, or keys with a small dead zone) stopped. The aim is never nearer than ROUTE.min: a point
+     further along the route, and a held move that goes nowhere follows the route (routeSlide), so holding toward the arrow gets through. */
+  if (best && Math.hypot(best.x - px, best.y - py) < ROUTE.min) { let i = path.indexOf(best); if (i < 0) i = 0; while (i < path.length - 1 && Math.hypot(path[i].x - px, path[i].y - py) < ROUTE.min) i++; best = path[i]; }
   return best && {x: Math.round(best.x), y: Math.round(best.y)};
 }
 /* improve20-u-nov1 #4: one step of a held move along the walkable route to (tx, ty): toward the route a few cells ahead, unless that runs

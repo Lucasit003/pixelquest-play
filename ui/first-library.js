@@ -58,4 +58,10 @@ export function placementOpens(save,subject,stage,name=subject){
 export function gradeLine(save,subject,name=subject,warm=2){const g=save?.schoolGrade;if(save?.schoolMode!=='elementary'||!(g>2)||g>5)return null;const gs=placementGrades(subject,'elementary');if(!gs.length)return null;
  /* improve20-r9d-nov1 #6 (audit8 a19): "Repeating patterns · Grade 2 warm-up" with the check as the second button was the "is this a baby game?"
    moment for a 9-year-old. The check is the main button and names the grade; the warm-up lesson stays one tap away (warmButton). */
- return {grade:g,warm,questions:gs.length*PLACEMENT_PER_GRADE,text:`You picked Grade ${g}. A short check (${gs.length*PLACEMENT_PER_GRADE} questions, no timer) starts you at your level. It only opens lessons.`,button:`Show what you know: Grade ${g} check`,warmButton:`Grade ${warm} warm-up`};}
+ /* improve20-r10a-nov2 #3/#4 (kid sims: Zoe, a struggling Grade 3 kid, spent 235 s in the check with two runs of wrong answers; Theo, Grade 5,
+   was sent to Grade 2 with no word why): the lesson leads again and says honestly what it is, a warm-up on the ladder's first open grade
+   (lessons.js gradeOpen: nothing above it is open until it is mastered or a check places higher); the check is offered beside it, never
+   pushed, and stops kindly after PLACEMENT_STREAK misses in a row (placement.js). R9D's point holds: the card names the grade picked and the
+   way to it in one line. The text stays true: the check only opens lessons, and only ever raises (finishPlacement). */
+ const n=gs.length*PLACEMENT_PER_GRADE;
+ return {grade:g,warm,questions:n,text:`You picked Grade ${g}. Lessons start at Grade ${warm}, so this one is a warm-up. Know it already? A short check (${n} questions, no timer) can open higher grades.`,button:'Already know this? Show what you know',warmButton:`Start: Grade ${warm} warm-up`};}

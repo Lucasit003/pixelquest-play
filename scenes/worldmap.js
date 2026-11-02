@@ -38,7 +38,8 @@ export const artReady=()=>!!art;
 export function preload(opts){if(!art){art=makeArt(opts);artPromise=art.uiReady;}return artPromise;}
 export const sceneReady=chapter=>{preload();return art.scene(chapter).ready;};
 
-export function enter(ctx={}){const save=ctx.save||{};let at=ctx.view?.id||ctx.at||memory.at;if(!at||(!isGate(at)&&!levelById(at)))at=frontier(save);
+export function enter(ctx={}){const save=ctx.save||{};let at=ctx.view?.id||ctx.at||memory.at;if(!at||(!isGate(at)&&!levelById(at))||(!ctx.view&&!ctx.at&&levelById(at)?.kind==='home'))at=frontier(save);
+ /* R10A: the map is opened from town, so a cursor left on home (Oakhaven) would only offer "Enter: Home" back to where the kid stands; it opens on the next stop instead */
  /* the pacing enemies' bodies load with the map, so they are there on the first frame */
  for(const l of LEVELS){const k=firstFoe(l);if(k)loadSprite(ENEMY_TYPES[k].sprite);}
  let chapter=isGate(at)?at.slice(5).split('>')[0]:chapterOfLevel(at)||'elderwood';

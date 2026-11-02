@@ -382,6 +382,13 @@ dialog:is([data-view=placement],[data-view=lesson-quiz]) #quiz-feedback #lesson-
 .am-pips i.miss::after{content:'';position:absolute;inset:0;background:linear-gradient(to top right,#0000 calc(50% - 1px),#4a2418 calc(50% - 1px) calc(50% + 1px),#0000 calc(50% + 1px)),linear-gradient(to bottom right,#0000 calc(50% - 1px),#4a2418 calc(50% - 1px) calc(50% + 1px),#0000 calc(50% + 1px))}
 .am-pips i.now{background:#2a3050;border-color:var(--gold-2,#f0d48a)}
 
+/* improve20-r10a-nov2 #3: the placement check's progress dots: answered ones fill, the current one is ringed; no right or wrong marks */
+dialog[data-view=placement] .placement-dots{display:inline-flex;flex-wrap:wrap;gap:5px;align-items:center;padding:4px 8px}
+dialog[data-view=placement] .placement-dots i{width:10px;height:10px;border-radius:50%;background:#0000;border:2px solid currentColor;opacity:.45;box-sizing:border-box}
+dialog[data-view=placement] .placement-dots i.done{background:currentColor;opacity:.85}
+dialog[data-view=placement] .placement-dots i.now{opacity:1;width:12px;height:12px;box-shadow:0 0 0 2px var(--gold-2,#f0d48a)}
+dialog[data-view=placement] .placement-dots .pd-label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
 /* The lesson's steps read as one bar that fills, not a row of tiny dots */
 .lesson-footer .lesson-dots{gap:4px;max-width:480px;margin:0 auto;max-height:none}
 .lesson-footer .lesson-dots i{flex:1;width:auto;height:8px;min-width:8px;background:#2a3050;border:2px solid #0d1020;opacity:1}

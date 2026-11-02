@@ -90,13 +90,19 @@ export function answerPlacement(save,run,id,input){
     because this check opens grades and nothing else. */
  const r=grade(save,run.items[run.i],input,{master:false});run.right[id]=r.ok;run.i++;run.xp+=r.xp;
  /* improve20-z-nov1 #2: two misses in a row inside one grade's block mark the run to stop (stopPlacement) */
- const k=run.i-1;if(STAGE_GRADES[run.stage]&&!r.ok&&k%PLACEMENT_PER_GRADE>0&&run.right[run.items[k-1].id]===false)run.stop=true;return r;
+ const k=run.i-1;if(STAGE_GRADES[run.stage]&&!r.ok&&k%PLACEMENT_PER_GRADE>0&&run.right[run.items[k-1].id]===false)run.stop=true;
+ /* improve20-r10a-nov2 #3 (kid sims: Zoe, Grade 3, answered two runs of wrong answers in the 12-question Elementary check): PLACEMENT_STREAK misses in
+    a row, in any check and across its grade blocks, end it kindly too (run.streak). What was answered is scored as before; nothing is lowered. */
+ if(!r.ok&&k+1>=PLACEMENT_STREAK&&run.items.slice(k+1-PLACEMENT_STREAK,k+1).every(q=>run.right[q.id]===false)){run.stop=true;run.streak=true;}
+ return r;
 }
+export const PLACEMENT_STREAK=3;
 /* improve20-z-nov1 #2 (audit6 #8): a Middle School check of 12 typed questions ran to the end however hard it was. Two misses in a row in
    one grade's block end it: that block can no longer pass (PLACEMENT_PASS of PLACEMENT_PER_GRADE) and the blocks above it are harder.
    stopPlacement keeps the answered items only; finishPlacement scores them (a block never reached scores 0 of 0) with the same rules:
    the stage's floor opens, a block passed opens its grade, and it only ever raises. A wrong-but-not-twice block still goes on to the next.
-   Middle and High School checks only: the Elementary check (three short Grade 2-4 blocks) runs as before. */
+   Middle and High School checks only: the Elementary check (three short Grade 2-4 blocks) runs as before (improve20-r10a-nov2: except
+   PLACEMENT_STREAK misses in a row, which end any check). */
 export function stopPlacement(run){if(!run||run.closed||!run.stop||run.i<1)return false;run.items=run.items.slice(0,run.i);run.stopped=true;return true;}
 /* improve20-z-nov1 #2: "Start a Grade N lesson now", the first Library visit's main choice for a Middle or High School learner. The grade is
    the one picked at the title (s.schoolGrade, Middle School 6-8) when the subject has it, else the highest one below it, else the stage's first

@@ -184,9 +184,10 @@ export const SMITH_TAB_HELP={buy:'Buy: new gear for your hero. It goes in your b
    "Potion bag full: +16 gold for 2 potions" (amounts unchanged, game/potions.js BAG.overflow each); opts.quiet marks it as a small dim
    line once the save has seen it (main.js keeps s.settings.bagFullSeen). */
 const BAGFULL=/^Potion bag full \(\d+ of \d+\): \+(\d+) gold instead$/;
+/* improve20-r10a-nov2 (round 10 item 15): opts.secretGold false leaves out the "+N extra gold from a secret spot" lines (a defeat card shows them only the first time; the gold is paid all the same) */
 export function resultLoot(st,opts={}){const pots=(st?.loot||[]).filter(x=>/^health potion$/i.test(x)).length+(st?.secrets||[]).filter(x=>x.kind==='potion').reduce((n,x)=>n+(x.n|0||1),0),
  sold=[...(st?.loot||[]).map(x=>BAGFULL.exec(x)).filter(Boolean).map(m=>+m[1]),...(st?.secrets||[]).filter(x=>x.kind==='bagfull').map(x=>x.n|0)],gold=sold.reduce((a,b)=>a+b,0),n=Math.max(sold.length,Math.round(gold/BAG.overflow)),
- rest=[...(st?.loot||[]).filter(x=>!/^health potion$/i.test(x)&&!BAGFULL.test(x)).map(x=>({icon:'potion',label:x})),...(st?.secrets||[]).filter(x=>x.kind!=='potion'&&x.kind!=='bagfull').map(x=>({icon:'chest',label:x.kind==='gold'?`+${x.n} extra gold from a secret spot`:x.label}))];
+ rest=[...(st?.loot||[]).filter(x=>!/^health potion$/i.test(x)&&!BAGFULL.test(x)).map(x=>({icon:'potion',label:x})),...(st?.secrets||[]).filter(x=>x.kind!=='potion'&&x.kind!=='bagfull'&&!(opts.secretGold===false&&x.kind==='gold')).map(x=>({icon:'chest',label:x.kind==='gold'?`+${x.n} extra gold from a secret spot`:x.label}))];
  return [...(pots?[{icon:'potion',label:`${pots} health potion${pots>1?'s':''}`}]:[]),...rest,...(sold.length?[{icon:'potion',label:`Potion bag full: +${gold} gold for ${n} potion${n>1?'s':''}`,bagfull:true,quiet:!!opts.quiet}]:[])];}
 export function lootHTML(gear=[],mats={},s=null){const items=gear.map(id=>ITEM[id]).filter(Boolean),m=Object.entries(mats||{}).filter(([,n])=>n>0);if(!items.length&&!m.length)return '';
  /* with the save, a set piece says how far its set has come: "Bog King's set 3/3" */

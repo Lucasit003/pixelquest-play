@@ -2,8 +2,8 @@
    the final story boss (levels.js gameFinale, the same level finale.js FINALE_LEVEL names). Each chapter has three rungs; a rung is that
    chapter's story bosses (main-path boss levels, no side paths, no prologue) fought back to back in their own boss arenas, at the hero's
    own power. Rung I plays them on Normal numbers ("Standard"), II on Heroic, III on Legendary (game/tiers.js, no new tables). Health
-   carries over from one boss to the next with a fixed heal of HALL_HEAL of max health between them; potions are allowed (the one free
-   potion comes once, at the first boss, and what is left of it carries on). A fall ends the rung: nothing is lost and it can be tried
+   carries over from one boss to the next with a fixed heal of HALL_HEAL of max health between them; potions are allowed (each boss fight
+   brings the one free potion a story attempt brings, ranged-nov2; the bag is carried). A fall ends the rung: nothing is lost and it can be tried
    again at once.
    Rewards: the FIRST clear of a rung pays a fixed amount of gold and Essence (the gear material, 'elite-shard'), shown before the
    fight; a repeat clear pays nothing. A fight in the Hall pays no kill gold, kill XP, drops, chests or level records (World.finish and
@@ -48,10 +48,15 @@ export const keepsakes=s=>HALL_CHAPTERS.flatMap(ch=>RUNGS.filter(r=>hasKeepsake(
 export function startRung(s,ch,r){if(!rungOpen(s,ch,r))return null;return {chapter:ch,rung:r,tier:RUNG_TIER[r],bosses:hallBosses(ch),i:0,hp:1,drunk:0,free:FREE_POTIONS};}
 /* the health share the next boss starts with: what was left plus HALL_HEAL, never above full */
 export const hallCarry=hp=>Math.min(1,Math.max(0,+hp||0)+HALL_HEAL);
+/* ranged-nov2: the free potion comes back at every boss, as it does at every story attempt (it came once a rung). A chained boss-only rung
+   with no regeneration decided by kit: Warrior and Paladin open with a shield or a heal and won every kid-bot run, while the Mage, Ranger,
+   Summoner and Rogue, with neither in their first four abilities, won about one in four (balance-sim --hall=all --rungs=2,3
+   --hall-abilities=4, kid). One free potion a boss is the heal every class gets alike; the kits that already heal never needed it.
+   docs/playtest/ranged-nov2/REPORT.md. */
 /* One boss fight of the run ended. fight = {won, hp (share of max health left), drunk (potions drunk in it), free (free potions left)}.
    Mutates the run; -> 'next' (another boss waits), 'won' (the rung is cleared) or 'lost'. */
 export function hallStep(run,{won,hp=0,drunk=0,free=0}={}){if(!run||run.done)return run?.done||'lost';run.drunk+=Math.max(0,drunk|0);run.free=Math.max(0,free|0);
- if(!won){run.done='lost';return 'lost';}run.i++;if(run.i>=run.bosses.length){run.done='won';return 'won';}run.hp=hallCarry(hp);return 'next';}
+ if(!won){run.done='lost';return 'lost';}run.i++;if(run.i>=run.bosses.length){run.done='won';return 'won';}run.hp=hallCarry(hp);run.free=Math.max(run.free,FREE_POTIONS);return 'next';}
 /* A cleared rung: records it, pays the first clear (writes s.gold and s.gear.mats) and grants the keepsake for a clear with no potions.
    -> {first, gold, essence, keepsake (a name when this clear had no potions), keepsakeNew}. A lost run changes nothing. */
 export function hallFinish(s,run){if(!run||run.done!=='won')return null;const h=H(s),k=key(run.chapter,run.rung),first=!h.cleared[k];h.cleared[k]=true;let gold=0,essence=0;
