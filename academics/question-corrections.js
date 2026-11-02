@@ -26110,6 +26110,13 @@ export const QUESTION_REVISIONS=[
   "oldPrompt": "For the balanced equation CuSO₄ + 2 NaOH → Cu(OH)₂ + Na₂SO₄, 20.0 mL of 0.0800 M CuSO₄(aq) is mixed with 30.0 mL of 0.350 M NaOH(aq). What is the final molarity of NaOH(aq) in the mixture? Assume the volumes add and the reaction goes to completion. Round to three significant figures.",
   "newPrompt": "For the balanced equation CuSO₄ + 2 NaOH → Cu(OH)₂ + Na₂SO₄, 20.0 mL of 0.0800 M CuSO₄(aq) is mixed with 30.00 mL of 0.3500 M NaOH(aq). What is the final molarity of NaOH(aq) in the mixture? Assume the volumes add and the reaction goes to completion. Round to three significant figures.",
   "reason": "followups-nov2 part 3: SIG FIGS: leftover NaOH is 10.5 − 3.20 mmol, a difference with one decimal place (two figures); now 30.00 mL of 0.3500 M (10.50 mmol), so 7.30 mmol ÷ 50.0 mL keeps three. Same answer. Source: significant-figure rules (products/quotients: fewest figures; sums/differences: fewest decimal places; exact counts do not limit), derivation in tests/followups-nov2.test.js"
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "Use these approximate textbook values for KNO₃: 63.9 g dissolve in 100 g of water at 40 °C and 109 g at 60 °C. A solution saturated at 60 °C contains 250.0 g of water. It is cooled to 40 °C with no evaporation. How many grams of KNO₃ crystallize? Round to three significant figures.",
+  "newPrompt": "Use these textbook values for KNO₃: 63.9 g dissolve in 100 g of water at 40 °C and 110.1 g at 60 °C. A solution saturated at 60 °C contains 200.0 g of water. It is cooled to 40 °C with no evaporation. How many grams of KNO₃ crystallize? Round to three significant figures.",
+  "reason": "r11f-nov2: KNO₃ VALUE: the lesson's solubility curve and this item now share one sourced value. Source: Seidell, Solubilities of Inorganic and Metal Organic Compounds, 3rd ed., vol. 1 (Van Nostrand, 1940), pp. 833-850: 63.9 g at 40 °C and 110.1 g at 60 °C per 100 g water (the 109 g used before had no named source). 200.0 g of water avoids a 115.5 half-way rounding. Answer 113 -> 92.4 (220.2 − 127.8, one decimal place, three figures)."
  }
 ];
 export const ANSWER_ID_RENAMES=new Map(QUESTION_REVISIONS.map(r=>[`${r.subject}-${r.level}-${hash(r.oldPrompt)}`,`${r.subject}-${r.level}-${hash(r.newPrompt)}`]));

@@ -31,8 +31,10 @@ const middleIndex=v=>{const o=v.map((n,i)=>[n,i]).sort((a,b)=>a[0]-b[0]||a[1]-b[
 export const trials=(c,{what='Result',unit='cm',names=['A','B'],values,mid,solve},p)=>{
  const max=Math.max(10,...values.flat()),top=Math.ceil(max/20)*20,y=222,x0=70;text(c,`${what} (${unit}), three trials each`,320,20,17);
  for(let i=0;i<=4;i++){const yy=y-i*42;c.strokeStyle='#d0d3c8';c.lineWidth=1;c.beginPath();c.moveTo(x0,yy);c.lineTo(620,yy);c.stroke();text(c,top*i/4,40,yy,12);}
+ /* improve20-r11f-nov2 #3: when "trial 1" would touch its neighbour at the size drawn (12 CSS px in a fitted quiz picture), the bars carry just 1, 2, 3 (the title says "three trials each") */
+ c.font='11px sans-serif';const short=c.measureText('trial 1').width+6>72;
  values.forEach((v,g)=>{const gx=x0+30+g*280,m=middleIndex(v);text(c,names[g],gx+105,262,17,true);
-  v.forEach((n,i)=>{const x=gx+i*72,hh=168*n/top*p;c.fillStyle=g?'#c98a4a':'#5f8fb8';c.fillRect(x,y-hh,52,hh);c.strokeStyle=ink;c.lineWidth=mid&&solve&&i===m&&p>=0.6?4:1;c.strokeRect(x,y-hh,52,hh);text(c,n,x+26,y-hh-12,14);text(c,`trial ${i+1}`,x+26,238,11);});});
+  v.forEach((n,i)=>{const x=gx+i*72,hh=168*n/top*p;c.fillStyle=g?'#c98a4a':'#5f8fb8';c.fillRect(x,y-hh,52,hh);c.strokeStyle=ink;c.lineWidth=mid&&solve&&i===m&&p>=0.6?4:1;c.strokeRect(x,y-hh,52,hh);text(c,n,x+26,y-hh-12,14);text(c,short?`${i+1}`:`trial ${i+1}`,x+26,238,11);});});
 };
 /* shadow: {lamp:'east'|'north'|'south'|'west', solve}. Seen from above on a compass: the stick at the centre, the lamp on
    its side of the circle, and (solve) the stick's shadow growing out the opposite way. Unsolved, the shadow's side is a "?". */

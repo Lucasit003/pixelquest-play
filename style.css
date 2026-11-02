@@ -4165,6 +4165,59 @@ html[data-motion="reduced"].m-mode .title-screen[data-step="look"] .hero-look-ac
    only between its parts (each part stays whole), so at 844x390 it takes one or two lines */
 .m-mode dialog[data-view=result] .level-result>.rating-key.rating-key>span{display:inline;white-space:nowrap}.m-mode dialog[data-view=result] .level-result>.rating-key.rating-key>.rk-sep{display:inline;white-space:normal}.m-mode dialog[data-view=result] .level-result>.rating-key.rating-key{font:400 15px/1.25 var(--ui);overflow-wrap:normal}
 @media(max-height:500px) and (min-width:600px){.m-mode dialog[data-view=result] #modal-content .level-result.level-result:has(>.result-side):not(.result-tight)>.rating-key{display:block;margin:0 0 2px}}
+/* improve20-r11f-nov2 (round 11 lane R11F, leftovers). Placed before the tablets-nov2 block (its test reads everything after it as tablet rules).
+   #1: the phone strip's goal may take a second line only when its shorter wording still does not fit and the strip stays clear of the Today
+   chip (ui/controls-tutorial.js fitStripGoal decides; the class is removed otherwise). */
+.m-mode #controls-tutorial.strip.has-goal .strip-goal.wrap{white-space:normal;text-overflow:clip}
+/* #2: on a desktop the stars-from-grade key was hidden whenever the card tightened (.result-tight), so desktop players never saw what the stars
+   mean. It now always shows, tight or not, as one compact line under the time (16 px, the pixel font's own size: 14 px read about 9 px), so
+   tightening never changes the card's header and the card does not jump. Phones keep R11D's rule. */
+html:not(.m-mode) dialog[data-view=result] .level-result.level-result>.rating-key{display:block;white-space:nowrap;font-size:16px;line-height:1.15;margin:0 0 2px}
+/* improve20-r12b-nov2 (round 12 lane R12B, short phones). Phone rules, gated html.m-mode, none with a height break at 600 px or over, so they
+   never meet the tablets-nov2 block below.
+   #1 (kidsim2 #2, #3, #19): at 852x283 (an iPhone in Safari with its bars) the tour's Skip / Read to me / Next, the Library's Start and the
+   unlock card's words sat under the bottom edge. On a phone (under 420 px tall, so 740x360 too) a modal's action row stays in the frame:
+   the tour's foot is sticky at the box's foot, and the Library's next lesson puts Start beside the lesson's name (at 740x360 it was 23 px
+   under the edge too). Under 300 px the cards are compact: the tour's bust and picture shrink and its title gives way to Aldous's line (the
+   close button stays); the Library's subject chooser joins the title row; the unlock card's words sit beside the picture; the chapter-clear
+   card closes up so Continue is whole. */
+@media(max-height:420px){
+ html.m-mode dialog[data-view=tour] .lib-tour-foot{position:sticky;bottom:0;z-index:3;margin:0 -8px;padding:4px 8px;background:linear-gradient(#1b2142e6,#1b2142 40%)}
+ html.m-mode dialog[data-view=library] .edu-next:not(.lib-awaken){display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:8px;align-items:start}
+ html.m-mode dialog[data-view=library] .edu-next:not(.lib-awaken)>.edu-next-text{grid-column:1;grid-row:1/span 2}
+ html.m-mode dialog[data-view=library] .edu-next:not(.lib-awaken)>.edu-next-actions{grid-column:2;grid-row:1;max-width:260px;justify-content:flex-end;margin:0}
+}
+@media(max-height:300px){
+ html.m-mode dialog[data-view=tour] #modal-content{position:relative}
+ html.m-mode dialog[data-view=tour] .modal-head{position:absolute;top:4px;right:8px;z-index:4;margin:0;padding:0;border:0}
+ html.m-mode dialog[data-view=tour] .modal-head>:not(.close){display:none}
+ html.m-mode dialog[data-view=tour] .lib-tour{gap:6px}
+ html.m-mode dialog[data-view=tour] .lib-tour-talk{margin-right:52px;padding:4px 10px;gap:10px}
+ html.m-mode dialog[data-view=tour] .lib-tour-bust{width:52px;height:58px}
+ html.m-mode dialog[data-view=tour] .lib-tour-bust img{width:52px}
+ html.m-mode dialog[data-view=tour] .lib-tour-line span{line-height:1.25;font-size:1.15rem}
+ html.m-mode dialog[data-view=tour] .lib-tour-show{min-height:0}
+ html.m-mode dialog[data-view=tour] .lib-tour-books li{width:78px;padding:4px 2px;font-size:13px}
+ html.m-mode dialog[data-view=tour] .lib-tour-books li .ico{transform:none;margin:0}
+ html.m-mode dialog[data-view=tour] .lib-tour-steps li{padding:4px 8px;font-size:14px;gap:2px}
+ html.m-mode dialog[data-view=tour] .lib-tour-steps li .ico{transform:none;margin:0}
+ html.m-mode dialog[data-view=tour] .lib-tour-actions>button{min-height:40px}
+ html.m-mode dialog[data-view=tour] .lib-tour-first{padding:6px 14px}
+ html.m-mode dialog[data-view=tour] .lib-tour-first .lib-power-ico{width:56px;height:56px}
+ html.m-mode dialog[data-view=library] #modal-content{position:relative}
+ html.m-mode dialog[data-view=library] .library-browser{position:absolute;top:22px;left:250px;right:68px;margin:0}
+ html.m-mode dialog[data-view=unlock] .edu-unlock>:is(.edu-unlock-eyebrow,.edu-unlock-quote){display:none}
+ html.m-mode dialog[data-view=unlock] .edu-unlock>:is(.edu-unlock-desc,.edu-unlock-slot,.edu-unlock-where){grid-column:2;margin:0;text-align:center}
+ html.m-mode dialog[data-view=unlock] .edu-unlock>:is(.edu-unlock-rune,.edu-unlock-preview){grid-row:1/span 7}
+ html.m-mode dialog[data-view=unlock] .edu-unlock{padding-top:4px}
+ html.m-mode dialog[data-view=unlock] .edu-unlock .edu-unlock-name{margin:0;font-size:22px}
+ html.m-mode dialog[data-view=unlock] .edu-unlock .edu-unlock-why{margin:0}
+ html.m-mode dialog[data-view=unlock] .edu-unlock .edu-unlock-ribbon{margin:0 auto}
+ html.m-mode dialog[data-view=chapter-clear] .cc-inner{gap:2px;padding-block:2px}
+}
+/* #1: the scroll fade (R10C) on phones too, on the Library, Journal and Settings boxes while their words go on below the foot (the tour and the
+   unlock card keep their sticky buttons at the foot instead, which a fade would dim) */
+@supports (animation-timeline:scroll()){html.m-mode #modal:is([data-view=library],[data-view=journal],[data-view=settings]) :is(.library-content,#journal-body,.settings-grid){animation:r10c-cue linear both;animation-timeline:scroll(self);-webkit-mask-image:linear-gradient(#000 calc(100% - var(--r10c-cue)),transparent);mask-image:linear-gradient(#000 calc(100% - var(--r10c-cue)),transparent)}}
 /* tablets-nov2 (round 9 item 12): the tablet sweep (1024x768, 1180x820, 1280x800, 1366x1024, 1180x740 touch). A tablet is a touch screen at
    least 600 css px on its short side (ui/mobile.js tabletSize); phones in landscape are 430 px tall at most, so (min-height:600px) never
    reaches them, and every rule here sits under html.m-mode, so desktops are untouched. */

@@ -6,6 +6,9 @@ const INK='#2a1a10',SOFT='#6a5a46',GRID='#d8c79f',AXIS='#4a3a2a',COL=['#3f6fa0',
 const clamp=v=>Math.max(0,Math.min(1,v));
 const AREA=[['rgba(63,111,160,0.22)','rgba(63,111,160,0.6)'],['rgba(180,96,46,0.22)','rgba(180,96,46,0.6)'],['rgba(79,138,60,0.22)','rgba(79,138,60,0.6)'],['rgba(138,79,158,0.2)','rgba(138,79,158,0.6)']];
 const text=(c,s,x,y,size=14,{bold=false,align='center',color=INK}={})=>{c.fillStyle=color;c.font=`${bold?'bold ':''}${size}px sans-serif`;c.textAlign=align;c.textBaseline='middle';c.fillText(String(s),x,y);};
+/* improve20-r11f-nov2 #3: every k-th tick is numbered (k from 1, 2, 5, 10) so the numbers, measured at the size they are drawn (c.measureText includes a
+   fitted picture's label growth), keep 8 units between them; vertical ticks need the cap height (about 0.7 of a two-digit width) plus 6 */
+export function tickEvery(c,stepU,v0,v1,s,vertical){c.font='11px sans-serif';let need=0;for(let v=Math.ceil(v0/s)*s;v<=v1+1e-9;v+=s){const w=c.measureText(num(v)).width;need=Math.max(need,vertical?c.measureText('00').width*.7+6:w+8);}return [1,2,5,10].find(k=>k*stepU>=need)||10;}
 const num=v=>Number.isInteger(v)?`${v}`:`${Math.round(v*100)/100}`;
 /* A round grid step that gives about 4 to 12 lines across a range. */
 const stepFor=range=>[1,2,5,10,20,25,50,100,200,500,1000].find(s=>range/s<=12)||Math.ceil(range/10);
@@ -25,9 +28,12 @@ export const plot=(c,{title,x=[-10,10],y=[-10,10],lines=[],curves=[],paths=[],po
  /* axes through zero when zero is in range, else along the low edge */
  const ax=x0v<=0&&x1v>=0?X(0):L,ay=y0v<=0&&y1v>=0?Y(0):Bm;
  c.strokeStyle=AXIS;c.lineWidth=2;c.beginPath();c.moveTo(L,ay);c.lineTo(R,ay);c.moveTo(ax,T);c.lineTo(ax,Bm);c.stroke();
- for(let v=Math.ceil(x0v/sx)*sx;v<=x1v+1e-9;v+=sx)if(v!==0||ay===Bm)text(c,num(v),X(v),Math.min(Bm+10,ay+12),11,{color:SOFT});
- for(let v=Math.ceil(y0v/sy)*sy;v<=y1v+1e-9;v+=sy)if(v!==0||ax===L)text(c,num(v),Math.max(L-6,ax-6),Y(v),11,{align:'right',color:SOFT});
- text(c,'x',R+8,ay,12,{bold:true,color:SOFT});text(c,'y',ax,T-9,12,{bold:true,color:SOFT});
+ /* improve20-r11f-nov2 #3: tick numbers that would touch at the label size drawn (12 CSS px in a fitted quiz picture) label every 2nd, 5th or 10th
+    tick; every grid line stays where it is. The axis letters sit clear of the last tick and the title: x past the arrow end, y above the axis unless the title is there, then just right of the axis top. */
+ const kx=tickEvery(c,sx*(R-L)/(x1v-x0v),x0v,x1v,sx,false),ky=tickEvery(c,sy*(Bm-T)/(y1v-y0v),y0v,y1v,sy,true),on=(v,s,k)=>Math.round(v/s)%k===0;
+ for(let v=Math.ceil(x0v/sx)*sx;v<=x1v+1e-9;v+=sx)if((v!==0||ay===Bm)&&on(v,sx,kx))text(c,num(v),X(v),Math.min(Bm+10,ay+12),11,{color:SOFT});
+ for(let v=Math.ceil(y0v/sy)*sy;v<=y1v+1e-9;v+=sy)if((v!==0||ax===L)&&on(v,sy,ky))text(c,num(v),Math.max(L-6,ax-6),Y(v),11,{align:'right',color:SOFT});
+ text(c,'x',R+16,ay,12,{bold:true,color:SOFT,align:'left'});{c.font='bold 16px sans-serif';const tw=title?c.measureText(String(title)).width/2+24:0;if(Math.abs(ax-320)>tw)text(c,'y',ax,T-9,12,{bold:true,color:SOFT});else text(c,'y',ax+8,T+2,12,{bold:true,color:SOFT,align:'left'});}
  /* areas, clipped to the grid, faded in under the graphs */
  if(areas.length){c.save();c.beginPath();c.rect(L,T,R-L,Bm-T);c.clip?.();c.globalAlpha=clamp(p*1.5);
   areas.forEach((a,i)=>{const col=AREA[(a.col??i)%AREA.length];c.fillStyle=col[0];c.strokeStyle=col[1];c.lineWidth=1.5;c.beginPath();a.pts.forEach(([u,v],j)=>j?c.lineTo(X(u),Y(v)):c.moveTo(X(u),Y(v)));c.closePath();c.fill();if(a.edge!==false)c.stroke();});

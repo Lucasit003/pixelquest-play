@@ -159,7 +159,8 @@ const upgradeFirst=(save,n)=>{const u=n&&firstUpgrade(save);return u?{id:'first-
    then. Then the prologue names the power to try, and after the prologue the first lesson step names the NEXT power and the topic that wakes
    it. Step ids: 'awaken' is new (npcs.js reads it); the rest keep theirs. An older save never sees any of this (no save.opening). */
 const starterName=save=>starterOf(save?.hero)?.name||'your first power';
-export function awakenStep(save,room){const n=starterName(save);return {id:'awaken',text:room==='library'?`Learn your first power, ${n}: start the short lesson.`:`Go to the Library: learn your first power, ${n}!`,target:{kind:'library'}};}
+/* improve20-r11f-nov2 #1: phone is the phone strip's shorter wording (ui/controls-tutorial.js), used only when the whole text does not fit; the power name stays */
+export function awakenStep(save,room){const n=starterName(save);return {id:'awaken',text:room==='library'?`Learn your first power, ${n}: start the short lesson.`:`Go to the Library: learn your first power, ${n}!`,...(room==='library'?{}:{phone:`Go to the Library: learn ${n}!`}),target:{kind:'library'}};}
 export function nextStep(save,{room}={}){goalSave=save;
  if(gateShut(save))return awakenStep(save,room);
  /* newplayer-oct27: after a lost first fight the HUD no longer reads as if the child had never been to the gate; it offers the Library too, as the defeat card does */

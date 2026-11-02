@@ -76,6 +76,13 @@ export const LIBRARY_YARD = {hide: s => s[3] === 116 && s[4] === 94 && Math.abs(
    tree between the Lantern Inn and the Weaponsmith, through a line of trunk/root cells with one-cell (8 px) slots. A held push toward the arrow
    caught on the slot's edges and bounced. Under the canopy (no trunk is drawn there) the cells above and below the slot open, so the pass is 48 px tall. */
 export const TREE_GAP = [[1284, 1488, 1304, 1536]];
+/* improve20-r12b-nov2 #4 (kidsim2 #10: Ivy, a joystick follower on a tablet, snagged 6 times by the big tree). A thumb is never exactly on the
+   arrow, and a push 15-30 degrees off it slid the hero along the walls by the route into one-cell slots and pockets: an 8 px slot west of
+   the tree's crown block, the pocket under that block, a notch east of it, a notch in the lane's west wall south of the tree, and the
+   gaps between the fence posts north of the Inn's lane. The
+   hero (10 px wide) could not pass any of them, so a held push stopped there. Those cells are walls now (collision only; the art is unchanged),
+   so the walls along the route are flush and a held push slides along them. Scan: tools/sim/improve20-r12b-nov2-scan.mjs. */
+export const ROUTE_FILL = [[1248, 1472, 1256, 1480], [1248, 1480, 1288, 1488], [1304, 1472, 1320, 1480], [1048, 1400, 1192, 1408], [888, 1400, 904, 1408], [1208, 1432, 1224, 1440], [1288, 1600, 1304, 1608]];
 export const BARRACKS = {door: 6972, img: 'barracks.png', x: 1205, y: 1950, base: 2170,
   swap: s => s[3] === 174 && s[4] === 248 && Math.abs(s[1] - 1226) < 4 && Math.abs(s[2] - 1912) < 4,
   step: s => s[5] === 2163 && (Math.abs(s[1] - 1227) < 2 || Math.abs(s[1] - 1373) < 2),
@@ -251,6 +258,7 @@ export function blockedAt(S, x, y) {
   if (gx < 0 || gy < 0 || gx >= c.w || gy >= c.h) return true;
   const i = gy * c.w + gx;
   if (restoreOf(S).block.has(i)) return true;
+  if (S.key === 'village' && ROUTE_FILL.some(([x0, y0, x1, y1]) => x >= x0 && x < x1 && y >= y0 && y < y1)) return true;
   if (S.key === 'village' && (LIBRARY_YARD.open.some(([x0, y0, x1, y1]) => x >= x0 && x < x1 && y >= y0 && y < y1) || TREE_GAP.some(([x0, y0, x1, y1]) => x >= x0 && x < x1 && y >= y0 && y < y1))) return false;
   if (S.key === 'barracks') { const inR = r => x >= r[0] && x < r[2] && y >= r[1] && y < r[3]; if (BARRACKS.roomBlock.some(inR)) return true; }
   if (S.key === 'village' && BARRACKS.block.some(([x0, y0, x1, y1]) => x >= x0 && x < x1 && y >= y0 && y < y1)) return true;

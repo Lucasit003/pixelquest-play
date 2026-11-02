@@ -133,12 +133,14 @@ const shapeAt=(ctx,kind,x,y,r,fillStyle)=>{ctx.fillStyle=fillStyle;ctx.strokeSty
  else ctx.arc(x,y,r,0,Math.PI*2);
  ctx.fill();ctx.stroke();};
 /* improve20-r11d-nov2 #2: in a fitted quiz picture (o.tight) the tiles sit closer (gap 64, not 84), so the fit can make them bigger */
-const tiles=(ctx,{seq,fill,solve},p,o={})=>{const n=seq.length,gap=Math.min(o.tight?64:84,(PIC_W-40)/n),x0=PIC_W/2-(n-1)*gap/2,shown=p*n,r=Math.min(26,gap*.34);
+/* improve20-r11f-nov2 #3: names that would touch at the size drawn (a fitted quiz picture grows them to 12 CSS px) alternate between two rows */
+const staggered=(ctx,words,gap,size=13)=>{ctx.font=`bold ${size}px sans-serif`;return words.some(w=>w!=null&&ctx.measureText(String(w)).width+6>gap);};
+const tiles=(ctx,{seq,fill,solve},p,o={})=>{const n=seq.length,gap=Math.min(o.tight?64:84,(PIC_W-40)/n),x0=PIC_W/2-(n-1)*gap/2,shown=p*n,r=Math.min(26,gap*.34),two=staggered(ctx,seq.map(t=>t==null?fill:t),gap),row=ctx.measureText('M').width*1.9;
  seq.forEach((tok,i)=>{const t=clamp(shown-i);if(t<=0)return;const x=x0+i*gap,y=120;ctx.globalAlpha=t;
   const word=tok==null?(solve&&fill?fill:'?'):tok,blank=tok==null;
   if(blank&&!(solve&&fill)){ctx.strokeStyle=INK;ctx.lineWidth=2;ctx.setLineDash?.([6,4]);ctx.strokeRect(x-r,y-r,2*r,2*r);ctx.setLineDash?.([]);ctx.fillStyle=INK;ctx.font='bold 26px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('?',x,y);}
   else shapeAt(ctx,SHAPE.has(word)?word:'circle',x,y,r,HUE[word]||'#c9ccd1');
-  if(!(blank&&!(solve&&fill)))label(ctx,word,x,y+r+22,13);
+  if(!(blank&&!(solve&&fill)))label(ctx,word,x,y+r+22+(two&&i%2?Math.max(22,row):0),13);
   ctx.globalAlpha=1;});};
 /* Compass: a rose with N, E, S, W written out, and an arrow for the way you face. turn rotates the
    arrow a quarter (right = clockwise, left = anticlockwise) or half (around) as p runs. Optional
@@ -154,7 +156,10 @@ const compass=(ctx,{face,turn,mark,from,to,dir,solve},p)=>{const cx=from?180:PIC
   ctx.beginPath();const hx=cx+Math.cos(ang)*(R-8),hy=cy+Math.sin(ang)*(R-8);ctx.moveTo(hx,hy);ctx.lineTo(hx-Math.cos(ang-.5)*18,hy-Math.sin(ang-.5)*18);ctx.lineTo(hx-Math.cos(ang+.5)*18,hy-Math.sin(ang+.5)*18);ctx.closePath();ctx.fill();
   ctx.fillStyle=INK;ctx.beginPath();ctx.arc(cx,cy,9,0,Math.PI*2);ctx.fill();}
  if(from){const off={north:[0,-1],south:[0,1],east:[1,0],west:[-1,0]}[dir],ax=470,ay=140,bx=ax+off[0]*110,by=ay+off[1]*90;
-  label(ctx,from,ax,ay,15);if(p>=.5||!solve)label(ctx,to,bx,by,15);
+  /* improve20-r11f-nov2 #3: two places side by side (east/west) touched at the size drawn; each now has a dot on the true spot, its name above (from)
+     or below (to) the dot, so the way between them still reads exactly east or west */
+  const side=off[0]!==0,dot=(x,y)=>{ctx.fillStyle=INK;ctx.beginPath();ctx.arc(x,y,5,0,Math.PI*2);ctx.fill();};
+  if(side)dot(ax,ay);label(ctx,from,ax,ay-(side?22:0),15);if(p>=.5||!solve){if(side)dot(bx,by);label(ctx,to,bx,by+(side?22:0),15);}
   if(solve&&p>=.5){ctx.strokeStyle=LEAF;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(ax+off[0]*40,ay+off[1]*18);ctx.lineTo(bx-off[0]*40,by-off[1]*18);ctx.stroke();}}};
 /* Word card: a word with its ending sliding on, the new letters in a second colour and underlined
    (so the change never rests on colour alone). With n, that many copies of the thing stand above the card.
@@ -403,10 +408,10 @@ function pixelText(ctx){
   if(pw>PIC_W-8||(pl>=4&&pl+pw<=PIC_W-4))return x;return x+(pl<4?4-pl:PIC_W-4-(pl+pw))/k;},
   over=(t,x,w,al)=>{const m=t.getTransform?.();if(!m||!base||m.b||m.c||!m.a)return false;const l=(al==='center'?x-w/2:al==='right'||al==='end'?x-w:x),pl=(m.a*l+m.e-base.e)/base.a;return pl<4||pl+w*m.a/base.a>PIC_W-4;};
  return new Proxy(ctx,{get(t,k){
-  if(k==='fillText')return (s,x,y)=>{if(mathText(String(s))){const b=fitBoost(bOf(mathPx(t.font)),mathFont(t,()=>t.measureText(String(s)).width));if(labelProbe.on)labelProbe.note(t,mathPx(t.font)*b);mathFont(t,()=>t.fillText(s,inside(t,x,t.measureText(String(s)).width,t.textAlign),y),b);return;}const f=fontOf(t.font),col=typeof t.fillStyle==='string'?t.fillStyle:INK,al=t.textAlign==='center'?'center':(t.textAlign==='right'||t.textAlign==='end')?'right':'left',bl=t.textBaseline==='middle'?'middle':(t.textBaseline==='top'||t.textBaseline==='hanging')?'top':'alphabetic';
+  if(k==='fillText')return (s,x,y)=>{if(mathText(String(s))){const b=fitBoost(bOf(mathPx(t.font)),mathFont(t,()=>t.measureText(String(s)).width));if(labelProbe.on){labelProbe.note(t,mathPx(t.font)*b);const mw=mathFont(t,()=>t.measureText(String(s)).width)*b,al=t.textAlign==='center'?'center':(t.textAlign==='right'||t.textAlign==='end')?'right':'left',bl=t.textBaseline==='middle'?'middle':(t.textBaseline==='top'||t.textBaseline==='hanging')?'top':'alphabetic';labelProbe.rect(t,inside(t,x,mw/b,t.textAlign),y,mw,mathPx(t.font)*b,al,bl,String(s));}mathFont(t,()=>t.fillText(s,inside(t,x,t.measureText(String(s)).width,t.textAlign),y),b);return;}const f=fontOf(t.font),col=typeof t.fillStyle==='string'?t.fillStyle:INK,al=t.textAlign==='center'?'center':(t.textAlign==='right'||t.textAlign==='end')?'right':'left',bl=t.textBaseline==='middle'?'middle':(t.textBaseline==='top'||t.textBaseline==='hanging')?'top':'alphabetic';
    /* 17 Oct: text never runs off the picture: a big line that would cross an edge drops to the small size, then slides inside */
    const str=String(s);let b=fitBoost(bOf(16*f.scale),runWidth(str,f)),w=runWidth(str,f)*b;if(f.scale===2&&over(t,x,w,al)){f.scale=1;b=fitBoost(bOf(16),runWidth(str,f));w=runWidth(str,f)*b;}x=inside(t,x,w,al);
-   if(labelProbe.on&&str.trim())labelProbe.note(t,16*f.scale*b);
+   if(labelProbe.on&&str.trim()){labelProbe.note(t,16*f.scale*b);labelProbe.rect(t,x,y,w,16*f.scale*b,al,bl,str);}
    if(b>1){t.save();t.translate(x,y);t.scale(b,b);const ok=drawRun(t,str,0,0,{scale:f.scale,bold:f.bold,color:col,outline:null,align:al,baseline:bl});t.restore();if(ok===false)t.fillText(s,x,y);return;}
    if(drawRun(t,str,x,y,{scale:f.scale,bold:f.bold,color:col,outline:null,align:al,baseline:bl})===false)t.fillText(s,x,y);};
   if(k==='measureText')return s=>{if(mathText(String(s))){const w=mathFont(t,()=>t.measureText(s).width);return {width:w*fitBoost(bOf(mathPx(t.font)),w)};}const f=fontOf(t.font),w=runWidth(String(s),f);return {width:w*fitBoost(bOf(16*f.scale),w)};};
@@ -433,7 +438,10 @@ export function fitOf(list,o={}){let key;try{key=JSON.stringify(stripPic(list));
  if(FITS.size>200)FITS.delete(FITS.keys().next().value);FITS.set(key,out);return out;}
 /* improve20-r11d-nov2 #2: a probe for tests and the browser check: the smallest label drawn, in CSS px of its font's em (needs ctx.pqDev,
    device px per CSS px, which crispCtx sets) */
-export const labelProbe={on:false,min:Infinity,list:[],reset(){this.on=true;this.min=Infinity;this.list=[];},note(t,em){const m=t.getTransform?.(),dev=t.pqDev||1,px=em*Math.hypot(m?.a||1,m?.b||0)/dev;this.list.push(px);if(px<this.min)this.min=px;}};
+/* improve20-r11f-nov2 #3: rect() also keeps each unrotated label's box in CSS px (x, y, w, h, the text), for the overlap sweep
+   (tools/sim/improve20-r11f-nov2-shots.mjs labels; tests/improve20-r11f-nov2.test.js). h is the pixel font's cap band (cap top to baseline: rows 3-13 of its 16, ascent 13), so a descender over the next line's cap top is not counted. */
+export const labelProbe={on:false,min:Infinity,list:[],rects:[],reset(){this.on=true;this.min=Infinity;this.list=[];this.rects=[];},note(t,em){const m=t.getTransform?.(),dev=t.pqDev||1,px=em*Math.hypot(m?.a||1,m?.b||0)/dev;this.list.push(px);if(px<this.min)this.min=px;},
+ rect(t,x,y,w,em,al,bl,text){const m=t.getTransform?.();if(!m||m.b||m.c||!t.pqDev)return;/* live canvases only (crispCtx sets pqDev), not fitOf's off-screen ink pass */const dev=t.pqDev||1,l=al==='center'?x-w/2:al==='right'?x-w:x,base=bl==='top'?y+em*13/16:bl==='middle'?y+em*5/16:y,top=base-em*10/16,h=em*10/16;this.rects.push({x:(m.a*l+m.e)/dev,y:(m.d*top+m.f)/dev,w:w*m.a/dev,h:h*m.d/dev,text});}};
 export function drawPic(ctx,pic,p=1,o={}){const list=Array.isArray(pic)?pic:[pic],q=o.reduced?1:clamp(p);
  ctx.save();loadCanvasUI();ctx.fillStyle=PAPER;ctx.fillRect(0,0,PIC_W,PIC_H);drawPanel(ctx,'parchment',0,0,PIC_W,PIC_H,{scale:2});
  const fitOn=!!(o.fit??ctx.pqFit)&&!list.some(x=>x?.t==='theater');if(fitOn)o={...o,tight:true};const fit=fitOn?fitOf(list,o):null,u0=ctx.pqUnit,c0=ctx.pqCss;fitLast=fit;

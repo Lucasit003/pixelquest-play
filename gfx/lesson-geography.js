@@ -23,12 +23,13 @@ export const gridmap=(c,{cols=5,rows=5,marks=[],key=[],start,startLabel='S',path
  if(!key.length){text(c,start?(startLabel==='E'?'E = end':'S = start'):highlight?'Outlined square = target':'Letter first, number second',445,151);text(c,'North is at the top',445,180);}
 };
 export const contours=(c,{base=20,interval=10,lines=4,blank=-1,hidden=[],showInterval=true,gap=55,compare},p)=>{
- const panel=(x,width,spacing,name)=>{text(c,name,x+width/2,22,17);for(let i=0;i<lines;i++){const xx=x+25+i*spacing;c.strokeStyle='#8a593b';c.lineWidth=3;c.beginPath();c.moveTo(xx,61);c.lineTo(xx,190);c.stroke();text(c,i===blank||hidden.includes(i)?'? m':`${base+i*interval} m`,xx,202+(i%2)*24,12);}};
- if(compare){panel(20,275,compare[0],'Slope A');panel(340,275,compare[1],'Slope B');text(c,'Same map scale and contour interval',320,265,14);}
+ /* improve20-r11f-nov2 #3: the heights under close lines take as many staggered rows (2 or 3) as their grown width needs; the caption sits below them */
+ let low=265;const panel=(x,width,spacing,name)=>{text(c,name,x+width/2,22,17);c.font='12px sans-serif';const lw=c.measureText(`${base+(lines-1)*interval} m`).width+6,rows=Math.min(3,Math.max(2,Math.ceil(lw/spacing))),dy=Math.max(24,c.measureText('M').width*1.6),dy2=rows>2?Math.min(dy,27):dy;low=Math.min(272,Math.max(low,202+(rows-1)*dy2+Math.max(24,dy*.9)));for(let i=0;i<lines;i++){const xx=x+25+i*spacing;c.strokeStyle='#8a593b';c.lineWidth=3;c.beginPath();c.moveTo(xx,61);c.lineTo(xx,190);c.stroke();text(c,i===blank||hidden.includes(i)?'? m':`${base+i*interval} m`,xx,202+(i%rows)*dy2,12);}};
+ if(compare){panel(20,275,compare[0],'Slope A');panel(340,275,compare[1],'Slope B');text(c,'Same map scale and contour interval',320,low,14);}
  /* improve20-g-nov1 #15 (audit5 b5): a hill seen from above is nested closed rings, the lowest outside and the highest round the top, not
     straight lines (kids did not see a hill in them). Each ring's height sits on a paper tag on its right-hand side. */
  else{text(c,'Contour lines: a hill seen from above',320,20,17);const cx=300,cy=142;for(let i=0;i<lines;i++){const rx=250-i*(200/Math.max(1,lines)),ry=100-i*(80/Math.max(1,lines));c.strokeStyle='#8a593b';c.lineWidth=3;c.beginPath();c.ellipse(cx-i*6,cy+i*3,rx,ry,0,0,Math.PI*2);c.stroke();
-  const t=i===blank||hidden.includes(i)?'? m':`${base+i*interval} m`,tx=cx-i*6+rx,ty=cy+i*3;c.fillStyle=paper;c.fillRect(tx-24,ty-11,48,22);c.strokeStyle=ink;c.lineWidth=1;c.strokeRect(tx-24,ty-11,48,22);text(c,t,tx,ty,13);}
+  /* improve20-r11f-nov2 #3: when neighbouring tags would touch at the size drawn, every other ring carries its tag on its left-hand side (still on its own ring) */c.font='13px sans-serif';const alt=c.measureText('100 m').width+6>200/Math.max(1,lines)-6;const t=i===blank||hidden.includes(i)?'? m':`${base+i*interval} m`,tx=cx-i*6+(alt&&i%2?-rx:rx),ty=cy+i*3;c.fillStyle=paper;c.fillRect(tx-24,ty-11,48,22);c.strokeStyle=ink;c.lineWidth=1;c.strokeRect(tx-24,ty-11,48,22);text(c,t,tx,ty,13);}
  text(c,showInterval?`Contour interval: ${interval} m`:'Equal elevation steps between neighboring lines',320,265,15);}
 };
 export const rainfall=(c,{values,labels=['Apr','May','Jun'],title='Fictional rainfall record (mm)'},p)=>{
@@ -50,13 +51,18 @@ export const sites=(c,{a,b,criteria},p)=>{
 };
 /* lines: a simplified globe grid. axis 'lat' draws parallels 70°S-70°N; 'lon' draws meridians 90°W-90°E. places:[{name,deg}] (south/west negative). */
 const deg=(d,axis)=>d===0?(axis==='lat'?'0° equator':'0° prime meridian'):`${Math.abs(d)}°${axis==='lat'?(d>0?'N':'S'):(d>0?'E':'W')}`;
+/* improve20-r11f-nov2 #3: at the size drawn (12 CSS px in a fitted quiz picture) the degree numbers touched. Latitude: every line keeps its number,
+   in two staggered columns (odd tens left, even tens right; the equator reads 0° with "equator" written on its red line), each on its line's
+   true height. Longitude: every 2nd meridian is numbered (30°; the prime meridian and any line a place sits on always), every line still drawn
+   where it is. A place's name sits right of its dot, clear of the title and the next line's number. */
+const beside=(c,s,x,y,size=13)=>{c.fillStyle=ink;c.font=`${size}px sans-serif`;c.textAlign='left';c.textBaseline='middle';c.fillText(String(s),x,y);};
 export const lines=(c,{axis='lat',places=[]},p)=>{
- if(axis==='lat'){const y=d=>150-d*1.7;text(c,'Lines of latitude (simplified; north at the top)',370,11,13);
-  for(let d=-70;d<=70;d+=10){c.strokeStyle=d?'#b9c2c8':'#b14432';c.lineWidth=d?1:3;c.beginPath();c.moveTo(120,y(d));c.lineTo(620,y(d));c.stroke();text(c,deg(d,'lat'),62,y(d),d?10:12);}
-  places.forEach((q,i)=>{const x=190+i*(400/Math.max(1,places.length-1||1));if(i/places.length>p)return;symbol(c,'circle',x,y(q.deg));text(c,q.name,x,y(q.deg)-17,13);});}
- else {const x=d=>320+d*3.2;text(c,'Lines of longitude (simplified; east to the right)',320,14,15);
-  for(let d=-90;d<=90;d+=15){c.strokeStyle=d?'#b9c2c8':'#b14432';c.lineWidth=d?1:3;c.beginPath();c.moveTo(x(d),36);c.lineTo(x(d),236);c.stroke();text(c,d?deg(d,'lon'):'0°',x(d),250,11);}
-  text(c,'prime meridian',x(0),268,11);
+ if(axis==='lat'){const y=d=>150-d*1.7;text(c,'Lines of latitude (simplified; north at the top)',370,11,13);c.font='10px sans-serif';const two=c.measureText('00').width*.7+4>17,lw=c.measureText('70°S').width,x0=two?Math.max(120,Math.round(12+2*lw+8)):120;
+  for(let d=-70;d<=70;d+=10){c.strokeStyle=d?'#b9c2c8':'#b14432';c.lineWidth=d?1:3;c.beginPath();c.moveTo(x0,y(d));c.lineTo(620,y(d));c.stroke();if(!two)text(c,deg(d,'lat'),62,y(d),d?10:12);else{text(c,d?deg(d,'lat'):'0°',(d/10)%2?6+lw/2:x0-6-lw/2,y(d),d?10:12);if(!d){const r=places.some((q,i)=>i===0&&Math.abs(q.deg)<=10);c.fillStyle='#b14432';c.font='10px sans-serif';c.textAlign=r?'right':'left';c.textBaseline='middle';c.fillText('equator',r?616:x0+4,y(d)-11);}}}
+  places.forEach((q,i)=>{const x=190+i*(400/Math.max(1,places.length-1||1));if(i/places.length>p)return;symbol(c,'circle',x,y(q.deg));beside(c,q.name,x+14,y(q.deg)+(q.deg>=60?9:-9));});}
+ else {const x=d=>320+d*3.2;text(c,'Lines of longitude (simplified; east to the right)',320,14,15);c.font='11px sans-serif';const k=c.measureText('90°W').width+6>48?2:1,pm=places[0]?.deg%30?15:0;
+  let lowPrev=null;for(let d=-90;d<=90;d+=15){c.strokeStyle=d?'#b9c2c8':'#b14432';c.lineWidth=d?1:3;c.beginPath();c.moveTo(x(d),36);c.lineTo(x(d),236);c.stroke();const zl=k===2&&pm&&places.some(q=>Math.abs(q.deg)===15);if((d?places.some(q=>q.deg===d):!zl)||((d-pm)/15)%k===0&&!(k===2&&pm&&Math.abs(d)===15)&&!(k===2&&places.some(q=>Math.abs(q.deg-d)===15))){/* two numbered lines side by side (two places 15° apart) take two rows */const low=k===2&&lowPrev===d-15;text(c,d?deg(d,'lon'):'0°',x(d),low?262:250,11);lowPrev=low?null:d;}}
+  /* the 0° moves down into the prime meridian's caption when a place's line beside it is numbered */text(c,k===2&&pm&&places.some(q=>Math.abs(q.deg)===15)?'0° prime meridian':'prime meridian',x(0),268,11);
   places.forEach((q,i)=>{const y=70+i*(140/Math.max(1,places.length-1||1));if(i/places.length>p)return;symbol(c,'circle',x(q.deg),y);text(c,q.name,x(q.deg),y-17,13);});}
 };
 /* A geographic map, not invented teaching coordinates. Regional crops preserve Natural Earth

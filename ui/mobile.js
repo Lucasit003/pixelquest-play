@@ -215,3 +215,7 @@ export function bannerSpot(x0,y0,w,h,W,H,hero,under=true){if(!hero)return null;c
 /* A door plate (#prompt, anchored by its bottom centre) that a short phone's floor (the goal strip) kept on the hero's head: under his feet
    when that fits, else beside him on the side with room. a = its box, hero = his box (both #stage px); {bottom} or {x} or null. */
 export function plateOffHero(a,hero,W,H){if(!hero||!a)return null;if(a.right<=hero.left||a.left>=hero.right||a.bottom<=hero.top+4||a.top>=hero.bottom)return null;const w=a.right-a.left,h=a.bottom-a.top,below=hero.bottom+6+h;if(below<=H-8)return {bottom:Math.round(below)};const cx=(a.left+a.right)/2,l=hero.left-8-w/2,r=hero.right+8+w/2,ok=c=>c-w/2>=8&&c+w/2<=W-8,c=ok(l)&&(cx<=(hero.left+hero.right)/2||!ok(r))?l:ok(r)?r:null;return c==null?null:{x:Math.round(c)};}
+/* improve20-r12b-nov2 #5 (kidsim2 #16): a world prompt is drawn over its spot, so at the town's edge it ran off the screen ("E West pasture lane"
+   at x = -45 at 1280x720, "E East road" 40-137 px past the right edge on a phone). The shift (dx, dy) that brings box a (stage px) inside a
+   W x H stage with an m px margin, or null when it is already inside. Run after the other rules (main.js promptInView). */
+export function clampIntoView(a,W,H,m=6){if(!a)return null;const w=a.right-a.left,h=a.bottom-a.top,dx=w>W-2*m?0:a.left<m?m-a.left:a.right>W-m?W-m-a.right:0,dy=h>H-2*m?0:a.top<m?m-a.top:a.bottom>H-m?H-m-a.bottom:0;return dx||dy?{dx:Math.round(dx),dy:Math.round(dy)}:null;}

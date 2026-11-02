@@ -133,3 +133,8 @@ html:not(.m-mode) .title-screen[data-step="look"] .creator{grid-template-columns
 /* phone look step: the stage stands 20 px taller so its hero is drawn at 3x as well (canvas 212x184) */
 .m-mode .title-screen[data-step="look"] .creator .cr-stage{height:196px;min-height:196px}
 .m-mode .title-screen[data-step="look"] .creator .cr-figure{width:212px;height:184px}
+/* improve20-r12b-nov2 #3 (kidsim2 #9): on the look step "Next →" was the narrowest button (107 px against Surprise me's 129), and a kid who
+   taps the biggest button tapped Surprise me for 15 minutes. Next is the widest button in its bar, growing to the width of "Choose this
+   hero →" (314 px) where there is room; Surprise me and Reset are the plain, smaller secondary buttons beside it */
+.title-screen[data-step="look"] .hero-look-actions>[data-title=setup]{flex:1 1 auto;min-width:160px;max-width:314px;white-space:nowrap}
+.title-screen[data-step="look"] .hero-look-actions .cr-actions button{font-size:15px;padding-inline:12px}

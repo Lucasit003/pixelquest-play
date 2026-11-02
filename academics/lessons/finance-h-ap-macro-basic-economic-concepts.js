@@ -24,9 +24,10 @@ const gx=(title,{xm,ym,xl,yl,tx=[],ty=[],yf=v=>String(v),paths=[],dots=[],drops=
  drops.forEach((n,k)=>{const [px,py]=pts[n];pts['K'+k]=[px,0];pts['L'+k]=[0,py];hide.push('K'+k,'L'+k);segs.push({v:`${n}K${k}`,col:'#6a5a46',w:2,dash:true},{v:`${n}L${k}`,col:'#6a5a46',w:2,dash:true});});
  gaps.forEach((g,k)=>{pts['M'+k]=[X(g.x1),Y(g.y)];pts['N'+k]=[X(g.x2),Y(g.y)];hide.push('M'+k,'N'+k);segs.push({v:`M${k}N${k}`,col:g.col??4,w:5,label:g.label,side:g.side});});
  tx.forEach(v=>nt.push({at:[X(v),-1],text:String(v)}));ty.forEach(v=>nt.push({at:[-1.7,Y(v)],text:yf(v)}));
- nt.push({at:[W/2,-2.5],text:xl},{at:[0.5,H+1.9],text:yl});
+ /* improve20-r11f-nov2 #3: the x-axis title sits a row lower (-3.3, view to -4.4) so the tick numbers, grown to 12 CSS px in a quiz picture, clear it */
+ nt.push({at:[W/2,-3.3],text:xl},{at:[0.5,H+1.9],text:yl});
  notes.forEach(n=>nt.push({at:[X(n.at[0]),Y(n.at[1])],text:n.text,col:n.col}));
- return fig(title,{view:[-4,W+3,-3.6,H+2.8],pts,dots:dots.map(d=>d.n).join(''),hide:hide.join(''),segs,notes:nt});};
+ return fig(title,{view:[-4,W+3,-4.4,H+2.8],pts,dots:dots.map(d=>d.n).join(''),hide:hide.join(''),segs,notes:nt});};
 /* the part of the line Q = k + m·P that lies inside the graph [0, xm] x [0, ym], as two [Q, P] points, low price first */
 const lineQ=(k,m,xm,ym)=>{const p0=-k/m,p1=(xm-k)/m,lo=Math.max(0,Math.min(p0,p1)),hi=Math.min(ym,Math.max(p0,p1));return [[k+m*lo,lo],[k+m*hi,hi]];};
 const nice=v=>{const e=10**Math.floor(Math.log10(v)),m=v/e;return ([1,2,2.5,3,4,5,6,8,10].find(s=>m<=s+1e-9)||10)*e;};

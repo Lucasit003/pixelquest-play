@@ -12,11 +12,17 @@ const clamp=v=>Math.max(0,Math.min(1,v));
 const text=(c,s,x,y,size=13,{bold=false,align='center',color=INK}={})=>{c.fillStyle=color;c.font=`${bold?'bold ':''}${size}px sans-serif`;c.textAlign=align;c.textBaseline='middle';c.fillText(String(s),x,y);};
 const num=v=>Number.isInteger(v)?`${v}`:`${Math.round(v*100)/100}`;
 const stepFor=range=>[1,2,5,10,20,25,50,100,200,500,1000].find(s=>range/s<=10)||Math.ceil(range/10);
+/* improve20-r11f-nov2 #3: every k-th tick or bin edge is numbered (k from 1, 2, 5, 10) so the numbers, measured at the size drawn (a fitted quiz
+   picture's labels grow to 12 CSS px), keep 8 units apart; every tick stays where it is. The axis title sits a row lower (B+34) so it clears
+   the grown numbers, and crowded category labels alternate between two rows. */
+const every=(c,vals,stepU)=>{c.font='11px sans-serif';const need=Math.max(0,...vals.map(v=>c.measureText(num(v)).width))+8;return [1,2,5,10].find(k=>k*stepU>=need)||10;};
+const everyY=(c,stepU)=>{c.font='11px sans-serif';const need=c.measureText('00').width*.7+6;return [1,2,5,10].find(k=>k*stepU>=need)||10;};
+const crowded=(c,labels,w)=>{c.font='12px sans-serif';return labels.some(l=>c.measureText(String(l)).width+6>w);};
 const line=(c,x0,y0,x1,y1,col=AXIS,w=2,dash)=>{c.strokeStyle=col;c.lineWidth=w;c.setLineDash?.(dash?[6,5]:[]);c.beginPath();c.moveTo(x0,y0);c.lineTo(x1,y1);c.stroke();c.setLineDash?.([]);};
 
 /* a number line from a to b across [L, R] at height y, with round tick numbers below it */
-function axis(c,a,b,L,R,y){const X=v=>L+(v-a)/(b-a)*(R-L),st=stepFor(b-a);line(c,L,y,R,y);
- for(let v=Math.ceil(a/st)*st;v<=b+1e-9;v+=st){line(c,X(v),y-4,X(v),y+4,AXIS,1.5);text(c,num(v),X(v),y+14,11,{color:SOFT});}return X;}
+function axis(c,a,b,L,R,y){const X=v=>L+(v-a)/(b-a)*(R-L),st=stepFor(b-a),vs=[];for(let v=Math.ceil(a/st)*st;v<=b+1e-9;v+=st)vs.push(v);const k=every(c,vs,st*(R-L)/(b-a));line(c,L,y,R,y);
+ for(const v of vs){line(c,X(v),y-4,X(v),y+4,AXIS,1.5);if(Math.round(v/st)%k===0)text(c,num(v),X(v),y+14,11,{color:SOFT});}return X;}
 
 function box(c,q,p,L,R,T){const [a,b]=q.axis,yA=232,X=axis(c,a,b,L,R,yA),[mn,q1,md,q3,mx]=q.five,yb=T+(yA-T)*0.55,h=Math.min(46,(yA-T)*0.5),grow=clamp(p/0.6);
  /* everything opens out from the median */
@@ -24,7 +30,7 @@ function box(c,q,p,L,R,T){const [a,b]=q.axis,yA=232,X=axis(c,a,b,L,R,yA),[mn,q1,
  c.fillStyle='rgba(63,111,160,0.16)';c.fillRect(at(q1),yb-h/2,at(q3)-at(q1),h);c.strokeStyle=BLUE;c.lineWidth=2.5;c.strokeRect(at(q1),yb-h/2,at(q3)-at(q1),h);
  line(c,at(mn),yb,at(q1),yb,BLUE,2.5);line(c,at(q3),yb,at(mx),yb,BLUE,2.5);line(c,at(mn),yb-h/4,at(mn),yb+h/4,BLUE,2.5);line(c,at(mx),yb-h/4,at(mx),yb+h/4,BLUE,2.5);line(c,X(md),yb-h/2,X(md),yb+h/2,ORANGE,3.5);
  if(p>=0.6){c.globalAlpha=clamp((p-0.6)/0.25);
-  if(q.labels!==false)[[mn,'min'],[q1,'Q1'],[md,'median'],[q3,'Q3'],[mx,'max']].forEach(([v,n],i)=>text(c,`${n} ${num(v)}`,X(v),yb-h/2-12-(i%2)*14,12,{bold:true,color:n==='median'?ORANGE:BLUE}));
+  if(q.labels!==false){/* improve20-r11f-nov2 #3: the two label rows sit a grown label's height apart (14 units at lesson size) */c.font='bold 12px sans-serif';const st=Math.max(14,c.measureText('M').width*1.6);[[mn,'min'],[q1,'Q1'],[md,'median'],[q3,'Q3'],[mx,'max']].forEach(([v,n],i)=>text(c,`${n} ${num(v)}`,X(v),yb-h/2-12-(i%2)*st,12,{bold:true,color:n==='median'?ORANGE:BLUE}));}
   for(const v of q.values||[])/* the data themselves, as a dot strip under the box */{c.fillStyle=SOFT;c.beginPath();c.arc(X(v),yb+h/2+12,3.5,0,Math.PI*2);c.fill();}
   for(const v of q.outliers||[]){c.strokeStyle=RED;c.lineWidth=2;c.beginPath();c.arc(X(v),yb,5,0,Math.PI*2);c.stroke();text(c,num(v),X(v),yb-16,12,{bold:true,color:RED});}
   for(const v of q.fences||[]){line(c,X(v),T+4,X(v),yA-6,RED,1.5,true);text(c,`fence ${num(v)}`,X(v),T-2,11,{bold:true,color:RED});}
@@ -32,18 +38,18 @@ function box(c,q,p,L,R,T){const [a,b]=q.axis,yA=232,X=axis(c,a,b,L,R,yA),[mn,q1,
 
 function hist(c,q,p,L,R,T){const bins=q.bins,lo=bins[0][0],hi=bins.at(-1)[1],top=Math.max(...bins.map(b=>b[2])),ymax=Math.ceil(top/stepFor(top))*stepFor(top)||1,B=226,Lx=L+26;
  const X=v=>Lx+(v-lo)/(hi-lo)*(R-Lx),Y=v=>B-v/ymax*(B-T-8),sy=stepFor(ymax);
- for(let v=sy;v<=ymax+1e-9;v+=sy){line(c,Lx,Y(v),R,Y(v),GRID,1);text(c,num(v),Lx-6,Y(v),11,{align:'right',color:SOFT});}
+ {const k=everyY(c,Y(0)-Y(sy));for(let v=sy;v<=ymax+1e-9;v+=sy){line(c,Lx,Y(v),R,Y(v),GRID,1);if(Math.round(v/sy)%k===0)text(c,num(v),Lx-6,Y(v),11,{align:'right',color:SOFT});}}
  bins.forEach(([a,b,n],i)=>{const g=clamp(p/0.8*bins.length-i);if(g<=0)return;const y=B-(B-Y(n))*g;c.fillStyle='rgba(63,111,160,0.55)';c.fillRect(X(a),y,X(b)-X(a),B-y);c.strokeStyle=BLUE;c.lineWidth=2;c.strokeRect(X(a),y,X(b)-X(a),B-y);
   if(g>=1)text(c,n,(X(a)+X(b))/2,y-9,12,{bold:true});});
  line(c,Lx,B,R,B);line(c,Lx,B,Lx,T);
- for(const v of [...new Set(bins.flatMap(b=>[b[0],b[1]]))])text(c,num(v),X(v),B+12,11,{color:SOFT});
- if(q.xlabel)text(c,q.xlabel,(Lx+R)/2,B+26,12,{color:SOFT});}
+ {const es=[...new Set(bins.flatMap(b=>[b[0],b[1]]))],k=every(c,es,Math.min(...bins.map(b=>X(b[1])-X(b[0]))));es.forEach((v,i)=>{if(i%k===0)text(c,num(v),X(v),B+12,11,{color:SOFT});});}
+ if(q.xlabel)text(c,q.xlabel,(Lx+R)/2,B+34,12,{color:SOFT});}
 
 function scatter(c,q,p,L,R,T){const [x0,x1]=q.x,[y0,y1]=q.y,B=q.xlabel?222:232,Lx=L+30,X=v=>Lx+(v-x0)/(x1-x0)*(R-Lx),Y=v=>B-(v-y0)/(y1-y0)*(B-T),sx=stepFor(x1-x0),sy=stepFor(y1-y0);
- for(let v=Math.ceil(x0/sx)*sx;v<=x1+1e-9;v+=sx){line(c,X(v),T,X(v),B,GRID,1);text(c,num(v),X(v),B+12,11,{color:SOFT});}
- for(let v=Math.ceil(y0/sy)*sy;v<=y1+1e-9;v+=sy){line(c,Lx,Y(v),R,Y(v),GRID,1);text(c,num(v),Lx-6,Y(v),11,{align:'right',color:SOFT});}
+ {const vs=[];for(let v=Math.ceil(x0/sx)*sx;v<=x1+1e-9;v+=sx)vs.push(v);const k=every(c,vs,sx*(R-Lx)/(x1-x0));for(const v of vs){line(c,X(v),T,X(v),B,GRID,1);if(Math.round(v/sx)%k===0)text(c,num(v),X(v),B+12,11,{color:SOFT});}}
+ {const k=everyY(c,Y(0)-Y(sy));for(let v=Math.ceil(y0/sy)*sy;v<=y1+1e-9;v+=sy){line(c,Lx,Y(v),R,Y(v),GRID,1);if(Math.round(v/sy)%k===0&&!(v===y0&&x0===0&&y0===0))text(c,num(v),Lx-6,Y(v),11,{align:'right',color:SOFT});}}
  line(c,Lx,B,R,B);line(c,Lx,B,Lx,T);
- if(q.xlabel)text(c,q.xlabel,(Lx+R)/2,B+26,12,{color:SOFT});
+ if(q.xlabel)text(c,q.xlabel,(Lx+R)/2,B+34,12,{color:SOFT});
  if(q.ylabel){c.save();c.translate(L+6,(T+B)/2);c.rotate?.(-Math.PI/2);text(c,q.ylabel,0,0,12,{color:SOFT});c.restore();}
  const pts=q.points||[],shown=Math.floor(clamp(p/0.6)*pts.length+1e-9);
  pts.slice(0,shown).forEach(([x,y])=>{c.fillStyle=BLUE;c.beginPath();c.arc(X(x),Y(y),4.5,0,Math.PI*2);c.fill();});
@@ -54,9 +60,9 @@ function scatter(c,q,p,L,R,T){const [x0,x1]=q.x,[y0,y1]=q.y,B=q.xlabel?222:232,L
 
 /* bars: labelled bars for categories, negative values below the axis: bars:[{label,value,col?}], unit?:'$', show values */
 function catbars(c,q,p,L,R,T){const bs=q.bars||[],vals=bs.map(b=>b.value),hi=Math.max(0,...vals),lo=Math.min(0,...vals),span=(hi-lo)||1,B=222,Y=v=>B-(v-lo)/span*(B-T-14),zero=Y(0),w=(R-L-20)/bs.length,cols=[BLUE,ORANGE,GREEN,'#8a4f9e',RED];
- line(c,L,zero,R,zero);
+ line(c,L,zero,R,zero);const two=crowded(c,bs.map(b=>b.label),w);
  bs.forEach((b,i)=>{const g=clamp(p/0.8*bs.length-i);const x=L+10+i*w+w*0.15,bw=w*0.7,top=zero+(Y(b.value)-zero)*g;c.fillStyle=typeof b.col==='string'?b.col:cols[(b.col??i)%cols.length];c.globalAlpha=0.75;c.fillRect(x,Math.min(zero,top),bw,Math.abs(top-zero));c.globalAlpha=1;
-  text(c,b.label,x+bw/2,B+(lo<0?28:14),12,{color:SOFT});if(g>=1)text(c,`${q.unit||''}${b.value<0?'-':''}${(q.unit?Math.abs(b.value):Math.abs(b.value)).toLocaleString('en-US')}${q.suffix||''}`,x+bw/2,b.value<0?top+11:top-10,12,{bold:true});});}
+  text(c,b.label,x+bw/2,B+(lo<0?28:14)+(two&&i%2?22:0),12,{color:SOFT});if(g>=1)text(c,`${q.unit||''}${b.value<0?'-':''}${(q.unit?Math.abs(b.value):Math.abs(b.value)).toLocaleString('en-US')}${q.suffix||''}`,x+bw/2,b.value<0?top+11:top-10,12,{bold:true});});}
 
 /* numline: one or more number lines, each with an inequality drawn on it: a ray from a dot, or a span between two dots.
    A closed dot is included (≤, ≥), an open dot is not (<, >). rows:[{label, ray:{at,dir:'left'|'right',closed}} or
