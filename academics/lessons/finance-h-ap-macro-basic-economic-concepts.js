@@ -33,8 +33,9 @@ const lineQ=(k,m,xm,ym)=>{const p0=-k/m,p1=(xm-k)/m,lo=Math.max(0,Math.min(p0,p1
 const nice=v=>{const e=10**Math.floor(Math.log10(v)),m=v/e;return ([1,2,2.5,3,4,5,6,8,10].find(s=>m<=s+1e-9)||10)*e;};
 const sup=(c,d)=>c<0?`${d}P - ${-c}`:c>0?`${d}P + ${c}`:`${d}P`;
 /* a market drawn from its two equations, with no equilibrium marked */
+/* picframe-nov2 #2 (R11F's finance-5 "D" against "Price ($)"): the D tag sat above the curve's top end, under the axis title; it now sits beside the curve 18% of the way down (picture data only: no prompt, so no question id, changes) */
 const mkt=(a,b,c,d,title='A fictional market')=>{const P=(a-c)/(b+d),Q=a-b*P,ym=nice(P*2),xm=nice(Q*2),pd=lineQ(a,-b,xm,ym),ps=lineQ(c,d,xm,ym);
- return gx(title,{xm,ym,xl:'Quantity',yl:'Price ($)',tx:[1,2,3,4,5].map(i=>xm*i/5),ty:[1,2,3,4,5].map(i=>ym*i/5),paths:[{pts:pd,col:0,tag:[pd[1][0]+xm*0.05,pd[1][1]+ym*0.06,'D']},{pts:ps,col:1,tag:[ps[1][0]+xm*0.04,ps[1][1]+ym*0.06,'S']}]});};
+ return gx(title,{xm,ym,xl:'Quantity',yl:'Price ($)',tx:[1,2,3,4,5].map(i=>xm*i/5),ty:[1,2,3,4,5].map(i=>ym*i/5),paths:[{pts:pd,col:0,tag:[pd[1][0]+(pd[0][0]-pd[1][0])*0.18+xm*0.04,pd[1][1]+(pd[0][1]-pd[1][1])*0.18+ym*0.06,'D']},{pts:ps,col:1,tag:[ps[1][0]+xm*0.04,ps[1][1]+ym*0.06,'S']}]});};
 /* what is made in the picture of the PPC steps: phones against wheat, y = 100 - 0.25x^2 */
 const PPC=Array.from({length:21},(_,x)=>[x,100-0.25*x*x]),PPC2=Array.from({length:24},(_,x)=>[x,140-0.25*x*x]);
 /* the market of the worked examples: Qd = 100 - 10P, Qs = 20P - 20 (equilibrium $4 and 60) */

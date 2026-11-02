@@ -33,7 +33,7 @@ export const plot=(c,{title,x=[-10,10],y=[-10,10],lines=[],curves=[],paths=[],po
  const kx=tickEvery(c,sx*(R-L)/(x1v-x0v),x0v,x1v,sx,false),ky=tickEvery(c,sy*(Bm-T)/(y1v-y0v),y0v,y1v,sy,true),on=(v,s,k)=>Math.round(v/s)%k===0;
  for(let v=Math.ceil(x0v/sx)*sx;v<=x1v+1e-9;v+=sx)if((v!==0||ay===Bm)&&on(v,sx,kx))text(c,num(v),X(v),Math.min(Bm+10,ay+12),11,{color:SOFT});
  for(let v=Math.ceil(y0v/sy)*sy;v<=y1v+1e-9;v+=sy)if((v!==0||ax===L)&&on(v,sy,ky))text(c,num(v),Math.max(L-6,ax-6),Y(v),11,{align:'right',color:SOFT});
- text(c,'x',R+16,ay,12,{bold:true,color:SOFT,align:'left'});{c.font='bold 16px sans-serif';const tw=title?c.measureText(String(title)).width/2+24:0;if(Math.abs(ax-320)>tw)text(c,'y',ax,T-9,12,{bold:true,color:SOFT});else text(c,'y',ax+8,T+2,12,{bold:true,color:SOFT,align:'left'});}
+ text(c,'x',R+16,ay,12,{bold:true,color:SOFT,align:'left'});{c.font='bold 16px sans-serif';const tw=title?c.measureText(String(title)).width/2+24:0;var yBox;c.font='bold 12px sans-serif';const yw=c.measureText('y').width,yh=Math.max(8,c.measureText('0').width/7*6);if(Math.abs(ax-320)>tw){text(c,'y',ax,T-9,12,{bold:true,color:SOFT});yBox=[ax-yw/2-3,T-9-yh,ax+yw/2+3,T-9+yh];}else{text(c,'y',ax+8,T+2,12,{bold:true,color:SOFT,align:'left'});yBox=[ax+5,T+2-yh,ax+8+yw+3,T+2+yh];}}
  /* areas, clipped to the grid, faded in under the graphs */
  if(areas.length){c.save();c.beginPath();c.rect(L,T,R-L,Bm-T);c.clip?.();c.globalAlpha=clamp(p*1.5);
   areas.forEach((a,i)=>{const col=AREA[(a.col??i)%AREA.length];c.fillStyle=col[0];c.strokeStyle=col[1];c.lineWidth=1.5;c.beginPath();a.pts.forEach(([u,v],j)=>j?c.lineTo(X(u),Y(v)):c.moveTo(X(u),Y(v)));c.closePath();c.fill();if(a.edge!==false)c.stroke();});
@@ -45,7 +45,7 @@ export const plot=(c,{title,x=[-10,10],y=[-10,10],lines=[],curves=[],paths=[],po
  const fns=[...lines.map(l=>v=>l.m*v+l.b),...curves.map(q=>v=>q.a*(v-q.h)**2+q.k),...paths.map(q=>pathF(q.pts)),...(y0v<=0&&y1v>=0?[()=>0]:[])],cross=(bx,own)=>[own,...fns].filter(Boolean).some(g=>{for(let px=bx[0];px<=bx[2];px+=3){const py=Y(g(x0v+(px-L)/(R-L)*(x1v-x0v)));if(py>=bx[1]-3&&py<=bx[3]+3)return true;}return false;});
  const inGrid=b=>b[0]>=L-4&&b[2]<=R+4&&b[1]>=T-4&&b[3]<=Bm+4;
  /* point labels: the first corner (up-right, up-left, down-right, down-left) clear of every graph and earlier label, inside the grid */
- taken.push([ax-34,T,ax+2,Bm],[L,ay+3,R,ay+20]);
+ /* picframe-nov2 #2 (R11F's math-5 "y" against a line label, "12" against a curve label): the y letter and the y numbers' measured column (grown, as a fitted quiz picture grows them) are taken too, so a graph's label keeps clear of them */c.font='11px sans-serif';let tcw=34;for(let v=Math.ceil(y0v/sy)*sy;v<=y1v+1e-9;v+=sy)if(on(v,sy,ky))tcw=Math.max(tcw,c.measureText(num(v)).width+10);const gb=Math.max(1,c.measureText('0').width/7),lh=Math.max(10,5*gb+2);taken.push([ax-tcw,T,ax+2,Bm],[L,ay+3,R,Math.max(ay+20,ay+12+lh)],yBox);
  const ptAt=new Map();for(const pt of points){if(pt.x<x0v||pt.x>x1v||pt.y<y0v||pt.y>y1v)continue;const px=X(pt.x),py=Y(pt.y);taken.push([px-8,py-8,px+8,py+8]);}
  for(const pt of points){if(!pt.label||pt.x<x0v||pt.x>x1v||pt.y<y0v||pt.y>y1v)continue;const px=X(pt.x),py=Y(pt.y),w=W(pt.label);let first=null,pick=null;
   for(const [sx,sy] of [[1,-1],[-1,-1],[1,1],[-1,1]]){const x=sx>0?px+10:px-10-w,y=py+sy*14,b=[x,y-10,x+w,y+10];first=first||[x,y,b];if(inGrid(b)&&!hit(b)&&!cross(b)){pick=[x,y,b];break;}}
@@ -56,9 +56,11 @@ export const plot=(c,{title,x=[-10,10],y=[-10,10],lines=[],curves=[],paths=[],po
   const n=240;let started=false;for(let i=0;i<=n;i++){const xv=x0v+(xEnd-x0v)*i/n,yv=f(xv);if(!Number.isFinite(yv))continue;const px=X(xv),py=Y(yv);if(!started){c.moveTo(px,py);started=true;}else c.lineTo(px,py);}
   c.stroke();c.restore();
   if(label&&p>=1){/* label near the right end of the graph (a path may stop short of the grid's edge), inside the grid, clear of the taken boxes */const w=W(label),at=fr=>{const xv=Math.min(x1v-(x1v-x0v)*fr,lastX-(x1v-x0v)*0.05),yv=Math.max(y0v,Math.min(y1v,f(xv)));return [Math.max(L+w/2+2,Math.min(R-w/2-2,X(xv))),Y(yv)];};
-   let best=null,first=null;pick:for(const dy of [-14,14,-30,30,-48,48])for(const fr of [0.06+0.1*k,0.16+0.1*k,0.28,0.4,0.52,0.64,0.76]){const [cx,py]=at(fr),cy=Math.max(T+10,Math.min(Bm-10,py+dy)),bx=[cx-w/2-2,cy-10,cx+w/2+2,cy+10];first=first||[cx,cy,bx];if(!hit(bx)&&!cross(bx,f)){best=[cx,cy,bx];break pick;}}
+   let best=null,first=null;pick:for(const dy of [-14,14,-30,30,-48,48])for(const fr of [0.06+0.1*k,0.16+0.1*k,0.28,0.4,0.52,0.64,0.76]){const [cx,py]=at(fr),cy=Math.max(T+10,Math.min(Bm-10,py+dy)),bx=[cx-w/2-2,cy-lh,cx+w/2+2,cy+lh];first=first||[cx,cy,bx];if(!hit(bx)&&!cross(bx,f)){best=[cx,cy,bx];break pick;}}
    /* nothing clear near the graph: the first clear spot in the grid, scanning from the top right */
-   if(!best)scan:for(let cy=T+12;cy<=Bm-12;cy+=12)for(let cx=R-w/2-4;cx>=L+w/2+4;cx-=12){const bx=[cx-w/2-2,cy-10,cx+w/2+2,cy+10];if(!hit(bx)&&!cross(bx,f)){best=[cx,cy,bx];break scan;}}
+   if(!best)scan:for(let cy=T+12;cy<=Bm-12;cy+=12)for(let cx=R-w/2-4;cx>=L+w/2+4;cx-=12){const bx=[cx-w/2-2,cy-lh,cx+w/2+2,cy+lh];if(!hit(bx)&&!cross(bx,f)){best=[cx,cy,bx];break scan;}}
+   /* picframe-nov2 #2: still nothing: the first spot clear of the taken boxes (the axis letters and numbers), even if the graph passes under it */
+   if(!best)scan2:for(let cy=T+12;cy<=Bm-12;cy+=6)for(let cx=R-w/2-4;cx>=L+w/2+4;cx-=6){const bx=[cx-w/2-2,cy-lh,cx+w/2+2,cy+lh];if(!hit(bx)){best=[cx,cy,bx];break scan2;}}
    best=best||first;taken.push(best[2]);text(c,label,best[0],best[1],13,{bold:true,color:col});}};
  lines.forEach((l,i)=>trace(v=>l.m*v+l.b,COL[i%COL.length],l.label,i,l.dash));
  curves.forEach((q,i)=>trace(v=>q.a*(v-q.h)**2+q.k,COL[(lines.length+i)%COL.length],q.label,lines.length+i));

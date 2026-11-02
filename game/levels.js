@@ -12,10 +12,13 @@
 // - par: a brisk clear time in seconds (score bonus only -- never a timer on anything).
 // - gentle: Normal keeps its original numbers (game/tiers.js NORMAL_RAMP skips it): the prologue and Goblin Camp.
 // - stars: a star gate -- the pad also needs that many stars in total, from any level and tier (see starGate).
+// - powers: a power gate (improve20-r12a-nov2) -- the pad also needs the hero's Nth ability awake, read from the ladder (see powerGate).
 // Map positions live in game/worldmap-layout.js (worldmap agent), keyed by these ids.
 import {stageWidth} from './stage.js';
 import {TIER_KEYS,tierOf,tierKey,tierPar,tierGold,tierXP,starsFor,STAR_PAR,STAR_CLEAN} from './tiers.js';
 import {GRADE_STARS,gradeStars} from './grade.js';
+import {ABILITIES} from './abilities.js';
+import {unlocked,xpLevel} from './math.js';
 export const CHAPTERS=[
  {id:'elderwood',name:'Elderwood',biome:'forest',blurb:'Goblins, orcs and old things in the wood.',
   pool:['goblin','slime','orc','orc-rogue','skeleton'],elites:['goblin-king','orc-warlord','minotaur']},
@@ -52,7 +55,7 @@ export const LEVELS=[
  {id:'e3',chapter:'elderwood',kind:'level',name:'Orc Warcamp',biome:'forest-warcamp',floor:'camp-mud',boss:'orc-warlord',bossName:'Gorrak the Warlord',requires:['e2'],tier:3,gap:1.2,
   blurb:'Four fights through the stockade. Orcs hit hard; let them swing first.',
   waves:[{groups:[['orc','orc-rogue','goblin'],['orc-rogue','orc','goblin']]},{groups:[['orc','orc-rogue','goblin'],['orc','goblin','orc-rogue']]},{groups:[['orc-rogue','orc','goblin'],['orc','orc','goblin']],side:'both'},{groups:[['orc-rogue','orc-rogue','goblin'],['orc','orc-rogue','orc-rogue','goblin']]},{groups:[['orc','orc-rogue','goblin'],['orc-rogue','orc-rogue','goblin']],ambush:true}],bossAdds:['orc-rogue']},
- {id:'e4',chapter:'elderwood',kind:'level',name:'Minotaur Hollow',biome:'forest-hollow',floor:'hollow-earth',boss:'minotaur',bossName:'The Hollow Minotaur',requires:['e3'],tier:4,gap:.8,
+ {id:'e4',chapter:'elderwood',kind:'level',name:'Minotaur Hollow',biome:'forest-hollow',floor:'hollow-earth',boss:'minotaur',bossName:'The Hollow Minotaur',requires:['e3'],tier:4,gap:.8,powers:2,
   blurb:'A short walk into a deep hollow, and something huge at the bottom.',
   waves:[{groups:[['orc','goblin','flying-eye'],['orc','orc-rogue','goblin','goblin']]},{groups:[['orc-rogue','orc-rogue','flying-eye'],['orc-rogue','orc','goblin','flying-eye']],side:'left'},{groups:[['orc','orc','goblin','goblin'],['orc','orc-rogue','orc','goblin','goblin']],side:'both'},{groups:[['orc','orc-rogue','goblin'],['orc','orc','goblin','flying-eye']],ambush:true}]},
  {id:'shop1',chapter:'elderwood',kind:'shop',name:'Wandering Trader',requires:['e2']},
@@ -77,7 +80,7 @@ export const LEVELS=[
   blurb:'A soft, quiet bog that is not quiet at all.',
   waves:[['sporeling','sporeling','slime'],{groups:[['sporeling','sporeling'],['slime','sporeling'],['wisp','wisp']],side:'both'},[E('slime-king'),'sporeling']],bossAdds:['sporeling','sporeling','sporeling']},
  // --- Emberkeep: seven boss levels, a trader, an arena and a side path. Tiers 9-15.
- {id:'m1',chapter:'emberkeep',kind:'level',name:'Ashen Gate',biome:'lava-gate',floor:'ash',boss:'dungeon-master',bossName:'The Dungeon Master',mini:'imp-warchief',requires:['e8'],tier:9,gap:1,stars:15,
+ {id:'m1',chapter:'emberkeep',kind:'level',name:'Ashen Gate',biome:'lava-gate',floor:'ash',boss:'dungeon-master',bossName:'The Dungeon Master',mini:'imp-warchief',requires:['e8'],tier:9,gap:1,stars:15,powers:3,
   blurb:'The keep\'s front door, and the jailer who keeps it.',
   waves:[['skeleton-warrior','skeleton'],{groups:[['imp','imp'],['skeleton-warrior','ember-lobber']],side:'both'},['fire-skeleton','ember-lobber','skeleton']],bossAdds:['skeleton-warrior']},
  {id:'m2',chapter:'emberkeep',kind:'level',name:'Cinder Forge',biome:'lava-forge',floor:'forge-plates',boss:'forge-golem',bossName:'The Forge Golem',mini:'magma-brute',requires:['m1'],tier:10,gap:.8,
@@ -104,7 +107,7 @@ export const LEVELS=[
   blurb:'Grey dunes outside the walls. Nothing grows; things still walk.',
   waves:[['ash-ghoul','skeleton','skeleton'],{groups:[['ash-ghoul'],['ash-ghoul','skeleton'],['ash-ghoul','skeleton']],side:'both'}],bossAdds:['ash-ghoul','ash-ghoul']},
  // --- The Veilmoor: seven boss levels, a trader, an arena and a side path. Tiers 16-22.
- {id:'v1',chapter:'veilmoor',kind:'level',name:'Drowned Shrine',biome:'mystic-shrine',floor:'shrine-pond',boss:'drowned-priest',bossName:'The Drowned Priest',mini:'prism-sentinel',requires:['m7'],tier:16,gap:1,stars:30,
+ {id:'v1',chapter:'veilmoor',kind:'level',name:'Drowned Shrine',biome:'mystic-shrine',floor:'shrine-pond',boss:'drowned-priest',bossName:'The Drowned Priest',mini:'prism-sentinel',requires:['m7'],tier:16,gap:1,powers:4,stars:30,
   blurb:'Steps down into still violet water. Someone still keeps the shrine.',
   waves:[['drowned-thrall','slime'],{groups:[['drowned-thrall','wisp'],['drowned-thrall','wisp']],side:'both'},['cultist','drowned-thrall','drowned-thrall']],bossAdds:['drowned-thrall','drowned-thrall']},
  {id:'v2',chapter:'veilmoor',kind:'level',name:'Glimmer Fen',biome:'mystic-fen',floor:'fen-pond',boss:'wisp-mother',bossName:'The Wisp Mother',mini:'abyss-herald',requires:['v1'],tier:17,gap:1.3,
@@ -143,7 +146,7 @@ export const levelById=id=>LEVELS.find(l=>l.id===id);
 export const levelDone=(save,id)=>id==='home'||!!save?.levels?.[id]?.done;
 /* A pad opens when any one requirement is done and, for a star-gated pad, the total stars reach its gate. A pad already
    won on any tier, or one a save had reached before star gates existed (save.starPass), never closes again. */
-export const levelOpen=(save,id)=>{const l=levelById(id);return !!l&&(l.requires.length===0||l.requires.some(r=>levelDone(save,r)))&&starGateMet(save,l);};
+export const levelOpen=(save,id)=>{const l=levelById(id);return !!l&&(l.requires.length===0||l.requires.some(r=>levelDone(save,r)))&&starGateMet(save,l)&&powerGateMet(save,l);};
 /* ---- the difficulty ladder (game/tiers.js): per-tier records, stars and star gates ---------------------------------
    save.levels[id] is the Normal record ({done,best,plays,stars}); save.levels[id].tiers[heroic|legendary] hold the
    others in the same shape. Only map levels are tiered: not the hidden prologue, the shops or the arenas. */
@@ -165,6 +168,31 @@ export function starGateMet(save,l){const need=starGate(l);if(!need)return true;
 /* {need,have} when the pad's requirements are done but its star gate is not; else null. */
 export function starsShort(save,id){const l=levelById(id);if(!l||!starGate(l)||starGateMet(save,l))return null;if(!(l.requires.length===0||l.requires.some(r=>levelDone(save,r))))return null;return {need:starGate(l),have:totalStars(save)};}
 export const starGateText=g=>g?`Needs ${g.need}★ — you have ${g.have}★. Replay earlier levels on Heroic or Legendary, or win them with a better grade, for more stars.`:'';
+/* ---- power gates (improve20-r12a-nov2; kid sims round 2: 0 of 10 fresh runs woke a second ability) ---------------------
+   A few doors need learning: e4 the hero's 2nd ability awake, m1 the 3rd, v1 the 4th (the level's `powers`). "Awake" is unlocked() for that
+   rung of the hero's own class, in ladder order (gate, then hero level), so it needs the ladder's mastery AND hero level, exactly as the
+   ability does; no topic count is written here. Ground already won never closes: a gated pad stays open once it, or any level after it,
+   was won on any tier, or once the save passed the gate (save.powerPass, additive, kept by normalize(); the save stays v9). Heroic and
+   Legendary follow the Normal pad (tierOpen needs levelOpen). Pure: reads the save it is given. */
+export const powerGate=l=>l?.powers|0;
+/* the hero's abilities in ladder order (the Paladin's swapped rungs are already in each ability's gate and lvl) */
+export const ladderOf=hero=>[...(ABILITIES[hero]||[])].sort((a,b)=>a.gate-b.gate||xpLevel(a)-xpLevel(b));
+/* the ability a power gate asks for: the hero's Nth rung, or null (no gate, or no such hero) */
+export const powerAbility=(save,l,hero=save?.hero)=>{const n=powerGate(l);return n?ladderOf(hero)[n-1]||null:null;};
+/* every pad whose road runs through this one (its requires chain), worked out once */
+let AFTER=null;const afterOf=id=>{if(!AFTER){AFTER={};for(const l of LEVELS){const seen=new Set(),q=[...(l.requires||[])];while(q.length){const r=q.shift();if(seen.has(r))continue;seen.add(r);q.push(...(levelById(r)?.requires||[]));}for(const r of seen)(AFTER[r]??=[]).push(l.id);}}return AFTER[id]||[];};
+/* the gate was passed: this pad won on any tier, a pad after it won, or the save recorded the pass */
+export const powerPassed=(save,l)=>!!l&&(TIER_KEYS.some(k=>tierDone(save,l.id,k))||afterOf(l.id).some(id=>levelDone(save,id))||!!save?.powerPass?.includes?.(l.id));
+export function powerGateMet(save,l){if(!powerGate(l))return true;if(powerPassed(save,l))return true;const a=powerAbility(save,l);return !a||!!unlocked(save,a);}
+/* {need, a} when the pad's requirements are done but its power gate is not; else null (the map card and the next goal read it) */
+export function powerShort(save,id){const l=levelById(id);if(!l||!powerGate(l)||powerGateMet(save,l))return null;if(!(l.requires.length===0||l.requires.some(r=>levelDone(save,r))))return null;return {need:powerGate(l),a:powerAbility(save,l),level:l};}
+/* the pad's lock in kid words, power first. `w` is what the ladder still asks ({topics, subject (a name), lvl, lvlOk}), from
+   game/power-gate.js powerWants; the numbers always come from there, never from here. */
+export function powerGateText(g,w){if(!g?.a)return '';const t=w?.topics|0,sub=w?.subject||'',lv=w?.lvl||xpLevel(g.a),need=[];
+ if(t>0)need.push(`Master ${t} ${sub?sub+' ':''}topic${t===1?'':'s'} at the Library`);if(!w?.lvlOk)need.push(t>0?`(hero level ${lv})`:`Reach hero level ${lv}`);
+ return `Needs ${g.a.name}. ${need.join(' ')}${need.length?'.':''}`.replace(/\s+\./,'.').trim();}
+/* record the pass (main.js calls it when a gated pad is entered, so a later hero swap never shuts a road the save walked) */
+export function notePowerPass(save,id){const l=levelById(id);if(!powerGate(l)||!powerGateMet(save,l))return false;save.powerPass??=[];if(save.powerPass.includes(id))return false;save.powerPass.push(id);return true;}
 /* The last level on the main road of the last chapter: winning it finishes the adventure (playtest oct14: beating the
    final boss used to end on an ordinary result card). Side paths never count. */
 export const gameFinale=id=>{const last=CHAPTERS[CHAPTERS.length-1]?.id,l=levelById(id);return !!l&&l.kind==='level'&&!l.optional&&!l.hidden&&l.chapter===last&&!LEVELS.some(o=>o.chapter===last&&o.kind==='level'&&!o.optional&&o.requires.includes(id));};

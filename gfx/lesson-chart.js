@@ -46,8 +46,9 @@ function hist(c,q,p,L,R,T){const bins=q.bins,lo=bins[0][0],hi=bins.at(-1)[1],top
  if(q.xlabel)text(c,q.xlabel,(Lx+R)/2,B+34,12,{color:SOFT});}
 
 function scatter(c,q,p,L,R,T){const [x0,x1]=q.x,[y0,y1]=q.y,B=q.xlabel?222:232,Lx=L+30,X=v=>Lx+(v-x0)/(x1-x0)*(R-Lx),Y=v=>B-(v-y0)/(y1-y0)*(B-T),sx=stepFor(x1-x0),sy=stepFor(y1-y0);
- {const vs=[];for(let v=Math.ceil(x0/sx)*sx;v<=x1+1e-9;v+=sx)vs.push(v);const k=every(c,vs,sx*(R-Lx)/(x1-x0));for(const v of vs){line(c,X(v),T,X(v),B,GRID,1);if(Math.round(v/sx)%k===0)text(c,num(v),X(v),B+12,11,{color:SOFT});}}
- {const k=everyY(c,Y(0)-Y(sy));for(let v=Math.ceil(y0/sy)*sy;v<=y1+1e-9;v+=sy){line(c,Lx,Y(v),R,Y(v),GRID,1);if(Math.round(v/sy)%k===0&&!(v===y0&&x0===0&&y0===0))text(c,num(v),Lx-6,Y(v),11,{align:'right',color:SOFT});}}
+ let corner=false;{const vs=[];for(let v=Math.ceil(x0/sx)*sx;v<=x1+1e-9;v+=sx)vs.push(v);const k=every(c,vs,sx*(R-Lx)/(x1-x0));for(const v of vs){line(c,X(v),T,X(v),B,GRID,1);if(Math.round(v/sx)%k===0){text(c,num(v),X(v),B+12,11,{color:SOFT});if(Math.abs(v-x0)<1e-9)corner=true;}}}
+ /* picframe-nov2 #2 (R11F's science-5 "10" against "0"): when the x axis is numbered at its corner and the numbers grow (b, from the small font's 7-unit "0"), the y axis's bottom number sits just above the axis line instead of across it, midway between the next y number and the corner's x number */
+ {c.font='11px sans-serif';const gb=Math.max(1,c.measureText('0').width/7),k=everyY(c,Y(0)-Y(sy)),lift=corner&&gb>1.15?Math.max(0,Y(y0)-((Y(y0+k*sy)+5*gb)+(B+12-5*gb))/2):0;for(let v=Math.ceil(y0/sy)*sy;v<=y1+1e-9;v+=sy){line(c,Lx,Y(v),R,Y(v),GRID,1);if(Math.round(v/sy)%k===0&&!(v===y0&&x0===0&&y0===0))text(c,num(v),Lx-6,Y(v)-(Math.abs(v-y0)<1e-9?lift:0),11,{align:'right',color:SOFT});}}
  line(c,Lx,B,R,B);line(c,Lx,B,Lx,T);
  if(q.xlabel)text(c,q.xlabel,(Lx+R)/2,B+34,12,{color:SOFT});
  if(q.ylabel){c.save();c.translate(L+6,(T+B)/2);c.rotate?.(-Math.PI/2);text(c,q.ylabel,0,0,12,{color:SOFT});c.restore();}

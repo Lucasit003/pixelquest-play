@@ -72,3 +72,10 @@ export function gradeLine(save,subject,name=subject,warm=2){const g=save?.school
    way to it in one line. The text stays true: the check only opens lessons, and only ever raises (finishPlacement). */
  const n=gs.length*PLACEMENT_PER_GRADE;
  return {grade:g,warm,questions:n,text:`You picked Grade ${g}. Lessons start at Grade ${warm}, so this one is a warm-up. Know it already? A short check (${n} questions, no timer) can open higher grades.`,button:'Already know this? Show what you know',warmButton:`Start: Grade ${warm} warm-up`};}
+/* improve20-r12a-nov2 #5 (kidsim2 finding 21: placement became opt-in and no Grade 4-5 pick ever opted in, so they only met Grade 2
+   warm-ups): the first lesson-complete card of a Grade 4+ Elementary pick offers the check once more, as a secondary button, never
+   pushed. Shown once per save (s.settings.placeReoffer, additive in v9; settings keeps its keys). The check itself is unchanged: it only
+   ever raises a placement and opens lessons, never masters a topic, and gradeOpen is never touched. -> {subject, button} or null */
+export const PLACE_REOFFER='Already know this? Show what you know';
+export function placeReoffer(save,subject){const g=save?.schoolGrade;if(save?.schoolMode!=='elementary'||!(g>=4)||g>5||save?.settings?.placeReoffer)return null;
+ if(!placementGrades(subject,'elementary').length||placementGrade(save,subject)>=g||gradeOpen(save,subject,g))return null;return {subject,button:PLACE_REOFFER};}

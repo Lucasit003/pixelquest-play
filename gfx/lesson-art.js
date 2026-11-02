@@ -237,7 +237,10 @@ const describeBars=q=>`${q.rows.length} bars the same size: `+q.rows.map(r=>`one
 /* Pair: two word cards for synonyms and antonyms. rel 'same' puts an equals sign between them and 'opposite' a
    double arrow, each with its name written under it (never colour alone). A null b is a dashed '?' card that solve fills. */
 const pair=(ctx,{a,b,rel,fill,solve},p)=>{const card=(cx,text,dashed)=>{ctx.fillStyle=PAPER;ctx.fillRect(cx-100,70,200,80);ctx.setLineDash?.(dashed?[8,6]:[]);ctx.strokeStyle=INK;ctx.lineWidth=3;ctx.strokeRect(cx-100,70,200,80);ctx.setLineDash?.([]);
-  ctx.font='bold 32px sans-serif';if(ctx.measureText(String(text)).width>188)ctx.font='bold 15px sans-serif';/* 17 Oct: a long card word drops to the small size so it stays on its card */ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle=INK;ctx.fillText(text,cx,110);};
+  ctx.font='bold 32px sans-serif';if(ctx.measureText(String(text)).width>188)ctx.font='bold 15px sans-serif';/* 17 Oct: a long card word drops to the small size so it stays on its card */ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle=INK;
+  /* picframe-nov2 #2 (R11F's history-3 pair): a phrase still wider than the card at the small size ran out over the "?" card; it breaks over up to four lines inside its own card, same words in the same order */
+  const ws=String(text).split(' '),ln=[];if(ctx.measureText(String(text)).width>188&&ws.length>1){let cur='';for(const w of ws){const nx=cur?cur+' '+w:w;if(cur&&ctx.measureText(nx).width>188){ln.push(cur);cur=w;}else cur=nx;}ln.push(cur);}
+  if(ln.length>1){const lh=ln.length>3?17:19;ln.forEach((l,i)=>ctx.fillText(l,cx,110+(i-(ln.length-1)/2)*lh));}else ctx.fillText(text,cx,110);};
  card(160,a,false);const t=ease(clamp(p/0.6));ctx.globalAlpha=t;card(lerp(600,480,t),b==null?(solve&&fill?fill:'?'):b,b==null&&!(solve&&fill));ctx.globalAlpha=1;
  if(p>=0.6&&rel){const seg=(x0,y0,x1,y1)=>{ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x1,y1);ctx.stroke();};ctx.strokeStyle=INK;ctx.lineWidth=4;
   if(rel==='same'){seg(300,100,340,100);seg(300,120,340,120);}else{seg(290,110,350,110);seg(290,110,302,102);seg(290,110,302,118);seg(350,110,338,102);seg(350,110,338,118);}

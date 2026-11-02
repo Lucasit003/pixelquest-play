@@ -31,6 +31,7 @@ import {adviceLevel} from './tiers.js';
 import {learningRoad,nextUnlockStep} from '../academics/learning-road.js';
 import {startGrade,STAGE_FLOOR} from '../academics/placement.js';
 import {gateShut,libraryOpening,nextPowerLine} from '../academics/starter-lesson.js';
+import {waitingGate,powerWants,powerStep} from './power-gate.js';
 import {starterOf,awakened} from '../academics/awakening.js';
 /* How much practice to suggest before the next adventure. The test still needs practiceNeeded (lessons.js: 10 on a save's first topic, 25 after). */
 export const PRACTICE_FIRST=10;
@@ -122,6 +123,13 @@ export function chargeStep(save){if(save?.goalTurn!=='learn'||!earned(save)||gam
 export function wilNudge(save){if(save?.goalTurn!=='learn'||!levelDone(save,'e5')||gameCleared(save))return null;const n=save.questNudge|0;if(n<1||(n-1)%3)return null;
  const q=nextQuestStep(save,questLive);if(!q||q.rank==='handin'||QUESTS[q.quest]?.companion!=='wil')return null;const qs=questStep(q);return {...qs,text:`${qs.text.replace(/[.!]\s*$/,'')}: Wil, a new companion, can join you.`,nudge:true};}
 /* a goal after a fresh charge that is an adventure on the map: "Try your new skills" leads it */
+/* improve20-r12a-nov2 (kid sims round 2 finding 1): the goal at a power gate names the pad, the power and the one step that wakes it
+   (game/power-gate.js); a gate short only of the hero level points at XP (a won level again, or a lesson). Ids: 'power-<pad>'. */
+const STEP_WORDS={lesson:t=>`start “${t.title}”`,quiz:t=>`take the quiz on “${t.title}”`,practice:(t,st)=>`finish practice on “${t.title}” (${Math.max(0,st.needed-st.practice)} to go)`,test:t=>`take the mastery test on “${t.title}”`};
+export function powerGoal(save){const g=waitingGate(save);if(!g?.a)return null;const w=powerWants(save,g.a),st=powerStep(save,g.a),name=g.level.name;
+ if(w.topics<=0){const back=levelById(g.level.requires[0]);return {id:'power-'+g.level.id,text:`${name} needs ${g.a.name}: reach hero level ${w.lvl}. Win a level again or study for XP.`,target:back?{kind:'pad',id:back.id}:{kind:'library'},powerGate:g.level.id,power:g.a.id};}
+ const how=st?.topic&&STEP_WORDS[st.stage]?STEP_WORDS[st.stage](st.topic,st):`master ${w.topics} ${w.subject} topic${w.topics===1?'':'s'}`;
+ return {id:'power-'+g.level.id,text:`${name} needs ${g.a.name}. To wake it, ${how} at the Library.`,target:{kind:'library',subject:st?.subject||g.a.subject},powerGate:g.level.id,power:g.a.id};}
 /* improve20-r10a-nov2 #5: a mastery that opened no ability sets goalTurn 'go' (main.js): the adventure still comes next, without "Try your new skills" */
 const tryNew=(save,n)=>{if(save?.goalTurn!=='fight'||!earned(save)||n?.target?.kind!=='pad')return n;const l=levelById(n.target.id);
  return {...n,text:n.id==='level-'+n.target.id&&l?`Try your new skills at ${l.name}.`:`Try your new skills! ${n.text}`,tryNew:true};};
@@ -129,6 +137,8 @@ function adventure(save){
  const h=hireStep(save);if(h)return h;
  const q=nextQuestStep(save,questLive);if(q?.rank==='handin')return questStep(q);
  const road=nextLevel(save);if(road)return pad(road);
+ /* improve20-r12a-nov2: a power gate holds the main road (game/levels.js powerGate): the goal is the learning step that wakes its power */
+ {const pg=powerGoal(save);if(pg)return pg;}
  const gate=playable().find(l=>!l.optional&&starsShort(save,l.id));
  /* stargate-oct29 (midgame-oct29 finding 2): the quest step still comes first at a star wall (guide-oct26), but it now says the
     main road is held by stars, so a kid on 14 of 15 is not left wondering why the road stopped */
@@ -153,7 +163,8 @@ export function firstUpgrade(save){if((save?.gold|0)<FIRST_UPGRADE_GOLD||!save?.
  if(Object.keys(save.gear.owned).some(id=>ITEM[id]&&!ITEM[id].scholar&&ITEM[id].shop>0))return null;
  let u=null;try{u=affordableUpgrade(save);}catch{u=null;}if(!u||!ITEM[u.id])return null;return {id:u.id,name:ITEM[u.id].name,cost:u.cost,craft:u.kind==='craft'};}
 /* improve20-r8a-nov1 #1: the one judge may pick a craft whose materials are in hand; the goal then says "craft" */
-const upgradeFirst=(save,n)=>{const u=n&&firstUpgrade(save);return u?{id:'first-upgrade',text:u.craft?`Visit the Weaponsmith: craft your first upgrade, the ${u.name} (${u.cost} gold and your materials).`:`Visit the Weaponsmith: your first upgrade, the ${u.name} (${u.cost} gold).`,target:{kind:'smith'},item:u.id,craft:!!u.craft,then:n}:n;};
+/* improve20-r12a-nov2: a power gate's goal is a learning step, so the first-upgrade nudge never covers it (kidsim: Mia's e3 card said "Visit the Weaponsmith" beside "Finish practice") */
+const upgradeFirst=(save,n)=>{const u=n&&!n.powerGate&&firstUpgrade(save);return u?{id:'first-upgrade',text:u.craft?`Visit the Weaponsmith: craft your first upgrade, the ${u.name} (${u.cost} gold and your materials).`:`Visit the Weaponsmith: your first upgrade, the ${u.name} (${u.cost} gold).`,target:{kind:'smith'},item:u.id,craft:!!u.craft,then:n}:n;};
 /* libraryfirst-nov1 (owner, 1 Nov: "start by bringing the character to the Library ... and have them learn an ability first"): a new game on the
    Library-first opening (academics/starter-lesson.js) is pointed at the Library until its starter power is awake; the south gate is shut till
    then. Then the prologue names the power to try, and after the prologue the first lesson step names the NEXT power and the topic that wakes

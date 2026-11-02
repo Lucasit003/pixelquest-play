@@ -107,7 +107,7 @@ const twoContours=(lo,hi,frac)=>scene('Between two contour lines (fictional)',d=
  d.line(100,100,540,100,1,0,false,3);d.line(100,200,540,200,0,0,false,3);d.note(80,100,`${hi} m`,1);d.note(80,200,`${lo} m`,0);
  d.circle(320,200-100*frac,5,4);d.note(380,200-100*frac,'spot: ? m',4);d.line(320,200,320,200-100*frac,4,0,true,1);});
 const bearingPic=(dx,dy)=>{const s=Math.min(11,95/Math.max(Math.abs(dx),Math.abs(dy)));return scene('Grid map: A at the center, B somewhere else',d=>{
- d.circle(320,152,5,0);d.note(320,170,'A',0);d.circle(320+dx*s,152-dy*s,5,4);d.note(320+dx*s,152-dy*s-14,'B',4);d.line(320,152,320+dx*s,152-dy*s,4,1,false,2);
+ d.circle(320,152,5,0);d.note(320,170,'A',0);d.circle(320+dx*s,152-dy*s,5,4);/* picframe-nov2 #2 (R11F's geography-5 title against "B"): a B near the top edge has its letter beside it, on the side away from A, not above it under the title (picture only) */if(152-dy*s-14<72)d.note(320+dx*s+(dx<0?-16:16),152-dy*s,'B',4);else d.note(320+dx*s,152-dy*s-14,'B',4);d.line(320,152,320+dx*s,152-dy*s,4,1,false,2);
  d.line(120,200,120,150,0,1,false,2);d.note(120,138,'N',0);d.note(500,236,'scale not marked: use the numbers',2);});};
 /* The Try-it questions in pool form; the generator skips them. */
 const TRY=['Two fictional harbors lie on one meridian, at 18° N and 7° N. At 111 km per degree of latitude, how many kilometers apart are they?',

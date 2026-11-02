@@ -1,6 +1,7 @@
 /* The map's information card lives at screen resolution: whole-size Pixel Operator,
    the same pl-window frame as the modals, and measured placement away from the route. */
 import {placeBoardCard} from '../gfx/worldmap-art.js';
+import {abilityIcon} from './icons.js';
 let el=null,contentKey='',layoutKey='',sizes=[],compactSizes=[],expanded='';
 const make=(tag,cls,text)=>{const n=document.createElement(tag);n.className=cls;if(text)n.textContent=text;return n;};
 /* Tier icons are reused across card rebuilds: a fresh <img> per text change painted blank for a frame while it decoded,
@@ -14,11 +15,13 @@ export function updateMapPanel(v,canvas){if(!globalThis.document?.body||!canvas?
  if(!el){el=make('aside','worldmap-info');el.id='worldmap-info';el.setAttribute('aria-label','Selected stop');
   /* a compact card opens to the full card on a tap, and closes again on the next */
   el.addEventListener('click',e=>{if(!el.classList.contains('wm-compact')&&expanded!==contentKey)return;e.stopPropagation();expanded=expanded===contentKey?'':contentKey;layoutKey='';});document.body.append(el);}
- const key=JSON.stringify([v.chapterName,v.title,v.inside,v.bossLine,v.gradeLine,v.heroicLead,v.blurb,v.tiers,v.toast,v.chapterBorder,v.notice]);
+ const key=JSON.stringify([v.chapterName,v.title,v.inside,v.bossLine,v.gradeLine,v.heroicLead,v.blurb,v.tiers,v.toast,v.chapterBorder,v.notice,v.power?[v.power.id,v.power.a?.id,v.power.text||'']:null]);
  if(key!==contentKey){contentKey=key;el.classList.toggle('chapter-complete',!!v.chapterBorder);layoutKey='';recycle(el);const dash=t=>String(t||'').replace(/--+/g,'—'),children=[make('div','wm-chapter',v.chapterName),make('h2','wm-title',v.title)];
   /* polish2-oct29: what is inside (the level's blurb and boss), then the goal; a stop with no blurb shows the goal alone, as before */
-  if(v.inside)children.push(make('p','wm-inside',dash(v.inside)));if(v.bossLine)children.push(make('p','wm-boss',v.bossLine));/* improve20-r8a-nov1 #4 */if(v.gradeLine)children.push(make('p','wm-grade',v.gradeLine));/* improve20-r10c-nov2 #19: an overlevelled or all-stars stop leads with Heroic, in place of its goal line, and its Heroic chip glows */if(v.heroicLead){const p=make('p','wm-heroic');p.append(icon('heroic',''),make('span','',v.heroicLead));children.push(p);}else children.push(make('p','wm-description'+(v.inside?' wm-goal':''),dash(v.blurb)));
+  if(v.inside)children.push(make('p','wm-inside',dash(v.inside)));if(v.bossLine)children.push(make('p','wm-boss',v.bossLine));/* improve20-r8a-nov1 #4 */if(v.gradeLine)children.push(make('p','wm-grade',v.gradeLine));/* improve20-r10c-nov2 #19: an overlevelled or all-stars stop leads with Heroic, in place of its goal line, and its Heroic chip glows */if(v.heroicLead){const p=make('p','wm-heroic');p.append(icon('heroic',''),make('span','',v.heroicLead));children.push(p);}else if(!v.power)children.push(make('p','wm-description'+(v.inside?' wm-goal':''),dash(v.blurb)));
   if(v.tiers?.length){const chips=make('div','wm-tiers');for(const t of v.tiers){const chip=make('span','wm-tier');chip.setAttribute('aria-label',t.label+': '+(t.open?t.stars+' of 3 stars':'clear '+(t.key==='heroic'?'Normal':'Heroic')+' here'));if(t.crest){chip.classList.add('earned');chip.title=t.label+' crest earned';}if(v.heroicLead&&t.key==='heroic')chip.classList.add('wm-tier-lead');chip.append(icon(t.key,t.crest?t.label+' crest earned':''),make('span','wm-tier-name',t.label));if(t.open)chip.append(make('span','wm-count',t.stars+'/3'),icon('star','stars'));else chip.append(icon('lock','Locked'));chips.append(chip);}children.push(chips);}
+  /* improve20-r12a-nov2: a power gate (game/levels.js powerGate): the power's icon, what it needs (a won pad beside the gate says it too) and one button to the Library */
+  if(v.power){const box=make('div','wm-power');box.dataset.powerGate=v.power.id;const ic=make('span','wm-power-ico');ic.innerHTML=abilityIcon(v.power.a,v.power.hero,32);box.append(ic);if(v.power.text)box.append(make('p','wm-power-text',v.power.text));const go=make('button','wm-power-go primary',v.power.label||'Go to the Library');go.type='button';go.dataset.powerGo=v.power.id;go.addEventListener('click',e=>{e.stopPropagation();v.power.go?.();});box.append(go);children.push(box);/* power first, then the star gate */if(v.blurb)children.push(make('p','wm-description',dash(v.blurb)));}
   if(v.chapterBorder)children.push(make('p','wm-notice','Chapter Legendary clears complete.'));
   if(v.toast)children.push(make('p','wm-notice',v.toast));
   /* W1 view mode: the level paused under the map, and how to go back to it */
@@ -33,6 +36,6 @@ export function updateMapPanel(v,canvas){if(!globalThis.document?.body||!canvas?
  /* polish2-oct29 (readiness #12): on a phone the full card covered the middle of the map. A touch screen takes the full card only in a
     corner clear of the hero, the selected stop and its road; otherwise the one-line card in a corner (a tap opens it) */
  /* stargate-oct29: a phone's compact card hid the map's notice (the locked chapter tab's stars hint), so a notice opens the card while it shows */
- const open=expanded===key||!!(v.touch&&v.toast),hit=(v.touch&&!open?fit(sizes,true,true,true)||fit(compactSizes,true,true,true)||fit(compactSizes,true):null)||fit(sizes,true)||(open&&fit(sizes,true,false))||fit(compactSizes,true)||fit(compactSizes,false)||fit(sizes,false);
+ const open=expanded===key||!!(v.touch&&(v.toast||v.power)),hit=(v.touch&&!open?fit(sizes,true,true,true)||fit(compactSizes,true,true,true)||fit(compactSizes,true):null)||fit(sizes,true)||(open&&fit(sizes,true,false))||fit(compactSizes,true)||fit(compactSizes,false)||fit(sizes,false);
  if(!hit){el.hidden=true;return false;}const [q,size]=hit;el.hidden=false;el.classList.toggle('wm-compact',size.compact);el.classList.toggle('wm-bare',!!size.bare);el.classList.toggle('wm-open',open&&!size.compact);el.style.width=size.compact?'max-content':size.width+'px';el.style.maxWidth=size.compact?size.width+'px':'';el.style.left=Math.round(b.left+q.x*scale)+'px';el.style.top=Math.round(b.top+q.y*scale)+'px';el.style.opacity=String(1-(v.fade||0));return true;
 }

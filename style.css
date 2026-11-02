@@ -4223,6 +4223,32 @@ html:not(.m-mode) dialog[data-view=result] .level-result.level-result>.rating-ke
 /* #1: the scroll fade (R10C) on phones too, on the Library, Journal and Settings boxes while their words go on below the foot (the tour and the
    unlock card keep their sticky buttons at the foot instead, which a fade would dim) */
 @supports (animation-timeline:scroll()){html.m-mode #modal:is([data-view=library],[data-view=journal],[data-view=settings]) :is(.library-content,#journal-body,.settings-grid){animation:r10c-cue linear both;animation-timeline:scroll(self);-webkit-mask-image:linear-gradient(#000 calc(100% - var(--r10c-cue)),transparent);mask-image:linear-gradient(#000 calc(100% - var(--r10c-cue)),transparent)}}
+/* picframe-nov2 #1: text-only pictures (passages, setups) are HTML text (ui/question-picture.js textPicHTML/textPicSync), not a canvas.
+   The card wraps to its column, keeps at least 14 px on a phone (12 px is the floor), and scrolls inside itself only when a short phone
+   cannot hold it. A canvas that hands over to a card is hidden (.as-text) but stays in the DOM. */
+canvas.as-text{display:none!important}
+.pic-text.pic-text{box-sizing:border-box;width:100%;max-width:100%;max-height:none;height:auto;margin:6px 0;padding:8px 12px;border:1px solid #ac9a78;border-radius:3px;background:#fffaf0;color:#283c37;font:17px/1.35 sans-serif;text-align:left;overflow-wrap:anywhere;overflow:auto;letter-spacing:0;text-transform:none}
+.pic-text .pt-title{margin:0 0 6px;font-weight:700;font-size:1.05em;color:#263c36;text-align:left;caption-side:top}
+.pic-text .pt-list{list-style:none;margin:0;padding:0;display:grid;gap:5px}
+.pic-text .pt-list li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;align-items:baseline;padding:4px 8px;border:1px solid #d8ccb0;background:#fffdf7}
+.pic-text .pt-tag{color:#385e57;min-width:1.1em}
+.pic-text p.pt-one{margin:0;padding:4px 8px;border:1px solid #d8ccb0;background:#fffdf7}
+.pic-text p+p{margin-top:0}
+.pic-text .pt-table{width:100%;border-collapse:collapse;table-layout:auto}
+.pic-text .pt-table th,.pic-text .pt-table td{border:1px solid #a9ad9f;padding:3px 7px;text-align:center;vertical-align:middle;color:#1d2a3a}
+.pic-text .pt-table thead th{font-weight:700;background:#f1ead8}
+.pic-text .pt-table tbody th{font-weight:400;text-align:left}
+.pic-text .pt-table tr.pt-mark>*{background:#f3dc8f}
+dialog[data-view=lesson] .lesson-visual>.pic-text{margin:6px auto;max-width:860px}
+/* a lesson step with a text card: the picture column is --pic-w wide (main.js fitLessonPic sets it to about 42% of the body) */
+dialog[data-view=lesson] .lesson-body.text-pic>.lesson-visual{width:var(--pic-w,360px)!important;max-width:100%!important;justify-self:stretch}
+html.m-mode dialog[data-view=lesson] .lesson-body.text-pic>.lesson-visual>.pic-text{max-height:calc(100dvh - 150px)}
+#quiz-feedback .pic-text{margin:8px auto;max-width:640px}
+/* in an answer's notes the card takes the picture's place (the right-hand column); on a short phone the question's card fills the height of
+   the prompt beside it (at least 96 px) and scrolls inside itself, rather than the 200x64 thumbnail a canvas picture gets */
+dialog#modal:is([data-view=placement],[data-view=lesson-quiz]) #quiz-feedback .feedback.feedback:has(>#lesson-pic)>.pic-text{grid-column:2;grid-row:1/span 9;width:min(340px,40vw);max-height:min(300px,42vh);margin:2px 0}
+@media(max-height:500px){dialog#modal:is([data-view=placement],[data-view=lesson-quiz]) #quiz-feedback .feedback.feedback:has(>#lesson-pic)>.pic-text{max-height:min(120px,30vh);width:min(300px,36vw)}#modal#modal#modal#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question.qf.qf>.question-reading>.pic-text.pic-text{width:clamp(240px,42vw,400px);max-width:none;height:0;min-height:max(100%,96px);max-height:none;align-self:stretch;margin:0;font-size:14px;padding:5px 8px;overflow:auto}}
+@media(max-height:500px){.pic-text.pic-text{font-size:14px;line-height:1.3;padding:5px 8px;margin:3px 0}.pic-text .pt-list{gap:3px}.pic-text .pt-list li,.pic-text p.pt-one{padding:2px 6px}.pic-text .pt-table th,.pic-text .pt-table td{padding:2px 5px}}
 /* tablets-nov2 (round 9 item 12): the tablet sweep (1024x768, 1180x820, 1280x800, 1366x1024, 1180x740 touch). A tablet is a touch screen at
    least 600 css px on its short side (ui/mobile.js tabletSize); phones in landscape are 430 px tall at most, so (min-height:600px) never
    reaches them, and every rule here sits under html.m-mode, so desktops are untouched. */
@@ -4304,3 +4330,10 @@ dialog[data-view=travel] .travel-more[open] summary{min-height:24px;row-gap:0}di
    with four or more buttons the result row was nowrap. A defeat row wraps inside the frame at every size; each button may wrap its own words */
 dialog[data-view=result] #modal-content .level-result[data-outcome=lost]>.modal-actions,html:not(.m-mode) dialog[data-view=result] #modal-content .level-result[data-outcome=lost]>.modal-actions:has(>button:nth-of-type(4)),.m-mode dialog[data-view=result] #modal-content .level-result[data-outcome=lost]>.modal-actions:has(>button:nth-of-type(4)){flex-wrap:wrap;justify-content:center;row-gap:6px;max-width:100%;box-sizing:border-box}
 dialog[data-view=result] #modal-content .level-result[data-outcome=lost]>.modal-actions>button{flex:0 1 auto;min-width:0;max-width:100%;white-space:normal}
+/* improve20-r12a-nov2: the map card's power gate block (ui/worldmap-panel.js); the card ignores the pointer, its button takes it */
+.worldmap-info .wm-power{display:grid;grid-template-columns:auto 1fr;gap:4px 8px;align-items:center;margin:4px 0 6px;padding:5px 6px;border:2px solid #a984ff;background:rgba(30,20,60,.75)}
+.worldmap-info .wm-power-ico{display:grid;place-items:center;width:40px;height:40px;border:2px solid #5d5244;background:rgba(0,0,0,.35)}
+.worldmap-info .wm-power-ico .ico{filter:grayscale(.6) brightness(.8)}
+.worldmap-info .wm-power-text{margin:0;font:700 16px/18px var(--ui);color:#fff1c8;text-wrap:pretty}
+.worldmap-info .wm-power-go{grid-column:1/-1;pointer-events:auto;min-height:40px;font:700 18px/20px var(--ui);cursor:pointer}
+.worldmap-info.wm-compact .wm-power{display:none}

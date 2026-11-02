@@ -1142,3 +1142,19 @@ html.m-mode dialog[data-view=lesson] .lesson[data-young] .lesson-body.young-snug
 html.m-mode dialog[data-view=lesson] .lesson[data-young] .lesson-body.young-snug>.lesson-check>p{line-height:1.1;margin:0 0 2px}
 html.m-mode dialog[data-view=lesson] .lesson[data-young] .lesson-body.young-snug{row-gap:2px}
 html.m-mode dialog[data-view=lesson] .lesson[data-young] .lesson-body.young-snug .edu-speech{padding-top:3px;padding-bottom:3px}
+/* improve20-r12a-nov2 #3 (kidsim2 finding 8: for a non-reader the subject picker was the biggest control, 1074 px wide): at normal
+   sizes the picker is slim and the next step's primary (Start lesson, Take the quiz, ...) is the largest button on the screen.
+   852x283 and other short phones are left to their own rules. */
+@media (min-height:420px){
+ dialog[data-view=library] .library-browser .pixel-select{flex:0 1 300px;max-width:300px}
+ dialog[data-view=library] .library-browser .pixel-select-button{min-height:32px}
+ dialog[data-view=library] .library-content>.edu-next .edu-next-actions>button.primary{flex-basis:100%;min-height:56px;font-size:22px;line-height:24px;padding-top:10px;padding-bottom:12px}
+}
+/* improve20-r12a-nov2 #3, phones in landscape (340-480 px tall; 852x283 is R12B's): Start sat below the card's fold at 844x390 under a
+   1-line subject picker as wide as the screen and the 3-line grade note. The picker is slim and the note gives way (its button stays in the
+   row, and Read to me still reads it), so the next step's primary shows without scrolling. */
+@media (min-height:340px) and (max-height:480px){
+ html.m-mode dialog[data-view=library] .library-browser .pixel-select{flex:0 1 300px;max-width:300px}
+ html.m-mode dialog[data-view=library] .library-content>.edu-next .edu-grade-line{display:none}
+ html.m-mode dialog[data-view=library] .library-content>.edu-next .edu-next-actions>button.primary{min-width:200px}
+}

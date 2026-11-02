@@ -4,7 +4,10 @@
 // and M resume it, and main.js asks before any other pad or Home ends the run.
 // main.js also forwards key(k) (lower-cased KeyboardEvent.key; returns true when the map used it) and tap(x,y)
 // (canvas pixels, 480x270). Layout: game/worldmap-layout.js. Drawing: gfx/worldmap-art.js.
-import {LEVELS,CHAPTERS,levelById,levelOpen,levelDone,tiered,tierOpen,tierDone,starsOf,totalStars,maxStars,starsShort,tierCrests,chapterBorder} from '../game/levels.js';
+import {LEVELS,CHAPTERS,levelById,levelOpen,levelDone,tiered,tierOpen,tierDone,starsOf,totalStars,maxStars,starsShort,tierCrests,chapterBorder,powerShort} from '../game/levels.js';
+import {gateInfo as gateInfo0} from '../game/power-gate.js';
+/* improve20-r12a-nov2: the card never breaks the map; a partial save (tools, tests) gets no power block rather than an error */
+const gateInfo=(save,id)=>{try{return gateInfo0(save,id);}catch{return null;}};
 import {ladderGoal,heroicLead} from '../game/ladder-guide.js';
 import {padGradeLine} from '../game/grade.js';
 import {updateMapPanel,clearMapPanel} from '../ui/worldmap-panel.js';
@@ -32,7 +35,8 @@ const chapterOfLevel=id=>levelById(id)?.chapter;
 /* Where a fresh visit starts: the furthest open-but-unfinished level, else the furthest finished one, else home. */
 /* oct24-ch3: the main road's next level comes first; an open side level (ex1, vx1...) only when no main level is open. A child who
    skipped Bandit Road and beat Moltar opened the map in the Elderwood while the HUD said "Next adventure: Drowned Shrine" */
-export function frontier(save){let best='home',side=null;for(const l of LEVELS){if(l.kind!=='level'||l.hidden)continue;if(levelOpen(save,l.id)&&!levelDone(save,l.id)){if(!l.optional)return l.id;side??=l.id;}if(levelDone(save,l.id))best=l.id;}return side||best;}
+/* improve20-r12a-nov2: a main-road pad held by a power gate is where the map opens, so its card says what wakes the road */
+export function frontier(save){let best='home',side=null;for(const l of LEVELS){if(l.kind!=='level'||l.hidden)continue;if(!l.optional&&powerShort(save,l.id))return l.id;if(levelOpen(save,l.id)&&!levelDone(save,l.id)){if(!l.optional)return l.id;side??=l.id;}if(levelDone(save,l.id))best=l.id;}return side||best;}
 export const artReady=()=>!!art;
 /* opts: {loader, json, mod} for node renders; the browser defaults otherwise. */
 export function preload(opts){if(!art){art=makeArt(opts);artPromise=art.uiReady;}return artPromise;}
@@ -93,7 +97,7 @@ function landNow(){if(!S?.jump||!S.pending)return false;const p=S.pending;S.pend
 function stateOf(id){return S.hidden?.has(id)?'locked':nodeState(S.save,id);}
 
 /* Start walking from S.at to a neighbouring node. */
-function walkTo(id){if(stateOf(id)==='soon'){toast(gateById(id).label.replace(/^To (the )?/,'')+' is coming soon');return false;}if(stateOf(id)==='locked'){const l=levelById(id),req=l?.requires.map(r=>levelById(r)?.name).filter(Boolean).join(' or '),g=starsShort(S.save,id);toast(isGate(id)?gateStars(id)||'The road is closed for now':g?starLine(g):req?'Clear '+req+' first':'Locked');return false;}
+function walkTo(id){if(stateOf(id)==='soon'){toast(gateById(id).label.replace(/^To (the )?/,'')+' is coming soon');return false;}/* improve20-r12a-nov2: the hero may stand on a pad held only by a power gate, so its card shows what wakes it */if(stateOf(id)==='locked'&&!(S.hidden?.has(id))&&powerShort(S.save,id)){}else if(stateOf(id)==='locked'){const l=levelById(id),req=l?.requires.map(r=>levelById(r)?.name).filter(Boolean).join(' or '),g=starsShort(S.save,id);toast(isGate(id)?gateStars(id)||'The road is closed for now':g?starLine(g):req?'Clear '+req+' first':'Locked');return false;}
  const pts=pathPoints(S.chapter,S.at,id);if(pts.length<2)return false;const lens=[0];for(let i=1;i<pts.length;i++)lens.push(lens[i-1]+Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]));
  S.walk={to:id,pts,lens,d:0};
  /* the speed is set once per trip, from the whole route still to walk (queued pads too), so the longest trip ends within TRIP_S */
@@ -119,13 +123,13 @@ function travel(gateId){const g=gateById(gateId),arr=gateArrival(g);if(!g||!arr)
      open!") while a light runs from the gate along the road to the first pad and pops it, then the hero walks on (each chapter's board fits
      the screen, so the move is the light over the existing map art, not a camera pan) */
   if(S.beat&&S.beat.to===S.chapter&&next&&!reducedMotion(S.save)){const pts=pathPoints(S.chapter,S.at,next);if(pts.length>1){S.reveals=[{to:next,pts,p:0,len:segLen(pts)}];S.autoTo=next;S.banner=4.2;S.beat.arrived=true;toast(`${chapterName(S.beat.to).replace(/^the /,'The ')} is open!`);S.toastT=3.4;return;}}
-  S.beat=null;if(next&&stateOf(next)!=='locked')walkTo(next);};}
+  S.beat=null;/* improve20-r12a-nov2: a first stop held only by a power gate is walked onto too, so its card says what wakes it */if(next&&(stateOf(next)!=='locked'||powerShort(S.save,next)))walkTo(next);};}
 const chapterName=id=>(CHAPTERS.find(c=>c.id===id)?.name||'the next land').replace(/^The /,'the ');
 function confirm(){if(!S||S.walk||S.fadeTo>0)return;const id=S.at,n=nodeAt(id);if(!n)return;const st=stateOf(id);
  /* view mode: the level being played is "Resume" */
  if(S.view&&id===S.view.id){S.ctx.onResume?.();return;}
  if(n.kind==='home'){S.ctx.onHome?.();return;}if(n.kind==='gate'){if(st==='soon')toast(n.name.replace(/^To (the )?/,'')+' is coming soon');else if(st==='locked')toast(gateStars(id)||'The road is closed for now');else travel(id);return;}
- if(st==='locked'){const g=starsShort(S.save,id);toast(g?starLine(g):'Locked');return;}S.ctx.onPlay?.(id);}
+ if(st==='locked'){/* improve20-r12a-nov2: Enter on a power gate opens the Library on that power's next step */if(powerShort(S.save,id)&&S.ctx.onPowerGate){S.ctx.onPowerGate(id);return;}const g=starsShort(S.save,id);toast(g?starLine(g):'Locked');return;}S.ctx.onPlay?.(id);}
 /* Star gates (game/levels.js): the canvas font has no star glyph, so the map says "stars" in words. */
 const starLine=g=>`${g.have}/${g.need} stars needed.`;
 /* a chapter gate whose first level waits on a star gate says so */
@@ -230,7 +234,12 @@ function info(){const id=S.walk?.to||S.at,n=nodeAt(id),st=stateOf(id);if(!n)retu
  const full=l.bossName||S.ctx.bossName?.(l.boss)||BOSS_NAMES[l.boss]||(l.boss?titleCase(l.boss):''),boss=l.plate||shortName(full);
  /* polish2-oct29 (readiness #12): every card read only "Clear Goblin Camp."; it now says what is inside (the level's own blurb and its
     boss, from levels.js) above the goal. A locked stop keeps its secrets: no boss and no blurb until it opens. */
- return{title:l.name,boss:st==='locked'?'':boss,inside:st==='locked'?'':String(l.blurb||''),bossLine:st==='locked'||!full?'':`Boss: ${full}`,gradeLine:st==='locked'?'':padGrade(S.save,l),subtitle:st==='locked'?'Locked':'',blurb:ladderGoal(S.save,l),tiers:st==='locked'||!tiered(l)?[]:TIER_KEYS.map(k=>({key:k,label:TIERS[k].label,open:tierOpen(S.save,l.id,k),stars:starsOf(S.save,l.id,k),crest:tierCrests(S.save,l.id).includes(k)})),tierLine:st==='locked'?'':tierLine(S.save,l),/* improve20-r10c-nov2 #19 */heroicLead:st==='locked'?'':heroicLead(S.save,l.id)?.text||'',side:!!l.optional};}
+ /* improve20-r12a-nov2: a pad held by a power gate says what it needs (power first, then the star gate when both are unmet) and offers the Library */
+ const pg=st==='locked'?gateInfo(S.save,l.id):null,sg=pg?starsShort(S.save,l.id):null;if(pg)return{title:l.name,boss:'',inside:'',bossLine:'',gradeLine:'',subtitle:'Locked',blurb:sg?`Then ${sg.need} stars (you have ${sg.have}).`:'',tiers:[],tierLine:'',heroicLead:'',side:!!l.optional,power:{id:l.id,a:pg.a,hero:S.save.hero,text:pg.text,label:'Go to the Library',go:()=>S?.ctx?.onPowerGate?.(l.id)}};
+ /* a won pad next to a power gate carries the same block, so the card the map opens on says why the road stops */
+ const near=st==='locked'?null:neighbours(S.chapter,id).map(n=>levelById(n)&&!levelById(n).optional?gateInfo(S.save,n):null).find(Boolean),nearPower=near?{id:near.id,a:near.a,hero:S.save.hero,label:'Go to the Library',text:near.text.replace(/^Needs /,`${near.name} needs `),go:()=>S?.ctx?.onPowerGate?.(near.id)}:null;
+
+ return{title:l.name,boss:st==='locked'?'':boss,inside:st==='locked'?'':String(l.blurb||''),bossLine:st==='locked'||!full?'':`Boss: ${full}`,gradeLine:st==='locked'?'':padGrade(S.save,l),subtitle:st==='locked'?'Locked':'',blurb:ladderGoal(S.save,l),tiers:st==='locked'||!tiered(l)?[]:TIER_KEYS.map(k=>({key:k,label:TIERS[k].label,open:tierOpen(S.save,l.id,k),stars:starsOf(S.save,l.id,k),crest:tierCrests(S.save,l.id).includes(k)})),tierLine:st==='locked'?'':tierLine(S.save,l),/* improve20-r10c-nov2 #19 */heroicLead:st==='locked'?'':heroicLead(S.save,l.id)?.text||'',side:!!l.optional,power:nearPower};}
 /* improve20-r11a-nov2 #6 (audit9 a17): arriving in a new chapter, the card's title was the gate the hero stood on ("Emberkeep", the road back)
    and the news sat under it ("The Veilmoor is open!"). While the arrival's light runs to the first stop, the news is the title and the
    first stop is the line under it; when the light lands the card goes back to the stop (and "Welcome to ..." is the notice). The old
@@ -254,7 +263,7 @@ export function hallNode(){if(!S||S.view||S.ctx.look||!S.ctx.onHall||S.chapter!=
 /* improve20-k-nov1 #2: the pads an active villager quest sends the hero to win (its current clear step); gone once that step is done */
 export function questPads(save){const out=new Set();for(const id of activeQuests(save||{},questLive)){const s=currentStep(save,id);if(s?.kind==='clear'&&s.level)out.add(s.level);}return out;}
 export function view(t){const ch=CHAPTERS.find(c=>c.id===S.chapter),board=!!MAPS[S.chapter]?.art,qp=questPads(S.save);const ns=nodes(S.chapter).map(n=>{const st=stateOf(n.id),o={...n,state:st,boss:isFinale(n.id)};if(board&&n.level&&tiered(n.level)&&st==='done'){o.tier=bestTier(n.id);o.stars=starsOf(S.save,n.id,o.tier||'normal');}if(board&&st==='open'&&(n.kind==='level'||n.kind==='arena')&&!levelDone(S.save,n.id))o.next=true;if(board&&qp.has(n.id)&&st!=='locked'&&st!=='soon'&&!S.ctx.look)o.quest=true;return o;});
- const rv=S.reveals[0];return{chapter:S.chapter,chapterBorder:chapterBorder(S.save,S.chapter),rift:riftNode(),hall:hallNode(),cam:S.cam,nodes:ns,touch:!!globalThis.document?.documentElement?.classList?.contains('m-mode'),sel:S.walk||rv?null:S.at,focusId:S.walk?.to||S.at,reduced:reducedMotion(S.save),reveal:rv?{pts:rv.pts,p:rv.p,to:rv.to,opens:[rv.to,...(rv.marks||[]).map(m=>m[1])]}:null,burst:S.burst,blurbAlpha:S.reveals.length||S.tour?0:Math.max(0,Math.min(1,(S.still-.3)*4,(2.6-S.still)*2.5)),blurbAt:blurbSide(),hero:S.hero,drawHero,wanderers:board?[]:wanderers(ns,S.time),drawWanderer,...(beatCard()||info()),board,closed:board?closedRoads(rv):null,starCount:totalStars(S.save),starMax:maxStars(),action:S.walk||S.reveals.length||S.tour||['locked','soon'].includes(stateOf(S.at))?'':S.view&&S.at===S.view.id?'Enter: Resume':nodeAt(S.at)?.kind==='home'?'Enter: Home':nodeAt(S.at)?.kind==='gate'?'Enter: Travel':nodeAt(S.at)?.kind==='shop'?'Enter: Visit':'Enter: Play',fade:S.fade,banner:S.banner,stars:`Stars ${totalStars(S.save)} / ${maxStars()}`,chapterName:(S.chapter==='veilmoor'?'Veilmoor':ch?.name||''),chapterBlurb:ch?.blurb||'',toast:beatCard()?.notice??S.toast,tabs:S.ctx.look?[]:chapterTabs(),travelTab:travelLabel(),notice:!S.view?'':globalThis.document?.documentElement?.classList?.contains('m-mode')?(S.at===S.view.id?`Paused in ${S.view.name}. Tap Resume to go back.`:`Paused in ${S.view.name}. Tap its stop, then Resume.`):`Paused in ${S.view.name}. Esc or ${String(S.ctx.mapKey||'M').toUpperCase()} resumes.`};}
+ const rv=S.reveals[0];return{chapter:S.chapter,chapterBorder:chapterBorder(S.save,S.chapter),rift:riftNode(),hall:hallNode(),cam:S.cam,nodes:ns,touch:!!globalThis.document?.documentElement?.classList?.contains('m-mode'),sel:S.walk||rv?null:S.at,focusId:S.walk?.to||S.at,reduced:reducedMotion(S.save),reveal:rv?{pts:rv.pts,p:rv.p,to:rv.to,opens:[rv.to,...(rv.marks||[]).map(m=>m[1])]}:null,burst:S.burst,blurbAlpha:S.reveals.length||S.tour?0:Math.max(0,Math.min(1,(S.still-.3)*4,(2.6-S.still)*2.5)),blurbAt:blurbSide(),hero:S.hero,drawHero,wanderers:board?[]:wanderers(ns,S.time),drawWanderer,...(beatCard()||info()),board,closed:board?closedRoads(rv):null,starCount:totalStars(S.save),starMax:maxStars(),action:S.walk||S.reveals.length||S.tour?'':stateOf(S.at)==='locked'&&powerShort(S.save,S.at)&&S.ctx.onPowerGate?'Enter: Library':['locked','soon'].includes(stateOf(S.at))?'':S.view&&S.at===S.view.id?'Enter: Resume':nodeAt(S.at)?.kind==='home'?'Enter: Home':nodeAt(S.at)?.kind==='gate'?'Enter: Travel':nodeAt(S.at)?.kind==='shop'?'Enter: Visit':'Enter: Play',fade:S.fade,banner:S.banner,stars:`Stars ${totalStars(S.save)} / ${maxStars()}`,chapterName:(S.chapter==='veilmoor'?'Veilmoor':ch?.name||''),chapterBlurb:ch?.blurb||'',toast:beatCard()?.notice??S.toast,tabs:S.ctx.look?[]:chapterTabs(),travelTab:travelLabel(),notice:!S.view?'':globalThis.document?.documentElement?.classList?.contains('m-mode')?(S.at===S.view.id?`Paused in ${S.view.name}. Tap Resume to go back.`:`Paused in ${S.view.name}. Tap its stop, then Resume.`):`Paused in ${S.view.name}. Esc or ${String(S.ctx.mapKey||'M').toUpperCase()} resumes.`};}
 export function draw(c,t){if(!S)return;if(!art)preload();const v=view(t);updateMapPanel(v,c.canvas);drawWorldmap(c,v,art,t);}
 /* tools only (bake-worldmap-review 'whole'): point the camera without walking; the next update() eases it back */
 export const setCamera=(x,y)=>{if(S){S.cam.x=x;S.cam.y=y;}};

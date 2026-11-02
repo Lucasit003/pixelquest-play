@@ -8,7 +8,7 @@
 // - BENDS['a>b']: optional [dx,dy] that bows the road from pad a to pad b (quadratic control point offset).
 // Roads come from levels.js `requires` (pads in the same chapter) plus the gates. To add a pad: add it to levels.js,
 // give it a PADS entry here, run `node tools/bake-worldmap-tmx.mjs <chapter>` then `node tools/bake-worldmap.mjs`.
-import {LEVELS,CHAPTERS,levelById,levelOpen,levelDone,levelFogged} from './levels.js';
+import {LEVELS,CHAPTERS,levelById,levelOpen,levelDone,levelFogged,powerShort,starGateMet} from './levels.js';
 export const MAPS={
  /* Winding Elderwood (owner 16 Oct): native 480x270 PixelLab board. Keep every level's landmark and unlocks.
     Bandit Road's burnt tower is beside the main bend; Ruined Watch's stone tower is a mandatory spur.
@@ -93,7 +93,7 @@ export function pathPoints(chapter,a,b){if(!ROADS[chapter])return samplePath(cha
 export const neighbours=(chapter,id)=>ROADS[chapter]?roadLinks(chapter,id):edges(chapter).flatMap(([a,b])=>a===id?[b]:b===id?[a]:[]);
 /* Pad state for drawing: 'done' | 'open' | 'locked'. Gates are open when the far chapter has an open level. */
 export const chapterFogged=ch=>levelFogged({chapter:ch});
-export function nodeState(save,id){if(!isGate(id)&&levelFogged(levelById(id)))return 'soon';if(isGate(id)){const g=gateById(id);if(chapterFogged(g.to))return 'soon';return LEVELS.some(l=>l.chapter===g.to&&levelOpen(save,l.id))?'open':'locked';}
+export function nodeState(save,id){if(!isGate(id)&&levelFogged(levelById(id)))return 'soon';if(isGate(id)){const g=gateById(id);if(chapterFogged(g.to))return 'soon';/* improve20-r12a-nov2: a land whose first stop waits only on a power gate (its stars met) still opens its road, so the hero walks in and the stop's card says what wakes it */return LEVELS.some(l=>l.chapter===g.to&&(levelOpen(save,l.id)||powerShort(save,l.id)&&starGateMet(save,l)))?'open':'locked';}
  return levelDone(save,id)&&levelById(id)?.kind!=='shop'?'done':levelOpen(save,id)?'open':'locked';}
 export const canEnter=(save,id)=>!['locked','soon'].includes(nodeState(save,id));
 export const playableChapter=ch=>!!MAPS[ch]&&!chapterFogged(ch);
