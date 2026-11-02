@@ -207,3 +207,11 @@ export function armourBannerSpots(w,h,d=doc()){
  /* the top strip only when the whole one-line plate fits in it (at 740x360 the shield tip does not) */
  return [...(r-l>=w?[{kind:'top',center:Math.round(tc),width:Math.round(tw),top:Math.round(tt),box:{left:tc-tw/2,right:tc+tw/2,top:tt,bottom:tt+h}}]:[]),
   {kind:'bottom',center:Math.round(bc),width:Math.round(bw),bottom:bb,box:{left:bc-bw/2,right:bc+bw/2,top:sr.height-bb-h,bottom:sr.height-bb}}];}
+
+/* improve20-r11b-nov2 #1 (audit9 a1): nothing is drawn over the hero. A centre banner ("New day!", "Level up!") keeps its place unless that
+   covers the hero; then it goes just under him (a phone: the open ground, its HUD is up top; under=false, a desktop: above first), just above him, or (a short phone, 852x283, where neither fits) beside him, whichever
+   covers him least. x0,y0 = its centre in #stage px, w x h its size (its crest pokes up to 6 px above the box), W x H the stage; {x,y} or null to stay. */
+export function bannerSpot(x0,y0,w,h,W,H,hero,under=true){if(!hero)return null;const box=(x,y)=>({left:x-w/2,right:x+w/2,top:y-h/2-6,bottom:y+h/2}),cx=x=>Math.max(w/2+4,Math.min(W-w/2-4,x)),ok=y=>y-h/2-6>=4&&y+h/2<=H-4,c=[[x0,y0]];for(const y of under?[hero.bottom+8+h/2,hero.top-8-h/2]:[hero.top-8-h/2,hero.bottom+8+h/2])if(ok(y))c.push([x0,y]);c.push([cx(hero.left-10-w/2),y0],[cx(hero.right+10+w/2),y0]);const pick=pickBannerSpot(c.map(([x,y])=>({x,y,box:box(x,y)})),[hero]);return pick&&(pick.x!==x0||pick.y!==y0)?{x:Math.round(pick.x),y:Math.round(pick.y)}:null;}
+/* A door plate (#prompt, anchored by its bottom centre) that a short phone's floor (the goal strip) kept on the hero's head: under his feet
+   when that fits, else beside him on the side with room. a = its box, hero = his box (both #stage px); {bottom} or {x} or null. */
+export function plateOffHero(a,hero,W,H){if(!hero||!a)return null;if(a.right<=hero.left||a.left>=hero.right||a.bottom<=hero.top+4||a.top>=hero.bottom)return null;const w=a.right-a.left,h=a.bottom-a.top,below=hero.bottom+6+h;if(below<=H-8)return {bottom:Math.round(below)};const cx=(a.left+a.right)/2,l=hero.left-8-w/2,r=hero.right+8+w/2,ok=c=>c-w/2>=8&&c+w/2<=W-8,c=ok(l)&&(cx<=(hero.left+hero.right)/2||!ok(r))?l:ok(r)?r:null;return c==null?null:{x:Math.round(c)};}

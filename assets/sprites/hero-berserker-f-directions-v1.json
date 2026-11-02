@@ -422,13 +422,13 @@
       "state": "roll-north",
       "frame": 0,
       "file": "art/heroes/berserker-f/pixellab/roll-north/0.png",
-      "sha256": "421ae043bfb4377ace413b663c084d17a4216f3452638edac3850252e4afcbfa",
+      "sha256": "469bba711add0e90fbefc838317a1e4b11817b2a27d7d3163d58f97cebff0e66",
       "size": [
-        80,
+        84,
         88
       ],
       "offset": [
-        18,
+        16,
         8
       ]
     },
@@ -436,13 +436,13 @@
       "state": "roll-north",
       "frame": 1,
       "file": "art/heroes/berserker-f/pixellab/roll-north/1.png",
-      "sha256": "11618618ececc805bbbc35fd6942bdde3958a51d0ca361a0fa9ffb121126a908",
+      "sha256": "99d5306b5e50cbd69df21f8ba73cdda9fe824ed39d28722ed7bcbd02af279643",
       "size": [
-        80,
+        84,
         88
       ],
       "offset": [
-        18,
+        16,
         8
       ]
     },
@@ -450,13 +450,13 @@
       "state": "roll-north",
       "frame": 2,
       "file": "art/heroes/berserker-f/pixellab/roll-north/2.png",
-      "sha256": "18ff8c827afe7b463531f80bfd2e6b9019127ef68c189466aac2464b476636b6",
+      "sha256": "f805d6b47f86630644ded891739eff55173359a4f599a5451836c65cbcc9d50b",
       "size": [
-        80,
+        84,
         88
       ],
       "offset": [
-        18,
+        16,
         8
       ]
     },
@@ -464,13 +464,13 @@
       "state": "roll-north",
       "frame": 3,
       "file": "art/heroes/berserker-f/pixellab/roll-north/3.png",
-      "sha256": "aca27e81d6311512d6e6e00f0d6b481842e9773ef411824ec2b1fd02f93c6f28",
+      "sha256": "47de96f37d58846ca7b5c044aae3686d18c751361ce6d7370f4de00d7daebd90",
       "size": [
-        80,
+        84,
         88
       ],
       "offset": [
-        18,
+        16,
         8
       ]
     },
@@ -478,13 +478,13 @@
       "state": "roll-north",
       "frame": 4,
       "file": "art/heroes/berserker-f/pixellab/roll-north/4.png",
-      "sha256": "b42225dc9f40877a323dac5a6038b2d288830aa17760381a888c25d88807f971",
+      "sha256": "059647d0e877b12285f389f7fcbe461fd031f5e9e49cfb3b1133a9dce92825fa",
       "size": [
-        80,
+        84,
         88
       ],
       "offset": [
-        18,
+        16,
         8
       ]
     },
@@ -492,13 +492,13 @@
       "state": "roll-north",
       "frame": 5,
       "file": "art/heroes/berserker-f/pixellab/roll-north/5.png",
-      "sha256": "d4c1080c2ebd608a9bc5e05b61bb0a5b75ad24767fe5647cd28e8d5c059df74b",
+      "sha256": "1b7702d6ce81c3dabf1d25524425c8168ac1f418fe8621bee2c137691627e1ef",
       "size": [
-        80,
+        84,
         88
       ],
       "offset": [
-        18,
+        16,
         8
       ]
     },
@@ -506,13 +506,13 @@
       "state": "roll-north",
       "frame": 6,
       "file": "art/heroes/berserker-f/pixellab/roll-north/6.png",
-      "sha256": "933bd407eac278c2e45e523f82938282c7d35181a5f0440c02a0e3973e0598df",
+      "sha256": "07aa0e11f6c2ec99869212e0f488ffa3c5d6c0b87a93054b230a484a8090674a",
       "size": [
-        80,
+        84,
         88
       ],
       "offset": [
-        18,
+        16,
         8
       ]
     },
@@ -520,13 +520,13 @@
       "state": "roll-north",
       "frame": 7,
       "file": "art/heroes/berserker-f/pixellab/roll-north/7.png",
-      "sha256": "03eb700162989ad85aa4d016ffbf136b2030ab94b6395de28ee1fcf3e3b5adda",
+      "sha256": "aaef8758e58690782b6eb5d1f329f9a632825e5d56e9927a3a91add8d2c09405",
       "size": [
-        80,
+        84,
         88
       ],
       "offset": [
-        18,
+        16,
         8
       ]
     }

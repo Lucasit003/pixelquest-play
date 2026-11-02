@@ -422,7 +422,7 @@
       "state": "roll-north",
       "frame": 0,
       "file": "art/heroes/berserker/pixellab/roll-north/0.png",
-      "sha256": "318d9f3a17e08a41b0c7e273f2443b8b9c047678520f42c4e6c812480498c965",
+      "sha256": "bd8e7347cc94c3299ee313adcb289d1dd811a80777e67e87050b88d2c948c951",
       "size": [
         80,
         88
@@ -436,7 +436,7 @@
       "state": "roll-north",
       "frame": 1,
       "file": "art/heroes/berserker/pixellab/roll-north/1.png",
-      "sha256": "615b8cdab8b04ff0a664aa9fd4e6d7c4dd449d599ec8691624811fc25af58587",
+      "sha256": "b95416dfef4bc18f7adb0e83e6415bb84be04d225d9b487a831347c27268fd7d",
       "size": [
         80,
         88
@@ -450,7 +450,7 @@
       "state": "roll-north",
       "frame": 2,
       "file": "art/heroes/berserker/pixellab/roll-north/2.png",
-      "sha256": "fca2da1e6d43d8450a315f17fab4d766798f5218c750ee12ccc97a30108d3b66",
+      "sha256": "3b7277596cd8d4a38cf145d5f595cc83700e27ae6bd20e57ea82c5ac760b73f6",
       "size": [
         80,
         88
@@ -464,7 +464,7 @@
       "state": "roll-north",
       "frame": 3,
       "file": "art/heroes/berserker/pixellab/roll-north/3.png",
-      "sha256": "126a8214ad249b552dec8e64bf8255528e935988324e155b4381fc67ea365b72",
+      "sha256": "9ca9c11a2ee7b8a3ba53f700b86949efb4712077fe014a3aed1e6862d74d8336",
       "size": [
         80,
         88
@@ -478,7 +478,7 @@
       "state": "roll-north",
       "frame": 4,
       "file": "art/heroes/berserker/pixellab/roll-north/4.png",
-      "sha256": "682d41ae1b261713aebe73e40e8dcb8a188c6ab648ffd7e19b11f6546d6b432d",
+      "sha256": "13f3797858cfb6c831bb54135a3628c59600a9610c3e5d0011390a39752f70c5",
       "size": [
         80,
         88
@@ -492,7 +492,7 @@
       "state": "roll-north",
       "frame": 5,
       "file": "art/heroes/berserker/pixellab/roll-north/5.png",
-      "sha256": "6bed2f2f9ac5f9fbf15a75270713886d44656beb7bc75057f5ae0345467b11c0",
+      "sha256": "2a95eb17754a7c650034fcfc36c03f1401ddce05acd088799767ba65006a0b2a",
       "size": [
         80,
         88
@@ -506,7 +506,7 @@
       "state": "roll-north",
       "frame": 6,
       "file": "art/heroes/berserker/pixellab/roll-north/6.png",
-      "sha256": "a898b0b2365c9645c111110baff85ca64ec220e308ebc1af8a94ecd679f10208",
+      "sha256": "e83cd2e9091008cda6a2d47b0e61145ad2bcddb651629d9500fb164012e7cc31",
       "size": [
         80,
         88
@@ -520,7 +520,7 @@
       "state": "roll-north",
       "frame": 7,
       "file": "art/heroes/berserker/pixellab/roll-north/7.png",
-      "sha256": "7cb82bb2f5136be1e89681a5ffe2397acaf22083654a3ca5d490fda9cfb29d78",
+      "sha256": "947f9fa326d3c6437de405b07a7816496f5a2a32cf28d62a424f78a1505205d2",
       "size": [
         80,
         88

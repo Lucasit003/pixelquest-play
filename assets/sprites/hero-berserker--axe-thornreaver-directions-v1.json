@@ -422,13 +422,13 @@
       "state": "roll-north",
       "frame": 0,
       "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/roll-north/0.png",
-      "sha256": "88e06a2b48319276161b730d8cfb1f819e06a15559fc42642282258775164866",
+      "sha256": "0babf46d986f1c7849e2e694e10d42469e0800b69cf2e055704f258e362fbbce",
       "size": [
-        88,
+        92,
         88
       ],
       "offset": [
-        14,
+        12,
         8
       ]
     },
@@ -436,13 +436,13 @@
       "state": "roll-north",
       "frame": 1,
       "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/roll-north/1.png",
-      "sha256": "bf97e77e3c8225857a72322aac9db8f8b8c2e5c9f605678a028d60f383d61084",
+      "sha256": "6058ccb4e1ea2f37cceec3be44558e522d37ff6d6399483824ebd9313300d7e2",
       "size": [
-        88,
+        92,
         88
       ],
       "offset": [
-        14,
+        12,
         8
       ]
     },
@@ -450,13 +450,13 @@
       "state": "roll-north",
       "frame": 2,
       "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/roll-north/2.png",
-      "sha256": "c8639081ecaf5ec8bfbd402644f05da91565268684028b7b236c10ce03c8a054",
+      "sha256": "3ef11e26e879ea86220705fe8316bcdd00efc2bb8609f518d4e699ebc3617d84",
       "size": [
-        88,
+        92,
         88
       ],
       "offset": [
-        14,
+        12,
         8
       ]
     },
@@ -464,13 +464,13 @@
       "state": "roll-north",
       "frame": 3,
       "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/roll-north/3.png",
-      "sha256": "f6c6be6789e31395ebfc08ee0462ddac689b8cd2556c3ac1133225eec9729635",
+      "sha256": "749a189a7d7f536dd840f1a9229f90f9906dd8e5847b3eeda0bb002d7cc2b982",
       "size": [
-        88,
+        92,
         88
       ],
       "offset": [
-        14,
+        12,
         8
       ]
     },
@@ -478,13 +478,13 @@
       "state": "roll-north",
       "frame": 4,
       "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/roll-north/4.png",
-      "sha256": "71f1e9df89761bf513e3b4fbc51dc8f584cd929b8ce361eea841e88cd0d961d2",
+      "sha256": "1ade0ff3a264d6dadaf1d81305e928bc7002d5e9b5bcd06b1dcdba7f513b968f",
       "size": [
-        88,
+        92,
         88
       ],
       "offset": [
-        14,
+        12,
         8
       ]
     },
@@ -492,13 +492,13 @@
       "state": "roll-north",
       "frame": 5,
       "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/roll-north/5.png",
-      "sha256": "88e88e726fe82b38a930a806a0bc2a4340660a28fcaf486de6fdf0449a2e6434",
+      "sha256": "4d61cef09c709c08ea08022c05f7777d86708a76aaa1ac8a646c811295dfb747",
       "size": [
-        88,
+        92,
         88
       ],
       "offset": [
-        14,
+        12,
         8
       ]
     },
@@ -506,13 +506,13 @@
       "state": "roll-north",
       "frame": 6,
       "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/roll-north/6.png",
-      "sha256": "7dfe74ff456c9a18f18111786336f03ba8d1709c7d5cb768fa9e4827e8675994",
+      "sha256": "3c1eae75a03e020bc46cba3d032de0b9173fbeae7fc45db385a5a13d93f694f5",
       "size": [
-        88,
+        92,
         88
       ],
       "offset": [
-        14,
+        12,
         8
       ]
     },
@@ -520,13 +520,13 @@
       "state": "roll-north",
       "frame": 7,
       "file": "art/heroes/berserker-w/axe-thornreaver/pixellab/roll-north/7.png",
-      "sha256": "9b71762f83921a42d34182bfcf5d5214dfeccf29b8045523a0e654026638236f",
+      "sha256": "b881c2126fad4f20ea521487e987d56aa86f456f505f0b481384ed31091386a3",
       "size": [
-        88,
+        92,
         88
       ],
       "offset": [
-        14,
+        12,
         8
       ]
     }

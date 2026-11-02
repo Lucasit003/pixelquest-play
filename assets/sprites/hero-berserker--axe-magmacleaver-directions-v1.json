@@ -422,7 +422,7 @@
       "state": "roll-north",
       "frame": 0,
       "file": "art/heroes/berserker-w/axe-magmacleaver/pixellab/roll-north/0.png",
-      "sha256": "4fbb62c5884f1b66c346f1fd81686cf1f2d7dcc244716e85743d2dfbb1b38018",
+      "sha256": "8e6d198ddc7f4c2079fd3e902bea2f01393f3bfd03b78889e558240d5440520f",
       "size": [
         84,
         88
@@ -436,7 +436,7 @@
       "state": "roll-north",
       "frame": 1,
       "file": "art/heroes/berserker-w/axe-magmacleaver/pixellab/roll-north/1.png",
-      "sha256": "0e63e1d5b97be89f5793755686f31ea2eb7c07fd08f291b81f3e4082515f6c35",
+      "sha256": "51a2fdf4acc03f2e31442991d61ea66b6d2b50838b6440286223b20125f17883",
       "size": [
         84,
         88
@@ -450,7 +450,7 @@
       "state": "roll-north",
       "frame": 2,
       "file": "art/heroes/berserker-w/axe-magmacleaver/pixellab/roll-north/2.png",
-      "sha256": "652f9df9482b53f623028f29b85f92e1b4c36ee70585460277819c80e813f9f0",
+      "sha256": "86443ee9f944d65132bf025bf196d001489f2d5f734428351e86093cea980f2b",
       "size": [
         84,
         88
@@ -464,7 +464,7 @@
       "state": "roll-north",
       "frame": 3,
       "file": "art/heroes/berserker-w/axe-magmacleaver/pixellab/roll-north/3.png",
-      "sha256": "f5bbd334244d237db054c5727301cadd1322822d1ab0f2664b133943b7df31f4",
+      "sha256": "7fa9eccf5bf91cd8d1a7ec36171b022c334a0dd55b52865a02ecbb5b858ede67",
       "size": [
         84,
         88
@@ -478,7 +478,7 @@
       "state": "roll-north",
       "frame": 4,
       "file": "art/heroes/berserker-w/axe-magmacleaver/pixellab/roll-north/4.png",
-      "sha256": "f06cb6ad9d43b9d271f1f032eaab0d29337cebf094446251013d1c3d7979e87d",
+      "sha256": "93733523c9b1fb237dfbd2cc15780668525fc782e74390aa1322e2e546606841",
       "size": [
         84,
         88
@@ -492,7 +492,7 @@
       "state": "roll-north",
       "frame": 5,
       "file": "art/heroes/berserker-w/axe-magmacleaver/pixellab/roll-north/5.png",
-      "sha256": "c70331a6b188e42803a2a1fe8b4f2bce80076bcb2f47a8cab98b96cea6361d5e",
+      "sha256": "71a75c693070d40adb79016952b777e09627f3342b5e38b0a8256d5c22b3cb57",
       "size": [
         84,
         88
@@ -506,7 +506,7 @@
       "state": "roll-north",
       "frame": 6,
       "file": "art/heroes/berserker-w/axe-magmacleaver/pixellab/roll-north/6.png",
-      "sha256": "4ac785406417989cd1065dccd252e8517ff2c56cc4b99d90b1afe4615b64675f",
+      "sha256": "b073ac271370941a18119582c0b68009330b518d1d4355c20d8df8e6014b454f",
       "size": [
         84,
         88
@@ -520,7 +520,7 @@
       "state": "roll-north",
       "frame": 7,
       "file": "art/heroes/berserker-w/axe-magmacleaver/pixellab/roll-north/7.png",
-      "sha256": "23028960b404799fe38f4797defa3d86efa007198d0fef72b95e0295a88fc863",
+      "sha256": "3ec63f8483e34998df6f87266a797bc3a2f0ca8c5c13a87f4520ab5bf29e2bd2",
       "size": [
         84,
         88

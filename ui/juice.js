@@ -61,6 +61,9 @@ export function installToastHold(){
  new MutationObserver(()=>{if((busy||mapOpen())&&t.classList.contains('show')&&!t.classList.contains('held')){t.classList.add('held');const wait=()=>{if(mapOpen()||busy)tick(wait,200);else t.classList.remove('held');};tick(wait,200);}}).observe(t,{attributes:true,attributeFilter:['class']});
 }
 let bannerTimer=0;
+/* improve20-r11b-nov2 #1 (audit9 a1): a card is never drawn over the hero. main.js registers a placer that moves a banner above or under
+   the hero when its own place would cover him (the "New day!" card sat on the hero at 852x283 and 844x390) */
+let placeBanner=null;export const setBannerPlacer=f=>{placeBanner=f;};
 /* improve20-r9c-nov1 #1: o.guard (optional) is asked again when the banner's turn comes; false skips it and calls o.skip (the "New day!" card
    waits for an idle hub and must never land on a level's opening if the queue held it that long) */
 export function banner(text,sub='',kind='info',ms=2200,o={}){
@@ -70,7 +73,7 @@ export function banner(text,sub='',kind='info',ms=2200,o={}){
   let el=d.querySelector('#ui-banner');
   if(!el){el=d.createElement('div');el.id='ui-banner';el.setAttribute('role','status');el.setAttribute('aria-live','polite');host.appendChild(el);}
   el.className=`ui-banner ${kind}`;el.innerHTML=`<span class="b-crest" aria-hidden="true"></span><strong>${text}</strong>${sub?`<small>${sub}</small>`:''}`;
-  void el.offsetWidth;el.classList.add('show');
+  if(el.style){el.style.top='';el.style.left='';}void el.offsetWidth;try{placeBanner?.(el,kind);}catch{}el.classList.add('show');
   clearTimeout(bannerTimer);bannerTimer=tick(()=>el.classList.remove('show'),ms);
  },ms);
 }

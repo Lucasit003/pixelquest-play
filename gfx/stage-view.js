@@ -121,7 +121,9 @@ export function queueBanners(w,out){const now=w.run?.time??w.time??0,Q=w.bannerQ
  const live=b=>cand.find(x=>id(x)===b);
  if(Q.cur){const c=Q.cur;if(c.live){const b=live(c.id);if(!b){Q.cur=null;Q.ended=now;}}else if(now-c.start>=c.dur){Q.cur=null;Q.ended=now;}}
  if(!Q.cur&&!(now-(Q.ended??-1e9)<BANNER_GAP)){Q.wait=Q.wait.filter(x=>now-x.first<=BANNER_STALE).sort((a,b)=>b.b.prio-a.b.prio||a.first-b.first);const n=Q.wait.shift();if(n){const b=live(n.id);Q.cur=b&&now-n.first<.05?{id:n.id,start:now,live:true}:{id:n.id,start:now,live:false,b:n.b,dur:(n.b.dur||2)*QUEUED_SHARE};}}
- const c=Q.cur;if(rest.some(b=>b.step==='potion'))return rest;if(!c)return Q.wait.length||now-(Q.ended??-1e9)<BANNER_GAP?rest:[...rest,...sticky];
+ const c=Q.cur;if(rest.some(b=>b.step==='potion'))return rest;/* improve20-r11b-nov2 #5 (R10B's watch: "DEFEAT THE BACKUP FIRST" came about 6.4 s in): an instruction for right now fills the gap and the wait
+   instead of sitting behind them; it still shows only while no other top banner is up, so nothing stacks */
+ if(!c)return [...rest,...sticky];
  if(c.live)return [...rest,live(c.id)];
  const a=now-c.start,b={...c.b,alpha:Math.max(0,Math.min(1,c.b.kind==='quote'?1:a/.2,(c.dur-a)/.3))};return [...rest,b];}
 /* combatpolish-oct28: the ground a telegraph covers this frame, in camera pixels (the boss's markers, as scenes/tier-fx.js softMarker

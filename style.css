@@ -4117,6 +4117,43 @@ html.m-mode #modal#modal#modal#modal#modal[data-view=placement] .question.qf.qf.
 html.m-mode #modal#modal#modal#modal#modal[data-view=placement] .question.qf.qf.qf.q-pin:has(#quiz-feedback:empty)>#quiz-feedback{display:none}
 html.m-mode #modal#modal#modal#modal#modal[data-view=placement] .question.qf.qf.qf.q-pin.q-more:has(#quiz-feedback:empty)>.question-reading{-webkit-mask-image:linear-gradient(#000 calc(100% - 22px),transparent);mask-image:linear-gradient(#000 calc(100% - 22px),transparent)}
 @media(min-height:600px){html.m-mode #modal#modal[data-view=placement] .question.qf .qf-name{font-size:12px}}
+/* improve20-r11b-nov2 (round 11 lane R11B, phones and the first town screen). Phone rules are gated html.m-mode; none sets a height break at
+   600 px or over, so they do not meet the tablets-nov2 block below.
+   #1 (audit9 a1): in town the phone strip carries the goal on a second line (ui/controls-tutorial.js stripGoal), and the goal plank hides under
+   it, so the first screen is one card; the next-ability card waits while the Getting started strip is up. */
+.m-mode #controls-tutorial.strip.has-goal{display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-rows:auto auto;column-gap:8px;row-gap:1px;align-items:center}
+.m-mode #controls-tutorial.strip.has-goal strong{grid-row:1/3;grid-column:1}
+.m-mode #controls-tutorial.strip.has-goal p{grid-row:1;grid-column:2}
+.m-mode #controls-tutorial.strip.has-goal .strip-goal{grid-row:2;grid-column:2;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;line-height:1.2;color:#e7c77e}
+.m-mode #controls-tutorial.strip.has-goal button{grid-row:1/3;grid-column:3}
+html.m-mode.in-town:has(#controls-tutorial.strip.has-goal:not([hidden])) #objective{visibility:hidden}
+html.m-mode:has(#controls-tutorial.strip:not([hidden])) #next-unlock{visibility:hidden}
+/* #2 (audit9 a11): the strip's display:flex outranked #controls-tutorial[hidden], so a strip the game had hidden (a boss intro, a blocked
+   step) stayed drawn with its old words, over the boss bar in the prologue. Hidden is hidden; a live strip parks under a boss bar
+   (ui/controls-tutorial.js stripBox). */
+.m-mode #controls-tutorial.strip[hidden]{display:none}
+/* #1: on the shortest phones (852x283, Safari's bars) a centre card is compact, so it finds room beside the hero (main.js bannerSpot) */
+@media(max-height:300px){html.m-mode .ui-banner{min-width:0;padding:0 14px 6px}html.m-mode .ui-banner strong{font-size:22px;letter-spacing:2px}html.m-mode .ui-banner small{font-size:14px}html.m-mode .ui-banner .b-crest{margin-top:-40px}}
+/* #4 (audit9 a18): one plate at a door: the greeting toast gives way to the door plate (main.js toast, #toast.hello) */
+html:has(#prompt:not(:empty)) #toast.hello{visibility:hidden}
+/* #3 (audit9 a14): an answered choice question on a short screen hid its words (the stars, the guide and Read to me stayed as one slim row),
+   so after a wrong answer the question and its numbers were gone. Its plate comes back as a one-line summary under the stars, beside the
+   guide; a tap shows it whole (main.js submitSitting). The picture still steps aside. */
+@media(max-height:500px){#modal#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-form.choice-form):has(#quiz-feedback:not(:empty))>.question-reading{grid-template-areas:"guide top read" "guide say read";grid-template-rows:auto auto;row-gap:2px}#modal#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-form.choice-form):has(#quiz-feedback:not(:empty))>.question-reading>h3{display:block;grid-area:say!important;min-width:0;margin:0;padding:2px 36px 2px 8px;font-size:14px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}#modal#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-form.choice-form):has(#quiz-feedback:not(:empty))>.question-reading>h3.qf-open{white-space:normal}}
+/* ...and at 852x283 (the owner's iPhone with Safari's bars) the card itself had no room left (a 4 px sliver): there the picked-answer chip
+   steps aside once the card says the answer, and the card gets its room */
+@media(max-height:300px){#modal#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-form.choice-form):has(#quiz-feedback:not(:empty))>#quiz-form{display:none}#modal#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-form.choice-form):has(#quiz-feedback:not(:empty))>#quiz-feedback .feedback{flex:none;min-height:44px}}
+/* #5 (R11C leftover): at 844x390 only the title of the Champion card's "Wake your next power" block showed above the sticky buttons. On a
+   short screen the key-art band is slimmer and the block compact, so the power and the topics it needs read without scrolling. */
+@media(max-height:500px){dialog[data-view=finale] .finale .finale-scene{height:104px;background-position:center 34%;align-self:start}dialog[data-view=finale] .finale:has(>.wake-next){grid-template-rows:auto auto 1fr auto auto;align-items:start}dialog[data-view=finale] .finale .finale-hero{width:96px;height:96px}dialog[data-view=finale] .finale>.wake-next{margin:2px 0 0;padding:3px 8px 4px}dialog[data-view=finale] .finale>.wake-next .wake-eyebrow{font-size:13px;letter-spacing:2px;line-height:1.2}dialog[data-view=finale] .finale>.wake-next .wake-body{gap:8px}dialog[data-view=finale] .finale>.wake-next .wake-icon{width:44px;height:44px}dialog[data-view=finale] .finale>.wake-next .wake-icon :is(img,canvas,svg){max-width:36px;max-height:36px}dialog[data-view=finale] .finale>.wake-next .wake-text strong{font-size:17px;line-height:1.15}dialog[data-view=finale] .finale>.wake-next :is(.wake-need,.wake-level){font-size:14px;line-height:1.2}}
+/* #5 (R10D leftover): "Not reached yet" was clipped on a shut region tab (844x390: 117 px of words in a 103 px cell). It wraps instead. */
+dialog[data-view=travel] .travel-tab.travel-tab-shut small{white-space:normal;line-height:1.1;min-width:0}
+/* #5 (audit9, also seen): on the creator's look step the "More below" chip sat in the scrolling box over the skin swatches (740x360: two of
+   them). On a phone it moves into the Next bar, between Reset and Next, where nothing lies under it (ui/creator.js still sets .more-below). */
+html.m-mode .title-screen[data-step="look"] .hero-look.more-below::after{content:none}
+html.m-mode .title-screen[data-step="look"]:has(.hero-look.more-below) .hero-look-actions::before{content:'More below ▾';order:1;flex:none;align-self:center;padding:2px 10px 3px;font:700 14px/18px var(--ui);letter-spacing:.5px;color:var(--gold-2,#f0d48a);text-shadow:0 2px 0 #0d0806;pointer-events:none;background:#2a2f5c;border:1px solid #e3b85a88;border-radius:10px;box-shadow:0 2px 0 #0d0806;animation:cr-more-nudge 1.4s ease-in-out infinite}
+html.m-mode .title-screen[data-step="look"] .hero-look-actions>:not(.cr-actions){order:2}
+html[data-motion="reduced"].m-mode .title-screen[data-step="look"] .hero-look-actions::before{animation:none}
 /* improve20-r11d-nov2 #2 (audit9 a10): the practice counter ("Dummy 5/10") read about 6 px in the dummy scene's 11 px uppercase body font. It
    stays HTML (ui/practice-dummy.js dummyBarHTML) at 14 px in the game font, 12 px on short screens, never smaller */
 #modal#modal#modal#modal#modal .pd-label{font:700 14px/1.15 var(--ui);letter-spacing:.5px;text-transform:none}
