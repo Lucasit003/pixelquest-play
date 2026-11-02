@@ -27,3 +27,8 @@ export function pushToast(queue,message,max=3){if(queue.includes(message))return
    is done; only one cut short goes back in the queue (a secret's line came back a second time 3 s later) */
 export const READ_MS_WORD=300;
 export const readEnough=(message,shownMs)=>shownMs>=Math.max(1500,(String(message??'').match(/\S+/g)||[]).length*READ_MS_WORD);
+/* kidsim2-nov2: a boss drop's "Found: X (Rare)! ..." line fires a moment before the victory card, is cut short by it and went back in the queue,
+   so it popped up again at the start of the NEXT level, 20 s later (Theo e1->e2, e3->e4; Nia m3). The victory card already shows the item: a
+   Found line naming an item the card shows is done once the card is up. findName reads the item's name; cardFinds picks those lines. */
+export const findName=m=>(/^Found: (.+?) \(/.exec(String(m??''))||[])[1]||null;
+export const cardFinds=(lines,cardText)=>lines.filter(m=>{const n=findName(m);return !!n&&String(cardText??'').includes(n);});
