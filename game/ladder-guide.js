@@ -36,3 +36,12 @@ export function ladderGoal(s,l){if(!tiered(l))return '';const g=starsShort(s,l.i
 /* oct24-overlevel: the first-clear XP shown is what this hero would be paid (math.js overLevelXP against the tier card's level) */
 export function rewardPreview(s,l,k){const done=tierDone(s,l.id,k),gold=levelReward(l,k),clearXP=overLevelXP(levelXPReward(l,k),s?.level||1,adviceLevel(l,k)),payout=done?`Replay: ${Math.round(gold/4)} gold. A win adds ${Math.round((XP_TUNE.win[tierKey(k)]||0)*100)}% bonus XP.`:`First clear: ${gold} gold + kill gold. ${clearXP} XP${clearXP<levelXPReward(l,k)?' (reduced: you are well above the recommended level)':''}.`,bosses=[l.boss,l.duo].filter(Boolean),materials=bosses.map(b=>{const m=bossMat(b),extra=s?.gear?.beat?.[b]?0:firstKillBonus(m);/* oct24-progress: an Elderwood or Emberkeep boss's first kill pays FIRST_KILL_BONUS more (gear.js rollGear) */return `${TIER_COUNT[k]+extra} ${MATS[m].name}${extra?' (first kill)':''}`;}).join(' + '),grants=k==='legendary'?bosses.map(b=>legendaryReward(s,b)).filter(Boolean):[];
  return {payout,materials,grants,first:grants.map(g=>g.item?ITEM[g.item].name:`${g.n} extra ${MATS[g.mat].name}`).join(' + ')};}
+/* improve20-r10c-nov2 #19 (kidsim-nov2 #18: mid and late saves made 16 Normal clears with 0 deaths): before the run, on the map card and the
+   tier picker, Heroic is offered when it is open here and not yet won and either every Normal star is earned ("All stars earned: try
+   Heroic.") or the hero is HEROIC_LEAD_OVER or more levels above the level's Normal band (tiers.js adviceLevel). Only the overlevelled case
+   (lead:true) also makes Heroic the picker's first choice: a hero near the band keeps Normal first. The result card's own nudge
+   (next-step.js overlevelled) is unchanged. */
+export const HEROIC_LEAD_OVER=8;
+export function heroicLead(s,id){const l=levelById(id);if(!l||!tiered(l)||!levelOpen(s,id)||!tierOpen(s,id,'heroic')||tierDone(s,id,'heroic'))return null;const over=(s?.level|0)-adviceLevel(l,'normal'),lead=over>=HEROIC_LEAD_OVER;
+ if(starsOf(s,id,'normal')>=3)return {kind:'stars',over,lead,text:'All stars earned: try Heroic.'};
+ return lead?{kind:'over',over,lead,text:`You are ${over} levels above ${l.name}. Try Heroic for a real fight.`}:null;}

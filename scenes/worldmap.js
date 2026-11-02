@@ -5,7 +5,7 @@
 // main.js also forwards key(k) (lower-cased KeyboardEvent.key; returns true when the map used it) and tap(x,y)
 // (canvas pixels, 480x270). Layout: game/worldmap-layout.js. Drawing: gfx/worldmap-art.js.
 import {LEVELS,CHAPTERS,levelById,levelOpen,levelDone,tiered,tierOpen,tierDone,starsOf,totalStars,maxStars,starsShort,tierCrests,chapterBorder} from '../game/levels.js';
-import {ladderGoal} from '../game/ladder-guide.js';
+import {ladderGoal,heroicLead} from '../game/ladder-guide.js';
 import {padGradeLine} from '../game/grade.js';
 import {updateMapPanel,clearMapPanel} from '../ui/worldmap-panel.js';
 import {reducedMotion} from '../ui/settings.js';
@@ -229,7 +229,7 @@ function info(){const id=S.walk?.to||S.at,n=nodeAt(id),st=stateOf(id);if(!n)retu
  const full=l.bossName||S.ctx.bossName?.(l.boss)||BOSS_NAMES[l.boss]||(l.boss?titleCase(l.boss):''),boss=l.plate||shortName(full);
  /* polish2-oct29 (readiness #12): every card read only "Clear Goblin Camp."; it now says what is inside (the level's own blurb and its
     boss, from levels.js) above the goal. A locked stop keeps its secrets: no boss and no blurb until it opens. */
- return{title:l.name,boss:st==='locked'?'':boss,inside:st==='locked'?'':String(l.blurb||''),bossLine:st==='locked'||!full?'':`Boss: ${full}`,gradeLine:st==='locked'?'':padGrade(S.save,l),subtitle:st==='locked'?'Locked':'',blurb:ladderGoal(S.save,l),tiers:st==='locked'||!tiered(l)?[]:TIER_KEYS.map(k=>({key:k,label:TIERS[k].label,open:tierOpen(S.save,l.id,k),stars:starsOf(S.save,l.id,k),crest:tierCrests(S.save,l.id).includes(k)})),tierLine:st==='locked'?'':tierLine(S.save,l),side:!!l.optional};}
+ return{title:l.name,boss:st==='locked'?'':boss,inside:st==='locked'?'':String(l.blurb||''),bossLine:st==='locked'||!full?'':`Boss: ${full}`,gradeLine:st==='locked'?'':padGrade(S.save,l),subtitle:st==='locked'?'Locked':'',blurb:ladderGoal(S.save,l),tiers:st==='locked'||!tiered(l)?[]:TIER_KEYS.map(k=>({key:k,label:TIERS[k].label,open:tierOpen(S.save,l.id,k),stars:starsOf(S.save,l.id,k),crest:tierCrests(S.save,l.id).includes(k)})),tierLine:st==='locked'?'':tierLine(S.save,l),/* improve20-r10c-nov2 #19 */heroicLead:st==='locked'?'':heroicLead(S.save,l.id)?.text||'',side:!!l.optional};}
 const lockLine=l=>{const g=starsShort(S.save,l.id);if(g)return ladderGoal(S.save,l);const req=l.requires.map(r=>levelById(r)?.name).filter(Boolean);return req.length?'Clear '+req.join(' or ')+' to open this.':'Locked.';};
 const isFinale=id=>{const l=levelById(id);return!!l&&l.kind==='level'&&!l.optional&&!LEVELS.some(o=>o.chapter===l.chapter&&o.kind==='level'&&o.requires.includes(id));};
 /* Painted board state: per pad the stars and the best tier cleared (the flag's tint), and the road links still closed (greyed). */

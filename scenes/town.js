@@ -389,6 +389,7 @@ export function personAhead(S, x0, y0, x1, y1) {
    offer is measured from there, so it is reached in plain view. A building sprite whose foot is in that bottom band (the gatehouse)
    fades to GATE_FADE while the hero stands under it, instead of covering him with the dark ghost. */
 export const SOUTH_MARGIN = 100, GATE_FADE = .4;
+export const ROOM_HUD_PAD = .19; /* improve20-r10c-nov2 #20: the desktop hotbar band, 135 of 720 px */
 export const gateFade = (S, s, p) => !!(S && !S.room && S.key === 'village' && p && s[5] < 1e6 && s[5] > p.y && s[5] > S.D.h - SOUTH_MARGIN - 60 && s[1] < p.x + 12 && s[1] + s[3] > p.x - 12 && s[2] < p.y && s[2] + s[4] > p.y - 44);
 export const southEdge = S => S && !S.room && S.key === 'village' ? S.D.h - SOUTH_MARGIN : Infinity;
 const footBlocked = (S, x, y) => y > southEdge(S) || blockedAt(S, x - FOOT.hw, y - FOOT.up) || blockedAt(S, x + FOOT.hw, y - FOOT.up) || blockedAt(S, x - FOOT.hw, y + FOOT.down) || blockedAt(S, x + FOOT.hw, y + FOOT.down) || blockedAt(S, x, y);
@@ -1044,7 +1045,9 @@ export function drawHub(c, state, t, kit) {
   /* 1:1 and whole pixels. A room smaller than the view is centred on a dark floor. */
   /* the camera keeps to the room's own walls (its baked bounds), never the black void around them */
   const [bx0, by0, bx1, by1] = D.bounds ?? [0, 0, D.w, D.h], fit = (lo, hi, view, at) => hi - lo <= view ? Math.round((lo + hi - view) / 2) : Math.round(Math.max(lo, Math.min(hi - view, at - view / 2)));
-  const ox = fit(bx0, bx1, VIEW_W, H.cam.x), oy = fit(by0, by1, VIEW_H, H.cam.y);
+  /* improve20-r10c-nov2 #20: on desktop the hotbar band covers the foot of the view, so a room's south exit (the Library's) sat under it; a room taller than the view may scroll that band's height past its floor */
+  const hudPad = S.room && by1 - by0 > VIEW_H && typeof document !== 'undefined' && !document.documentElement.classList.contains('m-mode') ? Math.round(VIEW_H * ROOM_HUD_PAD) : 0;
+  const ox = fit(bx0, bx1, VIEW_W, H.cam.x), oy = fit(by0, by1 + hudPad, VIEW_H, H.cam.y);
   H.view = {ox, oy};
   c.save();
   c.imageSmoothingEnabled = false;

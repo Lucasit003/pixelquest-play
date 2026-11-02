@@ -187,7 +187,8 @@ export const tabRect=(i,n,touch)=>{const h=touch?31:20,y=touch?0:3;return [TABS.
 export function tabHit(x,y,tabs,touch){const n=tabs?.length||0;for(let i=0;i<n;i++){const [rx,ry,rw,rh]=tabRect(i,n,touch);if(x>=rx&&x<rx+rw&&y>=ry&&y<ry+rh)return i;}return -1;}
 /* Fast travel (25 Oct): a tab of the same make on the left of the top rim, opposite the chapter tabs; v.travelTab is its label
    (none in view mode or the ending's look back). Touch: 31 native px tall, at least 44 CSS px. */
-export const travelTabRect=touch=>{const h=touch?31:20,y=touch?0:3;return [UI_SAFE_INSET+4,y,116,h];};
+/* improve20-r10c-nov2 #16: the desktop label carries its key ("Fast travel T"), and its T touched the plate's rim at 116 px; 132 still ends left of the chapter tabs (182) */
+export const travelTabRect=touch=>{const h=touch?31:20,y=touch?0:3;return [UI_SAFE_INSET+4,y,touch?116:132,h];};
 export function travelTabHit(x,y,v,touch){if(!v)return false;const [rx,ry,rw,rh]=travelTabRect(touch);return x>=rx&&x<rx+rw&&y>=ry&&y<ry+rh;}
 function drawTabs(c,v,art){if(v.travelTab){const [x,y,w,h]=travelTabRect(v.touch);c.save();footerPanel(c,art,x,y,w,h);text(c,v.travelTab,x+w/2,y+(h-16)/2,{font:FONT_BOLD,color:'#fff3ce',align:'center'});c.restore();}const tabs=v.tabs||[];/* polish2-oct29 (readiness #12): a closed chapter's tab was the whole tab at 60% alpha, so its name read as faded mush. The plate dims
    a little; the name stays solid in a muted parchment colour (regular weight, so it fits beside the lock) behind a lock, so it reads clearly and clearly as locked. An open tab

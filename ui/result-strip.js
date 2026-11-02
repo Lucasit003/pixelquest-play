@@ -41,10 +41,14 @@ export function youGotHTML({won=true,gold=0,xp=0,riftBonus=0,shard='',loot=[],ge
     colour, its pips under the icon (so it never rests on colour alone, and still shows on a compact phone chip) and the name in the title */
  const item=(kind,img,n,what,cls='',rar=null)=>`<span class="you-got-item${cls}" title="${esc((n!==''?n+' ':'')+what+(rar?` (${rarName(rar)})`:''))}" data-reward="${kind}"${rar?` data-rar="${esc(rar)}" style="--rar:${rarColor(rar)}"`:''}>${rar?`<span class="you-got-ico">${img}${rarPips(rar,'rar-on-cell')}</span>`:img}<span class="you-got-text">${n!==''?`<strong>${esc(n)}</strong>`:''}<small>${esc(what)}</small></span></span>`;
  /* a defeat shows only what the run did bring home: no "+0" chips, and no strip at all when there is nothing */
- const parts=[...(won||gold>0?[item('gold',icon('gold'),`+${gold}`,(riftBonus>0?'gold (Rift bonus)':'gold')+(spare>0?` (+${spare} for ${spare>BAG.overflow?'spare potions':'a spare potion'})`:'')+(won&&next?(/^craft /.test(next)?` · next: ${next}`:` · next buy: ${next}`):''),' level-reward')]:[]),...(shard?[item('shard',shard,'+1','Rift Shard',' level-reward')]:[]),...(xp>0?[item('xp',icon('xp'),`+${xp}`,'XP',' level-reward')]:[]),
+ /* improve20-r10c-nov2 #17 (kidsim-nov2 #16): "+28 extra gold from a secret spot" took a chip per spot; that gold joins the gold chip's words
+    ("+173 gold (+53 from secret spots)"), as the bag-full gold does */const SECRET=/^\+(\d+) extra gold from a secret spot$/;let secret=0;loot=loot.filter(x=>{const m=SECRET.exec(x?.label||'');if(m){secret+=+m[1];return false;}return true;});gold+=secret;
+ const goldWords=(riftBonus>0?'gold (Rift bonus)':'gold')+(spare>0?` (+${spare} for ${spare>BAG.overflow?'spare potions':'a spare potion'})`:'')+(secret>0?` (+${secret} from secret spots)`:'')+(won&&next?(/^craft /.test(next)?` · next: ${next}`:` · next buy: ${next}`):'');
+ /* improve20-r10c-nov2 #17: on a win the drop and the stars lead the strip (the drop as a bigger chip, data-lead), then gold, XP and items */
+ const drops=gear.map(g=>item('gear',g.img||icon('chest'),'',g.name,' level-loot-item'+(won?' you-got-lead':''),g.rar||null)),starChip=stars>0?[item('stars',starIcon,`+${stars}`,`${stars>1?'stars':'star'}${starsAll?` · ${starsAll} in all`:''}`,won?' you-got-lead':'')]:[];
+ const parts=[...(won?[...drops,...starChip]:[]),...(won||gold>0?[item('gold',icon('gold'),`+${gold}`,goldWords,' level-reward')]:[]),...(shard?[item('shard',shard,'+1','Rift Shard',' level-reward')]:[]),...(xp>0?[item('xp',icon('xp'),`+${xp}`,'XP',' level-reward')]:[]),
   ...loot.map(x=>{const {n,what}=splitCount(x.label);return item('item',icon(x.icon),n,what,` level-loot-item${x.quiet?' loot-quiet':''}`);}),
-  ...gear.map(g=>item('gear',g.img||icon('chest'),'',g.name,' level-loot-item',g.rar||null)),
-  ...(stars>0?[item('stars',starIcon,`+${stars}`,`${stars>1?'stars':'star'}${starsAll?` · ${starsAll} in all`:''}`)]:[])];
+  ...(won?[]:[...drops,...starChip])];
  if(!parts.length)return '';
  /* improve20-y-nov1 #1 (audit4 #17): a compact phone strip shows a gear piece or jewel as its icon only, so a kid could not tell what the
     run found. One caption under the strip names them ("Found: Jelly Pendant, Bog Waders"); it shows only on a compact phone strip */

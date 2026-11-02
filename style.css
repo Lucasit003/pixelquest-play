@@ -3959,6 +3959,48 @@ html.m-mode .hall-rung[data-state=locked] small{display:none}
 /* kidsim-nov2 fix 2 (Sam, 852x283, a phone with browser bars showing): the interact pill sat at bottom:237px above the arc, so on a screen under
    340 px tall it went off the top edge under Map/Journal/Menu and "Tap the hand to Enter the Library" had no hand; there it moves left of the arc */
 @media (max-height:340px){.m-mode:not(.map-open) #touch .t-interact{bottom:8px;right:236px}}
+/* improve20-r10c-nov2 (round 10 lane R10C, layout and cards). Desktop rules are gated html:not(.m-mode); phone rules sit under 340/300 px
+   tall, so none of them meets the tablets-nov2 block below (html.m-mode and min-height:600px). */
+/* #16 (kidsim-nov2 #11, #12, #27): at 1280x720 the Library, Journal and Settings boxes scroll, but a row cut by the frame's foot read as clipped.
+   Each scrolling box fades at its foot while more is below, and the fade is gone at the end (a scroll-driven custom property; a browser
+   without scroll timelines keeps the plain box) */
+@property --r10c-cue{syntax:'<length>';inherits:false;initial-value:0px}
+@keyframes r10c-cue{from{--r10c-cue:30px}to{--r10c-cue:0px}}
+@supports (animation-timeline:scroll()){html:not(.m-mode) #modal:is([data-view=library],[data-view=journal],[data-view=settings]) :is(.library-content,#journal-body,.settings-grid){animation:r10c-cue linear both;animation-timeline:scroll(self);-webkit-mask-image:linear-gradient(#000 calc(100% - var(--r10c-cue)),transparent);mask-image:linear-gradient(#000 calc(100% - var(--r10c-cue)),transparent)}}
+/* the Library's three-button row ("Show what you know", "Grade 2 warm-up", "Read to me") keeps each button on one line */
+@media(min-height:601px) and (max-height:800px) and (min-width:641px){html:not(.m-mode) dialog[data-view=library] .edu-next-actions:has(>[data-find-start]){flex-basis:min(420px,50%)}html:not(.m-mode) dialog[data-view=library] .edu-next-actions>:is(.edu-warm-up,.edu-read){white-space:nowrap;padding-inline:10px}}
+/* under 760 px tall the next-ability card drops its first-time glosses and badge count (the Journal and HUD keep them), so the next
+   lesson's buttons are in the first view */
+@media(max-height:760px){html:not(.m-mode) dialog[data-view=library] .library-content>.am-goal.road{padding-block:6px;row-gap:2px}html:not(.m-mode) dialog[data-view=library] .library-content>.am-goal.road :is(.road-gloss,.road-badges,.am-goal-checks){display:none}html:not(.m-mode) dialog[data-view=library] .library-content>.am-goal.road :is(.am-goal-what,.am-goal-line){font-size:16px;line-height:1.25}}
+/* the Journal's next-ability card is one narrow column: the badge line spans it and wraps as words, not as letters */
+.adventure-power .road>.road-badges{grid-column:1/-1;flex-wrap:wrap;row-gap:0}.adventure-power .road>.road-badges>.road-gloss{flex:1 0 100%}
+@media(max-height:760px){html:not(.m-mode) .adventure-power .road .road-count>.road-gloss{display:none}html:not(.m-mode) .adventure-power .road{row-gap:2px}}
+/* Settings under 760 px tall: rows sit closer, so Save ends with Load code in view and Display shows Reduced motion whole */
+@media(max-height:760px){html:not(.m-mode) dialog[data-view=settings] .settings-sections>section{gap:4px;padding-bottom:6px}html:not(.m-mode) dialog[data-view=settings] .settings-sections>section>label{min-height:44px}html:not(.m-mode) dialog[data-view=settings] .settings-sections h4{margin-top:4px}html:not(.m-mode) dialog[data-view=settings] .settings-sections .code-row{margin-block:2px}}
+/* #17 (kidsim-nov2 #16): a win's drop leads the You got strip as the biggest chip (ui/result-strip.js you-got-lead); its chests and rank line
+   wait under Details (main.js foldWin) */
+html:not(.m-mode) dialog[data-view=result] .you-got-item.you-got-lead[data-reward=gear]{padding:6px 14px 6px 8px;background:rgba(40,30,70,.6);box-shadow:0 0 10px -2px var(--rar,#e3b85a)}
+html:not(.m-mode) dialog[data-view=result] .you-got-item.you-got-lead[data-reward=gear] img{width:48px;height:48px}
+html:not(.m-mode) dialog[data-view=result] .you-got-item.you-got-lead[data-reward=gear] .ico{--s:48px!important}
+:root:not(.m-mode) dialog[data-view=result] .you-got-item.you-got-lead[data-reward=gear] small{font-size:calc(var(--fs) * 1.1);font-weight:700;color:#fff3ce}
+/* #19 (kidsim-nov2 #18): an overlevelled or all-stars stop leads with Heroic on the map card (scenes/worldmap.js heroicLead) */
+.worldmap-info .wm-heroic{display:flex;align-items:flex-start;gap:6px;margin:0 0 6px;font:700 16px/18px var(--ui);color:#ffd27a;text-wrap:pretty;letter-spacing:0}
+.worldmap-info .wm-heroic img{flex:none;width:16px;height:16px;margin-top:1px;image-rendering:pixelated}
+.worldmap-info.wm-compact .wm-heroic{display:none}
+.worldmap-info .wm-tier.wm-tier-lead{border-color:#ffb347;background:#3a2414;box-shadow:0 0 6px #ff9a3c99}
+dialog[data-view=tiers] .tier-lead{display:flex;align-items:center;justify-content:center;gap:8px;margin:4px 0 8px;font-weight:700;color:#ffd27a;text-align:center}
+dialog[data-view=tiers] .tier-lead img{flex:none;width:24px;height:24px;image-rendering:pixelated}
+dialog[data-view=tiers]:has(.tier-lead) #tier-card-heroic{outline:2px solid #ffb347;outline-offset:-2px;box-shadow:0 0 12px #ff9a3c80}
+.m-mode dialog[data-view=tiers] .tier-lead{margin:2px 0 4px;font-size:15px}
+/* #18 (kidsim-nov2 #25, #24): phones. Under 340 px tall (852x283, Safari with its bars) the tutorial strip and the goal card share the top
+   row, so the goal card waits while a tutorial card shows; and during the fast-travel fade the tutorial card waits (the place's caption and
+   the goal card were stacking with it) */
+@media(max-height:340px){html.m-mode:has(#controls-tutorial:not([hidden])) #objective{visibility:hidden}}
+html.m-mode:has(#scene-fade.on.travel) #controls-tutorial{visibility:hidden}
+/* the creator's last step at 852x283: its column ran 21 px under the screen, so "Choose a school stage first" / "Begin your adventure" were
+   cut by .hero-detail. Under 300 px tall the column is the screen's height and scrolls (its grid row
+   was sized to its content), the name label gives way to the field's placeholder, and Begin stays pinned at the column's foot */
+@media(max-height:300px){html.m-mode .title-screen[data-step=setup] .er-stats{height:100%;max-height:100%;box-sizing:border-box}html.m-mode .title-screen[data-step=setup] .er-detail.hero-detail{grid-template-rows:minmax(0,1fr)}html.m-mode .title-screen[data-step=setup] .hero-setup>.hero-name-label{display:none}html.m-mode .title-screen[data-step=setup] #begin{position:sticky;bottom:0;z-index:2;min-height:44px;box-shadow:0 -6px 8px #0f1622}}
 /* tablets-nov2 (round 9 item 12): the tablet sweep (1024x768, 1180x820, 1280x800, 1366x1024, 1180x740 touch). A tablet is a touch screen at
    least 600 css px on its short side (ui/mobile.js tabletSize); phones in landscape are 430 px tall at most, so (min-height:600px) never
    reaches them, and every rule here sits under html.m-mode, so desktops are untouched. */
