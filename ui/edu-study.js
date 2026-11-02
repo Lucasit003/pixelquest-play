@@ -78,7 +78,7 @@ export function nextLessonHTML(save,{hero=save.hero,subject=null}={}){
  const t=n.topic,sub=SUBJECTS[t.subject]||{name:t.subject,color:'#e7c77e'};
  /* The card steps on through the topic (playtest S2-3): lesson, then quiz, then practice, then the test,
     never re-offering a finished lesson. */
- const g=topicStage(save,t),act={lesson:['Next lesson','data-lesson','Start lesson'],quiz:['Next: the quiz','data-quiz','Take the quiz'],practice:['Next: practice','data-practice',`Practice (${g.practice}/${g.needed})`],test:['Next: the mastery test','data-test','Mastery test']}[g.stage]||['Next lesson','data-lesson','Start lesson'];
+ const g=topicStage(save,t),act={lesson:['Next lesson','data-lesson','Start lesson'],quiz:['Next: the quiz','data-quiz','Take the quiz'],practice:['Next: practice','data-practice',practiceLeft(g)],test:['Next: the mastery test','data-test','Mastery test']}[g.stage]||['Next lesson','data-lesson','Start lesson'];
  /* The Library agrees with the town strip (game/next-step.js, playtest S4): when the next step is an adventure,
     the card says so and the study step stays offered, but not insisted on. A subject station keeps its own card. */
  const step=subject?null:nextStep(save),lv=step?.target?.kind==='pad'?levelById(step.target.id):null;
@@ -95,6 +95,8 @@ export function placementNudgeHTML(save,{hero=save.hero}={}){
 }
 /* Why practice is needed, in one line a child can read (playtest S2-3). The number is the topic's own (owner 29 Oct: 10 on a
    save's first topic, 25 after; lessons.js practiceNeeded); PRACTICE_WHY is the 25 line. */
+/* improve20-r10d-nov2 #2 (kid sims nov2): the practice button says how many are left, from the topic's own count (testReady(...).needed), never a literal */
+export const practiceLeft=g=>`Practice: ${Math.max(0,(g?.needed|0)-(g?.practice|0))} more to go`;
 export const practiceWhy=(n=25)=>`Practice helps your brain keep what you learned: get ${n} different questions right, and the mastery test opens.`;
 export const PRACTICE_WHY=practiceWhy(25);
 

@@ -398,7 +398,7 @@ const footBlocked = (S, x, y) => y > southEdge(S) || blockedAt(S, x - FOOT.hw, y
 const H = {S: null, player: null, cam: {x: 0, y: 0}, fade: null, near: null, time: 0, from: null, save: null, events: [], drawT: 0};
 const current = () => H.S ?? (H.S = scene('village'));
 
-function placeAt(p, S, x, y) { H.S = S; p.x = x; p.y = y; H.cam.x = x; H.cam.y = y; H.snap = true; H.vx = H.vy = 0; H.walked = false; H.still = 0;
+function placeAt(p, S, x, y) { H.S = S; p.x = x; p.y = y; H.cam.x = x; H.cam.y = y; H.snap = true; H.vx = H.vy = 0; H.walked = false; H.still = 0; H.doorAt = H.time ?? 0;
   /* townchunk-oct28: every arrival in the village goes through here; core/loader.js holds it until the arrival view is in */
   if (S.key === 'village') { H.arrival = {x, y}; H.onArrive?.(H.arrival); } }
 /** townchunk-oct28: the last arrival point in the village (core/loader.js gates it), and the loader's hook for arrivals. */
@@ -484,7 +484,8 @@ function optionFor(S, p) {
   if (act === 'barracks' && H.save?.party?.with) return {label: 'Check the roster board', panel: act};
   if (act) return {label: act === 'guild' || act === 'alchemist' ? PANEL_LABEL[act] : pr.label || p.name || PANEL_LABEL[act], panel: act};
   if (p.type === 'npc-spot') { const key = p.props?.key, who = nameOf(key, p.name); return {label: `Talk to ${who}`, talk: {key, name: who, fallback: p.props?.talk}}; }
-  if (p.type === 'interact') return {label: pr.label || p.name, say: pr.text ?? flavor(p.name)};
+  /* improve20-r10d-nov2 #4: a bed's Sleep is marked so main.js can ask "Sleep now?" the first time in a session */
+  if (p.type === 'interact') return {label: pr.label || p.name, say: pr.text ?? flavor(p.name), ...(/^sleep$/i.test(pr.label || p.name) ? {sleep: true} : {})};
   return null;
 }
 
@@ -529,11 +530,13 @@ function nearest(S, p) {
      improve20-q-oct31 (audit2 #2): "Pet Ink Cat" took the bubble a second after walking into a room, before the child had done
      anything. It now waits until the hero has walked in this room (H.walked, cleared on every arrival in placeAt) and then stood
      still for PET_STILL seconds, with no door, person, station or chest even near reach (PET_CLEAR, half again the reach). */
-  const pet = !best && !close && H.walked && (H.still ?? 0) > PET_STILL && PETS.find(x => x.key === H.save?.pet);
+  /* improve20-r10d-nov2 #3 (kid sims nov2: "Pet Ink Cat" competed for E right after a door): it also waits PET_DOOR_WAIT seconds after every
+     arrival through a door (placeAt), however soon the hero walks and stops; any target in reach still takes the prompt first (best). */
+  const pet = !best && !close && H.walked && (H.still ?? 0) > PET_STILL && (H.time ?? 0) - (H.doorAt ?? -1e9) >= PET_DOOR_WAIT && PETS.find(x => x.key === H.save?.pet);
   if (pet) { const px = p.x - 22 * p.facing, py = p.y + 9; best = {d: 99, q: {x: px, y: py, sx: px, sy: py, mark: [px, py - 30], pet: true}, o: {label: `Pet ${pet.name}`, run: () => { petThePet(pet); p.petting = true; H.petted = (H.petted | 0) + 1; }}}; }
   return best;
 }
-export const PET_STILL = 1.5, PET_CLEAR = 45;
+export const PET_STILL = 1.5, PET_CLEAR = 45, PET_DOOR_WAIT = 3;
 
 function fadeTo(mid) { if (!H.fade) H.fade = {t: 0, mid, done: false}; }
 function enter(room, door) {
@@ -809,7 +812,7 @@ export function hubInteract() {
   if (o.worldmap) return {worldmap: true};
   /* speaking may move a villager quest on (npcs.js talkAndAdvance); main.js saves and announces `quest` */
   if (o.talk) { const t = talkAndAdvance(o.talk.key, o.talk.name, H.save, o.talk.fallback); return {say: t.lines.join(' '), speaker: t.speaker, lines: t.lines, quest: t.moved}; }
-  if (o.say) return {say: o.say, speaker: o.speaker, lines: o.lines ?? [o.say]};
+  if (o.say) return {say: o.say, speaker: o.speaker, lines: o.lines ?? [o.say], ...(o.sleep ? {sleep: true} : {})};
   return null;
 }
 

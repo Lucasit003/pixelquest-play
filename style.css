@@ -4051,3 +4051,30 @@ html.m-mode:has(#scene-fade.on.travel) #controls-tutorial{visibility:hidden}
  html.m-mode dialog[data-view=pause] .pause-menu .pause-more{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
  html.m-mode dialog[data-view=pause] .pause-menu .pause-more>button{margin:0;width:100%}
 }
+/* improve20-r10d-nov2 (kid-sim polish leftovers). #1 the Journal's Recent tab: the session's messages, newest first, plain text.
+   #6 one friendly line on an early Journal page; a Bestiary chapter not explored yet folds to its name; Settings > Grown-ups is one line
+   and a More toggle (the long text, both helper lines and the account heading fold; the buttons and the gate are unchanged). #4 the Home
+   bed's "Sleep now?" card uses the small confirm modal (like "Leave this level?"). */
+.recent-lead{margin:2px 0 8px}
+.recent-log{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.recent-log li{padding:8px 12px;border:2px solid #3a3352;background:#1b1830;color:var(--text,#efe6cf);font-size:var(--fs,16px);line-height:1.35;overflow-wrap:anywhere}
+.recent-log li:first-child{border-color:var(--gold-deep,#9c7a3c)}
+.journal-early{margin:4px 0 12px;padding:10px 14px;border:2px dashed #5a4f7a;color:#e9dcb4;font-size:var(--fs,16px);line-height:1.4}
+details.bestiary-unmet>summary{cursor:pointer;list-style:none;min-height:32px;display:flex;align-items:center}
+details.bestiary-unmet>summary::-webkit-details-marker{display:none}
+details.bestiary-unmet>summary h4{margin:0;opacity:.8}
+details.bestiary-unmet>summary h4::before{content:'▸ ';color:var(--gold,#e4c57a)}
+details.bestiary-unmet[open]>summary h4::before{content:'▾ '}
+.grownups-brief:not(.is-open) :is(.grownups-long,#edu-grownups-help,#acct-open-help,h4,h4+p){display:none}
+.grownups-brief:not(.is-open) :is(#edu-grownups,#acct-open){margin:4px 10px 4px 0}
+.grownups-brief{align-content:start}
+.grownups-line{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
+.grownups-line .grownups-more{min-height:32px;padding:2px 10px;text-transform:none;letter-spacing:0;color:var(--gold,#e4c57a);text-decoration:underline;text-underline-offset:3px}
+dialog[data-view=sleep-confirm] .modal-actions{justify-content:center}
+/* improve20-r10d-nov2 #5: fast travel's upcoming places, greyed-out chips with a lock, under "Visit each once to unlock it" */
+.travel-soon{list-style:none;margin:4px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:4px}
+.travel-soon li{display:inline-flex;align-items:center;gap:4px;min-width:0;max-width:100%;padding:2px 6px;border:1px solid #3a3352;background:#151322;color:#9a94ad;font-size:13px;line-height:1.2}
+.travel-soon li b{font-weight:400;color:#a9a3bd;filter:grayscale(1)}
+.travel-soon .travel-lock{flex:none;opacity:.7;filter:grayscale(1)}
+.m-mode dialog[data-view=travel] .travel-soon{gap:3px}.m-mode dialog[data-view=travel] .travel-soon li{padding:1px 5px}
+dialog[data-view=travel] .travel-more[open] summary{min-height:24px;row-gap:0}dialog[data-view=travel] .travel-side:has(.travel-soon){gap:8px}.travel-soon li{padding:1px 6px}

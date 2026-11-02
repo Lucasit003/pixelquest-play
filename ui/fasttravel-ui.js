@@ -28,7 +28,9 @@ function pin(p,pos,here,ic,sub){
  if(!p.open)return `<span class="pq-map-mark travel-pin travel-shut" ${at?`style="${at}"`:''} aria-hidden="true">${LOCK}</span>`;
  return `<button type="button" class="pq-map-mark travel-pin" data-travel="${esc(p.id)}" data-place="${esc(p.id)}" ${at?`style="${at}"`:''} title="${name}" aria-label="${name}: ${esc(sub)}">${ico(ic)}<b class="pq-map-name" aria-hidden="true">${short}</b></button>`;}
 /* the places not visited yet, folded into one line whose names open on a tap (improve20-d-nov1, audit5 b21) */
-const more=places=>{const n=places.length;if(!n)return '';return `<details class="travel-more"><summary><b>${n} more to find</b> <small>Visit each once to unlock it</small></summary><p>${places.map(p=>esc(p.name)).join(' · ')}</p></details>`;};
+/* improve20-r10d-nov2 #5 (kid sims nov2, polish list): the line opens by default and lists each upcoming place greyed out, a lock beside its name,
+   under "Visit each once to unlock it" (owner: fast travel is free and unlocks by visiting); a tap on the line still folds it */
+const more=places=>{const n=places.length;if(!n)return '';return `<details class="travel-more" open><summary><b>${n} more to find</b> <small>Visit each once to unlock it</small></summary><ul class="travel-soon">${places.map(p=>`<li title="${esc(p.name)}: visit to unlock" aria-label="${esc(p.name)}: visit to unlock">${LOCK}<b>${esc(p.name)}</b></li>`).join('')}</ul></details>`;};
 const board=(key,title,img,W,H,places,here,iconOf,posOf,subOf,on)=>{
  const pins=places.map(p=>pin(p,posOf(p),here,iconOf(p),subOf(p))).join(''),hereAt=places.find(p=>p.id===here);
  const you=hereAt&&posOf(hereAt)?`<span class="pq-map-you pq-map-you-near" style="${posOf(hereAt)}" aria-hidden="true">You</span>`:'';
@@ -36,9 +38,9 @@ const board=(key,title,img,W,H,places,here,iconOf,posOf,subOf,on)=>{
   +`<div class="pq-village-map travel-map" style="aspect-ratio:${W}/${H};--ar:${(W/H).toFixed(4)}">${img?`<img src="${esc(img)}" alt="Map of ${esc(title)}" class="pq-map-image" draggable="false">`:''}${pins}${you}</div></section>`;};
 /* the region's "N more to find" line sits under the tabs, so the map can take the whole height of a phone held sideways */
 const fold=(key,places,here,on)=>{const m=more(places.filter(p=>!p.open&&p.id!==here));return m?`<div class="travel-fold" data-fold="${key}"${on?'':' hidden'}>${m}</div>`:'';};
-const tab=(key,title,thumb,count,on,shut)=>shut
+const tab=(key,title,thumb,count,on,shut,total=count)=>shut
  ?`<button type="button" role="tab" class="travel-tab travel-tab-shut" disabled aria-selected="false" title="Not reached yet. Walk there on the world map to unlock its stops."><span class="travel-thumb" style="background-image:url(${esc(thumb)})" aria-hidden="true"></span><b>${esc(title)}</b><small>${LOCK}Not reached yet</small></button>`
- :`<button type="button" role="tab" class="travel-tab${on?' is-on':''}" data-tab="${key}" aria-selected="${on}" aria-controls="travel-board-${key}"><span class="travel-thumb" style="background-image:url(${esc(thumb)})" aria-hidden="true"></span><b>${esc(title)}</b><small>${count} ${count===1?'place':'places'}</small></button>`;
+ :`<button type="button" role="tab" class="travel-tab${on?' is-on':''}" data-tab="${key}" aria-selected="${on}" aria-controls="travel-board-${key}"><span class="travel-thumb" style="background-image:url(${esc(thumb)})" aria-hidden="true"></span><b>${esc(title)}</b><small>${total>count?`${count} of ${total} places`:`${count} ${count===1?'place':'places'}`}</small></button>`;
 /* the chapter board's picture (the world map's own) */
 export const boardArt=id=>MAPS[id]?.art?`assets/worldmap/${MAPS[id].art}`:null;
 /** list: travelList(save); here: the place id the hero stands at (no trip to it); town: {img, w, h, spots: {id: {x, y}}} (scenes/town.js
@@ -49,8 +51,8 @@ export function travelPickerHTML(list,{here=null,town=null,tab:want=null,touch=f
  const hereIn=here&&list.town.some(p=>p.id===here)?'town':reached.find(c=>c.stops.some(p=>p.id===here))?.id;
  const open=[...(want&&(want==='town'||reached.some(c=>c.id===want))?[want]:[]),hereIn,'town'].find(Boolean);
  const tw=town?.w||4,th=town?.h||3,tpos=p=>{const q=town?.spots?.[p.id.slice(5)];return q?pct(q.x,q.y,tw,th):null;};
- const tabs=[tab('town','Oakhaven',town?.img||'',list.town.filter(p=>p.open).length,open==='town',false),
-  ...list.chapters.map(c=>tab(c.id,c.name,boardArt(c.id)||'',c.stops.filter(p=>p.open).length,open===c.id,!c.reached))].join('');
+ const tabs=[tab('town','Oakhaven',town?.img||'',list.town.filter(p=>p.open).length,open==='town',false,list.town.length),
+  ...list.chapters.map(c=>tab(c.id,c.name,boardArt(c.id)||'',c.stops.filter(p=>p.open).length,open===c.id,!c.reached,c.stops.length))].join('');
  const boards=[board('town','Oakhaven',town?.img,tw,th,list.town,here,p=>TOWN_ICON[p.id.slice(5)]||'map',tpos,p=>p.note,open==='town'),
   ...reached.map(c=>{const M=MAPS[c.id]||{w:480,h:270};return board(c.id,c.name,boardArt(c.id),M.w,M.h,c.stops,here,p=>STOP_ICON[p.kind]||'swords',p=>PADS[p.id]?pct(PADS[p.id].x,PADS[p.id].y,M.w,M.h):null,p=>(KIND[p.kind]||'Stop')+(p.optional?' · side path':''),open===c.id);})].join('');
  const folds=[fold('town',list.town,here,open==='town'),...reached.map(c=>fold(c.id,c.stops,here,open===c.id))].join('');

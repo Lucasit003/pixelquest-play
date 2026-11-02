@@ -28,6 +28,9 @@ export function masteryRowsHTML(save){
   return `<li class="jm-row${n?' jm-started':''}" style="--subject-color:${v.color}" data-subject="${id}">${icon(SUBJECT_ICON[id]||'book-open',{size:32})}<div class="jm-text"><span class="jm-top"><strong>${esc(v.name)}</strong><small class="jm-stage">${esc(subjectStage(save,id))}</small></span>
 <span class="jm-count"><b>${n}</b> topic${n===1?'':'s'} mastered</span>${x.none?'':`<div class="meter jm-bar" role="progressbar" aria-label="${esc(v.name)} toward the next ability" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><i style="width:${pct}%"></i></div>`}${goal(save,id,x)}</div></li>`;}).join('');
  return `<ul class="jm-rows" aria-label="Your subjects">${rows}</ul>`;}
+/* improve20-r10d-nov2 #6 (kid sims nov2 #30: early tabs read as empty walls): while no topic is mastered in any subject, the page opens on one
+   friendly line; the rows below still name each subject's next ability */
+export const masteryEarlyHTML=save=>Object.keys(SUBJECTS).some(id=>topicsMastered(save,id)>0)?'':'<p class="journal-early">Master your first topic in the Library to fill this page.</p>';
 /* the grown-ups' grid: the old table, without stage columns that are empty for every subject */
 export function masteryDetailsHTML(save,levelMastery){const S=Object.keys(SUBJECTS),cols=[['ELEM',id=>elementary(save,id)],['MIDDLE',id=>levelMastery(id,0)],['HIGH',id=>levelMastery(id,1)],['COLLEGE',id=>levelMastery(id,2)]].filter(([,f])=>S.some(id=>f(id)>.05));
  const row=(a,b)=>`<div class="journal-row" style="--jm-cols:${cols.length}">${a}${b}</div>`;

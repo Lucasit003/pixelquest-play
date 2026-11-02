@@ -186,7 +186,9 @@ export function questsJournalHTML(save) {
   const body = sec('Active', active) + sec('Available', open) + sec('Coming later', coming) + sec('Done', done);
   /* oct26-midgame: with every quest done the tab was a lone "Done" card; it says so, and where the next goal lives */
   const allDone = !active.length && !open.length && !coming.length && done.length;
-  return (allDone ? '<p class="subtle quests-all-done">Every quest so far is done. More villagers may ask for help later. Your next goal is on the Adventure tab.</p>' : '') + body || '<p class="subtle">No quests yet.</p>';
+  /* improve20-r10d-nov2 #6 (kid sims nov2 #30): with only "coming later" cards the tab opens on one friendly line, so it does not read as an empty wall */
+  const early = !active.length && !open.length && !done.length && coming.length ? '<p class="journal-early">Help a villager to fill this page. Here is who will ask first.</p>' : '';
+  return (allDone ? '<p class="subtle quests-all-done">Every quest so far is done. More villagers may ask for help later. Your next goal is on the Adventure tab.</p>' : early) + body || '<p class="subtle">No quests yet.</p>';
 }
 
 /** What to say and show when quests move (from talking, a visit or a level): {toasts:[...], say:{speaker, lines}|null} */
