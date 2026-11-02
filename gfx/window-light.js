@@ -12,7 +12,8 @@
 export const WINDOWS = {
   /* Home's arched four-pane window (window_windows1_8 at 197,89): glass x 206-241, y 98-124, a round top (centre 223.5,112, r 18),
      the centre mullion x 220-227 and the transom y 112-115 */
-  home: [{cx: 223.5, top: 97.5, bottom: 124.5, half: 17.5, archY: 112, archR: 18, mullion: 4, transom: [111.5, 115.5], floor: 160}],
+  /* sort: the window sprite's baked draw order (its y in interiors.js), so the night glass (drawWindowGlass) goes on just over it */
+  home: [{cx: 223.5, top: 97.5, bottom: 124.5, half: 17.5, archY: 112, archR: 18, mullion: 4, transom: [111.5, 115.5], floor: 160, sort: 132}],
 };
 
 /** Is room point (x,y) on the window's glass (not its frame, mullion or transom)? */
@@ -104,3 +105,26 @@ export function drawWindowLight(c, key, motion = true, now = new Date()) {
   for (const w of list) { const cv = lightCanvas(key, w, s); if (cv) c.drawImage(cv, cv.x0, cv.y0); }
   c.restore();
 }
+
+/* improve20-r9c-nov1 #7 (ownernotes-a-nov1 gap: "the night window glass stays yellow; only the beams turn blue"): the window's own glass follows the
+   same clock as the beams. nightAt(hour) is 0 by day, rises over 19-21 h as the beams turn to moonlight and falls over 4-7 h at dawn (the
+   ramps sunAt uses). drawWindowGlass lays a moonlit blue-grey over the glass pixels only (glassAt: never the frame, mullion or transom), the
+   upper panes a little lighter where the moon catches them, at NIGHT_GLASS of full strength so the pane's own shading still shows through.
+   A light effect in code over the pack's window, as the beams are; the art is untouched. Pure parts are exported for tests. */
+export const NIGHT_GLASS = .8, MOON_GLASS = [96, 116, 156], MOON_SHEEN = [150, 170, 208];
+export function nightAt(hour) { const h = ((hour % 24) + 24) % 24; if (h >= 7 && h < 19) return 0; if (h >= 19 && h < 21) return ramp(h, 19, 21); if (h >= 4 && h < 7) return 1 - ramp(h, 4, 7); return 1; }
+/* the glass of window w as a mask: a box (x0,y0,w,h) in room pixels and, per pixel, 0 (frame) or 1 (upper panes, above the transom) or 2 (lower) */
+export function glassMask(w) { const x0 = Math.floor(w.cx - w.half), y0 = Math.floor(w.top), W = Math.ceil(w.cx + w.half) - x0, H = Math.ceil(w.bottom) - y0, m = new Uint8Array(W * H);
+  for (let j = 0; j < H; j++) for (let i = 0; i < W; i++) { const X = x0 + i + .5, Y = y0 + j + .5; if (glassAt(w, X, Y)) m[j * W + i] = Y < w.transom[0] ? 1 : 2; }
+  return {x0, y0, w: W, h: H, m}; }
+const glassCache = new Map();
+function glassCanvas(key, i, w, n) { const id = key + ':' + i + ':' + n.toFixed(2); let cv = glassCache.get(id); if (cv !== undefined) return cv;
+  const g0 = glassMask(w); cv = document.createElement('canvas'); cv.width = g0.w; cv.height = g0.h; const g = cv.getContext?.('2d'), img = g?.createImageData?.(g0.w, g0.h);
+  if (!img?.data) { glassCache.set(id, null); return null; }
+  for (let k = 0; k < g0.m.length; k++) { if (!g0.m[k]) continue; const c = g0.m[k] === 1 ? MOON_SHEEN : MOON_GLASS; img.data[k * 4] = c[0]; img.data[k * 4 + 1] = c[1]; img.data[k * 4 + 2] = c[2]; img.data[k * 4 + 3] = Math.round(255 * NIGHT_GLASS * n); }
+  g.putImageData(img, 0, 0); cv.x0 = g0.x0; cv.y0 = g0.y0; if (glassCache.size > 24) glassCache.clear(); glassCache.set(id, cv); return cv; }
+/** Room `key`'s windows that want night glass now: [{sort, draw(c)}] (empty by day or for a room without one); same clock as the beams. */
+export function windowGlass(key, motion = true, now = new Date()) { const list = WINDOWS[key]; if (!list) return [];
+  const ms = now.getTime(); if (hourAt === -Infinity || (motion && ms - hourAt > 60000)) { hourNow = now.getHours() + now.getMinutes() / 60; hourAt = ms; }
+  const n = Math.round(nightAt(sunStep(hourNow)) * 20) / 20; if (n <= 0) return [];
+  return list.map((w, i) => ({sort: w.sort ?? w.floor, draw: c => { const cv = glassCanvas(key, i, w, n); if (cv) c.drawImage(cv, cv.x0, cv.y0); }})); }

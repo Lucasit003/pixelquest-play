@@ -68,17 +68,39 @@ export function placeFurniture(s,id,x,y,wall=false){if(!FURN[id]||spare(s,id)<1|
    piece's top sits just under the beam (WALL.rail), so a row of pieces lines up. It hangs inside the wall, clear of the room's own wall art
    (the window, the shelves, a sconce: rects the caller passes) and of every piece already hung; furniture standing in front of the wall (the
    bed, the hearth, the logs: art whose top is at WALL.stand or lower) may hide at most WALL.tuck px of its foot, as a headboard does. It never
-   blocks the floor. An item hung on the wall carries wall:1 (additive; a piece placed on the floor before this keeps standing where it was). */
+   blocks the floor. An item hung on the wall carries wall:1 (additive). improve20-r9c-nov1: hung pieces snap to WALL_SLOTS, and a wall piece standing on the floor goes up (settleWall). */
 export const WALL=Object.freeze({x0:98,x1:478,rail:98,floor:160,stand:128,tuck:12});
 export const wallRect=(f,x)=>({x0:Math.round(x-f.w/2),x1:Math.round(x+f.w/2),y0:WALL.rail,y1:WALL.rail+f.h});
 const hit=(a,b)=>a.x0<b.x1&&b.x0<a.x1&&a.y0<b.y1&&b.y0<a.y1;
-export function wallFits(f,x,items=[],art=[]){if(!f?.wall)return false;const r=wallRect(f,x);if(r.x0<WALL.x0||r.x1>WALL.x1||r.y1>WALL.floor)return false;
- return !art.some(a=>hit(r,a)&&!(a.y0>=WALL.stand&&r.y1-a.y0<=WALL.tuck))&&!items.some(it=>it.wall&&FURN[it.id]&&hit(r,wallRect(FURN[it.id],it.x)));}
-/* the free spot on the wall nearest to x where f hangs (4 px steps), or null when the wall has no room left for it */
-export function wallSpot(f,x,items=[],art=[],reach=WALL.x1-WALL.x0){for(let d=0;d<=reach;d+=4)for(const sx of d?[x-d,x+d]:[x]){const q=Math.round(sx/4)*4;if(wallFits(f,q,items,art))return {x:q,y:WALL.rail+f.h};}return null;}
+/* improve20-r9c-nov1 #2 (improve20-r7a-nov1 report: "the back wall fits about three wall pieces; the fourth stands on the floor"): pieces hang on
+   fixed slots, the centre xs below, measured on the Home's own back-wall art (HOME_WALL_ART, the rects scenes/town.js wallArt reads from the
+   baked room; tests check they match): one over the bed head (left of the sconce) and five along the plaster between the window and the
+   shelves, above the hearth and the log pile. Slots side by side overlap, so a wide piece takes its neighbour's room. Any set of the four wall
+   pieces packs (wallPack moves hung pieces along to make room, nearest first), so nothing is ever left standing on the floor. */
+export const WALL_SLOTS=Object.freeze([131,280,308,336,364,392]);
+export const HOME_WALL_ART=Object.freeze([[421,90,53,22],[171,108,9,20],[197,89,54,43],[425,94,49,43],[308,128,89,46],[169,145,46,31],[230,148,54,33],[182,131,21,34],[411,134,67,60],[101,136,54,81]].map(([x,y,w,h])=>Object.freeze({x0:x,x1:x+w,y0:y,y1:y+h})));
+const artFits=(f,x,art)=>{const r=wallRect(f,x);if(r.x0<WALL.x0||r.x1>WALL.x1||r.y1>WALL.floor)return false;return !art.some(a=>hit(r,a)&&!(a.y0>=WALL.stand&&r.y1-a.y0<=WALL.tuck));};
+export function wallFits(f,x,items=[],art=HOME_WALL_ART){if(!f?.wall||!WALL_SLOTS.includes(x)||!artFits(f,x,art))return false;const r=wallRect(f,x);
+ return !items.some(it=>it.wall&&FURN[it.id]&&hit(r,wallRect(FURN[it.id],it.x)));}
+/* every way to hang pieces ps ([{f,x}], x the spot it would rather keep) on distinct slots, each clear of the art and of the others: the one
+   moving them least (sum of |slot - x|), as slot xs in ps order, or null */
+export function wallPack(ps,art=HOME_WALL_ART){const n=ps.length,ok=ps.map(p=>WALL_SLOTS.map(x=>artFits(p.f,x,art)));let best=null,cost=1e9;const pick=[];
+ const go=(i,c)=>{if(c>=cost)return;if(i===n){best=pick.slice();cost=c;return;}for(let k=0;k<WALL_SLOTS.length;k++){if(!ok[i][k]||pick.includes(k))continue;const r=wallRect(ps[i].f,WALL_SLOTS[k]);if(pick.some((q,j)=>hit(r,wallRect(ps[j].f,WALL_SLOTS[q]))))continue;pick.push(k);go(i+1,c+Math.abs(WALL_SLOTS[k]-ps[i].x));pick.pop();}};
+ go(0,0);return best&&best.map(k=>WALL_SLOTS[k]);}
+/* where f hangs for a hero at x: the free slot nearest x ({x,y}); when none is free, a packing that moves hung pieces along ({x,y,moves:[[item
+   index, new x]]}); null only when the wall cannot hold them all */
+export function wallSpot(f,x,items=[],art=HOME_WALL_ART){if(!f?.wall)return null;const free=WALL_SLOTS.filter(s=>wallFits(f,s,items,art)).sort((a,b)=>Math.abs(a-x)-Math.abs(b-x)||a-b);if(free.length)return {x:free[0],y:WALL.rail+f.h};
+ const hung=items.map((it,i)=>[it,i]).filter(([it])=>it.wall&&FURN[it.id]),xs=wallPack([...hung.map(([it])=>({f:FURN[it.id],x:it.x})),{f,x}],art);if(!xs)return null;
+ return {x:xs[xs.length-1],y:WALL.rail+f.h,moves:hung.map(([it,i],j)=>[i,xs[j]]).filter(([i,nx])=>items[i].x!==nx)};}
+/* a save's wall (cleanHouse): every hung piece sits on a slot, and a wall piece left standing on the floor (the wall was full before slots)
+   goes up onto a free slot; a piece that cannot go up keeps standing where it was, never dropped */
+export function settleWall(items){const hung=items.filter(it=>it.wall&&FURN[it.id]),up=items.filter(it=>!it.wall&&FURN[it.id]?.wall);
+ let xs=wallPack(hung.map(it=>({f:FURN[it.id],x:it.x})));if(!xs)return items;hung.forEach((it,j)=>{it.x=xs[j];it.y=WALL.rail+FURN[it.id].h;});
+ for(const it of up){const all=[...hung,it],ys=wallPack(all.map(o=>({f:FURN[o.id],x:o.x})));if(!ys)continue;all.forEach((o,j)=>{o.x=ys[j];o.y=WALL.rail+FURN[o.id].h;o.wall=1;});hung.push(it);}
+ return items;}
 export function pickUp(s,i){if(i<0||i>=s.house.items.length)return false;s.house.items.splice(i,1);return true;}
 /* a save's house, cleaned: known items only, whole counts, and never more placed than owned (save.js normalize) */
 export function cleanHouse(h){const owned={},items=[];
  for(const [id,n] of Object.entries(h?.owned&&typeof h.owned==='object'?h.owned:{}))if(FURN[id]&&Math.floor(Number(n))>0)owned[id]=FURN[id].kind==='show'?1:Math.floor(Number(n));
  for(const it of Array.isArray(h?.items)?h.items:[])if(it&&FURN[it.id]&&Number.isFinite(+it.x)&&Number.isFinite(+it.y)&&items.filter(o=>o.id===it.id).length<(owned[it.id]||0)&&items.length<MAX_PLACED)items.push({id:it.id,x:Math.round(+it.x),y:Math.round(+it.y),...(it.wall&&FURN[it.id].wall?{wall:1}:{})});
- return {owned,items};}
+ settleWall(items);return {owned,items};}

@@ -15,7 +15,18 @@ export function separateMarks(root){const map=root?.querySelector?.('.pq-village
   const sx=(a.left+a.right)<(b.left+b.right)?-1:1,sy=(a.top+a.bottom)<(b.top+b.bottom)?-1:1,[dx,dy]=ox<=oy?[ox/2*sx,0]:[0,oy/2*sy];
   for(const [k,s] of [[i,1],[j,-1]]){const r=R[k],mx=Math.max(frame.left-r.left,Math.min(frame.right-r.right,dx*s)),my=Math.max(frame.top-r.top,Math.min(frame.bottom-r.bottom,dy*s));r.left+=mx;r.right+=mx;r.top+=my;r.bottom+=my;off[k][0]+=mx;off[k][1]+=my;}}if(!moved)break;}
  const out=[];marks.forEach((m,k)=>{const [x,y]=off[k];if(Math.abs(x)>=.5||Math.abs(y)>=.5){m.style.translate=`${Math.round(x)}px ${Math.round(y)}px`;out.push([m.dataset.place,Math.round(x),Math.round(y)]);}});return out;}
-export function fitMap(root){separateMarks(root);const a=fitMapLabels(root);fitMapYou(root);if(!a)return null;const b=fitMapLabels(root),y=fitMapYou(root);return {names:b,you:y};}
+export function fitMap(root){separateMarks(root);const a=fitMapLabels(root);fitMapYou(root);if(!a)return null;const b=fitMapLabels(root),y=fitMapYou(root),n=clearHere(root);return {names:b,you:y,nudged:n};}
+/* improve20-r9c-nov1 #8 (ownernotes-a-nov1 gap: "a lock pin can sit under the here pin"): at a map's edge every spot round "here" can cover
+   something (the Gate stands on the bottom edge, a lock beside it), and "You" then sat over a lock. Last pass: each lock (or other pin) that
+   still touches the "here" pin or "You" (with a G px gap) is nudged clear on the shorter axis, inside the map; "here" and "You" never move,
+   and stay on top (style.css z-index). Returns the pins moved, [place or 'lock', dx, dy]. */
+export function clearHere(root){const map=root?.querySelector?.('.pq-village-map');if(!map)return [];const frame=map.getBoundingClientRect();if(!frame.width)return [];
+ const fixed=[map.querySelector('.travel-here'),map.querySelector('.pq-map-you')].filter(Boolean).map(e=>e.getBoundingClientRect()).filter(r=>r.width);if(!fixed.length)return [];const G=2,out=[];
+ for(const m of map.querySelectorAll('.pq-map-mark:not(.travel-here)')){let r=m.getBoundingClientRect();if(!r.width)continue;let dx=0,dy=0;
+  for(let it=0;it<4;it++){const b={left:r.left+dx,right:r.right+dx,top:r.top+dy,bottom:r.bottom+dy},f=fixed.find(q=>Math.min(b.right,q.right)-Math.max(b.left,q.left)+G>0&&Math.min(b.bottom,q.bottom)-Math.max(b.top,q.top)+G>0);if(!f)break;
+   const opts=[[f.left-G-b.right,0],[f.right+G-b.left,0],[0,f.top-G-b.bottom],[0,f.bottom+G-b.top]].filter(([x,y])=>b.left+x>=frame.left&&b.right+x<=frame.right&&b.top+y>=frame.top&&b.bottom+y<=frame.bottom).sort((p,q)=>Math.abs(p[0])+Math.abs(p[1])-Math.abs(q[0])-Math.abs(q[1]));if(!opts.length)break;dx+=opts[0][0];dy+=opts[0][1];}
+  if(dx||dy){const [x0=0,y0=0]=(m.style.translate||'').split(/\s+/).map(v=>parseFloat(v)||0);m.style.translate=`${Math.round(x0+dx)}px ${Math.round(y0+dy)}px`;out.push([m.dataset.place||'lock',Math.round(dx),Math.round(dy)]);}}
+ return out;}
 export function fitMapYou(root){const map=root?.querySelector?.('.pq-village-map'),you=map?.querySelector('.pq-map-you');if(!you)return null;
  const frame=map.getBoundingClientRect();if(!frame.width)return null;const marks=[...map.querySelectorAll('.pq-map-mark,.pq-map-name')].map(m=>m.getBoundingClientRect());
  const keep=you.className.replace(/\s*pq-map-you-(?:left|top|bottom|above|below)\b/g,''),cost=()=>{const r=you.getBoundingClientRect(),pad={left:r.left-2,right:r.right+2,top:r.top-2,bottom:r.bottom+2};return marks.reduce((n,m)=>n+hit(pad,m),0)+(r.left<frame.left||r.right>frame.right||r.top<frame.top||r.bottom>frame.bottom?1e6:0);};

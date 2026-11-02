@@ -49,7 +49,7 @@ const toastUp=()=>!!doc()?.querySelector('#toast.show:not(.held)');
 function pump(){
  if(busy||!Q.length)return;
  if(toastUp()){tick(pump,250);return;}
- const {run,ms}=Q.shift();busy=true;run();
+ const {run,ms}=Q.shift();busy=true;if(run()===false){busy=false;pump();return;}
  tick(()=>{busy=false;doc()?.querySelector('#toast.held')?.classList.remove('held');pump();},ms+200);
 }
 function announce(key,run,ms){if(key&&Q.some(q=>q.key===key))return;Q.push({key,run,ms});pump();}
@@ -61,9 +61,11 @@ export function installToastHold(){
  new MutationObserver(()=>{if((busy||mapOpen())&&t.classList.contains('show')&&!t.classList.contains('held')){t.classList.add('held');const wait=()=>{if(mapOpen()||busy)tick(wait,200);else t.classList.remove('held');};tick(wait,200);}}).observe(t,{attributes:true,attributeFilter:['class']});
 }
 let bannerTimer=0;
-export function banner(text,sub='',kind='info',ms=2200){
+/* improve20-r9c-nov1 #1: o.guard (optional) is asked again when the banner's turn comes; false skips it and calls o.skip (the "New day!" card
+   waits for an idle hub and must never land on a level's opening if the queue held it that long) */
+export function banner(text,sub='',kind='info',ms=2200,o={}){
  announce('b:'+text+sub,()=>{
-  const d=doc();if(!d)return;
+  const d=doc();if(!d)return;if(o.guard&&!o.guard()){o.skip?.();return false;}
   const host=d.querySelector('#stage')||d.body;
   let el=d.querySelector('#ui-banner');
   if(!el){el=d.createElement('div');el.id='ui-banner';el.setAttribute('role','status');el.setAttribute('aria-live','polite');host.appendChild(el);}
@@ -72,6 +74,8 @@ export function banner(text,sub='',kind='info',ms=2200){
   clearTimeout(bannerTimer);bannerTimer=tick(()=>el.classList.remove('show'),ms);
  },ms);
 }
+/* improve20-r9c-nov1 #1: a level start takes the banner zone back from a card of this kind still up */
+export function dropBanner(kind){const el=doc()?.querySelector('#ui-banner.'+kind+'.show');if(el)el.classList.remove('show');return !!el;}
 export function levelUpBanner(level){banner('Level up!',`Hero level ${level}`,'levelup',2600);celebrate('levelup');}
 export function areaTitle(name,sub=''){
  if(!name)return;

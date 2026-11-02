@@ -22,8 +22,9 @@ import {heroArtKey,heroBody,heroDirectionAtlas} from './hero-directions.js';
 import {ARMOR_SOURCES,ARMOR_SETS,tintForChest,tintLUT,decodeRoleMap} from './hero-armor.js';
 import {LOOK_MAPS as ATLAS_LOOK_MAPS} from './hero-look-maps.js';
 import {DRINK_SHEETS,DRINK_ROLE_MAPS,DRINK_LOOK_MAPS} from './hero-drink.js';
+import {PAT_SHEETS,PAT_ROLE_MAPS,PAT_LOOK_MAPS} from './hero-pat.js';
 /* potion-drink-nov1: the drink sheets' maps join the atlases' (tools/bake-hero-drink.mjs) */
-const LOOK_MAPS={...ATLAS_LOOK_MAPS,...DRINK_LOOK_MAPS},HAS_ROLE=new Set([...ROLE_MAPS,...DRINK_ROLE_MAPS]);
+const LOOK_MAPS={...ATLAS_LOOK_MAPS,...DRINK_LOOK_MAPS,...PAT_LOOK_MAPS},HAS_ROLE=new Set([...ROLE_MAPS,...DRINK_ROLE_MAPS,...PAT_ROLE_MAPS]);
 import {lookFor,lookName,normalizeLook,paletteLUT,applyPalette,decodeLookMap} from './hero-palette.js';
 
 export const MAX_VARIANTS=2,MAX_TINTS=4,MAX_ROLE_MAPS=6;
@@ -182,5 +183,13 @@ export const MAX_DRINK_TINTS=4;
 export function heroDrinkId(look,{plain=false,art,set,colours:co}={}){const body=heroBody(look),key=heroArtKey(look,body),L=heroLookOf(look),A=plain?null:art===undefined?L.art:art;
  const v=variantAtlasId(look,body,A)+'-drink',id=DRINK_SHEETS.includes(v)?v:'hero-'+key+'-drink';if(!DRINK_SHEETS.includes(id))return null;const s=loadSprite(id);if(!s.ready)return null;if(plain)return id;
  const P=paletteFor(id,tintFor(look,set===undefined?L.set:set),coloursFor(look,co));if(!P)return id;const t=tintedAtlas(id,P,drinkTints,MAX_DRINK_TINTS);return t||(tintComing(id,P)?null:id);}
+/* improve20-r9c-nov1 #5: the free-hand pat sheet a hero draws while petting the companion (hero-<class>[-f]-pat, tools/bake-hero-pat.mjs),
+   recoloured like the drink (armour set + creator colours) in its own small cache. Only for the body's own weapon: a worn drawn weapon
+   keeps its atlas' own kneel (hero-sprites.js PET_POSE), so the weapon in hand never changes mid-pat. null while it loads. */
+const patTints=new Map();
+export const MAX_PAT_TINTS=2;
+export function heroPatId(look,{plain=false,art,set,colours:co}={}){const body=heroBody(look),key=heroArtKey(look,body),L=heroLookOf(look),A=plain?null:art===undefined?L.art:art;
+ if(variantAtlasId(look,body,A)!=='hero-'+key)return null;const id='hero-'+key+'-pat';if(!PAT_SHEETS.includes(id))return null;const s=loadSprite(id);if(!s.ready)return null;if(plain)return id;
+ const P=paletteFor(id,tintFor(look,set===undefined?L.set:set),coloursFor(look,co));if(!P)return id;const t=tintedAtlas(id,P,patTints,MAX_PAT_TINTS);return t||(tintComing(id,P)?null:id);}
 /* tests and the loader's bookkeeping */
-export function resetHeroLooks(){for(const id of [...resident])releaseSprite(id);resident.length=0;pinned=null;held.clear();dropped.clear();for(const k of busts.keys())releaseSprite(k);busts.clear();for(const k of [...tints.keys()])releaseSprite(k);tints.clear();for(const k of [...drinkTints.keys()])releaseSprite(k);drinkTints.clear();roleMaps.clear();for(const k in lookStats)lookStats[k]=0;lookOf=()=>null;colours={};}
+export function resetHeroLooks(){for(const id of [...resident])releaseSprite(id);resident.length=0;pinned=null;held.clear();dropped.clear();for(const k of busts.keys())releaseSprite(k);busts.clear();for(const k of [...tints.keys()])releaseSprite(k);tints.clear();for(const k of [...drinkTints.keys()])releaseSprite(k);drinkTints.clear();for(const k of [...patTints.keys()])releaseSprite(k);patTints.clear();roleMaps.clear();for(const k in lookStats)lookStats[k]=0;lookOf=()=>null;colours={};}

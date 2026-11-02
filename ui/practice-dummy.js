@@ -7,7 +7,7 @@
    The dummy is never drawn in code: only transforms of its image, plus the existing effect sprites. No timers: the scene
    only reacts to answers. Reduced motion: the still frame of each moment. */
 import {loadSprite,drawSprite} from '../gfx/actors/sprites.js';
-import {drawHeroFigure,previewAttackLen} from '../gfx/actors/hero-sprites.js';
+import {drawHeroFigure,previewAttackLen,previewHitAt} from '../gfx/actors/hero-sprites.js';
 import {drawEffect} from '../gfx/combat-fx.js';
 import {motionReduced} from './juice.js';
 
@@ -55,7 +55,7 @@ export function mountDummyScene(root,{hero,health,cracked=false,extra=false}={})
   /* the hero: their own idle, attack and victory animations, gear look included, facing the dummy ('attack' is the class's showcase
      attack, hero-sprites.js PREVIEW_ATTACK: the Ranger's arrow flies at the dummy, ownernotes-a-nov1) */
   const ht=st.clock-st.heroT,state=st.hero==='attack'&&ht>Math.max(.6,previewAttackLen(hero))?'idle':st.hero==='victory'&&ht>1.3?'idle':st.hero;if(state==='idle')st.hero='idle';
-  if(drawHeroFigure(heroCv,hero,{state,time:still?(state==='idle'?0:.3):(state==='idle'?st.clock:ht),front:false}))c.drawImage(heroCv,Math.round(HERO_X-51.5),GROUND+4-98);
+  if(drawHeroFigure(heroCv,hero,{state,time:still?(state==='idle'?0:.3):(state==='idle'?st.clock:ht),front:false,reach:DUMMY_X-HERO_X-6}))c.drawImage(heroCv,Math.round(HERO_X-51.5),GROUND+4-98);
   /* effects: the existing hit spark and straw-coloured splash particles, dust when it cracks */
   st.fx=st.fx.filter(f=>(f.life-=dt)>0);for(const f of st.fx){if(f.type==='dust'){drawSprite(c,'fx-dust','rise',f.max-f.life,f.x,f.y);}else drawEffect(c,f);}
   if(!still||st.fx.length)tick(paint);else tick(paint,120);};
@@ -63,7 +63,7 @@ export function mountDummyScene(root,{hero,health,cracked=false,extra=false}={})
  const ctl={
   hit(h){st.h=h;st.hero='attack';st.heroT=st.clock;
    const land=()=>{st.kickT=st.clock;st.fx.push({type:'burst',element:'physical',x:DUMMY_X-4,y:GROUND-18,life:.36,max:.36});st.fx.push({type:'slime-splash',color:'#d9b44a',x:DUMMY_X-2,y:GROUND-14,life:.6,max:.65});bar();if(st.h.left===0&&!st.crack&&!st.extra)ctl.crack();};
-   still?land():setTimeout(land,250);},
+   /* improve20-r9c-nov1 #6: it kicks back when the swing or the shot reaches it (the Mage's Fireball, the Ranger's arrow) */still?land():setTimeout(land,Math.round(1000*previewHitAt(hero,DUMMY_X-HERO_X-6)));},
   miss(){st.wobT=st.clock;},
   crack(){if(st.crack)return;st.crack=1;st.crackT=st.clock;st.fx.push({type:'dust',x:DUMMY_X+8,y:GROUND+2,life:.42,max:.42},{type:'burst',element:'physical',x:DUMMY_X,y:GROUND-24,life:.36,max:.36},{type:'slime-splash',color:'#e8c862',x:DUMMY_X,y:GROUND-26,life:.65,max:.65},{type:'slime-splash',color:'#b58b3a',x:DUMMY_X+6,y:GROUND-20,life:.65,max:.65});},
   cheer(){st.hero='victory';st.heroT=st.clock;},

@@ -28,7 +28,7 @@ export {uiSettingsHTML,wireUiSettings,applySettings} from './settings.js';
 export {openStats} from './stats.js';
 export {openCredits} from './credits-screen.js';
 export {abilityIcon,icon} from './icons.js';
-export {levelUpBanner,areaTitle,banner,transition,fadeIn,fadeOut,irisOpen,irisClose,drawDamageText,celebrate} from './juice.js';
+export {levelUpBanner,areaTitle,banner,dropBanner,transition,fadeIn,fadeOut,irisOpen,irisClose,drawDamageText,celebrate} from './juice.js';
 export {openSheet,closeSheet,sheetOpen} from './sheet.js';
 export {say,dialogueOpen,talkPress,talkJustClosed,PORTRAITS,portraitFor} from './dialogue.js';
 export {stageBanner,installStageBanners} from './stage-banners.js';

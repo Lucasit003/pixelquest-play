@@ -13,7 +13,7 @@ import VILLAGE from '../assets/town/oakhaven-approaches-oct13.js';
 import {STAGE} from '../game/stage.js'; /* v2:ui-mobile */
 import {SUBJECTS, PETS} from '../game/data.js';
 import {petThePet,pettingNow,PAT_SPOT} from '../gfx/actors/pet-sprites.js';
-import {drawWindowLight} from '../gfx/window-light.js';
+import {drawWindowLight, windowGlass} from '../gfx/window-light.js';
 import ROOMS from '../assets/town/interiors-reviewed-oct13.js';
 import FX from '../assets/town/fx.js';
 import {shopById} from '../game/shops.js';
@@ -326,7 +326,10 @@ export function hubConfirmPlacing() {
   const S = current(), f = FURN[H.placing];
   if (!f || !S || S.key !== 'home') { H.placing = null; return {ok: false, reason: 'Furniture can only go in your Home.'}; }
   const at = placingSpot();
-  if (!at || !placingOk(S, f, at.x, at.y)) return {ok: false, reason: `The ${f.name.toLowerCase()} does not fit there. Try another spot.`};
+  /* improve20-r9c-nov1 #2: a full row of slots makes room: the hung pieces slide along to the slots wallSpot packed them into (undone if it still fails) */
+  const items = H.save?.house?.items ?? [], was = (at?.moves ?? []).map(([i]) => [i, items[i].x]);
+  for (const [i, nx] of at?.moves ?? []) items[i].x = nx;
+  if (!at || !placingOk(S, f, at.x, at.y)) { for (const [i, x] of was) items[i].x = x; return {ok: false, reason: `The ${f.name.toLowerCase()} does not fit there. Try another spot.`}; }
   if (!placeFurniture(H.save, f.id, at.x, at.y, !!at.wall)) { H.placing = null; return {ok: false, reason: 'You have none of those left to place.'}; }
   H.placing = null;
   return {ok: true, name: f.name};
@@ -815,7 +818,7 @@ export function hubMarkers() {
 /** The next story beat to show, once: {id, speaker, lines} or null (main.js polls this each frame). */
 export function hubEvent() { return H.events.shift() ?? null; }
 /** Hub state for tests and the integrator: the current room key ('village' outside). */
-export const hubState = () => ({room: current().key, fading: !!H.fade, near: H.near?.o.label ?? null, camera: {...H.cam}});
+export const hubState = () => ({room: current().key, fading: !!H.fade, near: H.near?.o.label ?? null, camera: {...H.cam}, still: H.still ?? 0});
 /* ownernotes-a-nov1: the view's top-left corner in room pixels as last drawn (shots crop around the hero with it) */
 export const hubView = () => H.view ? {...H.view} : null;
 /** Current-room destination for the early objective arrow. Uses the same markers as E;
@@ -1093,6 +1096,8 @@ export function drawHub(c, state, t, kit) {
   if (H.placing && S.key === 'home') { const f = FURN[H.placing], at = placingSpot(), im = f && furnImage(f);
     if (at && im) { const ok = placingOk(S, f, at.x, at.y); const draw = () => { if (!ready(im)) return; c.save(); c.globalAlpha = ok ? .75 : .3; c.drawImage(im, Math.round(at.x - f.w / 2), Math.round(at.y - f.h)); c.restore(); };
       if (f.flat) draw(); else figures.push({y: at.y, draw}); } }
+  /* improve20-r9c-nov1 #7: at night the window's glass turns moonlit blue-grey with the beams (gfx/window-light.js), drawn just over the window sprite */
+  if (S.room) for (const g of windowGlass(S.key, state.motion !== false)) figures.push({y: g.sort + .01, draw: () => g.draw(c)});
   figures.sort((a, b) => a.y - b.y);
   let fi = 0, heroAt = -1;
   const occluders = [];
