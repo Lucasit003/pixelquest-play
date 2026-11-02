@@ -1,0 +1,298 @@
+{
+  "image": "hero-berserker--axe-magmacleaver-directions-v1.png",
+  "cell": [
+    112,
+    100
+  ],
+  "anchor": [
+    57,
+    79
+  ],
+  "faces": "right",
+  "scale": 1,
+  "states": {
+    "idle-south": {
+      "row": 0,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "walk-south": {
+      "row": 1,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    },
+    "idle-north": {
+      "row": 2,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "walk-north": {
+      "row": 3,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    }
+  },
+  "source": "pixellab",
+  "unmodified": false,
+  "sourcePixelsUnmodified": true,
+  "credit": "PixelQuest original character (the Berserker holding the Magma Cleaver), made with PixelLab (pixellab.ai) for PixelQuest. North/south walks per the owner note of 1 November 2026 (every hero walks up and down).",
+  "contract": "art/heroes/berserker-w/axe-magmacleaver/directions.json",
+  "sources": [
+    {
+      "state": "idle-south",
+      "frame": 0,
+      "file": "art/heroes/berserker-w/axe-magmacleaver/pixellab/rotations/south.png",
+      "sha256": "2efa266d853482d69dac65768acb77c686aaf6536916b42b4f9a08b0f62a857f",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        19
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 0,
+      "file": "art/heroes/berserker-w/axe-magmacleaver/pixellab/walk-south/0.png",
+      "sha256": "26652bff5386363fb5c07290b77d38e2b739e7d928d3c1c1576f89885e9f255b",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 1,
+      "file": "art/heroes/berserker-w/axe-magmacleaver/pixellab/walk-south/1.png",
+      "sha256": "606959cb47c1c88d1fb63ba6588cb0a90dab260c07b4803cf06e477a23a9eceb",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 2,
+      "file": "art/heroes/berserker-w/axe-magmacleaver/pixellab/walk-south/2.png",
+      "sha256": "d350443f6182ed730c80ed3a5b750eda8c1f581f12058ad7e6d2c799d8c41d75",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 3,
+      "file": "art/heroes/berserker-w/axe-magmacleaver/pixellab/walk-south/3.png",
+      "sha256": "a3a1ce73dfba0d8ff4834070cbf497850a2038689acb3767ac1e1211c4f01f3d",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 4,
+      "file": "art/heroes/berserker-w/axe-magmacleaver/pixellab/walk-south/4.png",
+      "sha256": "575d7a3b206e1b2d53894036040f315510cbc6cdbe1d71ce360c6cfbd1578aae",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 5,
+      "file": "art/heroes/berserker-w/axe-magmacleaver/pixellab/walk-south/5.png",
+      "sha256": "de6cf1cfb84d379ce1f3009fd2891afb9e7d13deacd4e211ca6dbd933988c07c",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 6,
+      "file": "art/heroes/berserker-w/axe-magmacleaver/pixellab/walk-south/6.png",
+      "sha256": "b810982d7dc923ba5ff997d3c0da73f7d55d6a7bd66de54bfd8d86d200e46198",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 7,
+      "file": "art/heroes/berserker-w/axe-magmacleaver/pixellab/walk-south/7.png",
+      "sha256": "6292ef8d79574c49c7b279ee12002d39a08f25a798faf435472dac4b2a9ed20b",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "idle-north",
+      "frame": 0,
+      "file": "art/heroes/berserker-w/axe-magmacleaver/pixellab/rotations/north.png",
+      "sha256": "924af788e6c8c3d7cdab143866325588ed41b361465c021c2615b77f5d4efa30",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        20
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 0,
+      "file": "art/heroes/berserker-w/axe-magmacleaver/pixellab/walk-north/0.png",
+      "sha256": "d41a14204501754e3d11e7c9038c85a4f70527a377247205d97059d71a2bdc95",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 1,
+      "file": "art/heroes/berserker-w/axe-magmacleaver/pixellab/walk-north/1.png",
+      "sha256": "c9b63e346e0828e8e073f7289e8b4408983c0ae07b2db973434742ca2d70bf07",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 2,
+      "file": "art/heroes/berserker-w/axe-magmacleaver/pixellab/walk-north/2.png",
+      "sha256": "86bb65293dbcdbbeb17ac619b8a940cfc2805ad92affebac4bac6fb106bdf062",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 3,
+      "file": "art/heroes/berserker-w/axe-magmacleaver/pixellab/walk-north/3.png",
+      "sha256": "c6609375506df64a0045668892e047ad2680f09fd4d61bf171e9d4a5024b3f83",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 4,
+      "file": "art/heroes/berserker-w/axe-magmacleaver/pixellab/walk-north/4.png",
+      "sha256": "7a206d784a3e0669a5c25a2f80b85d08ff3c6ababaa406e52239ba35616aeb27",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 5,
+      "file": "art/heroes/berserker-w/axe-magmacleaver/pixellab/walk-north/5.png",
+      "sha256": "ef344274caf81d33e66a7f9f85ba13cd312334e128fcb73817b32ba2ea0adc98",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 6,
+      "file": "art/heroes/berserker-w/axe-magmacleaver/pixellab/walk-north/6.png",
+      "sha256": "1269099bf1c1b733c37970f53a1ff19b64f132da4dbbc56dc182fdaa6e7810c2",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 7,
+      "file": "art/heroes/berserker-w/axe-magmacleaver/pixellab/walk-north/7.png",
+      "sha256": "c29fbc8392deab3b2ccfb2449b5827a6d067738f3e590cd7a75fde57773ef8fb",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    }
+  ]
+}

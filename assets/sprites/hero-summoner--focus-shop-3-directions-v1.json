@@ -1,0 +1,298 @@
+{
+  "image": "hero-summoner--focus-shop-3-directions-v1.png",
+  "cell": [
+    112,
+    100
+  ],
+  "anchor": [
+    57,
+    79
+  ],
+  "faces": "right",
+  "scale": 1,
+  "states": {
+    "idle-south": {
+      "row": 0,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "walk-south": {
+      "row": 1,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    },
+    "idle-north": {
+      "row": 2,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "walk-north": {
+      "row": 3,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    }
+  },
+  "source": "pixellab",
+  "unmodified": false,
+  "sourcePixelsUnmodified": true,
+  "credit": "PixelQuest original character (the Summoner holding the Ancestor's Eye), made with PixelLab (pixellab.ai) for PixelQuest. North/south walks per the owner note of 1 November 2026 (every hero walks up and down).",
+  "contract": "art/heroes/summoner-w/focus-shop-3/directions.json",
+  "sources": [
+    {
+      "state": "idle-south",
+      "frame": 0,
+      "file": "art/heroes/summoner-w/focus-shop-3/pixellab/rotations/south.png",
+      "sha256": "9cd24edbf1a0c8c1c62b306ea6f418a09b20c2c905faab6b1ac83749541c665c",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        19
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 0,
+      "file": "art/heroes/summoner-w/focus-shop-3/pixellab/walk-south/0.png",
+      "sha256": "e4a96457cefe603f00c77e49fc03e670fdb4f7d8afe00edf2cf63e2ae7c8d1e4",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 1,
+      "file": "art/heroes/summoner-w/focus-shop-3/pixellab/walk-south/1.png",
+      "sha256": "ab92e5c79063d5bea9d284d8d408ca44185b4dd174656fe82559d0bc4133fa04",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 2,
+      "file": "art/heroes/summoner-w/focus-shop-3/pixellab/walk-south/2.png",
+      "sha256": "034d1942a8fb251457ea20c1836cbd0355703af31808f6a5b9731a8f67ee5860",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 3,
+      "file": "art/heroes/summoner-w/focus-shop-3/pixellab/walk-south/3.png",
+      "sha256": "beedc468e9b76ef4e7bd4850668952f4952c768640ff6163525777867ef142d6",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 4,
+      "file": "art/heroes/summoner-w/focus-shop-3/pixellab/walk-south/4.png",
+      "sha256": "6b6aaae63e25559bf23c7ba7960a0bd8b8092373f5084c78acd123602013e5f8",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 5,
+      "file": "art/heroes/summoner-w/focus-shop-3/pixellab/walk-south/5.png",
+      "sha256": "9ce5fa73c2968ab67ddc4e5c30f5918995967770bdb172c9df61cfeebc516dad",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 6,
+      "file": "art/heroes/summoner-w/focus-shop-3/pixellab/walk-south/6.png",
+      "sha256": "8a9c1c1a7e339092402d14b5964e12ec16350143c25304ade21818c1fdac8772",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 7,
+      "file": "art/heroes/summoner-w/focus-shop-3/pixellab/walk-south/7.png",
+      "sha256": "8598fc57f4c0bdcacf39ab3a620fe3359cce120f802915d1d6ef33fbaab5f035",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "idle-north",
+      "frame": 0,
+      "file": "art/heroes/summoner-w/focus-shop-3/pixellab/rotations/north.png",
+      "sha256": "aaeaf7d275221649b5834c29a28f7b1f3ff27708acf4e69c2958afe2ebf03fb1",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        20
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 0,
+      "file": "art/heroes/summoner-w/focus-shop-3/pixellab/walk-north/0.png",
+      "sha256": "8c3283876edaac0e7d16ce4ef4bfa3fd9e06f5001b19e7e9290cc9622e85caf0",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 1,
+      "file": "art/heroes/summoner-w/focus-shop-3/pixellab/walk-north/1.png",
+      "sha256": "d1fdb95f9761f2953df7c4b263aa567b00e7428c9aa5701c7f3d2a730e124e57",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 2,
+      "file": "art/heroes/summoner-w/focus-shop-3/pixellab/walk-north/2.png",
+      "sha256": "de98c2446c3909abd6ea19a04ac83388af5a86cb4cbd224d53cbdfa353f7e70a",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 3,
+      "file": "art/heroes/summoner-w/focus-shop-3/pixellab/walk-north/3.png",
+      "sha256": "b5d8038377983468d4e2616ad27925698dc6678b89c47fb00db28f4b3bfca585",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 4,
+      "file": "art/heroes/summoner-w/focus-shop-3/pixellab/walk-north/4.png",
+      "sha256": "aaf37c68a1019dbe384c729a4640cc12340ed6cd4fe559a6f8fb7fd952a91035",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 5,
+      "file": "art/heroes/summoner-w/focus-shop-3/pixellab/walk-north/5.png",
+      "sha256": "e7da5ab284191798b67f30d3ba8e34973b74bab145c4d95cc3a1e54451ac546f",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 6,
+      "file": "art/heroes/summoner-w/focus-shop-3/pixellab/walk-north/6.png",
+      "sha256": "e5a92f8d80eb17594ff0894193268466cd6f3646d24cf60554ae59572184d632",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 7,
+      "file": "art/heroes/summoner-w/focus-shop-3/pixellab/walk-north/7.png",
+      "sha256": "ccdd7327c924c09d850a3b3965893b5006f0d656ee2e0c1e7fbfe5312e56f6fb",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    }
+  ]
+}

@@ -1,0 +1,298 @@
+{
+  "image": "hero-rogue--dagger-shop-3-directions-v1.png",
+  "cell": [
+    112,
+    100
+  ],
+  "anchor": [
+    57,
+    79
+  ],
+  "faces": "right",
+  "scale": 1,
+  "states": {
+    "idle-south": {
+      "row": 0,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "walk-south": {
+      "row": 1,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    },
+    "idle-north": {
+      "row": 2,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "walk-north": {
+      "row": 3,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    }
+  },
+  "source": "pixellab",
+  "unmodified": false,
+  "sourcePixelsUnmodified": true,
+  "credit": "PixelQuest original character (the Rogue holding the Night's End), made with PixelLab (pixellab.ai) for PixelQuest. North/south walks per the owner note of 1 November 2026 (every hero walks up and down).",
+  "contract": "art/heroes/rogue-w/dagger-shop-3/directions.json",
+  "sources": [
+    {
+      "state": "idle-south",
+      "frame": 0,
+      "file": "art/heroes/rogue-w/dagger-shop-3/pixellab/rotations/south.png",
+      "sha256": "e0c48b493a97f8653dc2792aa03ea50bb951e679b77abeff34771afe82461839",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        19
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 0,
+      "file": "art/heroes/rogue-w/dagger-shop-3/pixellab/walk-south/0.png",
+      "sha256": "4cbde3961c8fc08d3d571db80192ead3cc4878d3ece5dade07b48c7604a43781",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 1,
+      "file": "art/heroes/rogue-w/dagger-shop-3/pixellab/walk-south/1.png",
+      "sha256": "6b0b9b3c138fbd018884b9da9a523a2f53f666f4d276be479ed08363fda97028",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 2,
+      "file": "art/heroes/rogue-w/dagger-shop-3/pixellab/walk-south/2.png",
+      "sha256": "6eea04ca8ef04fb6f4178001cd312be1a4ed670ba1ac0b953483fcfca633f6c3",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 3,
+      "file": "art/heroes/rogue-w/dagger-shop-3/pixellab/walk-south/3.png",
+      "sha256": "891635538e2c4412565a31481cbb383685ebcc4f3cc6d95ed01935b30342dc04",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 4,
+      "file": "art/heroes/rogue-w/dagger-shop-3/pixellab/walk-south/4.png",
+      "sha256": "7f9110232d06e5571eb0f991137392eecb7514751a9b8b01e9b93cc855dd5022",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 5,
+      "file": "art/heroes/rogue-w/dagger-shop-3/pixellab/walk-south/5.png",
+      "sha256": "544337701470873a19395a4e58b1aec5fd2c808e24d5d5c47a1f84da6b1c81ca",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 6,
+      "file": "art/heroes/rogue-w/dagger-shop-3/pixellab/walk-south/6.png",
+      "sha256": "386fbe8de72f4b7997da4c761905c23c8c8104e8a5ede4d50451d5635b765010",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 7,
+      "file": "art/heroes/rogue-w/dagger-shop-3/pixellab/walk-south/7.png",
+      "sha256": "7e6d40c1255526d396b944f21ed4f347c8df01e7f787f7554f9772a779b87e4f",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "idle-north",
+      "frame": 0,
+      "file": "art/heroes/rogue-w/dagger-shop-3/pixellab/rotations/north.png",
+      "sha256": "44ba79ea215d8875f710bdb26f84e6f1bbb170e0a3776a7a27c3080aac931b59",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        20
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 0,
+      "file": "art/heroes/rogue-w/dagger-shop-3/pixellab/walk-north/0.png",
+      "sha256": "910c428b33f2ac8ccc7b1c1bfb539b89ba446dca911d659a1f33694c16495591",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 1,
+      "file": "art/heroes/rogue-w/dagger-shop-3/pixellab/walk-north/1.png",
+      "sha256": "ed47dc6cb215e99be714cf28f4ed8fc3336e41b4e9a0384c83c78edb87762c4b",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 2,
+      "file": "art/heroes/rogue-w/dagger-shop-3/pixellab/walk-north/2.png",
+      "sha256": "26544e7eb2603e2f2b6d044abb3a178320ecd0cf98ef7956c362979a5e6a402d",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 3,
+      "file": "art/heroes/rogue-w/dagger-shop-3/pixellab/walk-north/3.png",
+      "sha256": "292982cb62ee59b9692e6bc3554e28a4d298e13e73f106e01eb570440f50b4d5",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 4,
+      "file": "art/heroes/rogue-w/dagger-shop-3/pixellab/walk-north/4.png",
+      "sha256": "932783e23f595f15c9d74c36781d7808ac5059b8f50ffd6d1158fd54cabaaed6",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 5,
+      "file": "art/heroes/rogue-w/dagger-shop-3/pixellab/walk-north/5.png",
+      "sha256": "23ab76ce9ddcf25ccc3b2761afb825c3f4f7169ab8136bb50c4a1a80ec759b73",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 6,
+      "file": "art/heroes/rogue-w/dagger-shop-3/pixellab/walk-north/6.png",
+      "sha256": "ae2f804a4cac66267a9de2b0f985af0f9aeed1b65bfb164fd51085546207c8ac",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 7,
+      "file": "art/heroes/rogue-w/dagger-shop-3/pixellab/walk-north/7.png",
+      "sha256": "50bd1fb652bd774252af07dc8a95a1f8fc6800583dc76b136cdd288b81c87b45",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    }
+  ]
+}

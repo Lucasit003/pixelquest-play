@@ -1,0 +1,298 @@
+{
+  "image": "hero-paladin--hammer-moltengavel-directions-v1.png",
+  "cell": [
+    112,
+    100
+  ],
+  "anchor": [
+    57,
+    79
+  ],
+  "faces": "right",
+  "scale": 1,
+  "states": {
+    "idle-south": {
+      "row": 0,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "walk-south": {
+      "row": 1,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    },
+    "idle-north": {
+      "row": 2,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "walk-north": {
+      "row": 3,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    }
+  },
+  "source": "pixellab",
+  "unmodified": false,
+  "sourcePixelsUnmodified": true,
+  "credit": "PixelQuest original character (the Paladin holding the Molten Gavel), made with PixelLab (pixellab.ai) for PixelQuest. North/south walks per the owner note of 1 November 2026 (every hero walks up and down).",
+  "contract": "art/heroes/paladin-w/hammer-moltengavel/directions.json",
+  "sources": [
+    {
+      "state": "idle-south",
+      "frame": 0,
+      "file": "art/heroes/paladin-w/hammer-moltengavel/pixellab/rotations/south.png",
+      "sha256": "4dff0a7370a92cb6a670865be70291c304bed3ee619fd8b4af4323d1c5356223",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        19
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 0,
+      "file": "art/heroes/paladin-w/hammer-moltengavel/pixellab/walk-south/0.png",
+      "sha256": "c79473f1e5076bf1a4d364d8ef66efb79f365bc95d9d64abbe1c7bb71428ead9",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 1,
+      "file": "art/heroes/paladin-w/hammer-moltengavel/pixellab/walk-south/1.png",
+      "sha256": "7c7b37eeb42dd2616d8db65320df1b6e992bd210827e05069166be0a7fabf5e2",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 2,
+      "file": "art/heroes/paladin-w/hammer-moltengavel/pixellab/walk-south/2.png",
+      "sha256": "73c10b09a58f107546eee8cc784a4ffa215c12341645e3f3659b6e393ee67c79",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 3,
+      "file": "art/heroes/paladin-w/hammer-moltengavel/pixellab/walk-south/3.png",
+      "sha256": "a6ebf20c3bbc571a808d781083358dbb44b4ce83d5676d2688224eeb530853fd",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 4,
+      "file": "art/heroes/paladin-w/hammer-moltengavel/pixellab/walk-south/4.png",
+      "sha256": "147f685fc428b73ba3697d65136908097af5a71d9c80a7651b7796de5d1fc336",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 5,
+      "file": "art/heroes/paladin-w/hammer-moltengavel/pixellab/walk-south/5.png",
+      "sha256": "d9cbf580c65f610491f10340ce5e5c176cff0504ff27385457c117340cada7b5",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 6,
+      "file": "art/heroes/paladin-w/hammer-moltengavel/pixellab/walk-south/6.png",
+      "sha256": "dd5a1ee607ea0819ae2ddc5f01c0817b72355c65158fc14e765e401bddd621e9",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 7,
+      "file": "art/heroes/paladin-w/hammer-moltengavel/pixellab/walk-south/7.png",
+      "sha256": "e1a6309b921e8611233032da19893207f9edd41546eead75cef705905328b9dd",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "idle-north",
+      "frame": 0,
+      "file": "art/heroes/paladin-w/hammer-moltengavel/pixellab/rotations/north.png",
+      "sha256": "22f5ec1292f37ebbb0e1b9a706b33a4d16d804de41001eb5f41e04e58fd90d6a",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        20
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 0,
+      "file": "art/heroes/paladin-w/hammer-moltengavel/pixellab/walk-north/0.png",
+      "sha256": "3cd6661eec5f9c1b7f9d7053da87af597ec8ed86a89dd4b142fa03fd507833d8",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 1,
+      "file": "art/heroes/paladin-w/hammer-moltengavel/pixellab/walk-north/1.png",
+      "sha256": "a8ce3d7c969ac1700f23c65d43d711da73e0695d52201ad20c08cfc19afbe752",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 2,
+      "file": "art/heroes/paladin-w/hammer-moltengavel/pixellab/walk-north/2.png",
+      "sha256": "2a54bba2e7cdb7fc743fa892ae5437a991e2e2582e0e691d63c44ddda0c6ef29",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 3,
+      "file": "art/heroes/paladin-w/hammer-moltengavel/pixellab/walk-north/3.png",
+      "sha256": "198696df8a549c17f35e6590f92f1375889f389b5ffdcecfb9c8e3b8ead99ea6",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 4,
+      "file": "art/heroes/paladin-w/hammer-moltengavel/pixellab/walk-north/4.png",
+      "sha256": "199a68deb680f8582b8e1baf5721f8bb6586ebb25070594736c6c696998de79e",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 5,
+      "file": "art/heroes/paladin-w/hammer-moltengavel/pixellab/walk-north/5.png",
+      "sha256": "6afaa7f3bb2e734955492499681a36289dbecad9034364772e9d3486ae8c4508",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 6,
+      "file": "art/heroes/paladin-w/hammer-moltengavel/pixellab/walk-north/6.png",
+      "sha256": "49dba04245c208402ef8073996f3ca8c283888ff28ac620e35ba02e91da8ab40",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 7,
+      "file": "art/heroes/paladin-w/hammer-moltengavel/pixellab/walk-north/7.png",
+      "sha256": "556c4cb382bfe19116e397bbf8cc7b7a82a8ed0fcac0202a0dd341816a25b673",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    }
+  ]
+}

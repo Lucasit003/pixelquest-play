@@ -1,0 +1,298 @@
+{
+  "image": "hero-summoner--focus-magmaidol-directions-v1.png",
+  "cell": [
+    112,
+    100
+  ],
+  "anchor": [
+    57,
+    79
+  ],
+  "faces": "right",
+  "scale": 1,
+  "states": {
+    "idle-south": {
+      "row": 0,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "walk-south": {
+      "row": 1,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    },
+    "idle-north": {
+      "row": 2,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "walk-north": {
+      "row": 3,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    }
+  },
+  "source": "pixellab",
+  "unmodified": false,
+  "sourcePixelsUnmodified": true,
+  "credit": "PixelQuest original character (the Summoner holding the Magma Idol), made with PixelLab (pixellab.ai) for PixelQuest. North/south walks per the owner note of 1 November 2026 (every hero walks up and down).",
+  "contract": "art/heroes/summoner-w/focus-magmaidol/directions.json",
+  "sources": [
+    {
+      "state": "idle-south",
+      "frame": 0,
+      "file": "art/heroes/summoner-w/focus-magmaidol/pixellab/rotations/south.png",
+      "sha256": "33fa3251ec2f12fb94dd20a53d4d91bf584f2e3919c45da3a3ca254303b04d1e",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        19
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 0,
+      "file": "art/heroes/summoner-w/focus-magmaidol/pixellab/walk-south/0.png",
+      "sha256": "2bf0c8f4b84645db3d7488511b87a5d82bd38713d848013dd5d3dd8391797b3f",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 1,
+      "file": "art/heroes/summoner-w/focus-magmaidol/pixellab/walk-south/1.png",
+      "sha256": "e88abc61c130e7c63b3ac74a658cd508d02a2c08830f2466e2983e82ba560188",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 2,
+      "file": "art/heroes/summoner-w/focus-magmaidol/pixellab/walk-south/2.png",
+      "sha256": "7179030f2fc5e525b7876a53be989f9ff5272d397d326a5ee9eb72cd1f0ca112",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 3,
+      "file": "art/heroes/summoner-w/focus-magmaidol/pixellab/walk-south/3.png",
+      "sha256": "e56e078672393ec50403a6a9dc465424c38de55fa5bc3c152b1a5587c4b4f84c",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 4,
+      "file": "art/heroes/summoner-w/focus-magmaidol/pixellab/walk-south/4.png",
+      "sha256": "20c006846977aeadd1d8c3c7a0bf639931781fd0829a3333c330f0ef91bb04e9",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 5,
+      "file": "art/heroes/summoner-w/focus-magmaidol/pixellab/walk-south/5.png",
+      "sha256": "12f1915677139e012e7e5b988f00b2dca0c9da0f6c81660b15e03ce936f4feee",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 6,
+      "file": "art/heroes/summoner-w/focus-magmaidol/pixellab/walk-south/6.png",
+      "sha256": "2989614ed689f1207bc3562522a1cd662127f4318aadaceac628efe575dfa968",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 7,
+      "file": "art/heroes/summoner-w/focus-magmaidol/pixellab/walk-south/7.png",
+      "sha256": "28ca1d8653d833eb078645fa69b6a900f22dbc81fc5b8dc32a2f390facd5434d",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "idle-north",
+      "frame": 0,
+      "file": "art/heroes/summoner-w/focus-magmaidol/pixellab/rotations/north.png",
+      "sha256": "7dad65de24a59efbe8ad7cef932d42223468f99590ffc5394f7cfa5350a75626",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        20
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 0,
+      "file": "art/heroes/summoner-w/focus-magmaidol/pixellab/walk-north/0.png",
+      "sha256": "b75355061824a1ad3bcc1d3f3d16c67d8a0c35dde41f3b294668249120aebb60",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 1,
+      "file": "art/heroes/summoner-w/focus-magmaidol/pixellab/walk-north/1.png",
+      "sha256": "5dc08c323ced081f197f1af69fbd4ac3cbbcabba7e2b028d63d5d52c1f303471",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 2,
+      "file": "art/heroes/summoner-w/focus-magmaidol/pixellab/walk-north/2.png",
+      "sha256": "d6098d0cad702bb2595b5b24354588cbde886ee3a871ebd1d3fed49640adc450",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 3,
+      "file": "art/heroes/summoner-w/focus-magmaidol/pixellab/walk-north/3.png",
+      "sha256": "95c01b8ae664aa407ebfd2dfeeb2136488937464a9e084cb2b7cb20d50c50b3f",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 4,
+      "file": "art/heroes/summoner-w/focus-magmaidol/pixellab/walk-north/4.png",
+      "sha256": "5077a07d8efe878f00bae81e6d28ed29e8d71c271bcd506202a64f154751467c",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 5,
+      "file": "art/heroes/summoner-w/focus-magmaidol/pixellab/walk-north/5.png",
+      "sha256": "c87cb798357e2ada765e7e042c3ad293180b459639bde43b5592b2d8c2a13d54",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 6,
+      "file": "art/heroes/summoner-w/focus-magmaidol/pixellab/walk-north/6.png",
+      "sha256": "1797aa9dd90a087c49d22b6f02b1efdcedf3856dcb0e710f768bf4bb6d8ed9ce",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 7,
+      "file": "art/heroes/summoner-w/focus-magmaidol/pixellab/walk-north/7.png",
+      "sha256": "4be70db2d16f8f4388bf491e946f64135e31436a058e78878f4af17d85a769d6",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    }
+  ]
+}

@@ -1,0 +1,298 @@
+{
+  "image": "hero-berserker--axe-shop-3-directions-v1.png",
+  "cell": [
+    112,
+    100
+  ],
+  "anchor": [
+    57,
+    79
+  ],
+  "faces": "right",
+  "scale": 1,
+  "states": {
+    "idle-south": {
+      "row": 0,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "walk-south": {
+      "row": 1,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    },
+    "idle-north": {
+      "row": 2,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "walk-north": {
+      "row": 3,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    }
+  },
+  "source": "pixellab",
+  "unmodified": false,
+  "sourcePixelsUnmodified": true,
+  "credit": "PixelQuest original character (the Berserker holding the Worldsplitter), made with PixelLab (pixellab.ai) for PixelQuest. North/south walks per the owner note of 1 November 2026 (every hero walks up and down).",
+  "contract": "art/heroes/berserker-w/axe-shop-3/directions.json",
+  "sources": [
+    {
+      "state": "idle-south",
+      "frame": 0,
+      "file": "art/heroes/berserker-w/axe-shop-3/pixellab/rotations/south.png",
+      "sha256": "e0e0cec1c1ce6b35e3ea5477801d6482e2898a6e584c834513bce118c0023f22",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        19
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 0,
+      "file": "art/heroes/berserker-w/axe-shop-3/pixellab/walk-south/0.png",
+      "sha256": "8f0559fed89e5892d4f3463468c56ed2a01dce653cd457c7283b25bc0ac601a9",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 1,
+      "file": "art/heroes/berserker-w/axe-shop-3/pixellab/walk-south/1.png",
+      "sha256": "a55ed4bbe7e3b24a43094290d712c4d5ff42e3078fd7341f873d2785c94133f7",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 2,
+      "file": "art/heroes/berserker-w/axe-shop-3/pixellab/walk-south/2.png",
+      "sha256": "8f24f75b3ae082ddc5e48f8c6dccc0a5ad199bf4cadf51b3fc7259926cb03d23",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 3,
+      "file": "art/heroes/berserker-w/axe-shop-3/pixellab/walk-south/3.png",
+      "sha256": "f745c13f9474363ea2cd35e8562ede613ad675e64159901bbd110b9c15b1067d",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 4,
+      "file": "art/heroes/berserker-w/axe-shop-3/pixellab/walk-south/4.png",
+      "sha256": "385df4e0a433ff8efb7fb4fc11ac34dc2eb1c787fa6f341d569cde17cff93adf",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 5,
+      "file": "art/heroes/berserker-w/axe-shop-3/pixellab/walk-south/5.png",
+      "sha256": "1d687953dc3fc9c102199531af17fde7fe8898f137545f08fa6e955529434c9c",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 6,
+      "file": "art/heroes/berserker-w/axe-shop-3/pixellab/walk-south/6.png",
+      "sha256": "cf31617fb3cc84d53d168bb21ae52a747bcebc524c2e8ea39fc0071f72bebf07",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 7,
+      "file": "art/heroes/berserker-w/axe-shop-3/pixellab/walk-south/7.png",
+      "sha256": "9c3e2f217bc27ae8644a57ba4944a15d6f3b0b498068ba18829bf9ea66c33970",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "idle-north",
+      "frame": 0,
+      "file": "art/heroes/berserker-w/axe-shop-3/pixellab/rotations/north.png",
+      "sha256": "465d316d820a912b8433b755ae11b9511c0d3f37802bf3159486a8e7ffbd609c",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        20
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 0,
+      "file": "art/heroes/berserker-w/axe-shop-3/pixellab/walk-north/0.png",
+      "sha256": "3de5fd735ca50d6d09822254153c4f319c253e28b3843219981ab79ae174c336",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 1,
+      "file": "art/heroes/berserker-w/axe-shop-3/pixellab/walk-north/1.png",
+      "sha256": "72813d2e143c134e1fb021b576dc84f4547271d388e8819adf59734d226b4d83",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 2,
+      "file": "art/heroes/berserker-w/axe-shop-3/pixellab/walk-north/2.png",
+      "sha256": "6bb28d5d404e5561b31a7a73fb38f1f1786c4b348c587752eeb0b3797a321345",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 3,
+      "file": "art/heroes/berserker-w/axe-shop-3/pixellab/walk-north/3.png",
+      "sha256": "67b4e012822e247b16423dc53c0c9e57bf29a9982e56e5fbe23dfb10d430bd31",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 4,
+      "file": "art/heroes/berserker-w/axe-shop-3/pixellab/walk-north/4.png",
+      "sha256": "57ad21b2e9d2d8fdbaa7e275c6f550122bdba24a8cbc45c1ea30c6da139eb83f",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 5,
+      "file": "art/heroes/berserker-w/axe-shop-3/pixellab/walk-north/5.png",
+      "sha256": "347346e3ba78ed0d6e412a68408bccc53456badcb7025b424ee06e67000fb66e",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 6,
+      "file": "art/heroes/berserker-w/axe-shop-3/pixellab/walk-north/6.png",
+      "sha256": "58eebc4ad8153dad08a8e7c0e98a376fa00eda07f2a479fcd3219b8524f2a79e",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 7,
+      "file": "art/heroes/berserker-w/axe-shop-3/pixellab/walk-north/7.png",
+      "sha256": "e017247e7e453eed0703d98cec24052c24d2df76c39cef3ae250f313da007332",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    }
+  ]
+}

@@ -1,0 +1,298 @@
+{
+  "image": "hero-ranger--bow-shop-3-directions-v1.png",
+  "cell": [
+    112,
+    100
+  ],
+  "anchor": [
+    57,
+    79
+  ],
+  "faces": "right",
+  "scale": 1,
+  "states": {
+    "idle-south": {
+      "row": 0,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "walk-south": {
+      "row": 1,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    },
+    "idle-north": {
+      "row": 2,
+      "frames": 1,
+      "fps": 5,
+      "loop": true
+    },
+    "walk-north": {
+      "row": 3,
+      "frames": 8,
+      "fps": 12,
+      "loop": true
+    }
+  },
+  "source": "pixellab",
+  "unmodified": false,
+  "sourcePixelsUnmodified": true,
+  "credit": "PixelQuest original character (the Ranger holding the Celestial Arc), made with PixelLab (pixellab.ai) for PixelQuest. North/south walks per the owner note of 1 November 2026 (every hero walks up and down).",
+  "contract": "art/heroes/ranger-w/bow-shop-3/directions.json",
+  "sources": [
+    {
+      "state": "idle-south",
+      "frame": 0,
+      "file": "art/heroes/ranger-w/bow-shop-3/pixellab/rotations/south.png",
+      "sha256": "0333532d13cd4fdacd39be6e7bde71c0c9cb2da7c4be54d9f12d5b91a6ea8425",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        19
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 0,
+      "file": "art/heroes/ranger-w/bow-shop-3/pixellab/walk-south/0.png",
+      "sha256": "3392a6cb0c95037f03b4f9ecaa4d4654bd4ea4cc4a401c63c99d7cbd8086f04e",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 1,
+      "file": "art/heroes/ranger-w/bow-shop-3/pixellab/walk-south/1.png",
+      "sha256": "4d9723ba388c67494c1382acc76cad6952bee0ae967ace8a5bb7620902f05dd1",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 2,
+      "file": "art/heroes/ranger-w/bow-shop-3/pixellab/walk-south/2.png",
+      "sha256": "d654b6858226c6aba8bdf0e2a99e64d2f34ec9d255cdef7f97bda11587e03c9e",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 3,
+      "file": "art/heroes/ranger-w/bow-shop-3/pixellab/walk-south/3.png",
+      "sha256": "e9134afd59382536b95af50da4abeaae836189bb4268b849c86438ead627b00c",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 4,
+      "file": "art/heroes/ranger-w/bow-shop-3/pixellab/walk-south/4.png",
+      "sha256": "34db7a992bc2bb667fa8d7f9f3130df44bf7ec9910fcd080baa4a421354a06b0",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 5,
+      "file": "art/heroes/ranger-w/bow-shop-3/pixellab/walk-south/5.png",
+      "sha256": "f6bcd5920a53cc8033ffbf6a47b54f7540b728ff89d45de70cb545bd03430286",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 6,
+      "file": "art/heroes/ranger-w/bow-shop-3/pixellab/walk-south/6.png",
+      "sha256": "47fffadac8fdda43f97406e96cc3f3c4811d2e2924152c3ccc8d0a1b8d172181",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-south",
+      "frame": 7,
+      "file": "art/heroes/ranger-w/bow-shop-3/pixellab/walk-south/7.png",
+      "sha256": "90254a3f819f015f8d41166f8caa2fb02786429278e2cfde8fc9595198953d06",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "idle-north",
+      "frame": 0,
+      "file": "art/heroes/ranger-w/bow-shop-3/pixellab/rotations/north.png",
+      "sha256": "906759e78421aa59a41e040181071133d35fe97e50c61d27a453e6f616311f70",
+      "size": [
+        64,
+        64
+      ],
+      "offset": [
+        26,
+        20
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 0,
+      "file": "art/heroes/ranger-w/bow-shop-3/pixellab/walk-north/0.png",
+      "sha256": "bcc561a8b0f34bfe5b2ed0b31113b1578ffdfeaf9914e39dc1fc339ca65a1571",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 1,
+      "file": "art/heroes/ranger-w/bow-shop-3/pixellab/walk-north/1.png",
+      "sha256": "c65727deaa337d0f50d90cf2c3392507d89e3e072bb8ee1bfc222fd99ebc11da",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 2,
+      "file": "art/heroes/ranger-w/bow-shop-3/pixellab/walk-north/2.png",
+      "sha256": "a259fcab95d642c75ef399e7519e9e876a333dfa7eb6654b6f545b938e048565",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 3,
+      "file": "art/heroes/ranger-w/bow-shop-3/pixellab/walk-north/3.png",
+      "sha256": "f12a529b7178ba32fbe7c6238a464c2fdfd02e8ee85dfb5a54f27268bf52131a",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 4,
+      "file": "art/heroes/ranger-w/bow-shop-3/pixellab/walk-north/4.png",
+      "sha256": "2e131fa8550e6bf8ad7354758e8359e2d6f30fa107b6a52a7142476100b85dca",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 5,
+      "file": "art/heroes/ranger-w/bow-shop-3/pixellab/walk-north/5.png",
+      "sha256": "a696af45b90b6218355f4db9556974dc0e7eae4e080dcc10a476eaa93db68407",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 6,
+      "file": "art/heroes/ranger-w/bow-shop-3/pixellab/walk-north/6.png",
+      "sha256": "691e8e84e749210dc5646f332e532251ba27091ecd32cb271b2188e739752c85",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    },
+    {
+      "state": "walk-north",
+      "frame": 7,
+      "file": "art/heroes/ranger-w/bow-shop-3/pixellab/walk-north/7.png",
+      "sha256": "5ee1b07632d592258e237f7d66df3f89953bcfd7199dbb89b022addb5ead5147",
+      "size": [
+        96,
+        96
+      ],
+      "offset": [
+        9,
+        2
+      ]
+    }
+  ]
+}
