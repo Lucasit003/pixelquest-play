@@ -16,6 +16,7 @@
 #parent-gate .pgate-pad button{min-height:46px;padding:4px 0;font-size:22px}
 #parent-gate .pgate-acts{display:flex;justify-content:flex-end;gap:10px}
 #parent-gate .pgate-shut{gap:12px}
+#parent-gate .pgate-wait{color:var(--ink-2,#d9cba3)}
 @media (max-height:560px){
  #parent-gate{width:min(760px,96vw)}
  #parent-gate .pgate-body{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start;gap:8px 14px;padding:2px 10px 8px}

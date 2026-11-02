@@ -43,6 +43,13 @@ export function lockedText(save,subject,g){
  }
  return `Opens when Grade ${g-1} is mastered`;
 }
+/* improve20-r11d-nov2 #3 (audit9 a13, shot 21): while the first visit's "Start a High School lesson now" is offered, every course row read
+   "Opens with the High School check", though that button opens High School (startAt raises the placement to Grade 9, and every course of
+   the subject opens with it). A shut course now says so: the start course (already tagged "start here") reads "Opens with the lesson button above", the others
+   "Opens with your first lesson or the check". Once the offer is gone (placed, or a lesson begun) lockedText speaks as before. */
+export function courseLockedText(save,subject,g,isStart=false,name=subject){
+ if(STAGE_OF(g)==='high'&&save?.schoolMode==='high'&&placementGrade(save,subject)<9&&firstStart(save,subject,name))return isStart?'Opens with the lesson button above':'Opens with your first lesson or the check';
+ return lockedText(save,subject,g);}
 /* improve20-m-nov1 item 13 (audit3 #18): what a finished check opened, in one line for the placement result. The grades of the check's own
    stage that are open now (every grade below a placement is open: lessons.js gradeOpen), or, in High School, its courses that are open. */
 const IN_STAGE={elementary:g=>g<=5,middle:g=>g>=6&&g<=8,high:g=>g>=9};

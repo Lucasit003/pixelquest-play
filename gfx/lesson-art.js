@@ -132,7 +132,8 @@ const shapeAt=(ctx,kind,x,y,r,fillStyle)=>{ctx.fillStyle=fillStyle;ctx.strokeSty
  else if(kind==='star')for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,rr=i%2?r*.45:r;i?ctx.lineTo(x+Math.cos(a)*rr,y+Math.sin(a)*rr):ctx.moveTo(x+Math.cos(a)*rr,y+Math.sin(a)*rr);}
  else ctx.arc(x,y,r,0,Math.PI*2);
  ctx.fill();ctx.stroke();};
-const tiles=(ctx,{seq,fill,solve},p)=>{const n=seq.length,gap=Math.min(84,(PIC_W-40)/n),x0=PIC_W/2-(n-1)*gap/2,shown=p*n,r=Math.min(26,gap*.34);
+/* improve20-r11d-nov2 #2: in a fitted quiz picture (o.tight) the tiles sit closer (gap 64, not 84), so the fit can make them bigger */
+const tiles=(ctx,{seq,fill,solve},p,o={})=>{const n=seq.length,gap=Math.min(o.tight?64:84,(PIC_W-40)/n),x0=PIC_W/2-(n-1)*gap/2,shown=p*n,r=Math.min(26,gap*.34);
  seq.forEach((tok,i)=>{const t=clamp(shown-i);if(t<=0)return;const x=x0+i*gap,y=120;ctx.globalAlpha=t;
   const word=tok==null?(solve&&fill?fill:'?'):tok,blank=tok==null;
   if(blank&&!(solve&&fill)){ctx.strokeStyle=INK;ctx.lineWidth=2;ctx.setLineDash?.([6,4]);ctx.strokeRect(x-r,y-r,2*r,2*r);ctx.setLineDash?.([]);ctx.fillStyle=INK;ctx.font='bold 26px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('?',x,y);}
@@ -285,14 +286,18 @@ const ruler=(ctx,{max,unit,from=0,to,thing,solve},p)=>{
  const PX=unit==='in'?46:18,x0=(PIC_W-max*PX)/2,X=v=>x0+v*PX;
  const L=X(0)-12,R=X(max)+12;
  ctx.fillStyle='#f0d58a';ctx.fillRect(L,180,R-L,50);ctx.strokeStyle=INK;ctx.lineWidth=2;ctx.strokeRect(L,180,R-L,50);
- for(let v=0;v<=max;v++){
-  ctx.strokeStyle=INK;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(X(v),180);ctx.lineTo(X(v),198);ctx.stroke();
-  ctx.fillStyle=INK;ctx.font='13px sans-serif';ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText(v,X(v),201);
+ /* improve20-r11d-nov2 #2: labels grow to 12 CSS px in a small quiz frame, so when the widest number no longer fits between two marks, every
+    2nd, 5th or 10th mark is numbered (with a longer mark); every whole mark is still drawn where it was */
+ ctx.font='13px sans-serif';const lw=ctx.measureText(String(max)).width+8,lk=[1,2,5,10].find(k=>k*PX>=lw)||10;
+ for(let v=0;v<=max;v++){const num=v%lk===0;
+  ctx.strokeStyle=INK;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(X(v),180);ctx.lineTo(X(v),lk>1&&num?203:198);ctx.stroke();
+  ctx.fillStyle=INK;ctx.font='13px sans-serif';ctx.textAlign='center';ctx.textBaseline='top';if(num)ctx.fillText(v,X(v),lk>1?205:201);
   if(v<max){
    ctx.strokeStyle=INK;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(X(v+0.5),180);ctx.lineTo(X(v+0.5),189);ctx.stroke();
   }
  }
- ctx.fillStyle=INK;ctx.font='12px sans-serif';ctx.textAlign='right';ctx.textBaseline='bottom';ctx.fillText(unit==='cm'?'centimeters':'inches',X(max)+8,228);
+ /* improve20-r11d-nov2 #2: the unit name sits under the ruler, clear of the numbers once they grow */
+ ctx.fillStyle=INK;ctx.font='12px sans-serif';ctx.textAlign='right';ctx.textBaseline='top';ctx.fillText(unit==='cm'?'centimeters':'inches',R,236);
  const dy=lerp(-60,0,ease(clamp(p/0.5)));
  ctx.fillStyle=APPLE;ctx.fillRect(X(from),118+dy,X(to)-X(from),24);ctx.strokeStyle=INK;ctx.lineWidth=2;ctx.strokeRect(X(from),118+dy,X(to)-X(from),24);
  ctx.strokeStyle=INK;ctx.lineWidth=1;ctx.setLineDash?.([4,4]);
@@ -344,7 +349,10 @@ export function crispCtx(el){const dpr=globalThis.devicePixelRatio||1,live=!!(el
  /* oct25-quizpolish (P7): labels grow to LABEL_MIN CSS px on a phone (pixelText) */
  if(ctx)ctx.pqUnit=live&&el.ownerDocument?.documentElement?.classList?.contains('m-mode')?room/PIC_W:0;
  /* improve20-j-nov1 #3: CSS px per picture unit on every screen (0 off the page), for labels that ask for a size in CSS px (lesson-board.js helper labels) */
- if(ctx)ctx.pqCss=live?(fit?k/dpr:room/PIC_W):0;return ctx;}
+ if(ctx)ctx.pqCss=live?(fit?k/dpr:room/PIC_W):0;
+ /* improve20-r11d-nov2 #2: the quiz and practice picture (#quiz-pic) is fitted to its frame (drawPic) and its labels reach LABEL_MIN CSS px on
+   every screen, not only on phones; pqDev is device px per CSS px, for labelProbe */
+ if(ctx){ctx.pqDev=live&&ctx.pqCss>0?k/ctx.pqCss:1;ctx.pqFit=el.id==='quiz-pic';if(ctx.pqFit&&live)ctx.pqUnit=ctx.pqCss;ctx.pqBoostMax=ctx.pqFit?2.15:0;}return ctx;}
 /* How long a step's picture runs, and whether it keeps drawing after that (theater idle loops). */
 export const picLength=(pic,dur=2.5)=>{const one=[].concat(pic)[0];return one?.t==='theater'?theaterLength(one):dur;};
 export const picLive=pic=>[].concat(pic).some(one=>one?.t==='theater'&&theaterLive(one));
@@ -374,29 +382,65 @@ export const tabletPicWidth=(room,textW,otherH=0,bw=6)=>Math.max(200,Math.min(Ma
 /* oct26-phonelesson: 12 (was 11). With the bigger phone picture (main.js phonePic) most labels need no more growth than they had at 11. */
 export const LABEL_MIN=12;
 /* the factor for a label of em px (picture units) on a canvas drawn at unit CSS px per picture unit; 1 off a phone (unit 0) */
-export const labelBoost=(unit,em=16)=>unit>0&&em*unit<LABEL_MIN?Math.min(1.6,LABEL_MIN/(em*unit)):1;
+export const labelBoost=(unit,em=16,max=1.6)=>unit>0&&em*unit<LABEL_MIN?Math.min(max,LABEL_MIN/(em*unit)):1;
 const fitBoost=(b,w)=>b>1&&w*b>PIC_W-8?Math.max(1,(PIC_W-8)/w):b,mathPx=f=>Math.max(16,+(/(\d+(?:\.\d+)?)px/.exec(f||'')||[0,16])[1]);
+/* improve20-r11d-nov2 #3 (audit9 a13, shot 30): a label with a left or right arrow ("Gross pay - deductions → net pay") went to the canvas font,
+   because the bitmap font has no arrow. It now stays in the game font: the words are bitmap text and each arrow is drawn in pixels between
+   them (ARROW_W units wide at scale 1). Other math signs still use the canvas font. */
+const ARROWS=/[→←]/,ARROW_W=14;
+const mathText=str=>MATH_GLYPH.test(str.replace(/[→←]/g,''));
+const runWidth=(str,f)=>ARROWS.test(str)?str.split(/([→←])/).reduce((w,p)=>w+(p==='→'||p==='←'?ARROW_W*f.scale:p?measurePixelText(p,f):0),0):measurePixelText(str,f);
+function drawRun(t,str,x,y,o){if(!ARROWS.test(str))return drawPixelText(t,str,x,y,o);const f={scale:o.scale,bold:o.bold},sc=Math.max(1,Math.round(o.scale)),w=runWidth(str,f),fh=16*sc;
+ let cx=Math.round(o.align==='center'?x-w/2:o.align==='right'?x-w:x);const cy=Math.round(o.baseline==='top'?y+fh/2:o.baseline==='middle'?y:y-5*sc);
+ for(const part of str.split(/([→←])/)){if(!part)continue;if(part==='→'||part==='←'){const aw=ARROW_W*sc,l=cx+2*sc,r=cx+aw-2*sc,h=3*sc;t.fillStyle=o.color;t.fillRect(l,cy-Math.ceil(sc/2),r-l,sc);
+   t.beginPath();if(part==='→'){t.moveTo(r+sc,cy);t.lineTo(r-h,cy-h);t.lineTo(r-h,cy+h);}else{t.moveTo(l-sc,cy);t.lineTo(l+h,cy-h);t.lineTo(l+h,cy+h);}t.closePath();t.fill();cx+=aw;continue;}
+  if(drawPixelText(t,part,cx,y,{...o,align:'left'})===false)return false;cx+=measurePixelText(part,f);}return w;}
 function pixelText(ctx){
  if(!pixelReady(ctx))return ctx;
- const U=ctx.pqUnit>0?ctx.pqUnit:0,bOf=em=>labelBoost(U,em);
+ const U=ctx.pqUnit>0?ctx.pqUnit:0,bm=ctx.pqBoostMax>0?ctx.pqBoostMax:1.6,bOf=em=>labelBoost(U,em,bm);
  /* inside(t,x,w,al) -> x moved so a w-wide run stays 4px inside the picture; only when unrotated (a rotated axis title is left alone), in picture units */
  const base=ctx.getTransform?.(),inside=(t,x,w,al)=>{const m=t.getTransform?.();if(!m||!base||m.b||m.c||!m.a)return x;const k=m.a/base.a,l=(al==='center'?x-w/2:al==='right'||al==='end'?x-w:x),pl=(m.a*l+m.e-base.e)/base.a,pw=w*k;
   if(pw>PIC_W-8||(pl>=4&&pl+pw<=PIC_W-4))return x;return x+(pl<4?4-pl:PIC_W-4-(pl+pw))/k;},
   over=(t,x,w,al)=>{const m=t.getTransform?.();if(!m||!base||m.b||m.c||!m.a)return false;const l=(al==='center'?x-w/2:al==='right'||al==='end'?x-w:x),pl=(m.a*l+m.e-base.e)/base.a;return pl<4||pl+w*m.a/base.a>PIC_W-4;};
  return new Proxy(ctx,{get(t,k){
-  if(k==='fillText')return (s,x,y)=>{if(MATH_GLYPH.test(String(s))){const b=fitBoost(bOf(mathPx(t.font)),mathFont(t,()=>t.measureText(String(s)).width));mathFont(t,()=>t.fillText(s,inside(t,x,t.measureText(String(s)).width,t.textAlign),y),b);return;}const f=fontOf(t.font),col=typeof t.fillStyle==='string'?t.fillStyle:INK,al=t.textAlign==='center'?'center':(t.textAlign==='right'||t.textAlign==='end')?'right':'left',bl=t.textBaseline==='middle'?'middle':(t.textBaseline==='top'||t.textBaseline==='hanging')?'top':'alphabetic';
+  if(k==='fillText')return (s,x,y)=>{if(mathText(String(s))){const b=fitBoost(bOf(mathPx(t.font)),mathFont(t,()=>t.measureText(String(s)).width));if(labelProbe.on)labelProbe.note(t,mathPx(t.font)*b);mathFont(t,()=>t.fillText(s,inside(t,x,t.measureText(String(s)).width,t.textAlign),y),b);return;}const f=fontOf(t.font),col=typeof t.fillStyle==='string'?t.fillStyle:INK,al=t.textAlign==='center'?'center':(t.textAlign==='right'||t.textAlign==='end')?'right':'left',bl=t.textBaseline==='middle'?'middle':(t.textBaseline==='top'||t.textBaseline==='hanging')?'top':'alphabetic';
    /* 17 Oct: text never runs off the picture: a big line that would cross an edge drops to the small size, then slides inside */
-   const str=String(s);let b=fitBoost(bOf(16*f.scale),measurePixelText(str,f)),w=measurePixelText(str,f)*b;if(f.scale===2&&over(t,x,w,al)){f.scale=1;b=fitBoost(bOf(16),measurePixelText(str,f));w=measurePixelText(str,f)*b;}x=inside(t,x,w,al);
-   if(b>1){t.save();t.translate(x,y);t.scale(b,b);const ok=drawPixelText(t,str,0,0,{scale:f.scale,bold:f.bold,color:col,outline:null,align:al,baseline:bl});t.restore();if(ok===false)t.fillText(s,x,y);return;}
-   if(drawPixelText(t,str,x,y,{scale:f.scale,bold:f.bold,color:col,outline:null,align:al,baseline:bl})===false)t.fillText(s,x,y);};
-  if(k==='measureText')return s=>{if(MATH_GLYPH.test(String(s))){const w=mathFont(t,()=>t.measureText(s).width);return {width:w*fitBoost(bOf(mathPx(t.font)),w)};}const f=fontOf(t.font),w=measurePixelText(String(s),f);return {width:w*fitBoost(bOf(16*f.scale),w)};};
+   const str=String(s);let b=fitBoost(bOf(16*f.scale),runWidth(str,f)),w=runWidth(str,f)*b;if(f.scale===2&&over(t,x,w,al)){f.scale=1;b=fitBoost(bOf(16),runWidth(str,f));w=runWidth(str,f)*b;}x=inside(t,x,w,al);
+   if(labelProbe.on&&str.trim())labelProbe.note(t,16*f.scale*b);
+   if(b>1){t.save();t.translate(x,y);t.scale(b,b);const ok=drawRun(t,str,0,0,{scale:f.scale,bold:f.bold,color:col,outline:null,align:al,baseline:bl});t.restore();if(ok===false)t.fillText(s,x,y);return;}
+   if(drawRun(t,str,x,y,{scale:f.scale,bold:f.bold,color:col,outline:null,align:al,baseline:bl})===false)t.fillText(s,x,y);};
+  if(k==='measureText')return s=>{if(mathText(String(s))){const w=mathFont(t,()=>t.measureText(s).width);return {width:w*fitBoost(bOf(mathPx(t.font)),w)};}const f=fontOf(t.font),w=runWidth(String(s),f);return {width:w*fitBoost(bOf(16*f.scale),w)};};
   const v=t[k];return typeof v==='function'?v.bind(t):v;},set(t,k,v){t[k]=v;return true;}});
 }
+/* improve20-r11d-nov2 #2 (audit9 a10): quiz and practice pictures were drawn at lesson size in a frame half as wide, so shapes were about 25 px
+   tall and labels about 5 px. A canvas with ctx.pqFit (crispCtx sets it on #quiz-pic) is fitted: the picture's ink (its question and its
+   worked "solve" state, drawn once off screen at the end of its animation) is measured, and the whole picture is scaled uniformly about
+   that box to fill the frame (16 units of margin), at most FIT_MAX times. Uniform scaling keeps every ruler, number line and grid exact.
+   Labels then read at pqUnit*s CSS px per unit, and any still under LABEL_MIN grow through labelBoost (pixelText), up to 2.15x here (pqBoostMax). Theater scenes, which
+   fill their stage, are never fitted. */
+export const FIT_MAX=3,FIT_MARGIN=16;
+const FITS=new Map();let fitLast=null;
+export const lastFit=()=>fitLast;
+const stripPic=x=>Array.isArray(x)?x.map(stripPic):x&&typeof x==='object'?Object.fromEntries(Object.entries(x).filter(([k])=>k!=='count'&&k!=='solve')):x;
+const solvePic=x=>Array.isArray(x)?x.map(solvePic):x&&typeof x==='object'?{...x,solve:true}:x;
+/* the fit for a picture list: {s,cx,cy} or null (nothing to gain, or no canvas to measure on) */
+export function fitOf(list,o={}){let key;try{key=JSON.stringify(stripPic(list));}catch{return null;}if(FITS.has(key))return FITS.get(key);
+ let out=null;try{const doc=globalThis.document;const cv=typeof OffscreenCanvas==='function'?new OffscreenCanvas(PIC_W,PIC_H):doc?.createElement?.('canvas');if(cv){cv.width=PIC_W;cv.height=PIC_H;const x=cv.getContext('2d');
+  if(x?.getImageData){let x0=PIC_W,y0=PIC_H,x1=-1,y1=-1;
+   for(const v of [stripPic(list),solvePic(stripPic(list))]){x.setTransform(1,0,0,1,0,0);x.clearRect(0,0,PIC_W,PIC_H);const c=pixelText(x);try{for(const one of v){const f=DRAW[one?.t];if(f)f(c,one,1,{...o,reduced:true});}}catch{continue;}
+    const d=x.getImageData(0,0,PIC_W,PIC_H).data;for(let yy=0;yy<PIC_H;yy++)for(let xx=0;xx<PIC_W;xx++)if(d[(yy*PIC_W+xx)*4+3]>24){if(xx<x0)x0=xx;if(xx>x1)x1=xx;if(yy<y0)y0=yy;if(yy>y1)y1=yy;}}
+   if(x1>=x0&&y1>=y0){const bw=x1-x0+1,bh=y1-y0+1,sc=Math.min(FIT_MAX,(PIC_W-2*FIT_MARGIN)/bw,(PIC_H-2*FIT_MARGIN)/bh);if(sc>=1.15)out={s:sc,cx:(x0+x1+1)/2,cy:(y0+y1+1)/2,box:[x0,y0,bw,bh]};}}}}catch{out=null;}
+ if(FITS.size>200)FITS.delete(FITS.keys().next().value);FITS.set(key,out);return out;}
+/* improve20-r11d-nov2 #2: a probe for tests and the browser check: the smallest label drawn, in CSS px of its font's em (needs ctx.pqDev,
+   device px per CSS px, which crispCtx sets) */
+export const labelProbe={on:false,min:Infinity,list:[],reset(){this.on=true;this.min=Infinity;this.list=[];},note(t,em){const m=t.getTransform?.(),dev=t.pqDev||1,px=em*Math.hypot(m?.a||1,m?.b||0)/dev;this.list.push(px);if(px<this.min)this.min=px;}};
 export function drawPic(ctx,pic,p=1,o={}){const list=Array.isArray(pic)?pic:[pic],q=o.reduced?1:clamp(p);
  ctx.save();loadCanvasUI();ctx.fillStyle=PAPER;ctx.fillRect(0,0,PIC_W,PIC_H);drawPanel(ctx,'parchment',0,0,PIC_W,PIC_H,{scale:2});
- const c=pixelText(ctx);
- for(const one of list){const f=DRAW[one?.t];if(!f)throw new Error(`lesson-art: unknown primitive ${one?.t}`);f(c,one,q,o);}
- ctx.restore();}
+ const fitOn=!!(o.fit??ctx.pqFit)&&!list.some(x=>x?.t==='theater');if(fitOn)o={...o,tight:true};const fit=fitOn?fitOf(list,o):null,u0=ctx.pqUnit,c0=ctx.pqCss;fitLast=fit;
+ if(fit){ctx.translate(PIC_W/2,PIC_H/2);ctx.scale(fit.s,fit.s);ctx.translate(-fit.cx,-fit.cy);if(u0>0)ctx.pqUnit=u0*fit.s;if(c0>0)ctx.pqCss=c0*fit.s;}
+ try{const c=pixelText(ctx);
+  for(const one of list){const f=DRAW[one?.t];if(!f)throw new Error(`lesson-art: unknown primitive ${one?.t}`);f(c,one,q,o);}}
+ finally{if(fit){ctx.pqUnit=u0;ctx.pqCss=c0;}ctx.restore();}}
 export function describe(pic){const list=Array.isArray(pic)?pic:[pic];return list.map(q=>
  q.t==='theater'?describeTheater(q):
  q.t==='passages'?describePassages(q):

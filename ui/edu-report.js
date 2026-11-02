@@ -72,7 +72,7 @@ export function openReportCard(save,doc=globalThis.document){
 
 /* improve20-r9f-nov1 #1: the grown-ups button opens the one grown-up gate (ui/parent-gate.js); a right answer opens the report. The
    two-second hold it replaced (wireHold) is gone: any child could do it. */
-export const grownupsButtonHTML=()=>`<button type="button" id="edu-grownups" class="edu-grownups" aria-describedby="edu-grownups-help">Grown-ups</button><small id="edu-grownups-help" class="subtle">A grown-up answers a quick sum to open the learning record.</small>`;
+export const grownupsButtonHTML=()=>`<button type="button" id="edu-grownups" class="edu-grownups" aria-describedby="edu-grownups-help">Grown-ups</button><small id="edu-grownups-help" class="subtle">A grown-up works out a quick multiplication to open the learning record.</small>`;
 export function wireGrownupsButton(root,save,{onOpen,rng}={}){
  const b=root?.querySelector?.('#edu-grownups');if(!b)return false;
  return guardButton(b,()=>{const el=openReportCard(save,root.ownerDocument);onOpen?.(el);},{why:'The learning record is for grown-ups.',rng});

@@ -828,6 +828,8 @@ html[data-text="150"] :is(dialog,#ui-dialogue,#toast,#prompt,.ui-banner){--fs:24
 .learner-row.active{border-image-source:url(ui/skin/pl-plate.png)}
 .learner-row>div{flex:1;min-width:0}
 .learner-row small{display:block;color:var(--muted)}
+/* improve20-r11d-nov2 #1: Rename and Remove behind "Manage" (ui/profiles-screen.js) */
+.learner-manage{margin:2px 0 8px;display:flex;justify-content:flex-end}
 /* improve20-r8c-nov1 #2: Remove's grown-up check, and "Who is playing?" before Continue */
 .learner-remove-li{list-style:none}
 .learner-remove{display:grid;gap:8px;padding:10px 12px;border-style:solid;border-width:calc(4*var(--u));border-color:transparent;border-image:url(ui/skin/pl-card-plain.png) 8 8 8 8 fill/calc(12.0*var(--u)) calc(12.0*var(--u)) round;image-rendering:pixelated}
@@ -4115,6 +4117,17 @@ html.m-mode #modal#modal#modal#modal#modal[data-view=placement] .question.qf.qf.
 html.m-mode #modal#modal#modal#modal#modal[data-view=placement] .question.qf.qf.qf.q-pin:has(#quiz-feedback:empty)>#quiz-feedback{display:none}
 html.m-mode #modal#modal#modal#modal#modal[data-view=placement] .question.qf.qf.qf.q-pin.q-more:has(#quiz-feedback:empty)>.question-reading{-webkit-mask-image:linear-gradient(#000 calc(100% - 22px),transparent);mask-image:linear-gradient(#000 calc(100% - 22px),transparent)}
 @media(min-height:600px){html.m-mode #modal#modal[data-view=placement] .question.qf .qf-name{font-size:12px}}
+/* improve20-r11d-nov2 #2 (audit9 a10): the practice counter ("Dummy 5/10") read about 6 px in the dummy scene's 11 px uppercase body font. It
+   stays HTML (ui/practice-dummy.js dummyBarHTML) at 14 px in the game font, 12 px on short screens, never smaller */
+#modal#modal#modal#modal#modal .pd-label{font:700 14px/1.15 var(--ui);letter-spacing:.5px;text-transform:none}
+@media(max-height:500px){#modal#modal#modal#modal#modal .question.qf .pd-label,html.m-mode #modal#modal#modal#modal#modal .pd-label{font-size:12px}#modal#modal#modal#modal#modal .question.qf .pd-hud{gap:6px}}
+/* improve20-r11d-nov2 #2: on short screens the question's picture is 108 px tall (was 92), so a 640-unit picture is drawn at 0.38 CSS px per
+   unit or more and a 16-unit label reaches 12 CSS px within the fitted picture’s 2.15x label growth (gfx/lesson-art.js pqBoostMax) */
+@media(max-height:500px){#modal#modal#modal#modal:is([data-view=lesson-quiz],[data-view=placement]) .question.qf.qf:has(#quiz-feedback:empty)>.question-reading>#quiz-pic{height:108px;max-width:250px}}
+/* improve20-r11d-nov2 #5: the stars-from-grade key ran to three lines on phones (one span per line). It now reads on one line, wrapping
+   only between its parts (each part stays whole), so at 844x390 it takes one or two lines */
+.m-mode dialog[data-view=result] .level-result>.rating-key.rating-key>span{display:inline;white-space:nowrap}.m-mode dialog[data-view=result] .level-result>.rating-key.rating-key>.rk-sep{display:inline;white-space:normal}.m-mode dialog[data-view=result] .level-result>.rating-key.rating-key{font:400 15px/1.25 var(--ui);overflow-wrap:normal}
+@media(max-height:500px) and (min-width:600px){.m-mode dialog[data-view=result] #modal-content .level-result.level-result:has(>.result-side):not(.result-tight)>.rating-key{display:block;margin:0 0 2px}}
 /* tablets-nov2 (round 9 item 12): the tablet sweep (1024x768, 1180x820, 1280x800, 1366x1024, 1180x740 touch). A tablet is a touch screen at
    least 600 css px on its short side (ui/mobile.js tabletSize); phones in landscape are 430 px tall at most, so (min-height:600px) never
    reaches them, and every rule here sits under html.m-mode, so desktops are untouched. */
