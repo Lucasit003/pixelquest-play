@@ -25,9 +25,11 @@ const key=(ch,r)=>`${ch}:${r}`,okKey=k=>{const [ch,r]=String(k).split(':');retur
 export const emptyHall=()=>({cleared:{},keepsakes:{}});
 export function cleanHall(v){const h=emptyHall();if(!v||typeof v!=='object'||Array.isArray(v))return h;for(const f of ['cleared','keepsakes']){const o=v[f];if(o&&typeof o==='object'&&!Array.isArray(o))for(const k of Object.keys(o))if(o[k]===true&&okKey(k))h[f][k]=true;}return h;}
 const H=s=>s.hall&&typeof s.hall==='object'&&s.hall.cleared&&s.hall.keepsakes?s.hall:(s.hall=cleanHall(s.hall));
-/* followups-nov2 (a real rung timed in tools/balance-sim.mjs --hall): a Hall-only scale on boss health, per chapter and rung, for the
-   long chapters. Story levels never read it (combat.js applies it only to a Hall fight's bosses). Missing = 1. */
-export const HALL_BOSS_HP=Object.freeze({'elderwood:1':.6,'elderwood:2':1.3});
+/* followups-nov2 (rungs timed in tools/balance-sim.mjs --hall): a Hall-only scale on boss health, per chapter and rung. Story levels never
+   read it (combat.js applies it only to a Hall fight's bosses). Missing = 1. Part 3 made Hall fights boss-only (each starts at its boss
+   arena), so this was re-tuned on boss-only rungs (4 classes x 4 reps, kid and good bots, typical-after-v7 save): Rung I kid >= 75%,
+   Rung II kid 40-70% and good >= 70%, Rung III good 40-70%, good-bot rungs about 12 minutes or less (was elderwood:1 .6, elderwood:2 1.3). */
+export const HALL_BOSS_HP=Object.freeze({'elderwood:2':1.3,'emberkeep:2':.7,'emberkeep:3':.8,'veilmoor:2':.75,'veilmoor:3':.7});
 export const hallBossHp=(ch,r)=>HALL_BOSS_HP[key(ch,r)]??1;
 export const rungCleared=(s,ch,r)=>!!s?.hall?.cleared?.[key(ch,r)];
 export const hasKeepsake=(s,ch,r)=>!!s?.hall?.keepsakes?.[key(ch,r)];

@@ -25893,6 +25893,223 @@ export const QUESTION_REVISIONS=[
   "oldPrompt": "The two national languages of Canada are A: English and Spanish, B: English and French, C: French and Portuguese. Answer A, B or C.",
   "newPrompt": "The two official languages of Canada are A: English and Spanish, B: English and French, C: French and Portuguese. Answer A, B or C.",
   "reason": "followups-nov2: WRONG TERM: Canada's two languages are its official languages (Official Languages Act, R.S.C. 1985, c. 31 (4th Supp.); Canadian Charter of Rights and Freedoms s. 16(1): 'English and French are the official languages of Canada'); same answer. Source: https://laws-lois.justice.gc.ca/eng/acts/o-3.01/"
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "A fictional sample of 0.25 mol of an ideal gas fills a rigid 5.00 L container at 25 °C. What is its pressure in atm? Use R = 0.08206 L·atm/(mol·K) and K = °C + 273.15. Round to three significant figures.",
+  "newPrompt": "A fictional sample of 0.250 mol of an ideal gas fills a rigid 5.00 L container at 25 °C. What is its pressure in atm? Use R = 0.08206 L·atm/(mol·K) and K = °C + 273.15. Round to three significant figures.",
+  "reason": "followups-nov2 part 3: SIG FIGS: a measured value below 1 was printed with two significant figures (e.g. 0.25 mol, 0.80 atm, 2.0 × 10⁻⁵ M) while the data held three (0.250, 0.800, 2.00); products and quotients take the fewest figures, so the prompt now prints three. Same answer. Source: significant-figure rules (products/quotients: fewest figures; sums/differences: fewest decimal places; exact counts do not limit), derivation in tests/followups-nov2.test.js"
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "A fictional sample of 0.80 mol of an ideal gas fills a rigid 10.00 L container at -23 °C. What is its pressure in atm? Use R = 0.08206 L·atm/(mol·K) and K = °C + 273.15. Round to three significant figures.",
+  "newPrompt": "A fictional sample of 0.800 mol of an ideal gas fills a rigid 10.00 L container at -23 °C. What is its pressure in atm? Use R = 0.08206 L·atm/(mol·K) and K = °C + 273.15. Round to three significant figures.",
+  "reason": "followups-nov2 part 3: SIG FIGS: a measured value below 1 was printed with two significant figures (e.g. 0.25 mol, 0.80 atm, 2.0 × 10⁻⁵ M) while the data held three (0.250, 0.800, 2.00); products and quotients take the fewest figures, so the prompt now prints three. Same answer. Source: significant-figure rules (products/quotients: fewest figures; sums/differences: fewest decimal places; exact counts do not limit), derivation in tests/followups-nov2.test.js"
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "An ideal gas sample of 0.40 mol at 1.50 atm occupies 8.00 L. What is its temperature in kelvin? Use R = 0.08206 L·atm/(mol·K). Round to three significant figures.",
+  "newPrompt": "An ideal gas sample of 0.400 mol at 1.50 atm occupies 8.00 L. What is its temperature in kelvin? Use R = 0.08206 L·atm/(mol·K). Round to three significant figures.",
+  "reason": "followups-nov2 part 3: SIG FIGS: a measured value below 1 was printed with two significant figures (e.g. 0.25 mol, 0.80 atm, 2.0 × 10⁻⁵ M) while the data held three (0.250, 0.800, 2.00); products and quotients take the fewest figures, so the prompt now prints three. Same answer. Source: significant-figure rules (products/quotients: fewest figures; sums/differences: fewest decimal places; exact counts do not limit), derivation in tests/followups-nov2.test.js"
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "An ideal gas sample of 1.25 mol at 0.60 atm occupies 40.00 L. What is its temperature in kelvin? Use R = 0.08206 L·atm/(mol·K). Round to three significant figures.",
+  "newPrompt": "An ideal gas sample of 1.25 mol at 0.600 atm occupies 40.00 L. What is its temperature in kelvin? Use R = 0.08206 L·atm/(mol·K). Round to three significant figures.",
+  "reason": "followups-nov2 part 3: SIG FIGS: a measured value below 1 was printed with two significant figures (e.g. 0.25 mol, 0.80 atm, 2.0 × 10⁻⁵ M) while the data held three (0.250, 0.800, 2.00); products and quotients take the fewest figures, so the prompt now prints three. Same answer. Source: significant-figure rules (products/quotients: fewest figures; sums/differences: fewest decimal places; exact counts do not limit), derivation in tests/followups-nov2.test.js"
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "A gas sample has a volume of 5.00 L at 0.80 atm and 10 °C. It is changed to 1.20 atm and 50 °C. What is the new volume in liters? Use K = °C + 273.15. Round to three significant figures.",
+  "newPrompt": "A gas sample has a volume of 5.00 L at 0.800 atm and 10 °C. It is changed to 1.20 atm and 50 °C. What is the new volume in liters? Use K = °C + 273.15. Round to three significant figures.",
+  "reason": "followups-nov2 part 3: SIG FIGS: a measured value below 1 was printed with two significant figures (e.g. 0.25 mol, 0.80 atm, 2.0 × 10⁻⁵ M) while the data held three (0.250, 0.800, 2.00); products and quotients take the fewest figures, so the prompt now prints three. Same answer. Source: significant-figure rules (products/quotients: fewest figures; sums/differences: fewest decimal places; exact counts do not limit), derivation in tests/followups-nov2.test.js"
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "A fictional gas has a density of 1.52 g/L at 127 °C and 0.80 atm. What is its molar mass in g/mol, treating it as ideal? Use R = 0.08206 L·atm/(mol·K) and K = °C + 273.15. Round to three significant figures.",
+  "newPrompt": "A fictional gas has a density of 1.52 g/L at 127 °C and 0.800 atm. What is its molar mass in g/mol, treating it as ideal? Use R = 0.08206 L·atm/(mol·K) and K = °C + 273.15. Round to three significant figures.",
+  "reason": "followups-nov2 part 3: SIG FIGS: a measured value below 1 was printed with two significant figures (e.g. 0.25 mol, 0.80 atm, 2.0 × 10⁻⁵ M) while the data held three (0.250, 0.800, 2.00); products and quotients take the fewest figures, so the prompt now prints three. Same answer. Source: significant-figure rules (products/quotients: fewest figures; sums/differences: fewest decimal places; exact counts do not limit), derivation in tests/followups-nov2.test.js"
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "A container holds 4.00 g of He (4.003 g/mol) and 32.00 g of O₂ (32 g/mol) at a total pressure of 2.40 atm. What is the partial pressure of He, in atm? Round to three significant figures.",
+  "newPrompt": "A container holds 4.00 g of He (4.003 g/mol) and 32.00 g of O₂ (32.00 g/mol) at a total pressure of 2.40 atm. What is the partial pressure of He, in atm? Round to three significant figures.",
+  "reason": "followups-nov2 part 3: SIG FIGS: the molar mass was printed short (32, 40); it is now shown as 32.00 / 40.00 g/mol, as the data array already held. Same answer. Source: significant-figure rules (products/quotients: fewest figures; sums/differences: fewest decimal places; exact counts do not limit), derivation in tests/followups-nov2.test.js"
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "0.50 mol of N₂ and 0.30 mol of O₂ share a 10.00 L container at 27 °C. What is the partial pressure of O₂, in atm? Use R = 0.08206 L·atm/(mol·K) and K = °C + 273.15. Round to three significant figures.",
+  "newPrompt": "0.500 mol of N₂ and 0.300 mol of O₂ share a 10.00 L container at 27 °C. What is the partial pressure of O₂, in atm? Use R = 0.08206 L·atm/(mol·K) and K = °C + 273.15. Round to three significant figures.",
+  "reason": "followups-nov2 part 3: SIG FIGS: a measured value below 1 was printed with two significant figures (e.g. 0.25 mol, 0.80 atm, 2.0 × 10⁻⁵ M) while the data held three (0.250, 0.800, 2.00); products and quotients take the fewest figures, so the prompt now prints three. Same answer. Source: significant-figure rules (products/quotients: fewest figures; sums/differences: fewest decimal places; exact counts do not limit), derivation in tests/followups-nov2.test.js"
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "A fictional gas X effuses 0.50 times as fast as SO₂ (64.07 g/mol) under the same conditions. What is the molar mass of X, in g/mol? Round to three significant figures.",
+  "newPrompt": "A fictional gas X effuses 0.500 times as fast as SO₂ (64.07 g/mol) under the same conditions. What is the molar mass of X, in g/mol? Round to three significant figures.",
+  "reason": "followups-nov2 part 3: SIG FIGS: a measured value below 1 was printed with two significant figures (e.g. 0.25 mol, 0.80 atm, 2.0 × 10⁻⁵ M) while the data held three (0.250, 0.800, 2.00); products and quotients take the fewest figures, so the prompt now prints three. Same answer. Source: significant-figure rules (products/quotients: fewest figures; sums/differences: fewest decimal places; exact counts do not limit), derivation in tests/followups-nov2.test.js"
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "What pressure, in atm, would 1.00 mol of an ideal gas exert in 0.50 L at 250 K? Use R = 0.08206 L·atm/(mol·K). Round to three significant figures.",
+  "newPrompt": "What pressure, in atm, would 1.00 mol of an ideal gas exert in 0.500 L at 250.0 K? Use R = 0.08206 L·atm/(mol·K). Round to three significant figures.",
+  "reason": "followups-nov2 part 3: SIG FIGS: a measured value below 1 was printed with two significant figures (e.g. 0.25 mol, 0.80 atm, 2.0 × 10⁻⁵ M) while the data held three (0.250, 0.800, 2.00); products and quotients take the fewest figures, so the prompt now prints three. Same answer. Source: significant-figure rules (products/quotients: fewest figures; sums/differences: fewest decimal places; exact counts do not limit), derivation in tests/followups-nov2.test.js"
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "A solution is made by dissolving 5.00 g of NaOH (40 g/mol) in enough water to make 125.0 mL of solution. What is its molarity? Round to three significant figures.",
+  "newPrompt": "A solution is made by dissolving 5.00 g of NaOH (40.00 g/mol) in enough water to make 125.0 mL of solution. What is its molarity? Round to three significant figures.",
+  "reason": "followups-nov2 part 3: SIG FIGS: the molar mass was printed short (32, 40); it is now shown as 32.00 / 40.00 g/mol, as the data array already held. Same answer. Source: significant-figure rules (products/quotients: fewest figures; sums/differences: fewest decimal places; exact counts do not limit), derivation in tests/followups-nov2.test.js"
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "What volume, in mL, of 12.00 M stock solution must be diluted with water to make 250.0 mL of 0.50 M solution? Round to three significant figures.",
+  "newPrompt": "What volume, in mL, of 12.00 M stock solution must be diluted with water to make 250.0 mL of 0.500 M solution? Round to three significant figures.",
+  "reason": "followups-nov2 part 3: SIG FIGS: a measured value below 1 was printed with two significant figures (e.g. 0.25 mol, 0.80 atm, 2.0 × 10⁻⁵ M) while the data held three (0.250, 0.800, 2.00); products and quotients take the fewest figures, so the prompt now prints three. Same answer. Source: significant-figure rules (products/quotients: fewest figures; sums/differences: fewest decimal places; exact counts do not limit), derivation in tests/followups-nov2.test.js"
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "In a particle diagram each solute particle drawn represents 0.0100 mol. The diagram shows 12 solute particles in 0.50 L of solution. What is the molarity of the solution? Round to three significant figures.",
+  "newPrompt": "In a particle diagram each solute particle drawn represents 0.0100 mol. The diagram shows 12 solute particles in 0.500 L of solution. What is the molarity of the solution? Round to three significant figures.",
+  "reason": "followups-nov2 part 3: SIG FIGS: a measured value below 1 was printed with two significant figures (e.g. 0.25 mol, 0.80 atm, 2.0 × 10⁻⁵ M) while the data held three (0.250, 0.800, 2.00); products and quotients take the fewest figures, so the prompt now prints three. Same answer. Source: significant-figure rules (products/quotients: fewest figures; sums/differences: fewest decimal places; exact counts do not limit), derivation in tests/followups-nov2.test.js"
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "Use these approximate textbook values for KNO₃: 64 g dissolve in 100 g of water at 40 °C and 110 g at 60 °C. A solution saturated at 60 °C contains 250 g of water. It is cooled to 40 °C with no evaporation. How many grams of KNO₃ crystallize? Round to three significant figures.",
+  "newPrompt": "Use these approximate textbook values for KNO₃: 63.9 g dissolve in 100 g of water at 40 °C and 109 g at 60 °C. A solution saturated at 60 °C contains 250.0 g of water. It is cooled to 40 °C with no evaporation. How many grams of KNO₃ crystallize? Round to three significant figures.",
+  "reason": "followups-nov2 part 3: SIG FIGS: the table values (64 g, 110 g, 250 g of water) have two significant figures while three are asked; the data now carries three or more (63.9 g and 109 g, common table values for KNO₃ at 40 °C and 60 °C, and 250.0 g of water). Answer 115 -> 113. Source: significant-figure rules (products/quotients: fewest figures; sums/differences: fewest decimal places; exact counts do not limit), derivation in tests/followups-nov2.test.js"
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "Light has a wavelength of 650 nm. What is its frequency, in units of 10¹⁴ Hz? Use c = 2.998 × 10⁸ m/s and h = 6.626 × 10⁻³⁴ J·s. Round to three significant figures.",
+  "newPrompt": "Light has a wavelength of 656 nm. What is its frequency, in units of 10¹⁴ Hz? Use c = 2.998 × 10⁸ m/s and h = 6.626 × 10⁻³⁴ J·s. Round to three significant figures.",
+  "reason": "followups-nov2 part 3: SIG FIGS: a wavelength written 650/450/400/700/250 nm has non-significant trailing zeros; real three-figure lines are used instead (H 656, 486, 434 nm; ruby laser 694 nm; mercury 254 nm), answers recomputed. Answer 4.61 -> 4.57. Source: significant-figure rules (products/quotients: fewest figures; sums/differences: fewest decimal places; exact counts do not limit), derivation in tests/followups-nov2.test.js"
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "Light has a wavelength of 450 nm. What is its frequency, in units of 10¹⁴ Hz? Use c = 2.998 × 10⁸ m/s and h = 6.626 × 10⁻³⁴ J·s. Round to three significant figures.",
+  "newPrompt": "Light has a wavelength of 486 nm. What is its frequency, in units of 10¹⁴ Hz? Use c = 2.998 × 10⁸ m/s and h = 6.626 × 10⁻³⁴ J·s. Round to three significant figures.",
+  "reason": "followups-nov2 part 3: SIG FIGS: a wavelength written 650/450/400/700/250 nm has non-significant trailing zeros; real three-figure lines are used instead (H 656, 486, 434 nm; ruby laser 694 nm; mercury 254 nm), answers recomputed. Answer 6.66 -> 6.17. Source: significant-figure rules (products/quotients: fewest figures; sums/differences: fewest decimal places; exact counts do not limit), derivation in tests/followups-nov2.test.js"
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "What is the energy of one photon of 400 nm light, in units of 10⁻¹⁹ J? Use c = 2.998 × 10⁸ m/s and h = 6.626 × 10⁻³⁴ J·s. Round to three significant figures.",
+  "newPrompt": "What is the energy of one photon of 434 nm light, in units of 10⁻¹⁹ J? Use c = 2.998 × 10⁸ m/s and h = 6.626 × 10⁻³⁴ J·s. Round to three significant figures.",
+  "reason": "followups-nov2 part 3: SIG FIGS: a wavelength written 650/450/400/700/250 nm has non-significant trailing zeros; real three-figure lines are used instead (H 656, 486, 434 nm; ruby laser 694 nm; mercury 254 nm), answers recomputed. Answer 4.97 -> 4.58. Source: significant-figure rules (products/quotients: fewest figures; sums/differences: fewest decimal places; exact counts do not limit), derivation in tests/followups-nov2.test.js"
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "What is the energy of one photon of 700 nm light, in units of 10⁻¹⁹ J? Use c = 2.998 × 10⁸ m/s and h = 6.626 × 10⁻³⁴ J·s. Round to three significant figures.",
+  "newPrompt": "What is the energy of one photon of 694 nm light, in units of 10⁻¹⁹ J? Use c = 2.998 × 10⁸ m/s and h = 6.626 × 10⁻³⁴ J·s. Round to three significant figures.",
+  "reason": "followups-nov2 part 3: SIG FIGS: a wavelength written 650/450/400/700/250 nm has non-significant trailing zeros; real three-figure lines are used instead (H 656, 486, 434 nm; ruby laser 694 nm; mercury 254 nm), answers recomputed. Answer 2.84 -> 2.86. Source: significant-figure rules (products/quotients: fewest figures; sums/differences: fewest decimal places; exact counts do not limit), derivation in tests/followups-nov2.test.js"
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "What is the energy of one photon of 250 nm light, in units of 10⁻¹⁹ J? Use c = 2.998 × 10⁸ m/s and h = 6.626 × 10⁻³⁴ J·s. Round to three significant figures.",
+  "newPrompt": "What is the energy of one photon of 254 nm light, in units of 10⁻¹⁹ J? Use c = 2.998 × 10⁸ m/s and h = 6.626 × 10⁻³⁴ J·s. Round to three significant figures.",
+  "reason": "followups-nov2 part 3: SIG FIGS: a wavelength written 650/450/400/700/250 nm has non-significant trailing zeros; real three-figure lines are used instead (H 656, 486, 434 nm; ruby laser 694 nm; mercury 254 nm), answers recomputed. Answer 7.95 -> 7.82. Source: significant-figure rules (products/quotients: fewest figures; sums/differences: fewest decimal places; exact counts do not limit), derivation in tests/followups-nov2.test.js"
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "Light of frequency 0.90 × 10¹⁵ Hz strikes a fictional metal whose work function is Φ = 2.80 × 10⁻¹⁹ J. What is the maximum kinetic energy of an ejected electron, in units of 10⁻¹⁹ J? Use h = 6.626 × 10⁻³⁴ J·s. Round to three significant figures.",
+  "newPrompt": "Light of frequency 0.900 × 10¹⁵ Hz strikes a fictional metal whose work function is Φ = 2.80 × 10⁻¹⁹ J. What is the maximum kinetic energy of an ejected electron, in units of 10⁻¹⁹ J? Use h = 6.626 × 10⁻³⁴ J·s. Round to three significant figures.",
+  "reason": "followups-nov2 part 3: SIG FIGS: a measured value below 1 was printed with two significant figures (e.g. 0.25 mol, 0.80 atm, 2.0 × 10⁻⁵ M) while the data held three (0.250, 0.800, 2.00); products and quotients take the fewest figures, so the prompt now prints three. Same answer. Source: significant-figure rules (products/quotients: fewest figures; sums/differences: fewest decimal places; exact counts do not limit), derivation in tests/followups-nov2.test.js"
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "A fictional dye has ε = 1.50 × 10⁴ L/(mol·cm). What is the absorbance in a 1.00 cm cell at 2.0 × 10⁻⁵ M? Use A = εbc. Round to three significant figures.",
+  "newPrompt": "A fictional dye has ε = 1.50 × 10⁴ L/(mol·cm). What is the absorbance in a 1.00 cm cell at 2.00 × 10⁻⁵ M? Use A = εbc. Round to three significant figures.",
+  "reason": "followups-nov2 part 3: SIG FIGS: a measured value below 1 was printed with two significant figures (e.g. 0.25 mol, 0.80 atm, 2.0 × 10⁻⁵ M) while the data held three (0.250, 0.800, 2.00); products and quotients take the fewest figures, so the prompt now prints three. Same answer. Source: significant-figure rules (products/quotients: fewest figures; sums/differences: fewest decimal places; exact counts do not limit), derivation in tests/followups-nov2.test.js"
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "A fictional dye has ε = 0.85 × 10⁴ L/(mol·cm). What is the absorbance in a 2.00 cm cell at 3.5 × 10⁻⁵ M? Use A = εbc. Round to three significant figures.",
+  "newPrompt": "A fictional dye has ε = 0.850 × 10⁴ L/(mol·cm). What is the absorbance in a 2.00 cm cell at 3.50 × 10⁻⁵ M? Use A = εbc. Round to three significant figures.",
+  "reason": "followups-nov2 part 3: SIG FIGS: a measured value below 1 was printed with two significant figures (e.g. 0.25 mol, 0.80 atm, 2.0 × 10⁻⁵ M) while the data held three (0.250, 0.800, 2.00); products and quotients take the fewest figures, so the prompt now prints three. Same answer. Source: significant-figure rules (products/quotients: fewest figures; sums/differences: fewest decimal places; exact counts do not limit), derivation in tests/followups-nov2.test.js"
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "A solution of a fictional compound at 2.0 × 10⁻⁵ M has absorbance 0.540 in a 1.00 cm cell. What is its molar absorptivity ε, in units of 10⁴ L/(mol·cm)? Round to three significant figures.",
+  "newPrompt": "A solution of a fictional compound at 2.00 × 10⁻⁵ M has absorbance 0.540 in a 1.00 cm cell. What is its molar absorptivity ε, in units of 10⁴ L/(mol·cm)? Round to three significant figures.",
+  "reason": "followups-nov2 part 3: SIG FIGS: a measured value below 1 was printed with two significant figures (e.g. 0.25 mol, 0.80 atm, 2.0 × 10⁻⁵ M) while the data held three (0.250, 0.800, 2.00); products and quotients take the fewest figures, so the prompt now prints three. Same answer. Source: significant-figure rules (products/quotients: fewest figures; sums/differences: fewest decimal places; exact counts do not limit), derivation in tests/followups-nov2.test.js"
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "In the same cell, a fictional dye at 2.0 × 10⁻⁵ M has absorbance 0.320. A second sample has absorbance 0.800. What is its concentration, in units of 10⁻⁵ M? Round to three significant figures.",
+  "newPrompt": "In the same cell, a fictional dye at 2.00 × 10⁻⁵ M has absorbance 0.320. A second sample has absorbance 0.800. What is its concentration, in units of 10⁻⁵ M? Round to three significant figures.",
+  "reason": "followups-nov2 part 3: SIG FIGS: a measured value below 1 was printed with two significant figures (e.g. 0.25 mol, 0.80 atm, 2.0 × 10⁻⁵ M) while the data held three (0.250, 0.800, 2.00); products and quotients take the fewest figures, so the prompt now prints three. Same answer. Source: significant-figure rules (products/quotients: fewest figures; sums/differences: fewest decimal places; exact counts do not limit), derivation in tests/followups-nov2.test.js"
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "In the same cell, a fictional dye at 3.0 × 10⁻⁵ M has absorbance 0.240. A second sample has absorbance 0.600. What is its concentration, in units of 10⁻⁵ M? Round to three significant figures.",
+  "newPrompt": "In the same cell, a fictional dye at 3.00 × 10⁻⁵ M has absorbance 0.240. A second sample has absorbance 0.600. What is its concentration, in units of 10⁻⁵ M? Round to three significant figures.",
+  "reason": "followups-nov2 part 3: SIG FIGS: a measured value below 1 was printed with two significant figures (e.g. 0.25 mol, 0.80 atm, 2.0 × 10⁻⁵ M) while the data held three (0.250, 0.800, 2.00); products and quotients take the fewest figures, so the prompt now prints three. Same answer. Source: significant-figure rules (products/quotients: fewest figures; sums/differences: fewest decimal places; exact counts do not limit), derivation in tests/followups-nov2.test.js"
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "12.50 g of fictional solid X and 8.30 g of fictional liquid Y are sealed in a flask and react completely to form only a gas and a solid. The solid has a mass of 14.2 g. What is the mass of the gas, in grams? Round to three significant figures.",
+  "newPrompt": "12.50 g of fictional solid X and 8.30 g of fictional liquid Y are sealed in a flask and react completely to form only a gas and a solid. The solid has a mass of 14.20 g. What is the mass of the gas, in grams? Round to three significant figures.",
+  "reason": "followups-nov2 part 3: SIG FIGS: a mass difference keeps the fewest decimal places: 14.2 / 20.1 g (one place) gave 6.6 / 5.9 g; the solid is now 14.20 / 20.10 g, so the three-figure answer holds. Same answer. Source: significant-figure rules (products/quotients: fewest figures; sums/differences: fewest decimal places; exact counts do not limit), derivation in tests/followups-nov2.test.js"
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "3.40 g of fictional solid X and 22.60 g of fictional liquid Y are sealed in a flask and react completely to form only a gas and a solid. The solid has a mass of 20.1 g. What is the mass of the gas, in grams? Round to three significant figures.",
+  "newPrompt": "3.40 g of fictional solid X and 22.60 g of fictional liquid Y are sealed in a flask and react completely to form only a gas and a solid. The solid has a mass of 20.10 g. What is the mass of the gas, in grams? Round to three significant figures.",
+  "reason": "followups-nov2 part 3: SIG FIGS: a mass difference keeps the fewest decimal places: 14.2 / 20.1 g (one place) gave 6.6 / 5.9 g; the solid is now 14.20 / 20.10 g, so the three-figure answer holds. Same answer. Source: significant-figure rules (products/quotients: fewest figures; sums/differences: fewest decimal places; exact counts do not limit), derivation in tests/followups-nov2.test.js"
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "For the balanced equation N₂ + 3 H₂ → 2 NH₃, a mixture contains 20.0 g of N₂ and 5.00 g of H₂. Molar masses: N₂ (28.02 g/mol), H₂ (2.02 g/mol). How many grams of the excess reactant remain after the limiting reactant is completely used up? Round to three significant figures.",
+  "newPrompt": "For the balanced equation N₂ + 3 H₂ → 2 NH₃, a mixture contains 20.00 g of N₂ and 5.000 g of H₂. Molar masses: N₂ (28.02 g/mol), H₂ (2.02 g/mol). How many grams of the excess reactant remain after the limiting reactant is completely used up? Round to three significant figures.",
+  "reason": "followups-nov2 part 3: SIG FIGS: the mass left over is supplied − used, a difference: 20.0 − 4.33 style data supports only two figures; the masses are now given to four figures so the difference keeps three. Same answer. Source: significant-figure rules (products/quotients: fewest figures; sums/differences: fewest decimal places; exact counts do not limit), derivation in tests/followups-nov2.test.js"
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "For the balanced equation Zn + 2 HCl → ZnCl₂ + H₂, a mixture contains 13.1 g of Zn and 10.0 g of HCl. Molar masses: Zn (65.38 g/mol), HCl (36.46 g/mol). How many grams of the excess reactant remain after the limiting reactant is completely used up? Round to three significant figures.",
+  "newPrompt": "For the balanced equation Zn + 2 HCl → ZnCl₂ + H₂, a mixture contains 13.10 g of Zn and 10.00 g of HCl. Molar masses: Zn (65.38 g/mol), HCl (36.46 g/mol). How many grams of the excess reactant remain after the limiting reactant is completely used up? Round to three significant figures.",
+  "reason": "followups-nov2 part 3: SIG FIGS: the mass left over is supplied − used, a difference: 20.0 − 4.33 style data supports only two figures; the masses are now given to four figures so the difference keeps three. Same answer. Source: significant-figure rules (products/quotients: fewest figures; sums/differences: fewest decimal places; exact counts do not limit), derivation in tests/followups-nov2.test.js"
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "For the balanced equation 2 Na + Cl₂ → 2 NaCl, a mixture contains 11.5 g of Na and 10.0 g of Cl₂. Molar masses: Na (22.99 g/mol), Cl₂ (70.90 g/mol). How many grams of the excess reactant remain after the limiting reactant is completely used up? Round to three significant figures.",
+  "newPrompt": "For the balanced equation 2 Na + Cl₂ → 2 NaCl, a mixture contains 11.50 g of Na and 10.00 g of Cl₂. Molar masses: Na (22.99 g/mol), Cl₂ (70.90 g/mol). How many grams of the excess reactant remain after the limiting reactant is completely used up? Round to three significant figures.",
+  "reason": "followups-nov2 part 3: SIG FIGS: the mass left over is supplied − used, a difference: 20.0 − 4.33 style data supports only two figures; the masses are now given to four figures so the difference keeps three. Same answer. Source: significant-figure rules (products/quotients: fewest figures; sums/differences: fewest decimal places; exact counts do not limit), derivation in tests/followups-nov2.test.js"
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "For the balanced equation CuSO₄ + 2 NaOH → Cu(OH)₂ + Na₂SO₄, 20.0 mL of 0.0800 M CuSO₄(aq) is mixed with 30.0 mL of 0.350 M NaOH(aq). What is the final molarity of NaOH(aq) in the mixture? Assume the volumes add and the reaction goes to completion. Round to three significant figures.",
+  "newPrompt": "For the balanced equation CuSO₄ + 2 NaOH → Cu(OH)₂ + Na₂SO₄, 20.0 mL of 0.0800 M CuSO₄(aq) is mixed with 30.00 mL of 0.3500 M NaOH(aq). What is the final molarity of NaOH(aq) in the mixture? Assume the volumes add and the reaction goes to completion. Round to three significant figures.",
+  "reason": "followups-nov2 part 3: SIG FIGS: leftover NaOH is 10.5 − 3.20 mmol, a difference with one decimal place (two figures); now 30.00 mL of 0.3500 M (10.50 mmol), so 7.30 mmol ÷ 50.0 mL keeps three. Same answer. Source: significant-figure rules (products/quotients: fewest figures; sums/differences: fewest decimal places; exact counts do not limit), derivation in tests/followups-nov2.test.js"
  }
 ];
 export const ANSWER_ID_RENAMES=new Map(QUESTION_REVISIONS.map(r=>[`${r.subject}-${r.level}-${hash(r.oldPrompt)}`,`${r.subject}-${r.level}-${hash(r.newPrompt)}`]));
