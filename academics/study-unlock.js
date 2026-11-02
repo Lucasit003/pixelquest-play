@@ -17,6 +17,7 @@ import {mastery,elementary,abilityMastery,unlocked,xpLevel,clamp} from '../game/
 import {TOPICS,ELEMENTARY_RUNGS,MIDDLE_RUNGS,HIGH_RUNGS,rungOf,topicPoints,mastered,topicOpen,openGrade,testReady,practiceNeeded} from './lessons.js';
 import {middleLadder,highLadder} from '../game/math.js';
 import {placementGrades} from './placement.js';
+import {orderHigh} from './course-grades.js';
 
 const FADE=250/4.5;
 const EPS=1e-8;
@@ -100,7 +101,8 @@ export function studyPlan(save,{hero=save.hero,subject=null,limit=3}={}){
    Training in the bank still counts for mastery; this only says how many LESSONS would do it. */
 /* Start with the subject's current grade, including a placement or saved work. Earlier grades remain
    available as remediation after the current and later work; nothing about their unlocks changes. */
-const stageLadder=(save,subject)=>{const g=openGrade(save,subject),ts=[...ladder(subject,ELEMENTARY_RUNGS),...ladder(subject,MIDDLE_RUNGS),...ladder(subject,HIGH_RUNGS)];
+/* improve20-r8c-nov1 #1: High School topics (all on the Grade 9 rung) follow the grade the learner stated (course-grades.js orderHigh); unchanged without one */
+const stageLadder=(save,subject)=>{const g=openGrade(save,subject),ts=orderHigh(save,[...ladder(subject,ELEMENTARY_RUNGS),...ladder(subject,MIDDLE_RUNGS),...ladder(subject,HIGH_RUNGS)]);
  return [...ts.filter(t=>rungOf(t)>=g),...ts.filter(t=>rungOf(t)<g).sort((a,b)=>rungOf(b)-rungOf(a))];};
 export function lessonsToUnlock(save,a){
  const need=a.gate,have=abilityMastery(save,a.subject);

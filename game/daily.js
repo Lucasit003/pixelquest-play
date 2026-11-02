@@ -90,7 +90,7 @@ const decorOf=f=>f&&{key:f.id,kind:'decor',id:f.id,name:f.name,img:f.img};
    cheapest stool (prizeFor, kept for older callers) */
 export const decorPrizeFor=(s,day)=>{const free=FURNITURE.filter(f=>f.kind!=='show'&&!((s?.house?.owned?.[f.id]|0)>0));return free.length?free[hash('decor:'+day)%free.length]:null;};
 export function dailyPrize(s,day){for(const k of prizeKindFor(day)){if(k==='decor'){const f=decorPrizeFor(s,day);if(f)return decorOf(f);continue;}
-  const free=PRIZES.filter(p=>p.kind===k&&!owns(s,p.key));if(free.length)return free[hash('prize:'+k+':'+day)%free.length];}return null;}
+  const free=PRIZES.filter(p=>p.kind===k&&!p.earned&&!owns(s,p.key))/* improve20-r8a-nov1: big-win keepsakes are never a daily prize */;if(free.length)return free[hash('prize:'+k+':'+day)%free.length];}return null;}
 const prizeByKey=key=>PRIZE[key]||decorOf(FURN[key]&&FURN[key].kind!=='show'?FURN[key]:null)||null;
 /* the day's prize piece for this save: the cheapest unowned non-Showpiece, ties settled by the date; null once every piece is owned */
 export function prizeFor(s,day){const free=FURNITURE.filter(f=>f.kind!=='show'&&!((s?.house?.owned?.[f.id]|0)>0));if(!free.length)return null;const low=Math.min(...free.map(f=>f.price)),pick=free.filter(f=>f.price===low);return pick[hash('prize:'+day)%pick.length];}

@@ -1,4 +1,5 @@
 import {emptyHints,cleanHints,cleanSchoolGrade} from '../game/hints.js';
+import {cleanEcho} from '../game/echo.js';
 import {cleanRunes,owns} from '../game/runes.js';
 import {DEFAULT_BINDINGS,normalizeBindings} from '../game/bindings.js';
 import {cleanFieldMission} from '../game/field-mission.js';
@@ -35,7 +36,7 @@ import {emptyParty,cleanParty} from '../game/party.js';
 import {emptyQuests,cleanQuests} from '../game/quests.js';
 import {cleanTravel} from '../game/fasttravel.js';
 import {cleanTitles,earnTitles,TITLES} from '../game/titles.js';
-import {cleanPrizes} from '../game/prizes.js';
+import {cleanPrizes,grantWinKeepsakes} from '../game/prizes.js';
 
 // v7 writes a new key (v6 did the same). Older keys are never written again: they stay behind as rollback copies (a v5 build still finds
 // its own save under V5_KEY), and load() still reads every one of them, newest first.
@@ -63,7 +64,7 @@ export const VERSION=9;
 export const LADDER=3;
 export const LADDER2_RUNGS={'divine-shield':{gate:3,lvl:3},'hammer-of-light':{gate:6,lvl:4}};
 
-export function fresh(){return {version:VERSION,hero:'warrior',delve:emptyDelve(),skills:{crafting:0},adventurer:{tasks:{}},heroNames:{},fieldMission:cleanFieldMission(),level:1,xp:0,gold:30,mastery:{},answers:{},loadouts:{},equipment:{},potions:3,regenPotions:0,potionKind:'health',pet:'study',jewels:{owned:{},worn:{necklace:null,ring:null},pity:{}},gear:emptyGear(),house:{owned:{},items:[]},petBond:{},cleared:[],bossPhase2:false,cinematicSeen:false,schoolMode:null,settings:{sound:true,music:true,motion:!globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches,bindings:{...DEFAULT_BINDINGS},freePotionSeen:false},started:false,lessons:{},kept:[],placement:{},levels:{},starPass:[],bestiary:{},/* v2:hub */boons:{pending:[],bounty:null},hub:{seen:[]},party:emptyParty(),quests:emptyQuests(),town:{seen:[]},/* fast travel (25 Oct, additive within v9) */travel:{places:[],hinted:false},/* daily goals (herocard-oct27, additive within v9, no streaks) */daily:emptyDaily(),/* the Rift of the Week (improve20-r-oct31, additive within v9, no streaks) */rift:emptyRift(),/* titles (endfollow-oct29, additive within v9, cosmetic) */titles:[],/* kid-appeal help and the optional school grade (kidfix-a-oct31, additive within v9, game/hints.js) */hints:emptyHints(),runes:{},schoolGrade:null,/* improve20-z-nov1 #4: which goal the HUD suggests next after ability 2, 'learn' or 'fight' (additive within v9, game/next-step.js chargeStep) */goalTurn:null,/* libraryfirst-nov1: 'library' once a brand-new game begins on the Library-first opening, and the topic its starter lesson was cut from (additive within v9, academics/starter-lesson.js) */opening:null,starterLesson:null,/* earned pets (improve20-c-oct31, additive within v9, game/pets.js) */pets:emptyPets(),/* v2:edu */awakened:false,/* v2:gamedesign */ladder:LADDER};}
+export function fresh(){return {version:VERSION,hero:'warrior',delve:emptyDelve(),skills:{crafting:0},adventurer:{tasks:{}},heroNames:{},fieldMission:cleanFieldMission(),level:1,xp:0,gold:30,mastery:{},answers:{},loadouts:{},equipment:{},potions:3,regenPotions:0,potionKind:'health',pet:'study',jewels:{owned:{},worn:{necklace:null,ring:null},pity:{}},gear:emptyGear(),house:{owned:{},items:[]},petBond:{},cleared:[],bossPhase2:false,cinematicSeen:false,schoolMode:null,settings:{sound:true,music:true,motion:!globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches,bindings:{...DEFAULT_BINDINGS},freePotionSeen:false},started:false,lessons:{},kept:[],placement:{},levels:{},starPass:[],bestiary:{},/* v2:hub */boons:{pending:[],bounty:null},hub:{seen:[]},party:emptyParty(),quests:emptyQuests(),town:{seen:[]},/* fast travel (25 Oct, additive within v9) */travel:{places:[],hinted:false},/* daily goals (herocard-oct27, additive within v9, no streaks) */daily:emptyDaily(),/* the Rift of the Week (improve20-r-oct31, additive within v9, no streaks) */rift:emptyRift(),/* titles (endfollow-oct29, additive within v9, cosmetic) */titles:[],/* kid-appeal help and the optional school grade (kidfix-a-oct31, additive within v9, game/hints.js) */hints:emptyHints(),runes:{},schoolGrade:null,/* improve20-z-nov1 #4: which goal the HUD suggests next after ability 2, 'learn' or 'fight' (additive within v9, game/next-step.js chargeStep) */goalTurn:null,questNudge:0,/* libraryfirst-nov1: 'library' once a brand-new game begins on the Library-first opening, and the topic its starter lesson was cut from (additive within v9, academics/starter-lesson.js) */opening:null,starterLesson:null,/* earned pets (improve20-c-oct31, additive within v9, game/pets.js) */pets:emptyPets(),/* v2:edu */awakened:false,/* v2:gamedesign */ladder:LADDER};}
 
 const obj=v=>!!v&&typeof v==='object'&&!Array.isArray(v);
 const HEROES=['warrior','mage','rogue','ranger','paladin','berserker','summoner'];
@@ -136,7 +137,8 @@ const frac=(v,a,b)=>Math.max(a,Math.min(b,Number(v)||0));
  const tierRec=(id,l,k)=>{const t=Number(l.best?.time),time=Number.isFinite(t)&&t>0?Math.round(t*10)/10:null,done=l.done===true,lv=levelById(id),star=lv?.kind==='level'&&!lv.hidden;
   const stars=!done||!star?0:from>=6&&Number(l.stars)>=1?n(l.stars,1,3):time!=null?starsFor(time,levelParFor(lv,k)):1;
   const grade=GRADE_KEYS.includes(l.best?.grade)?l.best.grade:null;
-  return {done,best:{time,score:n(l.best?.score,0,1e9),...(grade?{grade}:{})},plays:n(l.plays,0,1e6),...(star&&done?{stars}:{})};};
+  /* improve20-r8a-nov1 #4: best.tip (additive) is the part the best grade's run should improve next, for the world-map card */const tip=grade&&['explore','skill','speed'].includes(l.best?.tip)?l.best.tip:null;
+  return {done,best:{time,score:n(l.best?.score,0,1e9),...(grade?{grade}:{}),...(tip?{tip}:{})},plays:n(l.plays,0,1e6),...(star&&done?{stars}:{})};};
  for(const [id,l] of Object.entries(s.lessons)){if(!l||typeof l!=='object'||Array.isArray(l)){delete s.lessons[id];continue;}/* v2:edu `reached` (additive): the furthest step ever shown; an older save starts it at its cursor. */const reached=Math.max(n(l.reached,0,1e6),n(l.at,0,1e6));s.lessons[id]={at:n(l.at,0,1e6),...(reached>0?{reached}:{}),done:l.done===true,...(Array.isArray(l.tried)?{tried:[...new Set(l.tried.filter(x=>typeof x==='string').map(latestId))]}:{}),quiz:n(l.quiz,0,99),test:n(l.test,0,99),pts:frac(l.pts,0,100),...(l.first===true?{first:true}:{}),...(l.sat===true?{sat:true}:{})/* improve20-f-nov1 #9: the quiz was sat (any score, even 0), so the first fight is offered (game/next-step.js firstQuizDue) *//* owner 29 Oct: the first topic's lower practice count (lessons.js settleFirst) */,miss:Array.isArray(l.miss)?l.miss.filter(x=>typeof x==='string').map(latestId).slice(0,10):[]};}
  /* follow6-oct29: a `first` on a topic that is not mastered is honoured only while no topic is mastered yet (lessons.js firstTopic); a save from before keeps it on its mastered topic(s) only */
  if(Object.values(s.lessons).some(l=>l.pts>0))for(const l of Object.values(s.lessons))if(l.first&&!(l.pts>0))delete l.first;
@@ -227,13 +229,13 @@ const frac=(v,a,b)=>Math.max(a,Math.min(b,Number(v)||0));
  /* improve20-r7a-nov1 #8 (game/prizes.js): the daily keepsakes (titles, trails, hero-card backdrops) and what is worn; additive within v9, a save
     without it starts empty; a worn title may be an earned one (s.titles) or 'none'. Cosmetic only. s.dayHello: the last day the "New day!" banner
     showed (game/tomorrow.js newDayDue), a date or absent */
- s.prizes=cleanPrizes(value.prizes,id=>!!TITLES[id]&&s.titles.includes(id));if(typeof value.dayHello==='string'&&/^\d{4}-\d\d-\d\d$/.test(value.dayHello))s.dayHello=value.dayHello;else delete s.dayHello;
+ s.prizes=cleanPrizes(value.prizes,id=>!!TITLES[id]&&s.titles.includes(id));/* improve20-r8a-nov1 #7: a chapter or the ending already won has its keepsake (back-filled once, never taken) */grantWinKeepsakes(s);if(typeof value.dayHello==='string'&&/^\d{4}-\d\d-\d\d$/.test(value.dayHello))s.dayHello=value.dayHello;else delete s.dayHello;
 
  /* kid-appeal help (kidfix-a-oct31, game/hints.js): additive within v9; a save without it starts empty, and the school grade is a hint only */
- s.hints=cleanHints(value.hints);s.schoolGrade=cleanSchoolGrade(value.schoolGrade);s.goalTurn=value.goalTurn==='learn'||value.goalTurn==='fight'?value.goalTurn:null;
+ s.hints=cleanHints(value.hints);s.schoolGrade=cleanSchoolGrade(value.schoolGrade);s.goalTurn=value.goalTurn==='learn'||value.goalTurn==='fight'?value.goalTurn:null;/* improve20-r8a-nov1 #3: wins since e5 (additive) */s.questNudge=Math.max(0,Math.min(1e6,Math.floor(+value.questNudge||0)));
  /* libraryfirst-nov1 (academics/starter-lesson.js): additive within v9. Only a stored 'library' keeps the Library-first opening; an older save loads
     without it and plays as before. starterLesson is a topic id (kept like lesson records keep unknown topic ids) or null */
- s.opening=value.opening==='library'?'library':null;s.starterLesson=typeof value.starterLesson==='string'&&value.starterLesson.length<=120?value.starterLesson:null;
+ s.opening=value.opening==='library'?'library':null;/* improve20-r8c-nov1 #3: the one-level Echo of the next power (game/echo.js); never read by unlocked() */s.echo=cleanEcho(value.echo);s.starterLesson=typeof value.starterLesson==='string'&&value.starterLesson.length<=120?value.starterLesson:null;
  /* kidfix-b-oct31 (game/runes.js, game/hints.js): Ability Runes are additive within v9. A save without s.runes has every rune
     point it earned (one per mastered topic) ready to place; bad or over-spent placements are clamped. A save from before the
     first-cast moment lists every ability it already owns, so only an ability unlocked from now on gets the moment. */

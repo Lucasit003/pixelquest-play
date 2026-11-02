@@ -24,6 +24,7 @@ import {sfx} from '../core/audio.js';
 import {loadSprite,drawSprite} from '../gfx/actors/sprites.js';
 
 const sgn=v=>v<0?-1:1,clampN=(v,a,b)=>v<a?a:v>b?b:v,rnd=w=>(w.rng?w.rng():Math.random());
+export const PILLAR_BEAT={slow:.25,time:1};
 export const MOVE_KINDS=['wave','sweep','vanish','stance','echo','dark','pillar','split','lure','zone','undertow','pick'];
 /* ---------- sound: every wind-up is heard, panned toward the attacker (section 13.3 P1) ---------- */
 const TELL={melee:'tell.melee',aoe:'tell.aoe',line:'tell.aoe',projectile:'tell.shot',beam:'tell.beam',sweep:'tell.beam',dash:'tell.dash',leap:'tell.leap',
@@ -93,9 +94,10 @@ export function stepMove(e,w,dt,b,a,K){const p=w.player,B=K.bounds(w);
   case 'stance':{if(b.parried){e.stance=null;b.force=a.riposte;return 'riposte';}
    if(b.broken||(e.statusTime>0&&['stun','freeze','root'].includes(e.status))){e.stance=null;w.text?.('GUARD BROKEN!',e.x,K.top(e)-4,'#ffd27a');sfx('armour.crack',undefined,{pan:panOf(w,e.x)});b.dizzy=a.dizzy||1.6;return 'broken';}
    if(b.t>=a.hold){e.stance=null;w.text?.('OPEN!',e.x,K.top(e)-4,'#ffd27a');return true;}return false;}
-  case 'pillar':{const dx=p.x-e.x,dy=p.y-e.y,d=Math.hypot(dx,dy*1.4)||1,sp=(a.speed||50)*(b.speedMul||1);if(d>4){e.x+=dx/d*sp*dt;e.y+=dy/d*sp*.7*dt;}
+  /* improve20-r8b-nov1 #4 (audit7 d21): after each hit the column slows to PILLAR_BEAT.slow of its speed for PILLAR_BEAT.time s, a beat to walk out of it */
+  case 'pillar':{b.pSlow=Math.max(0,(b.pSlow||0)-dt);const dx=p.x-e.x,dy=p.y-e.y,d=Math.hypot(dx,dy*1.4)||1,sp=(a.speed||50)*(b.speedMul||1)*(b.pSlow>0?PILLAR_BEAT.slow:1);if(d>4){e.x+=dx/d*sp*dt;e.y+=dy/d*sp*.7*dt;}
    e.x=clampN(e.x,B.x0,B.x1);e.y=clampN(e.y,B.y0,B.y1);e.facing=sgn(dx);b.markers=[{shape:'circle',x:e.x,y:e.y,r:a.radius||18}];
-   if((b.tick-=dt)<=0&&K.inMarker(b.markers[0],p)&&(b.pHits||0)<(a.maxHits||2)){K.hurt(e,w,a,e);b.tick=a.every||.8;b.pHits=(b.pHits||0)+1;}
+   if((b.tick-=dt)<=0&&K.inMarker(b.markers[0],p)&&(b.pHits||0)<(a.maxHits||2)){K.hurt(e,w,a,e);b.tick=a.every||.8;b.pHits=(b.pHits||0)+1;b.pSlow=PILLAR_BEAT.time;}
    if(b.t>=a.dur){e.pillar=false;b.markers=[];w.text?.('EXHAUSTED!',e.x,K.top(e)-4,'#ffd27a');K.puff(w,'fx-dust',e.x,e.y,e);return true;}return false;}
   case 'undertow':{if(!(p.dodge>0)&&p.hp>0){const dx=e.x-p.x;if(Math.abs(dx)>30){p.drift={x:sgn(dx)*(a.pull||32),y:(e.y-p.y)*.6};}}
    if((b.bubbleT=(b.bubbleT||0)-dt)<=0){b.bubbleT=.16;K.puff(w,a.bubble||'fx-spark-ice',p.x+sgn(e.x-p.x)*(8+rnd(w)*20),p.y+(rnd(w)-.5)*10,e,'twinkle');}
@@ -110,7 +112,7 @@ function vanishSpot(e,w,a,B){const p=w.player,cl=(x,y)=>({x:clampN(x,B.x0+16,B.x
  const n=a.decoys||0;d.decoys=[];for(let i=0;i<n;i++){const s=i%2?-1:1;d.decoys.push(cl(d.x+s*(70+i*18),clampN(d.y+(i%2?16:-16),B.y0,B.y1)));}
  return d;}
 /* ---------- echo: the hero's last ability, as this boss's attack ---------- */
-export function echoAttack(e,w,a){const L=w.lastCast,base={name:a.name,state:a.state,windup:a.windup,cd:a.cd,dmg:a.dmg||1,recover:a.recover,echo:true};
+export function echoAttack(e,w,a){let L=w.lastCast;/* Your Shadow (game/shadow.js): before the hero has cast, the echo borrows the hero's first two abilities in turn */if((!L||w.time-L.t>30)&&e.echoKit?.length){const i=e.echoI=((e.echoI??-1)+1)%e.echoKit.length;L={...e.echoKit[i],t:w.time};}const base={name:a.name,state:a.state,windup:a.windup,cd:a.cd,dmg:a.dmg||1,recover:a.recover,echo:true};
  if(!L||w.time-L.t>30)return {...base,kind:'melee',range:70,band:12,label:'ECHO'};
  const twice=L.twice?1.2:1,lead=a.lead&&w.player.lastDodge&&w.time-w.player.lastDodge.t<3?w.player.lastDodge:null;
  let o;if(L.kind==='projectile'||L.kind==='chain'||L.kind==='mark')o={kind:'projectile',fx:a.shotFx||'fx-bolt-shadow',range:300,speed:120,count:L.kind==='chain'?2:1,spread:16};

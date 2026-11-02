@@ -59,3 +59,14 @@ export function deleteProfile(id){
  const idx=readProfiles();if(id===idx.active||idx.list.length<2)return false;
  idx.list=idx.list.filter(p=>p.id!==id);writeProfiles(idx);try{ls()?.removeItem(SLOT(id));}catch{}return true;
 }
+/* improve20-r8c-nov1 #2 (audit7 d14): two kids on one device. With two or more learners, Continue first asks "Who is playing?"
+   (ui/profiles-screen.js openWhoPlays). Picking another learner switches (a reload) and marks it here in sessionStorage, so the title
+   that boots next carries straight on as that learner: one tap, never a second question. The mark only counts for the learner it names. */
+const AUTO='pixelquest.autoContinue';
+export const needsWhoPlays=()=>readProfiles().list.length>=2;
+export function markAutoContinue(id){try{ss()?.setItem(AUTO,id);}catch{}}
+export function takeAutoContinue(){const S=ss();if(!S)return false;let v=null;try{v=S.getItem(AUTO);S.removeItem(AUTO);}catch{}return !!v&&v===readProfiles().active;}
+/* the learner's stored save as text (for "Export this save first"), or null */
+export function profileRaw(id){const L=ls(),idx=readProfiles();try{return L?(id===idx.active?activeRaw(L):L.getItem(SLOT(id))):null;}catch{return null;}}
+/* the grown-up check for Remove: the learner's name typed again (case and outer spaces do not matter) */
+export const nameMatches=(name,typed)=>String(typed??'').trim().toLowerCase()===String(name??'').trim().toLowerCase()&&String(typed??'').trim().length>0;

@@ -5,6 +5,7 @@
 // On a landscape phone the strip heads the right-hand column, above the hero level, so it is never squeezed under the stars.
 import {LEVELS,levelOpen} from '../game/levels.js';
 import {rarPips,rarColor,rarName} from './rarity.js';
+import {BAG} from '../game/potions.js';
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 /** True once any level past the first chapter is open: from then on Details shows every line, as before. */
@@ -31,13 +32,16 @@ export const shortName=n=>String(n||'').replace(/^[^,]*?['’]s\s+(?=\S)/,'')||S
    twice; shard (an <img>) adds the week's Rift Shard as its own chip */
 /* improve20-r7a-nov1 #11 (audit6 #19): `next` names the smith piece the hero can buy now (gear-guidance.js affordableUpgrade, a shop buy), on
    the gold chip's own words line ("gold · next buy: Emberbrand"), so gold points at something; the strip's layout is untouched */
-export function youGotHTML({won=true,gold=0,xp=0,riftBonus=0,shard='',loot=[],gear=[],stars=0,starsAll=0,icon,starIcon='',next=''}){
+/* improve20-r8a-nov1 #6: `spare` is gold from potions the full bag sold, already inside `gold`, named in the same chip; #1: a `next` that is a
+   craft reads "next: craft Forgeplate" */
+export function youGotHTML({won=true,gold=0,xp=0,riftBonus=0,shard='',loot=[],gear=[],stars=0,starsAll=0,icon,starIcon='',next='',spare=0}){
+ /* improve20-r8a-nov1 #6 (audit7 d22): "Potion bag full: +8 gold" took a reward tile on every card; its gold joins the gold line instead */{const bf=/^Potion bag full: \+(\d+) gold/.exec(loot.find(x=>x?.bagfull)?.label||'');if(bf){spare+=+bf[1];gold+=+bf[1];}loot=loot.filter(x=>!x?.bagfull);}
  /* improve20-h-nov1: every chip carries its full words as a title, so a compact chip (below) still names itself */
  /* improve20-s-nov1 #18/#20 (audit5 b18, b15): a found piece carries its rarity: the border and a glow behind its icon in the rarity's
     colour, its pips under the icon (so it never rests on colour alone, and still shows on a compact phone chip) and the name in the title */
  const item=(kind,img,n,what,cls='',rar=null)=>`<span class="you-got-item${cls}" title="${esc((n!==''?n+' ':'')+what+(rar?` (${rarName(rar)})`:''))}" data-reward="${kind}"${rar?` data-rar="${esc(rar)}" style="--rar:${rarColor(rar)}"`:''}>${rar?`<span class="you-got-ico">${img}${rarPips(rar,'rar-on-cell')}</span>`:img}<span class="you-got-text">${n!==''?`<strong>${esc(n)}</strong>`:''}<small>${esc(what)}</small></span></span>`;
  /* a defeat shows only what the run did bring home: no "+0" chips, and no strip at all when there is nothing */
- const parts=[...(won||gold>0?[item('gold',icon('gold'),`+${gold}`,(riftBonus>0?'gold (Rift bonus)':'gold')+(won&&next?` · next buy: ${next}`:''),' level-reward')]:[]),...(shard?[item('shard',shard,'+1','Rift Shard',' level-reward')]:[]),...(xp>0?[item('xp',icon('xp'),`+${xp}`,'XP',' level-reward')]:[]),
+ const parts=[...(won||gold>0?[item('gold',icon('gold'),`+${gold}`,(riftBonus>0?'gold (Rift bonus)':'gold')+(spare>0?` (+${spare} for ${spare>BAG.overflow?'spare potions':'a spare potion'})`:'')+(won&&next?(/^craft /.test(next)?` · next: ${next}`:` · next buy: ${next}`):''),' level-reward')]:[]),...(shard?[item('shard',shard,'+1','Rift Shard',' level-reward')]:[]),...(xp>0?[item('xp',icon('xp'),`+${xp}`,'XP',' level-reward')]:[]),
   ...loot.map(x=>{const {n,what}=splitCount(x.label);return item('item',icon(x.icon),n,what,` level-loot-item${x.quiet?' loot-quiet':''}`);}),
   ...gear.map(g=>item('gear',g.img||icon('chest'),'',g.name,' level-loot-item',g.rar||null)),
   ...(stars>0?[item('stars',starIcon,`+${stars}`,`${stars>1?'stars':'star'}${starsAll?` · ${starsAll} in all`:''}`)]:[])];

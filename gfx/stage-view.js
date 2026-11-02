@@ -47,7 +47,9 @@ export function stageBanners(w){if(!w?.level)return [];const f=w.flow,k=w.flowT|
  if(f==='wave'&&k<1.4&&w.group===0&&!step)out.push({kind:'wave',title:w.arena?`WAVE ${w.wave+1}`:w.waveDef?.()?.extra?'LAST STAND!':w.waveDef?.()?.ambush?'AMBUSH!':`WAVE ${w.wave+1} / ${w.level.waves.length}`,y:54,alpha:Math.min(1,k/.2,(1.4-k)/.3),prio:1,dur:1.4});
  /* the boss's rally: call to arms, then the opening */
  if(f==='boss'&&w.rally&&w.run){const t=w.run.time-w.rally.at,e=w.rally.ended!=null?w.run.time-w.rally.ended:null;if(e==null&&t<2)out.push({kind:'wave',title:`${(w.level.bossName||'THE BOSS').split(',')[0].toUpperCase()} CALLS FOR BACKUP!`,y:54,alpha:Math.min(1,t/.2,(2-t)/.3),prio:3,dur:2});else if(e==null)out.push({kind:'wave',title:'DEFEAT THE BACKUP FIRST',y:54,alpha:1,sticky:true});else if(e<1.5)out.push({kind:'wave',title:'GUARD DOWN, ATTACK!',y:54,alpha:Math.min(1,e/.2,(1.5-e)/.3),prio:3,dur:1.5});}
- if((f==='go'||f==='arenabreak'||f==='regroup')&&k<BEATS.clear+.9)out.push({kind:'cleared',title:'WAVE CLEARED',y:70,alpha:Math.min(1,k/.15,(BEATS.clear+.9-k)/.3),prio:1,dur:BEATS.clear+.9});
+ /* improve20-r8b-nov1 #3 (audit7 d16): every fifth arena wave gets its own banner with the crest, "WAVE 10 CLEARED!" */
+ if(f==='arenabreak'&&w.arena&&w.wave>0&&w.wave%5===0){if(k<BEATS.clear+.9)out.push({kind:'cleared',milestone:true,title:`WAVE ${w.wave} CLEARED!`,y:70,alpha:Math.min(1,k/.15,(BEATS.clear+.9-k)/.3),prio:2,dur:BEATS.clear+.9});}
+ else if((f==='go'||f==='arenabreak'||f==='regroup')&&k<BEATS.clear+.9)out.push({kind:'cleared',title:'WAVE CLEARED',y:70,alpha:Math.min(1,k/.15,(BEATS.clear+.9-k)/.3),prio:1,dur:BEATS.clear+.9});
  /* the prologue's one prompt at a time, keyed to the player's own bindings */
  if(step){const kb=w.save?.settings?.bindings||{},K=v=>v===' '?'SPACE':String(v||'').toUpperCase();
   const text={move:`MOVE: ${[kb.up,kb.left,kb.down,kb.right].map(K).join(' ')}`,attack:`TAP ${K(kb.attack)} TO ATTACK`,walk:'WALK RIGHT →',dodge:`DODGE: ${K(kb.dodge)}`,power:'USE YOUR POWER: 1',finish:'DEFEAT THE SCOUTS!'}[step];

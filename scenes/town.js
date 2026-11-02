@@ -177,6 +177,8 @@ function scene(key) {
   });
   const S = {key, D, bits, B, buckets, images: null, room: key !== 'village',
     points: D.points.map(p => ({...p, sx: p.stand ? p.stand[0] : p.x, sy: p.stand ? p.stand[1] : p.y, ...(COUNTER_STAND[key]?.[p.props?.key] ? {front: COUNTER_STAND[key][p.props.key]} : {})}))};
+  /* improve20-r8b-nov1 #6: the south gate's stand sits at the hero's lowest step, so the guide's route and its prompt end in plain view */
+  for (const q of S.points) if (q.type === 'exit' && q.props?.to === 'worldmap' && q.sy > southEdge(S) - 4) q.sy = southEdge(S) - 4;
   S.walkers = (D.walkers ?? []).map(prepWalker);
   S.figures = (D.figures ?? []).map(([id, name, x, y]) => ({key: 'v' + id, name: nameOf('v' + id, name), x, y}));
   S.fx = D.fx ?? {lights: [], ambient: []};
@@ -374,7 +376,15 @@ export function personAhead(S, x0, y0, x1, y1) {
   for (const [x, y] of [...S.people, ...crewHere(S).map(m => [m.x, m.y])]) if (Math.abs(x1 - x) < PERSON.hw && Math.abs(y1 - y) < PERSON.hh && Math.hypot(x1 - x, (y1 - y) * 2) < Math.hypot(x0 - x, (y0 - y) * 2)) return true;
   return false;
 }
-const footBlocked = (S, x, y) => blockedAt(S, x - FOOT.hw, y - FOOT.up) || blockedAt(S, x + FOOT.hw, y - FOOT.up) || blockedAt(S, x - FOOT.hw, y + FOOT.down) || blockedAt(S, x + FOOT.hw, y + FOOT.down) || blockedAt(S, x, y);
+/* improve20-r8b-nov1 #6 (audit7 d23: walking out by the south gate, the hero went under the gatehouse roof and behind the hotbar, only
+   his head showing): the camera stops at the map's bottom edge, so the last strip of the village is where the hotbar band sits. The
+   hero's feet stop SOUTH_MARGIN short of that edge (more than a quarter of the farthest town view); the gate's stand is moved up to that step, and its "Leave Oakhaven"
+   offer is measured from there, so it is reached in plain view. A building sprite whose foot is in that bottom band (the gatehouse)
+   fades to GATE_FADE while the hero stands under it, instead of covering him with the dark ghost. */
+export const SOUTH_MARGIN = 100, GATE_FADE = .4;
+export const gateFade = (S, s, p) => !!(S && !S.room && S.key === 'village' && p && s[5] < 1e6 && s[5] > p.y && s[5] > S.D.h - SOUTH_MARGIN - 60 && s[1] < p.x + 12 && s[1] + s[3] > p.x - 12 && s[2] < p.y && s[2] + s[4] > p.y - 44);
+export const southEdge = S => S && !S.room && S.key === 'village' ? S.D.h - SOUTH_MARGIN : Infinity;
+const footBlocked = (S, x, y) => y > southEdge(S) || blockedAt(S, x - FOOT.hw, y - FOOT.up) || blockedAt(S, x + FOOT.hw, y - FOOT.up) || blockedAt(S, x - FOOT.hw, y + FOOT.down) || blockedAt(S, x + FOOT.hw, y + FOOT.down) || blockedAt(S, x, y);
 
 /* ---------------------------------------------------------------------------------- */
 const H = {S: null, player: null, cam: {x: 0, y: 0}, fade: null, near: null, time: 0, from: null, save: null, events: [], drawT: 0};
@@ -499,7 +509,7 @@ function nearest(S, p) {
     if (q.type === 'spawn' || q.type === 'entry') continue;
     /* the road out is wide: any of the last few steps toward the edge offers the World Map */
     /* the road out offers the World Map a few steps before the map's edge, so the hero is never under the prompt (playtest m3) */
-    const out = !S.room && worldExit(q), qx = q.x, qy = out ? q.sy : q.y;
+    const out = !S.room && worldExit(q), qx = q.x, qy = out ? Math.min(q.sy, southEdge(S) - 4) : q.y;
     const raw = out ? Math.hypot(p.x - qx, (p.y - qy) * .8) * .6 : doorReach(q, p.x, p.y);
     const d = raw - (out ? 0 : facingBonus(p, q.x, q.y));
     if (raw < PET_CLEAR && optionFor(S, q)) close = true;
@@ -1098,6 +1108,7 @@ export function drawHub(c, state, t, kit) {
     /* every sprite drawn over the hero can hide him (hedges and stalls as well as roofs and trees); the
        ghost is cut to their opaque pixels, so this only ever shows where he is really covered */
     /* newplayer-oct27: the Barracks is drawn from its own image and carries the shadow flag (8), which kept it out of this list: a hero walking behind it vanished */
+    if (gateFade(S, s, p)) { c.save(); c.globalAlpha = GATE_FADE; drawSprite(c, I, D, s, ms); c.restore(); continue; }
     if (heroAt >= 0 && (!(s[6] & 8) || s.barracks)) occluders.push(s);
     if (swapped) { const im = (H.barracks ??= load(BARRACKS.img)); if (ready(im)) c.drawImage(im, BARRACKS.x, BARRACKS.y); continue; }
     drawSprite(c, I, D, s, ms);

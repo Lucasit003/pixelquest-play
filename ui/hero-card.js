@@ -18,7 +18,7 @@ import {ICON_NAMES} from './icon-names.js';
 import {ABILITY_ICON_IDS} from './ability-icon-names.js';
 import {abilityIconName,SUBJECT_ICON,ownIconURL} from './icons.js';
 import {heroTitle,TITLES,cleanTitles} from '../game/titles.js';
-import {backdropOf,PRIZE_BACKDROPS,PRIZES,owns} from '../game/prizes.js';
+import {backdropOf,PRIZE_BACKDROPS,CHAPTER_BACKDROPS,PRIZES,owns} from '../game/prizes.js';
 
 export const CARD_W=1200,CARD_H=630,PLAY_URL='https://lucasit003.github.io/pixelquest-play/',GAME_TITLE='PixelQuest',GAME_SUB='The Thorn Kingdom';
 export const SHARE_NOTE='Only share with people you know.';
@@ -37,7 +37,7 @@ const ICON_IX=Object.fromEntries(ICON_NAMES.map((n,i)=>[n,i]));
 
 /* every skin file the card may draw, relative to dist/ui/ */
 export const CARD_ART=['skin/keyart.webp','skin/pl-frame.png','skin/pl-window.png','skin/pl-parchment.png','skin/pl-card-plain.png','skin/pl-plate.png','skin/divider.png','skin/star-gold.png','skin/icons.png','skin/ability-icons.png',
- 'skin/rewards/scroll.png','skin/uiicons/swords.png',...PRIZE_BACKDROPS.map(b=>b[2].replace(/^ui\//,'')),...new Set(Object.values(SUBJECT_ICON).map(n=>ownIconURL(n)?.replace(/^ui\//,'')).filter(Boolean))];
+ 'skin/rewards/scroll.png','skin/uiicons/swords.png',...[...PRIZE_BACKDROPS,...CHAPTER_BACKDROPS].map(b=>b[2].replace(/^ui\//,'')),...new Set(Object.values(SUBJECT_ICON).map(n=>ownIconURL(n)?.replace(/^ui\//,'')).filter(Boolean))];
 /* an icon by name: our own PixelLab file when there is one, else its cell in the 32 px strip */
 function iconArt(art,ic){if(ic.strip==='ability')return [art['skin/ability-icons.png'],ic.i*32];const own=ownIconURL(ic.name)?.replace(/^ui\//,'');if(own&&art[own])return [art[own],0];return [art['skin/icons.png'],(ICON_IX[ic.name]??ICON_IX.sparkle)*32];}
 const blit=(c,im,sx,sy,sw,sh,dx,dy,dw,dh)=>{if(im&&sw>0&&sh>0&&dw>0&&dh>0)c.drawImage(im,sx,sy,sw,sh,dx,dy,dw,dh);};
@@ -102,7 +102,7 @@ export function keepsakesHTML(s){const P=s?.prizes||{},earned=cleanTitles(s?.tit
  const tSel=P.title||'',titles=[opt('',earned.length?`Newest earned (${TITLES[earned.at(-1)].name})`:'No title',!tSel||!earned.length&&tSel==='none'),...earned.map(id=>opt(id,TITLES[id].name,tSel===id)),...mine('title').map(p=>opt(p.key,p.name,tSel===p.key)),...(earned.length?[opt('none','No title',tSel==='none')]:[])];
  const trails=[opt('','No trail',!P.trail),...mine('trail').map(p=>opt(p.key,p.name,P.trail===p.key))],backs=[opt('','The road to the Thorn Kingdom',!P.backdrop),...mine('backdrop').map(p=>opt(p.key,p.name.replace(/ backdrop$/,''),P.backdrop===p.key))];
  const n=PRIZES.filter(p=>owns(s,p.key)).length;
- return `<div class="keepsakes" aria-label="Keepsakes"><label>Title <select id="ks-title" data-ks="title">${titles.join('')}</select></label><label>Trail <select id="ks-trail" data-ks="trail">${trails.join('')}</select></label><label>Backdrop <select id="ks-backdrop" data-ks="backdrop">${backs.join('')}</select></label><p class="subtle">${n?`You have ${n} of ${PRIZES.length} keepsakes.`:'No keepsakes yet.'} Finish a day's adventure goal to win titles, trails and backdrops.</p></div>`;}
+ return `<div class="keepsakes" aria-label="Keepsakes"><label>Title <select id="ks-title" data-ks="title">${titles.join('')}</select></label><label>Trail <select id="ks-trail" data-ks="trail">${trails.join('')}</select></label><label>Backdrop <select id="ks-backdrop" data-ks="backdrop">${backs.join('')}</select></label><p class="subtle">${n?`You have ${n} of ${PRIZES.length} keepsakes.`:'No keepsakes yet.'} Finish a day's adventure goal, or clear a chapter, to win titles, trails and backdrops.</p></div>`;}
 export function heroCardPanelHTML(){return `<div class="herocard-panel"><canvas id="hero-card-canvas" width="${CARD_W}" height="${CARD_H}" role="img" aria-label="Your hero card"></canvas><div class="herocard-actions"><button id="hero-card-save" class="primary">Save picture</button><button id="hero-card-share">Share</button></div><p class="herocard-note">${SHARE_NOTE} The picture is made on this device; nothing is uploaded.</p></div>`;}
 export const cardFileName=m=>`pixelquest-${String(m.className||'hero').toLowerCase().replace(/[^a-z]+/g,'-')}-card.png`;
 const blobOf=cv=>new Promise(res=>{try{cv.toBlob(b=>res(b),'image/png');}catch{res(null);}});

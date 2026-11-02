@@ -85,6 +85,14 @@ export const ENEMY_TYPES={
  'ember-lobber':{name:'Ember Lobber',sprite:'ember-lobber',hp:38,atk:12,def:2,speed:34,scale:1,ai:'caster',band:9,weakness:'ice',keep:110,attacks:[
   {name:'ember lob',state:'attack',kind:'aoe',at:'player',lob:true,fx:'fx-fire-burst',radius:18,range:190,cd:3.4,windup:.5,delay:1,dmg:1}],
   fact:F('geography','A volcano can fling out blobs of lava that cool as they fly through the air. Pieces bigger than about 6 cm (2.5 inches) across are called volcanic bombs.')},
+ /* improve20-r8b-nov1 #2 (audit7 d10: no new regular foe after m3): one new Emberkeep regular each for m5, m6 and m7 (PixelLab, 1 Nov). */
+ 'furnace-stoker':{name:'Furnace Stoker',sprite:'furnace-stoker',hp:58,atk:15,def:6,speed:40,scale:1,ai:'chase',band:9,weakness:'ice',attacks:[melee({name:'coal shovel',range:40,cd:1.6,windup:.45})],
+  fact:F('science','Coal formed from plants that grew in swampy forests millions of years ago. Their remains were buried, squeezed and heated for a very long time.')},
+ 'basalt-guard':{name:'Basalt Guard',sprite:'basalt-guard',hp:64,atk:11,def:9,speed:34,scale:1,ai:'chase',band:9,weakness:'storm',block:{state:'block',chance:.35,time:.8},attacks:[melee({name:'stone mace',range:40,cd:1.6,windup:.45})],
+  fact:F('geography','When a thick lava flow cools slowly it can crack into tall stone columns, many of them six-sided. The Giant\'s Causeway in Northern Ireland is made of tens of thousands of them.')},
+ 'slag-smith':{name:'Slag Smith',sprite:'slag-smith',hp:70,atk:16,def:7,speed:32,scale:1,ai:'chase',band:9,weakness:'ice',attacks:[
+  {name:'hammer slam',state:'attack',kind:'aoe',at:'front',radius:26,range:46,cd:2.2,windup:.55,dmg:1.15,impact:'fx-dust',recover:.5}],
+  fact:F('science','A blacksmith hardens hot steel by plunging it into water or oil so it cools very fast. This is called quenching.')},
  'drowned-thrall':{name:'Drowned Thrall',sprite:'drowned-thrall',hp:40,atk:9,def:4,speed:38,scale:1,ai:'chase',band:9,weakness:'storm',attacks:[melee({name:'boat hook',range:40,cd:1.6,windup:.45})],
   fact:F('science','About half of Earth\'s oxygen is made in the ocean, mostly by tiny drifting living things called plankton. Seaweeds, which are large algae, make some too.')},
  'void-spawn':{name:'Void Spawn',sprite:'void-spawn',hp:48,atk:14,def:2,speed:60,scale:1,ai:'strafe',band:9,weakness:'holy',attacks:[melee({name:'void claw',range:40,cd:1.6,windup:.45})],
@@ -499,4 +507,7 @@ export function makeEnemy(key,x,y,extra={}){const d=ENEMY_TYPES[key];if(!d)throw
 /* oct24-ember-finale (playtest ch2 E5): earlier Emberkeep bosses fought as a level's mini-boss (levels.js mini, wave elites and Run
    Draft minis, never Legendary echoes) take the health, attack and defence of the chapter mini whose slot they fill, so a
    returning boss is no tougher than the Magma Brute or the Imp Warchief it replaces (roster.js entryEnemy) */
-export const BOSS_AS_MINI={'dungeon-master':'imp-warchief','forge-golem':'magma-brute'};
+/* improve20-r8b-nov1 #2 (audit7 d10): no mini-boss repeats within a chapter, so later levels bring back more earlier bosses, each with the
+   numbers of the chapter mini whose slot it fills (Emberkeep m5-m7 and mx1; Veilmoor v4-v7 and vx1) */
+export const BOSS_AS_MINI={'dungeon-master':'imp-warchief','forge-golem':'magma-brute','flame-knight':'imp-warchief','imp-lord':'imp-warchief','obsidian-sentinel':'magma-brute','fire-wyrm':'magma-brute',
+ 'drowned-priest':'prism-sentinel','wisp-mother':'abyss-herald','crystal-golem':'prism-sentinel','lich':'abyss-herald','shadow-twin':'veil-seer'};

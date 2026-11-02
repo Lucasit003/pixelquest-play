@@ -828,6 +828,24 @@ html[data-text="150"] :is(dialog,#ui-dialogue,#toast,#prompt,.ui-banner){--fs:24
 .learner-row.active{border-image-source:url(ui/skin/pl-plate.png)}
 .learner-row>div{flex:1;min-width:0}
 .learner-row small{display:block;color:var(--muted)}
+/* improve20-r8c-nov1 #2: Remove's grown-up check, and "Who is playing?" before Continue */
+.learner-remove-li{list-style:none}
+.learner-remove{display:grid;gap:8px;padding:10px 12px;border-style:solid;border-width:calc(4*var(--u));border-color:transparent;border-image:url(ui/skin/pl-card-plain.png) 8 8 8 8 fill/calc(12.0*var(--u)) calc(12.0*var(--u)) round;image-rendering:pixelated}
+.learner-remove p{margin:0}
+.learner-remove-type{display:grid;gap:4px}
+.learner-remove-type input{min-height:40px;padding:6px 12px;color:var(--parch-ink);background:none;border-style:solid;border-width:calc(4*var(--u));border-color:transparent;border-image:url(ui/skin/pl-parchment.png) 20 21 20 21 fill/calc(9.52*var(--u)) calc(10.0*var(--u)) round;image-rendering:pixelated;font:400 var(--fs)/1.3 var(--ui)}
+.learner-remove-acts{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.learner-hold{position:relative;overflow:hidden}
+.learner-hold::after{content:'';position:absolute;left:0;bottom:0;height:4px;width:0;background:#e8c060}
+.learner-hold.holding::after{animation:learner-hold 2s linear forwards}
+@keyframes learner-hold{to{width:100%}}
+.who-plays .who-row{list-style:none;margin:10px 0;padding:0;display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.who-card{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:132px;min-height:132px;padding:10px 14px}
+.who-card .who-bust{width:64px;height:64px;image-rendering:pixelated;display:grid;place-items:center}
+.who-card strong{font-size:calc(var(--fs) * 1.15)}
+.who-card small{color:var(--muted)}
+.who-card.last{outline:2px solid #e8c060;outline-offset:2px}
+.who-manage{text-align:center;margin:4px 0 0}
 .learner-new{display:flex;align-items:center;gap:10px;margin-top:10px}
 .learner-new input,.learner-rename,.code-row textarea,#code-out{flex:1;min-height:40px;padding:6px 12px;color:var(--parch-ink);background:none;border-style:solid;border-width:calc(4*var(--u));border-color:transparent;border-image:url(ui/skin/pl-parchment.png) 20 21 20 21 fill/calc(9.52*var(--u)) calc(10.0*var(--u)) round;image-rendering:pixelated;font:400 var(--fs)/1.3 var(--ui);resize:vertical;border-radius:0}
 #code-out{width:100%;word-break:break-all}
@@ -1236,6 +1254,8 @@ dialog[data-view=pause] #modal-content{padding:6px 10px 10px;overflow:auto}
 .title-screen[data-step=title]::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 34% 46% at 50% 56%,#0b080666,transparent 70%),linear-gradient(transparent 62%,#0b080699);pointer-events:none}
 /* High School by course (docs/design/COURSES.md step 2) */
 .course-row .course-ap{font-size:calc(var(--fs) * .75);vertical-align:middle;margin-left:4px}
+/* improve20-r8c-nov1 #1: the stated grade's first High School course */
+.course-row .course-start{font-size:calc(var(--fs) * .75);vertical-align:middle;margin-left:4px;background:#2f6b3a;color:#f3f0d8;border-color:#5fae6a}
 .course-soon{margin:4px 0 8px;line-height:1.4}
 .ap-note{font-size:calc(var(--fs) * .8);margin:6px 0 0;opacity:.8}
 .hs-start{margin:10px 0;padding:8px 12px;border-left:3px solid var(--gold,#e7c77e);background:rgba(231,199,126,.08)}.hs-start .lesson-actions{margin-top:6px;display:flex;flex-wrap:wrap;gap:6px}
@@ -3694,3 +3714,44 @@ dialog[data-view=travel] button.travel-pin::after{content:"";position:absolute;i
 /* potion-drink-nov1: the drink's fill ring round the potion slot (main.js drinkRing): a gold ring that fills clockwise over the 0.9 s drink */
 .drink-ring{position:absolute;inset:-3px;z-index:3;border-radius:50%;pointer-events:none;background:conic-gradient(#ffd77a var(--fill,0%),#ffffff26 0);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 4px),#000 calc(100% - 3px));mask:radial-gradient(farthest-side,transparent calc(100% - 4px),#000 calc(100% - 3px));filter:drop-shadow(0 0 2px #0008)}
 .drink-ring[hidden]{display:none}
+/* improve20-r8c-nov1 #3: the Echo of the next power: the result card line, the Library road line and the lent hotbar slot */
+dialog[data-view=result] .level-highlights>p.level-record.level-echo,.level-record.level-echo{flex-wrap:nowrap;justify-content:flex-start;align-items:center;text-align:left;max-width:56ch;text-transform:none;font-size:16px}
+.level-echo>span:last-child{flex:1;min-width:0;display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px}
+.m-mode .level-echo .echo-pic .ico{--s:24px!important}
+.level-echo small{display:block;width:100%;color:#c9a8ff;font-weight:700}
+.level-echo .echo-lesson{min-height:32px;padding:2px 10px}
+.echo-pic{display:inline-flex;align-items:center;gap:2px;flex:none}
+.road-echo{display:flex;align-items:center;gap:6px;grid-column:1/-1;margin:0 0 4px;padding:3px 8px;border-left:4px solid #a77bff;background:#2a1f4a55;color:#d9c6ff;font-weight:700;line-height:1.25}
+.edu .road-echo,.result .road-echo,.lesson .road-echo,.am-goal .road-echo{color:#3d2470;background:#a77bff2e}
+.ability-slot.echo-slot{box-shadow:0 0 0 2px #a77bff,0 0 10px #a77bffaa}
+.ability-slot.echo-slot::before{content:'ECHO';position:absolute;top:-9px;left:50%;transform:translateX(-50%);padding:0 4px;font-size:10px;line-height:12px;background:#4a2f8a;color:#f0e6ff;border-radius:2px;z-index:2;pointer-events:none}
+
+/* improve20-r8b-nov1 #3 (audit7 d16): the arena's wave and record, kept on screen in arenas (outside the level HUD diet) */
+#arena-chip{position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:4;padding:2px 12px;font:700 15px/1.2 var(--ui);color:var(--gold);letter-spacing:.5px;white-space:nowrap;pointer-events:none;text-shadow:0 2px 0 #0d0806}
+#arena-chip[hidden]{display:none}
+html.m-mode #arena-chip{top:6px;font-size:13px;padding:1px 8px}
+html.cine-on #arena-chip{visibility:hidden}
+/* improve20-r8a-nov1: the rune nag's own chip above the next-ability card (town only, main.js runeNag), the smith's trade line, the result card's
+   grade line and recipe chip, the world-map card's grade line */
+#rune-nag{position:absolute;left:calc(8px + 13*var(--u));bottom:220px;z-index:3;display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;max-width:300px;padding:6px 10px;background:rgba(12,14,30,.88);border:2px solid #7ff0ff88;border-radius:4px;font:700 15px/18px var(--ui);color:var(--ink);zoom:var(--hz,1)}
+#rune-nag[hidden],html:not(.in-town) #rune-nag,html.m-mode #rune-nag,html.cine-on #rune-nag,#stage:has(#ui-dialogue.show) #rune-nag{display:none}
+#rune-nag .rune-nag-gem{width:10px;height:10px;background:#7ff0ff;transform:rotate(45deg);box-shadow:0 0 6px #7ff0ffaa;flex:none}
+#rune-nag .rune-nag-text{flex:1 1 160px}
+#rune-nag button{min-height:28px;padding:2px 10px;font-size:15px}
+.gear-trade{margin:-2px 0 4px;font:700 15px/18px var(--ui);color:#e8c47a}
+.grade-next{margin:2px auto 0;font:700 16px/20px var(--ui);color:#ffe9a8;text-align:center}
+.level-recipe strong{color:#ffd28a}
+.worldmap-info .wm-grade{font:700 15px/18px var(--ui);margin:0 0 4px;color:#ffe9a8}
+.worldmap-info.wm-compact .wm-grade{display:none}
+.run-best-next{display:block;color:#ffe9a8}
+.chapter-seals{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin:4px 0 12px}
+.chapter-seal{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;width:132px;padding:8px 6px;border:2px solid #c19149;border-radius:6px;background:rgba(10,12,30,.55);text-align:center}
+.chapter-seal .seal-pic{width:96px;height:96px;border-radius:50%;border:3px solid #e8c47a;background:#111 center bottom/cover no-repeat;image-rendering:pixelated;box-shadow:0 0 0 3px #5a3d1c,0 4px 10px #000a}
+.chapter-seal.seal-dark{opacity:.55;border-color:#706255}.chapter-seal.seal-dark .seal-pic{border-color:#706255;background:#1a1712}
+.chapter-seal small{font:700 14px/16px var(--ui);letter-spacing:.12em;color:#ffd28a}
+.chapter-seal.seal-won small{position:absolute;top:44px;left:50%;transform:translateX(-50%) rotate(-12deg);padding:2px 8px;border:2px solid #ff6b4a;color:#ffdccf;background:#7a1d10cc;border-radius:3px}
+.chapter-seal.seal-stamp small{animation:seal-stamp .55s cubic-bezier(.2,1.6,.4,1) .35s both}
+@keyframes seal-stamp{from{transform:translateX(-50%) rotate(-12deg) scale(2.6);opacity:0}to{transform:translateX(-50%) rotate(-12deg) scale(1);opacity:1}}
+@media (prefers-reduced-motion:reduce){.chapter-seal.seal-stamp small{animation:none}}
+dialog[data-view=result] .level-highlights :is(.level-recipe,.level-keepsake){flex-wrap:nowrap}
+dialog[data-view=result] .level-highlights :is(.level-recipe,.level-keepsake) strong{text-align:left;max-width:400px}

@@ -6,6 +6,7 @@
 // (canvas pixels, 480x270). Layout: game/worldmap-layout.js. Drawing: gfx/worldmap-art.js.
 import {LEVELS,CHAPTERS,levelById,levelOpen,levelDone,tiered,tierOpen,tierDone,starsOf,totalStars,maxStars,starsShort,tierCrests,chapterBorder} from '../game/levels.js';
 import {ladderGoal} from '../game/ladder-guide.js';
+import {padGradeLine} from '../game/grade.js';
 import {updateMapPanel,clearMapPanel} from '../ui/worldmap-panel.js';
 import {reducedMotion} from '../ui/settings.js';
 import {TIER_KEYS,TIERS} from '../game/tiers.js';
@@ -42,7 +43,7 @@ export function enter(ctx={}){const save=ctx.save||{};let at=ctx.view?.id||ctx.a
  let chapter=isGate(at)?at.slice(5).split('>')[0]:chapterOfLevel(at)||'elderwood';
  /* a chapter that is not built yet: stand at the road out of the last one that is */
  if(!playableChapter(chapter)){chapter='elderwood';at=MAPS.elderwood.gates[0]?.id||'home';}
- S={ctx,save,chapter,at,walk:null,queue:[],trip:false,speed:SPEED,view:ctx.view||null,cam:{x:0,y:0},hero:{x:0,y:0,facing:1,direction:'down',lastDirection:'down',moving:false,walk:0},held:{},fade:1,fadeTo:0,banner:2.4,toast:null,toastT:0,pending:null,time:0,heroKey:'',heroImg:null};
+ S={ctx,save,chapter,at,beat:ctx.chapterBeat&&!ctx.view&&!ctx.look?{to:ctx.chapterBeat}:null,walk:null,queue:[],trip:false,speed:SPEED,view:ctx.view||null,cam:{x:0,y:0},hero:{x:0,y:0,facing:1,direction:'down',lastDirection:'down',moving:false,walk:0},held:{},fade:1,fadeTo:0,banner:2.4,toast:null,toastT:0,pending:null,time:0,heroKey:'',heroImg:null};
  const n=nodeAt(at);if(n){S.hero.x=n.x;S.hero.y=n.y;}snapCam();preload();reached(at);
  /* a level just won: walk a light along each road it opened, then pop the new pad open */
  S.reveals=[];S.hidden=new Set();S.still=0;if(ctx.reveal&&levelById(ctx.reveal)){const unlocks=edges(S.chapter).flatMap(([a,b])=>a===ctx.reveal?[b]:b===ctx.reveal?[a]:[]);for(const id of unlocks){const l=levelById(id);const opens=isGate(id)?nodeState(save,id)==='open':(l&&l.requires.includes(ctx.reveal)&&levelOpen(save,id));if(!opens||levelDone(save,id))continue;{const pts=pathPoints(S.chapter,ctx.reveal,id);let len=0;for(let i=1;i<pts.length;i++)len+=Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]);S.reveals.push({to:id,pts,p:0,len});}S.hidden.add(id);}
@@ -105,13 +106,19 @@ function route(target){const prev={[S.at]:null},q=[S.at];while(q.length){const c
 
 function arrive(){const id=S.walk.to;S.at=id;S.walk=null;reached(id);if(!S.view){memory.at=id;memory.chapter=S.chapter;}S.hero.moving=false;
  if(S.queue.length&&walkTo(S.queue.shift()))return;S.queue=[];S.trip=false;
- if(isGate(id)&&stateOf(id)!=='locked')travel(id);}
+ /* improve20-r8a-nov1 #7: on the chapter beat the hero stands at the open gate a moment before the road leads through */if(isGate(id)&&stateOf(id)!=='locked'){if(S.beat&&!S.beat.arrived){S.gateWait=1.4;S.burst={x:S.hero.x,y:S.hero.y,t:0};}else travel(id);}}
 /* Follow the local road tangent; horizontal facing is independent of a north/south pose. */
 function moveHero(x,y){const h=S.hero,dx=x-h.x,dy=y-h.y;if(Math.abs(dx)>.05)h.facing=dx>0?1:-1;
  if(Math.hypot(dx,dy)>.001)h.lastDirection=h.direction=Math.abs(dy)>Math.abs(dx)?(dy<0?'up':'down'):'side';h.x=x;h.y=y;}
 function travel(gateId){const g=gateById(gateId),arr=gateArrival(g);if(!g||!arr)return;S.fadeTo=1;S.pending=()=>{S.chapter=g.to;S.at=arr.id;const n=nodeAt(arr.id);S.hero.x=n.x;S.hero.y=n.y;snapCam();S.fadeTo=0;S.banner=2.4;if(!S.view){memory.at=S.at;memory.chapter=S.chapter;}
   /* step off the gate onto the first pad of the new map */
-  const next=neighbours(S.chapter,S.at).find(id=>!isGate(id));if(next&&stateOf(next)!=='locked')walkTo(next);};}
+  const next=neighbours(S.chapter,S.at).find(id=>!isGate(id));
+  /* improve20-r8a-nov1 #7 (audit7 d4): a chapter's first clear: arriving through the gate it opened, the new land's banner holds ("Veilmoor is
+     open!") while a light runs from the gate along the road to the first pad and pops it, then the hero walks on (each chapter's board fits
+     the screen, so the move is the light over the existing map art, not a camera pan) */
+  if(S.beat&&S.beat.to===S.chapter&&next&&!reducedMotion(S.save)){const pts=pathPoints(S.chapter,S.at,next);if(pts.length>1){S.reveals=[{to:next,pts,p:0,len:segLen(pts)}];S.autoTo=next;S.banner=4.2;S.beat.arrived=true;toast(`${chapterName(S.beat.to).replace(/^the /,'The ')} is open!`);S.toastT=3.4;return;}}
+  S.beat=null;if(next&&stateOf(next)!=='locked')walkTo(next);};}
+const chapterName=id=>(CHAPTERS.find(c=>c.id===id)?.name||'the next land').replace(/^The /,'the ');
 function confirm(){if(!S||S.walk||S.fadeTo>0)return;const id=S.at,n=nodeAt(id);if(!n)return;const st=stateOf(id);
  /* view mode: the level being played is "Resume" */
  if(S.view&&id===S.view.id){S.ctx.onResume?.();return;}
@@ -167,8 +174,9 @@ export function tap(x,y){if(!S)return false;if(landNow())return true;if(S.reveal
 
 export function update(dt,input={}){if(!S)return;S.time+=dt;
  if(S.tour){S.tour.t+=dt;if(S.tour.t>1.1){S.tour.t=0;S.tour.i++;if(S.tour.i>=S.tour.list.length)S.tour=null;}if(S.tour&&['up','down','left','right'].some(k=>input[k]))S.tour=null;}
+ if(S.gateWait>0){S.gateWait-=dt;if(S.gateWait<=0){S.gateWait=0;if(isGate(S.at))travel(S.at);}}
  if(S.burst){S.burst.t+=dt;if(S.burst.t>.6)S.burst=null;}
- if(S.reveals.length&&S.fade<.3){const r=S.reveals[0];const L=r.pts.length;r.p+=MAPS[S.chapter]?.art?dt/1.2:dt*260/Math.max(60,r.len);for(const m of r.marks||[])if(S.hidden.has(m[1])&&r.p*(L-1)>=m[0]){S.hidden.delete(m[1]);const e=r.pts[Math.max(0,m[0])];S.burst={x:e[0],y:e[1],t:0};}if(r.p>=1){S.hidden.delete(r.to);const e=r.pts[L-1];S.burst={x:e[0],y:e[1],t:0};S.reveals.shift();if(!S.reveals.length){toast('A new road is open');goOn();}}}
+ if(S.reveals.length&&S.fade<.3){const r=S.reveals[0];const L=r.pts.length;r.p+=MAPS[S.chapter]?.art?dt/1.2*(S.beat?.46:1):dt*260/Math.max(60,r.len);for(const m of r.marks||[])if(S.hidden.has(m[1])&&r.p*(L-1)>=m[0]){S.hidden.delete(m[1]);const e=r.pts[Math.max(0,m[0])];S.burst={x:e[0],y:e[1],t:0};}if(r.p>=1){S.hidden.delete(r.to);const e=r.pts[L-1];S.burst={x:e[0],y:e[1],t:0};S.reveals.shift();if(!S.reveals.length){toast(S.beat?(S.beat.arrived?`Welcome to ${chapterName(S.beat.to)}!`:`The gate to ${chapterName(S.beat.to)} opens!`):'A new road is open');if(S.beat?.arrived)S.beat=null;goOn();}}}
  S.still=S.walk||S.banner>0?0:S.still+dt;
  if(S.toastT>0){S.toastT-=dt;if(S.toastT<=0)S.toast=null;}if(S.banner>0)S.banner-=dt;
  const fs=dt*3.2;if(S.fade<S.fadeTo){S.fade=Math.min(S.fadeTo,S.fade+fs);if(S.fade>=1&&S.pending){const p=S.pending;S.pending=null;p();}}else if(S.fade>S.fadeTo)S.fade=Math.max(S.fadeTo,S.fade-fs);
@@ -205,6 +213,9 @@ function wanderers(ns,t){const out=[];for(const n of ns){if(n.kind!=='level'||n.
 function drawWanderer(c,w){drawSprite(c,w.sprite,w.moving?'walk':'idle',w.t,Math.round(w.x),Math.round(w.y),{facing:w.facing});}
 function drawHero(c,x,y,t){const cls=S.ctx.hero||S.save.hero||'warrior';
  drawHeroSprite(c,{appearance:cls,x,y,hp:1,facing:S.hero.facing,moving:S.hero.moving,walkAge:S.hero.walk,direction:S.hero.direction,lastDirection:S.hero.lastDirection,noShadow:true,armor:S.ctx.armor||0,tier:S.ctx.tier||0},t);}
+/* improve20-r8a-nov1 #4: the Normal best grade and what the next grade needs ("Best: B. Find the secret for A"); a record from before best.tip
+   with no secret ever found here says the secret too */
+const padGrade=(save,l)=>{const r=save?.levels?.[l.id];if(!r?.done||!r.best?.grade)return '';return padGradeLine(r.best.tip||!(r.secrets||[]).length?{...r.best,tip:r.best.tip||'explore'}:r.best,'normal');};
 /* What the bar shows for the node the hero stands on (or is walking to). */
 function info(){const id=S.walk?.to||S.at,n=nodeAt(id),st=stateOf(id);if(!n)return{};const l=n.level;
  if(n.kind==='gate')return{title:n.name.replace(/^To (the )?/,''),subtitle:st==='soon'?'Coming soon':st==='locked'?'The road is closed':'Travel',blurb:st==='soon'?'Mist hides the road beyond the wood. This land opens in a later update.':st==='locked'?(gateStars(id)||'Clear this land\'s last level to open the road.'):''};
@@ -215,7 +226,7 @@ function info(){const id=S.walk?.to||S.at,n=nodeAt(id),st=stateOf(id);if(!n)retu
  const full=l.bossName||S.ctx.bossName?.(l.boss)||BOSS_NAMES[l.boss]||(l.boss?titleCase(l.boss):''),boss=l.plate||shortName(full);
  /* polish2-oct29 (readiness #12): every card read only "Clear Goblin Camp."; it now says what is inside (the level's own blurb and its
     boss, from levels.js) above the goal. A locked stop keeps its secrets: no boss and no blurb until it opens. */
- return{title:l.name,boss:st==='locked'?'':boss,inside:st==='locked'?'':String(l.blurb||''),bossLine:st==='locked'||!full?'':`Boss: ${full}`,subtitle:st==='locked'?'Locked':'',blurb:ladderGoal(S.save,l),tiers:st==='locked'||!tiered(l)?[]:TIER_KEYS.map(k=>({key:k,label:TIERS[k].label,open:tierOpen(S.save,l.id,k),stars:starsOf(S.save,l.id,k),crest:tierCrests(S.save,l.id).includes(k)})),tierLine:st==='locked'?'':tierLine(S.save,l),side:!!l.optional};}
+ return{title:l.name,boss:st==='locked'?'':boss,inside:st==='locked'?'':String(l.blurb||''),bossLine:st==='locked'||!full?'':`Boss: ${full}`,gradeLine:st==='locked'?'':padGrade(S.save,l),subtitle:st==='locked'?'Locked':'',blurb:ladderGoal(S.save,l),tiers:st==='locked'||!tiered(l)?[]:TIER_KEYS.map(k=>({key:k,label:TIERS[k].label,open:tierOpen(S.save,l.id,k),stars:starsOf(S.save,l.id,k),crest:tierCrests(S.save,l.id).includes(k)})),tierLine:st==='locked'?'':tierLine(S.save,l),side:!!l.optional};}
 const lockLine=l=>{const g=starsShort(S.save,l.id);if(g)return ladderGoal(S.save,l);const req=l.requires.map(r=>levelById(r)?.name).filter(Boolean);return req.length?'Clear '+req.join(' or ')+' to open this.':'Locked.';};
 const isFinale=id=>{const l=levelById(id);return!!l&&l.kind==='level'&&!l.optional&&!LEVELS.some(o=>o.chapter===l.chapter&&o.kind==='level'&&o.requires.includes(id));};
 /* Painted board state: per pad the stars and the best tier cleared (the flag's tint), and the road links still closed (greyed). */
@@ -231,7 +242,7 @@ export function riftNode(){if(!S||S.view||S.ctx.look||!S.ctx.onRift||!MAPS[S.cha
 /* improve20-k-nov1 #2: the pads an active villager quest sends the hero to win (its current clear step); gone once that step is done */
 export function questPads(save){const out=new Set();for(const id of activeQuests(save||{},questLive)){const s=currentStep(save,id);if(s?.kind==='clear'&&s.level)out.add(s.level);}return out;}
 export function view(t){const ch=CHAPTERS.find(c=>c.id===S.chapter),board=!!MAPS[S.chapter]?.art,qp=questPads(S.save);const ns=nodes(S.chapter).map(n=>{const st=stateOf(n.id),o={...n,state:st,boss:isFinale(n.id)};if(board&&n.level&&tiered(n.level)&&st==='done'){o.tier=bestTier(n.id);o.stars=starsOf(S.save,n.id,o.tier||'normal');}if(board&&st==='open'&&(n.kind==='level'||n.kind==='arena')&&!levelDone(S.save,n.id))o.next=true;if(board&&qp.has(n.id)&&st!=='locked'&&st!=='soon'&&!S.ctx.look)o.quest=true;return o;});
- const rv=S.reveals[0];return{chapter:S.chapter,chapterBorder:chapterBorder(S.save,S.chapter),rift:riftNode(),cam:S.cam,nodes:ns,touch:!!globalThis.document?.documentElement?.classList?.contains('m-mode'),sel:S.walk||rv?null:S.at,focusId:S.walk?.to||S.at,reduced:reducedMotion(S.save),reveal:rv?{pts:rv.pts,p:rv.p,to:rv.to,opens:[rv.to,...(rv.marks||[]).map(m=>m[1])]}:null,burst:S.burst,blurbAlpha:S.reveals.length||S.tour?0:Math.max(0,Math.min(1,(S.still-.3)*4,(2.6-S.still)*2.5)),blurbAt:blurbSide(),hero:S.hero,drawHero,wanderers:board?[]:wanderers(ns,S.time),drawWanderer,...info(),board,closed:board?closedRoads(rv):null,starCount:totalStars(S.save),starMax:maxStars(),action:S.walk||S.reveals.length||S.tour||['locked','soon'].includes(stateOf(S.at))?'':S.view&&S.at===S.view.id?'Enter: Resume':nodeAt(S.at)?.kind==='home'?'Enter: Home':nodeAt(S.at)?.kind==='gate'?'Enter: Travel':nodeAt(S.at)?.kind==='shop'?'Enter: Visit':'Enter: Play',fade:S.fade,banner:S.banner,stars:`Stars ${totalStars(S.save)} / ${maxStars()}`,chapterName:S.chapter==='veilmoor'?'Veilmoor':ch?.name||'',chapterBlurb:ch?.blurb||'',toast:S.toast,tabs:S.ctx.look?[]:chapterTabs(),travelTab:travelLabel(),notice:!S.view?'':globalThis.document?.documentElement?.classList?.contains('m-mode')?(S.at===S.view.id?`Paused in ${S.view.name}. Tap Resume to go back.`:`Paused in ${S.view.name}. Tap its stop, then Resume.`):`Paused in ${S.view.name}. Esc or ${String(S.ctx.mapKey||'M').toUpperCase()} resumes.`};}
+ const rv=S.reveals[0];return{chapter:S.chapter,chapterBorder:chapterBorder(S.save,S.chapter),rift:riftNode(),cam:S.cam,nodes:ns,touch:!!globalThis.document?.documentElement?.classList?.contains('m-mode'),sel:S.walk||rv?null:S.at,focusId:S.walk?.to||S.at,reduced:reducedMotion(S.save),reveal:rv?{pts:rv.pts,p:rv.p,to:rv.to,opens:[rv.to,...(rv.marks||[]).map(m=>m[1])]}:null,burst:S.burst,blurbAlpha:S.reveals.length||S.tour?0:Math.max(0,Math.min(1,(S.still-.3)*4,(2.6-S.still)*2.5)),blurbAt:blurbSide(),hero:S.hero,drawHero,wanderers:board?[]:wanderers(ns,S.time),drawWanderer,...info(),board,closed:board?closedRoads(rv):null,starCount:totalStars(S.save),starMax:maxStars(),action:S.walk||S.reveals.length||S.tour||['locked','soon'].includes(stateOf(S.at))?'':S.view&&S.at===S.view.id?'Enter: Resume':nodeAt(S.at)?.kind==='home'?'Enter: Home':nodeAt(S.at)?.kind==='gate'?'Enter: Travel':nodeAt(S.at)?.kind==='shop'?'Enter: Visit':'Enter: Play',fade:S.fade,banner:S.banner,stars:`Stars ${totalStars(S.save)} / ${maxStars()}`,chapterName:(S.chapter==='veilmoor'?'Veilmoor':ch?.name||''),chapterBlurb:ch?.blurb||'',toast:S.toast,tabs:S.ctx.look?[]:chapterTabs(),travelTab:travelLabel(),notice:!S.view?'':globalThis.document?.documentElement?.classList?.contains('m-mode')?(S.at===S.view.id?`Paused in ${S.view.name}. Tap Resume to go back.`:`Paused in ${S.view.name}. Tap its stop, then Resume.`):`Paused in ${S.view.name}. Esc or ${String(S.ctx.mapKey||'M').toUpperCase()} resumes.`};}
 export function draw(c,t){if(!S)return;if(!art)preload();const v=view(t);updateMapPanel(v,c.canvas);drawWorldmap(c,v,art,t);}
 /* tools only (bake-worldmap-review 'whole'): point the camera without walking; the next update() eases it back */
 export const setCamera=(x,y)=>{if(S){S.cam.x=x;S.cam.y=y;}};

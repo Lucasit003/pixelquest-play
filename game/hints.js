@@ -8,9 +8,9 @@
    - petTips: how often each pet's "+N%" has shown beside its proc (improve20-w-nov1; it stops at scenes/pet-fx.js PET_TIPS).
    - firstCast: abilities whose first-cast moment has played (kidfix-b-oct31: once per ability per save). A save from before the
      field gets every ability it already owns listed (core/save.js), so only a newly unlocked ability gets the moment.
-   s.schoolGrade (2-5, or 6-8 for Middle School since improve20-z-nov1, 0 for "Not sure", null when never asked) is the title flow's optional grade hint. It never sets a placement.
+   s.schoolGrade (2-5, 6-8 for Middle School since improve20-z-nov1, 9-12 for High School since improve20-r8c-nov1, 0 for "Not sure", null when never asked) is the title flow's optional grade hint. It never sets a placement.
    Pure: callers pass the save. */
-export const NUDGE_STOP=10,LOW_HP_HELPS=2,LOW_HP=.3,SCHOOL_GRADES=[2,3,4,5,6,7,8];
+export const NUDGE_STOP=10,LOW_HP_HELPS=2,LOW_HP=.3,SCHOOL_GRADES=[2,3,4,5,6,7,8,9,10,11,12];
 /* improve20-z-nov1 #2: Middle School asks the grade too (6-8); the Elementary-only helpers below read 2-5 */
 export const ELEMENTARY_GRADES=[2,3,4,5],MIDDLE_GRADES=[6,7,8];
 export const emptyHints=()=>({casts:{},lowHp:0,defeat:0,petPointer:false,offered:[],firstCast:[],petTips:{}});
@@ -56,3 +56,8 @@ export function notePetTip(s,key,max){const h=H(s),t=h.petTips||(h.petTips={});i
    chapter 1 is cleared (CHAPTER1_END, the Elderwood finale). */
 export const TIP_CASTS=3,CHAPTER1_END='e8';
 export const abilityTipRetired=s=>!!s?.settings?.castTip||Object.values(s?.hints?.casts||{}).reduce((t,n)=>t+(n|0),0)>=TIP_CASTS||!!s?.levels?.[CHAPTER1_END]?.done;
+/* improve20-r8c-nov1 #1 (audit7 d12): a High School learner starts on Standard combat at hero level 1 (main.js Begin), so the prologue is
+   their hardest first fight. On any difficulty but Story, the High School prologue gives one extra free potion (World.startLevel adds it to
+   p.freePotion, which it SETS each attempt, so retries never stack it and it never reaches s.potions). */
+export const HS_PROLOGUE_POTIONS=1;
+export const extraFreePotions=(s,id)=>id==='prologue'&&s?.schoolMode==='high'&&s?.settings?.difficulty!=='easy'?HS_PROLOGUE_POTIONS:0;

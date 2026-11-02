@@ -24,6 +24,7 @@ import {nextQuestStep,questLive,QUESTS} from './quests.js';
 import {COMPANIONS,hireable} from './party.js';
 import {starSource} from './ladder-guide.js';
 import {nextShowpiece} from './furniture.js';
+import {riftOpen,riftPick} from './rift.js';
 import {gearAtCap,affordableUpgrade} from '../ui/gear-guidance.js';
 import {ITEM} from './gear.js';
 import {adviceLevel} from './tiers.js';
@@ -55,13 +56,25 @@ let goalSave=null;const tierPad=(l,k)=>{const n=tierPad0(l,k);return k==='heroic
    game's ending pointed back to "Goblin Camp, Heroic". After the ending the newest chapter comes first: its Heroic levels, then its
    arena, then its Legendary levels, then the chapter before it the same way; 3-star tries after that, newest first too. */
 export const gameCleared=save=>LEVELS.some(l=>gameFinale(l.id)&&levelDone(save,l.id));
-const arenaPad=l=>({id:'arena-'+l.id,text:`Next adventure: the ${l.name} arena. Survive ${ARENA_GOAL} waves.`,target:{kind:'pad',id:l.id}});
-function postGame(save){const ch=[...CHAPTERS].reverse().map(c=>c.id),of=c=>playable().filter(l=>l.chapter===c).sort((a,b)=>!!a.optional-!!b.optional);
- for(const c of ch){for(const k of ['heroic','legendary']){for(const l of of(c))if(tierOpen(save,l.id,k)&&!tierDone(save,l.id,k))return tierPad(l,k);
-  if(k==='heroic')for(const l of LEVELS.filter(l=>l.kind==='arena'&&l.chapter===c))if(levelOpen(save,l.id)&&!levelDone(save,l.id))return arenaPad(l);}}
+const arenaPad=l=>({id:'arena-'+l.id,text:`Next adventure: the ${/arena$/i.test(l.name)?l.name:l.name+' arena'}. Survive ${ARENA_GOAL} waves.`,target:{kind:'pad',id:l.id}});
+/* improve20-r8a-nov1 #2 (audit7 d5): after the ending the Champion card's NEXT GOAL was "buy the Purple hall banner (600 gold)" while four
+   levels and Wil's quest were still open. Content first, in this order: a side level never cleared -> Wil's quest while it is open -> Heroic
+   on the newest chapter's finale ("The Sleeper is back, and stronger") -> an arena not yet survived -> this week's Rift while it is unplayed -> the other Heroic levels, newest
+   chapter first -> Legendary, newest chapter first -> 3-star tries -> a Showpiece last. */
+const finaleOf=c=>{const ls=playable().filter(l=>l.chapter===c&&!l.optional&&l.boss);return ls.find(l=>gameFinale(l.id))||ls[ls.length-1]||null;};
+const riftUnplayed=save=>{if(!riftOpen(save))return null;let p=null;try{p=riftPick(save);}catch{p=null;}if(!p||save.rift?.week===p.week&&save.rift?.best)return null;const l=levelById(save.rift?.week===p.week&&save.rift?.level||p.level);return l?{id:'rift-'+p.week,text:`This week's Rift is open: ${l.name} with two twists. Press Rift on the world map.`,target:{kind:'pad',id:l.id},rift:true}:null;};
+function postGame(save,q=null){const ch=[...CHAPTERS].reverse().map(c=>c.id),of=c=>playable().filter(l=>l.chapter===c).sort((a,b)=>!!a.optional-!!b.optional);
+ /* a quest already under way keeps its place ahead of everything (as before the ending) */if(q&&q.rank!=='open')return questStep(q);
+ for(const c of ch)for(const l of of(c))if(l.optional&&levelOpen(save,l.id)&&!levelDone(save,l.id))return pad(l);
+ if(q)return questStep(q);
+ {const f=finaleOf(ch[0]);if(f&&tierOpen(save,f.id,'heroic')&&!tierDone(save,f.id,'heroic')){const who=(f.bossName||'The boss').split(',')[0];return {...tierPad(f,'heroic'),text:`${who} is back, and stronger: select Heroic on ${f.name}'s map card.`};}}
+ for(const c of ch)for(const l of LEVELS.filter(l=>l.kind==='arena'&&l.chapter===c))if(levelOpen(save,l.id)&&!levelDone(save,l.id))return arenaPad(l);
+ /* this week's Rift while unplayed comes before the long Heroic/Legendary grind (a week's twist, not 30 clears away) */{const r=riftUnplayed(save);if(r)return r;}
+ for(const c of ch)for(const l of of(c))if(tierOpen(save,l.id,'heroic')&&!tierDone(save,l.id,'heroic'))return tierPad(l,'heroic');
+ for(const c of ch)for(const l of of(c))if(tierOpen(save,l.id,'legendary')&&!tierDone(save,l.id,'legendary'))return tierPad(l,'legendary');
  /* endgame-oct29: a side path never cleared on Normal (vx1, mx1, ex1, ex2 are off the main road) was offered as "Try for 3 stars in Bandit Road on Normal"; it is a new adventure, so it says so */
  for(const c of ch)for(const k of TIER_KEYS)for(const l of of(c))if(tierOpen(save,l.id,k)&&starsOf(save,l.id,k)<3)return !tierDone(save,l.id,k)?(k==='normal'?pad(l):tierPad(l,k)):{...tierPad(l,k),text:`Try for 3 stars in ${l.name} on ${TIERS[k].label}: ${k==='legendary'?'beat its 3-star time with no fall':'beat its par time'} on the map card.`};
- return null;}
+ return showpieceStep(save);}
 /* Villager quests (docs/design/COMPANIONS_AND_OAKHAVEN.md §5.5), live chains only (today Wil's): a hand-in waiting in town comes
    before the next main-road pad; an active quest's clear step and then a newly opened quest come once the main road is done or
    held by a star gate, before stars and tiers. The learning steps above never see a quest. */
@@ -103,6 +116,11 @@ export function chargeStep(save){if(save?.goalTurn!=='learn'||!earned(save)||gam
  if(!road||road.sleeping||!road.reachable||road.knowledge||road.remaining<1)return null;const a=road.ability,st=nextUnlockStep(save,road),sub=SUBJECTS[a.subject]?.name||a.subject,t=st?.topic&&TOPICS.find(x=>x.id===st.topic);
  const left=st?.kind==='practice'?st.need-st.have:0,what=st?.kind==='practice'&&t?`practise ${left} more question${left===1?'':'s'} in “${t.title}”`:st?.kind==='quiz'&&t?`pass the quiz on “${t.title}”`:st?.kind==='test'&&t?`take the mastery test on “${t.title}”`:`start ${/^[aeiou]/i.test(sub)?'an':'a'} ${sub} lesson`;
  return {id:'charge',text:`Charge ${a.name} (${road.done}/${road.total}): ${what} at the Library.`,target:{kind:'library'},charge:{ability:a.id,done:road.done,total:road.total}};}
+/* improve20-r8a-nov1 #3 (audit7 d9): Wil, the only companion, was never suggested: adventure() returned the next main-road pad before it looked
+   at quests. Once e5 is cleared, right after a win (goalTurn 'learn'), his quest is the goal on the first win counted (save.questNudge, additive
+   within v9: wins since e5, game/levels.js recordLevel) and then on every third, until the quest is done; a hand-in already comes first. */
+export function wilNudge(save){if(save?.goalTurn!=='learn'||!levelDone(save,'e5')||gameCleared(save))return null;const n=save.questNudge|0;if(n<1||(n-1)%3)return null;
+ const q=nextQuestStep(save,questLive);if(!q||q.rank==='handin'||QUESTS[q.quest]?.companion!=='wil')return null;const qs=questStep(q);return {...qs,text:`${qs.text.replace(/[.!]\s*$/,'')}: Wil, a new companion, can join you.`,nudge:true};}
 /* a goal after a fresh charge that is an adventure on the map: "Try your new skills" leads it */
 const tryNew=(save,n)=>{if(save?.goalTurn!=='fight'||!earned(save)||n?.target?.kind!=='pad')return n;const l=levelById(n.target.id);
  return {...n,text:n.id==='level-'+n.target.id&&l?`Try your new skills at ${l.name}.`:`Try your new skills! ${n.text}`,tryNew:true};};
@@ -116,10 +134,9 @@ function adventure(save){
  /* improve20-t-oct31 #17 (audit2 #8): after the ending a quest nobody has taken yet ("Talk to Farmer Hob at his farm") no longer
     outranks the post-game road (Heroic, the arenas, Legendary, newest chapter first); the finale card and the Journal still name it.
     A quest already under way keeps its place. */
- if((!gate||gameCleared(save))&&!(q&&q.rank!=='open')){const sp=showpieceStep(save);if(sp?.buy)return sp;}
- if(q&&q.rank==='open'&&gameCleared(save)){const p=postGame(save);if(p)return p;}
+ /* improve20-r8a-nov1 #2: after the ending the post-game road decides, Wil's quest in its place there; a Showpiece never outranks content */
+ if(gameCleared(save))return postGame(save,q);
  if(q){const n=questStep(q);if(!gate)return n;const g=starsShort(save,gate.id);return {...n,text:`${n.text.replace(/[.!]\s*$/,'')} (${gate.name} needs ${g.need}★: ${g.need-g.have} more).`,starGate:gate.id};}
- if(gameCleared(save))return postGame(save);
  if(gate){const g=starsShort(save,gate.id),src=starSource(save,gate.id);if(src){const l=src.level,k=src.tier,n=tierPad(l,k);return {...n,id:'stars-'+gate.id,text:`${gate.name} needs ${g.need} stars (you have ${g.have}). ${src.done?'Beat the 3-star time in':'Clear'} ${l.name} on ${TIERS[k].label} for more.`};}}
  for(const optional of [false,true])for(const k of TIER_KEYS)for(const l of playable().filter(l=>!!l.optional===optional))if(tierOpen(save,l.id,k)&&!tierDone(save,l.id,k))return tierPad(l,k);
  for(const k of TIER_KEYS)for(const l of playable())if(tierOpen(save,l.id,k)&&starsOf(save,l.id,k)<3)return {...tierPad(l,k),text:`Try for 3 stars in ${l.name} on ${TIERS[k].label}: ${k==='legendary'?'beat its 3-star time with no fall':'beat its par time'} on the map card.`};
@@ -133,8 +150,9 @@ function adventure(save){
 export const FIRST_UPGRADE_GOLD=300;
 export function firstUpgrade(save){if((save?.gold|0)<FIRST_UPGRADE_GOLD||!save?.gear?.owned||save.settings?.upgradeVisit)return null;if(!LEVELS.some(l=>l.kind==='level'&&levelDone(save,l.id)))return null;
  if(Object.keys(save.gear.owned).some(id=>ITEM[id]&&!ITEM[id].scholar&&ITEM[id].shop>0))return null;
- let u=null;try{u=affordableUpgrade(save);}catch{u=null;}if(!u||u.kind==='craft'||!ITEM[u.id])return null;return {id:u.id,name:ITEM[u.id].name,cost:u.cost};}
-const upgradeFirst=(save,n)=>{const u=n&&firstUpgrade(save);return u?{id:'first-upgrade',text:`Visit the Weaponsmith: your first upgrade, the ${u.name} (${u.cost} gold).`,target:{kind:'smith'},item:u.id,then:n}:n;};
+ let u=null;try{u=affordableUpgrade(save);}catch{u=null;}if(!u||!ITEM[u.id])return null;return {id:u.id,name:ITEM[u.id].name,cost:u.cost,craft:u.kind==='craft'};}
+/* improve20-r8a-nov1 #1: the one judge may pick a craft whose materials are in hand; the goal then says "craft" */
+const upgradeFirst=(save,n)=>{const u=n&&firstUpgrade(save);return u?{id:'first-upgrade',text:u.craft?`Visit the Weaponsmith: craft your first upgrade, the ${u.name} (${u.cost} gold and your materials).`:`Visit the Weaponsmith: your first upgrade, the ${u.name} (${u.cost} gold).`,target:{kind:'smith'},item:u.id,craft:!!u.craft,then:n}:n;};
 /* libraryfirst-nov1 (owner, 1 Nov: "start by bringing the character to the Library ... and have them learn an ability first"): a new game on the
    Library-first opening (academics/starter-lesson.js) is pointed at the Library until its starter power is awake; the south gate is shut till
    then. Then the prologue names the power to try, and after the prologue the first lesson step names the NEXT power and the topic that wakes
@@ -153,6 +171,7 @@ export function nextStep(save,{room}={}){goalSave=save;
  const a=nextPower(save),subject=SUBJECTS[a?.subject]?.name;
  if(a&&abilityMastery(save,a.subject)+1e-8>=a.gate){const n=adventure(save)||pad(levelById('e1'));return {...n,id:'level-up',text:`Fight foes and finish adventures to earn XP toward hero level ${xpLevel(a)} for ${a.name}. ${n.text}`};}
  if(unplacedStage(save))return firstLibrary(save,room);
+ {const w=wilNudge(save);if(w)return w;}
  {const c=chargeStep(save);if(c)return c;}
  if(levelDone(save,'e3')||!openInMode(save).length)return upgradeFirst(save,tryNew(save,adventure(save))||endGoal(save));
  /* improve20-z-nov1 #1: the first lesson names a subject that has an open lesson (a placed Middle School learner may have opened another subject than the next power's) */

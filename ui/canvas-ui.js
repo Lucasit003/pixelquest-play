@@ -61,7 +61,7 @@ export function drawPixelText(c,text,x,y,{scale=1,color='#f1e6cc',outline='#1a0f
 }
 /* 9-slice sources: image, slice inset (art px). */
 const PANELS={plank:{src:'./skin/panel-plain.png',k:12},charcoal:{src:'./skin/panel-plain-2.png',k:12},ornate:{src:'./skin/panel.png',k:24},parchment:{src:'./skin/parchment.png',k:10},
- banner:{src:'./skin/btn-primary.png',k:[2,9]},button:{src:'./skin/btn.png',k:[2,9]},slot:{src:'./skin/slot.png',k:6}};
+ banner:{src:'./skin/btn-primary.png',k:[2,9]},/* improve20-r8b-nov1 #5: the same ribbon in three more colours, for stage calls by meaning */'banner-bright':{src:'./skin/btn-primary-hover.png',k:[2,9]},'banner-dark':{src:'./skin/btn-primary-pressed.png',k:[2,9]},'banner-calm':{src:'./skin/btn-hover.png',k:[2,9]},button:{src:'./skin/btn.png',k:[2,9]},slot:{src:'./skin/slot.png',k:6}};
 export function drawPanel(c,kind,x,y,w,h,{scale=1}={}){
  const P=PANELS[kind]||PANELS.plank,r=img(P.src);if(!ready(r))return false;
  const im=r.im,s=Math.max(1,Math.round(scale)),[ky,kx]=Array.isArray(P.k)?P.k:[P.k,P.k],W=im.width,H=im.height;

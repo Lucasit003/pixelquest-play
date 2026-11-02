@@ -40,7 +40,7 @@ export function stageBannerObstacles(canvas,W,H,mobileAvoid=false){
  if(!hit||hit.gen!==state.gen||hit.size!==size){
   const rects=[];
   /* latechap-oct27: a showing toast on desktop too (the armour tip sat over "ARMOUR CRACKED!" on the Void Knight) */
-  for(const el of d.querySelectorAll('.hero-hud,.hud-sub,#boss-hud,.map-panel,#hotbar button,#xp-track,#touch button,#toast.show'+(mobileAvoid?',#m-menu button,#joy-ghost,#joy-zone .nipple .back':''))){
+  for(const el of d.querySelectorAll('.hero-hud,.hud-sub,#boss-hud,.map-panel,#arena-chip,#hotbar button,#xp-track,#touch button,#toast.show'+(mobileAvoid?',#m-menu button,#joy-ghost,#joy-zone .nipple .back':''))){
    state.resize?.observe(el);
    if(el.hidden)continue;
    const r=el.getBoundingClientRect();if(!r.width||!r.height)continue;
@@ -114,6 +114,10 @@ export function fitStageWarning({W,H,title,top,hardObstacles=[],obstacles=[]}){
    gfx/world.js keeps floating combat words ("SHIELDED", "ARMOUR CRACKED!") out of them, since both draw over the world */
 const drawnBanners=[],clock=()=>globalThis.performance?.now?.()??0;
 export function labelObstacles(canvas,W,H){const now=clock();return [...stageBannerObstacles(canvas,W,H),...drawnBanners.filter(b=>now-b.at<150)];}
+/* improve20-r8b-nov1 #5 (audit7 d24: "WAVE 2/3" was a red ribbon, "WAVE CLEARED" a big parchment and "Dive!" a dark frame): every stage call
+   is the red Victory ribbon (skin/btn-primary*), coloured by meaning: a wave or a shout red, a cleared wave bright with gold letters (a
+   crest every fifth arena wave), a danger warning deep red, a how-to tip bronze. Boss quotes keep their parchment card. */
+export const bannerPanel=b=>b.kind==='cleared'?'banner-bright':b.kind==='prompt'?(b.step==='danger'?'banner-dark':'banner-calm'):'banner';
 /* a plank sized to its text, centred on cx */
 function plank(c,kind,cx,y,w,h){return drawPanel(c,kind,R(cx-w/2),R(y),R(w),R(h));}
 function text(c,s,x,y,o){return drawPixelText(c,s,x,y,{align:'center',outline:DARK,...o})!==false;}
@@ -140,8 +144,8 @@ export function stageBanner(c,b){
   /* oct24-endgame (playtest ch3 minor): world labels ("SHIELDED") read where the banners were drawn last frame to stay clear of them */
   drawnBanners.push({left:box.cx-box.width/2,top:box.top,right:box.cx+box.width/2,bottom:box.top+box.height,at:clock()});if(drawnBanners.length>8)drawnBanners.shift();
   if(quote&&b.compact&&box.overlap>0){c.restore();return true;}
-  const panel=clear||quote?'parchment':kind==='wave'?'banner':'plank',color=clear?'#7a3a12':quote?INK:kind==='wave'?'#fff2d0':PARCH,outline=clear||quote?null:kind==='wave'?'#2a0d08':DARK;
-  ok=plank(c,panel,box.cx,box.top,box.width,box.height);
+  const panel=quote?'parchment':bannerPanel(b),color=quote?INK:clear?GOLD:'#fff2d0',outline=quote?null:'#2a0d08';
+  ok=plank(c,panel,box.cx,box.top,box.width,box.height);if(clear&&b.milestone)ok=drawSkin(c,'crest',box.cx,box.top-14,{align:'center'})&&ok;
   for(let i=0;i<lines.length;i++)ok=text(c,lines[i],box.cx,box.top+(layout.textTop??(clear?28:kind==='wave'?16:18))+i*(layout.lineHeight??lineHeight),{scale,bold,color,outline})&&ok;
  }else if(b.kind==='intro'){
   const w=fitW(Math.max(BW(b.title)*2,BW(b.sub))+48),t=Y(98);

@@ -20,6 +20,7 @@ import {awakened,starterOf,asleep} from './awakening.js';
 import {TOPICS,gradeTopics,topicOpen,mastered,rungOf,openGrade} from './lessons.js';
 import {topicInSchoolMode,lessonsToUnlock} from './study-unlock.js';
 import {startGrade} from './placement.js';
+import {firstHighTopic} from './course-grades.js';
 
 export const STARTER_STEPS=4,STARTER_TRYITS=2;
 /* the line the south gate says while it is shut, and the second line that says where the Library is */
@@ -52,7 +53,7 @@ export function starterTopic(save){
  const kept=save?.starterLesson&&TOPICS.find(t=>t.id===save.starterLesson&&t.subject===sub);
  if(kept)return {topic:kept,grade:rungOf(kept),open:topicOpen(save,kept)};
  const mode=save?.schoolMode;
- if(mode==='middle'||mode==='high'){const g=startGrade(save,sub);if(g==null)return null;const t=gradeTopics(sub,g)[0];return t?{topic:t,grade:g,open:topicOpen(save,t)}:null;}
+ if(mode==='middle'||mode==='high'){const g=startGrade(save,sub);if(g==null)return null;/* improve20-r8c-nov1 #1: a High School learner who said a grade starts in that grade's first course */const t=(mode==='high'&&firstHighTopic(save,sub))||gradeTopics(sub,g)[0];return t?{topic:t,grade:g,open:topicOpen(save,t)}:null;}
  const g=openGrade(save,sub),inMode=t=>topicInSchoolMode(save,t);
  const t=gradeTopics(sub,g).find(t=>inMode(t)&&topicOpen(save,t)&&!mastered(save,t))||TOPICS.find(t=>t.subject===sub&&inMode(t)&&topicOpen(save,t)&&!mastered(save,t));
  return t?{topic:t,grade:rungOf(t),open:true}:null;

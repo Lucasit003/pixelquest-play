@@ -13,11 +13,22 @@ export const PRIZE_TITLES=Object.freeze([['slime-squasher','Slime Squasher'],['g
 export const PRIZE_TRAILS=Object.freeze([['ember','Ember trail','#ff8a3d','#ffd27a'],['frost','Frost trail','#8fdcff','#eafaff'],['leaf','Leaf trail','#7fdc5a','#d8ff9e'],['star','Starlight trail','#ffd95a','#fff6c4'],['rose','Rose trail','#ff7fbf','#ffd1ea'],['violet','Violet trail','#a984ff','#e6d8ff']]);
 /* hero-card backdrops: [id, name, picture relative to dist/] (the class stages, PixelLab, 15 Oct) */
 export const PRIZE_BACKDROPS=Object.freeze([['castle','Castle Gate backdrop','ui/skin/stages/warrior.png'],['crystal','Crystal Library backdrop','ui/skin/stages/mage.png'],['moonlit','Moonlit Alley backdrop','ui/skin/stages/rogue.png'],['forest','Green Forest backdrop','ui/skin/stages/ranger.png'],['chapel','Chapel Window backdrop','ui/skin/stages/paladin.png'],['mountain','Mountain Camp backdrop','ui/skin/stages/berserker.png'],['grove','Spirit Grove backdrop','ui/skin/stages/summoner.png']]);
+/* improve20-r8a-nov1 #7 (audit7 d17): keepsakes for the big wins, earned (never in the daily pool: `earned:true`). Each chapter's first clear gives
+   its backdrop, a scene cropped from that chapter's own world-map art (its finale's landmark); the ending gives the Champion trail.
+   [id, name, picture, the level whose first Normal clear grants it] */
+export const CHAPTER_BACKDROPS=Object.freeze([['thorn-keep','Thorn Keep backdrop','ui/skin/stages/chapter-elderwood.png','e8'],['molten-throne','Molten Throne backdrop','ui/skin/stages/chapter-emberkeep.png','m7'],['deep-below','The Deep Below backdrop','ui/skin/stages/chapter-veilmoor.png','v7']]);
+export const ENDING_TRAIL=Object.freeze(['champion','Champion trail','#ffd34d','#ffffff','v7']);
 export const TITLE_ART='ui/skin/rewards/scroll.png';
 export const PRIZES=Object.freeze([
  ...PRIZE_TITLES.map(([id,name])=>Object.freeze({key:'title:'+id,kind:'title',id,name,img:TITLE_ART})),
  ...PRIZE_TRAILS.map(([id,name,color,spark])=>Object.freeze({key:'trail:'+id,kind:'trail',id,name,color,spark})),
- ...PRIZE_BACKDROPS.map(([id,name,img])=>Object.freeze({key:'backdrop:'+id,kind:'backdrop',id,name,img}))]);
+ ...PRIZE_BACKDROPS.map(([id,name,img])=>Object.freeze({key:'backdrop:'+id,kind:'backdrop',id,name,img})),
+ ...CHAPTER_BACKDROPS.map(([id,name,img,level])=>Object.freeze({key:'backdrop:'+id,kind:'backdrop',id,name,img,earned:true,level})),
+ Object.freeze({key:'trail:'+ENDING_TRAIL[0],kind:'trail',id:ENDING_TRAIL[0],name:ENDING_TRAIL[1],color:ENDING_TRAIL[2],spark:ENDING_TRAIL[3],earned:true,level:ENDING_TRAIL[4]})]);
+/* the keepsakes a first clear of `levelId` grants (chapter backdrops, the ending's trail) */
+export const winKeepsakes=levelId=>PRIZES.filter(p=>p.earned&&p.level===levelId);
+/* gives every big-win keepsake this save has earned (a level done on Normal); returns the newly given. normalize() back-fills with it. */
+export function grantWinKeepsakes(s,done=id=>!!s?.levels?.[id]?.done){const out=[];for(const p of PRIZES)if(p.earned&&done(p.level)&&givePrize(s,p.key))out.push(p);return out;}
 export const PRIZE=Object.freeze(Object.fromEntries(PRIZES.map(p=>[p.key,p])));
 /* the order the day's kind is chosen from; 'decor' is a Home piece */
 export const PRIZE_KINDS=Object.freeze(['title','trail','backdrop','decor']);

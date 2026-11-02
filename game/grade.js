@@ -60,3 +60,18 @@ export function scoreRun(run={}){const tier=NEED_SECRETS[run.tier]?run.tier:'nor
  return {skill,explore,speed,bonus,total:sum,grade,tips:tips.slice(0,2),parts,need,found};}
 /* The next grade up and how many points it needs ({grade, need}); null at S+ or with no grade. */
 export function nextGrade(total){const i=GRADES.findIndex(([,min])=>total>=min);if(i<=0)return null;const [g,min]=GRADES[i-1];return {grade:g,need:min-total};}
+/* improve20-r8a-nov1 #4 (audit7 d7): all 17 Normal wins in the audit were B, and the card face never said what an A needs. gradeTip(run) is the
+   one line for the card face, in kid words with the points: "A is 48 points away: find the secret (+40)". Exploration's secret is named first
+   (it is exact and a kid can plan for it); then whichever of Skill or Speed has the most room ("up to", since those are earned by degree); a
+   second step is added only when the first cannot reach the next grade alone. part is what the world-map card remembers (best.tip). */
+export const TIP_PARTS=['explore','skill','speed'];
+export function gradeOptions(run){const need=Math.max(1,run?.need|0||1),found=Math.max(0,run?.found|0),o=[];
+ if(found<need){const n=need-found;o.push({part:'explore',pts:Math.round(40*Math.min(1,n/need)),text:need===1?'find the secret':`find ${n} more secret${n>1?'s':''}`,exact:true});}
+ const rest=[];if((run?.skill??100)<100)rest.push({part:'skill',pts:100-run.skill,text:'take fewer hits'});if((run?.speed??100)<100)rest.push({part:'speed',pts:100-run.speed,text:'finish faster'});
+ return [...o,...rest.sort((a,b)=>b.pts-a.pts)];}
+export function gradeTip(run){if(!run?.grade)return null;const ng=nextGrade(run.total);if(!ng)return null;const o=gradeOptions(run);if(!o.length)return {grade:ng.grade,need:ng.need,part:'bonus',text:`${ng.grade} is ${ng.need} point${ng.need>1?'s':''} away: beat elites and find the Mimic for bonus points`};
+ const say=x=>`${x.text} (${x.exact?'':'up to '}+${x.pts})`,steps=[o[0],...(o[0].pts<ng.need&&o[1]?[o[1]]:[])];
+ return {grade:ng.grade,need:ng.need,part:o[0].part,text:`${ng.grade} is ${ng.need} point${ng.need>1?'s':''} away: ${steps.map(say).join(' and ')}`};}
+/* the world-map card's short line from a record's best grade and remembered part: "Best: B. Find the secret for A" */
+export function padGradeLine(best,tier='normal'){const g=best?.grade;if(!g||!GRADE_KEYS.includes(g))return '';const i=GRADE_KEYS.indexOf(g);if(i<=0)return `Best: ${g}. The top grade!`;const up=GRADE_KEYS[i-1],need=NEED_SECRETS[tier]||1;
+ const what={explore:need===1?'Find the secret':`Find all ${need} secrets`,skill:'Take fewer hits',speed:'Finish faster'}[best.tip];return what?`Best: ${g}. ${what} for ${up}`:`Best: ${g}. Next: ${up}`;}

@@ -267,7 +267,7 @@ function step(e,w,dt,mover){_world=w;const b=brain(e,w);
  if(!ext&&e.status==='poison'&&e.statusTime>0){e.poisonTick=(e.poisonTick||1)-dt;if(e.poisonTick<=0){e.poisonTick=1;e.hp-=7;w.text?.(7,e.x,e.y-26,'#b5e490');if(e.hp<=0){w.kill?.(e);return;}}}
  if(e.boss&&e.phaseShift&&b.phase===1&&e.hp<=e.maxHp*(e.phaseShift.at||.5)&&b.mode!=='act')enterPhase2(e,w,b);
  /* the Thorn King's phase change is roster.js's cinematic (a second life): follow it into phase two */
- if(e.cinematic&&e.phase===2&&b.phase===1){b.phase=2;b.speedMul=1.2;b.cdMul=.75*(e.cdMul||1);b.cd={};b.markers=[];b.mode='move';e.tint='#9dff7a';puff(w,'fx-explosion',e.x,e.y,e);if(e.phaseLine&&!w.quote)w.quote={text:e.phaseLine,at:w.run?.time||0};}
+ if(e.cinematic&&e.phase===2&&b.phase===1){b.phase=2;b.speedMul=e.p2Speed||1.2;b.cdMul=(e.p2Cd||.75)*(e.cdMul||1);b.cd={};b.markers=[];b.mode='move';e.tint='#9dff7a';puff(w,'fx-explosion',e.x,e.y,e);if(e.phaseLine&&!w.quote)w.quote={text:e.phaseLine,at:w.run?.time||0};}
  const stunned=e.statusTime>0&&['stun','freeze','root'].includes(e.status);
  const p=w.player;
  switch(b.mode){
@@ -349,7 +349,7 @@ export function drawEnemy(c,e,t){if(!e.sprite)return false;const s=loadSprite(e.
     over his anchor) down onto its shadow: stillDrop, art pixels, set by World.cinematicBeat from a beat's still[2] */
  const state=e.state&&m.states[e.state]?e.state:'idle',st=e.stateT||0,z=Math.round(e.z||0)-Math.round((e.stillDrop||0)*k);
  /* fade: a boss vanishing (boss-moves.js vanish) or turned to a fire column (pillar) */
- const alpha=(e.hp>0?1:Math.max(0,Math.min(1,(e.deathTime||0)/.4)))*(e.fade??1)*(e.pillar?.35:1);
+ const alpha=(e.hp>0?1:Math.max(0,Math.min(1,(e.deathTime||0)/.4)))*(e.fade??1)*(e.pillar?PILLAR_LOOK.body:1);
  const rx=Math.max(m.shadow[0],m.height*.2)*k*(1-Math.min(.45,Math.max(0,z)/90)),ry=Math.max(m.shadow[1],rx*.3/k)*k*(1-Math.min(.45,Math.max(0,z)/90));
  /* a shadow copy casts no floor shadow: that is how a child tells the real one */
  if(!e.noShadow)shadow(c,e.x,e.y,rx,Math.min(ry,rx*.4),.3*alpha);
@@ -370,7 +370,8 @@ export function drawEnemy(c,e,t){if(!e.sprite)return false;const s=loadSprite(e.
  if(alpha<=0)return true;if(e.hp>0&&(e.pilotArmour||e.pilotGuard)&&!(e.pilotOpen>t)){c.save();c.strokeStyle='#b8dfff';c.lineWidth=2;c.beginPath();const a=(e.pilotFacing||e.facing)===-1?Math.PI:0;c.ellipse(e.x,e.y-12,18,24,0,a-1.2,a+1.2);c.stroke();c.restore();}
  drawSprite(c,e.sprite,state,st,e.x,e.y-z,{facing:e.facing||1,scale:k,alpha});
  /* a fire column over a boss in Pillar Form; a cold glint on a boss holding a guard; stars over a dizzy one */
- if(e.pillar&&e.hp>0){const H=m.height*k;for(let y=0;y<H;y+=20)drawSprite(c,'fx-col-fire','rise',((t||0)*1.3+y*.01)%.5,e.x+Math.round(Math.sin((t||0)*9+y)*2),e.y-y,{alpha:.9});}
+ /* improve20-r8b-nov1 #4 (audit7 d21: the column hid the Cinder Wraith): the column is half see-through and the boss stays at 70%, so he reads inside his fire */
+ if(e.pillar&&e.hp>0){const H=m.height*k;for(let y=0;y<H;y+=20)drawSprite(c,'fx-col-fire','rise',((t||0)*1.3+y*.01)%.5,e.x+Math.round(Math.sin((t||0)*9+y)*2),e.y-y,{alpha:PILLAR_LOOK.fire});}
  if(e.stance&&e.hp>0)overlay(c,e.sprite,m,state,st,e.x,e.y-z,e.facing||1,k,'#9fd8ff',.16+.12*Math.sin((t||0)*14));
  if(b?.mode==='hurt'&&b.hurtDur>.5&&e.hp>0){const top=e.y-z-m.height*k-4;for(let i=0;i<3;i++){const a=(t||0)*4+i*2.09;drawSprite(c,'fx-spark-holy','twinkle',((t||0)*.8+i*.3)%.5,Math.round(e.x+Math.cos(a)*12),Math.round(top+Math.sin(a)*3),{alpha:.85});}}
  /* Hit flash (art director round 3): the sprite's own pixels brightened (drawn over itself with 'lighter') at 0.6 for two
@@ -395,8 +396,17 @@ function marker(c,m,prog,t){if(m.hide)return;if(m.soft){softMarker(c,m,prog,fals
  const rx=m.r,ry=m.r*.55;for(let y=-ry+gy/2,r=0;y<=ry;y+=gy,r++)for(let x=-rx+(r%2?gx/2:0);x<=rx;x+=gx)if((x*x)/(rx*rx)+(y*y)/(ry*ry)<=.7)put(m.x+x,m.y+y);
  /* the edge: cracks around the full perimeter at 12 px or closer, so the boundary of the danger area reads */
  const per=Math.PI*(3*(rx+ry)-Math.sqrt((3*rx+ry)*(rx+3*ry))),n=Math.max(8,Math.ceil(per/12));for(let i=0;i<n;i++){const a=i/n*Math.PI*2;put(m.x+Math.cos(a)*rx,m.y+Math.sin(a)*ry);}}
+/* improve20-r8b-nov1 #4 (audit7 d21: Pillar Form was 69% of mx1's damage and had no ground marker a kid could read): while the boss is a
+   column, a bright ring on the ground shows exactly where it burns (the hit ellipse, enemy-ai.js inMarker), pulsing, and dimmer during the
+   slow beat after a hit. An effect, drawn in code like every telegraph. */
+export const PILLAR_LOOK={body:.7,fire:.55};
+export function pillarRing(c,e,b,t){const r=b.atk?.radius||18,slow=b.pSlow>0,pulse=.5+.5*Math.sin((t||0)*10);c.save();c.globalAlpha=slow?.45:.75+.25*pulse;
+ c.fillStyle='rgba(255,90,20,.22)';c.beginPath();c.ellipse(Math.round(e.x),Math.round(e.y),r,r*.55,0,0,Math.PI*2);c.fill();
+ c.lineWidth=2;c.strokeStyle='#ffb347';c.beginPath();c.ellipse(Math.round(e.x),Math.round(e.y),r,r*.55,0,0,Math.PI*2);c.stroke();
+ c.lineWidth=1;c.strokeStyle='#fff1c2';c.beginPath();c.ellipse(Math.round(e.x),Math.round(e.y),r+3+pulse*2,(r+3+pulse*2)*.55,0,0,Math.PI*2);c.stroke();c.restore();}
 /* Telegraph markers (painted now, under the actors) plus depth-sorted entries for enemy projectiles, hazards and beams. */
 export function enemyLayer(c,w,t){const out=w.level?.encounter?.readable?[{y:1e9,draw:()=>veilOverlay(c,w)}]:[];if(!w.enemies?.some(e=>e.brain)){if(w.enemyFx)w.enemyFx.length=0;return out;}
+ for(const e of w.enemies)if(e.pillar&&e.hp>0&&e.brain?.atk?.kind==='pillar')pillarRing(c,e,e.brain,t);
  for(const e of w.enemies){const b=e.brain;if(!b||e.hp<=0||!b.markers?.length)continue;
   if(e.normalPacing||w.level?.encounter?.readable)safeLane(c,b.safeLane,!w.level?.encounter?.veilmoor,w);
   const prog=b.mode==='tele'?Math.min(1,b.t/Math.max(.01,b.teleDur)):1;for(const m of b.markers)marker(c,e.normalPacing||w.level?.encounter?{...m,soft:true,lane:(e.normalPacing||w.level.encounter.readable)&&m.shape==='box',age:b.mode==='tele'?b.t:b.teleDur,warn:b.teleDur,motion:w.motion}:m,prog,t);}

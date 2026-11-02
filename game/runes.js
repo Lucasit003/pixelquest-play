@@ -53,3 +53,12 @@ const EFFECT=a=>a.heal>0?'healing':a.kind==='totem'?(a.damage>0?'wolf power':'gu
 const NOUN=a=>({projectile:'bolt',chain:'chain',aoe:'blast',melee:'strike',heal:'glow',buff:'aura',totem:'totem',mark:'mark',aura:'circle'})[a.kind]||'cast';
 export function runeLine(a,rank){if(!a||!(rank>=1&&rank<=RUNE_MAX))return '';const pct=Math.round(RUNE_STEP*100),look=rank===1?`rune-blue ${NOUN(a)}`:rank===2?`bigger, brighter ${NOUN(a)}`:`an extra rune ring, ${Math.round(RUNE_CDR*100)}% faster cooldown`;
  return `${a.name} ${RUNE_NUMERALS[rank]}: +${pct}% ${EFFECT(a)}, ${look}`;}
+/* improve20-r8a-nov1 #5 (audit7 d20): runes piled up behind "6 runes are ready: place them at Home → Abilities" (13 on the ending save). "Place
+   for me" puts each free rune, one at a time, on the ability it helps most: an equipped ability (the loadout) before one in the bag, the lowest
+   rank first (so ranks rise evenly), then the most damage, healing or shield per second of cooldown, then ladder order. Only owned abilities
+   below rank III take one; what does not fit waits, banked, for the next ability (as runesPlaceable says). Returns the ids placed, in order.
+   Runes never unlock anything, and Reset runes still gives them all back. */
+export const runeHelp=a=>((a?.damage||0)*Math.max(1,a?.count|0||1)+(a?.heal||0)+(a?.shield||0)+(a?.attackBuff>1?(a.attackBuff-1)*100:0))/Math.max(1,a?.cd||1);
+export function runePick(s){const eq=new Set((s?.loadouts?.[s?.hero]||[]).filter(Boolean)),own=ownedAbilities(s).filter(a=>runeRank(s,a.id)<RUNE_MAX);if(!own.length)return null;
+ const pool=own.some(a=>eq.has(a.id))?own.filter(a=>eq.has(a.id)):own;return [...pool].sort((a,b)=>runeRank(s,a.id)-runeRank(s,b.id)||runeHelp(b)-runeHelp(a)||a.gate-b.gate)[0];}
+export function autoPlaceRunes(s){const out=[];for(let i=0;i<64&&runesFree(s)>0;i++){const a=runePick(s);if(!a||!placeRune(s,a.id))break;out.push(a.id);}return out;}

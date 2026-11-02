@@ -4,6 +4,8 @@
    Boss atlases load only as their plaque scrolls into view, and are let go when the panel closes (the town never needs them). */
 import {trophies,trophyCount,TROPHY_TOTAL,METAL_TINT} from '../game/trophies.js';
 import {gradeFile} from '../game/grade.js';
+import {CHAPTER_BACKDROPS} from '../game/prizes.js';
+import {levelById,CHAPTERS} from '../game/levels.js';
 import {loadSprite,spriteImage,spriteMeta,spriteReady,releaseSprite,loadedSprites} from '../gfx/actors/sprites.js';
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const TIER_NAME={normal:'Normal',heroic:'Heroic',legendary:'Legendary'};
@@ -12,8 +14,13 @@ const later=(f,ms)=>{const h=setTimeout(f,ms);h?.unref?.();return h;};
    The plaque is taller now (176x196) and its window fits the boss to about 80% of the frame's height and up to 80% of its width; the canvas
    is drawn at PQ_RES (2x), so a fractional nearest-neighbour scale lands on half pixels and the boss's pixels stay even. */
 export const PLAQUE_W=176,PLAQUE_H=196,PQ_RES=2;
-export function trophyHallHTML(s){const list=trophies(s),n=trophyCount(s);
- return `<p class="subtle trophy-count">${n} of ${TROPHY_TOTAL} bosses beaten. Win on Heroic for a silver frame, on Legendary for gold.</p><div class="trophy-grid" role="list">${list.map(t=>`<div class="trophy ${t.won?'trophy-won trophy-'+t.metal:'trophy-dark'}" role="listitem" data-trophy="${esc(t.id)}"><canvas class="trophy-art" data-trophy-sprite="${esc(t.sprite)}" data-metal="${t.metal||''}" width="${PLAQUE_W*PQ_RES}" height="${PLAQUE_H*PQ_RES}" aria-hidden="true"></canvas>${t.won?`<h3>${esc(t.name)}</h3><p class="trophy-meta">${t.grade?`<img src="ui/skin/run/${gradeFile(t.grade)}.png" alt="" width="20" height="20"> Best grade ${esc(t.grade)} · `:''}${TIER_NAME[t.tier]} clear</p><p class="trophy-line">“${esc(t.line)}”</p>`:`<h3>?</h3><p class="trophy-meta">${esc(t.level)}</p><p class="trophy-line subtle">Beat this boss to hang its plaque.</p>`}</div>`).join('')}</div>`;}
+/* improve20-r8a-nov1 #7 (audit7 d4): a chapter seal for each chapter cleared, at the top of the hall: the chapter's finale scene (the same crop as
+   its hero-card backdrop) in a seal frame with "CLEARED" stamped over it. A seal not yet seen stamps in once (opts.fresh, main.js keeps
+   s.settings.sealsSeen); an uncleared chapter is a dark seal with its name. The stamp is a CSS effect over existing art. */
+export const sealsOf=s=>CHAPTER_BACKDROPS.map(([id,name,img,level])=>{const l=levelById(level),ch=CHAPTERS.find(c=>c.id===l?.chapter);return {id:ch?.id||id,chapter:ch?.name||'',img,level,won:!!s?.levels?.[level]?.done};});
+export function chapterSealsHTML(s,fresh=[]){return `<div class="chapter-seals" role="list" aria-label="Chapter seals">${sealsOf(s).map(x=>`<div class="chapter-seal ${x.won?'seal-won':'seal-dark'}${x.won&&fresh.includes(x.id)?' seal-stamp':''}" role="listitem" data-seal="${esc(x.id)}"><span class="seal-pic"${x.won?` style="background-image:url(${esc(x.img)})"`:''}></span><strong>${esc(x.chapter)}</strong><small>${x.won?'CLEARED':'Not yet'}</small></div>`).join('')}</div>`;}
+export function trophyHallHTML(s,{freshSeals=[]}={}){const list=trophies(s),n=trophyCount(s);
+ return `${chapterSealsHTML(s,freshSeals)}<p class="subtle trophy-count">${n} of ${TROPHY_TOTAL} bosses beaten. Win on Heroic for a silver frame, on Legendary for gold.</p><div class="trophy-grid" role="list">${list.map(t=>`<div class="trophy ${t.won?'trophy-won trophy-'+t.metal:'trophy-dark'}" role="listitem" data-trophy="${esc(t.id)}"><canvas class="trophy-art" data-trophy-sprite="${esc(t.sprite)}" data-metal="${t.metal||''}" width="${PLAQUE_W*PQ_RES}" height="${PLAQUE_H*PQ_RES}" aria-hidden="true"></canvas>${t.won?`<h3>${esc(t.name)}</h3><p class="trophy-meta">${t.grade?`<img src="ui/skin/run/${gradeFile(t.grade)}.png" alt="" width="20" height="20"> Best grade ${esc(t.grade)} · `:''}${TIER_NAME[t.tier]} clear</p><p class="trophy-line">“${esc(t.line)}”</p>`:`<h3>?</h3><p class="trophy-meta">${esc(t.level)}</p><p class="trophy-line subtle">Beat this boss to hang its plaque.</p>`}</div>`).join('')}</div>`;}
 
 /* 9-slice at whole scale k, edges stretched (the card's edges are plain) */
 function nine(c,im,x,y,w,h,[t,r,b,l],k){const W=im.width,H=im.height,mw=W-l-r,mh=H-t-b,d=(sx,sy,sw,sh,dx,dy,dw,dh)=>{if(sw>0&&sh>0&&dw>0&&dh>0)c.drawImage(im,sx,sy,sw,sh,dx,dy,dw,dh);};

@@ -17,7 +17,7 @@
      setVolume({master, music, sfx}), getVolume(), duck(on), voiceDuck(on) */
 import {ZZFX} from '../ui/vendor/zzfx.js';
 
-let ac=null,master,limiter,sfxBus,musicBus,duckGain,enabled=true,musicOn=true,ducked=false,voiced=false;
+let ac=null,master,limiter,sfxBus,musicBus,duckGain,tellGain,enabled=true,musicOn=true,ducked=false,voiced=false;
 const vol={master:.92,music:.55,sfx:.8};
 const AC=()=>globalThis.AudioContext||globalThis.webkitAudioContext;
 
@@ -27,8 +27,8 @@ function ctx(){
  try{ac=new C();}catch{return null;}
  limiter=ac.createDynamicsCompressor();
  limiter.threshold.value=-12;limiter.knee.value=6;limiter.ratio.value=10;limiter.attack.value=.003;limiter.release.value=.16;
- master=ac.createGain();sfxBus=ac.createGain();musicBus=ac.createGain();duckGain=ac.createGain();
- sfxBus.connect(master);musicBus.connect(duckGain).connect(master);master.connect(limiter).connect(ac.destination);
+ master=ac.createGain();sfxBus=ac.createGain();musicBus=ac.createGain();duckGain=ac.createGain();tellGain=ac.createGain();
+ sfxBus.connect(master);musicBus.connect(duckGain).connect(tellGain).connect(master);master.connect(limiter).connect(ac.destination);
  ZZFX.audioContext=ac;ZZFX.sampleRate=ac.sampleRate;
  applyVolume(0);
  return ac;
@@ -113,6 +113,11 @@ const Z={
  'armour.crack':[1,.05,300,.001,.05,.26,4,2,-8,,,,,3,,.5],
  'perfect':   [.6,.01,990,.004,.06,.3,1,1.5,,,495,.05,,,,,.06,.6],
  'dizzy':     [.35,.02,1600,.01,.05,.1,0,1,,,600,.05,.06,,,,,.5],
+ /* improve20-r8d-nov1: the result card's own reward sounds (it borrowed the potion gulp and ui.open): a gold star twinkles up,
+    a chest thunks then rings, the grade stamps down with a low slam and a ring */
+ 'reward.star': [.7,.01,1046,.005,.06,.32,0,1.6,,,523,.06,.05,,,,.05,.6],
+ 'reward.chest':[1,.03,180,.004,.06,.3,1,2,,,660,.09,,.4,,,.04,.6],
+ 'reward.grade':[1.4,.02,90,.002,.1,.45,2,2.5,-1,,,,,1.5,,.3,.08,.7,.06],
 };
 const CAST={
  fire:  [.5,.06,240,.01,.1,.28,4,1.6,-2,,,,,2.2,,.2,,.7,.04,,1400],
@@ -128,9 +133,20 @@ const CAST={
    15 dB over the rewards and drove the limiter into pumping the music, a wrong answer was louder than a right one,
    and the quiet casts (ice, holy, arcane) were 9 dB under fire. Now: hits -16..-12 dBFS, casts about -21, rewards and
    a correct answer above a wrong one. The recipes themselves are unchanged. */
-export const SFX_LEVEL={'hit.light':-2.5,'hit.heavy':-5,'hit.crit':-4.5,correct:5,wrong:-2,kill:4,shield:5,
- 'cast.fire':-2,'cast.poison':-2,'cast.ice':6,'cast.holy':5,'cast.arcane':5,'cast.storm':1.5,'cast.nature':1,'cast.shadow':1.5};
+export const SFX_LEVEL={'hit.light':-2.5,'hit.heavy':-5,'hit.crit':-4.5,correct:8,wrong:-2,kill:13.5,shield:5,
+ 'cast.fire':-2,'cast.poison':-2,'cast.ice':6,'cast.holy':5,'cast.arcane':5,'cast.storm':1.5,'cast.nature':1,'cast.shadow':1.5,
+ /* improve20-r8d-nov1 (audit7 d8): the boss warnings were the quietest sounds in the game (tell.stance, guard and ward about
+    -35.5 dB RMS at the default volumes, under a -16..-19 LUFS boss track). Every tell, guard and ward now renders at -24 dB RMS
+    or louder at the default volumes (-21.3 on the SFX bus), and a tell ducks the music 3 dB for 300 ms (tellDuck). A kill is
+    at least as loud as hit.light; the reward keys sit with the other rewards. Measured whole-buffer RMS, tests/improve20-r8d-nov1. */
+ 'tell.stance':12.5,guard:12.5,ward:13,'tell.small':6,'tell.shot':5,'tell.melee':2.5,'tell.aoe':3,'tell.beam':2,'tell.pull':.5,
+ 'reward.star':8,'reward.chest':7,'reward.grade':2};
 const dbGain=d=>Math.pow(10,(d||0)/20);
+/* improve20-r8d-nov1: a boss or enemy tell dips the music 3 dB for 300 ms on its own gain stage (after the panel and voice ducks),
+   so the warning sits on top of the boss track; a second tell inside the window restarts it. */
+export const TELL_DUCK_DB=-3,TELL_DUCK_MS=300;
+export const isTell=key=>String(key).startsWith('tell.');
+function tellDuck(){if(!tellGain)return;const g=tellGain.gain,now=ac.currentTime,end=now+TELL_DUCK_MS/1000;g.cancelScheduledValues(now);g.setValueAtTime(g.value,now);g.linearRampToValueAtTime(dbGain(TELL_DUCK_DB),now+.02);g.setValueAtTime(dbGain(TELL_DUCK_DB),end);g.linearRampToValueAtTime(1,end+.08);}
 const buffers=new Map();
 function bufferFor(key,params){
  let b=buffers.get(key);if(b)return b;
@@ -163,7 +179,7 @@ export function sfx(name,arg,opts={}){
   /* The same sound fired twice inside 30 ms is one sound louder; skip the double. */
   const now=ac.currentTime;if(now-(lastPlayed.get(key)||-1)<.03)return;lastPlayed.set(key,now);
   const rate=(name==='swing'&&typeof arg==='number'?Math.pow(1.08,arg):1)*(1+(Math.random()-.5)*.06);
-  playBuffer(bufferFor(key,params),{gain:.38*dbGain(SFX_LEVEL[key]),rate,pan:opts.pan||0});
+  playBuffer(bufferFor(key,params),{gain:.38*dbGain(SFX_LEVEL[key]),rate,pan:opts.pan||0});if(isTell(key))tellDuck();
  }catch{}
 }
 /* Old entry points, kept for existing call sites and tests. */

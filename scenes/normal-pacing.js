@@ -33,15 +33,28 @@ export function echoCue(a,cast){const act=a.kind==='projectile'?'Dodge through i
 export const pacedNormal=w=>w.tierKey==='normal'&&!!NORMAL_SEQUENCES[w.level?.id];
 /* The Golem and King used 0.3 s openings and shortened phase-two tells despite long, two-life fights.
    Keep every move and both health pools; a missed tell must leave time to recover and answer with a learned attack. */
-export function normalBoss(w,e){if(w.tierKey==='normal'&&['e7','e8'].includes(w.level?.id)&&e.key===w.level.boss){const moves=as=>as.map(a=>({...a,fullTell:true,windup:Math.max(1,a.windup||0),recover:Math.max(1.8,a.recover||0)}));e.recoveryGate=true;e.attacks=moves(e.attacks);if(e.rebirth)e.rebirth={...e.rebirth,attacks:moves(e.rebirth.attacks)};return e;}if(!pacedNormal(w)||e.key!==w.level.boss)return e;e.normalPacing=true;e.recoveryGate=true;e.phaseShift={...e.phaseShift,at:.65};
+export function normalBoss(w,e){if(w.tierKey==='normal'&&['e7','e8'].includes(w.level?.id)&&e.key===w.level.boss){const moves=as=>as.map(a=>({...a,fullTell:true,windup:Math.max(1,a.windup||0),recover:Math.max(1.8,a.recover||0)}));e.recoveryGate=true;e.attacks=moves(e.attacks);if(w.level.id==='e8')thornFinale(e);if(e.rebirth)e.rebirth={...e.rebirth,attacks:moves(e.rebirth.attacks)};return e;}if(!pacedNormal(w)||e.key!==w.level.boss)return e;e.normalPacing=true;e.recoveryGate=true;e.phaseShift={...e.phaseShift,at:.65};
  e.attacks=e.attacks.map(a=>({...a,fullTell:true,windup:Math.max(.65,Math.min(1.1,a.windup||.8)),cd:a.cd*.75,recover:Math.max(.65,a.recover||0),...(a.kind==='summon'?{count:Math.min(2,a.count||1),max:2,visibleTell:true}:{})}));
  /* playtest ch2: the warning panel names a move only when it has a label; the Dungeon Master, Forge Golem, Vexx, the Demon Slime, the Lich and the Moth Queen had none, so their taught moves came with no panel at all. oct24-ember-econ: the label is the move and its action (NORMAL_CUES) */
  {const seq=NORMAL_SEQUENCES[w.level.id]||[];e.attacks=e.attacks.map(a=>seq.includes(a.name)?{...a,label:NORMAL_CUES[a.name]||a.label||a.name.toUpperCase()}:moreCue(a));if(e.rebirth?.attacks)e.rebirth={...e.rebirth,attacks:e.rebirth.attacks.map(moreCue)};}
  /* improve20-a-oct31 #5 (kid-appeal playtest: a 12-year-old never fell below 74% on the last boss): in phase two the Abyss Wave comes
     round a second time (its own full 1.8 s tell and the CLEAR lane again), one more telegraphed pattern; HP, attack and every warning
     time are unchanged. Sim (--only=v7 --isolated --recommended-level, 24 runs, seeds 1-3): --skill=good ends at 60% (was 63%), kid 0 deaths */
+ if(w.level.id==='m7')forgeFinale(e);if(w.level.id==='v1')e.attacks=e.attacks.map(a=>a.name==='tide ring'?{...a,...TIDE_RING}:a);
  if(w.level.id==='v7')e.attacks=e.attacks.map(a=>a.name==='tentacle grab'?{...a,count:2,spread:50,hold:0,windup:1.2,recover:1.8,label:'Two tentacles! Leave the circles!'}:a.name==='abyss wave'?{...a,len:88,windup:1.8,dur:1.2,recover:2.4,label:'Abyss wave! Move to the CLEAR lane!',then:'abyss wave',thenPhase:2}:a.name==='ink darkness'?{...a,dur:3,banner:null}:a);
  return e;}
+/* improve20-r8b-nov1 #1 (audit7 d2: the same kid brain ended e7 at 12% health and the Thorn King at 51%, m6/mx1 at 37%/29% and Moltar at
+   61%, then v1 at 27% with 5 potions, where the Tide Ring alone took 72% of max health). Each chapter's finale gets one more signature
+   move in its second phase, the same kind of ring the Veilmoor opens with, so a kid has jumped two rings before the Drowned Priest's:
+   the Thorn King's ring of thorns and his thornlings come sooner; Moltar's lava ring and one call for his smiths. v1's ring is softer:
+   it stops at a ring drawn on the floor from the tell (step past it, or jump it), comes less often and hits for less. */
+export const THORN_RING={name:'thorn ring',state:'special',kind:'wave',shape:'ring',previewReach:true,range:240,reach:84,r0:10,speed:70,band:6,th:7,fx:'fx-earth-spike',windup:1.4,fullTell:true,dmg:1,cd:7,recover:1.8,phase:2,label:'Thorn ring! Jump the ring!'};
+export const LAVA_RING={name:'lava ring',state:'cast',kind:'wave',shape:'ring',previewReach:true,range:280,reach:92,r0:10,speed:80,band:6,th:7,fx:'fx-flame-pillar',windup:1.2,fullTell:true,dmg:1,cd:6.5,recover:1.2,phase:2,label:'Lava ring! Jump the ring!'};
+export const FORGE_CALL={name:'call the smiths',state:'cast',kind:'summon',key:'slag-smith',count:3,max:3,uses:2,range:400,cd:11,windup:.9,fullTell:true,visibleTell:true,recover:1.2,fx:'fx-portal',label:'Smiths! Defeat the smiths!'};
+export const TIDE_RING={reach:120,range:150,previewReach:true,speed:80,th:6,dmg:.8,cd:9};
+export const FINALE_P2={speed:1.35,cd:.62},FORGE_P2={hp:1.35,dmg:1.25,atk:1.15,at:.65,cd:.55,speed:1.3};
+export function thornFinale(e){e.p2Speed=FINALE_P2.speed;e.p2Cd=FINALE_P2.cd;e.attacks=[...e.attacks.map(a=>a.name==='thornlings rise'?{...a,cd:8,label:'Thornlings! Defeat the thornlings!'}:a),{...THORN_RING}];}
+export function forgeFinale(e){e.maxHp=e.hp=Math.round(e.maxHp*FORGE_P2.hp);e.atk=Math.round(e.atk*FORGE_P2.atk);e.speed=Math.round(e.speed*FORGE_P2.speed);e.phaseShift={...(e.phaseShift||{}),at:FORGE_P2.at,speed:FINALE_P2.speed,cd:FORGE_P2.cd,dmg:FORGE_P2.dmg};e.attacks=[...e.attacks,{...LAVA_RING},{...FORGE_CALL}];}
 /* improve20-l-oct31 (5): the Normal final boss was still gentle for a good player (sim --skill=good ended v7 near 60% health). In phase
    two each Abyss Wave's tell also calls one of the level's own boss adds (levels.js bossAdds: a Deep One) from the far side, at most
    two alive, so the wave's lane and a foe on the ground have to be watched together. No boss turn is spent, no warning is shorter,

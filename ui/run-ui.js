@@ -4,7 +4,7 @@
    Icons are PixelLab (art/pixellab/run-layer, served from ui/skin/run/); the chest opening is a code effect (a lid pop,
    a burst, the items rising). No spinning reel, no roulette, nothing to buy. */
 import {rarPips,rarColor} from './rarity.js';
-import {gradeFile,GRADE_STARS,nextGrade} from '../game/grade.js';
+import {gradeFile,GRADE_STARS,nextGrade,padGradeLine} from '../game/grade.js';
 import {meterOf,REQ} from '../game/meter.js';
 import {delverLevel,classRank,delverTitle,RANK_TITLES,RANK_MAX,DELVE_MAX} from '../game/delve.js';
 import {xpFor} from '../game/math.js';
@@ -78,7 +78,8 @@ export function meterHTML(s,l){const m=meterOf(s,l.id);if(!m.target&&!m.pts)retu
 export function meterPickerHTML(s,l){const m=meterOf(s,l.id),gift=[l.boss,l.duo].filter(Boolean).some(b=>firstLegendary(s,b));
  return `<div class="grid run-meter-picks">${m.targets.map(t=>{const icon=t.kind==='jewel'?jewelIcon(t.id,32):gearIcon(t.id,32);return `<div class="card run-meter-pick ${t.id===m.target?'chosen':''}"><span class="tag">${t.kind==='piece'?'SET PIECE':t.kind==='trick'?'TRICK WEAPON':'JEWEL'}</span><span class="run-pick-name">${icon}<strong>${esc(t.name)}</strong></span><p class="subtle">${REQ[t.kind]} points${t.id===m.target?' · your pick':''}</p><button data-meter="${esc(t.id)}" ${t.id===m.target?'disabled':''}>${t.id===m.target?'Chosen':'Pick this'}</button></div>`;}).join('')}</div><p class="subtle">Your points stay when you change your pick.${gift?' The first Legendary boss gives your missing set piece pick. Otherwise it gives the first missing set piece in this order. If none are missing, you get extra boss materials.':''}</p>`;}
 /* Best grade sits beside time stars; neither is a tier gate. */
-export function tierRunHTML(s,l,k){const g=tierRecord(s,l.id,k)?.best?.grade;return `<span class="run-best">Best grade: ${g?gradeBadge(g,16):'none yet'}</span>`;}
+/* improve20-r8a-nov1 #4: the map card's tier row says what the next grade needs, as the world-map card does */
+export function tierRunHTML(s,l,k){const r=tierRecord(s,l.id,k),g=r?.best?.grade,line=g?padGradeLine(r.best,k).replace(/^Best: [^.]+\.\s*/,''):'';return `<span class="run-best">Best grade: ${g?gradeBadge(g,16):'none yet'}${line?` <small class="run-best-next">${esc(line)}</small>`:''}</span>`;}
 /* ---- the journal's Skills page ---- */
 /* improve20-h-nov1 (audit2 #11: nine different levels on one page, "Delver" beside "Delving", "Warrior rank (Berserk)" and a Rogue
    rank reading "(Archer)"): the page leads with two numbers, the hero level (what abilities ask for) and the one Adventurer level

@@ -1,5 +1,5 @@
 import {rarPips} from './rarity.js';
-import {affordableUpgrade,smithTabs,equipComparison,betterPickup,setChanges,realGain,combatChange,SMITH_HELP,gearAtCap} from './gear-guidance.js';
+import {affordableUpgrade,smithTabs,equipComparison,betterPickup,setChanges,realGain,combatChange,SMITH_HELP,gearAtCap,tradeText,GEAR_SMALL} from './gear-guidance.js';
 /* Gear screens (game/gear.js): the paper doll's gear slots, the compare panel, the set tracker, the next-upgrade hint and
    the Weaponsmith's five tabs (Buy, Craft, Stars, Finish, Salvage). HTML builders only; main.js shows them and wires the
    buttons. Every cost is shown in full before anything is pressed, and a disabled button says why. Gains and losses in a
@@ -47,7 +47,8 @@ export function matSource(s,m){if(m==='elite-shard')return 'stronger enemies and
 /* A purchase the child can make now, compared with the combat stat of what they wear. */
 /* oct24-veil-econ: the hint names its slot's number when that number rises, else the overall change it was chosen for
    (a pair of boots at the Defence cap read "Defence 27 → 27") */
-const nextGainText=n=>{if(Math.round(n.after)>Math.round(n.before))return `${n.label} ${Math.round(n.before)} → ${Math.round(n.after)}`;const d=combatChange(n),[k,v]=Object.entries(d).sort((a,b)=>b[1]-a[1])[0];return `${{damage:'Overall damage',toughness:'Overall toughness',speed:'Speed'}[k]} +${Math.max(1,Math.round(v*100))}%`;};
+/* improve20-r8a-nov1 #1: a pick that trades a little away says so, as its card does ("+13% damage, -2% speed") */
+const nextGainText=n=>{const tr=tradeText(n);if(tr)return tr;if(Math.round(n.after)>Math.round(n.before))return `${n.label} ${Math.round(n.before)} → ${Math.round(n.after)}`;const d=combatChange(n),[k,v]=Object.entries(d).sort((a,b)=>b[1]-a[1])[0];return `${{damage:'Overall damage',toughness:'Overall toughness',speed:'Speed'}[k]} +${Math.max(1,Math.round(v*100))}%`;};
 /* follow6-oct29 (exploit6 E): at 1280x720 the card's "Buy · 350" sat below the stock's visible edge, so a kid had to scroll to buy.
    On the smith's Buy tab (buy:true) the line carries its own Buy button, the same data-gear-buy action as the card's. */
 export function nextUpgradeHTML(s,hero,{buy=false}={}){const n=affordableUpgrade(s,hero),craft=n?.kind==='craft';return n?`<p class="gear-next ready" data-next-item="${esc(n.id)}"${craft?' data-next-tab="craft"':''}><span class="tag">NEXT UPGRADE</span> ${gearIcon(n.id,24)} <strong>${craft?'Craft':'Buy'} ${esc(ITEM[n.id].name)} · ◆ ${n.cost}${craft?Object.entries(n.mats).map(([m,k])=>` + ${k} ${esc(MATS[m]?.name||m)}`).join(''):''}</strong> <small>${nextGainText(n)}</small>${buy&&!craft?`<button class="primary gear-next-buy" data-gear-buy="${esc(n.id)}">Buy now</button>`:''}</p>`:'';}
@@ -101,6 +102,10 @@ export const CAP_WASTE='At the gear limit: this raises the item’s own numbers 
 export const upgradePairs=(b,a,magic)=>[['Attack',b.basic,a.basic],[magic?'Magic':'Strength',b[magic?'mag':'atk'],a[magic?'mag':'atk']],['Defence',b.def,a.def],['Health',b.hp,a.hp],['Strong hit',b.crit*100,a.crit*100,'%'],['Ability wait reduction',b.cdr*100,a.cdr*100,'%'],['Speed',b.speed,a.speed]].filter(([,x,y])=>Math.abs((y||0)-(x||0))>.0005);
 export const changeText=([k,x,y,u=''])=>{let d=0;while(d<3&&(+x).toFixed(d)===(+y).toFixed(d))d++;return `${k} ${(+x).toFixed(d)}${u} → ${(+y).toFixed(d)}${u}`;};
 export function cardUpgradeHTML(s,hero,id,record){const after={...s,gear:{...s.gear,owned:{...s.gear.owned,[id]:record}}},b=equipComparison(s,hero,id).afterStats,a=equipComparison(after,hero,id).afterStats,magic=(CLASSES[hero].mag||0)>(CLASSES[hero].atk||0),ch=upgradePairs(b,a,magic);return `<p class="gear-lines">${ch.length?'If worn: '+ch.map(changeText).join(' · '):'If worn: your numbers stay the same.'}</p>`;}
+/* improve20-r8a-nov1 #1: the upgrade badge, with the trade it makes said plainly ("+14% damage, -2% speed") */
+export const upBadgeHTML=(label,trade='')=>`<p class="gear-up-badge"><span>▲</span> ${esc(label)}</p>${trade?`<p class="gear-trade">${esc(trade)}</p>`:''}`;
+/* a Craft card the one judge calls an upgrade (no set broken): the same badge as the Buy tab */
+export function craftUp(s,hero,id){if(!fits(hero,id,ITEM[id].slot))return null;const c=equipComparison(s,hero,id);if(!(realGain(c)>0)||setChanges(s,hero,id).some(x=>!x.up))return null;const n=affordableUpgrade(s,hero),g=realGain(c),small=g<GEAR_SMALL;return {label:n?.id===id?(small?'Small upgrade for you':'Best upgrade for you'):small?'Small upgrade':'Upgrade for you',trade:tradeText(c)};}
 /* ---- the Weaponsmith ---- */
 const SLOT_ORDER=it=>it.slot==='weapon'?0:it.slot==='chest'&&it.cls?1:2;
 export const SMITH_TABS=[['buy','Buy'],['craft','Craft'],['stars','Stars'],['finish','Finish'],['salvage','Salvage']];
@@ -118,19 +123,20 @@ export function smithHTML(s,hero,tab='buy',pick=null,confirm=null){const g=s.gea
   /* improve20-t-oct31 #14 (audit2 #5): at level 9 the first row was two items worse than what the hero wears and two already worn, and
      the upgrade was under "More below". What helps this hero now leads, marked (smithBuyOrder); what you wear and what is no better
      than it fold away at the end */
-  const {up,side,rest}=smithBuyOrder(s,hero,items),best=up.find(x=>x.open&&x.afford&&!x.owned)??up.find(x=>x.open&&!x.owned),one=x=>{const it=x.it,owned=x.owned,lock=x.lock,open=x.open;
-   const badge=x.grp===0?`<p class="gear-up-badge"><span>▲</span> ${x===best?'Best upgrade for you':owned?'Better than what you wear':x.strict?'Upgrade for you':'Stronger overall'}</p>`:'';
+  const capped=gearAtCap(s,hero),{up,side,rest}=smithBuyOrder(s,hero,items),nx=affordableUpgrade(s,hero),best=nx?(nx.kind==='craft'?null:up.find(x=>x.it.id===nx.id)):up.find(x=>x.open&&!x.owned),one=x=>{const it=x.it,owned=x.owned,lock=x.lock,open=x.open;
+   const badge=x.grp===0?upBadgeHTML(x===best?(x.gain<GEAR_SMALL?'Small upgrade for you':'Best upgrade for you'):owned?'Better than what you wear':x.gain<GEAR_SMALL?'Small upgrade':'Upgrade for you',x.trade):'';
    /* improve20-x-nov1 #20b (audit4 #10): the price and Buy (or Equip, or the lock) come first, under the name, so a row of cards shows its
       prices without scrolling; "At the gear limit" sits before the price, not after it */
    const cap=open&&!owned&&cardClipped(s,hero,it.id)?'<p class="gear-cap-top">At the gear limit: no stronger for you now</p>':'';
    return card(s,hero,it.id,'',badge+cardNumbersHTML(s,hero,it.id),x.grp===0?'gear-up'+(x===best?' gear-best':''):x.grp===2?'gear-no-better':'',cap+(owned?(wornOf(s,hero)[it.slot]===it.id?'<p class="subtle">Equipped ✓</p>':`<button${worthEquip(s,hero,it.id)?' class="primary"':''} data-smith-equip="${it.id}">Equip now</button>`):!open?`<p class="forge-reason gear-locked">🔒 Locked · ${esc(lock)}</p>`:`${btn('gear-buy',it.id,`Buy · ◆ ${it.shop}`,(s.gold||0)>=it.shop,(s.gold||0)>=it.shop?'':`Need ${it.shop-(s.gold||0)} more gold`)}`));};
   /* improve20-x-nov1 #20a: with the gear at its limit, the smith says where gold can go */
-  body=`${gearAtCap(s,hero)&&(s.gold|0)>=600?'<p class="smith-show-line">Your gear is at its limit for now. Save gold for a Showpiece at Home (Decorate tab): just for show.</p>':''}${up.length||side.length?'':'<p class="subtle smith-all-worn">You already wear the best the smith sells for your hero. Craft set gear or add stars next.</p>'}<div class="grid gear-grid">${[...up,...side].map(one).join('')}</div>${rest.length?`<details class="smith-no-better"${up.length||side.length?'':' open'}><summary>${rest.length} more: what you wear, and gear no better than it</summary><div class="grid gear-grid">${rest.map(one).join('')}</div></details>`:''}`;}
+  /* improve20-r8a-nov1 #1: the line and the badges read the same verdict: "at its limit" only with no upgrade on the shelf, "near" when what is left is small */
+  body=`${capped&&(s.gold|0)>=600?`<p class="smith-show-line">${up.some(x=>x.open&&!x.owned)||nx?'Your gear is near its limit: the upgrades left are small.':'Your gear is at its limit for now.'} Save gold for a Showpiece at Home (Decorate tab): just for show.</p>`:''}${up.length||side.length?'':'<p class="subtle smith-all-worn">You already wear the best the smith sells for your hero. Craft set gear or add stars next.</p>'}<div class="grid gear-grid">${[...up,...side].map(one).join('')}</div>${rest.length?`<details class="smith-no-better"${up.length||side.length?'':' open'}><summary>${rest.length} more: what you wear, and gear no better than it</summary><div class="grid gear-grid">${rest.map(one).join('')}</div></details>`:''}`;}
  else if(tab==='craft'){const items=ITEMS.filter(it=>(it.set&&!it.shop||it.trick)&&fits(hero,it.id,it.slot));
   body=`<div class="grid gear-grid">${items.map(it=>{if(it.scholar){const n=masteredTopics(s);return card(s,hero,it.id,g.owned[it.id]?'<p class="subtle">Earned. It grows a star for every 5 more topics past 15.</p>':`<p class="forge-reason">Earned in the Library: master ${it.scholar} topics (you have ${n}).</p>`);}
    if(g.owned[it.id])return card(s,hero,it.id,wornOf(s,hero)[it.slot]===it.id?'<p class="subtle">Equipped ✓</p>':`<button${worthEquip(s,hero,it.id)?' class="primary"':''} data-smith-equip="${it.id}">Equip now</button>`);
    if(!recipeOpen(s,it.id))return `<div class="card gear-card locked" data-item="${it.id}"><span class="tag">RECIPE LOCKED</span><span class="smith-ico gear-silhouette">${gearIcon(it.id,48)}</span><h3>???</h3><p class="forge-reason">Defeat ${esc(bossName(it.boss))} to learn this recipe.</p></div>`;
-   const r=recipe(it.id),ok=canAfford(s,r);return card(s,hero,it.id,`${it.set?pityHTML(s,it.set,it.boss):''}${costHTML(s,r)}${btn('gear-craft',it.id,'Craft',ok,ok?'':costWhy(s,r))}`);}).join('')}</div>`;}
+   const r=recipe(it.id),ok=canAfford(s,r),up=craftUp(s,hero,it.id);return card(s,hero,it.id,`${it.set?pityHTML(s,it.set,it.boss):''}${costHTML(s,r)}${btn('gear-craft',it.id,'Craft',ok,ok?'':costWhy(s,r))}`,up?upBadgeHTML(up.label,up.trade)+cardNumbersHTML(s,hero,it.id):null,up?'gear-up':'');}).join('')}</div>`;}
  else{const mine=ITEMS.filter(it=>g.owned[it.id]&&!it.scholar&&(tab!=='salvage'||it.shopTier!==0)).filter(it=>tab==='salvage'||fits(hero,it.id,it.slot)||!it.family&&!it.cls);
   if(tab==='stars'){/* late playtest 24 Oct: the starter sword and armour were listed first with "Add ★1 anyway"; what the hero wears comes first,
     and a piece in the bag says that its stars only help while it is worn */const on=it=>wornOf(s,hero)[it.slot]===it.id;mine.sort((a,b)=>on(b)-on(a));body=`<p class="subtle">Each star adds 6% to an item’s stats and always succeeds. Five stars at most.</p><div class="grid gear-grid">${mine.map(it=>{const n=g.owned[it.id].stars,bag=on(it)?'':'<p class="forge-reason">In your bag: stars only help while you wear it.</p>';if(n>=MAX_STARS)return card(s,hero,it.id,bag+'<p class="subtle">Fully upgraded.</p>');const c=starCost(it.id,n+1),ok=canAfford(s,c);
@@ -152,8 +158,10 @@ export function smithHTML(s,hero,tab='buy',pick=null,confirm=null){const g=s.gea
 export function smithBuyOrder(s,hero,items){const g=s.gear,worn=wornOf(s,hero),out={up:[],side:[],rest:[]};
  for(const it of items){const owned=!!g.owned[it.id],lock=shopLock(s,it.id),x={it,owned,lock,open:!lock,afford:(s.gold||0)>=it.shop};
   if(worn[it.slot]===it.id){x.grp=2;out.rest.push(x);continue;}
-  const c=equipComparison(s,hero,it.id),strict=realGain(c),d=combatChange(c),net=d.damage+d.toughness+d.speed,breaks=setChanges(s,hero,it.id).some(ch=>!ch.up);
-  if(!breaks&&(strict>0||net>1e-3)){x.grp=0;x.strict=strict>0;x.gain=strict>0?strict:net;out.up.push(x);continue;}
+  /* improve20-r8a-nov1 #1: an upgrade is what the one judge (gear-guidance.js realGain) says it is, a small trade included; "stronger overall"
+     with a bigger loss is a side trade now, so the badge, the cap line, Equip and NEXT UPGRADE never disagree */
+  const c=equipComparison(s,hero,it.id),gain=realGain(c),d=combatChange(c),breaks=setChanges(s,hero,it.id).some(ch=>!ch.up);
+  if(!breaks&&gain>0){x.grp=0;x.trade=tradeText(c);x.strict=!x.trade;x.gain=gain;out.up.push(x);continue;}
   const better=Object.values(d).some(v=>v>1e-3);x.grp=owned||!better?2:1;(x.grp===1?out.side:out.rest).push(x);}
  out.up.sort((a,b)=>(a.open?0:1)-(b.open?0:1)||(a.owned?0:1)-(b.owned?0:1)||(a.afford?0:1)-(b.afford?0:1)||b.gain-a.gain);
  return out;}

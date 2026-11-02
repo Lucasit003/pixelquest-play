@@ -13,8 +13,8 @@ import {sfx,playMusic} from '../core/audio.js';
 import {openCredits} from './credits-screen.js';
 import {irisOpen} from './juice.js';
 import {icon} from './icons.js';
-import {activeProfile} from './profiles.js';
-import {openProfiles} from './profiles-screen.js';
+import {activeProfile,needsWhoPlays,takeAutoContinue} from './profiles.js';
+import {openProfiles,openWhoPlays} from './profiles-screen.js';
 import {creatorHTML,wireCreator,customised,creatorStyles,drawCreatorFigure,previewPose,attackLen} from './creator.js';
 import {drawHeroBust} from '../gfx/actors/hero-sprites.js';
 /* One line of fantasy per class: what playing it feels like. */
@@ -33,7 +33,7 @@ export const CLASS_STYLE={warrior:['Close-range fighter','Sword & shield · High
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 /* improve20-z-nov1 #2/#3: the stage buttons and each stage's optional grade row (High School topics are courses, not grades: no row) */
 export const STAGES=Object.freeze([['elementary','Elementary School','grades 2-5'],['middle','Middle School','grades 6-8'],['high','High School','grades 9-12']]);
-export const GRADE_ROWS=Object.freeze({elementary:[2,3,4,5,0],middle:[6,7,8,0]});
+export const GRADE_ROWS=Object.freeze({elementary:[2,3,4,5,0],middle:[6,7,8,0],/* improve20-r8c-nov1 #1: High School says its grade too (academics/course-grades.js picks the first course) */high:[9,10,11,12,0]});
 export const gradeOptsHTML=(stage,picked)=>(GRADE_ROWS[stage]||[]).map(g=>`<button type="button" role="radio" data-grade="${g}" aria-checked="${picked===g}" class="${picked===g?'picked':''}">${g?'Grade '+g:'Not sure'}</button>`).join('');
 export function titleScreen({started=false,cards='',hero='warrior',begin,learner=activeProfile()?.name,schoolMode=null,heroNames={},schoolGrade=null,today=''}={}){
  const c=CLASSES[hero]||CLASSES.warrior,stageNow=schoolMode||(started?'elementary':'');
@@ -183,9 +183,9 @@ export function wireTitle(api={}){
   const k=b.dataset.title;sfx('ui.click');
   /* Continue always resumes the saved hero, whatever was browsed in the hero select. */
   const resetPick=()=>{const c=root.querySelector(`[data-class="${root.dataset.saved}"]`);if(c&&!c.classList.contains('selected')){restoring=true;try{c.click();}finally{restoring=false;}}};
-  if(k==='continue'){resetPick();d.querySelector('#begin')?.click();
-   /* main.js greets every start like a first run; a returning learner gets a welcome back instead */
-   const toast=d.querySelector('#toast');if(toast)toast.textContent=`Welcome back, ${activeProfile()?.name||'hero'}.`;}
+  /* main.js greets every start like a first run; a returning learner gets a welcome back instead */
+  const carryOn=()=>{resetPick();d.querySelector('#begin')?.click();const toast=d.querySelector('#toast');if(toast)toast.textContent=`Welcome back, ${activeProfile()?.name||'hero'}.`;};
+  if(k==='continue'){/* improve20-r8c-nov1 #2 (audit7 d14): with two or more learners, Continue asks who is playing first */if(needsWhoPlays()&&!b.dataset.picked)openWhoPlays({onContinue:()=>carryOn()});else carryOn();}
   else if(k==='new'){const loading=prepareScene('select',{hero:api.selected?.()||'warrior'});if(loading)await loading;paintCards();detail();step('select');}
   else if(k==='look'){if(openLook())step('look');else step('setup');}
   else if(k==='setup')step('setup');
@@ -212,6 +212,8 @@ export function wireTitle(api={}){
  /* Leaving the title: the world opens from black around the hero (main.js's handler has already run). */
  root.querySelector('#begin')?.addEventListener('click',()=>{if(!globalThis.document.querySelector('#modal')?.open){restoreHero(api.world);irisOpen(.5,.55);}});
  root.__save=saveOf;backdrop(root,api.world);playMusic('title');
+ /* improve20-r8c-nov1 #2: a learner just picked in "Who is playing?" (the switch reloads) carries straight on, without a second question */
+ {const cont=root.querySelector('[data-title="continue"]');if(cont&&takeAutoContinue()){cont.dataset.picked='1';setTimeout(()=>cont.click(),0);}}
  root.querySelectorAll('canvas[data-logo]').forEach(cv=>drawLogo(cv));
  root.querySelector('.title-menu button')?.focus?.({preventScroll:true});
 }
