@@ -22,14 +22,16 @@ export function markChapterCard(s,id){s.settings??={};s.settings.chapterCards=[.
 export const sealArt=levelId=>CHAPTER_BACKDROPS.find(b=>b[3]===levelId)?.[2]||'';
 export const firstStop=next=>LEVELS.find(l=>l.chapter===next.id&&l.kind==='level'&&!l.hidden&&!l.optional)||null;
 /* cc: chapterClear(id); levelId: the level just won; owned: the keepsake keys the save owns (s.prizes.own) */
-export function chapterCardHTML(cc,levelId,owned=[]){const art=sealArt(levelId),ks=winKeepsakes(levelId).filter(p=>owned.includes(p.key)),stop=firstStop(cc.next);
+/* improve20-r16a-nov3 #1 (audit12 finding 1): when the first stop is power-gated the NEXT line names the gate and its honest count (lead.gate, from
+   game/card-lead.js gateLead) instead of promising the pad, with a "While you learn" line (lead.also) naming something to play meanwhile */
+export function chapterCardHTML(cc,levelId,owned=[],lead={}){const art=sealArt(levelId),ks=winKeepsakes(levelId).filter(p=>owned.includes(p.key)),stop=firstStop(cc.next);
  return `<div class="chapter-clear" data-chapter-clear="${esc(cc.chapter.id)}" style="--cc-glow:${GLOW[cc.chapter.id]||GLOW.elderwood}"><div class="cc-inner">`+
   `<small class="cc-eyebrow"><img src="ui/skin/pl-icons/tier-star.png" width="32" height="32" alt="" draggable="false">CHAPTER CLEAR</small>`+
   `<h2 class="cc-title">${esc(cc.chapter.name)} is free!</h2>`+
   `<div class="chapter-seal seal-won seal-stamp cc-seal" data-seal="${esc(cc.chapter.id)}"><span class="seal-pic"${art?` style="background-image:url(${esc(art)})"`:''}></span><strong>${esc(cc.chapter.name)}</strong><small>CLEARED</small></div>`+
   `<p class="cc-line cc-seal-line">Its chapter seal hangs in your Trophy Hall at Home.</p>`+
   (ks.length?`<p class="cc-line cc-keepsake" data-keepsake="${esc(ks.map(p=>p.key).join(' '))}"><img src="ui/skin/rewards/chest.png" width="32" height="32" alt="" draggable="false"><span>New keepsake: <strong>${ks.map(p=>esc(p.name)).join(' and ')}</strong>. Wear ${ks.length>1?'them':'it'} from your Hero card.</span></p>`:'')+
-  `<p class="cc-line cc-next" data-cc-next="${esc(cc.next.id)}"><small>NEXT</small><span>The road to ${esc(the(cc.next.name))} is open${stop?`. First stop: <strong>${esc(stop.name)}</strong>`:''}.</span></p>`+
+  (lead?.gate?`<p class="cc-line cc-next cc-gated" data-cc-next="${esc(cc.next.id)}" data-cc-gate><small>NEXT</small><span><strong>${esc(lead.gate)}.</strong> Learn ${lead.n===1?'it':'them'} at the Library.</span></p>`+(lead.also?`<p class="cc-line cc-while" data-cc-while>${esc(lead.also)}</p>`:''):`<p class="cc-line cc-next" data-cc-next="${esc(cc.next.id)}"><small>NEXT</small><span>The road to ${esc(the(cc.next.name))} is open${stop?`. First stop: <strong>${esc(stop.name)}</strong>`:''}.</span></p>`)+
   `<div class="modal-actions cc-actions"><button type="button" id="cc-continue" class="primary">Continue</button></div></div></div>`;}
 /* the Champion card's line for the last chapter (main.js finaleCard): its keepsakes and its seal, so the Veilmoor's clear is named there */
 export function finaleKeepsakeHTML(levelId,owned=[]){const ks=winKeepsakes(levelId).filter(p=>owned.includes(p.key));const ch=CHAPTERS.find(c=>c.id===LEVELS.find(l=>l.id===levelId)?.chapter);
@@ -49,6 +51,7 @@ dialog[data-view=chapter-clear] .cc-title{margin:0;font-size:clamp(28px,6vw,48px
 .cc-line img{image-rendering:pixelated;flex:none}
 .cc-line strong{color:#fff1c8}
 .cc-next small{letter-spacing:2px;color:var(--gold,#e3b85a)}
+.cc-while{font-size:16px;color:#cfc6b3}
 .cc-actions{margin-top:6px;justify-content:center}
 .cc-actions button{min-width:200px}
 @media (max-height:480px){.cc-inner{gap:4px}.cc-eyebrow{font-size:16px}.cc-eyebrow img{width:24px;height:24px}dialog[data-view=chapter-clear] .cc-title{font-size:30px}.cc-seal{width:auto;flex-direction:row;padding:4px 10px;gap:10px}.cc-seal .seal-pic{width:72px;height:72px}.chapter-seal.cc-seal.seal-won small{top:30px;left:42px}.cc-line{font-size:15px}.cc-line img{width:24px;height:24px}.cc-actions{margin-top:2px}.cc-actions button{min-height:40px}}

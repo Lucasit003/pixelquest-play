@@ -54,8 +54,9 @@ export const quizGuideHTML=()=>`<div class="qf-guide" aria-hidden="true"><span c
 
 /* A quiz's encouraging second line after a right answer: how the pass is coming along, only while it can still be reached.
    Never shown after a wrong answer, and never a count of misses. need = right answers that pass (4 of 5). */
-export function quizCheer({right=0,answered=0,n=5,need=4}={}){
- if(right>=need)return right===need?`That is ${need} right: enough to pass the quiz!`:`${right} right. Another star for your quiz!`;
+/* improve20-r16a-nov3 #9: sum = the first topic's summed quiz, which ends on its passing answer, so it says the quiz is passed */
+export function quizCheer({right=0,answered=0,n=5,need=4,sum=false}={}){
+ if(right>=need)return sum?`That's ${need} right: quiz passed!`:right===need?`That is ${need} right: enough to pass the quiz!`:`${right} right. Another star for your quiz!`;
  const more=need-right;if(n-answered<more)return '';
  /* improve20-r13a-nov2 #8: "3 more pass the quiz" read as missing a word */return `${right} right so far. ${more} more to pass the quiz.`;
 }

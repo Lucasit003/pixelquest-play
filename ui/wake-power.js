@@ -25,13 +25,17 @@ export function wakeNextHTML(s,hero=s?.hero){const x=nextWake(s,hero);if(!x)retu
  const color=SUBJECTS[x.a.subject]?.color||'#e7c77e',[topics,lvl]=x.topics>0||!x.lvlOk?wakeNeeds(x):['',''];
  return `<div class="wake-next" data-wake="${esc(x.a.id)}" data-wake-topics="${x.topics}" data-wake-level="${x.lvl}" style="--accent:${esc(color)}"><small class="wake-eyebrow">WAKE YOUR NEXT POWER</small><div class="wake-body"><span class="wake-icon">${abilityIcon(x.a,hero,48)}</span><span class="wake-text"><strong>${esc(x.a.name)}</strong><span class="wake-need">${esc(topics)}${x.topics>0?' at the Library':''}</span><span class="wake-level${x.lvlOk?' met':''}">${esc(lvl)}</span></span></div></div>`;}
 /* all eight abilities: awake ones bright, locked ones dim with the topics each still needs (a level-only gate shows "Lv N") */
-export function powerRowHTML(s,hero=s?.hero,{size=32}={}){const row=powerRow(s,hero);return `<ul class="power-row" aria-label="Your abilities: ${row.filter(x=>x.on).length} of ${row.length} awake">${row.map(x=>{const tag=x.on?'':x.topics>0?String(x.topics):!x.lvlOk?`Lv ${x.lvl}`:'',tip=x.on?`${x.a.name}: awake`:`${x.a.name}: ${wakeNeeds(x).join(', ')}`;
- return `<li class="power-cell${x.on?' on':' locked'}" data-power="${esc(x.a.id)}"${x.on?'':` data-topics="${x.topics}"`} title="${esc(tip)}"><span class="power-ico">${abilityIcon(x.a,hero,size)}</span>${tag?`<b class="power-tag">${esc(tag)}</b>`:''}<span class="sr-only">${esc(tip)}</span></li>`;}).join('')}</ul>`;}
+/* improve20-r16a-nov3 #7 (audit12 finding 11: "Master 68 more Math topics" read as never): only the next power to wake (nextWake, the one the
+   cards name) shows its count; every other locked badge shows a lock with no number ("later as you learn") */
+export function powerRowHTML(s,hero=s?.hero,{size=32}={}){const row=powerRow(s,hero),nx=nextWake(s,hero)?.a.id;return `<ul class="power-row" aria-label="Your abilities: ${row.filter(x=>x.on).length} of ${row.length} awake">${row.map(x=>{const next=!x.on&&x.a.id===nx,tag=x.on||!next?'':x.topics>0?String(x.topics):!x.lvlOk?`Lv ${x.lvl}`:'',tip=x.on?`${x.a.name}: awake`:next?`${x.a.name}: ${wakeNeeds(x).join(', ')}`:`${x.a.name}: locked, it wakes later as you learn`;
+ return `<li class="power-cell${x.on?' on':' locked'}${next?' next':''}" data-power="${esc(x.a.id)}"${next?` data-topics="${x.topics}"`:''} title="${esc(tip)}"><span class="power-ico">${abilityIcon(x.a,hero,size)}</span>${tag?`<b class="power-tag">${esc(tag)}</b>`:!x.on?'<img class="power-lock" src="ui/skin/pl-icons/tier-lock.png" width="16" height="16" alt="" draggable="false">':''}<span class="sr-only">${esc(tip)}</span></li>`;}).join('')}</ul>`;}
 export const POWER_CSS=`.power-row{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:4px 0;padding:0;list-style:none}
 .power-cell{position:relative;display:grid;place-items:center;width:40px;height:40px;border:2px solid #c19149;border-radius:4px;background:rgba(10,12,30,.6)}
 .power-cell.locked{border-color:#5d5244;background:rgba(10,12,30,.35)}
 .power-cell.locked .power-ico{filter:grayscale(1) brightness(.45);opacity:.8}
 .power-tag{position:absolute;right:-6px;bottom:-6px;min-width:18px;padding:0 3px;font:700 14px/18px var(--ui);color:#fff1c8;background:#3b2a52;border:1px solid #a984ff;border-radius:3px;text-align:center}
+.power-lock{position:absolute;right:-5px;bottom:-5px;width:16px;height:16px;image-rendering:pixelated}
+.power-cell.next{border-color:#a984ff}
 .power-cell .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .wake-next{margin:2px 0 6px;padding:6px 10px;border:2px solid var(--accent,#e3b85a);border-radius:5px;background:rgba(20,16,40,.7);text-align:left}
 .wake-eyebrow{display:block;letter-spacing:3px;color:#ffd96a}

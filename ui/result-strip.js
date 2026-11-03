@@ -34,7 +34,8 @@ export const shortName=n=>String(n||'').replace(/^[^,]*?['’]s\s+(?=\S)/,'')||S
    the gold chip's own words line ("gold · next buy: Emberbrand"), so gold points at something; the strip's layout is untouched */
 /* improve20-r8a-nov1 #6: `spare` is gold from potions the full bag sold, already inside `gold`, named in the same chip; #1: a `next` that is a
    craft reads "next: craft Forgeplate" */
-export function youGotHTML({won=true,gold=0,xp=0,riftBonus=0,shard='',loot=[],gear=[],stars=0,starsAll=0,icon,starIcon='',next='',spare=0}){
+/* improve20-r16a-nov3 #6 (audit12 finding 9: the tile said +1 when 2 were given): shards = the run's shardsWon, the one value the line under it reads */
+export function youGotHTML({won=true,gold=0,xp=0,riftBonus=0,shard='',shards=1,loot=[],gear=[],stars=0,starsAll=0,icon,starIcon='',next='',spare=0}){
  /* improve20-r8a-nov1 #6 (audit7 d22): "Potion bag full: +8 gold" took a reward tile on every card; its gold joins the gold line instead */{const bf=/^Potion bag full: \+(\d+) gold/.exec(loot.find(x=>x?.bagfull)?.label||'');if(bf){spare+=+bf[1];gold+=+bf[1];}loot=loot.filter(x=>!x?.bagfull);}
  /* improve20-h-nov1: every chip carries its full words as a title, so a compact chip (below) still names itself */
  /* improve20-s-nov1 #18/#20 (audit5 b18, b15): a found piece carries its rarity: the border and a glow behind its icon in the rarity's
@@ -46,7 +47,7 @@ export function youGotHTML({won=true,gold=0,xp=0,riftBonus=0,shard='',loot=[],ge
  const goldWords=(riftBonus>0?'gold (Rift bonus)':'gold')+(spare>0?` (+${spare} for ${spare>BAG.overflow?'spare potions':'a spare potion'})`:'')+(secret>0?` (+${secret} from secret spots)`:'')+(won&&next?(/^craft /.test(next)?` · next: ${next}`:` · next buy: ${next}`):'');
  /* improve20-r10c-nov2 #17: on a win the drop and the stars lead the strip (the drop as a bigger chip, data-lead), then gold, XP and items */
  const drops=gear.map(g=>item('gear',g.img||icon('chest'),'',g.name,' level-loot-item'+(won?' you-got-lead':''),g.rar||null)),starChip=stars>0?[item('stars',starIcon,`+${stars}`,`${stars>1?'stars':'star'}${starsAll?` · ${starsAll} in all`:''}`,won?' you-got-lead':'')]:[];
- const parts=[...(won?[...drops,...starChip]:[]),...(won||gold>0?[item('gold',icon('gold'),`+${gold}`,goldWords,' level-reward')]:[]),...(shard?[item('shard',shard,'+1','Rift Shard',' level-reward')]:[]),...(xp>0?[item('xp',icon('xp'),`+${xp}`,'XP',' level-reward')]:[]),
+ const parts=[...(won?[...drops,...starChip]:[]),...(won||gold>0?[item('gold',icon('gold'),`+${gold}`,goldWords,' level-reward')]:[]),...(shard?[item('shard',shard,`+${Math.max(1,shards|0)}`,Math.max(1,shards|0)>1?'Rift Shards':'Rift Shard',' level-reward')]:[]),...(xp>0?[item('xp',icon('xp'),`+${xp}`,'XP',' level-reward')]:[]),
   ...loot.map(x=>{const {n,what}=splitCount(x.label);return item('item',icon(x.icon),n,what,` level-loot-item${x.quiet?' loot-quiet':''}`);}),
   ...(won?[]:[...drops,...starChip])];
  if(!parts.length)return '';

@@ -30,6 +30,8 @@ const writeProfiles=idx=>{try{ls()?.setItem(INDEX,JSON.stringify(idx));}catch{}}
 const DEFAULT_NAME=/^Player \d+$/;
 const heroNameOf=v=>{let sv=v;try{if(typeof v==='string')sv=JSON.parse(v);}catch{return '';}const n=String(sv?.heroNames?.[sv?.hero]||'').trim().slice(0,20);return n&&!Object.values(CLASSES).some(c=>c.name===n)?n:'';};
 const isDefault=p=>!!p&&!p.named&&DEFAULT_NAME.test(String(p.name||''));
+/* improve20-r16a-nov3 #10: the title's hero-name field pre-fills a typed profile name, never a "Player N" */
+export const isDefaultProfile=isDefault;
 export function nameFromHero(save,id){const idx=readProfiles(),p=idx.list.find(x=>x.id===(id||idx.active));if(!isDefault(p))return false;const n=heroNameOf(save);if(!n)return false;p.name=n;writeProfiles(idx);return true;}
 export function fixDefaultNames(){const L=ls();if(!L)return 0;const idx=readProfiles();let n=0;for(const p of idx.list){if(!isDefault(p))continue;let raw=null;try{raw=p.id===idx.active?activeRaw(L):L.getItem(SLOT(p.id));}catch{}const h=raw&&heroNameOf(raw);if(h){p.name=h;n++;}}if(n)writeProfiles(idx);return n;}
 export function activeProfile(){const idx=readProfiles();return idx.list.find(p=>p.id===idx.active)||idx.list[0];}

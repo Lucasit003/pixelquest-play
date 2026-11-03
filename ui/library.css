@@ -634,6 +634,9 @@ dialog[data-view=library] .edu-next-actions button.primary:hover:not(:disabled){
 .mastery-moment .mm-seal .ui-fx{top:50%}
 .mastery-moment .mm-banner{display:grid;place-items:center;width:384px;max-width:100%;height:72px;margin:-14px 0 0;padding-bottom:10px;font:700 26px/1 var(--edu-font,inherit);letter-spacing:2px;text-transform:uppercase;color:#ffd96a;background:url(skin/pl-icons/victory-banner.png) center -12px/384px 96px no-repeat;image-rendering:pixelated;text-shadow:0 2px 0 #4a0d06,0 4px 0 #1e0603}
 .mastery-moment .mm-title{margin:0;font-size:22px;line-height:1.2;color:var(--gold-2,#f0d48a)}
+/* improve20-r16a-nov3 #3: "Ember Dart is awake!" under the mastered topic */
+.mastery-moment .mm-awake{margin:2px 0 0;font-size:18px;line-height:1.2;color:#9fe0b0}
+.mastery-moment .mm-awake b{color:#c9ffd6}
 .mastery-moment .mm-score{margin:0;font-size:var(--fs);color:#d9cfb8}
 .mastery-moment .mm-closer{margin:4px 0 0;font-size:var(--fs);line-height:1.3;color:#fff4d6}
 .mastery-moment .mm-closer b{color:#ffd96a}
@@ -758,6 +761,9 @@ html[data-motion=reduced] .lesson-check.nudge{animation:none}
 @media(max-height:800px){#modal-content>.lesson:has(>.am-goal.road)>.actions{order:1}#modal-content>.lesson:has(>.am-goal.road)>.am-goal.road{order:2}}
 /* oct25-tryit P9: the unlock card's buttons in one row (Try it in a fight · Continue · Read to me), wrapping on narrow cards */
 .edu-unlock .edu-unlock-actions{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px;margin-top:8px}
+/* improve20-r16a-nov3 #3: the awaken card's buttons look dim for their first 1.5 s (main.js UNLOCK_ARM ignores real clicks then) */
+.edu-unlock .edu-arming>button{animation:edu-arm 1.5s step-end}
+@keyframes edu-arm{from{opacity:.5;filter:saturate(.4)}}
 .edu-unlock .edu-unlock-actions>button{margin:0!important;vertical-align:middle;min-width:0}
 .edu-unlock .edu-unlock-where{margin:4px 0 0}
 /* oct25-tryit P11 (learning-loop playtest): at 844x390 and 740x360 the Library's "Start lesson" and "Find your level" needed a scroll on

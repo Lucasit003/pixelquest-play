@@ -13,7 +13,7 @@ import {sfx,playMusic} from '../core/audio.js';
 import {fullscreenOption,toggleFullscreen,isFullscreen,toggleHowTo} from './fullscreen.js';import {openCredits} from './credits-screen.js';
 import {irisOpen} from './juice.js';
 import {icon} from './icons.js';
-import {activeProfile,needsWhoPlays,takeAutoContinue} from './profiles.js';
+import {activeProfile,needsWhoPlays,takeAutoContinue,isDefaultProfile} from './profiles.js';
 import {openProfiles,openWhoPlays} from './profiles-screen.js';
 import {openParentGate} from './parent-gate.js';
 /* landing-nov2: the page for parents and teachers (dist/parents.html). Same site, but it leaves the game screen, so it sits behind the
@@ -45,7 +45,8 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 export const STAGES=Object.freeze([['elementary','Elementary School','grades 2-5'],['middle','Middle School','grades 6-8'],['high','High School','grades 9-12']]);
 export const GRADE_ROWS=Object.freeze({elementary:[2,3,4,5,0],middle:[6,7,8,0],/* improve20-r8c-nov1 #1: High School says its grade too (academics/course-grades.js picks the first course) */high:[9,10,11,12,0]});
 export const gradeOptsHTML=(stage,picked)=>(GRADE_ROWS[stage]||[]).map(g=>`<button type="button" role="radio" data-grade="${g}" aria-checked="${picked===g}" class="${picked===g?'picked':''}">${g?'Grade '+g:'Not sure'}</button>`).join('');
-export function titleScreen({started=false,cards='',hero='warrior',begin,learner=activeProfile()?.name,schoolMode=null,heroNames={},schoolGrade=null,today='',recap=''}={}){
+/* improve20-r16a-nov3 #10 (audit12: Leo typed "Leo" twice): learnerNamed = the profile's name was typed (not "Player N"); the hero-name field then starts with it, still editable */
+export function titleScreen({started=false,cards='',hero='warrior',begin,learner=activeProfile()?.name,learnerNamed=(p=>!!p&&!isDefaultProfile(p))(activeProfile()),schoolMode=null,heroNames={},schoolGrade=null,today='',recap=''}={}){
  const c=CLASSES[hero]||CLASSES.warrior,stageNow=schoolMode||(started?'elementary':'');
  return `<div class="title-screen" data-step="title" data-saved="${esc(hero)}">
 <canvas class="title-bg" width="480" height="270" aria-hidden="true"></canvas>
@@ -80,7 +81,7 @@ export function titleScreen({started=false,cards='',hero='warrior',begin,learner
     <p class="subtle er-note">Learn and gain hero levels to unlock abilities. XP means points toward your next hero level.</p>
     <div class="hero-pick-actions"><div class="hero-profile-summary"><span>PROFILE</span><strong data-profile-name>${esc(learner||'Player 1')}</strong><span>HERO</span><strong data-selected-character>${esc(c.name)}</strong></div><button type="button" class="primary" data-title="look">Choose this hero →</button></div>
     <div class="hero-look" data-hero-look></div><div class="hero-look-actions"><button type="button" class="primary" data-title="setup">Next →</button></div>
-    <div class="hero-setup"><p class="setup-intro">Name your hero and choose your school stage. XP from learning and adventures raises your hero level.</p><label class="hero-name-label" for="hero-nickname">Hero name</label><input id="hero-nickname" maxlength="20" autocomplete="off" placeholder="Name your hero" value="${esc(heroNames[hero]||'')}">
+    <div class="hero-setup"><p class="setup-intro">Name your hero and choose your school stage. XP from learning and adventures raises your hero level.</p><label class="hero-name-label" for="hero-nickname">Hero name</label><input id="hero-nickname" maxlength="20" autocomplete="off" placeholder="Name your hero" value="${esc(heroNames[hero]||(learnerNamed&&learner?String(learner).slice(0,20):''))}">
     ${/* improve20-z-nov1 #3 (audit6 #5): the stage dropdown opened upward on a phone and hid "Elementary School"; three big buttons now, in the grade row's style, on every size. A hidden #school-mode keeps the value (and its change event) for the code that reads it */''}<span class="school-mode-choice" id="school-mode-label">School stage</span><div class="school-stage" role="radiogroup" aria-labelledby="school-mode-label">${STAGES.map(([id,name,gr])=>`<button type="button" role="radio" data-school-stage="${id}" aria-label="${name} (${gr})" aria-checked="${stageNow===id}" class="${stageNow===id?'picked':''}"><b>${name.replace(' School','')}</b><small>${gr[0].toUpperCase()+gr.slice(1)}</small></button>`).join('')}</div><input type="hidden" id="school-mode" value="${stageNow}">${/* kidfix-a-oct31: Elementary asks one more, optional question; the answer is a hint only (game/hints.js placementOffer) and never sets a placement. improve20-z-nov1 #2: Middle School asks it too (Grade 6-8), and the first Library visit starts a lesson at that grade */''}<div class="school-grade" role="radiogroup" aria-label="What grade are you in? (optional)" ${GRADE_ROWS[stageNow]?'':'hidden'}><span class="school-grade-q">What grade are you in? <small>(optional)</small></span><span class="school-grade-opts">${gradeOptsHTML(stageNow,schoolGrade)}</span></div>
     <button class="primary" id="begin" data-label="${esc(begin||(started?'Return to Oakhaven':'Begin your adventure'))}" ${!started&&!schoolMode?'disabled':''}>${!started&&!schoolMode?'Choose a school stage first':esc(begin||(started?'Return to Oakhaven':'Begin your adventure'))}</button></div>
    </div>

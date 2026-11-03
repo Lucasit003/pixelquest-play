@@ -76,9 +76,13 @@ export function gradeOptions(run){const need=Math.max(1,run?.need|0||1),found=Ma
  if(found<need){const n=need-found;o.push({part:'explore',pts:Math.round(40*Math.min(1,n/need)),text:need===1?'find the secret':`find ${n} more secret${n>1?'s':''}`,exact:true});}
  const rest=[];if((run?.skill??100)<100)rest.push({part:'skill',pts:100-run.skill,text:'take fewer hits'});if((run?.speed??100)<100)rest.push({part:'speed',pts:100-run.speed,text:'finish faster'});
  return [...o,...rest.sort((a,b)=>b.pts-a.pts)];}
-export function gradeTip(run){if(!run?.grade)return null;const ng=nextGrade(run.total);if(!ng)return null;const o=gradeOptions(run);if(!o.length)return {grade:ng.grade,need:ng.need,part:'bonus',text:`${ng.grade} is ${ng.need} point${ng.need>1?'s':''} away: beat elites and find the Mimic for bonus points`};
- const say=x=>`${x.text} (${x.exact?'':'up to '}+${x.pts})`,steps=[o[0],...(o[0].pts<ng.need&&o[1]?[o[1]]:[])];
- return {grade:ng.grade,need:ng.need,part:o[0].part,text:`${ng.grade} is ${ng.need} point${ng.need>1?'s':''} away: ${steps.map(say).join(' and ')}`};}
+/* improve20-r16a-nov3 #8 (audit12 finding 20: a B-grade kid was pointed at A, which earns the same 2 stars): the tip points at the nearest grade
+   above that earns a star more (gradeStars): from B, C or A that is S (3 stars), from D it is C; at S (all stars earned) it stays S+, as before.
+   Up to three steps are named when the first ones cannot reach it alone. */
+export function starGrade(total,grade){const i=GRADES.findIndex(([,min])=>total>=min);if(i<=0)return null;const have=gradeStars(grade||GRADES[i][0]);for(let j=i-1;j>=0;j--)if(gradeStars(GRADES[j][0])>have)return {grade:GRADES[j][0],need:GRADES[j][1]-total,stars:gradeStars(GRADES[j][0])};return null;}
+export function gradeTip(run){if(!run?.grade)return null;const ng=starGrade(run.total,run.grade)||nextGrade(run.total);if(!ng)return null;const o=gradeOptions(run),star=ng.stars?` (${ng.stars}★)`:'';if(!o.length)return {grade:ng.grade,need:ng.need,part:'bonus',text:`${ng.grade}${star} is ${ng.need} point${ng.need>1?'s':''} away: beat elites and find the Mimic for bonus points`};
+ const say=x=>`${x.text} (${x.exact?'':'up to '}+${x.pts})`,steps=[];let sum=0;for(const x of o){steps.push(x);sum+=x.pts;if(sum>=ng.need||steps.length>=3)break;}const said=[...steps.map(say),...(sum<ng.need?['earn bonus points (elites, the Mimic)']:[])];
+ return {grade:ng.grade,need:ng.need,part:o[0].part,text:`${ng.grade}${star} is ${ng.need} point${ng.need>1?'s':''} away: ${said.length>1?said.slice(0,-1).join(', ')+' and '+said[said.length-1]:said[0]}`};}
 /* the world-map card's short line from a record's best grade and remembered part: "Best: B. Find the secret for A" */
-export function padGradeLine(best,tier='normal'){const g=best?.grade;if(!g||!GRADE_KEYS.includes(g))return '';const i=GRADE_KEYS.indexOf(g);if(i<=0)return `Best: ${g}. The top grade!`;const up=GRADE_KEYS[i-1],need=NEED_SECRETS[tier]||1;
+export function padGradeLine(best,tier='normal'){const g=best?.grade;if(!g||!GRADE_KEYS.includes(g))return '';const i=GRADE_KEYS.indexOf(g);if(i<=0)return `Best: ${g}. The top grade!`;/* improve20-r16a-nov3 #8: the same star target as the win card's tip (S from A, B or C) */const up=GRADES.slice(0,i).reverse().find(([k])=>gradeStars(k)>gradeStars(g))?.[0]||GRADE_KEYS[i-1],need=NEED_SECRETS[tier]||1;
  const what={explore:need===1?'Find the secret':`Find all ${need} secrets`,skill:'Take fewer hits',speed:'Finish faster'}[best.tip];return what?`Best: ${g}. ${what} for ${up}`:`Best: ${g}. Next: ${up}`;}

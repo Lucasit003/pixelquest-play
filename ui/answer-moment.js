@@ -113,9 +113,10 @@ export function masteryCloser(save,t,road=learningRoad(save)){
  /* improve20-z-nov1 #4 (audit6 #2): a topic toward the next ability is a charge, said as one ("Volley 1/3 charged!") */
  return mine?`${name} ${esc(road.done)}/${esc(road.total)} charged! ${left} to go.${lv}`:`Next ability: ${name}, ${left} away.${lv}`;
 }
-export function masteryMomentHTML(save,t,{score=0,total=0,points='',stage='',subjectName='',rune=''}={}){
+/* improve20-r16a-nov3 #3: awake = the names of abilities this mastery woke; the card repeats "<Ability> is awake!" under the banner */
+export function masteryMomentHTML(save,t,{score=0,total=0,points='',stage='',subjectName='',rune='',awake=[]}={}){
  const closer=masteryCloser(save,t);
- return `<div class="mastery-moment" data-mastery-moment><span class="mm-seal"><span class="am-seal" aria-hidden="true"></span></span><h2 class="mm-banner">Topic mastered!</h2><h3 class="mm-title">“${esc(t.title)}”</h3><p class="mm-score">${esc(score)} of ${esc(total)} right · +${esc(points)} ${esc(stage)} ${esc(subjectName)}</p>${closer?`<p class="mm-closer" data-mm-closer>${closer}</p>`:''}${rune}</div>`;
+ return `<div class="mastery-moment" data-mastery-moment><span class="mm-seal"><span class="am-seal" aria-hidden="true"></span></span><h2 class="mm-banner">Topic mastered!</h2><h3 class="mm-title">“${esc(t.title)}”</h3>${awake.length?`<p class="mm-awake" data-mm-awake>${awake.map(n=>`<b>${esc(n)}</b>`).join(' and ')} ${awake.length>1?'are':'is'} awake!</p>`:''}<p class="mm-score">${esc(score)} of ${esc(total)} right · +${esc(points)} ${esc(stage)} ${esc(subjectName)}</p>${closer?`<p class="mm-closer" data-mm-closer>${closer}</p>`:''}${rune}</div>`;
 }
 /* improve20-m-nov1 (audit3 #18, IMPROVE20 round 3 item 13): the placement result was small text. It is now a short moment with existing
    art: the Library's open book stamping in over the victory sunburst, the starting grade (or "High School") on the victory banner, what the

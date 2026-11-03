@@ -64,7 +64,7 @@ const arenaPad=l=>({id:'arena-'+l.id,text:`Next adventure: the ${/arena$/i.test(
    on the newest chapter's finale ("The Sleeper is back, and stronger") -> an arena not yet survived -> this week's Rift while it is unplayed -> the other Heroic levels, newest
    chapter first -> Legendary, newest chapter first -> 3-star tries -> a Showpiece last. */
 const finaleOf=c=>{const ls=playable().filter(l=>l.chapter===c&&!l.optional&&l.boss);return ls.find(l=>gameFinale(l.id))||ls[ls.length-1]||null;};
-const riftUnplayed=save=>{if(!riftOpen(save))return null;let p=null;try{p=riftPick(save);}catch{p=null;}if(!p||save.rift?.week===p.week&&save.rift?.best)return null;const l=levelById(save.rift?.week===p.week&&save.rift?.level||p.level);return l?{id:'rift-'+p.week,text:`This week's Rift is open: ${l.name} with two twists. Press Rift on the world map.`,target:{kind:'pad',id:l.id},rift:true}:null;};
+export const riftUnplayed=save=>{if(!riftOpen(save))return null;let p=null;try{p=riftPick(save);}catch{p=null;}if(!p||save.rift?.week===p.week&&save.rift?.best)return null;const l=levelById(save.rift?.week===p.week&&save.rift?.level||p.level);return l?{id:'rift-'+p.week,text:`This week's Rift is open: ${l.name} with two twists. Press Rift on the world map.`,target:{kind:'pad',id:l.id},rift:true}:null;};
 function postGame(save,q=null){const ch=[...CHAPTERS].reverse().map(c=>c.id),of=c=>playable().filter(l=>l.chapter===c).sort((a,b)=>!!a.optional-!!b.optional);
  /* a quest already under way keeps its place ahead of everything (as before the ending) */if(q&&q.rank!=='open')return questStep(q);
  for(const c of ch)for(const l of of(c))if(l.optional&&levelOpen(save,l.id)&&!levelDone(save,l.id))return pad(l);
@@ -131,7 +131,7 @@ export function wilNudge(save){if(save?.goalTurn!=='learn'||!levelDone(save,'e5'
 /* a goal after a fresh charge that is an adventure on the map: "Try your new skills" leads it */
 /* improve20-r12a-nov2 (kid sims round 2 finding 1): the goal at a power gate names the pad, the power and the one step that wakes it
    (game/power-gate.js); a gate short only of the hero level points at XP (a won level again, or a lesson). Ids: 'power-<pad>'. */
-const STEP_WORDS={lesson:t=>`start “${t.title}”`,quiz:t=>`take the quiz on “${t.title}”`,practice:(t,st)=>`finish practice on “${t.title}” (${Math.max(0,st.needed-st.practice)} to go)`,test:t=>`take the mastery test on “${t.title}”`};
+export const STEP_WORDS={lesson:t=>`start “${t.title}”`,quiz:t=>`take the quiz on “${t.title}”`,practice:(t,st)=>`finish practice on “${t.title}” (${Math.max(0,st.needed-st.practice)} to go)`,test:t=>`take the mastery test on “${t.title}”`};
 export function powerGoal(save){const g=waitingGate(save);if(!g?.a)return null;const w=powerWants(save,g.a),st=powerStep(save,g.a),name=g.level.name;
  if(w.topics<=0){const back=levelById(g.level.requires[0]);return {id:'power-'+g.level.id,text:`${name} needs ${g.a.name}: reach hero level ${w.lvl}. Win a level again or study for XP.`,target:back?{kind:'pad',id:back.id}:{kind:'library'},powerGate:g.level.id,power:g.a.id};}
  const how=st?.topic&&STEP_WORDS[st.stage]?STEP_WORDS[st.stage](st.topic,st):`master ${w.topics} ${w.subject} topic${w.topics===1?'':'s'}`;
