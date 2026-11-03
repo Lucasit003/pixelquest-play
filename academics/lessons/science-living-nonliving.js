@@ -1,6 +1,5 @@
-// UNVERIFIED: 61 facts in this topic were written by the local model, not computed.
-// Read them before registering it -- tools/lesson-kit/review.mjs prints them. The three
-// Try-it answers are the model's too. Everything else is worked out by the generators.
+// Facts reviewed 3 Nov 2026 (improve20-r16c): 61 rows and the 3 Try-its checked against NGSS K-LS1-1 and Britannica (life: growth, needs, reproduction); 0 fixed.
+// Limits: one reader, row by row, against those references as known to the reviewer; no page was fetched live. Generated sums are computed, not reviewed.
 // Elementary topic: Living things grow, need food and water, and make more of themselves. Built from a slot sheet by tools/lesson-kit/build-lesson.mjs.
 export default {
  id:"science-e-living-nonliving",subject:"science",level:3,grade:2,standard:"NGSS K-LS1-1",

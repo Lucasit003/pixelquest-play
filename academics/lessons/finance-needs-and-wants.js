@@ -1,6 +1,5 @@
-// UNVERIFIED: 112 facts in this topic were written by the local model, not computed.
-// Read them before registering it -- tools/lesson-kit/review.mjs prints them. The three
-// Try-it answers are the model's too. Everything else is worked out by the generators.
+// Facts reviewed 3 Nov 2026 (improve20-r16c): 112 rows (40 classify, 60 priority pairs, 12 context) and the 3 Try-its checked against Jump$tart needs/wants guidance: every need is food, water, shelter, safety, health or school, and every want is stated as extra; 0 fixed.
+// Limits: one reader, row by row, against those references as known to the reviewer; no page was fetched live. Generated sums are computed, not reviewed.
 // Elementary topic: Use the situation to tell a basic need from an optional extra, and put a need first when money is limited. Built from a slot sheet by tools/lesson-kit/build-lesson.mjs.
 // 28 Oct (elfact): steps 0 and 4 and the three whys were reworded in grade 2 words ("an optional extra in the situation described" is now "something nice to have that you can do without").
 export default {

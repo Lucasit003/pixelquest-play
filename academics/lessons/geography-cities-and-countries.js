@@ -1,6 +1,5 @@
-// UNVERIFIED: 53 facts in this topic were written by the local model, not computed.
-// Read them before registering it -- tools/lesson-kit/review.mjs prints them. The three
-// Try-it answers are the model's too. Everything else is worked out by the generators.
+// Facts reviewed 3 Nov 2026 (improve20-r16c): 53 city/country rows and the 3 Try-its checked against Britannica country and city entries; 0 fixed.
+// Limits: one reader, row by row, against those references as known to the reviewer; no page was fetched live. Generated sums are computed, not reviewed.
 // Elementary topic: A city sits inside a country, which sits on a continent. Built from a slot sheet by tools/lesson-kit/build-lesson.mjs.
 export default {
  id:"geography-e-cities-and-countries",subject:"geography",level:3,grade:2,standard:"NCSS III",

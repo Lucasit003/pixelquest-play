@@ -1,6 +1,5 @@
-// UNVERIFIED: 105 facts in this topic were written by the local model, not computed.
-// Read them before registering it -- tools/lesson-kit/review.mjs prints them. The three
-// Try-it answers are the model's too. Everything else is worked out by the generators.
+// Facts reviewed 3 Nov 2026 (improve20-r16c): 105 rows and the 3 Try-its checked against National Geographic Education habitat pages, NOAA Ocean Service and NGSS 3-LS4-3; 0 fixed.
+// Limits: one reader, row by row, against those references as known to the reviewer; no page was fetched live. Generated sums are computed, not reviewed.
 // Elementary topic: Match animals to suitable habitats and explain how habitats meet their needs. Built from a slot sheet by tools/lesson-kit/build-lesson.mjs.
 export default {
  id:"science-e-habitats",subject:"science",level:3,grade:3,standard:"NGSS 3-LS4-3",

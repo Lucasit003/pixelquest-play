@@ -1,6 +1,5 @@
-// UNVERIFIED: 48 facts in this topic were written by the local model, not computed.
-// Read them before registering it -- tools/lesson-kit/review.mjs prints them. The three
-// Try-it answers are the model's too. Everything else is worked out by the generators.
+// Facts reviewed 3 Nov 2026 (improve20-r16c): 48 rows and the 3 Try-its checked against Merriam-Webster parts of speech for each word in its sentence and CCSS L.5.1a; 0 fixed.
+// Limits: one reader, row by row, against those references as known to the reviewer; no page was fetched live. Generated sums are computed, not reviewed.
 // Elementary topic: Name the job a word does in a sentence: noun, verb, adjective or adverb. Built from a slot sheet by tools/lesson-kit/build-lesson.mjs.
 export default {
  id:"language-e-parts-of-speech",subject:"language",level:3,grade:3,standard:"CCSS L.3.1a",

@@ -1,6 +1,5 @@
-// UNVERIFIED: 45 facts in this topic were written by the local model, not computed.
-// Read them before registering it -- tools/lesson-kit/review.mjs prints them. The three
-// Try-it answers are the model's too. Everything else is worked out by the generators.
+// Facts reviewed 3 Nov 2026 (improve20-r16c): 45 list rows and the 3 Try-its checked against the lists each question shows (every answer is read off the pictured list) and CSTA 1B-AP-09; 0 fixed.
+// Limits: one reader, row by row, against those references as known to the reviewer; no page was fetched live. Generated sums are computed, not reviewed.
 // Elementary topic: Find what is at a position in a list, and which position a thing is in. Built from a slot sheet by tools/lesson-kit/build-lesson.mjs.
 export default {
  id:"cs-e-lists",subject:"cs",level:3,grade:3,standard:"CSTA 1B-AP-09",

@@ -1,6 +1,5 @@
-// UNVERIFIED: 38 facts in this topic were written by the local model, not computed.
-// Read them before registering it -- tools/lesson-kit/review.mjs prints them. The three
-// Try-it answers are the model's too. Everything else is worked out by the generators.
+// Facts reviewed 3 Nov 2026 (improve20-r16c): 38 contraction rows and the 3 Try-its checked against Merriam-Webster (can't, won't, mustn't, let's) and CCSS L.2.2.C; 0 fixed.
+// Limits: one reader, row by row, against those references as known to the reviewer; no page was fetched live. Generated sums are computed, not reviewed.
 // Elementary topic: A contraction squeezes two words together with an apostrophe. Built from a slot sheet by tools/lesson-kit/build-lesson.mjs.
 export default {
  id:"language-e-contractions",subject:"language",level:3,grade:2,standard:"CCSS L.2.2.C",

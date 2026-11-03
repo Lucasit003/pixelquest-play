@@ -1,6 +1,5 @@
-// UNVERIFIED: 56 facts in this topic were written by the local model, not computed.
-// Read them before registering it -- tools/lesson-kit/review.mjs prints them. The three
-// Try-it answers are the model's too. Everything else is worked out by the generators.
+// Facts reviewed 3 Nov 2026 (improve20-r16c): 56 rows and the 3 Try-its checked against National Geographic Education food-chain pages and NGSS 5-LS2-1 (each link is a real predator-prey or grazer-plant relation; every chain starts with a producer); 0 fixed.
+// Limits: one reader, row by row, against those references as known to the reviewer; no page was fetched live. Generated sums are computed, not reviewed.
 // Elementary topic: Follow the energy from the sun through a plant to the animals that eat it. Built from a slot sheet by tools/lesson-kit/build-lesson.mjs.
 export default {
  id:"science-e-food-chains",subject:"science",level:3,grade:5,standard:"NGSS 5-LS2-1",

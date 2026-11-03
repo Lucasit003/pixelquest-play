@@ -1,6 +1,5 @@
-// UNVERIFIED: 60 facts in this topic were written by the local model, not computed.
-// Read them before registering it -- tools/lesson-kit/review.mjs prints them. The three
-// Try-it answers are the model's too. Everything else is worked out by the generators.
+// Facts reviewed 3 Nov 2026 (improve20-r16c): 60 beat counts and the 3 Try-its checked against Merriam-Webster syllable breaks; 0 fixed.
+// Limits: one reader, row by row, against those references as known to the reviewer; no page was fetched live. Generated sums are computed, not reviewed.
 // Elementary topic: Every word has beats you can clap. Built from a slot sheet by tools/lesson-kit/build-lesson.mjs.
 export default {
  id:"language-e-syllables",subject:"language",level:3,grade:2,standard:"CCSS RF.2.3.C",

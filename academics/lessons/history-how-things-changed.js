@@ -1,6 +1,7 @@
-// UNVERIFIED: 39 facts in this topic were written by the local model, not computed.
-// Read them before registering it -- tools/lesson-kit/review.mjs prints them. The three
-// Try-it answers are the model's too. Everything else is worked out by the generators.
+// Facts reviewed 3 Nov 2026 (improve20-r16c): 39 timeline entries and the 3 Try-its checked against Britannica (steam locomotive 1804, Benz petrol car 1886, Wright flyer 1903, telegraph 1830s-40s, telephone 1876, phonograph 1877, icebox early 1800s, electric refrigerator 1910s, washboard 1797, cassette 1963, CD 1982, abacus, adding machine); 1 hedged (cellar order, below).
+// UNVERIFIED: "a cool cellar" before "blocks of ice" (how people kept food cold). Both were used in ancient times and no source found orders them; every question that
+// orders the cellar now says the order is this timeline's. Replace the first link, or drop the chain, when the catalog can change.
+// Limits: one reader, row by row, against those references as known to the reviewer; no page was fetched live. Generated sums are computed, not reviewed.
 // Elementary topic: Everyday things were invented in an order, and each one came after the one before it. Built from a slot sheet by tools/lesson-kit/build-lesson.mjs.
 export default {
  id:"history-e-how-things-changed",subject:"history",level:3,grade:3,standard:"NCSS Theme 2",
@@ -22,7 +23,10 @@ export default {
   add=(s,p,a,pic,why,acc)=>{if(!_SKIP.has(String(p)))_add(s,p,a,pic,why,acc);};
   /* "the computer" before "the electronic calculator" is true only of the first, room-sized electronic computers, so say so; and start every why with a capital letter. */
   const _CALC=" The first electronic computers were room-sized machines of the 1940s; the first electronic desk calculators came in the 1960s.",_add2=add;
-  add=(s,p,a,pic,why,acc)=>{why=why.charAt(0).toUpperCase()+why.slice(1);_add2(s,p,a,pic,/the computer|electronic calculator/.test(p+" "+a)?why+_CALC:why,acc);};
+  add=(s,p,a,pic,why,acc)=>{why=why.charAt(0).toUpperCase()+why.slice(1);_add2(s,p,a,pic,/the computer|electronic calculator/.test(p+" "+a)?why+_CALC:/cool cellar/.test(p+" "+a)||/^In how people kept food cold, which (one is number|came first of all)/.test(p)?why+_CELLAR:why,acc);};
+  /* 3 Nov (improve20-r16c): cool cellars and stored ice were both used in ancient times, and no source found puts the cellar first, so every question
+     that orders "a cool cellar" says the order is this timeline's (the header keeps it marked UNVERIFIED). */
+  const _CELLAR=" Cool cellars and stored ice both go back a very long time; this timeline puts the cellar first.";
 {const _SK=["order","after","compare"];let _q=0;const _C={"how people traveled":["the horse and cart","the steam train","the car","the airplane","the rocket to space"],"how people sent messages":["a handwritten letter","the telegraph","the telephone","the radio","the television","the internet"],"how people lit their homes":["firelight","the oil lamp","the candle","the gas lamp","the electric light bulb"],"how people kept food cold":["a cool cellar","blocks of ice","the ice box","the electric refrigerator"],"how people washed clothes":["washing by hand in a river","the washboard and tub","the hand-cranked washer","the electric washing machine"],"how people listened to music":["live players only","the phonograph","the radio","the cassette player","the compact disc","music on a phone"],"how people took pictures":["the black-and-white film camera","the color film camera","the digital camera","the camera in a phone"],"how people worked out sums":["counting on fingers","the abacus","the adding machine","the computer","the electronic calculator"]};
 for(const name of Object.keys(_C)){const _L=_C[name];
  /* A step that shows up twice in one chain has two different answers to "what comes

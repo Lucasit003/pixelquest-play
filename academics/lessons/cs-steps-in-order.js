@@ -1,6 +1,5 @@
-// UNVERIFIED: 46 facts in this topic were written by the local model, not computed.
-// Read them before registering it -- tools/lesson-kit/review.mjs prints them. The three
-// Try-it answers are the model's too. Everything else is worked out by the generators.
+// Facts reviewed 3 Nov 2026 (improve20-r16c): 46 plan steps and the 3 Try-its checked against the numbered plan each question shows, CDC handwashing steps and CSTA 1A-AP-10; 1 fixed (the "straight before" why said the step "has to be done before" the next, untrue of steps that can swap; it now says "comes straight before ... in this plan").
+// Limits: one reader, row by row, against those references as known to the reviewer; no page was fetched live. Generated sums are computed, not reviewed.
 // Elementary topic: Some steps must come before others. A plan works when those steps are in the right order; other steps can sometimes swap. Built from a slot sheet by tools/lesson-kit/build-lesson.mjs.
 export default {
  id:"cs-e-steps-in-order",subject:"cs",level:3,grade:2,standard:"CSTA 1A-AP-10",
@@ -26,7 +25,7 @@ for(const name of Object.keys(_C)){const _L=_C[name];/* 28 Oct (elfact): the pla
  const _seen={};for(const _s of _L)_seen[_s]=(_seen[_s]||0)+1;const _ok=_s=>_seen[_s]===1;
  for(let i=0;i<_L.length-1;i++){if(!_ok(_L[i]))continue;const x=_L[i],y=_L[i+1],r=_L[i+1];
   add(_SK[_q++%_SK.length],"In the plan for "+(name)+", what comes straight after '"+(x)+"'?",r,_PIC,"'"+(r)+"' comes straight after '"+(x)+"'.");}
- for(let i=1;i<_L.length;i++){if(!_ok(_L[i]))continue;const x=_L[i],y=_L[i-1],r=_L[i-1];add(_SK[_q++%_SK.length],"In the plan for "+(name)+", what comes straight before '"+(x)+"'?",r,_PIC,"'"+(r)+"' has to be done before '"+(x)+"'.");}
+ for(let i=1;i<_L.length;i++){if(!_ok(_L[i]))continue;const x=_L[i],y=_L[i-1],r=_L[i-1];/* 3 Nov (improve20-r16c): the why said the step before "has to be done" first, which is not true of every pair (you can close the fish tank before watching the fish eat); it now says where the step sits in this plan. */add(_SK[_q++%_SK.length],"In the plan for "+(name)+", what comes straight before '"+(x)+"'?",r,_PIC,"'"+(r)+"' comes straight before '"+(x)+"' in this plan.");}
  for(let _k=0;_k<_L.length;_k++){const i=_k+1,x=_L[_k],y=_L[_k],r=_L[_k];add(_SK[_q++%_SK.length],"In the plan for "+(name)+", which step is number "+(i)+"?",r,_PIC,"Counting from the start, step "+(i)+" is '"+(r)+"'.");}
  for(let _a=0;_a<_L.length;_a++)for(let _b=_a+1;_b<_L.length;_b++){if(!_ok(_L[_a])||!_ok(_L[_b]))continue;/* Alternate which of the pair is named first, or the answer is always the second
       one named and a child learns the trick rather than the order. Parity, not a

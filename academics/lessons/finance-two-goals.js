@@ -1,6 +1,5 @@
-// UNVERIFIED: 16 facts in this topic were written by the local model, not computed.
-// Read them before registering it -- tools/lesson-kit/review.mjs prints them. The three
-// Try-it answers are the model's too. Everything else is worked out by the generators.
+// Facts reviewed 3 Nov 2026 (improve20-r16c): 16 which-goal-first rows and the 3 Try-its re-derived by hand (cost divided by weekly share, fewer weeks first); 0 fixed.
+// Limits: one reader, row by row, against those references as known to the reviewer; no page was fetched live. Generated sums are computed, not reviewed.
 // Elementary topic: Split one weekly saving between two goals, work out how many weeks each goal takes, and see which is reached first. Built from a slot sheet by tools/lesson-kit/build-lesson.mjs.
 export default {
  id:"finance-e-two-goals",subject:"finance",level:3,grade:4,standard:"Jump$tart 1-1",

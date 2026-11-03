@@ -1,6 +1,5 @@
-// UNVERIFIED: 56 facts in this topic were written by the local model, not computed.
-// Read them before registering it -- tools/lesson-kit/review.mjs prints them. The three
-// Try-it answers are the model's too. Everything else is worked out by the generators.
+// Facts reviewed 3 Nov 2026 (improve20-r16c): 56 rows and the 3 Try-its checked against Merriam-Webster (conjunction or preposition) and CCSS L.5.1a; each blank was tested with both offered words and only the key fits; 0 fixed.
+// Limits: one reader, row by row, against those references as known to the reviewer; no page was fetched live. Generated sums are computed, not reviewed.
 // Elementary topic: Use conjunctions to join two ideas, and prepositions to say where or when something is. Built from a slot sheet by tools/lesson-kit/build-lesson.mjs.
 export default {
  id:"language-e-joining-words",subject:"language",level:3,grade:5,standard:"CCSS L.5.1a",

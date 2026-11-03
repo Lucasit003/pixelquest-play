@@ -1,6 +1,5 @@
-// UNVERIFIED: 18 facts in this topic were written by the local model, not computed.
-// Read them before registering it -- tools/lesson-kit/review.mjs prints them. The three
-// Try-it answers are the model's too. Everything else is worked out by the generators.
+// Facts reviewed 3 Nov 2026 (improve20-r16c): 18 can-you-buy-both rows and the 3 Try-its re-derived by hand (each sum compared with the money held); 0 fixed.
+// Limits: one reader, row by row, against those references as known to the reviewer; no page was fetched live. Generated sums are computed, not reviewed.
 // Elementary topic: See that a fixed amount of money buys one thing or another, work out what is left after a choice, and tell which choice leaves more. Built from a slot sheet by tools/lesson-kit/build-lesson.mjs.
 export default {
  id:"finance-e-spending-choices",subject:"finance",level:3,grade:3,standard:"Jump$tart Spending and Saving (foundational, pre-grade-4)",

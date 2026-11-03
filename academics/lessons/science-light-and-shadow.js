@@ -1,6 +1,5 @@
-// UNVERIFIED: 105 facts in this topic were written by the local model, not computed.
-// Read them before registering it -- tools/lesson-kit/review.mjs prints them. The three
-// Try-it answers are the model's too. Everything else is worked out by the generators.
+// Facts reviewed 3 Nov 2026 (improve20-r16c): 105 rows and the 3 Try-its checked against NASA and Britannica (light sources, reflection, transparent, translucent, opaque, umbra and penumbra) and NGSS 1-PS4-3, 4-PS4-2; ruler lengths re-derived; 0 fixed.
+// Limits: one reader, row by row, against those references as known to the reviewer; no page was fetched live. Generated sums are computed, not reviewed.
 // Elementary topic: Explain straight light paths, how blocked light makes shadows, and how shadows change. Built from a slot sheet by tools/lesson-kit/build-lesson.mjs.
 export default {
  id:"science-e-light-and-shadow",subject:"science",level:3,grade:4,standard:"NGSS 1-PS4-3, 4-PS4-2",

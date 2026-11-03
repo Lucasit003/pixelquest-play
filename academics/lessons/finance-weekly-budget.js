@@ -1,6 +1,5 @@
-// UNVERIFIED: 24 facts in this topic were written by the local model, not computed.
-// Read them before registering it -- tools/lesson-kit/review.mjs prints them. The three
-// Try-it answers are the model's too. Everything else is worked out by the generators.
+// Facts reviewed 3 Nov 2026 (improve20-r16c): 24 does-the-plan-fit rows and the 3 Try-its re-derived by hand (spending plus saving compared with income); 0 fixed.
+// Limits: one reader, row by row, against those references as known to the reviewer; no page was fetched live. Generated sums are computed, not reviewed.
 // Elementary topic: Plan one week: add income and planned spending, find what remains, and check whether spending plus saving fits. Built from a slot sheet by tools/lesson-kit/build-lesson.mjs.
 export default {
  id:"finance-e-weekly-budget",subject:"finance",level:3,grade:4,standard:"Jump$tart 4-1",

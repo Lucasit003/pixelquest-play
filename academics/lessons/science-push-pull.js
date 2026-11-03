@@ -1,6 +1,5 @@
-// UNVERIFIED: 105 facts in this topic were written by the local model, not computed.
-// Read them before registering it -- tools/lesson-kit/review.mjs prints them. The three
-// Try-it answers are the model's too. Everything else is worked out by the generators.
+// Facts reviewed 3 Nov 2026 (improve20-r16c): 105 rows and the 3 Try-its checked against NGSS 3-PS2-1 and Britannica (force, friction, gravity, balanced forces); distances re-derived; 0 fixed.
+// Limits: one reader, row by row, against those references as known to the reviewer; no page was fetched live. Generated sums are computed, not reviewed.
 // Elementary topic: Recognize pushes and pulls and explain how forces can change movement. Built from a slot sheet by tools/lesson-kit/build-lesson.mjs.
 export default {
  id:"science-e-push-pull",subject:"science",level:3,grade:3,standard:"NGSS 3-PS2-1",

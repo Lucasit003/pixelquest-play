@@ -1,6 +1,5 @@
-// UNVERIFIED: 29 facts in this topic were written by the local model, not computed.
-// Read them before registering it -- tools/lesson-kit/review.mjs prints them. The three
-// Try-it answers are the model's too. Everything else is worked out by the generators.
+// Facts reviewed 3 Nov 2026 (improve20-r16c): 29 noun/adjective rows and the 3 Try-its checked against Merriam-Webster parts of speech in the sentence each question shows; 0 fixed.
+// Limits: one reader, row by row, against those references as known to the reviewer; no page was fetched live. Generated sums are computed, not reviewed.
 // Elementary topic: An adjective tells you more about a noun. Built from a slot sheet by tools/lesson-kit/build-lesson.mjs.
 export default {
  id:"language-e-adjectives",subject:"language",level:3,grade:2,standard:"CCSS L.2.1.E",

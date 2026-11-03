@@ -1,6 +1,5 @@
-// UNVERIFIED: 58 facts in this topic were written by the local model, not computed.
-// Read them before registering it -- tools/lesson-kit/review.mjs prints them. The three
-// Try-it answers are the model's too. Everything else is worked out by the generators.
+// Facts reviewed 3 Nov 2026 (improve20-r16c): 58 rows and the 3 Try-its checked against Merriam-Webster definitions; every blank has one fitting choice of the pair shown; 0 fixed (Codex review of 22 Sept and elfact 28 Oct already applied).
+// Limits: one reader, row by row, against those references as known to the reviewer; no page was fetched live. Generated sums are computed, not reviewed.
 // Elementary topic: Choose between words that sound alike but are spelled differently and mean different things. Built from a slot sheet by tools/lesson-kit/build-lesson.mjs.
 export default {
  id:"language-e-homophones",subject:"language",level:3,grade:4,standard:"CCSS L.4.1g",

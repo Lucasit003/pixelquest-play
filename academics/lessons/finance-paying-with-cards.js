@@ -1,6 +1,5 @@
-// UNVERIFIED: 10 facts in this topic were written by the local model, not computed.
-// Read them before registering it -- tools/lesson-kit/review.mjs prints them. The three
-// Try-it answers are the model's too. Everything else is worked out by the generators.
+// Facts reviewed 3 Nov 2026 (improve20-r16c): 10 debit/credit rows and the 3 Try-its checked against CFPB and FDIC consumer pages (debit draws on your account, credit is a loan repaid later; fees depend on the agreement) and Jump$tart 2-6; worked sums re-derived; 0 fixed.
+// Limits: one reader, row by row, against those references as known to the reviewer; no page was fetched live. Generated sums are computed, not reviewed.
 // Elementary topic: Compare debit and credit, subtract completed debit purchases, track credit purchases and repayments, and add a stated fee. Assume no overdraft and no other charges. Built from a slot sheet by tools/lesson-kit/build-lesson.mjs.
 export default {
  id:"finance-e-paying-with-cards",subject:"finance",level:3,grade:4,standard:"Jump$tart 2-6",

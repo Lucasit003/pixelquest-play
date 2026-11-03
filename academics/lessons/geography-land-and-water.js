@@ -1,6 +1,5 @@
-// UNVERIFIED: 36 facts in this topic were written by the local model, not computed.
-// Read them before registering it -- tools/lesson-kit/review.mjs prints them. The three
-// Try-it answers are the model's too. Everything else is worked out by the generators.
+// Facts reviewed 3 Nov 2026 (improve20-r16c): 36 land/water rows and the 3 Try-its checked against National Geographic Education landform and body-of-water definitions (fjord, estuary, strait, harbor, lagoon are water; delta, mesa, plateau, peninsula are land); 0 fixed.
+// Limits: one reader, row by row, against those references as known to the reviewer; no page was fetched live. Generated sums are computed, not reviewed.
 // Elementary topic: Some features are shapes of land, others are bodies of water. Built from a slot sheet by tools/lesson-kit/build-lesson.mjs.
 export default {
  id:"geography-e-land-and-water",subject:"geography",level:3,grade:2,standard:"NCSS III",

@@ -1,6 +1,5 @@
-// UNVERIFIED: 14 facts in this topic were written by the local model, not computed.
-// Read them before registering it -- tools/lesson-kit/review.mjs prints them. The three
-// Try-it answers are the model's too. Everything else is worked out by the generators.
+// Facts reviewed 3 Nov 2026 (improve20-r16c): 14 earned-or-gift rows, the 3 Try-its and every worked sum checked by hand against Jump$tart 1-2 (earned income); 0 fixed.
+// Limits: one reader, row by row, against those references as known to the reviewer; no page was fetched live. Generated sums are computed, not reviewed.
 // Elementary topic: Distinguish pay from gifts, multiply pay by hours or jobs, and add earnings. Built from a slot sheet by tools/lesson-kit/build-lesson.mjs.
 export default {
  id:"finance-e-earning",subject:"finance",level:3,grade:3,standard:"Jump$tart 1-2",

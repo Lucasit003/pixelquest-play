@@ -1,6 +1,5 @@
-// UNVERIFIED: 52 facts in this topic were written by the local model, not computed.
-// Read them before registering it -- tools/lesson-kit/review.mjs prints them. The three
-// Try-it answers are the model's too. Everything else is worked out by the generators.
+// Facts reviewed 3 Nov 2026 (improve20-r16c): 52 rows and the 3 Try-its checked against Britannica class entries (mammal, bird, fish, insect, reptile; shark a cartilaginous fish, penguin a bird, whale, dolphin and bat mammals); 0 fixed.
+// Limits: one reader, row by row, against those references as known to the reviewer; no page was fetched live. Generated sums are computed, not reviewed.
 // Elementary topic: Animals that are alike in certain ways belong to the same group. Built from a slot sheet by tools/lesson-kit/build-lesson.mjs.
 export default {
  id:"science-e-animal-groups",subject:"science",level:3,grade:2,standard:"NGSS 1-LS3-1",

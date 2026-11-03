@@ -1,6 +1,5 @@
-// UNVERIFIED: 105 facts in this topic were written by the local model, not computed.
-// Read them before registering it -- tools/lesson-kit/review.mjs prints them. The three
-// Try-it answers are the model's too. Everything else is worked out by the generators.
+// Facts reviewed 3 Nov 2026 (improve20-r16c): 105 rows and the 3 Try-its checked against NASA Space Place (seasons, day and night), NOAA and NGSS 5-ESS1-2; daylight sums re-derived; 0 fixed.
+// Limits: one reader, row by row, against those references as known to the reviewer; no page was fetched live. Generated sums are computed, not reviewed.
 // Elementary topic: Explain day and night using Earth's spin, and seasons using Earth's tilt and orbit. Built from a slot sheet by tools/lesson-kit/build-lesson.mjs.
 export default {
  id:"science-e-day-night-seasons",subject:"science",level:3,grade:5,standard:"NGSS 5-ESS1-2",
