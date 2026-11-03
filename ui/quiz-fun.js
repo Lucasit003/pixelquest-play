@@ -57,7 +57,7 @@ export const quizGuideHTML=()=>`<div class="qf-guide" aria-hidden="true"><span c
 export function quizCheer({right=0,answered=0,n=5,need=4}={}){
  if(right>=need)return right===need?`That is ${need} right: enough to pass the quiz!`:`${right} right. Another star for your quiz!`;
  const more=need-right;if(n-answered<more)return '';
- return `${right} right so far. ${more} more ${more===1?'passes':'pass'} the quiz.`;
+ /* improve20-r13a-nov2 #8: "3 more pass the quiz" read as missing a word */return `${right} right so far. ${more} more to pass the quiz.`;
 }
 
 /* The answer moment on the screen around the card: the star of question i lights with the pack burst (no burst with reduced

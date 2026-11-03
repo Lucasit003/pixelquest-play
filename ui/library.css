@@ -1158,3 +1158,5 @@ html.m-mode dialog[data-view=lesson] .lesson[data-young] .lesson-body.young-snug
  html.m-mode dialog[data-view=library] .library-content>.edu-next .edu-grade-line{display:none}
  html.m-mode dialog[data-view=library] .library-content>.edu-next .edu-next-actions>button.primary{min-width:200px}
 }
+/* improve20-r13a-nov2 #5 (audit10 #16): while a Try-it waits, "Try it later" is a quiet secondary; answering is the main action */
+dialog[data-view=lesson] .lesson-footer #lesson-next.try-later{opacity:.82;font-size:.92em}

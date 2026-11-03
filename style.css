@@ -4249,6 +4249,18 @@ html.m-mode dialog[data-view=lesson] .lesson-body.text-pic>.lesson-visual>.pic-t
 dialog#modal:is([data-view=placement],[data-view=lesson-quiz]) #quiz-feedback .feedback.feedback:has(>#lesson-pic)>.pic-text{grid-column:2;grid-row:1/span 9;width:min(340px,40vw);max-height:min(300px,42vh);margin:2px 0}
 @media(max-height:500px){dialog#modal:is([data-view=placement],[data-view=lesson-quiz]) #quiz-feedback .feedback.feedback:has(>#lesson-pic)>.pic-text{max-height:min(120px,30vh);width:min(300px,36vw)}#modal#modal#modal#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question.qf.qf>.question-reading>.pic-text.pic-text{width:clamp(240px,42vw,400px);max-width:none;height:0;min-height:max(100%,96px);max-height:none;align-self:stretch;margin:0;font-size:14px;padding:5px 8px;overflow:auto}}
 @media(max-height:500px){.pic-text.pic-text{font-size:14px;line-height:1.3;padding:5px 8px;margin:3px 0}.pic-text .pt-list{gap:3px}.pic-text .pt-list li,.pic-text p.pt-one{padding:2px 6px}.pic-text .pt-table th,.pic-text .pt-table td{padding:2px 5px}}
+/* improve20-r13a-nov2 #3 (audit10 #3): a won card with four or more buttons (Details, Return, Try Heroic, the learning lead; the finale's credits)
+   stays on one row but can no longer run past the frame: each button may shrink and wrap its own words, and the primary never shrinks, so it
+   stays the largest. The prologue's "Go to the Library" is padded to be the widest of its three */
+dialog[data-view=result] #modal-content .level-result>.modal-actions:has(>button:nth-of-type(4))>button{flex:0 1 auto;min-width:0;max-width:100%;white-space:normal}
+dialog[data-view=result] #modal-content .level-result>.modal-actions>button.primary,dialog[data-view=result] #modal-content .level-result>.modal-actions:has(>button:nth-of-type(4))>button.primary{flex-shrink:0;white-space:nowrap}
+dialog[data-view=result] #modal-content .level-result>.modal-actions>button#prologue-library{padding-left:36px;padding-right:36px}
+/* improve20-r13a-nov2 #6: "Make fights easier?" as a quiet full-width line at the top of the defeat card's button row (it wraps there at every
+   size); Try again keeps the primary */
+dialog[data-view=result] #modal-content .level-result>.modal-actions>.defeat-easier{order:-2;flex:1 0 100%;display:flex;align-items:center;justify-content:center;gap:10px;margin:0 0 2px;padding:0;text-align:left}
+dialog[data-view=result] .defeat-easier p{margin:0;font-size:16px;line-height:1.1;color:#d8d2c0;max-width:560px}dialog[data-view=result] .defeat-easier p b{color:#ffd96b}
+dialog[data-view=result] #modal-content .defeat-easier button{flex:0 0 auto;padding:6px 14px;min-height:0}
+/* the pixel font is drawn crisp at 16 px only (13 px clipped its letters) */
 /* tablets-nov2 (round 9 item 12): the tablet sweep (1024x768, 1180x820, 1280x800, 1366x1024, 1180x740 touch). A tablet is a touch screen at
    least 600 css px on its short side (ui/mobile.js tabletSize); phones in landscape are 430 px tall at most, so (min-height:600px) never
    reaches them, and every rule here sits under html.m-mode, so desktops are untouched. */

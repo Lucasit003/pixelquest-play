@@ -29,7 +29,7 @@ export function dummyHealth(g){const max=Math.max(1,g?.needed||1),left=Math.max(
 export function dummyBarHTML(h,extra=false){
  if(extra)return `<span class="pd-bar extra" role="img" aria-label="Extra practice: the dummy is fresh"><i style="width:100%"></i></span><span class="pd-label">Extra practice</span>`;
  const pct=Math.round(h.left/h.max*100);
- return `<span class="pd-bar${h.left?'':' empty'}" role="img" aria-label="Training dummy: ${h.left} of ${h.max} hits left"><i style="width:${pct}%"></i></span><span class="pd-label">${h.left?`Dummy ${h.left}/${h.max}`:'Dummy broken!'}</span>`;
+ return `<span class="pd-bar${h.left?'':' empty'}" role="img" aria-label="Training dummy: ${h.left} of ${h.max} hits left"><i style="width:${pct}%"></i></span><span class="pd-label">${/* improve20-r13a-nov2 #8: "Dummy 5/10" counted down beside "Practice 5/10" counting up; the dummy now says what it is, hits left */h.left?`${h.left} hit${h.left===1?'':'s'} left`:'Dummy broken!'}</span>`;
 }
 export function dummySceneHTML(h,{extra=false}={}){
  return `<div class="qf-guide pd-scene" data-practice-scene><canvas class="pd-canvas" width="${SCENE_W}" height="${SCENE_H}" role="img" aria-label="Your hero at a training dummy in the Library yard"></canvas><span class="pd-hud">${dummyBarHTML(h,extra)}</span></div>`;
