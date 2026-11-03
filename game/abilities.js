@@ -49,7 +49,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 0,
-      "lvl": 1
+      "lvl": 1,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "rallying-cry",
@@ -100,7 +103,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 15,
-      "lvl": 2
+      "lvl": 2,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "shield-bash",
@@ -151,7 +157,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 25,
-      "lvl": 3
+      "lvl": 3,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "sundering-blow",
@@ -202,7 +211,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 35,
-      "lvl": 4
+      "lvl": 4,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "ground-slam",
@@ -253,7 +265,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 45,
-      "lvl": 6
+      "lvl": 6,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "iron-bulwark",
@@ -304,7 +319,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 50,
-      "lvl": 8
+      "lvl": 8,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "berserker-rage",
@@ -355,7 +373,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 60,
-      "lvl": 10
+      "lvl": 10,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "earthshatter",
@@ -406,7 +427,10 @@ export const ABILITIES = {
       "finisher": true,
       "stop": 0.17,
       "legacyGate": 65,
-      "lvl": 12
+      "lvl": 12,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     }
   ],
   "mage": [
@@ -459,7 +483,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 0,
-      "lvl": 1
+      "lvl": 1,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "ember-dart",
@@ -510,7 +537,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 15,
-      "lvl": 2
+      "lvl": 2,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "frost-nova",
@@ -561,7 +591,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 30,
-      "lvl": 3
+      "lvl": 3,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "ice-lance",
@@ -612,7 +645,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 35,
-      "lvl": 4
+      "lvl": 4,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "chain-lightning",
@@ -663,7 +699,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 45,
-      "lvl": 6
+      "lvl": 6,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "static-field",
@@ -714,7 +753,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 50,
-      "lvl": 8
+      "lvl": 8,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "arcane-shield",
@@ -765,7 +807,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 55,
-      "lvl": 10
+      "lvl": 10,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "arcane-barrage",
@@ -816,7 +861,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 65,
-      "lvl": 12
+      "lvl": 12,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     }
   ],
   "rogue": [
@@ -827,7 +875,7 @@ export const ABILITIES = {
       "subject": "cs",
       "gate": 0,
       "kind": "melee",
-      "description": "melee \u00b7 26 dmg \u00b7 0 mp \u00b7 cd 2.5 \u00b7 range 24 \u00b7 kb 60",
+      "description": "melee \u00b7 26 dmg \u00b7 0 mp \u00b7 cd 2.5 \u00b7 range 24 \u00b7 kb 60 \u00b7 life-steal 10%",
       "vfx": "A short violet slash with a hard leading edge. The target gains a persistent **Exposed** marker \u2014 a small violet chevron above the head, pulsing once per second for its 5 s life. That marker is the class's entire read.",
       "note": " \u2014 starter \u00b7 applies Exposed",
       "element": "arcane",
@@ -869,7 +917,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 0,
-      "lvl": 1
+      "lvl": 1,
+      "lifeSteal": 0.1,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "throwing-knife",
@@ -920,7 +971,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 15,
-      "lvl": 2
+      "lvl": 2,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "poison-dagger",
@@ -971,7 +1025,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 25,
-      "lvl": 3
+      "lvl": 3,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "venom-cloud",
@@ -1022,7 +1079,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 35,
-      "lvl": 4
+      "lvl": 4,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "smoke-bomb",
@@ -1073,7 +1133,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 45,
-      "lvl": 6
+      "lvl": 6,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "vanish",
@@ -1124,7 +1187,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 50,
-      "lvl": 8
+      "lvl": 8,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "shadow-rush",
@@ -1175,7 +1241,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 60,
-      "lvl": 10
+      "lvl": 10,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "assassinate",
@@ -1226,7 +1295,10 @@ export const ABILITIES = {
       "finisher": true,
       "stop": 0.17,
       "legacyGate": 65,
-      "lvl": 12
+      "lvl": 12,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     }
   ],
   "ranger": [
@@ -1237,7 +1309,7 @@ export const ABILITIES = {
       "subject": "math",
       "gate": 0,
       "kind": "projectile",
-      "description": "projectile \u00b7 20 dmg \u00b7 0 mp \u00b7 cd 2 \u00b7 speed 240 \u00b7 range 260",
+      "description": "projectile \u00b7 20 dmg \u00b7 0 mp \u00b7 cd 2 \u00b7 speed 240 \u00b7 range 260 \u00b7 on-hit barrier 8 / 4 s",
       "vfx": "The bowstring draws visibly across the wind-up, using a real string mechanism anchored to the bow sprite. Arrow leaves a 1 px straight tracer that fades in 0.12 s. Against a Marked target the tracer turns green and the impact adds a burst.",
       "note": " \u2014 starter \u00b7 benefits from Mark",
       "element": "arcane",
@@ -1279,7 +1351,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 0,
-      "lvl": 1
+      "lvl": 1,
+      "lifeSteal": 0,
+      "hitShield": 8.0,
+      "hitShieldTime": 4.0
     },
     {
       "id": "quick-shot",
@@ -1330,7 +1405,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 15,
-      "lvl": 2
+      "lvl": 2,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "volley",
@@ -1381,7 +1459,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 30,
-      "lvl": 3
+      "lvl": 3,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "bear-trap",
@@ -1432,7 +1513,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 35,
-      "lvl": 4
+      "lvl": 4,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "snare-trap",
@@ -1483,7 +1567,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 45,
-      "lvl": 6
+      "lvl": 6,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "thornvine",
@@ -1534,7 +1621,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 50,
-      "lvl": 8
+      "lvl": 8,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "hunter-s-mark",
@@ -1585,7 +1675,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 60,
-      "lvl": 10
+      "lvl": 10,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "rain-of-arrows",
@@ -1636,7 +1729,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 65,
-      "lvl": 12
+      "lvl": 12,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     }
   ],
   "paladin": [
@@ -1689,7 +1785,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 0,
-      "lvl": 1
+      "lvl": 1,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "lay-on-hands",
@@ -1740,7 +1839,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 15,
-      "lvl": 2
+      "lvl": 2,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "divine-shield",
@@ -1791,7 +1893,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 25,
-      "lvl": 4
+      "lvl": 4,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "hammer-of-light",
@@ -1842,7 +1947,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 35,
-      "lvl": 3
+      "lvl": 3,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "consecration",
@@ -1893,7 +2001,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 45,
-      "lvl": 6
+      "lvl": 6,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "sanctuary",
@@ -1944,7 +2055,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 50,
-      "lvl": 8
+      "lvl": 8,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "judgement",
@@ -1995,7 +2109,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 60,
-      "lvl": 10
+      "lvl": 10,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "wrath-of-dawn",
@@ -2046,7 +2163,10 @@ export const ABILITIES = {
       "finisher": true,
       "stop": 0.17,
       "legacyGate": 65,
-      "lvl": 12
+      "lvl": 12,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     }
   ],
   "berserker": [
@@ -2099,7 +2219,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 0,
-      "lvl": 1
+      "lvl": 1,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "cleave",
@@ -2150,7 +2273,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 15,
-      "lvl": 2
+      "lvl": 2,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "blood-frenzy",
@@ -2201,7 +2327,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 25,
-      "lvl": 3
+      "lvl": 3,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "bloodletting",
@@ -2252,7 +2381,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 35,
-      "lvl": 4
+      "lvl": 4,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "whirling-axes",
@@ -2303,7 +2435,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 45,
-      "lvl": 6
+      "lvl": 6,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "rampage",
@@ -2354,7 +2489,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 50,
-      "lvl": 8
+      "lvl": 8,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "execute",
@@ -2405,7 +2543,10 @@ export const ABILITIES = {
       "finisher": true,
       "stop": 0.17,
       "legacyGate": 60,
-      "lvl": 10
+      "lvl": 10,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "undying-wrath",
@@ -2456,7 +2597,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 65,
-      "lvl": 12
+      "lvl": 12,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     }
   ],
   "summoner": [
@@ -2509,7 +2653,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 0,
-      "lvl": 1
+      "lvl": 1,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "spirit-wisp",
@@ -2560,7 +2707,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 15,
-      "lvl": 2
+      "lvl": 2,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "wolf-totem",
@@ -2611,7 +2761,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 30,
-      "lvl": 3
+      "lvl": 3,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "stone-totem",
@@ -2662,7 +2815,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 35,
-      "lvl": 4
+      "lvl": 4,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "chain-spirits",
@@ -2713,7 +2869,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 45,
-      "lvl": 6
+      "lvl": 6,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "thorn-grove",
@@ -2764,7 +2923,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 50,
-      "lvl": 8
+      "lvl": 8,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "wild-growth",
@@ -2815,7 +2977,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 60,
-      "lvl": 10
+      "lvl": 10,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     },
     {
       "id": "ancestral-chorus",
@@ -2866,7 +3031,10 @@ export const ABILITIES = {
       "finisher": false,
       "stop": 0,
       "legacyGate": 65,
-      "lvl": 12
+      "lvl": 12,
+      "lifeSteal": 0,
+      "hitShield": 0,
+      "hitShieldTime": 0
     }
   ]
 };

@@ -17,6 +17,7 @@ export function abilityNumbers(save,a){
  /* kidfix-b-oct31: with the ability's rune rank, as combat gives it */const hp=stats(save,c).hp,out={},rm=runeMul(runeRank(save,a.id));
  if(a.shield>0)out.shield=Math.ceil(abilityGuard(a.shield,hp,c.hp)*rm);
  if(a.heal>0)out.heal=Math.round(abilityGuard(a.heal,hp,c.hp)*rm);
+ /* classsustain-nov2: Precision Shot's on-hit shield, the same formula combat uses (scenes/combat.js hit, rounded up) */if(a.hitShield>0)out.hitShield=Math.ceil(abilityGuard(a.hitShield,hp,c.hp)*rm);
  /* improve20-r7c-nov1 #2 (audit6 #12): a card's claim is true today. marks: the hero owns an ability that marks a foe (only Hunter's Mark
     does), so "+50% on a marked foe" shows from then on; flow: the hero owns an ability that fills a Flow-style bar, so a spender
     says it uses the bar (before that the bar stays empty and a spender is just its shot). */
@@ -46,6 +47,9 @@ function lineParts(a,nums){
   default:head='A special ability';
  }
  if(st)rest.push(st);
+ /* classsustain-nov2: the starter sustain effects (game/abilities.js lifeSteal, hitShield) */
+ if(a.lifeSteal>0)rest.push(`heals you for ${Math.round(a.lifeSteal*100)}% of the damage it deals`);
+ if(a.hitShield>0)rest.push(`a hit gives you a shield of ${nums?.hitShield??Math.ceil(a.hitShield)} for ${sec(a.hitShieldTime||4)}`);
  if(a.id==='smoke-bomb')rest.push('you can’t be hurt for 1.2 s','speed ×1.5 for 2.5 s');
  if(a.fromTotems)rest.push('raises an ancestor at each totem');
  if(a.appliesExposed)rest.push('leaves the foe Exposed');
