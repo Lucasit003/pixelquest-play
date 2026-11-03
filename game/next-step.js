@@ -136,7 +136,7 @@ export function powerGoal(save){const g=waitingGate(save);if(!g?.a)return null;c
    next topic when every ability is awake; the post-game adventure stays as `side`, a second line. Ids: 'post-power', 'post-topic'. */
 export function postPower(save){const p=nextPowerP(save);
  if(p){if(p.topics<=0&&p.reachable)return null;const st=powerStep(save,p.a),how=st?.topic&&STEP_WORDS[st.stage]?STEP_WORDS[st.stage](st.topic,st):p.place?`find your level in ${p.subject}`:`study ${p.subject}`;
-  return {id:'post-power',text:`Next power: ${powerLine(p).replace(/ \(find your level in [^)]*\)$/,'')}. ${how[0].toUpperCase()+how.slice(1)} at the Library.`,phone:`Wake ${p.a.name} at the Library.`,target:{kind:'library',subject:st?.subject||p.a.subject},power:p.a.id};}
+  const line=powerLine(p).replace(/ \(find your level in [^)]*\)$/,'');return {id:'post-power',line,text:`Next power: ${line}. ${how[0].toUpperCase()+how.slice(1)} at the Library.`,phone:`Wake ${p.a.name} at the Library.`,target:{kind:'library',subject:st?.subject||p.a.subject},power:p.a.id};}
  if((ABILITIES[save?.hero]||[]).some(a=>a.gate>0&&!unlocked(save,a)))return null;const t=openInMode(save).sort((a,b)=>!!save.lessons?.[b.id]?.done-!!save.lessons?.[a.id]?.done)[0];
  return t?{id:'post-topic',text:`Every power is awake. Master your next topic, “${t.title}”, at the Library.`,phone:'Master your next topic at the Library.',target:{kind:'library',subject:t.subject}}:null;}
 /* improve20-r10a-nov2 #5: a mastery that opened no ability sets goalTurn 'go' (main.js): the adventure still comes next, without "Try your new skills" */

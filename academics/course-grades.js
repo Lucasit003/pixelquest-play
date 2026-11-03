@@ -10,8 +10,8 @@
    (Math 1/Math 2, Intro to Programming, English 9/10, World Geography, Personal Finance; history has no non-AP course, so AP World History,
    whose recommended prerequisites are None); Grade 11-12 starts the subject's AP course. "Not sure" (0) is treated as Grade 9. A save
    that never picked a High School grade (null) keeps the catalog order it always had. Pure data and pure functions. */
-import {TOPICS,rungOf} from './lessons.js';
-import {courseOf,COURSES,HIGH_COURSE_LEVEL} from './courses.js';
+import {TOPICS,rungOf,mastered,topicOpen} from './lessons.js';
+import {courseOf,COURSES,HIGH_COURSE_LEVEL,course,builtUnits} from './courses.js';
 
 const AP='https://apstudents.collegeboard.org/courses/';
 export const COURSE_GRADES=Object.freeze({
@@ -71,3 +71,10 @@ export function orderHigh(save,ts){const g=hsGrade(save);if(g==null)return ts;
  return [...low,...high.sort((a,b)=>a.r-b.r||a.i-b.i).map(x=>x.t)];}
 /* the first topic of the grade's first course in a subject (built units only), or null */
 export function firstHighTopic(save,subject){const g=hsGrade(save);if(g==null)return null;return orderHigh(save,TOPICS.filter(t=>t.subject===subject&&rungOf(t)===9))[0]||null;}
+/* improve20-r14a-nov3 #3 (audit11 b3): the Coding station tagged "Intro to Programming (Python) · Grade 10: start here", and "Start a High School
+   lesson now" opened AP CSP's "Creative Development" (the first Grade 9 topic in catalog order). The lesson the button starts is now the first
+   open, unmastered built unit of the tagged course (firstCourse, in the course's own unit order); else the first such topic in suggested course
+   order (orderHigh); null when the save has no High School grade (the caller keeps its old pick). Read-only. */
+export function startTopic(save,subject){const g=hsGrade(save);if(g==null)return null;const ids=new Set(TOPICS.map(t=>t.id)),ok=t=>t&&!mastered(save,t)&&topicOpen(save,t);
+ const c=course(firstCourse(subject,g)),u=c?builtUnits(c,ids).map(u=>TOPICS.find(t=>t.id===u.topic)).find(ok):null;
+ return u||orderHigh(save,TOPICS.filter(t=>t.subject===subject&&rungOf(t)===9)).find(ok)||null;}

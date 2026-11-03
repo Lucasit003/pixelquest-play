@@ -9,6 +9,7 @@
 
    localStorage: pixelquest.profiles = {active, list:[{id, name}]}, pixelquest.profile.<id> = save JSON. */
 import {KEY,V8_KEY,V7_KEY,fresh} from '../core/save.js';
+import {CLASSES} from '../game/data.js';
 /* the active save may still sit under an older key until the first v9 write */
 const activeRaw=L=>L.getItem(KEY)??L.getItem(V8_KEY)??L.getItem(V7_KEY);
 const INDEX='pixelquest.profiles',SLOT=id=>'pixelquest.profile.'+id,PENDING='pixelquest.pendingProfile';
@@ -23,6 +24,14 @@ export function readProfiles(){
  return idx;
 }
 const writeProfiles=idx=>{try{ls()?.setItem(INDEX,JSON.stringify(idx));}catch{}};
+/* improve20-r14a-nov3 #7 (audit11 b15): the device's first learner kept the default "Player 1" beside "Leo". A profile still on its default
+   name ("Player N", never typed by anyone: `named` marks a typed name) takes its save's hero name once one is typed (not the bare class
+   name). nameFromHero runs when a game begins; fixDefaultNames runs once at import for profiles made before this. */
+const DEFAULT_NAME=/^Player \d+$/;
+const heroNameOf=v=>{let sv=v;try{if(typeof v==='string')sv=JSON.parse(v);}catch{return '';}const n=String(sv?.heroNames?.[sv?.hero]||'').trim().slice(0,20);return n&&!Object.values(CLASSES).some(c=>c.name===n)?n:'';};
+const isDefault=p=>!!p&&!p.named&&DEFAULT_NAME.test(String(p.name||''));
+export function nameFromHero(save,id){const idx=readProfiles(),p=idx.list.find(x=>x.id===(id||idx.active));if(!isDefault(p))return false;const n=heroNameOf(save);if(!n)return false;p.name=n;writeProfiles(idx);return true;}
+export function fixDefaultNames(){const L=ls();if(!L)return 0;const idx=readProfiles();let n=0;for(const p of idx.list){if(!isDefault(p))continue;let raw=null;try{raw=p.id===idx.active?activeRaw(L):L.getItem(SLOT(p.id));}catch{}const h=raw&&heroNameOf(raw);if(h){p.name=h;n++;}}if(n)writeProfiles(idx);return n;}
 export function activeProfile(){const idx=readProfiles();return idx.list.find(p=>p.id===idx.active)||idx.list[0];}
 /* What the picker shows for a profile: hero and level from its stored save, if any. */
 export function profileSummary(id){
@@ -30,6 +39,7 @@ export function profileSummary(id){
  try{raw=L&&(id===idx.active?activeRaw(L):L.getItem(SLOT(id)));}catch{}
  try{const s=raw?JSON.parse(raw):null;return s?{hero:s.hero,level:s.level||1,started:!!s.started}:{hero:null,level:1,started:false};}catch{return {hero:null,level:1,started:false};}
 }
+try{fixDefaultNames();}catch{}
 /* Runs at import time, before main.js loads the save. */
 (function applyPending(){
  const L=ls(),S=ss();if(!L||!S)return;
@@ -51,9 +61,9 @@ export function switchProfile(id,{persist}={}){
 export function addProfile(name,id){
  const idx=readProfiles(),clean=String(name||'').trim().slice(0,20)||`Player ${idx.list.length+1}`;
  if(id&&idx.list.some(p=>p.id===id))return idx.list.find(p=>p.id===id);
- const p={id:id&&/^[\w-]{1,64}$/.test(id)?id:uid(),name:clean};idx.list.push(p);writeProfiles(idx);return p;
+ const p={id:id&&/^[\w-]{1,64}$/.test(id)?id:uid(),name:clean,...(String(name||'').trim()?{named:true}:{})};idx.list.push(p);writeProfiles(idx);return p;
 }
-export function renameProfile(id,name){const idx=readProfiles(),p=idx.list.find(p=>p.id===id);if(!p)return false;p.name=String(name||'').trim().slice(0,20)||p.name;writeProfiles(idx);return true;}
+export function renameProfile(id,name){const idx=readProfiles(),p=idx.list.find(p=>p.id===id);if(!p)return false;p.name=String(name||'').trim().slice(0,20)||p.name;if(String(name||'').trim())p.named=true;writeProfiles(idx);return true;}
 /* Never deletes the active learner (switch first), and never the last one. */
 export function deleteProfile(id){
  const idx=readProfiles();if(id===idx.active||idx.list.length<2)return false;

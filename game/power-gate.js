@@ -29,7 +29,7 @@ export function waitingGate(save){const g=gateAt(save);if(!g)return null;const p
 /* everything a locked pad's card needs: {id, name, a, text, wants, step} or null */
 export function gateInfo(save,id){const g0=powerShort(save,id);if(!g0?.a)return null;const p=nextPower(save),g={...g0,rung:g0.a,a:p?.a||g0.a,have:awakeCount(save)};const w=powerWants(save,g.a);return {id,name:g.level.name,a:g.a,text:powerGateText(g,w),wants:w,step:powerStep(save,g.a)};}
 /* the subject the Library leads with: the waiting gate's power first, else the fastest next ability (study-unlock.js nextLesson) */
-export function leadSubject(save){const g=waitingGate(save);if(g?.a){const st=powerStep(save,g.a);if(st?.topic)return st.subject;}return nextLesson(save)?.topic?.subject||null;}
+export function leadSubject(save){const g=waitingGate(save);if(g?.a){const st=powerStep(save,g.a);if(st?.topic)return st.subject;/* improve20-r14a-nov3 #2: a road whose first lessons a placement opens leads with that subject, not the nearest open lesson elsewhere */const p=nextPower(save);if(p?.place&&p.a.id===g.a.id)return p.place;}return nextLesson(save)?.topic?.subject||null;}
 /* the next power one mastery step away: a started topic of the next locked ability's road whose quiz, practice or test is next, and
    whose mastery would wake that ability (its road is one topic long). -> {a, step} or null */
 export function nearPower(save){const a=nextPower(save)?.a;if(!a)return null;

@@ -255,11 +255,18 @@ const bars=(ctx,{rows,solve},p)=>{const y0=(PIC_H-rows.length*40-(rows.length-1)
 const describeBars=q=>`${q.rows.length} bars the same size: `+q.rows.map(r=>`one cut into ${r.parts} equal parts with ${r.shade==null?'how many':r.shade} shaded`).join(', ');
 /* Pair: two word cards for synonyms and antonyms. rel 'same' puts an equals sign between them and 'opposite' a
    double arrow, each with its name written under it (never colour alone). A null b is a dashed '?' card that solve fills. */
-const pair=(ctx,{a,b,rel,fill,solve},p)=>{const card=(cx,text,dashed)=>{ctx.fillStyle=PAPER;ctx.fillRect(cx-100,70,200,80);ctx.setLineDash?.(dashed?[8,6]:[]);ctx.strokeStyle=INK;ctx.lineWidth=3;ctx.strokeRect(cx-100,70,200,80);ctx.setLineDash?.([]);
-  ctx.font='bold 32px sans-serif';if(ctx.measureText(String(text)).width>188)ctx.font='bold 15px sans-serif';/* 17 Oct: a long card word drops to the small size so it stays on its card */ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle=INK;
-  /* picframe-nov2 #2 (R11F's history-3 pair): a phrase still wider than the card at the small size ran out over the "?" card; it breaks over up to four lines inside its own card, same words in the same order */
-  const ws=String(text).split(' '),ln=[];if(ctx.measureText(String(text)).width>188&&ws.length>1){let cur='';for(const w of ws){const nx=cur?cur+' '+w:w;if(cur&&ctx.measureText(nx).width>188){ln.push(cur);cur=w;}else cur=nx;}ln.push(cur);}
-  if(ln.length>1){const lh=ln.length>3?17:19;ln.forEach((l,i)=>ctx.fillText(l,cx,110+(i-(ln.length-1)/2)*lh));}else ctx.fillText(text,cx,110);};
+/* improve20-r14a-nov3 #7 (audit11 b16, shot 08): "Saved $56" drew at the large size and "Still need $25" dropped to the small one on the card
+   beside it. Both cards now share one size (pairSize): the large one whenever every label fits its card in at most two lines at that size
+   (a long label wraps: "Still need / $25"), else the small one for both. The pixel font has just these two sizes (fontOf: 16 px and up
+   draws at 32). */
+export const PAIR_BIG=32,PAIR_SMALL=15;
+const wrapLines=(ctx,text)=>{const str=String(text??''),ws=str.split(' ');if(ctx.measureText(str).width<=188)return [str];if(ws.some(w=>ctx.measureText(w).width>188))return null;const ln=[];let cur='';for(const w of ws){const nx=cur?cur+' '+w:w;if(cur&&ctx.measureText(nx).width>188){ln.push(cur);cur=w;}else cur=nx;}ln.push(cur);return ln;};
+export const pairSize=(ctx,labels)=>{ctx.font=`bold ${PAIR_BIG}px sans-serif`;return labels.every(t=>{if(t==null)return true;const l=wrapLines(ctx,t);return !!l&&l.length<=2;})?PAIR_BIG:PAIR_SMALL;};
+const pair=(ctx,{a,b,rel,fill,solve},p)=>{const z=pairSize(ctx,[a,b==null?(solve?fill:'?'):b]);const card=(cx,text,dashed)=>{ctx.fillStyle=PAPER;ctx.fillRect(cx-100,70,200,80);ctx.setLineDash?.(dashed?[8,6]:[]);ctx.strokeStyle=INK;ctx.lineWidth=3;ctx.strokeRect(cx-100,70,200,80);ctx.setLineDash?.([]);
+  ctx.font=`bold ${z}px sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle=INK;
+  /* picframe-nov2 #2 (R11F's history-3 pair): a phrase still wider than the card at the small size breaks over up to four lines inside its own card, same words in the same order; improve20-r14a-nov3: at the large size, two lines */
+  const ln=wrapLines(ctx,text)||[String(text)];
+  if(ln.length>1){const lh=z===PAIR_BIG?34:ln.length>3?17:19;ln.forEach((l,i)=>ctx.fillText(l,cx,110+(i-(ln.length-1)/2)*lh));}else ctx.fillText(text,cx,110);};
  card(160,a,false);const t=ease(clamp(p/0.6));ctx.globalAlpha=t;card(lerp(600,480,t),b==null?(solve&&fill?fill:'?'):b,b==null&&!(solve&&fill));ctx.globalAlpha=1;
  if(p>=0.6&&rel){const seg=(x0,y0,x1,y1)=>{ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x1,y1);ctx.stroke();};ctx.strokeStyle=INK;ctx.lineWidth=4;
   if(rel==='same'){seg(300,100,340,100);seg(300,120,340,120);}else{seg(290,110,350,110);seg(290,110,302,102);seg(290,110,302,118);seg(350,110,338,102);seg(350,110,338,118);}

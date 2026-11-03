@@ -4358,3 +4358,10 @@ dialog[data-view=result] #modal-content .level-result[data-outcome=lost]>.modal-
 .worldmap-info .wm-power-text{margin:0;font:700 16px/18px var(--ui);color:#fff1c8;text-wrap:pretty}
 .worldmap-info .wm-power-go{grid-column:1/-1;pointer-events:auto;min-height:40px;font:700 18px/20px var(--ui);cursor:pointer}
 .worldmap-info.wm-compact .wm-power{display:none}
+/* improve20-r14a-nov3 #6 (audit11 b20): one short line per hero; the longer lines wait behind "More" */
+.select-pane .hero-more{margin:2px 0 8px}
+.select-pane .hero-more>summary{display:inline-block;cursor:pointer;list-style:none;font-size:14px;line-height:1.2;color:#e7c77e;padding:4px 12px;border:1px solid rgba(231,199,126,.55);border-radius:4px}
+.select-pane .hero-more>summary::-webkit-details-marker{display:none}
+.select-pane .hero-more[open]>summary{margin-bottom:4px}
+.select-pane .hero-more .hero-more-kid{margin:2px 0;color:#d8e3ea}
+.title-screen[data-step=setup] .hero-more{display:none}
