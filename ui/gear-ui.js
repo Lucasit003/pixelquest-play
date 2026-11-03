@@ -1,5 +1,5 @@
 import {rarPips} from './rarity.js';
-import {affordableUpgrade,smithTabs,equipComparison,betterPickup,setChanges,realGain,combatChange,SMITH_HELP,gearAtCap,tradeText,GEAR_SMALL} from './gear-guidance.js';
+import {affordableUpgrade,featuredUpgrade,smithTabs,equipComparison,betterPickup,setChanges,realGain,combatChange,SMITH_HELP,gearAtCap,tradeText,GEAR_SMALL} from './gear-guidance.js';
 /* Gear screens (game/gear.js): the paper doll's gear slots, the compare panel, the set tracker, the next-upgrade hint and
    the Weaponsmith's five tabs (Buy, Craft, Stars, Finish, Salvage). HTML builders only; main.js shows them and wires the
    buttons. Every cost is shown in full before anything is pressed, and a disabled button says why. Gains and losses in a
@@ -48,10 +48,12 @@ export function matSource(s,m){if(m==='elite-shard')return 'stronger enemies and
 /* oct24-veil-econ: the hint names its slot's number when that number rises, else the overall change it was chosen for
    (a pair of boots at the Defence cap read "Defence 27 → 27") */
 /* improve20-r8a-nov1 #1: a pick that trades a little away says so, as its card does ("+13% damage, -2% speed") */
-const nextGainText=n=>{const tr=tradeText(n);if(tr)return tr;if(Math.round(n.after)>Math.round(n.before))return `${n.label} ${Math.round(n.before)} → ${Math.round(n.after)}`;const d=combatChange(n),[k,v]=Object.entries(d).sort((a,b)=>b[1]-a[1])[0];return `${{damage:'Overall damage',toughness:'Overall toughness',speed:'Speed'}[k]} +${Math.max(1,Math.round(v*100))}%`;};
+export const nextGainText=n=>{const tr=tradeText(n);if(tr)return tr;if(Math.round(n.after)>Math.round(n.before))return `${n.label} ${Math.round(n.before)} → ${Math.round(n.after)}`;const d=combatChange(n),[k,v]=Object.entries(d).sort((a,b)=>b[1]-a[1])[0];return `${{damage:'Overall damage',toughness:'Overall toughness',speed:'Speed'}[k]} +${Math.max(1,Math.round(v*100))}%`;};
 /* follow6-oct29 (exploit6 E): at 1280x720 the card's "Buy · 350" sat below the stock's visible edge, so a kid had to scroll to buy.
-   On the smith's Buy tab (buy:true) the line carries its own Buy button, the same data-gear-buy action as the card's. */
-export function nextUpgradeHTML(s,hero,{buy=false}={}){const n=affordableUpgrade(s,hero),craft=n?.kind==='craft';return n?`<p class="gear-next ready" data-next-item="${esc(n.id)}"${craft?' data-next-tab="craft"':''}><span class="tag">NEXT UPGRADE</span> ${gearIcon(n.id,24)} <strong>${craft?'Craft':'Buy'} ${esc(ITEM[n.id].name)} · ◆ ${n.cost}${craft?Object.entries(n.mats).map(([m,k])=>` + ${k} ${esc(MATS[m]?.name||m)}`).join(''):''}</strong> <small>${nextGainText(n)}</small>${buy&&!craft?`<button class="primary gear-next-buy" data-gear-buy="${esc(n.id)}">Buy now</button>`:''}</p>`:'';}
+   On the smith's Buy tab (buy:true) the line carries its own Buy button, the same data-gear-buy action as the card's.
+   improve20-r16b-nov3 #1 (audit12 a8): that button is "Buy and wear" (data-gear-buywear): one tap buys the piece and puts it on, since it is
+   featured only as a real upgrade (gear-guidance.js featuredUpgrade, +8% or more). The cards' own Buy keeps the post-buy Equip now / Not now prompt. */
+export function nextUpgradeHTML(s,hero,{buy=false}={}){const n=featuredUpgrade(s,hero),craft=n?.kind==='craft';return n?`<p class="gear-next ready" data-next-item="${esc(n.id)}"${craft?' data-next-tab="craft"':''}><span class="tag">NEXT UPGRADE</span> ${gearIcon(n.id,24)} <strong>${craft?'Craft':'Buy'} ${esc(ITEM[n.id].name)} · ◆ ${n.cost}${craft?Object.entries(n.mats).map(([m,k])=>` + ${k} ${esc(MATS[m]?.name||m)}`).join(''):''}</strong> <small>${nextGainText(n)}</small>${buy&&!craft?`<button class="primary gear-next-buy" data-gear-buywear="${esc(n.id)}">Buy and wear</button>`:''}</p>`:'';}
 export const matsHTML=s=>{const m=Object.entries(s.gear.mats).filter(([,n])=>n>0);return `<div class="gear-mats"><h4>Materials</h4><p class="subtle">Use materials, including Essence, to upgrade gear at the smith.</p>${m.length?m.map(([k,n])=>`<span class="gear-mat" title="${esc(MATS[k].name)}">${matIcon(k,24)}<b>${n}</b><small>${esc(MATS[k].name)}</small></span>`).join(''):'<p class="subtle">Bosses drop materials. Stronger enemies drop Essence for gear upgrades.</p>'}</div>`;};
 /* the bag for one slot: every owned item that fits this hero, worn ones marked */
 export function bagHTML(s,hero,slot,sel){const items=ITEMS.filter(it=>it.slot===slot&&s.gear.owned[it.id]&&fits(hero,it.id,slot)),worn=wornOf(s,hero),topics=masteredTopics(s);

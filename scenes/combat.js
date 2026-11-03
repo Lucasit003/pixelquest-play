@@ -75,6 +75,8 @@ export const FLOW_MP=1;
 export const SOFT_PUSH={speed:34,floor:8,depth:26,mid:.6};
 const bodyR=e=>{const m=e.sprite?spriteMeta(e.sprite):null;return Math.max(6,(m?.shadow?.[0]||(e.boss?26:e.elite?16:10))*Math.max(1,e.scale||1)*.8);};
 /* kidfix-a-oct31: a hero's ability reach is measured to a boss's or elite's DRAWN body, not its shadow. bodyR is 0.8x the shadow half-width (19 px for the Dungeon Master, whose idle frame is 56 px wide), so a Shield Bash whose blade visibly overlapped his cloak at 50 px said "Move closer to a target." The drawn half-width is meta.width/2, or 1.17x the shadow half-width when a sheet has no width (measured on 35 boss sheets) */
+/* improve20-r16b-nov3 #3: a boss's drawn half-width (reachR) plus a few pixels, for the arena clamp and the fight camera */
+const bossHalf=e=>reachR(e)+6;
 const reachR=e=>{const b=bodyR(e);if(!e.boss&&!e.elite)return b;const m=e.sprite?spriteMeta(e.sprite):null;return Math.max(b,(m?.width?m.width/2:(m?.shadow?.[0]||0)*1.17)*Math.max(1,e.scale||1));};
 export const CLOSER_TOAST_GAP=8,LUNGE_REACH=1.5;
 /* improve20-a-oct31 #7: a taunt line waits until the quote before it has had its 2.5 s (2 s on a phone) and a short beat */
@@ -228,6 +230,9 @@ export class World{
  nextArena(){const L=this.layout;if(!L)return null;if(this.arena)return null;return this.wave<L.arenas.length?L.arenas[this.wave]:this.flow==='boss'||this.flow==='bossintro'||this.flow==='rebirth'||this.flow==='victory'?null:L.boss;}
  /* Where actors may stand right now: the locked arena, or the stage from the camera's left edge on.
     In town (no stage) it is the old 700-wide map. */
+ /* improve20-r16b-nov3 #3: how far inside the locked arena's x0/x1 a boss's centre stops (its drawn half-width), 0 when it is not clamped;
+    enemy-ai.js charges and wall bonks read it so a charge still ends "in the wall" */
+ bossInset(e){if(!this.lock||!e?.boss||!e.entered)return 0;const b=this.bounds(),R=Math.min(bossHalf(e),(b.x1-b.x0)/2-1);return R>HERO_MARGIN-28?R:0;}
  bounds(){const L=this.layout;if(!L)return {x0:35,x1:665,y0:70,y1:TOWN.height-25};
   const x0=this.lock?this.lock.x0:this.camFloor,x1=this.lock?this.lock.x1:L.width;return {x0:x0+10,x1:x1-10,y0:L.floorTop+4,y1:L.floorBottom-2};}
  admitEnemy(e){riftEnemy(this,e);pilotEnemy(this,e);return admitEnemy(this,e);}
@@ -328,6 +333,9 @@ export class World{
      and out so it never steps; desktop (padB null) is unchanged */
   {const bo=STAGE.padB!=null&&['boss','bossintro','rebirth'].includes(this.flow)?(this.enemies||[]).find(e=>e.boss&&e.hp>0&&!e.decoy):null,want=bo?bossLiftFor({camTop:this.camTop,bossTop:enemyTop(bo),heroFeet:this.player.y}):0;
    this.bossLift=(this.bossLift||0)+(want-(this.bossLift||0))*Math.min(1,dt*4);if(this.bossLift<.5&&!want)this.bossLift=0;this.camTop=Math.max(0,Math.round(this.camTop-this.bossLift));}const lo=this.lock?this.lock.x0:0,hi=this.lock?Math.max(this.lock.x0,this.lock.x1-W):Math.max(0,L.width-W);let target=clamp(this.player.x-W*(this.lock?.5:.4),lo,hi);if(!this.lock)target=Math.max(target,this.camFloor);
+  /* improve20-r16b-nov3 #3 (audit12 a10): in a locked fight the camera keeps every live boss's whole body in view with the hero when the two fit
+     in one screen (the view moves the least from hero-centred to do it); the phone rules below still win */
+  if(this.lock)for(const e of this.enemies||[])if(e.boss&&e.hp>0&&!e.decoy&&e.entered){const R=bossHalf(e),a=Math.min(this.player.x-24,e.x-R),z=Math.max(this.player.x+24,e.x+R);if(z-a<=W)target=clamp(clamp(target,z-W,a),lo,hi);}
   /* 25 Oct (phone): the touch controls cover the screen's sides (joystick ghost left, action arc right; ui/mobile.js measures them into STAGE.padL/padR, 0 on desktop). At an arena edge the camera may look past the edge by that much, so the hero never stands under a button. Hero bounds are unchanged. */
   let pr=STAGE.padR||0,pl=0;
   /* camface-oct28 (phone safe zone): the hero stood under the top-left hero panel at the top of the floor band. While his head (46 px above his feet on the ground; a jump does not move the camera) is level with a top HUD obstacle, keep him that far from its side, faded in over 12 px of height so the camera eases and never steps. Desktop has none (ui/mobile.js measurePads) */
@@ -408,6 +416,10 @@ export class World{
  cinematicBeat(beat){const king=this.enemies.find(e=>e.boss);if(!king)return;
   const [dx,dy]=beat.shot||[0,-16];
   this.cinematicTarget={x:king.x+dx,y:king.y+dy};
+  /* improve20-r16b-nov3 #3 (audit12 a10, shot 14: the Sleeper's head was cut by the letterbox and the line's plate): a boss taller than about half
+     the view is framed on its face, not its middle: the shot rises so the face sits just under the upper third (gfx/world.js still keeps the
+     shot inside the level, at most 40 px above its top) */
+  {const m=spriteMeta(king.sprite),h=(m?.height||0)*Math.max(1,king.scale||1),H=STAGE.camH||270;if(h>H*.55)this.cinematicTarget.y=Math.min(this.cinematicTarget.y,Math.round(king.y-h*.8+H*.1));}
   if(!this.cinematicShot)this.cinematicShot={...this.cinematicTarget};
   /* latechap-oct27: the epilogue freezes everyone where the fight ended, and Wil stood on the hero (m7, Moltar's kneel); he steps a pace back first, never into a wall */
   /* endgame-oct29: the hero was frozen as the fight ended too, standing inside the Sleeper (v7) or with its back to it; the hero
@@ -575,7 +587,7 @@ export class World{
   else if(p.knock>0){p.x+=p.kx*dt;p.y+=p.ky*dt;p.kx*=.86;p.ky*=.86;}
   else if(len&&!(p.moveLock>0)){/* improve20-r9a-nov1: shallow water (game/sleeper-pool.js) slows the hero, with a ripple at his feet; never a stun */const wet=p.z<=0&&!!this.layout?.shallow?.(p.x,p.y);if(wet&&(this.rippleT=(this.rippleT||0)-dt)<=0){this.rippleT=.28;this.effect('ring',p.x,p.y,{radius:9,color:'#cdeef5',ground:true,life:.45,max:.45});}const zs=Math.min(p.slowZ??1,wet?SHALLOW_SLOW:1)*(p.drink?DRINK.speed:1),ls=p.drink?1:laneStride(this,dt),rk=Math.max(p.running&&!p.drink?1.5:1,ls)/* improve20-r12c-nov2 #5: the empty-lane stride (scenes/lane-stride.js) */;p.striding=ls>1/* at merge: a striding hero plays the run cycle, so the feet keep up with the faster pace */;p.pace=rk;p.x+=dx/len*this.base.speed*p.speedBuff*rk*zs*dt;p.y+=dy/len*this.base.speed*p.speedBuff*rk*zs*dt;}/* slowing ground and a boss's undertow (scenes/boss-moves.js zones), set by the enemies' step each frame */if(p.drift&&!(p.dodge>0)){p.x+=p.drift.x*dt;p.y+=p.drift.y*dt;}p.drift=null;p.slowZ=1;const pb=this.bounds(),pm=this.lock?HERO_MARGIN-10:10;p.x=clamp(p.x,pb.x0+pm,pb.x1-pm);p.y=clamp(p.y,pb.y0,pb.y1);if(this.layout?.blocked(p.x,p.y)){if(!this.layout.blocked(old.x,old.y)){if(!this.layout.blocked(p.x,old.y))p.y=old.y;else if(!this.layout.blocked(old.x,p.y))p.x=old.x;else{p.x=old.x;p.y=old.y;}}else{/* exploit5-oct28: a hero already standing in a blocked cell (pushed there) was frozen, since every step was undone; he now steps to the nearest open spot within 16 px, never further into the wall */p.x=old.x;p.y=old.y;out:for(let r=2;r<=16;r+=2)for(const [ux,uy] of [[0,-1],[0,1],[-1,0],[1,0],[-.7,-.7],[.7,-.7],[-.7,.7],[.7,.7]]){const x=clamp(old.x+ux*r,pb.x0+pm,pb.x1-pm),y=clamp(old.y+uy*r,pb.y0,pb.y1);if(!this.layout.blocked(x,y)){p.x=x;p.y=y;break out;}}}}if(this.layout){this.pushOut(pb,pm);this.softPush(pb,pm,dt);this.checkSecrets(false);}if(!this.layout){for(const b of input.buildings||[])if(p.x>b.x-b.w*.37&&p.x<b.x+b.w*.37&&p.y>b.y-36&&p.y<b.y-2){p.x=old.x;p.y=old.y;}return;}
  pumpEnemies(this);this.follow(dt);this.stageFlow(dt);tierTick(this,dt);if(this.level?.encounter&&!this.enemies.some(e=>e.hp>0))tickIdleEnemyFx(this,dt);if(this.flow==='intro'||this.flow==='bossintro'||this.ended)return;
- const b=this.bounds(),em=this.lock?HERO_MARGIN-28:0,hm=this.lock?HERO_MARGIN-10:10,dashing=e=>e.brain?.atk?.kind==='dash'&&['tele','act','recover','hurt'].includes(e.brain.mode),inX=(e,v)=>{if(!e.entered)return v;v=clamp(v,b.x0+em,b.x1-em);if(e.boss||dashing(e))return v;const lo=b.x0+hm,hi=b.x1-hm,px=this.player.x;return v>hi&&px>=hi-32?Math.max(hi,Math.min(v,e.x)-90*dt):v<lo&&px<=lo+32?Math.min(lo,Math.max(v,e.x)+90*dt):v;},inY=v=>clamp(v,b.y0,b.y1);let committed=this.enemies.filter(e=>e.hp>0&&e.wind>0).length;
+ const b=this.bounds(),em=this.lock?HERO_MARGIN-28:0,hm=this.lock?HERO_MARGIN-10:10,dashing=e=>e.brain?.atk?.kind==='dash'&&['tele','act','recover','hurt'].includes(e.brain.mode),inX=(e,v)=>{if(!e.entered)return v;v=clamp(v,b.x0+em,b.x1-em);if(e.boss){/* improve20-r16b-nov3 #3 (audit12 a10, shot 13: the Sleeper stood at the arena's right edge, half its body past the map's end, with the hero pinned under it): a boss keeps its whole drawn body inside the locked arena */const R=this.bossInset(e);return R?clamp(v,b.x0+R,b.x1-R):v;}if(dashing(e))return v;const lo=b.x0+hm,hi=b.x1-hm,px=this.player.x;return v>hi&&px>=hi-32?Math.max(hi,Math.min(v,e.x)-90*dt):v<lo&&px<=lo+32?Math.min(lo,Math.max(v,e.x)+90*dt):v;},inY=v=>clamp(v,b.y0,b.y1);let committed=this.enemies.filter(e=>e.hp>0&&e.wind>0).length;
   for(const e of this.enemies){if(e.hp<=0)continue;for(const k of ['flash','flashWhite','attack','inv','statusTime','exposed','marked','cool','ccGuard'])e[k]=Math.max(0,(e[k]||0)-dt);if(e.inv>1)continue;if(e.hop>0){e.hop=Math.max(0,e.hop-dt);const k=1-e.hop/e.hopMax;
     e.x=e.hopFrom.x+(e.hopTo.x-e.hopFrom.x)*k;e.y=e.hopFrom.y+(e.hopTo.y-e.hopFrom.y)*k;e.z=Math.sin(k*Math.PI)*16;}
    else e.z=0;

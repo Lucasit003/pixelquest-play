@@ -210,8 +210,17 @@ function dodgeRing(c,p){const v=cooldownView(p.dodgeCd,DODGE_CD,p.ringWas||0);p.
 const COMBO_COL=['#f4ead2','#ffd96b','#ffb547','#ff8a3d'];
 /* exploit4-oct27: on a phone the right edge holds the interact and Defend buttons, which hid the combo; there it sits on the left, below the hero panel and gold, above the stick */
 export function comboAnchor(phone,W=STAGE.camW,H=STAGE.camH){return phone?{x:14,y:Math.round(H*.42),align:'left'}:{x:W-14,y:Math.round(H*.3),align:'right'};}
+/* improve20-r16b-nov3 #3 (audit12 a10, shot 13: "18 HITS" was drawn over the Sleeper's face): the counter keeps its usual spot unless a boss's
+   drawn box (BODIES, in camera pixels) covers it; then it takes the first clear spot of a short fixed list (desktop: right under the boss bar,
+   left under the hero panel, then both lower; phone: left, then lower left) and stays there while that spot is clear, so it never hops each
+   frame. `boxes` are {l,r,t,b} in camera pixels; `last` is the index used last frame. */
+export const COMBO_W=72,COMBO_H=14;
+export function comboSpots(phone,W=STAGE.camW,H=STAGE.camH){return phone?[{x:14,y:Math.round(H*.42),align:'left'},{x:14,y:Math.round(H*.58),align:'left'},{x:14,y:Math.round(H*.3),align:'left'}]:[{x:W-14,y:Math.round(H*.3),align:'right'},{x:14,y:Math.round(H*.3),align:'left'},{x:W-14,y:Math.round(H*.62),align:'right'},{x:14,y:Math.round(H*.62),align:'left'}];}
+export const comboBox=A=>({l:A.align==='left'?A.x:A.x-COMBO_W,r:A.align==='left'?A.x+COMBO_W:A.x,t:A.y-COMBO_H+2,b:A.y+4});
+const comboHits=(a,b)=>a.l<b.r&&a.r>b.l&&a.t<b.b&&a.b>b.t;
+export function comboSpot(phone,boxes=[],last=0,W=STAGE.camW,H=STAGE.camH){const S=comboSpots(phone,W,H),clear=i=>S[i]&&!boxes.some(b=>comboHits(comboBox(S[i]),b));if(clear(last))return {...S[last],i:last};for(let i=0;i<S.length;i++)if(clear(i))return {...S[i],i};return {...S[0],i:0};}
 const phoneView=c=>!!c?.canvas?.ownerDocument?.documentElement?.classList?.contains('m-mode');
-function drawCombo(c,s){const v=comboView(s.hitChain,s.time||0);if(!v)return;const A=comboAnchor(phoneView(c)),y=A.y,pop=v.pop&&s.motion!==false;c.save();c.globalAlpha*=v.alpha;
+function drawCombo(c,s){const v=comboView(s.hitChain,s.time||0);if(!v)return;const cx=Math.round(s.camX||0),cy=Math.round(s.camTop||0),boss=BODIES.filter(b=>b.e.boss||b.e.elite).map(b=>({l:b.l-cx,r:b.r-cx,t:b.t-cy,b:b.b-cy})),A=comboSpot(phoneView(c),boss,s.comboSpot|0);s.comboSpot=A.i;const y=A.y,pop=v.pop&&s.motion!==false;c.save();c.globalAlpha*=v.alpha;
  if(A.align==='left'){const nw=measurePixelText(String(v.n),{scale:1,bold:true})||String(v.n).length*7;drawPixelText(c,String(v.n),A.x,y-(pop?2:0),{scale:1,color:COMBO_COL[v.tier],outline:'#1a0f0b',bold:true,align:'left'});drawPixelText(c,'HITS',A.x+nw+4,y,{scale:1,color:'#f4ead2',outline:'#1a0f0b',bold:false,align:'left'});c.restore();return;}
  const x=A.x;
  drawPixelText(c,String(v.n),x-(measurePixelText('HITS',{scale:1})||28)-4,y-(pop?2:0),{scale:1,color:COMBO_COL[v.tier],outline:'#1a0f0b',bold:true,align:'right'});

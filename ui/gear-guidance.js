@@ -26,6 +26,11 @@ export const realGain=c=>judge(c).value;
 const pctWord=v=>Math.max(1,Math.round(Math.abs(v)*100));
 /* "+14% damage, -2% speed" for a judged upgrade that trades something away; '' when nothing is lost */
 export function tradeText(c){const j=judge(c);if(!j.ok||!j.downs.length)return '';return [...j.ups.sort((a,b)=>b[1]-a[1]),...j.downs].map(([k,v])=>`${v>0?'+':'-'}${pctWord(v)}% ${STAT_WORD[k]}`).join(', ');}
+/* improve20-r16b-nov3 #1 (audit12 a8: NEXT UPGRADE pushed Emberbrand, +4% damage and -2% speed, for 90% of the kid's gold): the NEXT UPGRADE
+   line (and its Buy and wear button) FEATURES a piece only when judge()'s value, the summed change in expected damage (game/power.js
+   equipmentDPS), toughness and Speed that the badge and Equip already read, is at least FEATURE_MIN (+8%, the same line as GEAR_SMALL, below
+   which a card is badged "Small upgrade"). affordableUpgrade itself is unchanged: the gold chip, the arrival buy and the badge still see it. */
+export const FEATURE_MIN=.08;
 const best=xs=>xs.map(x=>({...x,value:realGain(x)})).filter(x=>x.value>0).sort((a,b)=>b.value-a.value||a.cost-b.cost||a.id.localeCompare(b.id))[0]||null;
 /* A shop buy first; with none, a craft the child can afford now (playtest ch2: from m1 to m7 the line stayed empty while a Thornwarden Helm,
    a plain upgrade, sat craftable on the Craft tab). A craft that breaks a worn set's bonus is never suggested. */
@@ -69,3 +74,5 @@ export function recipeChips(s,runMats,hero=s?.hero,max=1){if(!s?.gear||!runMats)
   return {id:it.id,mat:done[0],need:done[1],name:it.set?SETS[it.set].name:it.name,gain};}).filter(Boolean).sort((a,b)=>b.gain-a.gain);
  for(const x of rows){if(seen.has(x.name))continue;seen.add(x.name);out.push({...x,text:`${x.need}/${x.need} ${MATS[x.mat]?.name||x.mat}: craft ${x.name} at Brannoc`});if(out.length>=max)break;}
  return out;}
+/* improve20-r16b-nov3 #1: the piece the NEXT UPGRADE line may push, or null when the best buy is under FEATURE_MIN */
+export function featuredUpgrade(s,hero=s.hero){const n=affordableUpgrade(s,hero);return n&&n.value>=FEATURE_MIN-EPS?n:null;}

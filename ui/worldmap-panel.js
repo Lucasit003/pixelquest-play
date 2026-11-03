@@ -1,6 +1,6 @@
 /* The map's information card lives at screen resolution: whole-size Pixel Operator,
    the same pl-window frame as the modals, and measured placement away from the route. */
-import {placeBoardCard} from '../gfx/worldmap-art.js';
+import {placeBoardCard,riftView,riftLabel} from '../gfx/worldmap-art.js';
 import {abilityIcon} from './icons.js';
 let el=null,contentKey='',layoutKey='',sizes=[],compactSizes=[],expanded='';
 const make=(tag,cls,text)=>{const n=document.createElement(tag);n.className=cls;if(text)n.textContent=text;return n;};
@@ -9,9 +9,16 @@ const make=(tag,cls,text)=>{const n=document.createElement(tag);n.className=cls;
 const pool=new Map();
 const icon=(name,alt='')=>{let im=pool.get(name)?.pop();if(!im){im=make('img','');im.dataset.icon=name;im.src=new URL('./skin/pl-icons/tier-'+name+'.png',import.meta.url).href;im.width=im.height=16;}im.alt=alt;return im;};
 const recycle=root=>{for(const im of root.querySelectorAll('img[data-icon]')){if(!pool.has(im.dataset.icon))pool.set(im.dataset.icon,[]);pool.get(im.dataset.icon).push(im);}};
-export function clearMapPanel(){el?.remove();el=null;pool.clear();contentKey=layoutKey=expanded='';sizes=[];compactSizes=[];}
-export function updateMapPanel(v,canvas){if(!globalThis.document?.body||!canvas?.getBoundingClientRect||!v.board)return false;
- const b=canvas.getBoundingClientRect(),scale=b.width/480;if(!scale)return false;
+/* improve20-r16b-nov3 #7 (audit12 a15): the Rift's name plate and first-time note, at the node card's 16 px, under the portal and kept on the board */
+let riftEl=null;
+export function placeRiftLabel(v,canvas){const doc=globalThis.document;if(!doc?.body)return null;const at=v?.rift&&riftView(v),b=canvas?.getBoundingClientRect?.(),scale=b?.width/480;
+ if(!at||!scale){if(riftEl)riftEl.hidden=true;return null;}
+ if(!riftEl){riftEl=make('div','worldmap-rift');riftEl.id='worldmap-rift';riftEl.setAttribute('aria-hidden','true');doc.body.append(riftEl);}
+ const k=riftLabel(v)+'|'+(v.rift.note||'');if(riftEl.dataset.k!==k){riftEl.dataset.k=k;riftEl.replaceChildren(make('strong','wm-rift-name',riftLabel(v)),...(v.rift.note?[make('span','wm-rift-note',v.rift.note)]:[]));}
+ riftEl.hidden=false;const w=riftEl.offsetWidth||0,x=b.left+at.x*scale,left=Math.max(b.left+6,Math.min(b.left+b.width-w-6,x-w/2));riftEl.style.left=Math.round(left)+'px';riftEl.style.top=Math.round(b.top+(at.y+6)*scale)+'px';return riftEl;}
+export function clearMapPanel(){riftEl?.remove();riftEl=null;el?.remove();el=null;pool.clear();contentKey=layoutKey=expanded='';sizes=[];compactSizes=[];}
+export function updateMapPanel(v,canvas){if(!globalThis.document?.body||!canvas?.getBoundingClientRect||!v.board){if(riftEl)riftEl.hidden=true;return false;}
+ const b=canvas.getBoundingClientRect(),scale=b.width/480;if(!scale)return false;placeRiftLabel(v,canvas);
  if(!el){el=make('aside','worldmap-info');el.id='worldmap-info';el.setAttribute('aria-label','Selected stop');
   /* a compact card opens to the full card on a tap, and closes again on the next */
   el.addEventListener('click',e=>{if(!el.classList.contains('wm-compact')&&expanded!==contentKey)return;e.stopPropagation();expanded=expanded===contentKey?'':contentKey;layoutKey='';});document.body.append(el);}

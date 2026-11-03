@@ -159,7 +159,7 @@ function beginAct(e,w,b){const a=b.atk;b.mode='act';b.t=0;b.prevT=-1;b.freeze=fa
  const info=stateInfo(e.sprite,a.state);b.info=info;b.hits=info.contacts.length?info.contacts.slice():[Math.min(.25,info.dur*.5)];
  if(OWN.has(a.kind)&&beginMove(e,w,b,a,K))return;
  if(a.kind==='dash')b.path=[{x:e.x,y:e.y}];
- if(a.kind==='dash'){b.dashLeft=Math.min(a.range,Math.abs((e.facing>0?bounds(w).x1-(a.edge||0):bounds(w).x0+(a.edge||0))-e.x));b.info={dur:b.dashLeft/a.speed+.05,contacts:[]};}
+ if(a.kind==='dash'){/* improve20-r16b-nov3 #3: a clamped boss's wall is its inset (combat.js bossInset) */const ed=Math.max(a.edge||0,w.bossInset?.(e)||0);b.dashLeft=Math.min(a.range,Math.abs((e.facing>0?bounds(w).x1-ed:bounds(w).x0+ed)-e.x));b.info={dur:b.dashLeft/a.speed+.05,contacts:[]};}
  if(a.kind==='leap'){b.from={x:e.x,y:e.y};b.to={...b.markers[0]};b.air=a.air||.7;b.info={dur:b.air+.25,contacts:[b.air]};b.hits=[b.air];}}
 function resolveHit(e,w,b,k){const a=b.atk,p=w.player,fx=fxList(w),f=e.facing,k2=e.scale||1;
  switch(a.kind){
@@ -194,7 +194,7 @@ function stepAct(e,w,dt,b){const a=b.atk,prev=b.prevT;b.prevT=b.t;
    /* an afterimage trail bursts along the dash's path a moment later (Your Shadow's Shadow Step) */
    if(a.trail&&b.path)for(let i=1;i<=3;i++){const k=i/4,q=b.path[0],r=b.path[1],x=q.x+(r.x-q.x)*k,y=q.y+(r.y-q.y)*k,m={shape:'circle',x,y,r:a.trail.radius||16};fxList(w).push({kind:'hazard',owner:e,a:{...a,...a.trail,kind:'aoe'},fx:a.trail.fx,x,y,r:m.r,t:-(a.trail.delay||1)-i*.08,marker:m,hit:false,dmgMult:1});}
    /* a charge that ends in the arena wall leaves the boss stuck (M9 wall bonk): a free opening */
-   const B=bounds(w),wall=Math.min(Math.abs(e.x-B.x0-(a.edge||0)),Math.abs(e.x-B.x1+(a.edge||0)))<8;endAct(e,w,b);if(a.bonk&&wall)dizzy(e,w,b,a.bonk,'STUCK!');return;}return;}
+   const B=bounds(w),ed=Math.max(a.edge||0,w.bossInset?.(e)||0),wall=Math.min(Math.abs(e.x-B.x0-ed),Math.abs(e.x-B.x1+ed))<8;endAct(e,w,b);if(a.bonk&&wall)dizzy(e,w,b,a.bonk,'STUCK!');return;}return;}
  if(a.kind==='leap'){const k=Math.min(1,b.t/b.air);e.x=b.from.x+(b.to.x-b.from.x)*k;e.y=b.from.y+(b.to.y-b.from.y)*k;e.z=Math.sin(Math.PI*k)*(30+10*(e.scale||1));
   if(b.t>=b.air)e.z=0;}
  if(b.t>=b.info.dur){if((a.kind==='leap'||a.sequential)&&(b.repeat=(b.repeat||1))<(a.repeat||1)){b.repeat++;startTele(e,w,b,a);if(!a.fullTell)b.teleDur=.45;return;}endAct(e,w,b);}}

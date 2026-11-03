@@ -49,3 +49,17 @@ html.m-mode #parent-gate{width:min(760px,96vw);height:fit-content;max-height:96d
 #parent-gate .pgate-reset{font-size:16px;line-height:1.3;padding:6px 10px;background:#4a2a1acc;border:1px solid #e8a060aa;color:#ffe2c0}
 #parent-gate .pgate-forgot-ask{gap:10px}
 @media (max-height:560px){#parent-gate .pgate-note{font-size:14px}#parent-gate .pgate-reset{font-size:15px;padding:4px 8px}#parent-gate .pgate-forgot-ask{grid-template-columns:1fr}}
+/* improve20-r16b-nov3 #2 (audit12 a4: the keypad jumped from y 54 to 96 between the sum and "Enter the same 4 digits again", so a parent who
+   types by position hit the wrong keys): ONE dialog box for every step. The dialog has a fixed height and is centred, the words scroll inside
+   their own column when they run long, and the pad sits at a fixed place (under the words on tall screens, pinned to the foot; beside them,
+   at the top, on short ones), so the keys never move between the sum, choose, confirm and enter steps. */
+#parent-gate[open]{display:flex;flex-direction:column;height:min(620px,96dvh);margin:auto;inset:0}
+#parent-gate .pgate-body:not(.pgate-shut){flex:1 1 auto;min-height:0;overflow:hidden;grid-template-rows:minmax(0,1fr) auto auto}
+#parent-gate .pgate-body:not(.pgate-shut) .pgate-ask{overflow-y:auto;min-height:0;align-content:start}
+#parent-gate .pgate-shut{flex:1 1 auto;align-content:start}
+html.m-mode #parent-gate[open]{height:min(620px,96dvh)}
+@media (max-height:560px){
+ #parent-gate[open],html.m-mode #parent-gate[open]{height:min(372px,96dvh)}
+ #parent-gate .pgate-body:not(.pgate-shut){grid-template-rows:minmax(0,1fr) auto}
+ #parent-gate .pgate-body:not(.pgate-shut) .pgate-pad{align-self:start}
+}
