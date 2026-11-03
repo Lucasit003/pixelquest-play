@@ -31,7 +31,7 @@ import {adviceLevel} from './tiers.js';
 import {learningRoad,nextUnlockStep} from '../academics/learning-road.js';
 import {startGrade,STAGE_FLOOR} from '../academics/placement.js';
 import {gateShut,libraryOpening,nextPowerLine} from '../academics/starter-lesson.js';
-import {waitingGate,powerWants,powerStep} from './power-gate.js';
+import {waitingGate,powerWants,powerStep,nextPower as nextPowerP,powerLine} from './power-gate.js';
 import {starterOf,awakened} from '../academics/awakening.js';
 /* How much practice to suggest before the next adventure. The test still needs practiceNeeded (lessons.js: 10 on a save's first topic, 25 after). */
 export const PRACTICE_FIRST=10;
@@ -42,7 +42,8 @@ export const firstQuizDue=save=>{const ts=TOPICS.filter(t=>save?.lessons?.[t.id]
 /* An ability the hero earned (gate above zero): the slice's payoff. */
 const earned=save=>(ABILITIES[save?.hero]||[]).some(a=>a.gate>0&&unlocked(save,a));
 /* The hero's next locked power, lowest gate first. */
-export const nextPower=save=>(ABILITIES[save?.hero]||[]).filter(a=>a.gate>0&&!unlocked(save,a)).sort((a,b)=>a.gate-b.gate)[0]||null;
+/* improve20-r13b-nov2 #1: the shared pick (game/power-gate.js nextPower), no longer the lowest gate */
+export const nextPower=save=>nextPowerP(save)?.a||null;
 /* The topic of that subject the child is working through: lesson done, not yet mastered, most recent first. */
 const inProgress=(save,subject)=>TOPICS.filter(t=>t.subject===subject&&save?.lessons?.[t.id]?.done&&!mastered(save,t))
  .sort((a,b)=>(save.lessons[b.id].at||0)-(save.lessons[a.id].at||0))[0]||null;
@@ -130,6 +131,14 @@ export function powerGoal(save){const g=waitingGate(save);if(!g?.a)return null;c
  if(w.topics<=0){const back=levelById(g.level.requires[0]);return {id:'power-'+g.level.id,text:`${name} needs ${g.a.name}: reach hero level ${w.lvl}. Win a level again or study for XP.`,target:back?{kind:'pad',id:back.id}:{kind:'library'},powerGate:g.level.id,power:g.a.id};}
  const how=st?.topic&&STEP_WORDS[st.stage]?STEP_WORDS[st.stage](st.topic,st):`master ${w.topics} ${w.subject} topic${w.topics===1?'':'s'}`;
  return {id:'power-'+g.level.id,text:`${name} needs ${g.a.name}. To wake it, ${how} at the Library.`,target:{kind:'library',subject:st?.subject||g.a.subject},powerGate:g.level.id,power:g.a.id};}
+/* improve20-r13b-nov2 #2 (audit10 a6): once the story is done the HUD goal and the Journal led with a side level ("Next adventure: Moonlit
+   Garden"). They now lead with the shared next ability (game/power-gate.js nextPower, the Champion card's "Wake your next power"), or the
+   next topic when every ability is awake; the post-game adventure stays as `side`, a second line. Ids: 'post-power', 'post-topic'. */
+export function postPower(save){const p=nextPowerP(save);
+ if(p){if(p.topics<=0&&p.reachable)return null;const st=powerStep(save,p.a),how=st?.topic&&STEP_WORDS[st.stage]?STEP_WORDS[st.stage](st.topic,st):p.place?`find your level in ${p.subject}`:`study ${p.subject}`;
+  return {id:'post-power',text:`Next power: ${powerLine(p).replace(/ \(find your level in [^)]*\)$/,'')}. ${how[0].toUpperCase()+how.slice(1)} at the Library.`,phone:`Wake ${p.a.name} at the Library.`,target:{kind:'library',subject:st?.subject||p.a.subject},power:p.a.id};}
+ if((ABILITIES[save?.hero]||[]).some(a=>a.gate>0&&!unlocked(save,a)))return null;const t=openInMode(save).sort((a,b)=>!!save.lessons?.[b.id]?.done-!!save.lessons?.[a.id]?.done)[0];
+ return t?{id:'post-topic',text:`Every power is awake. Master your next topic, “${t.title}”, at the Library.`,phone:'Master your next topic at the Library.',target:{kind:'library',subject:t.subject}}:null;}
 /* improve20-r10a-nov2 #5: a mastery that opened no ability sets goalTurn 'go' (main.js): the adventure still comes next, without "Try your new skills" */
 const tryNew=(save,n)=>{if(save?.goalTurn!=='fight'||!earned(save)||n?.target?.kind!=='pad')return n;const l=levelById(n.target.id);
  return {...n,text:n.id==='level-'+n.target.id&&l?`Try your new skills at ${l.name}.`:`Try your new skills! ${n.text}`,tryNew:true};};
@@ -146,7 +155,7 @@ function adventure(save){
     outranks the post-game road (Heroic, the arenas, Legendary, newest chapter first); the finale card and the Journal still name it.
     A quest already under way keeps its place. */
  /* improve20-r8a-nov1 #2: after the ending the post-game road decides, Wil's quest in its place there; a Showpiece never outranks content */
- if(gameCleared(save))return postGame(save,q);
+ if(gameCleared(save)){if(q&&q.rank!=='open')return questStep(q);const pg=postGame(save,q),pw=postPower(save);if(!pw)return pg;/* right after a mastery (goalTurn 'fight' or 'go') the adventure leads and the power is the second line, as before the ending */if(pg&&(save.goalTurn==='fight'||save.goalTurn==='go'))return {...pg,side:pw.text};return {...pw,side:pg?.text||'',then:pg||undefined};}
  if(q){const n=questStep(q);if(!gate)return n;const g=starsShort(save,gate.id);return {...n,text:`${n.text.replace(/[.!]\s*$/,'')} (${gate.name} needs ${g.need}★: ${g.need-g.have} more).`,starGate:gate.id};}
  if(gate){const g=starsShort(save,gate.id),src=starSource(save,gate.id);if(src){const l=src.level,k=src.tier,n=tierPad(l,k);return {...n,id:'stars-'+gate.id,text:`${gate.name} needs ${g.need} stars (you have ${g.have}). ${src.done?'Win a better grade in':'Clear'} ${l.name} on ${TIERS[k].label} for more.`};}}
  for(const optional of [false,true])for(const k of TIER_KEYS)for(const l of playable().filter(l=>!!l.optional===optional))if(tierOpen(save,l.id,k)&&!tierDone(save,l.id,k))return tierPad(l,k);

@@ -1209,7 +1209,9 @@ export function drawHub(c, state, t, kit) {
   /* the Library: every teacher's subject floats over their head, so it is obvious who teaches what (owner, packet #17) */
   if (S.key === 'library') for (const q of S.points) if (q.type === 'interact' && q.props?.subject) {
     const who = S.points.filter(o => o.type === 'npc-spot').sort((a, b) => Math.hypot(a.x - q.x, a.y - q.y) - Math.hypot(b.x - q.x, b.y - q.y))[0];
-    if (who && Math.hypot(who.x - q.x, who.y - q.y) < 120) subjectPlate(c, SUBJECT_NAME[q.props.subject] ?? q.props.subject, who.x, who.y - 58);
+    /* improve20-r13b-nov2 #5 (audit10 a18): at the room's top-left the ENGLISH plate sat under the hero plate; a plate that would run under the
+       HUD (the same top bands as the doorway names above: hero plate on the left, objective on the right) drops below the teacher's feet */
+    if (who && Math.hypot(who.x - q.x, who.y - q.y) < 120) { const sx = who.x - ox, band = sx < 170 ? 82 : sx > 280 ? 46 : 14, up = who.y - 58; subjectPlate(c, SUBJECT_NAME[q.props.subject] ?? q.props.subject, who.x, up - 10 < oy + band ? who.y + 12 : up, 16, [ox, ox + VIEW_W]); }
   }
   c.restore();
   if (H.fade) { c.fillStyle = `rgba(10,8,8,${Math.min(1, H.fade.t < 1 ? H.fade.t : 2 - H.fade.t)})`; c.fillRect(0, 0, VIEW_W, VIEW_H); }
@@ -1237,10 +1239,10 @@ const SUBJECT_NAME = Object.fromEntries(Object.entries(SUBJECTS).map(([id, v]) =
 /* a small dark plate with gold pixel lettering, centred over a teacher */
 /* 24 Oct playtest: "READING" read "READ HO". Pixel Operator is drawn for 16 px; at 8 px its letters lose their shapes
    (R like A, N like H) and sit on half pixels. The teachers' plates now use the font's own 16 px size, on whole pixels. */
-function subjectPlate(c, text, x, y, size = 16) {
+function subjectPlate(c, text, x, y, size = 16, bounds = null) {
   c.save(); c.font = `${size}px "Pixel Operator", monospace`; c.textAlign = 'left'; c.textBaseline = 'middle';
   const adv = [...text].map(ch => Math.ceil(c.measureText(ch).width)), tw = adv.reduce((a, b) => a + b, 0);
-  const w = tw + 10, h = size + 4, X = Math.round(x - w / 2), Y = Math.round(y - h / 2);
+  const w = tw + 10, h = size + 4, X = Math.round(bounds ? Math.max(bounds[0] + 2, Math.min(bounds[1] - w - 2, x - w / 2)) : x - w / 2), Y = Math.round(y - h / 2); /* improve20-r13b-nov2 #5: a plate at the view's edge stays whole */
   c.fillStyle = 'rgba(20,12,8,.82)'; c.fillRect(X, Y, w, h); c.fillStyle = '#a5773c'; c.fillRect(X, Y, w, 1); c.fillRect(X, Y + h - 1, w, 1);
   c.fillStyle = '#ffe2a0'; let cx = X + 5; [...text].forEach((ch, i) => { c.fillText(ch, cx, Y + h / 2); cx += adv[i]; }); c.restore();
   (H.plates ??= []).push({x: X, y: Y, w, h});

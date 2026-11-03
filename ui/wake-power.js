@@ -10,12 +10,14 @@ import {unlocked,xpLevel} from '../game/math.js';
 import {lessonsToUnlock} from '../academics/study-unlock.js';
 import {asleep} from '../academics/awakening.js';
 import {abilityIcon} from './icons.js';
+import {nextPower} from '../game/power-gate.js';
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const subName=id=>SUBJECTS[id]?.name||id;
 /* the hero's eight abilities in ladder order: {a, on, topics (still to master, from the ladder), reachable, lvl, lvlOk} */
 export function powerRow(s,hero=s?.hero){return [...(ABILITIES[hero]||[])].sort((x,y)=>x.gate-y.gate).map(a=>{const on=!!unlocked(s,a)&&!asleep(s,a),r=on?null:lessonsToUnlock(s,a),lvl=xpLevel(a);return {a,on,topics:r?r.lessons|0:0,reachable:!r||!!r.reachable,lvl,lvlOk:(s?.level||1)>=lvl};});}
 /* the next ability to wake (the lowest gate still locked), or null when all are awake */
-export const nextWake=(s,hero=s?.hero)=>powerRow(s,hero).find(x=>!x.on&&x.a.gate>0)||null;
+/* improve20-r13b-nov2 #1: the shared pick (game/power-gate.js nextPower: fewest topics, the gate's cheapest power), no longer the lowest gate */
+export const nextWake=(s,hero=s?.hero)=>{const p=nextPower(s,{hero});return p&&powerRow(s,hero).find(x=>!x.on&&x.a.id===p.a.id)||null;};
 /* what it still needs, in kid words: ["Master 8 more Math topics", "Reach hero level 10"] (a met level reads "Hero level 10 ✓") */
 export function wakeNeeds(x){if(!x||x.on)return [];const out=[];if(x.topics>0)out.push(`Master ${x.topics} more ${subName(x.a.subject)} topic${x.topics===1?'':'s'}`);else if(!x.lvlOk)out.push(`${subName(x.a.subject)} topics done`);out.push(x.lvlOk?`Hero level ${x.lvl} ✓`:`Reach hero level ${x.lvl}`);return out;}
 /* the block that leads the Champion card's "What's next" */

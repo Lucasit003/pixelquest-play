@@ -19,6 +19,7 @@ import {TIER_KEYS,tierOf,tierKey,tierPar,tierGold,tierXP,starsFor,STAR_PAR,STAR_
 import {GRADE_STARS,gradeStars} from './grade.js';
 import {ABILITIES} from './abilities.js';
 import {unlocked,xpLevel} from './math.js';
+import {asleep} from '../academics/awakening.js';
 export const CHAPTERS=[
  {id:'elderwood',name:'Elderwood',biome:'forest',blurb:'Goblins, orcs and old things in the wood.',
   pool:['goblin','slime','orc','orc-rogue','skeleton'],elites:['goblin-king','orc-warlord','minotaur']},
@@ -183,14 +184,19 @@ export const powerAbility=(save,l,hero=save?.hero)=>{const n=powerGate(l);return
 let AFTER=null;const afterOf=id=>{if(!AFTER){AFTER={};for(const l of LEVELS){const seen=new Set(),q=[...(l.requires||[])];while(q.length){const r=q.shift();if(seen.has(r))continue;seen.add(r);q.push(...(levelById(r)?.requires||[]));}for(const r of seen)(AFTER[r]??=[]).push(l.id);}}return AFTER[id]||[];};
 /* the gate was passed: this pad won on any tier, a pad after it won, or the save recorded the pass */
 export const powerPassed=(save,l)=>!!l&&(TIER_KEYS.some(k=>tierDone(save,l.id,k))||afterOf(l.id).some(id=>levelDone(save,id))||!!save?.powerPass?.includes?.(l.id));
-export function powerGateMet(save,l){if(!powerGate(l))return true;if(powerPassed(save,l))return true;const a=powerAbility(save,l);return !a||!!unlocked(save,a);}
+/* improve20-r13b-nov2 #1 (audit10: "the v1 gate needs 4"): the gate also opens once N of the hero's abilities are awake, whichever they are
+   (a ladder-2 Paladin kept Divine Shield before Hammer of Light), so the power the cards name (game/power-gate.js nextPower, the fewest
+   topics) really opens it. Never stricter than before: the Nth rung awake still opens it. */
+export const awakeCount=(save,hero=save?.hero)=>(ABILITIES[hero]||[]).filter(a=>unlocked(save,a)&&!asleep(save,a)).length;
+export function powerGateMet(save,l){if(!powerGate(l))return true;if(powerPassed(save,l))return true;const a=powerAbility(save,l);return !a||!!unlocked(save,a)||awakeCount(save)>=powerGate(l);}
 /* {need, a} when the pad's requirements are done but its power gate is not; else null (the map card and the next goal read it) */
 export function powerShort(save,id){const l=levelById(id);if(!l||!powerGate(l)||powerGateMet(save,l))return null;if(!(l.requires.length===0||l.requires.some(r=>levelDone(save,r))))return null;return {need:powerGate(l),a:powerAbility(save,l),level:l};}
 /* the pad's lock in kid words, power first. `w` is what the ladder still asks ({topics, subject (a name), lvl, lvlOk}), from
    game/power-gate.js powerWants; the numbers always come from there, never from here. */
 export function powerGateText(g,w){if(!g?.a)return '';const t=w?.topics|0,sub=w?.subject||'',lv=w?.lvl||xpLevel(g.a),need=[];
  if(t>0)need.push(`Master ${t} ${sub?sub+' ':''}topic${t===1?'':'s'} at the Library`);if(!w?.lvlOk)need.push(t>0?`(hero level ${lv})`:`Reach hero level ${lv}`);
- return `Needs ${g.a.name}. ${need.join(' ')}${need.length?'.':''}`.replace(/\s+\./,'.').trim();}
+ /* improve20-r13b-nov2: when one more power will not be enough (g.have, from gateInfo), the card says how many first */const head=g.have!=null&&g.need-g.have>1?`Needs ${g.need} powers awake (you have ${g.have}). Next: ${g.a.name}.`:`Needs ${g.a.name}.`;
+ return `${head} ${need.join(' ')}${need.length?'.':''}`.replace(/\s+\./,'.').trim();}
 /* record the pass (main.js calls it when a gated pad is entered, so a later hero swap never shuts a road the save walked) */
 export function notePowerPass(save,id){const l=levelById(id);if(!powerGate(l)||!powerGateMet(save,l))return false;save.powerPass??=[];if(save.powerPass.includes(id))return false;save.powerPass.push(id);return true;}
 /* The last level on the main road of the last chapter: winning it finishes the adventure (playtest oct14: beating the

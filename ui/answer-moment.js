@@ -103,7 +103,8 @@ export function nextStepId(stage){return {lesson:'lesson-again',quiz:'start-quiz
 /* improve20-m-nov1 (audit3 #9, R3): a topic's first mastery is a moment of its own. The seal stamps in over the victory sunburst,
    the victory banner says TOPIC MASTERED, then what was mastered, what it brings closer (the real road: learningRoad()) and the
    rune it earned. Markup only: nothing here is earned or written; the caller passes the numbers finishTest() already settled. */
-export function masteryCloser(save,t,road=learningRoad(save,t.subject)){
+/* improve20-r13b-nov2 #1: the card names the shared next ability (learningRoad without a subject reads game/power-gate.js nextPower) */
+export function masteryCloser(save,t,road=learningRoad(save)){
  if(!road)return 'Every ability for this hero is unlocked.';
  const a=road.ability,sub=SUBJECTS[a.subject]?.name||a.subject,mine=a.subject===t.subject,n=road.remaining,name=`<b>${esc(a.name)}</b>`,lv=road.level?'':` You also need hero level ${esc(road.levelNeed)}.`;
  if(road.knowledge)return `${mine&&road.total?`${name} ${esc(road.total)}/${esc(road.total)} charged! `:''}Your knowledge for ${name} is ready.${road.level?'':` Reach hero level ${esc(road.levelNeed)} to use it.`}`;

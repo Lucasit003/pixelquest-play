@@ -18,6 +18,7 @@ import {TOPICS,ELEMENTARY_RUNGS,MIDDLE_RUNGS,HIGH_RUNGS,rungOf,topicPoints,maste
 import {middleLadder,highLadder} from '../game/math.js';
 import {placementGrades} from './placement.js';
 import {orderHigh} from './course-grades.js';
+import {nextPower,powerLine} from '../game/power-gate.js';
 
 const FADE=250/4.5;
 const EPS=1e-8;
@@ -140,7 +141,8 @@ export function topicUnderWay(save,route){if(!route?.reachable||!(route.lessons>
  for(const id of route.topics||[]){const t=TOPICS.find(x=>x.id===id);if(!t||mastered(save,t))continue;const g=topicStage(save,t),r=save.lessons?.[t.id]||{};if(g.stage!=='lesson'||r.at>0||r.reached>0)return {topic:t,stage:g};}return null;}
 export function finishSteps(g){return g.stage==='lesson'?'the lesson, the quiz, practice, then the test':g.stage==='quiz'?`pass the quiz, practice ${g.practice}/${g.needed}, then the test`:g.stage==='practice'?`practice ${g.practice}/${g.needed}, then the test`:'take the mastery test';}
 export function finishLine(save,a,route=lessonsToUnlock(save,a)){const w=topicUnderWay(save,route);if(!w)return null;const n=route.lessons-1;
- return `Finish ${w.topic.title}: ${finishSteps(w.stage)} → ${a.name}${n>0?` (then ${n} more topic${n===1?'':'s'})`:''}`;}
+ /* improve20-r13b-nov2 #1 (audit10 a5): no "(then 59 more topics)" tail; a longer road names the ability, its subject and the topics left, as every card does */
+ const sub=SUBJECTS[a.subject]?.name||a.subject;return n>0?`Finish ${w.topic.title}: ${finishSteps(w.stage)}. ${a.name}: ${n+1} more ${sub} topics`:`Finish ${w.topic.title}: ${finishSteps(w.stage)} → ${a.name}`;}
 /* One short line for an ability: what is left, in topics and hero levels. A topic is mastered by its lesson,
    quiz, practice and test, so the line says so instead of "1 lesson" (playtest S2-3: that took 38 answers). */
 export function goalLine(save,a){
@@ -160,6 +162,15 @@ export function goalLine(save,a){
    locked ability of the hero in that subject, else the subject's first open, unmastered topic. */
 export const topicInSchoolMode=(save,t)=>!save.schoolMode||(save.schoolMode==='elementary'?rungOf(t)<=5:save.schoolMode==='middle'?rungOf(t)>=6&&rungOf(t)<=8:rungOf(t)>=9);
 export function nextLesson(save,{hero=save.hero,subject=null}={}){
+ /* improve20-r13b-nov2 #1 (audit10 a5): without a subject the lesson is the next topic toward the shared next ability (game/power-gate.js
+    nextPower). When that road has no topic open in this school stage (a placement opens it), the lesson is the nearest open one and its goal
+    names the shared ability instead of a far one ("Rain of Arrows (then 59 more topics)"). */
+ if(!subject){const p=nextPower(save,{hero});if(p){const a=p.a,l=lessonsToUnlock(hero===save.hero?save:{...save,hero},a);
+  const t=l.topics.map(id=>TOPICS.find(x=>x.id===id)).find(t=>t&&topicInSchoolMode(save,t)&&topicOpen(save,t));if(t)return {topic:t,ability:a,lessons:l.lessons,goal:goalLine(save,a)};
+  const o=nextLessonRaw(save,{hero,subject});if(o?.topic){return {...o,ability:null,lessons:0,goal:p.place?'':`Next ability: ${powerLine(p).replace(': ',', ')}.`/* a placement road: the card's Find-your-level line (placementNudge) names it once */,road:o.ability||null};}return o;}}
+ /* at a subject station a far ability of that subject (more than 12 topics) is named without its long count; the shared one keeps its goal line */
+ const o=nextLessonRaw(save,{hero,subject}),p=o?.ability&&nextPower(save,{hero});if(o?.ability&&p&&p.a.id!==o.ability.id){const l=o.lessons|0;if(l>12)return {...o,goal:`Builds ${SUBJECTS[o.ability.subject]?.name||o.ability.subject} toward ${o.ability.name}`};}return o;}
+function nextLessonRaw(save,{hero=save.hero,subject=null}={}){
  const plans=studyPlan(save,{hero,subject,limit:8});
  for(const p of plans){const a=ABILITIES[hero].find(x=>x.id===p.ability.id),l=lessonsToUnlock(save,a);
   const t=l.topics.map(id=>TOPICS.find(x=>x.id===id)).find(t=>t&&topicInSchoolMode(save,t)&&topicOpen(save,t));

@@ -7,11 +7,14 @@ import {lessonsToUnlock,topicStage,topicMastery} from './study-unlock.js';
 import {SUBJECTS} from '../game/data.js';
 import {asleep} from './awakening.js';
 import {awakenOffer} from './starter-lesson.js';
+import {nextPower,powerRank} from '../game/power-gate.js';
 export const scholarBadges=save=>Object.values(save.lessons||{}).filter(l=>l?.pts>0).length;
 export function learningRoad(save,subject){
  const own=[...(ABILITIES[save.hero]||[])].sort((a,b)=>a.gate-b.gate),sleeping=own.find(a=>asleep(save,a)),locked=own.filter(a=>!unlocked(save,a));
  const waiting=locked.find(a=>abilityMastery(save,a.subject)+1e-8>=a.gate);
- const ability=sleeping||waiting||locked.find(a=>!subject||a.subject===subject)||locked[0];
+ /* improve20-r13b-nov2 #1: without a subject (the HUD card, the Library's next-ability card, the mastery card, pointers) the road is the shared
+    next ability (game/power-gate.js nextPower: fewest topics, the gate's cheapest power); a subject station keeps its own subject's next one */
+ const rank=powerRank(save),ability=sleeping||(subject?waiting||rank.find(x=>x.a.subject===subject)?.a:null)||nextPower(save)?.a||locked[0];
  if(!ability)return null;
  const route=lessonsToUnlock(save,ability),done=TOPICS.filter(t=>t.subject===ability.subject&&mastered(save,t)).length,total=done+route.lessons;
  return {ability,done,total,remaining:route.lessons,reachable:route.reachable,topics:route.topics,sleeping:!!sleeping,knowledge:route.reachable&&route.lessons===0,level:(save.level||1)>=xpLevel(ability),levelNeed:xpLevel(ability),percent:total?Math.round(done/total*100):route.reachable?100:0};

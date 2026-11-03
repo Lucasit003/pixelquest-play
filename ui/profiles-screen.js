@@ -3,7 +3,7 @@
 import {CLASSES} from '../game/data.js';
 import {readProfiles,profileSummary,switchProfile,addProfile,renameProfile,deleteProfile,markAutoContinue,profileRaw} from './profiles.js';
 import {drawHeroBust} from '../gfx/actors/hero-sprites.js';
-import {openParentGate} from './parent-gate.js';
+import {openParentGate,pinSet} from './parent-gate.js';
 import {openSheet,sheetHeader,closeSheet} from './sheet.js';
 import {icon} from './icons.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -34,7 +34,7 @@ export function openProfiles({manage=false}={}){
    const done=()=>{renameProfile(id,inp.value);openProfiles({manage:true});};inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();done();}});inp.addEventListener('blur',done);}
   else if(act==='remove')openRemove(d,id);
  }));
- d.querySelector('[data-act="manage"]')?.addEventListener('click',()=>{const nd=openProfiles({manage:!manageOn});nd.querySelector('[data-act="manage"]')?.focus?.({preventScroll:true});});
+ /* improve20-r13b-nov2 #3: once a parent PIN is set, Manage (Rename, Remove) opens behind it too */d.querySelector('[data-act="manage"]')?.addEventListener('click',()=>{const flip=()=>{const nd=openProfiles({manage:!manageOn});nd.querySelector('[data-act="manage"]')?.focus?.({preventScroll:true});};if(!manageOn&&pinSet())openParentGate({why:'Managing learners is for grown-ups.',onPass:flip});else flip();});
  return d;
 }
 

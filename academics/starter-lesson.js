@@ -21,6 +21,7 @@ import {TOPICS,gradeTopics,topicOpen,mastered,rungOf,openGrade} from './lessons.
 import {topicInSchoolMode,lessonsToUnlock} from './study-unlock.js';
 import {startGrade} from './placement.js';
 import {firstHighTopic} from './course-grades.js';
+import {nextPower} from '../game/power-gate.js';
 
 export const STARTER_STEPS=4,STARTER_TRYITS=2;
 /* the line the south gate says while it is shut, and the second line that says where the Library is */
@@ -121,7 +122,7 @@ export const restLine=t=>`The rest of “${t.title}” waits on the Library shel
 /* What the next power is and which topic wakes it, for the prologue's victory card and the HUD line after it: {a, topic, lessons, line}
    or null. Reads lessonsToUnlock, as the board does. */
 export function nextPowerLine(save){
- const a=[...(ABILITIES[save?.hero]||[])].filter(x=>x.gate>0&&!unlocked(save,x)).sort((x,y)=>x.gate-y.gate)[0];if(!a)return null;
+ /* improve20-r13b-nov2 #1: the shared pick */const a=nextPower(save)?.a;if(!a)return null;
  const r=lessonsToUnlock(save,a),t=firstInMode(save,r);
  const where=t?`learn “${t.title}” (${sname(t.subject)}) at the Library`:`study ${sname(a.subject)} at the Library`;
  return {a,topic:t,lessons:r.lessons|0,line:`Next power: ${a.name}. To wake it, ${where}.`};

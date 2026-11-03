@@ -16,6 +16,7 @@ import {SUBJECTS} from './data.js';
 import {unlocked,xpLevel} from './math.js';
 import {asleep,activeLoadout} from '../academics/awakening.js';
 import {lessonsToUnlock} from '../academics/study-unlock.js';
+import {nextPower} from './power-gate.js';
 
 export const ECHO_BOSSES=Object.freeze(['e8','m7','v7']);
 const okId=(hero,id)=>typeof hero==='string'&&!!ABILITIES[hero]&&typeof id==='string'&&ABILITIES[hero].some(a=>a.id===id);
@@ -27,7 +28,8 @@ export function cleanEcho(v){const e=emptyEcho();if(!v||typeof v!=='object')retu
 const E=s=>s.echo&&typeof s.echo==='object'&&Array.isArray(s.echo.given)?s.echo:(s.echo=cleanEcho(s.echo));
 const ab=(hero,id)=>ABILITIES[hero]?.find(a=>a.id===id)||null;
 /* the hero's next locked ability in ladder order (lowest gate, then hero level), not yet echoed; null when there is none */
-export function echoCandidate(save,hero=save?.hero){
+/* improve20-r13b-nov2 #1: the shared next ability first (game/power-gate.js nextPower), so the scroll and every goal name the same power */
+export function echoCandidate(save,hero=save?.hero){const p=save&&nextPower(save,{hero})?.a;if(p&&!asleep(save,p))return p;
  return [...(ABILITIES[hero]||[])].sort((a,b)=>a.gate-b.gate||xpLevel(a)-xpLevel(b)).find(a=>!unlocked(save,a)&&!asleep(save,a))||null;}
 /* After a level: a chapter boss's first Normal win grants the Echo of the next ability (once per ability). Writes s.echo.
    -> the ability granted, or null. */

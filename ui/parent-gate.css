@@ -31,3 +31,16 @@
  #parent-gate .pgate-why,#parent-gate .pgate-how{font-size:16px}
 }
 html.m-mode #parent-gate{width:min(760px,96vw);height:fit-content;max-height:96dvh;margin:auto;inset:0}
+/* improve20-r13b-nov2 #3: the parent PIN. The entry is a real input (inputmode="numeric", so phones raise their number pad); the PIN shows as
+   dots; "Forgot PIN?" and "Set a PIN" are quiet text links; the reset hold fills its bar over 5 s while pressed. */
+#parent-gate input.pgate-entry{box-sizing:border-box;width:100%;min-width:0;margin:0;border-radius:0;outline-offset:2px}
+#parent-gate input.pgate-entry[type=password]{letter-spacing:.5em}
+#parent-gate .pgate-acts{flex-wrap:wrap;align-items:center}
+#parent-gate .pgate-link{margin-right:auto;padding:4px 2px;min-height:44px;background:none;border:0;box-shadow:none;color:var(--gold,#e8c060);text-decoration:underline;text-underline-offset:3px;font-size:16px;cursor:pointer}
+#parent-gate .pgate-hold-body{gap:12px}
+#parent-gate .pgate-hold{position:relative;overflow:hidden;min-height:56px;font-size:20px;touch-action:none;user-select:none;-webkit-user-select:none}
+#parent-gate .pgate-hold span{position:relative;z-index:1}
+#parent-gate .pgate-hold i{position:absolute;left:0;top:0;bottom:0;width:0;background:#ffffff40}
+#parent-gate .pgate-hold.holding i{width:100%;transition:width 5s linear}
+@media (max-height:560px){#parent-gate .pgate-hold-body{grid-template-columns:1fr}}
+#parent-gate input.pgate-entry[type=password]{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;font-size:30px}

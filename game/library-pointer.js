@@ -11,11 +11,12 @@ export const LIBRARY_RECENT=3;
 /* every level and arena run ever recorded, on every tier (levels.js recordLevel counts plays) */
 export const runsPlayed=save=>Object.values(save?.levels||{}).reduce((n,r)=>n+(r?.plays|0)+Object.values(r?.tiers||{}).reduce((m,t)=>m+(t?.plays|0),0),0);
 export function markLibraryVisit(save){(save.settings??={}).libraryRuns=runsPlayed(save);}
-export function libraryPointer(save){
+/* improve20-r13b-nov2 #4 (audit10 a12): `rune:false` drops a "12 runes to place" lead (main.js shows it on at most one result card a session) */
+export function libraryPointer(save,{rune=true}={}){
  const r=learningRoad(save);if(!r||r.sleeping||!r.reachable||!(r.remaining>0))return null;
  if(runsPlayed(save)-(save.settings?.libraryRuns|0)<LIBRARY_RECENT)return null;
  const a=r.ability,n=r.remaining,level=(save.level||1)>=xpLevel(a)?'':` You also need hero level ${xpLevel(a)}.`;
- /* kidfix-b-oct31: the near goal leads (a rune), then the gate as topic dots (game/rune-goal.js) */const lead=runeLead(save),dots=lead&&gateDots(save,r);
+ /* kidfix-b-oct31: the near goal leads (a rune), then the gate as topic dots (game/rune-goal.js) */const lead0=runeLead(save),lead=lead0&&(rune||lead0.kind!=='place')?lead0:null,dots=lead&&gateDots(save,r);
  /* improve20-r7c-nov1 #3: a topic under way leads, in the defeat card's words */const fin=finishLine(save,a,{lessons:n,topics:r.topics,reachable:r.reachable});
- return {ability:a,remaining:n,text:fin?`Next ability: ${fin}.${level}`:dots?`${lead.text}. Next ability: ${dots}.${level}`:`Next ability: ${a.name}. Master ${n} more topic${n===1?'':'s'} in the Library to unlock it.${level}`};
+ return {ability:a,remaining:n,rune:!fin&&dots?lead.kind:null,text:fin?`Next ability: ${fin}.${level}`:dots?`${lead.text}. Next ability: ${dots}.${level}`:`Next ability: ${a.name}. Master ${n} more topic${n===1?'':'s'} in the Library to unlock it.${level}`};
 }
