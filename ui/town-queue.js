@@ -18,3 +18,11 @@ export function createTownQueue({tip=()=>null,card=()=>null,inTown=()=>true,teac
    (the line is also on the title's Continue button, and the HUD goal says the same Next). */
 export const HELLO_MOVE=14;
 export const helloMoved=(from,p)=>!!from&&!!p&&Math.hypot(p.x-from.x,p.y-from.y)>=HELLO_MOVE;
+/* improve20-r17b-nov3 #7 (kidsim4 k7 and k15: Ava, the explorer, walked Home, Looks and the town for 343 s before her first fight; the tutorial's
+   "Go to the Library" chip was ignored for 170 s): after LIB_NUDGE_S s in town (wall time between town frames, each step capped at 1 s) on a save with no lesson started, the
+   tour's first card comes up once as the held town tip (main.js libNudge: #travel-tip, so R16B's queue keeps it from stacking with the card and
+   the prompt): "Go to the Library", wherever the hero is. Shown once per save (s.settings.libNudge, settings keep unknown keys); never while the
+   hero is in the Library or the goal is not the Library. Only a suggestion: nothing is locked or timed. */
+export const LIB_NUDGE_S=90;
+export const lessonStarted=save=>Object.values(save?.lessons||{}).some(l=>l&&typeof l==='object'&&((l.at|0)>0||!!l.done||(l.sat|0)>0||(l.pts||0)>0));
+export const libNudgeDue=(save,secs,{room=null,library=false,busy=false}={})=>secs>=LIB_NUDGE_S&&!busy&&!!library&&room!=='library'&&!save?.settings?.libNudge&&!lessonStarted(save);

@@ -8,7 +8,9 @@
    200-240 words a minute): outside a fight a toast stays max(KID_FLOOR, KID_MS a character); in a fight (`fight`, main.js toastFight) the
    old timing stands, so fight lines never sit over the action longer than before. A held message keeps its hold. */
 export const KID_MS=90,KID_FLOOR=4000;
-export const toastMs=(message,hold,fight=false)=>hold?.get(message)||(fight?Math.max(3000,String(message??'').length*60,(String(message??'').match(/\S+/g)||[]).length*250):Math.max(KID_FLOOR,String(message??'').length*KID_MS,(String(message??'').match(/\S+/g)||[]).length*250));
+export const FIGHT_FLOOR=4000;
+/* improve20-r17b-nov3 #5 (kidsim4 k12): in a fight a toast keeps a 4 s floor (FIGHT_FLOOR; it was 3 s) */
+export const toastMs=(message,hold,fight=false)=>hold?.get(message)||(fight?Math.max(FIGHT_FLOOR,String(message??'').length*60,(String(message??'').match(/\S+/g)||[]).length*250):Math.max(KID_FLOOR,String(message??'').length*KID_MS,(String(message??'').match(/\S+/g)||[]).length*250));
 export function requeueShowing(queue,showing,next,max=3){if(showing&&showing!==next&&!queue.includes(showing)){queue.unshift(showing);if(queue.length>max)queue.pop();}return queue;}
 /* A message that asks to show at once (an armour or ability hint) waits while a held message is still within its hold. */
 export const heldUp=({shown,text,message,hold,now,free})=>!!(shown&&text!==message&&now<free&&hold?.has(text)&&!hold.has(message));

@@ -142,8 +142,16 @@ const settleFirst=(save,t)=>{if(!anyMastered(save))rec(save,t).first=true;};
    across sittings (`qright` on the lesson record; the pass latches as `qsum`, so mastering another topic later never takes it back). Every
    other quiz keeps 4 of 5 in one sitting. `quizSum` = {have, need} while the summed rule is the one that applies and the quiz is not passed. */
 export const quizSumOn=(save,t)=>firstTopic(save,t)&&!mastered(save,t);
+/* improve20-r17a-nov3 #1 (kidsim4 k2, lead, 3 Nov): on that same first topic, a lesson Try-it answered right on its first try (and never tried
+   before, so a rewatch after the answer was shown never counts) also counts toward the 4: `tright` (distinct Try-it ids of the topic, additive,
+   kept by normalize(); save stays v9). It is recorded only while quizSumOn holds, and read only by the summed rule. The quiz must still be sat:
+   the pass is decided in recordQuiz, when a sitting with at least one answer ends. Practice and the mastery test are unchanged. */
+/* lead review (r17a): Try-its count at most TRY_SUM_MAX of the 4, so the quiz itself always supplies right answers (a 0-right sitting can never pass) */export const TRY_SUM_MAX=2;
+const sumHave=r=>(Array.isArray(r?.qright)?r.qright.length:0)+Math.min(TRY_SUM_MAX,Array.isArray(r?.tright)?r.tright.length:0);
+export const tryRights=(save,t)=>{const r=save.lessons?.[t.id];return Array.isArray(r?.tright)?r.tright.length:0;};
+export function recordTryRight(save,t,id){if(!quizSumOn(save,t)||CHECKS[id]?.topic!==t.id)return false;const r=rec(save,t),have=new Set(Array.isArray(r.tright)?r.tright:[]);if(have.has(id))return false;have.add(id);r.tright=[...have].slice(0,20);return true;}
 export const testReady=(save,t)=>{const r=save.lessons?.[t.id]||{},done=r.done===true,need=Math.ceil(PASS*QUIZ_SIZE-1e-9),quiz=(r.quiz||0)>=need||r.qsum===true||left(save,t)<need,p=practised(save,t),n=practiceNeeded(save,t);
- return {ready:done&&quiz&&p>=n,lesson:done,quiz,quizNeed:need,quizSize:QUIZ_SIZE,practice:Math.min(p,n),needed:n,quizSum:!quiz&&quizSumOn(save,t)?{have:Math.min(need,Array.isArray(r.qright)?r.qright.length:0),need}:null};};
+ return {ready:done&&quiz&&p>=n,lesson:done,quiz,quizNeed:need,quizSize:QUIZ_SIZE,practice:Math.min(p,n),needed:n,quizSum:!quiz&&quizSumOn(save,t)?{have:Math.min(need,sumHave(r)),need,...(Array.isArray(r.tright)&&r.tright.length?{tries:r.tright.length}:{})}:null};};
 /* How many questions a practice sitting asks (late playtest 24 Oct: at 24 of 25 a child sat a full ten for the one answer the
    test still needed). Before the test opens: what is still needed, between 5 and size; after that, size. Never a limit on practice. */
 export const practiceSitting=(save,t,size=10)=>{const r=testReady(save,t);return r.practice>=r.needed?size:Math.max(5,Math.min(size,r.needed-r.practice));};
@@ -214,6 +222,19 @@ export function tryItEchoes(t){
  if(POOL[t.id].length)echoCache.set(t,out);return out;
 }
 export const pickQuiz=(save,t,n=QUIZ_SIZE,random=Math.random)=>pickItems(save,t,n,random,tryItEchoes(t));
+/* improve20-r17a-nov3 #5 (kidsim4 k16): between mastery-test tries, a short practice on one missed skill: up to n unretired items of that skill
+   from the topic's own pool, missed ones first, then the least answered (as pickItems ranks them). It is ordinary practice: the answers are
+   graded and recorded as any practice answer, and retirement is untouched. */
+export const SKILL_PRACTICE=3;
+export function pickSkillItems(save,t,skill,n=SKILL_PRACTICE,random=Math.random){
+    const miss=save.lessons?.[t.id]?.miss||[],c=(POOL[t.id]||[]).filter(id=>ITEMS[id].skill===skill&&(save.answers[id]||0)<2);
+    for(let i=c.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[c[i],c[j]]=[c[j],c[i]];}
+    const rank=id=>miss.includes(id)?-1:(save.answers[id]||0);c.sort((a,b)=>rank(a)-rank(b));return c.slice(0,n).map(id=>ITEMS[id]);
+}
+/* the skill that practice goes to after a failed test: one with no right answer in the sitting first, then the most missed; only a skill
+   with unretired items left. -> skill key or null */
+export function testPracticeSkill(save,t,items,right,r){const wrong=k=>(items||[]).filter(x=>x.skill===k&&right?.[x.id]===false).length,un=new Set(r?.uncovered||[]);
+    const ks=[...new Set(r?.missed||[])].sort((a,b)=>(un.has(b)-un.has(a))||(wrong(b)-wrong(a)));return ks.find(k=>(POOL[t.id]||[]).some(id=>ITEMS[id].skill===k&&(save.answers[id]||0)<2))??null;}
 /* A mastery sitting covers every skill with unretired work. Large units need more than ten
    questions; exhausted skills already have two correct answers on every item and stay retired.
    Snapshot both coverage and readiness before any answers in this sitting are credited. */
@@ -298,7 +319,7 @@ export function recordQuiz(save,t,score,{right=null,full=false}={}){
     const improved=best>before,first=!(r.quiz>0);
     r.quiz=best;
     const need=Math.ceil(PASS*QUIZ_SIZE-1e-9);
-    if(sum&&right&&typeof right==='object'){const pool=new Set(POOL[t.id]||[]),have=new Set(Array.isArray(r.qright)?r.qright:[]);for(const [id,ok] of Object.entries(right))if(ok===true&&pool.has(id))have.add(id);if(have.size)r.qright=[...have].slice(0,QUIZ_SIZE*2);if(have.size>=need)r.qsum=true;}
+    if(sum&&right&&typeof right==='object'&&Object.keys(right).length){const pool=new Set(POOL[t.id]||[]),have=new Set(Array.isArray(r.qright)?r.qright:[]);for(const [id,ok] of Object.entries(right))if(ok===true&&pool.has(id))have.add(id);if(have.size)r.qright=[...have].slice(0,QUIZ_SIZE*2);/* improve20-r17a-nov3 #1: the first topic's first-try Try-its count too */if(sumHave(r)>=need)r.qsum=true;}
     const passed=testReady(save,t).quiz,passedNow=passed&&!was,bySum=passedNow&&r.qsum===true&&best<need;
     if(passed)delete r.qmiss;else if(full)r.qmiss=Math.min(99,(r.qmiss|0)+1);
     return {best,improved,first,before,passed,passedNow,bySum,misses:r.qmiss|0};

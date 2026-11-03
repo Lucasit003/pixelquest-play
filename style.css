@@ -3428,6 +3428,34 @@ html:not(.m-mode) dialog[data-view=result] .level-result.result-packed>.result-g
 html:not(.m-mode) dialog[data-view=result] .level-result.result-packed .level-highlights .level-levelup small{white-space:nowrap}
 html:not(.m-mode) dialog[data-view=result] .level-result.result-packed>.result-goal .result-library{font-size:15px;line-height:1.2}
 
+/* improve20-r17b-nov3 (round 17 lane B: play pull). Placed before the picframe-nov2, improve20-v-nov1 #18 and tablets-nov2 blocks (their tests read everything after them) */
+/* #2: on a first loss in a row the rune button is a secondary in the button row, after Retry */
+dialog[data-view=result] #modal-content .level-result>.modal-actions:has(>.defeat-runes[data-lead=secondary]){flex-wrap:wrap!important;row-gap:4px}
+dialog[data-view=result] #modal-content .level-result>.modal-actions>.defeat-runes[data-lead=secondary]{order:5;flex:1 0 100%;display:flex;justify-content:center;margin:0}
+dialog[data-view=result] #modal-content .defeat-runes[data-lead=secondary] button{white-space:nowrap;padding-left:10px;padding-right:10px;font-size:14px}
+/* #4: the Story help line is the Retry button's own second line */
+dialog[data-view=result] #modal-content .level-result>.modal-actions>#retry[data-story]{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
+dialog[data-view=result] #modal-content #retry[data-story] .story-help-line{display:flex;align-items:center;gap:4px;font-size:12px;line-height:1.2;color:#ffe9a8;white-space:nowrap}
+dialog[data-view=result] #modal-content #retry[data-story] .story-help-line img{width:16px;height:16px;image-rendering:pixelated}
+/* #5: the held in-fight ability tip, a small chip above the hotbar (under the boss bar on a phone) */
+#ability-chip{position:absolute;transform:translateX(-50%);z-index:7;max-width:min(60%,520px);box-sizing:border-box;padding:3px 12px;font:700 15px/1.25 var(--ui);color:#ffe9a8;background:#1c0e0ae6;border:2px solid #e8c47a;border-radius:4px;box-shadow:0 2px 0 #0008;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none;animation:travel-tip-in .25s ease-out}
+#ability-chip.guard-tip{border-color:#7fc8ff}
+html.m-mode #ability-chip{font-size:13px;padding:2px 10px;max-width:46%}
+/* #7: the tutorial's "Go to the Library" pulses until the Library is entered; the held 90 s card's button */
+#controls-tutorial button.tut-library{animation:tut-lib-pulse 1.4s ease-in-out infinite}
+@keyframes tut-lib-pulse{0%,100%{filter:none;box-shadow:0 0 0 0 #ffd36a00}50%{filter:brightness(1.25);box-shadow:0 0 0 4px #ffd36a99}}
+#travel-tip.lib-nudge .lib-nudge-go{flex:none;min-height:36px;white-space:nowrap}
+@media (prefers-reduced-motion:reduce){#controls-tutorial button.tut-library{animation:none;outline:3px solid #ffd36a;outline-offset:2px}}
+/* #8: the open Home tab reads as "you're here": a marker under it, and a tap on it says so */
+dialog[data-home] .home-tabs button.active{position:relative;cursor:default;box-shadow:inset 0 -3px 0 #ffd36a}
+dialog[data-home] .home-tabs button.tab-here::after{content:attr(data-here);position:absolute;left:50%;top:calc(100% + 2px);transform:translateX(-50%);padding:1px 6px;font-size:12px;line-height:16px;white-space:nowrap;color:#1c0e0a;background:#ffd36a;border-radius:3px;pointer-events:none;z-index:3;animation:travel-tip-in .2s ease-out}
+dialog[data-home] .home-tabs button.tab-here{animation:tab-here-pulse .5s steps(3) 2}
+@keyframes tab-here-pulse{50%{filter:brightness(1.35)}}
+html.m-mode dialog[data-home] .home-tabs button.tab-here::after,dialog[data-home] .home-tabs:is([style*=overflow]) button.tab-here::after{display:none}
+@media(max-width:520px){dialog[data-home] .home-tabs button.tab-here::after{display:none}}
+/* #2/#4: a leading rune row (its own full-width line) keeps the buttons under it in one wrapping row, even with 4 buttons; the Story Retry never shrinks */
+dialog[data-view=result] #modal-content .level-result>.modal-actions:has(>.defeat-runes:not([data-lead=secondary])){flex-wrap:wrap!important}
+dialog[data-view=result] #modal-content .level-result>.modal-actions>#retry[data-story]{flex-shrink:0;white-space:nowrap}
 /* improve20-v-nov1 #18: Text size 125/150% reached panels, dialogue and toasts, but not the quiz question, the HUD, the goal plate or
    the controls strip. They grow too, by less than the panels where the frame is fixed art (the HUD) or the screen is short (phones). The
    quiz rules below only set font-size, and only at 125/150, so the 100% card is exactly as lane M leaves it. */
@@ -4316,6 +4344,14 @@ dialog[data-view=lesson-summary] .result[data-kind=quiz]>.edu-mastery{display:no
 @media(max-height:500px){html dialog#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question.question #quiz-feedback .feedback.feedback.feedback:has(>#lesson-pic)>:not(#lesson-pic){grid-column:1}html dialog#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question.question #quiz-feedback .feedback.feedback.feedback:has(>#lesson-pic)>.edu-read{grid-column:1;grid-row:auto;position:static;justify-self:start;width:auto;margin:2px 0}html dialog#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question.question #quiz-feedback .feedback.feedback.feedback:has(>#lesson-pic)>.am{padding-right:0}html dialog#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question.question #quiz-feedback .feedback.feedback.feedback:has(>#lesson-pic)>p{margin:2px 0}}
 /* improve20-r15a-nov3 #5/#6: the mastery card's lead (Next lesson / Find your level) sits on top; the other two share one row under it, so all three stay in view at 1280x720 */
 dialog[data-view=lesson-summary] .result[data-kind=test] .modal-actions:has(>[data-lead=next])>:not([data-lead]){flex:1 1 40%;min-width:0}
+/* improve20-r17a-nov3 #7 (kidsim4 k3, Sam at 844x390): after a wrong choice answer with no worked picture, the feedback box shrank inside the
+   quiz's flex column, so its "why" line fell under the "Try it again, just for practice" row and "Read to me" hung over the box's edge. On a
+   short screen the box keeps its full height (the answer line and the why line in the text column, Read to me beside both), "Try it again"
+   follows below it, and if the two together are taller than the room the feedback area scrolls, never clips. R15A #4 covers the picture case. */
+@media(max-height:500px){html dialog#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question.question #quiz-feedback:not(:has(#lesson-pic)){overflow-y:auto;overscroll-behavior:contain}html dialog#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question.question #quiz-feedback .feedback.feedback.feedback:not(:has(>#lesson-pic)){flex:none;max-height:none;overflow:visible;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto;row-gap:0;align-items:center;padding-top:2px;padding-bottom:3px}html dialog#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question.question #quiz-feedback .feedback.feedback.feedback:not(:has(>#lesson-pic))>:not(.edu-read){grid-column:1}html dialog#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question.question #quiz-feedback .feedback.feedback.feedback:not(:has(>#lesson-pic))>p{margin:0;white-space:normal}html dialog#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question.question #quiz-feedback .feedback.feedback.feedback:not(:has(>#lesson-pic))>.edu-read{grid-column:2;grid-row:1/span 2;align-self:center;position:static;margin:0}html dialog#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question.question #quiz-feedback:not(:has(#lesson-pic))>.answer-review{flex:none;margin:4px 0 0;padding:5px 10px}}
+/* improve20-r17a-nov3 #8 (kidsim4 k4, Sam at 844x390: "What comes next: star, triangle, square, star, triangle, sq…"): the answered question's
+   one-line summary (R11B #3) wraps to two lines before any ellipsis; a tap still shows it whole (.qf-open, main.js submitSitting) */
+@media(max-height:500px){#modal#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-form.choice-form):has(#quiz-feedback:not(:empty))>.question-reading>h3:not(.qf-open){display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;white-space:normal;text-overflow:ellipsis;overflow:hidden}}
 /* ===== improve20-r16b-nov3 (round 16 lane R16B: layout, the smith and the Sleeper). Placed before the tablets-nov2 block (its test reads every line to the end as touch-only) ===== */
 /* #1 (audit12 a8, shot 17: "More below" sat over the cards' stat rows, and r14b's solid band hid them): the shop sheets keep a strip of their own
    under the scrolling box, and the cue is drawn in that strip, on the dialog, so it never covers a card */
