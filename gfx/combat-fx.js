@@ -28,6 +28,10 @@ export function drawEffect(c,f){const el=elementOf(f),t=age(f),r=f.radius||16;
  switch(f.type){
   /* improve20-w-nov1 #13: a pet's proc (gfx/pet-proc.js, code effects only) */
   case 'pet-proc':return drawPetProc(c,f);
+  /* improve20-r13c-nov2 #1: the grace after a boss's name card (combat.js BOSS_GRACE): a thin pale-gold ring at the hero's feet that breathes
+     and fades out as the grace ends, with two holy twinkles rising beside him. Code ring, existing spark sheet; the hero is never drawn */
+  case 'grace':{const k=Math.max(0,f.life||0)/(f.max||1.5),a=Math.min(1,k*2.5)*.8,pulse=.5+.5*Math.sin(t*9);c.save();c.globalAlpha*=a;c.strokeStyle='#ffe9a8';c.lineWidth=1;c.beginPath();c.ellipse(Math.round(f.x),Math.round(f.y),15+pulse*2,5+pulse*.7,0,0,Math.PI*2);c.stroke();c.globalAlpha*=.45;c.beginPath();c.ellipse(Math.round(f.x),Math.round(f.y),19+pulse*2,7+pulse,0,0,Math.PI*2);c.stroke();c.restore();
+   for(let i=0;i<2;i++){const ph=(t*.9+i*.5)%1;put(c,'fx-spark-holy','twinkle',(t*.8+i*.3)%.5,f.x+(i?13:-13),f.y-8-ph*34,{alpha:a*(1-ph)});}return true;}
   /* ownernotes-c-nov1: the Mage's basic bolt, its cast glow and its impact (gfx/mage-bolt.js, code effects) */
   case 'mbolt-charge':case 'mbolt-hit':return drawMageFx(c,f,t);
   /* Small ballistic droplets: rise, fall under gravity, then fade without leaving a floor blob. */

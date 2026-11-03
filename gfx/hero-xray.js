@@ -12,7 +12,10 @@ import {spriteMeta} from './actors/sprites.js';
 export const XRAY={color:'rgba(255,250,228,.72)',fill:'rgba(55,83,102,.5)',share:.15,w:140,h:120,up:96,box:{half:10,top:44}};
 /* the bosses and elites drawn over the hero this frame: nearer the camera than him, and their body crosses his box */
 export function heroCovers(state){const p=state?.player;if(!p||!state.level||p.hp<=0&&!p.down)return [];const B=XRAY.box,hx0=p.x-B.half,hx1=p.x+B.half,hy0=p.y-(p.z||0)-B.top,hy1=p.y;
- return (state.enemies||[]).filter(e=>(e.boss||e.elite)&&e.hp>0&&!e.decoy&&!(e.entering>0)&&e.y>p.y&&!(e.alpha===0)).filter(e=>{const m=spriteMeta(e.sprite),k=Math.max(1,e.scale||1),top=enemyTop(e),half=Math.max((e.y-top)*.32,(m?.width?m.width*.38:(m?.shadow?.[0]||16))*k);return e.x-half<hx1&&e.x+half>hx0&&top<hy1&&e.y>hy0;});}
+ /* improve20-r13c-nov2 #1: in Your Shadow's fight every foe counts (its copies and the shades are the hero's own size and dark), so the hero's
+    outline shows whenever any of them covers him */
+ const mirror=(state.enemies||[]).some(e=>e.key==='shadow-twin'&&e.hp>0);
+ return (state.enemies||[]).filter(e=>(mirror||(e.boss||e.elite)&&!e.decoy)&&e.hp>0&&!(e.entering>0)&&e.y>p.y&&!(e.alpha===0)).filter(e=>{const m=spriteMeta(e.sprite),k=Math.max(1,e.scale||1),top=enemyTop(e),half=Math.max((e.y-top)*.32,(m?.width?m.width*.38:(m?.shadow?.[0]||16))*k);return e.x-half<hx1&&e.x+half>hx0&&top<hy1&&e.y>hy0;});}
 let cv=null,mk=null,ed=null;
 const make=()=>{const n=()=>{const x=document.createElement('canvas');x.width=XRAY.w;x.height=XRAY.h;return x;};cv=n();mk=n();ed=n();};
 /* c is in world coordinates (the stage camera's transform). drawHero(g) and drawCover(g,e) draw into a context that is already

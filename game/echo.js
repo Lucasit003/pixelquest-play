@@ -44,8 +44,12 @@ export function startEcho(save,levelId){const a=echoReady(save);if(!a||!levelId)
 /* The level ends. A win with the lent Echo fades it; a loss keeps it waiting for the next try (no kid loses the gift to a defeat).
    Writes s.echo. -> the ability that faded, or null. */
 export function endEcho(save,levelId,won=true){const e=save?.echo,r=e?.ready;if(!r||!r.on||r.on!==levelId)return null;if(!won){r.on=null;return null;}const a=ab(r.hero,r.id);e.ready=null;e.faded=a&&!unlocked(save,a)?{hero:r.hero,id:r.id}:null;return a;}
-/* the hotbar while an Echo is lent: the hero's own slots with the Echo in the first empty one, else in slot 4 */
-export function echoLoadout(save,echoId){const ids=activeLoadout(save);if(!echoId||ids.includes(echoId))return ids;const i=ids.indexOf(null),out=[...ids];out[i>=0?i:3]=echoId;return out;}
+/* the hotbar while an Echo is lent: the hero's own four slots as they are, and the Echo in a fifth, temporary button (ECHO_SLOT, key 5).
+   improve20-r13c-nov2 #3 (audit10 a15): it used to take the first empty slot, else slot 4, which pushed an earned ability off the bar for
+   the whole level (a full bar is the usual case by the chapter bosses that drop it). A free slot only was the other choice, but then a
+   kid with a full bar would never feel the Echo at all; its own button keeps every earned power and still lends the next one. */
+export const ECHO_SLOT=4;
+export function echoLoadout(save,echoId){const ids=activeLoadout(save).slice(0,4);while(ids.length<4)ids.push(null);if(!echoId||ids.includes(echoId))return ids;return [...ids,echoId];}
 /* What keeps it: "<Ability> fades. Master N more <Subject> topics to keep it." (the topic count from the same rule unlocked() reads) */
 export function echoKeepLine(save,a){if(!a)return '';const r=lessonsToUnlock(save,a),n=r.lessons|0,sub=SUBJECTS[a.subject]?.name||a.subject;
  return n>0?`Master ${n} more ${sub} topic${n===1?'':'s'} to keep it.`:`Your ${sub} is ready: reach hero level ${xpLevel(a)} to keep it.`;}

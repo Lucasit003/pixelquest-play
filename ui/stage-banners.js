@@ -127,6 +127,9 @@ function text(c,s,x,y,o){return drawPixelText(c,s,x,y,{align:'center',outline:DA
    y values are for 270 rows; each banner keeps its own internal spacing and only its anchor moves, so on desktop
    unobstructed positions stay unchanged. Short announcements also avoid the measured DOM HUD. */
 export const stageBannerText=(b,touch=false)=>touch&&b.touchTitle?b.touchTitle:b.title;
+/* improve20-r13c-nov2 #1: the desktop boss card's top, in 270-tall stage units (was 150, over the hotbar): just under the 14-unit
+   cinematic bar and the card's 14-unit crest */
+export const BOSS_CARD_TOP=30;
 export function stageBanner(c,b){
  b={...b,title:stageBannerText(b,c.canvas?.ownerDocument?.documentElement?.classList.contains('m-mode'))};
  const W=STAGE.camW||480,H=STAGE.camH||270,cx=Math.round(W/2),Y=y=>Math.round(y*H/270),fitW=w=>Math.min(W-8,w);
@@ -175,8 +178,14 @@ export function stageBanner(c,b){
    const {ql,box,ch}=fit,bx=R(box.cx),bt=box.top+14;
    ok=plank(c,'plank',bx-off,bt,box.width,ch)&&drawSkin(c,'crest',bx-off,bt-14,{align:'center'})&&text(c,b.title,bx-off,bt+20,{bold:true,color:PARCH})&&text(c,b.sub,bx+off,bt+34,{color:GOLD})&&ql.every((s,i)=>text(c,s,bx,bt+50+i*12,{color:PARCH}));
   }else{
-  const t=Math.min(Y(150),H-h-6),o=[30,48,66];
-  ok=plank(c,'plank',cx-off,t,w,h)&&drawSkin(c,'crest',cx-off,t-14,{align:'center'})&&text(c,b.title,cx-off,t+o[0],{scale:ts,bold:true,color:PARCH})&&text(c,b.sub,cx+off,t+o[1],{color:GOLD})&&(!line||text(c,line,cx,t+o[2],{color:PARCH}));}
+  /* improve20-r13c-nov2 #1 (audit10 shot 30): the card sat at Y(150), its foot on the hotbar for every boss, and the hero stood behind it. It
+     now stands at the top, under the cinematic bar (BOSS_CARD_TOP), between the HUD plates: the quote wraps (one line, else narrower
+     cards of 2-3 lines) until the card fits clear of every plate; with no clear fit it takes the spot that covers least (placeStageBanner) */
+  const hud=stageBannerObstacles(c.canvas,W,H);let fit=null;
+  for(const limit of [W-16,300,260,220]){const ql=line?wrapBannerText(line,limit-48):[],cw=fitW(Math.max(BW(b.title)*ts,BW(b.sub),...ql.map(q=>measurePixelText(q)))+48),ch=line?76+(ql.length-1)*14:58;
+   const box=placeStageBanner({W,H,width:cw,height:ch+14,top:Y(BOSS_CARD_TOP)-14,obstacles:hud}),score=box.overlap*1e6+Math.abs(box.top+14-Y(BOSS_CARD_TOP))*10+ql.length;if(!fit||score<fit.score)fit={ql,box,cw,ch,score};if(!box.overlap&&box.top+14<=Y(BOSS_CARD_TOP)+2)break;}
+  const {ql,box,cw,ch}=fit,bx=R(box.cx),t=Math.min(box.top+14,H-ch-6),o=[30,48,66];
+  ok=plank(c,'plank',bx-off,t,cw,ch)&&drawSkin(c,'crest',bx-off,t-14,{align:'center'})&&text(c,b.title,bx-off,t+o[0],{scale:ts,bold:true,color:PARCH})&&text(c,b.sub,bx+off,t+o[1],{color:GOLD})&&ql.every((q,i)=>text(c,q,bx,t+o[2]+i*14,{color:PARCH}));}
  }else if(b.kind==='victory'){
   const w=BW(b.title)*2+72,t=Y(78);ok=plank(c,'ornate',cx,t,w,80)&&drawSkin(c,'crest',cx,t-14,{align:'center'})&&text(c,b.title,cx,t+50,{scale:2,bold:true,color:GOLD});
  }else ok=false;

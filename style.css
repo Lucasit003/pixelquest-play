@@ -1155,6 +1155,8 @@ dialog[data-view=library] #modal-content[data-school-mode=high] [data-stage=midd
 .m-mode #hotbar button[data-slot="1"]{right:171px;bottom:31px}
 .m-mode #hotbar button[data-slot="2"]{right:173px;bottom:97px}
 .m-mode #hotbar button[data-slot="3"]{right:125px;bottom:165px}
+/* improve20-r13c-nov2 #3: a lent Echo's own fifth button, on the arc's outer ring beside slot 3 (8+ px from every frame, tests/improve20-r13c-nov2.test.js) */
+.m-mode #hotbar button[data-slot="4"]{right:189px;bottom:163px}
 .m-mode #hotbar .potion-slot{right:59px;bottom:175px}
 /* interact: hidden until something is in reach, then a pill above the arc naming what it does */
 .m-mode #touch .t-interact{display:none;top:auto;right:6px;bottom:237px;width:auto;min-width:92px;height:42px;padding:0 12px 0 8px;font-size:0;opacity:1}
@@ -3746,6 +3748,8 @@ dialog[data-view=result] .level-highlights>p.level-record.level-echo,.level-reco
 .road-echo{display:flex;align-items:center;gap:6px;grid-column:1/-1;margin:0 0 4px;padding:3px 8px;border-left:4px solid #a77bff;background:#2a1f4a55;color:#d9c6ff;font-weight:700;line-height:1.25}
 .edu .road-echo,.result .road-echo,.lesson .road-echo,.am-goal .road-echo{color:#3d2470;background:#a77bff2e}
 .ability-slot.echo-slot{box-shadow:0 0 0 2px #a77bff,0 0 10px #a77bffaa}
+/* improve20-r13c-nov2 #3: on desktop the Echo's fifth button stands a little apart from the earned four */
+html:not(.m-mode) #hotbar .echo-extra{margin-left:10px}
 .ability-slot.echo-slot::before{content:'ECHO';position:absolute;top:-9px;left:50%;transform:translateX(-50%);padding:0 4px;font-size:10px;line-height:12px;background:#4a2f8a;color:#f0e6ff;border-radius:2px;z-index:2;pointer-events:none}
 
 /* improve20-r8b-nov1 #3 (audit7 d16): the arena's wave and record, kept on screen in arenas (outside the level HUD diet) */

@@ -388,11 +388,17 @@ export function cornerNudge(S, px, py, fx, fy, ax, ay, step) {
 /* improve20-r9e-nov1 #2 (audit8 a10): at 844x390 the hero stood inside Brannoc's sprite. The footprint is wider and reaches further in front
    (where the hero is drawn over the person) than behind; a room keeper's (behind a counter) is widest. Talk reach (28 for people,
    DOOR_REACH 30 for keepers) is still met from the edge of it. */
-const PERSON = {hw: 18, hh: 7, front: 13, back: 7, room: {hw: 22, front: 16}};
+/* improve20-r13c-nov2 #5 (audit10 a14): behind a room keeper the 7 px back let the hero walk round the counter and stand inside Brannoc's
+   sprite (his feet a few px above Brannoc's, the two bodies drawn on one another). A room keeper's (a seller's: Brannoc, Odell, Ilsa...) footprint
+   reaches room.back px behind him, about half a body, so the hero stops before the two figures cross; everyone else keeps the short back,
+   and the route planner (personAt) is unchanged */
+const PERSON = {hw: 18, hh: 7, front: 13, back: 7, room: {hw: 22, front: 16, back: 30}};
 export function personAhead(S, x0, y0, x1, y1) {
   S.people ??= [...(S.figures ?? []), ...S.points.filter(q => q.type === 'npc-spot')].map(q => [q.x, q.y]);
+  S.sellers ??= new Set(S.points.filter(q => q.type === 'npc-spot' && q.props?.role === 'seller').map(q => q.name));
+  S.sellerAt ??= [...(S.figures ?? []), ...S.points.filter(q => q.type === 'npc-spot')].map(q => S.sellers.has(q.name));
   const hw = S.room ? PERSON.room.hw : PERSON.hw, front = S.room ? PERSON.room.front : PERSON.front;
-  for (const [x, y] of [...S.people, ...crewHere(S).map(m => [m.x, m.y])]) if (Math.abs(x1 - x) < hw && y1 - y < front && y - y1 < PERSON.back && Math.hypot(x1 - x, (y1 - y) * 2) < Math.hypot(x0 - x, (y0 - y) * 2)) return true;
+  for (const [i, [x, y]] of [...S.people, ...crewHere(S).map(m => [m.x, m.y])].entries()) if (Math.abs(x1 - x) < hw && y1 - y < front && y - y1 < (S.room && S.sellerAt[i] ? PERSON.room.back : PERSON.back) && Math.hypot(x1 - x, (y1 - y) * 2) < Math.hypot(x0 - x, (y0 - y) * 2)) return true;
   return false;
 }
 /* improve20-r8b-nov1 #6 (audit7 d23: walking out by the south gate, the hero went under the gatehouse roof and behind the hotbar, only
@@ -781,6 +787,9 @@ export function personBeat(name) {
 /* improve20-k-nov1 #5: where each person in this room is drawn, as fractions of the view ({l, r, t, b}), so main.js can fade a HUD plate
    that would cover one (the Barracks captain sat under the goal plate on a phone) */
 export function hubHeads() { const S = current(), v = H.view; if (!S?.room || !v || H.fade) return []; return [...S.figures, ...crewHere(S)].map(f => ({l: (f.x - 14 - v.ox) / VIEW_W, r: (f.x + 14 - v.ox) / VIEW_W, t: (f.y - 60 - v.oy) / VIEW_H, b: (f.y - v.oy) / VIEW_H})); }
+/* improve20-r13c-nov2 #5 (audit10 a14): where the hero is drawn in this room, as fractions of the view ({l, r, t, b}, the body x +-16 and
+   60 px tall), so main.js keeps a toast off him (the "Runes placed" line sat over him at the smith); null outside a room or in a fade */
+export function hubHeroBox() { const S = current(), v = H.view, p = H.player; if (!S?.room || !v || !p || H.fade) return null; return {l: (p.x - 16 - v.ox) / VIEW_W, r: (p.x + 16 - v.ox) / VIEW_W, t: (p.y - 62 - v.oy) / VIEW_H, b: (p.y + 4 - v.oy) / VIEW_H}; }
 /* improve20-r9e-nov1 #2: the person (a keeper, a villager, a hired companion) whose drawn body, x +-16 and 60 px tall, the station's default
    bubble (about 80 x 24 px, its foot 70 px over the station) would cover, if any: {x, y, top}, top being where the bubble's foot goes,
    4 px over the head or over the subject plate drawn above it (the plates of the last frame, world units) */

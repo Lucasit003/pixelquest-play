@@ -1,4 +1,4 @@
-import {abilityKeys,heavyName} from '../game/bindings.js';
+import {abilityKeys,slotKeys,heavyName} from '../game/bindings.js';
 export {heavyName};
 /* Default labels for callers without a save; gameplay and teaching read saved bindings. */
 export const FIXED_KEYS={settings:'o',menu:'escape',journal:'tab',map:'m',run:'r',fullscreen:'f',abilities:['1','2','3','4']};
@@ -11,7 +11,7 @@ export function controlsHUD(s){const b=s.settings.bindings;return [['Move',[b.up
 /* improve20-w-nov1 (a14): the short form, read in a glance mid-fight on the banner plate: the key (or the touch control) and nothing else */
 export function armourHintText(s,touch=false,kind='armour'){const k=keyLabel(s.settings.bindings.attack);if(kind==='guard')return touch?'Shield! Walk round behind it, or hold Attack':`Shield! Hit it from behind, or hold ${k}`;return touch?'Armour! Hold Attack or tap an ability':`Armour! Hold ${k} or use an ability`;}
 
-export function abilityNudgeText(a,slot,touch=false,s=null){return touch?`Tip: tap the glowing button for ${a.name}!`:`Tip: press ${keyLabel(s?abilityKeys(s)[slot]:FIXED_KEYS.abilities[slot])} for ${a.name}!`;}
+export function abilityNudgeText(a,slot,touch=false,s=null){return touch?`Tip: tap the glowing button for ${a.name}!`:`Tip: press ${keyLabel(s?slotKeys(s)[slot]:FIXED_KEYS.abilities[slot]||'5')} for ${a.name}!`;}
 
 /* Touch help names the controls actually visible on phones and tablets. */
 function touchControlsHTML(s){const row=(label,note)=>`<div class="control-row"><span>${label}<small>${note}</small></span></div>`,group=(name,rows)=>`<section class="control-group"><h3>${name}</h3>${rows}</section>`;return `<div class="controls-table controls-groups">${group('Move',row('Move','Drag the joystick on the left.')+row('Run','Push the joystick to its rim.')+row('Jump','Tap the upward arrow.')+row('Interact','Walk close, then tap the hand button: Study, Talk, Open or another action.'))}${group('Fight',row('Basic attack','Tap Attack, the large sword button.')+row(heavyName(s),'Hold Attack for half a second, then release.')+row('Dodge','Tap the boot button to roll the way you steer.')+row('Potion','Tap the potion bottle.'))}${group('Abilities',row('Use a learned ability','Tap its icon beside Attack. Learn at the Library to unlock more.'))}${group('Menus',row('Map and Journal','Tap their buttons at the top right.')+row('Menu','Tap Menu to pause, view controls, open Settings or change fullscreen.')+row('World map','Tap a destination, then Play. Home returns to Oakhaven.')+row('Fast travel','Open the map, then Fast travel: go to any place you have visited. It is free.'))}</div><p class="controls-navigation subtle">Inside panels: tap buttons and swipe to scroll. Use Close or Back to return.</p>`;}

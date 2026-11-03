@@ -32,7 +32,8 @@ export const WEAPONS={sword:['Iron Longsword','Knight’s Blade','Emberbrand','K
 // Armour tier names. The bible gives the Warrior its own set; other classes keep the
 // generic ladder until they get the same treatment. See docs/reference/ARMOR_BIBLE.md.
 export const ARMOR_NAMES={warrior:['Iron Vanguard',"Royal Knight",'Runebound Champion','Celestial Warden'],
- default:['Adventurer','Valiant','Mythic','Ascendant']};/* oct24-progress (playtest r3 F12): tier 1 read "Heroic Armour" next to the Heroic tier; the id keeps its number */
+ default:['Adventurer','Valiant','Runeforged','Ascendant']};/* improve20-r13c-nov2 #5 (audit10 a13): tier 2 read "Mythic Armour" under a RARE CHEST tag (its rarity is Rare); a rarity word in a name
+   that is not the item's rarity misleads, so it is Runeforged (the Warrior's tier 2 is Runebound). Names only: ids and stats are unchanged *//* oct24-progress (playtest r3 F12): tier 1 read "Heroic Armour" next to the Heroic tier; the id keeps its number */
 export const armorName=(hero,tier)=>(ARMOR_NAMES[hero]||ARMOR_NAMES.default)[Math.max(0,Math.min(3,tier|0))];
 // The transformation, as direction rather than a list of captions. Visual beats run
 // on a timer; spoken lines are held until the player advances, so nothing anyone has

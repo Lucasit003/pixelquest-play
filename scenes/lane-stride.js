@@ -7,3 +7,8 @@ export const LANE_STRIDE=1.8,LANE_DELAY=.6,LANE_SPRINT=2.3,LANE_SPRINT_AT=2;
 export const emptyLane=w=>!!w?.level&&(w.flow==='walk'||w.flow==='go')&&!w.lock&&!(w.enemies||[]).some(e=>e.hp>0)&&!(w.reinforcements||[]).length;
 /* the lane's clock: the time the lane has been empty (0 while it is not); returns the speed factor for this frame */
 export function laneStride(w,dt){if(!emptyLane(w)){w.laneT=0;return 1;}w.laneT=(w.laneT||0)+dt;return w.laneT>=LANE_SPRINT_AT?LANE_SPRINT:w.laneT>=LANE_DELAY?LANE_STRIDE:1;}
+/* improve20-r13c-nov2 #4 (audit10 a19): the run cycle is timed for running (RUN_PACE, 1.5x walk); in the stride it played at that rate while
+   the hero moved at 1.8-2.3x, so the feet slid. The cycle's clock now runs at pace / RUN_PACE, never slower than the run and capped at
+   RUN_ANIM_CAP (1.4x: 2.3 / 1.5 would be 1.53, too fast to read). k: the speed factor this frame (laneStride, or 1.5 while running) */
+export const RUN_PACE=1.5,RUN_ANIM_CAP=1.4;
+export const runAnimRate=k=>k>RUN_PACE?Math.min(RUN_ANIM_CAP,k/RUN_PACE):1;

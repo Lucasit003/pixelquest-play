@@ -133,7 +133,7 @@ function hurtPlayer(e,w,a,from,mult=1){const p=w.player;if(!p||p.hp<=0||(p.z||0)
  afterHit(e,w,a,p.hp<hp0||(p.inv||0)>inv0);return true;}
 
 /* ---------- attack lifecycle ---------- */
-function pickAttack(e,w,b){if(!canBeginThreat(w,e))return null;const p=w.player;if(!p||p.hp<=0||p.hidden>0||b.gcd>0)return null;
+function pickAttack(e,w,b){if(!canBeginThreat(w,e))return null;const p=w.player;if(!p||p.hp<=0||p.hidden>0||b.gcd>0||w.bossGrace>0/* improve20-r13c-nov2 #1: no attack starts in the grace after a boss's name card */)return null;
  if(!e.boss&&living(w).filter(o=>o!==e&&!o.boss&&isAttacking(o)).length>=MAX_ATTACKERS)return null;
  /* forced moves (a riposte, a mash punish) only come when called; boss-only moves stay with the boss (not its elite echo or
     its shadow copies); `uses` caps a move per fight; a stance never comes twice in a row */
@@ -281,7 +281,7 @@ function step(e,w,dt,mover){_world=w;const b=brain(e,w);
   case 'tele':if(stunned){b.mode='move';b.markers=[];b.feint=false;break;}if(b.t>=b.teleDur){if(b.feint){b.feint=false;b.feinted=true;w.text?.('FEINT!',e.x,enemyTop(e)-6,'#c9d7e8');const a=b.atk;startTele(e,w,b,a);b.used[a.name]--;b.feinted=false;break;}beginAct(e,w,b);}break;
   case 'act':stepAct(e,w,dt,b);break;
   default:if(stunned){setState(e,'idle');break;}
-   if(b.force&&forced(e,w,b))break;const a=pickAttack(e,w,b);if(a){startTele(e,w,b,a);break;}
+   if(b.force&&!(w.bossGrace>0)&&forced(e,w,b))break;const a=pickAttack(e,w,b);if(a){startTele(e,w,b,a);break;}
    if(p.hidden>0||p.hp<=0){setState(e,'idle');break;}
    mover(e,w,dt,b);
    /* Star Form (phaseShift.trail): a boss in its second phase leaves ground that slows behind it as it walks */
@@ -342,6 +342,11 @@ function overlay(c,id,meta,state,t,x,y,facing,k,color,alpha){const img=spriteIma
 function shadow(c,x,y,rx,ry,a=.55){const s=loadSprite('fx-shadow');if(!s.ready)return;const w=s.meta.cell[0]-4,n=Math.max(1,Math.round(rx*2/w)),state=rx>9?'mid':'small';
  for(let i=0;i<n;i++)drawSprite(c,'fx-shadow',state,0,Math.round(x+(i-(n-1)/2)*w*.8),Math.round(y)+1,{alpha:a});}
 /* One sprite enemy: ground shadow, the atlas frame, then the hit flash (white), the wind-up flash (warm) or the phase tint. */
+/* improve20-r13c-nov2 #1 (audit10 a9, shot 14): Your Shadow wears the hero's own shape, and in phase 2 its Mirror Split copy too, so in a
+   crowd the hero was lost among them. Every shadow-twin body (the boss and its copies alike, so "only the real one has a shadow" is still
+   the tell between them) gets a cold violet wash over its own frame; the hero's sprite is never touched. Code effect only. */
+export const MIRROR_WASH={color:'#6f58ff',alpha:.34};
+export const mirrorActor=e=>!!e&&e.key==='shadow-twin'&&e.hp>0;
 export function drawEnemy(c,e,t){if(!e.sprite)return false;const s=loadSprite(e.sprite);if(!s.ready)return true;const m=s.meta,b=e.brain;
  /* Regular enemies were reading almost as large as heroes because their 56–58px
     atlases were drawn at full size. Keep their native artwork intact, but give
@@ -385,6 +390,7 @@ export function drawEnemy(c,e,t){if(!e.sprite)return false;const s=loadSprite(e.
    else{const pulse=.5+.5*Math.sin((t||0)*TELE_PULSE);overlay(c,e.sprite,m,state,st,e.x,e.y-z,e.facing||1,k,TELE.flash,.1+.24*pulse*Math.min(1,b.t/Math.max(.01,b.teleDur)+.25));}}
   /* improve20-a-oct31 #4: a held guard reads at a glance: a strong steel-blue wash over the boss's own frame */
   else if(e.guard)overlay(c,e.sprite,m,state,st,e.x,e.y-z,e.facing||1,k,e.tint||'#8fc4ff',.34+.1*Math.sin((t||0)*5));
+  else if(mirrorActor(e))overlay(c,e.sprite,m,state,st,e.x,e.y-z,e.facing||1,k,MIRROR_WASH.color,MIRROR_WASH.alpha+.05*Math.sin((t||0)*4));
   else if(e.tint)overlay(c,e.sprite,m,state,st,e.x,e.y-z,e.facing||1,k,e.tint,.1+.06*Math.sin((t||0)*4));
 }
  /* the killing blow lights the body up for a few frames before it falls (combat.js deathFx) */

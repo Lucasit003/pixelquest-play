@@ -16,3 +16,5 @@ export function echoResultHTML(save,echo){if(!echo)return '';const hero=save.her
 /* the Library road card's line (ui/answer-moment.js abilityProgressHTML): the same picture and words */
 export function echoRoadHTML(save){const r=echoRoad(save);if(!r)return '';
  return `<span class="road-echo" data-echo="${r.state}">${pic(r.a,save.hero,24)}<span>${esc(r.text)}</span></span>`;}
+/* improve20-r13c-nov2 #3: the level-start line for a lent Echo, naming its own button (the fifth, key ability5, or the purple ECHO button on a phone) */
+export function echoStartLine(a,key='5',touch=false){if(!a)return '';return `Echo of ${a.name}: it has its own button for this level. ${touch?'Tap the purple ECHO button':`Press ${key}`} to use it.`;}

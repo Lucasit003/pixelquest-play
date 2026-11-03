@@ -38,3 +38,7 @@ export const readEnough=(message,shownMs)=>shownMs>=Math.max(1500,(String(messag
    Found line naming an item the card shows is done once the card is up. findName reads the item's name; cardFinds picks those lines. */
 export const findName=m=>(/^Found: (.+?) \(/.exec(String(m??''))||[])[1]||null;
 export const cardFinds=(lines,cardText)=>lines.filter(m=>{const n=findName(m);return !!n&&String(cardText??'').includes(n);});
+/* improve20-r13c-nov2 #5 (audit10 a14): the top (page px) that keeps a toast box clear of the hero's box in town: just above him (GAP px) when it
+   fits under bounds.top, else just below him when it fits over bounds.bottom; null when they do not cross or neither fits. Pure */
+export const TOWN_TOAST_GAP=8;
+export function townToastTop(box,hero,bounds){if(!box||!hero)return null;const cross=box.left<hero.right&&box.right>hero.left&&box.top<hero.bottom&&box.bottom>hero.top;if(!cross)return null;const h=box.bottom-box.top,up=hero.top-TOWN_TOAST_GAP-h;if(up>=bounds.top)return up;const down=hero.bottom+TOWN_TOAST_GAP;return down+h<=bounds.bottom?down:null;}

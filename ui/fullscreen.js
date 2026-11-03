@@ -29,7 +29,7 @@ export const escFromFullscreen=e=>escLocked&&isFullscreen()?!!e?.repeat:isFullsc
 let armed=null;
 /* The first click or key (a click, not pointerdown: the resize must not move the button between press and release) (not Esc, not a modifier) anywhere asks once; later gestures never ask again. */
 export function armStartFullscreen(getSave){
- const w=globalThis.window,d=doc();if(!w?.addEventListener||!d)return;
+ const w=globalThis.window,d=doc();if(!w?.addEventListener||!d)return;watchFullscreenLabels();
  d.addEventListener?.('fullscreenchange',()=>{if(isFullscreen())lockEsc();else{exitedAt=now();unlockEsc();}});
  if(armed)return;
  const off=()=>{w.removeEventListener('click',fire,true);w.removeEventListener('keydown',fire,true);armed=null;};
@@ -52,4 +52,15 @@ export function fullscreenOption(){if(fullscreenSupported())return 'api';return 
 export const HOME_HOWTO='<p class="fs-howto" role="note"><b>Full screen on iPhone:</b> Safari can\'t hide its bars for a website. Tap <b>Share</b>, then <b>Add to Home Screen</b>, and open PixelQuest from its new icon. It fills the whole screen, like an app.</p>';
 /* Shows the how-to after the button once (a second press hides it). */
 export function toggleHowTo(btn){const n=btn?.nextElementSibling;if(n?.classList?.contains('fs-howto')){n.remove();return false;}btn?.insertAdjacentHTML?.('afterend',HOME_HOWTO);return true;}
-export const fullscreenLabel=()=>isFullscreen()?'Exit fullscreen':'Fullscreen';
+/* improve20-r13c-nov2 #6 (audit10 "also seen"): the desktop Pause menu said "Exit fullscreen" in a window that was not fullscreen. The API's
+   fullscreenElement can be set while the page does not fill the screen (a headless or embedded browser grants the request without
+   resizing, and the label was read once when the menu opened and again 250 ms after a press, before a slow OS animation ended). The label
+   now reads what the player sees: fullscreen only when the API says so AND the viewport is the screen's size (within FS_SLACK px; a headless Chrome grants the request with a 1280x720 window on an 800x600 screen), and every
+   fullscreen button is relabelled on each fullscreenchange and resize (watchFullscreenLabels). */
+export const FS_SLACK=4;
+export function shownFullscreen(win=globalThis.window,d=doc()){if(!d?.fullscreenElement)return false;const sc=win?.screen,w=win?.innerWidth,h=win?.innerHeight;if(!sc?.width||!sc?.height||!w||!h)return true;const z=win.visualViewport?.scale||1;return Math.abs(w*z-sc.width)<=FS_SLACK&&Math.abs(h*z-sc.height)<=FS_SLACK;}
+export const fullscreenLabel=()=>shownFullscreen()?'Exit fullscreen':'Fullscreen';
+/* every fullscreen button on the page, relabelled from the state (the Settings one keeps its key badge) */
+export function refreshFullscreenLabels(d=doc()){if(!d?.querySelectorAll)return;const label=fullscreenLabel();for(const b of d.querySelectorAll('.fs-toggle:not([data-fs])')){if(b.id==='fs-home')continue;const t=[...b.childNodes].find(n=>n.nodeType===3);if(t)t.nodeValue=label;else b.insertBefore(d.createTextNode(label),b.firstChild);}}
+let watching=false;
+export function watchFullscreenLabels(){const w=globalThis.window,d=doc();if(watching||!w?.addEventListener||!d?.addEventListener)return;watching=true;const go=()=>refreshFullscreenLabels(d);d.addEventListener('fullscreenchange',go);w.addEventListener('resize',go,{passive:true});}
