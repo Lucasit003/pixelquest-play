@@ -45,7 +45,7 @@ export function rungReward(ch,r){const last=hallBosses(ch).at(-1),l=LEVELS.find(
 export const keepsakes=s=>HALL_CHAPTERS.flatMap(ch=>RUNGS.filter(r=>hasKeepsake(s,ch,r)).map(r=>({chapter:ch,rung:r,name:keepsakeName(ch,r)})));
 /* ---- one rung, as a run ---- */
 /* -> the run state, or null when the rung is not open */
-export function startRung(s,ch,r){if(!rungOpen(s,ch,r))return null;return {chapter:ch,rung:r,tier:RUNG_TIER[r],bosses:hallBosses(ch),i:0,hp:1,drunk:0,free:FREE_POTIONS};}
+export function startRung(s,ch,r){if(!rungOpen(s,ch,r))return null;return {chapter:ch,rung:r,tier:RUNG_TIER[r],bosses:hallBosses(ch),i:0,hp:1,drunk:0,free:hallFree(r)};}
 /* the health share the next boss starts with: what was left plus the rung's heal (hallHeal), never above full */
 /* hallfair-nov2: the heal between bosses, per rung (missing = HALL_HEAL). No rung overrides it, by decision at merge. A Rung III heal of .15
    was tried: the good bot's Legendary class mean fell 88 -> 75 (16 reps), but only because the Rogue (54 -> 42), Ranger (83 -> 52) and
@@ -54,6 +54,14 @@ export function startRung(s,ch,r){if(!rungOpen(s,ch,r))return null;return {chapt
    is class identity, not a bug. Boss HP and damage were worse levers (they cut the Rogue first). docs/playtest/hallfair-nov2/REPORT.md. */
 export const HALL_HEAL_RUNG=Object.freeze({});
 export const hallHeal=r=>HALL_HEAL_RUNG[r]??HALL_HEAL;
+/* hall4-nov2: two Hall-only levers, per rung, both empty (no rung uses them): HALL_HIT_RUNG scales every hit the hero takes in a Hall fight
+   (the boss, its summons and its arena; missing = 1) and HALL_FREE_RUNG is the free potion each Hall boss brings (missing = FREE_POTIONS).
+   Trialled on Rung III after classsustain-nov2 (every class ~99-100%); declined at review, Rung III keeps its old rules: the best
+   class-blind mix (boss HP x.8, hits x1.6, no free potion) left the good bot at 99% and the kid Berserker-to-Warrior gap at 46 points, and
+   cutting ability heals and shields would make every ability card wrong on that rung. docs/playtest/hall4-nov2/REPORT.md. */
+export const HALL_HIT_RUNG=Object.freeze({}),HALL_FREE_RUNG=Object.freeze({});
+export const hallHit=r=>HALL_HIT_RUNG[r]??1;
+export const hallFree=r=>HALL_FREE_RUNG[r]??FREE_POTIONS;
 export const hallCarry=(hp,r)=>Math.min(1,Math.max(0,+hp||0)+hallHeal(r));
 /* ranged-nov2: the free potion comes back at every boss, as it does at every story attempt (it came once a rung). A chained boss-only rung
    with no regeneration decided by kit: Warrior and Paladin open with a shield or a heal and won every kid-bot run, while the Mage, Ranger,
@@ -63,7 +71,7 @@ export const hallCarry=(hp,r)=>Math.min(1,Math.max(0,+hp||0)+hallHeal(r));
 /* One boss fight of the run ended. fight = {won, hp (share of max health left), drunk (potions drunk in it), free (free potions left)}.
    Mutates the run; -> 'next' (another boss waits), 'won' (the rung is cleared) or 'lost'. */
 export function hallStep(run,{won,hp=0,drunk=0,free=0}={}){if(!run||run.done)return run?.done||'lost';run.drunk+=Math.max(0,drunk|0);run.free=Math.max(0,free|0);
- if(!won){run.done='lost';return 'lost';}run.i++;if(run.i>=run.bosses.length){run.done='won';return 'won';}run.hp=hallCarry(hp,run.rung);run.free=Math.max(run.free,FREE_POTIONS);return 'next';}
+ if(!won){run.done='lost';return 'lost';}run.i++;if(run.i>=run.bosses.length){run.done='won';return 'won';}run.hp=hallCarry(hp,run.rung);run.free=Math.max(run.free,hallFree(run.rung));return 'next';}
 /* A cleared rung: records it, pays the first clear (writes s.gold and s.gear.mats) and grants the keepsake for a clear with no potions.
    -> {first, gold, essence, keepsake (a name when this clear had no potions), keepsakeNew}. A lost run changes nothing. */
 export function hallFinish(s,run){if(!run||run.done!=='won')return null;const h=H(s),k=key(run.chapter,run.rung),first=!h.cleared[k];h.cleared[k]=true;let gold=0,essence=0;
