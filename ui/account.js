@@ -27,7 +27,7 @@ export function statusLine(st=syncStatus()){
  if(st.state==='error')return 'The last sync did not finish. It will try again.';
  return st.last?`Last synced ${when(st.last)}.`:'Not synced yet.';
 }
-export const accountGateHTML=()=>`<h4>Account and cloud saves</h4><p class="subtle">A grown-up can sign in by email to keep a safe copy of every learner’s progress and carry on from another device. Playing never needs an account.</p><button type="button" id="acct-open" class="edu-grownups" aria-describedby="acct-open-help">Account and cloud saves</button><small id="acct-open-help" class="subtle">A grown-up works out a quick multiplication to open it.</small><div id="acct-block" class="acct" hidden></div>`;
+export const accountGateHTML=()=>`<h4>Account and cloud saves</h4><p class="subtle">A grown-up can sign in by email to keep a safe copy of every learner’s progress and carry on from another device. Playing never needs an account.</p><button type="button" id="acct-open" class="edu-grownups" aria-describedby="acct-open-help">Account and cloud saves</button><small id="acct-open-help" class="subtle">A grown-up’s PIN opens it.</small><div id="acct-block" class="acct" hidden></div>`;
 /* view: {step:'email'|'code', email, msg, err, del} */
 export function accountHTML(view={},c=currentCloud()){
  const note=`<p class="subtle acct-privacy">${PRIVACY_NOTE}</p>`,msg=`<p id="acct-msg" class="acct-msg${view.err?' is-error':''}" role="status" aria-live="polite">${esc(view.msg||'')}</p>`;

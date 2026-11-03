@@ -1061,6 +1061,9 @@ html.m-mode .lib-tour-actions .primary{min-width:120px}
 html.m-mode dialog:not(.pic-zoomed)>.text-zoom{display:none}
 html.m-mode dialog.pic-zoomed>.text-zoom{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;padding:8px;background:rgba(14,12,26,.96);cursor:zoom-out}
 html.m-mode dialog.pic-zoomed>.text-zoom>.pic-text.pic-text{position:static;width:min(100%,760px);max-width:none;height:auto;min-height:0;max-height:100%;margin:0;overflow:auto;font-size:18px;line-height:1.35;padding:10px 14px}
+/* improve20-r14c-nov3 #6 (picframe2 follow-up): on a phone the zoom badge sits on the text card's top-right corner, over the end of its title
+   ("[10, 14, 19, 23, 28, 3…"); the title keeps that corner clear, so it wraps before the badge */
+html.m-mode dialog:is([data-view=placement],[data-view=lesson-quiz]):not(.pic-zoomed) .question-reading>.pic-text:has(+.quiz-zoom) .pt-title:first-child{padding-right:26px}
 /* oct26-phonelesson: phone lesson legibility (docs/playtest/oct26-phonelesson). The lesson sheet takes the whole screen like every other
    phone sheet (it was 92dvh, 29-31px lost). The picture column is exactly as wide as the picture (min-content): a long equation line above
    the picture used to set the column to its full length and squeeze the step's text to one word a line (AP Micro, APUSH). main.js

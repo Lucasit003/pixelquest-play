@@ -4270,6 +4270,52 @@ dialog[data-view=result] #modal-content .level-result>.modal-actions>.defeat-eas
 dialog[data-view=result] .defeat-easier p{margin:0;font-size:16px;line-height:1.1;color:#d8d2c0;max-width:560px}dialog[data-view=result] .defeat-easier p b{color:#ffd96b}
 dialog[data-view=result] #modal-content .defeat-easier button{flex:0 0 auto;padding:6px 14px;min-height:0}
 /* the pixel font is drawn crisp at 16 px only (13 px clipped its letters) */
+/* improve20-r14c-nov3: the r14c blocks (#5, #7, #2, #9) sit before the tablets-nov2 block, which is touch-only by rule (tests/tablets-nov2.test.js) */
+/* improve20-r14c-nov3 #5 (audit11 also-seen): the hero card's bottom buttons sat half under the frame. Desktop: the card picture and the stats
+   panel give back 50 px of height, so the buttons and the sharing note sit inside the frame at 1280x720. Phone: the stats panel's desktop
+   height cap went negative (100vh - 470px at 390 px tall) and squashed it to a sliver; it now follows the phone's height, and the four
+   buttons sit two by two so Back is inside the frame. */
+html:not(.m-mode) .herocard-panel:has(.keepsakes) .herocard-row canvas{width:min(100%,900px,calc((100vh - 530px)*1.9))}
+html:not(.m-mode) .herocard-stats{max-height:calc((100vh - 530px)*1.9*630/1200 + 30px)}
+@media (max-height:600px){
+ html.m-mode .herocard-stats{max-height:calc(100dvh - 236px);align-self:center}
+ html.m-mode .herocard-panel .herocard-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+ html.m-mode .herocard-panel .herocard-actions button{min-height:40px;padding:4px 8px}
+}
+/* improve20-r14c-nov3 #7 (kidsim3 k15): the held fast-travel tip (main.js showTravelTip): a toast-like plate with a close button, above the hotbar on
+   a desktop and over the bottom middle on a phone; it never fades on its own */
+#travel-tip{position:absolute;left:50%;bottom:calc(6px + 13*var(--u) + 112px);transform:translateX(-50%);z-index:8;display:flex;align-items:center;gap:10px;width:max-content;max-width:min(80%,760px);box-sizing:border-box;padding:6px 8px 6px 18px;color:var(--ink);font-size:var(--fs);border-style:solid;border-width:calc(5*var(--u));border-color:transparent;border-image:url(ui/skin/pl-plate.png) 8 8 8 8 fill/calc(12*var(--u)) stretch;image-rendering:pixelated;animation:travel-tip-in .3s ease-out}
+@keyframes travel-tip-in{from{opacity:0}to{opacity:1}}
+#travel-tip .travel-tip-x{flex:none;min-width:36px;min-height:36px;padding:0;font-size:22px;line-height:1}
+html:not(.in-town) #travel-tip,html.cine-on #travel-tip,html.map-open #travel-tip{display:none}
+html.m-mode #travel-tip{bottom:auto;top:24%;max-width:56%;padding:4px 6px 4px 12px;font-size:15px}
+html.m-mode #travel-tip .travel-tip-x{min-width:40px;min-height:40px}
+/* improve20-r14c-nov3 #2 (audit11 b6): the title on a short phone (844x390, 740x360, 667x375). CREDITS ran off the bottom and Today's Goals
+   sat against the menu at about 9 px. On a phone no taller than 430 px the goals stay in town (the Today chip), and the menu is Continue on
+   its own row with Choose hero, Settings and Credits side by side under it, so every button is on screen with room to spare. */
+@media (max-height:430px){
+ html.m-mode .title-today{display:none}
+ html.m-mode .title-menu{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;width:min(480px,calc(100vw - 2*max(150px,env(safe-area-inset-left,0px))))}
+ html.m-mode .title-menu>[data-title=continue]{grid-column:1/-1}
+ html.m-mode .title-menu>button:not([data-title=continue]){min-height:44px;padding:4px 6px;font-size:14px;letter-spacing:.5px;line-height:1.1}
+ html.m-mode .title-menu>[data-title=new]:first-child{grid-column:1/-1}
+ /* keep the centred logo and menu above the Switch learner button in the bottom-left corner */
+ html.m-mode .title-screen[data-step=title] .title-pane{padding-top:8px;padding-bottom:58px}
+}
+/* improve20-r14c-nov3 #9 (kidsim3 k20): the town tour's "Library" button takes the strip's fourth column, beside Skip, never on top of it */
+.m-mode #controls-tutorial.strip.has-goal:has(.tut-library){grid-template-columns:auto minmax(0,1fr) auto auto}
+.m-mode #controls-tutorial.strip.has-goal button.tut-library{grid-column:4}
+/* improve20-r15a-nov3 #2 (kidsim3 k10): the quiz result says its progress once, in the chip row (the "Toward mastery" bar repeated it), and a line
+   left empty (the summed first-topic quiz has no "Your best") takes no room, so the next-ability card stays in view */
+.result>p:empty{display:none}
+dialog[data-view=lesson-summary] .result[data-kind=quiz]>.edu-mastery{display:none}
+@media(max-height:420px){.m-mode dialog[data-view=lesson-summary] .result[data-kind=quiz]>.am-score{font-size:24px;line-height:1.1}.m-mode dialog[data-view=lesson-summary] .result[data-kind=quiz]>.reward-chips{transform:scale(.8);margin:-4px 0}.m-mode dialog[data-view=lesson-summary] .result[data-kind=quiz]>.edu-progress{margin:2px auto}.m-mode dialog[data-view=lesson-summary] .result[data-kind=quiz]>.am-goal{margin-top:4px}}
+/* improve20-r15a-nov3 #4 (kidsim3 k6): on a short screen a wrong answer's "why" line sat under the worked picture's rows (a choice-form rule put every
+   line across both columns), so only "Not quite... Nothing is lost." showed. Beside a worked picture every line keeps the text column, the Read to me
+   button follows the why line in that column (it sat under the picture), and the why line shows straight under the answer, above "Try it again" */
+@media(max-height:500px){html dialog#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question.question #quiz-feedback .feedback.feedback.feedback:has(>#lesson-pic)>:not(#lesson-pic){grid-column:1}html dialog#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question.question #quiz-feedback .feedback.feedback.feedback:has(>#lesson-pic)>.edu-read{grid-column:1;grid-row:auto;position:static;justify-self:start;width:auto;margin:2px 0}html dialog#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question.question #quiz-feedback .feedback.feedback.feedback:has(>#lesson-pic)>.am{padding-right:0}html dialog#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question.question #quiz-feedback .feedback.feedback.feedback:has(>#lesson-pic)>p{margin:2px 0}}
+/* improve20-r15a-nov3 #5/#6: the mastery card's lead (Next lesson / Find your level) sits on top; the other two share one row under it, so all three stay in view at 1280x720 */
+dialog[data-view=lesson-summary] .result[data-kind=test] .modal-actions:has(>[data-lead=next])>:not([data-lead]){flex:1 1 40%;min-width:0}
 /* tablets-nov2 (round 9 item 12): the tablet sweep (1024x768, 1180x820, 1280x800, 1366x1024, 1180x740 touch). A tablet is a touch screen at
    least 600 css px on its short side (ui/mobile.js tabletSize); phones in landscape are 430 px tall at most, so (min-height:600px) never
    reaches them, and every rule here sits under html.m-mode, so desktops are untouched. */

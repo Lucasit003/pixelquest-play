@@ -11,7 +11,11 @@ export const KID_MS=90,KID_FLOOR=4000;
 export const toastMs=(message,hold,fight=false)=>hold?.get(message)||(fight?Math.max(3000,String(message??'').length*60,(String(message??'').match(/\S+/g)||[]).length*250):Math.max(KID_FLOOR,String(message??'').length*KID_MS,(String(message??'').match(/\S+/g)||[]).length*250));
 export function requeueShowing(queue,showing,next,max=3){if(showing&&showing!==next&&!queue.includes(showing)){queue.unshift(showing);if(queue.length>max)queue.pop();}return queue;}
 /* A message that asks to show at once (an armour or ability hint) waits while a held message is still within its hold. */
-export const heldUp=({shown,text,message,hold,now,free})=>!!(shown&&hold?.has(text)&&text!==message&&!hold.has(message)&&now<free);
+export const heldUp=({shown,text,message,hold,now,free})=>!!(shown&&text!==message&&now<free&&hold?.has(text)&&!hold.has(message));
+/* improve20-r14c-nov3 #8 (kidsim3 k16): outside a fight a line that has not had its read time (toastMs: 90 ms a character, 4 s floor) and is
+   cut by a line that must show at once (a key's answer, "Finish the conversation first") is not lost: it goes back to the front of the queue
+   and shows again, in full, after the new one. In a fight the old rule stands (the newer line wins) */
+export const cutShowing=({shown,text,message,now,free,fight})=>!!(shown&&!fight&&text&&text!==message&&now<free);
 /* improve20-r10b-nov2 (kid sims nov2, items 8 and 13).
    Level tips: the boss tips (armour, blue guards) and the level's "This visit" line. Once one is up it stays for its read time under the fight
    banners (a stage banner used to hide it and put it back in the queue, so "Plain hits glance off..." showed 6 times for under 2.5 s each).
@@ -41,4 +45,11 @@ export const cardFinds=(lines,cardText)=>lines.filter(m=>{const n=findName(m);re
 /* improve20-r13c-nov2 #5 (audit10 a14): the top (page px) that keeps a toast box clear of the hero's box in town: just above him (GAP px) when it
    fits under bounds.top, else just below him when it fits over bounds.bottom; null when they do not cross or neither fits. Pure */
 export const TOWN_TOAST_GAP=8;
+/* improve20-r14c-nov3 #4 (audit11 b18): the same idea against everything a town toast must keep off: the hero, the people, the canvas name plates
+   (SOUTH GATE · WORLD MAP) and the HUD chips. Boxes are {left,top,right,bottom} in one coordinate space; bounds also. Returns null when the box
+   already crosses nothing; else the {left,top} nearest its own spot that crosses nothing (a sideways move costs twice an up or down one, so a
+   toast keeps to its band and only steps aside when it must), inside bounds; null when nothing fits (it stays where it was). Pure */
+export function townToastSpot(box,obstacles,bounds,gap=TOWN_TOAST_GAP){if(!box)return null;const w=box.right-box.left,h=box.bottom-box.top,obs=obstacles.filter(Boolean),hits=(l,t)=>obs.some(o=>l<o.right&&l+w>o.left&&t<o.bottom&&t+h>o.top);if(!hits(box.left,box.top))return null;
+ const L=bounds.left??-Infinity,R=bounds.right??Infinity,ls=[box.left],ts=[box.top,bounds.top];if(Number.isFinite(L))ls.push(L);if(Number.isFinite(R))ls.push(R-w);for(const o of obs){ts.push(o.top-gap-h,o.bottom+gap);ls.push(o.left-gap-w,o.right+gap);}
+ let best=null,bd=Infinity;for(const l of ls){if(l<L||l+w>R)continue;for(const t of ts){if(t<bounds.top||t+h>bounds.bottom||hits(l,t))continue;const d=Math.hypot((l-box.left)*2,t-box.top);if(d<bd){bd=d;best={left:l,top:t};}}}return best;}
 export function townToastTop(box,hero,bounds){if(!box||!hero)return null;const cross=box.left<hero.right&&box.right>hero.left&&box.top<hero.bottom&&box.bottom>hero.top;if(!cross)return null;const h=box.bottom-box.top,up=hero.top-TOWN_TOAST_GAP-h;if(up>=bounds.top)return up;const down=hero.bottom+TOWN_TOAST_GAP;return down+h<=bounds.bottom?down:null;}

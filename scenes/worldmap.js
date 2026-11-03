@@ -259,7 +259,8 @@ function closedRoads(rv){if(!ROADS[S.chapter])return null;const shut=id=>['locke
   if(pts.length)out.push({pts,ends:[a,b].filter(shut)});}
  return out;}
 /* the Rift portal on this board (game/worldmap-layout.js RIFT_PADS), or null before e8 is cleared, in view mode and in a look-only visit */
-export function riftNode(){if(!S||S.view||S.ctx.look||!S.ctx.onRift||!MAPS[S.chapter]?.art||!RIFT_PADS[S.chapter]||!riftOpen(S.save))return null;return {...RIFT_PADS[S.chapter],label:'The Rift',key:'R'};}
+export function riftNode(){if(!S||S.view||S.ctx.look||!S.ctx.onRift||!MAPS[S.chapter]?.art||!RIFT_PADS[S.chapter]||!riftOpen(S.save))return null;/* improve20-r14c-nov3 #5 (audit11 also-seen): a save that has never played it gets one line saying what it is and when it changes */const r=S.save.rift,fresh=!r?.best&&!r?.last;return {...RIFT_PADS[S.chapter],label:'The Rift',key:'R',...(fresh?{note:RIFT_NOTE}:{})};}
+export const RIFT_NOTE='A remixed level, new each Monday';
 /* improve20-r9a-nov1: the Hall of Echoes' door (HALL_PAD), or null before the final boss falls, off its board, in view mode and in a look-only visit */
 export function hallNode(){if(!S||S.view||S.ctx.look||!S.ctx.onHall||S.chapter!==HALL_PAD.chapter||!MAPS[S.chapter]?.art||!hallOpen(S.save))return null;return {x:HALL_PAD.x,y:HALL_PAD.y,label:'Hall of Echoes',key:'B'};}
 /* improve20-k-nov1 #2: the pads an active villager quest sends the hero to win (its current clear step); gone once that step is done */

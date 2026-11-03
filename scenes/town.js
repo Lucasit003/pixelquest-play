@@ -539,7 +539,9 @@ function nearest(S, p) {
     const out = !S.room && worldExit(q), qx = q.x, qy = out ? Math.min(q.sy, southEdge(S) - 4) : q.y;
     const raw = out ? Math.hypot(p.x - qx, (p.y - qy) * .8) * .6 : doorReach(q, p.x, p.y);
     const d = raw - (out ? 0 : facingBonus(p, q.x, q.y));
-    if (raw < PET_CLEAR && optionFor(S, q)) close = true;
+    /* improve20-r14c-nov3 #3 (audit11 b12): a study station (a subject's table, desk or lectern, or its teacher) keeps the pet quiet from
+       STUDY_CLEAR away: beside the Coding table, just outside its reach, "Pet Ink Cat" took E from a kid who had walked up to study */
+    if ((raw < PET_CLEAR || q.props?.subject && raw < STUDY_CLEAR) && optionFor(S, q)) close = true;
     if (raw < DOOR_REACH && (!best || d < best.d)) { const o = optionFor(S, q); if (o) best = {d, q, o}; }
   }
   /* kidfix-a-oct31: with nothing else in reach and the hero standing still, E pets the companion at his side (gfx/actors/pet-sprites.js
@@ -554,7 +556,7 @@ function nearest(S, p) {
   if (pet) { const px = p.x - 22 * p.facing, py = p.y + 9; best = {d: 99, q: {x: px, y: py, sx: px, sy: py, mark: [px, py - 30], pet: true}, o: {label: `Pet ${pet.name}`, run: () => { petThePet(pet); p.petting = true; H.petted = (H.petted | 0) + 1; }}}; }
   return best;
 }
-export const PET_STILL = 1.5, PET_CLEAR = 45, PET_DOOR_WAIT = 3;
+export const PET_STILL = 1.5, PET_CLEAR = 45, PET_DOOR_WAIT = 3, STUDY_CLEAR = 110, STUDY_PREFER = 8;
 
 function fadeTo(mid) { if (!H.fade) H.fade = {t: 0, mid, done: false}; }
 function enter(room, door) {
@@ -889,6 +891,11 @@ export function hubGuidanceTarget(target, subject) {
     : S.points.find(p => p.type === 'entrance' && actionOf(p) === kind)
       ?? S.points.find(p => p.type === 'board' && actionOf(p) === kind);
   if (!q) return null;
+  /* improve20-r14c-nov3 #3 (audit11 b12): a subject's teacher opens the same study, so the arrow aims at whichever stand point is nearer:
+     the station's or its teacher's. Beside the Coding table the station's spot is round the corner on the rug below it, and the route there
+     pointed the arrow straight down into the floor; Tinker Pip's spot is a step away */
+  if (S.room && kind === 'library' && q.props?.subject && H.player) { const t = S.points.find(p => p.type === 'npc-spot' && tutorSubject(S, p) && p.props.subject === q.props.subject && Number.isFinite(p.sx));
+    if (t && Math.hypot(H.player.x - t.sx, H.player.y - t.sy) + STUDY_PREFER < Math.hypot(H.player.x - q.sx, H.player.y - q.sy)) q = {...q, sx: t.sx, sy: t.sy, teacher: t}; }
   const x = !S.room && kind === 'gate' ? q.x : q.sx;
   const y = !S.room && kind === 'gate' ? q.sy : q.sy;
   /* polish-oct29 (#13): a building's arrow aims at the door itself (its stand spot is at the doorstep, level with a hero walking up,
@@ -896,7 +903,8 @@ export function hubGuidanceTarget(target, subject) {
   const aim = !S.room && q.type === 'entrance' ? {x: q.x, y: q.y - 32} : null;
   /* improve20-t-oct31 #13: at the subject's teacher, whose talk opens the same study, the hero has arrived too */
   const sameStudy = kind === 'library' && !!q.props?.subject && H.near?.o?.panel === 'library' && H.near.o.subject === q.props.subject;
-  return routed(S, {room: S.key, x, y, label, ...(aim ? {aim} : {}), arrived: H.near?.q === q || sameStudy || !!H.player && Math.hypot(H.player.x - x, H.player.y - y) <= 12});
+  const atQ = H.near?.q === q || !!q.teacher && H.near?.q === q.teacher;
+  return routed(S, {room: S.key, x, y, label, ...(aim ? {aim} : {}), arrived: atQ || sameStudy || !!H.player && Math.hypot(H.player.x - x, H.player.y - y) <= 12});
 }
 /* improve20-b-oct31 #8 (kid-appeal playtest: Maya walked the arrow from Home straight into the cliff by the house and had to find the
    stairs; in the Library it led her into the bench at the English desk's rug). When a wall stands on the straight line to the target,
@@ -1259,6 +1267,9 @@ function subjectPlate(c, text, x, y, size = 16, bounds = null) {
 /** phone-oct29 (town-844 shot: the "This way" chip sat on the WEAPONSMITH plate): the name plates drawn in the last frame
     (doorway names, the Library's teacher subjects), world units, so the objective arrow can keep clear of them. */
 export const hubPlates = () => [...(H.plates || [])];
+/* improve20-r14c-nov3 #4: the people standing in the current scene (figures, the hired crew, walkers where they are now) as world boxes, head to feet, so a
+   town toast or the New pet card keeps off them (the smith sat under the pet card) */
+export function hubPeople() { const S = current(); if (!S || H.fade) return []; return [...S.figures, ...crewHere(S), ...S.walkers.map(walkerNow)].filter(f => Number.isFinite(f?.x)).map(f => ({x: f.x - 16, y: f.y - 62, w: 32, h: 66})); }
 
 /* Ambient life at the rooms' `ambient` points and a soft flicker at their `light` points, from the
    downloaded effect strips baked into fx.webp (tools/bake-town.mjs bakeFx). Nothing is drawn in code. */

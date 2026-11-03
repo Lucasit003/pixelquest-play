@@ -467,6 +467,12 @@ export function fitOf(list,o={}){let key;try{key=JSON.stringify(stripPic(list));
     const d=x.getImageData(0,0,PIC_W,PIC_H).data;for(let yy=0;yy<PIC_H;yy++)for(let xx=0;xx<PIC_W;xx++)if(d[(yy*PIC_W+xx)*4+3]>24){if(xx<x0)x0=xx;if(xx>x1)x1=xx;if(yy<y0)y0=yy;if(yy>y1)y1=yy;}}
    if(x1>=x0&&y1>=y0){const bw=x1-x0+1,bh=y1-y0+1,sc=Math.min(FIT_MAX,(PIC_W-2*FIT_MARGIN)/bw,(PIC_H-2*FIT_MARGIN)/bh);if(sc>=1.15)out={s:sc,cx:(x0+x1+1)/2,cy:(y0+y1+1)/2,box:[x0,y0,bw,bh]};}}}}catch{out=null;}
  if(FITS.size>200)FITS.delete(FITS.keys().next().value);FITS.set(key,out);return out;}
+/* improve20-r15a-nov3 #7 (kidsim3 k19: an empty frame beside "How many cents are 9 nickels?"): does a picture draw anything at the end of its
+   animation? Drawn once off screen on a clear canvas without its board (stripped of count/solve unless solve is asked), true when any pixel is
+   inked (p: the animation point, 1 = its end). null when it cannot tell (no canvas, as in Node, or an unknown kind), so a caller keeps the frame. Read-only. */
+export function picInk(pic,{solve=false,p=1}={}){const list=[].concat(pic??[]).filter(Boolean);if(!list.length)return false;try{const doc=globalThis.document;const cv=typeof OffscreenCanvas==='function'?new OffscreenCanvas(PIC_W,PIC_H):doc?.createElement?.('canvas');if(!cv)return null;cv.width=PIC_W;cv.height=PIC_H;const x=cv.getContext('2d');if(!x?.getImageData)return null;
+ const v=solve?solvePic(stripPic(list)):stripPic(list),c=pixelText(x);for(const one of v){const f=DRAW[one?.t];if(!f)return null;f(c,one,p,p>=1?{reduced:true}:{});}
+ const d=x.getImageData(0,0,PIC_W,PIC_H).data;for(let i=3;i<d.length;i+=4)if(d[i]>24)return true;return false;}catch{return null;}}
 /* improve20-r11d-nov2 #2: a probe for tests and the browser check: the smallest label drawn, in CSS px of its font's em (needs ctx.pqDev,
    device px per CSS px, which crispCtx sets) */
 /* improve20-r11f-nov2 #3: rect() also keeps each unrotated label's box in CSS px (x, y, w, h, the text), for the overlap sweep

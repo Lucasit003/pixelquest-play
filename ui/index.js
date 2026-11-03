@@ -3,7 +3,7 @@
    credits, transitions, banners, damage text, stage scaling, the mobile mode and the music
    director. Other scenes can import the pieces directly (see each module's header). */
 import {unlockAudio,playMusic,duck,musicKey,setDirected,sfx,getSoundtrack,levelMusicKey,bossMusicKey} from '../core/audio.js';
-import {guardLinksOut} from './parent-gate.js';
+import {guardLinksOut,pinResetState} from './parent-gate.js';
 import {setSheetWorld,installSheetKeys,sheetOpen} from './sheet.js';
 import {applySettings} from './settings.js';
 import {initScale,rescale} from './scale.js';
@@ -46,7 +46,7 @@ export function initUI(c){
  {const R=globalThis.document?.documentElement,w=globalThis.window;if(R&&w?.addEventListener){w.addEventListener('mousemove',e=>{if(e.movementX||e.movementY)R.dataset.pointer='moved';},{passive:true});w.addEventListener('keydown',()=>{delete R.dataset.pointer;},{passive:true});}}
  ctx=c;const d=globalThis.document,w=globalThis.window;if(!d||!w)return;
  const s=c.save();
- applySettings(s);setSheetWorld(c.world);setDialogueWorld(c.world);setProfilePersist(c.persist);initAccount({persist:c.persist});installSheetKeys(w);/* improve20-r9f-nov1 #1: every link out of the game asks the grown-up gate */guardLinksOut(d);unlockAudio(w);setDirected(true);
+ applySettings(s);setSheetWorld(c.world);setDialogueWorld(c.world);setProfilePersist(c.persist);initAccount({persist:c.persist});installSheetKeys(w);/* improve20-r9f-nov1 #1: every link out of the game asks the grown-up gate */guardLinksOut(d);/* improve20-r14c-nov3 #1: note the clock for a running forgot-PIN wait, so a clock set back restarts it */try{pinResetState();}catch{}unlockAudio(w);setDirected(true);
  initMobile({world:c.world});initScale(c.save,{town:()=>c.world?.zone==='town'&&!c.world?.level}/* ownernotes-b-nov1 #2: the town's own view */);armStartFullscreen(c.save);
  fillIcons(d);installToastHold();loadCanvasUI();installStageBanners();
  /* Settings opened from the title screen come back to the title when they close. */

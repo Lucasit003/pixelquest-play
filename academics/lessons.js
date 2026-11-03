@@ -137,8 +137,13 @@ export const practiceNeeded=(save,t)=>firstTopic(save,t)?FIRST_PRACTICE_NEEDED:P
 const settleFirst=(save,t)=>{if(!anyMastered(save))rec(save,t).first=true;};
 // The quiz half of the gate: 4 of 5, or the pool has too few unretired questions left to ask 4,
 // in which case a quiz can never reach it and the practice already done stands in for it.
-export const testReady=(save,t)=>{const r=save.lessons?.[t.id]||{},done=r.done===true,need=Math.ceil(PASS*QUIZ_SIZE-1e-9),quiz=(r.quiz||0)>=need||left(save,t)<need,p=practised(save,t),n=practiceNeeded(save,t);
- return {ready:done&&quiz&&p>=n,lesson:done,quiz,quizNeed:need,quizSize:QUIZ_SIZE,practice:Math.min(p,n),needed:n};};
+/* improve20-r15a-nov3 #1 (lead, 3 Nov, delegated by the owner; docs/reference/SPEC_DECISIONS.md): the save's FIRST topic (firstTopic, the rule
+   behind FIRST_PRACTICE_NEEDED) also passes its quiz once QUIZ_NEED different questions of its pool have been answered right in quizzes, summed
+   across sittings (`qright` on the lesson record; the pass latches as `qsum`, so mastering another topic later never takes it back). Every
+   other quiz keeps 4 of 5 in one sitting. `quizSum` = {have, need} while the summed rule is the one that applies and the quiz is not passed. */
+export const quizSumOn=(save,t)=>firstTopic(save,t)&&!mastered(save,t);
+export const testReady=(save,t)=>{const r=save.lessons?.[t.id]||{},done=r.done===true,need=Math.ceil(PASS*QUIZ_SIZE-1e-9),quiz=(r.quiz||0)>=need||r.qsum===true||left(save,t)<need,p=practised(save,t),n=practiceNeeded(save,t);
+ return {ready:done&&quiz&&p>=n,lesson:done,quiz,quizNeed:need,quizSize:QUIZ_SIZE,practice:Math.min(p,n),needed:n,quizSum:!quiz&&quizSumOn(save,t)?{have:Math.min(need,Array.isArray(r.qright)?r.qright.length:0),need}:null};};
 /* How many questions a practice sitting asks (late playtest 24 Oct: at 24 of 25 a child sat a full ten for the one answer the
    test still needed). Before the test opens: what is still needed, between 5 and size; after that, size. Never a limit on practice. */
 export const practiceSitting=(save,t,size=10)=>{const r=testReady(save,t);return r.practice>=r.needed?size:Math.max(5,Math.min(size,r.needed-r.practice));};
@@ -284,11 +289,19 @@ export function finishLesson(save,t,attempted){
     }
     return {xp:0,first:false,skipped:[]};
 }
-export function recordQuiz(save,t,score){
+/* improve20-r15a-nov3 #1: `right` ({id: true|false}, the sitting's answers) feeds the first topic's summed pass (distinct pool ids, so the same
+   question right twice counts once); `full` (the quiz was answered to its last question) counts a missed quiz in a row (`qmiss`, reset by a
+   pass), which main.js reads to lead with the lesson from the second miss. Both are additive lesson-record fields (save stays v9). */
+export function recordQuiz(save,t,score,{right=null,full=false}={}){
+    const was=testReady(save,t).quiz,sum=quizSumOn(save,t);
     const r=rec(save,t),before=r.quiz||0,best=Math.max(before,Math.min(99,score|0));
     const improved=best>before,first=!(r.quiz>0);
     r.quiz=best;
-    return {best,improved,first,before};
+    const need=Math.ceil(PASS*QUIZ_SIZE-1e-9);
+    if(sum&&right&&typeof right==='object'){const pool=new Set(POOL[t.id]||[]),have=new Set(Array.isArray(r.qright)?r.qright:[]);for(const [id,ok] of Object.entries(right))if(ok===true&&pool.has(id))have.add(id);if(have.size)r.qright=[...have].slice(0,QUIZ_SIZE*2);if(have.size>=need)r.qsum=true;}
+    const passed=testReady(save,t).quiz,passedNow=passed&&!was,bySum=passedNow&&r.qsum===true&&best<need;
+    if(passed)delete r.qmiss;else if(full)r.qmiss=Math.min(99,(r.qmiss|0)+1);
+    return {best,improved,first,before,passed,passedNow,bySum,misses:r.qmiss|0};
 }
 export function finishTest(save,t,sitting){
     if(!sitting.items.length || sitting.items.some(i=>typeof sitting.right[i.id]!=='boolean'))return {graded:false,passed:false,first:false,xp:0,score:0,total:sitting.items.length,missed:[],uncovered:[]};

@@ -24,6 +24,11 @@ export const HINT_WAIT=90;
    ability hint already gives itself 15 s a level), and the card is done once a boss fight starts (as Interact is done on entering
    combat): the boss and its health bar stay clear. Travel tips are optional extras and get 30 s each anywhere. */
 export const LEVEL_HINT_WAIT=30,TIP_WAIT=30;
+/* improve20-r14c-nov3 #11 (kidsim3 k22: "5/6 Press Shift to roll" moved on before it was read): a step that has been on screen stays at least
+   STEP_HOLD seconds of on-screen time, or until its action is done, whichever is later. ui/controls-tutorial.js keeps showing the step the
+   card had (a held copy) while the game's own step has moved on; a step skipped without being shown, and the boss-fight close, are not held. */
+export const STEP_HOLD=3;
+export const holdStep=(cur,shown,t,vis)=>!!cur&&shown>=0&&shown<cur.steps.length&&vis>0&&vis<STEP_HOLD&&(t===cur&&t.index!==shown||!t&&cur.index>=cur.steps.length);
 export function tickControls(t,age,inLevel=false,bossFight=false){const step=t?.steps[t.index],tips=t?.steps[0]==='run';if(t&&bossFight&&!tips)return null;return t&&(age>(tips?TIP_WAIT:inLevel?LEVEL_HINT_WAIT:HINT_WAIT)||inLevel&&step==='interact')?advanceControls(t,step):t;}
 
 /* improve20-u-nov1 #2: the first hit Grubnak's guard soaks (w.guardNudge, scenes/boss-guard.js) shows the tip and pulses the button at once,

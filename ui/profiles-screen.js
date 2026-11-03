@@ -3,7 +3,7 @@
 import {CLASSES} from '../game/data.js';
 import {readProfiles,profileSummary,switchProfile,addProfile,renameProfile,deleteProfile,markAutoContinue,profileRaw} from './profiles.js';
 import {drawHeroBust} from '../gfx/actors/hero-sprites.js';
-import {openParentGate,pinSet} from './parent-gate.js';
+import {openParentGate} from './parent-gate.js';
 import {openSheet,sheetHeader,closeSheet} from './sheet.js';
 import {icon} from './icons.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -34,7 +34,7 @@ export function openProfiles({manage=false}={}){
    const done=()=>{renameProfile(id,inp.value);openProfiles({manage:true});};inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();done();}});inp.addEventListener('blur',done);}
   else if(act==='remove')openRemove(d,id);
  }));
- /* improve20-r13b-nov2 #3: once a parent PIN is set, Manage (Rename, Remove) opens behind it too */d.querySelector('[data-act="manage"]')?.addEventListener('click',()=>{const flip=()=>{const nd=openProfiles({manage:!manageOn});nd.querySelector('[data-act="manage"]')?.focus?.({preventScroll:true});};if(!manageOn&&pinSet())openParentGate({why:'Managing learners is for grown-ups.',onPass:flip});else flip();});
+ /* improve20-r13b-nov2 #3: Manage (Rename, Remove) opens behind the gate. improve20-r14c-nov3 #1: always, not only once a PIN is set (the gate itself asks for a PIN to be chosen first) */d.querySelector('[data-act="manage"]')?.addEventListener('click',()=>{const flip=()=>{const nd=openProfiles({manage:!manageOn});nd.querySelector('[data-act="manage"]')?.focus?.({preventScroll:true});};if(!manageOn)openParentGate({why:'Managing learners is for grown-ups.',onPass:flip});else flip();});
  return d;
 }
 
@@ -44,7 +44,7 @@ export function openProfiles({manage=false}={}){
    gate (ui/parent-gate.js); only a right answer deletes. */
 const fileName=n=>`pixelquest-${String(n||'learner').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'learner'}-save.json`;
 export function exportLearner(id,name,doc=globalThis.document){const raw=profileRaw(id);if(!raw||!doc)return false;try{const url=URL.createObjectURL(new Blob([raw],{type:'application/json'})),a=doc.createElement('a');a.href=url;a.download=fileName(name);doc.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);return true;}catch{return false;}}
-export const removeGateHTML=(name,hasSave)=>`<div class="learner-remove" role="group" aria-label="Remove ${esc(name)}"><p><strong>Remove ${esc(name)}?</strong> This deletes ${esc(name)}’s heroes and progress on this device. It cannot be undone.</p>${hasSave?`<button type="button" data-act="export">Export ${esc(name)}’s save first</button>`:''}<p class="subtle learner-remove-type">A grown-up works out a quick multiplication to remove.</p><div class="learner-remove-acts"><button type="button" data-act="remove-gate" class="danger">Remove ${esc(name)}</button><button type="button" data-act="remove-cancel" class="ghost">Keep ${esc(name)}</button></div></div>`;
+export const removeGateHTML=(name,hasSave)=>`<div class="learner-remove" role="group" aria-label="Remove ${esc(name)}"><p><strong>Remove ${esc(name)}?</strong> This deletes ${esc(name)}’s heroes and progress on this device. It cannot be undone.</p>${hasSave?`<button type="button" data-act="export">Export ${esc(name)}’s save first</button>`:''}<p class="subtle learner-remove-type">A grown-up’s PIN is needed to remove ${esc(name)}.</p><div class="learner-remove-acts"><button type="button" data-act="remove-gate" class="danger">Remove ${esc(name)}</button><button type="button" data-act="remove-cancel" class="ghost">Keep ${esc(name)}</button></div></div>`;
 function openRemove(d,id){
  const row=d.querySelector(`.learner-row[data-id="${id}"]`),p=readProfiles().list.find(x=>x.id===id);if(!row||!p)return;
  d.querySelectorAll('.learner-remove').forEach(x=>x.remove());row.insertAdjacentHTML('afterend',`<li class="learner-remove-li">${removeGateHTML(p.name,!!profileRaw(id))}</li>`);

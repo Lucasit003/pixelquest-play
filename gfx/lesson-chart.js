@@ -61,8 +61,12 @@ function scatter(c,q,p,L,R,T){const [x0,x1]=q.x,[y0,y1]=q.y,B=q.xlabel?222:232,L
   text(c,`residual ${num(y-yp)}`,X(x)+(X(x)>R-90?-12:12),(Y(y)+Y(yp))/2,12,{bold:true,align:X(x)>R-90?'right':'left',color:RED});}}
 
 /* bars: labelled bars for categories, negative values below the axis: bars:[{label,value,col?}], unit?:'$', show values */
-function catbars(c,q,p,L,R,T){const bs=q.bars||[],vals=bs.map(b=>b.value),hi=Math.max(0,...vals),lo=Math.min(0,...vals),span=(hi-lo)||1,B=222,Y=v=>B-(v-lo)/span*(B-T-14),zero=Y(0),w=(R-L-20)/bs.length,cols=[BLUE,ORANGE,GREEN,'#8a4f9e',RED];
- line(c,L,zero,R,zero);const two=crowded(c,bs.map(b=>b.label),w);
+/* improve20-r14c-nov3 #6 (picframe2 follow-up): with a negative bar the names sit a row lower, and crowded names alternate onto a second row
+   below that, so the second row ("deaths" in science-5's rates chart) ran off the bottom of the picture. Then the bars end BARS_LIFT units
+   higher, which keeps that row inside it. */
+const BARS_LIFT=26;
+function catbars(c,q,p,L,R,T){const bs=q.bars||[],vals=bs.map(b=>b.value),hi=Math.max(0,...vals),lo=Math.min(0,...vals),span=(hi-lo)||1,w=(R-L-20)/bs.length,two=crowded(c,bs.map(b=>b.label),w),B=222-(two&&lo<0?BARS_LIFT:0),Y=v=>B-(v-lo)/span*(B-T-14),zero=Y(0),cols=[BLUE,ORANGE,GREEN,'#8a4f9e',RED];
+ line(c,L,zero,R,zero);
  /* picframe2-nov2 #4: a negative bar's value sits under the bar's end; when that would touch the bar's name ("net migration" against "-3" on a
     phone) it sits just above the zero line in the bar's own column instead */
  c.font='bold 12px sans-serif';const hh=5*c.measureText('0').width/8,nameY=B+(lo<0?28:14);
