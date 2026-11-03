@@ -1,6 +1,7 @@
 /* Short player-facing previews from the shipped encounter rules. Reads progress, never writes it. */
 import {LEVELS,tiered,tierOpen,tierDone,tierRecord,starsOf,levelOpen,starsShort,levelReward,levelById,CHAPTERS,levelXPReward} from './levels.js';
 import {TIER_KEYS,TIERS,adviceLevel,XP_TUNE,tierKey} from './tiers.js';
+import {gradeRank} from './grade.js';
 import {overLevelXP} from './math.js';
 import {MAPS,PADS} from './worldmap-layout.js';
 import {encounterFor} from './tier-encounters.js';
@@ -47,6 +48,10 @@ export function rewardPreview(s,l,k){const done=tierDone(s,l.id,k),gold=levelRew
    this same rule (main.js heroicNudge); a learning lead on the card (round 12 lane A) still comes first there. Pure. */
 export const HEROIC_LEAD_OVER=5;
 export const secondClear=(s,id)=>{const r=s?.levels?.[id];return !!r?.done&&(r.plays|0)>=2;};
-export function heroicLead(s,id){const l=levelById(id);if(!l||!tiered(l)||!levelOpen(s,id)||!tierOpen(s,id,'heroic')||tierDone(s,id,'heroic'))return null;const over=(s?.level|0)-adviceLevel(l,'normal'),high=over>=HEROIC_LEAD_OVER,again=secondClear(s,id),lead=high||again,card=high?`You are ${over} levels above ${l.name}. Try it on Heroic for a real fight.`:again?`You have cleared ${l.name}. Try it on Heroic for a real fight.`:null/* the win card's line */;
+/* improve20-r15b-nov3 #6 (kidsim3 k13: Nia, a typical mid save, won 6 of 6 with 0 deaths at grades A/S+): from a level's first S grade on Normal
+   (its best grade S or S+, sGrade) Heroic leads too ("Grade S on <level>! Try it on Heroic for a real fight."). A learning lead on the win card
+   still comes first, and a visit with a loss shows no Heroic at all (main.js levelEnd). */
+export const sGrade=(s,id)=>gradeRank(s?.levels?.[id]?.best?.grade)>=gradeRank('S');
+export function heroicLead(s,id){const l=levelById(id);if(!l||!tiered(l)||!levelOpen(s,id)||!tierOpen(s,id,'heroic')||tierDone(s,id,'heroic'))return null;const over=(s?.level|0)-adviceLevel(l,'normal'),high=over>=HEROIC_LEAD_OVER,again=secondClear(s,id),sg=sGrade(s,id),lead=high||again||sg,card=high?`You are ${over} levels above ${l.name}. Try it on Heroic for a real fight.`:sg?`Grade ${s.levels[id].best.grade} on ${l.name}! Try it on Heroic for a real fight.`:again?`You have cleared ${l.name}. Try it on Heroic for a real fight.`:null/* the win card's line */;
  if(starsOf(s,id,'normal')>=3)return {kind:'stars',over,lead,text:'All stars earned: try Heroic.',card};
- return high?{kind:'over',over,lead,text:`You are ${over} levels above ${l.name}. Try Heroic for a real fight.`,card}:again?{kind:'again',over,lead,text:`You have cleared ${l.name}. Try Heroic for a real fight.`,card}:null;}
+ return high?{kind:'over',over,lead,text:`You are ${over} levels above ${l.name}. Try Heroic for a real fight.`,card}:again?{kind:'again',over,lead,text:`You have cleared ${l.name}. Try Heroic for a real fight.`,card}:sg?{kind:'grade',over,lead,text:`Grade ${s.levels[id].best.grade} here: try Heroic for a real fight.`,card}:null;}

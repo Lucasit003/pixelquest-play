@@ -114,6 +114,11 @@ function firstLibrary(save,room){if(room!=='library')return {id:'first-lesson',t
    ability ("Charge Volley (1/3): ..."), read from the same road the HUD card shows (learning-road.js). After the ending the post-game road
    keeps the goal (the HUD card still shows the charges). Only the suggestion changes: the gates,
    the practice counts and the test are untouched, and nothing here unlocks anything. Every class's ladder reads the same road. */
+/* improve20-r15b-nov3 #1 (kidsim3 k2: the readers fought about 140 s in 18 minutes): an ability that wakes holds goalTurn on 'fight' for
+   FIGHT_HOLD level clears before the next topic leads again (save.fightHold, additive within v9: set to FIGHT_HOLD by the mastery card
+   that woke it, main.js; game/levels.js recordLevel counts a won level down). Only the suggestion: the Library stays open and a kid who
+   goes there gets the normal lesson flow. */
+export const FIGHT_HOLD=2;
 export function chargeStep(save){if(save?.goalTurn!=='learn'||!earned(save)||gameCleared(save))return null;const road=learningRoad(save);
  if(!road||road.sleeping||!road.reachable||road.knowledge||road.remaining<1)return null;const a=road.ability,st=nextUnlockStep(save,road),sub=SUBJECTS[a.subject]?.name||a.subject,t=st?.topic&&TOPICS.find(x=>x.id===st.topic);
  const left=st?.kind==='practice'?st.need-st.have:0,what=st?.kind==='practice'&&t?`practise ${left} more question${left===1?'':'s'} in “${t.title}”`:st?.kind==='quiz'&&t?`pass the quiz on “${t.title}”`:st?.kind==='test'&&t?`take the mastery test on “${t.title}”`:`start ${/^[aeiou]/i.test(sub)?'an':'a'} ${sub} lesson`;
@@ -140,7 +145,8 @@ export function postPower(save){const p=nextPowerP(save);
  if((ABILITIES[save?.hero]||[]).some(a=>a.gate>0&&!unlocked(save,a)))return null;const t=openInMode(save).sort((a,b)=>!!save.lessons?.[b.id]?.done-!!save.lessons?.[a.id]?.done)[0];
  return t?{id:'post-topic',text:`Every power is awake. Master your next topic, “${t.title}”, at the Library.`,phone:'Master your next topic at the Library.',target:{kind:'library',subject:t.subject}}:null;}
 /* improve20-r10a-nov2 #5: a mastery that opened no ability sets goalTurn 'go' (main.js): the adventure still comes next, without "Try your new skills" */
-const tryNew=(save,n)=>{if(save?.goalTurn!=='fight'||!earned(save)||n?.target?.kind!=='pad')return n;const l=levelById(n.target.id);
+/* improve20-r15b-nov3 #1: on the second clear of a wake's hold (save.fightHold 1, see FIGHT_HOLD) the adventure keeps its own words */
+const tryNew=(save,n)=>{if(save?.goalTurn!=='fight'||!earned(save)||n?.target?.kind!=='pad'||(save.fightHold|0)===1)return n;const l=levelById(n.target.id);
  return {...n,text:n.id==='level-'+n.target.id&&l?`Try your new skills at ${l.name}.`:`Try your new skills! ${n.text}`,tryNew:true};};
 function adventure(save){
  const h=hireStep(save);if(h)return h;
@@ -173,7 +179,10 @@ export function firstUpgrade(save){if((save?.gold|0)<FIRST_UPGRADE_GOLD||!save?.
  let u=null;try{u=affordableUpgrade(save);}catch{u=null;}if(!u||!ITEM[u.id])return null;return {id:u.id,name:ITEM[u.id].name,cost:u.cost,craft:u.kind==='craft'};}
 /* improve20-r8a-nov1 #1: the one judge may pick a craft whose materials are in hand; the goal then says "craft" */
 /* improve20-r12a-nov2: a power gate's goal is a learning step, so the first-upgrade nudge never covers it (kidsim: Mia's e3 card said "Visit the Weaponsmith" beside "Finish practice") */
-const upgradeFirst=(save,n)=>{const u=n&&!n.powerGate&&firstUpgrade(save);return u?{id:'first-upgrade',text:u.craft?`Visit the Weaponsmith: craft your first upgrade, the ${u.name} (${u.cost} gold and your materials).`:`Visit the Weaponsmith: your first upgrade, the ${u.name} (${u.cost} gold).`,target:{kind:'smith'},item:u.id,craft:!!u.craft,then:n}:n;};
+/* improve20-r15b-nov3 #2 (kidsim3 k4: after the second mastery the HUD goal became "Visit the Weaponsmith", Theo, both runs): while a level
+   (a map pad) or a topic step (the Library) is next, the first upgrade never takes the goal; it stays the win card's "next:" chip (main.js
+   nextBuyName). It still leads a goal that is neither (a quest step, the end goals). */
+const upgradeFirst=(save,n)=>{const k=n?.target?.kind,u=n&&!n.powerGate&&k!=='pad'&&k!=='library'&&firstUpgrade(save);return u?{id:'first-upgrade',text:u.craft?`Visit the Weaponsmith: craft your first upgrade, the ${u.name} (${u.cost} gold and your materials).`:`Visit the Weaponsmith: your first upgrade, the ${u.name} (${u.cost} gold).`,target:{kind:'smith'},item:u.id,craft:!!u.craft,then:n}:n;};
 /* libraryfirst-nov1 (owner, 1 Nov: "start by bringing the character to the Library ... and have them learn an ability first"): a new game on the
    Library-first opening (academics/starter-lesson.js) is pointed at the Library until its starter power is awake; the south gate is shut till
    then. Then the prologue names the power to try, and after the prologue the first lesson step names the NEXT power and the topic that wakes

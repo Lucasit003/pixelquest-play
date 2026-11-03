@@ -256,7 +256,7 @@ export function runStars(l,k,{time,knockouts=0,grade=null}={}){const cap=knockou
 export function recordLevel(save,id,{won,time,score,tier,knockouts=0,rift=false,grade=null}){const l=levelById(id),k=tiered(l)?tierKey(tier):'normal';save.levels??={};
  const top=save.levels[id]??={done:false,best:{time:null,score:0},plays:0};
  const r=k==='normal'?top:((top.tiers??={})[k]??={done:false,best:{time:null,score:0},plays:0,stars:0});r.best??={time:null,score:0};
- r.plays=(r.plays|0)+1;/* improve20-z-nov1 #4: a won level turns the suggested goal back to learning (game/next-step.js chargeStep) */if(won&&l?.kind==='level')save.goalTurn='learn';/* improve20-r8a-nov1 #3: wins since e5, for the Wil nudge (next-step.js wilNudge) */if(won&&l?.kind==='level'&&(id==='e5'||save.levels.e5?.done))save.questNudge=(save.questNudge|0)+1;/* improve20-r12c-nov2 #1: the recap's "Last: cleared ..." (save.lastClear, additive; a Rift run is not a level clear) */if(won&&l?.kind==='level'&&!rift)save.lastClear={id,tier:k};if(rift)return {first:false,recordTime:false,recordScore:false,stars:won&&l?.kind==='level'?runStars(l,k,{time,knockouts,grade}):0,newStars:0,tier:k,rift:true};const first=won&&!r.done&&l?.kind==='level';
+ r.plays=(r.plays|0)+1;/* improve20-z-nov1 #4: a won level turns the suggested goal back to learning (game/next-step.js chargeStep) *//* improve20-r15b-nov3 #1: a wake's hold (save.fightHold, game/next-step.js FIGHT_HOLD) keeps 'fight' until its last clear */if(won&&l?.kind==='level'){if(save.goalTurn==='fight'&&(save.fightHold|0)>1)save.fightHold=(save.fightHold|0)-1;else{save.goalTurn='learn';save.fightHold=0;}}/* improve20-r15b-nov3 #7: level wins counted (save.winTally, additive), for the win card's every-third Library lead (main.js) */if(won&&l?.kind==='level'&&!rift)save.winTally=(save.winTally|0)+1;/* improve20-r8a-nov1 #3: wins since e5, for the Wil nudge (next-step.js wilNudge) */if(won&&l?.kind==='level'&&(id==='e5'||save.levels.e5?.done))save.questNudge=(save.questNudge|0)+1;/* improve20-r12c-nov2 #1: the recap's "Last: cleared ..." (save.lastClear, additive; a Rift run is not a level clear) */if(won&&l?.kind==='level'&&!rift)save.lastClear={id,tier:k};if(rift)return {first:false,recordTime:false,recordScore:false,stars:won&&l?.kind==='level'?runStars(l,k,{time,knockouts,grade}):0,newStars:0,tier:k,rift:true};const first=won&&!r.done&&l?.kind==='level';
  const stars=won&&l?.kind==='level'?runStars(l,k,{time,knockouts,grade}):0,newStars=stars>(r.stars|0)?stars-(r.stars|0):0;if(newStars)r.stars=stars;
  const recordTime=won&&l?.kind==='level'&&(r.best.time==null||time<r.best.time);if(recordTime)r.best.time=Math.round(time*10)/10;
  const recordScore=score>(r.best.score|0);if(recordScore){r.best.score=score;if(l?.kind==='arena')r.best.time=Math.round(time*10)/10;}
@@ -290,6 +290,14 @@ export const FIRST_FIGHTS=Object.freeze(['prologue','e1']);
 export const storyFirst=(save,id)=>FIRST_FIGHTS.includes(id)&&!levelDone(save,id);
 export const fightKey=(save,id)=>storyFirst(save,id)?'easy':save?.settings?.difficulty==='heroic'?'heroic':'easy';
 export const difficultyOf=(save,id)=>id?DIFFICULTY[fightKey(save,id)]:DIFFICULTY[save?.settings?.difficulty]||DIFFICULTY.easy;
+/* improve20-r15b-nov3 #5 (kidsim3 k12: Mia and Ivy lost e3 3-4 times on Story): measured first. The low-skill masher bot (Mia's style, skill 0)
+   walled at e3 on Story in 5 of 7 classes (median 5-7 tries, 15 wins in 35 runs); 15% off the boss's health changed nothing measurable (it falls
+   at 20-45% boss health and does not dodge), 2 extra free potions on the try made it 28 wins in 35 (docs/playtest/improve20-r15b-nov3/sim/).
+   So from the STORY_HELP_AFTER-th loss in a row at a level (levels[id].resolve, the defeats since its last win) on Story, Normal tier, that try
+   starts with STORY_POTIONS extra free potions (World.startLevel; the per-try drink cap still holds). A win clears it with the losses.
+   Standard (the heroic setting), Heroic and Legendary are unchanged; the Hall and the Rift never use it. */
+export const STORY_HELP_AFTER=2,STORY_POTIONS=2;
+export const storyHelp=(save,id,tier='normal')=>tier==='normal'&&levelById(id)?.kind==='level'&&fightKey(save,id)==='easy'&&(save?.levels?.[id]?.resolve|0)>=STORY_HELP_AFTER;
 /* After a loss in the first three levels on Standard, one offer to switch to Story ("Make fights easier?"); declined or taken, never again.
    s.settings.easierOffer: undefined (not asked), 'taken' or 'declined' (additive in v9, core/save.js normalize). Learning is untouched. */
 export const EASIER_LEVELS=Object.freeze(['prologue','e1','e2']);

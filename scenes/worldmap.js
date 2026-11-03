@@ -5,7 +5,7 @@
 // main.js also forwards key(k) (lower-cased KeyboardEvent.key; returns true when the map used it) and tap(x,y)
 // (canvas pixels, 480x270). Layout: game/worldmap-layout.js. Drawing: gfx/worldmap-art.js.
 import {LEVELS,CHAPTERS,levelById,levelOpen,levelDone,tiered,tierOpen,tierDone,starsOf,totalStars,maxStars,starsShort,tierCrests,chapterBorder,powerShort,starGateMet} from '../game/levels.js';
-import {gateInfo as gateInfo0} from '../game/power-gate.js';
+import {gateInfo as gateInfo0,waitingGate} from '../game/power-gate.js';
 /* improve20-r12a-nov2: the card never breaks the map; a partial save (tools, tests) gets no power block rather than an error */
 const gateInfo=(save,id)=>{try{return gateInfo0(save,id);}catch{return null;}};
 import {ladderGoal,heroicLead} from '../game/ladder-guide.js';
@@ -238,9 +238,12 @@ function info(){const id=S.walk?.to||S.at,n=nodeAt(id),st=stateOf(id);if(!n)retu
  /* improve20-r12a-nov2: a pad held by a power gate says what it needs (power first, then the star gate when both are unmet) and offers the Library */
  const pg=st==='locked'?gateInfo(S.save,l.id):null,sg=pg?starsShort(S.save,l.id):null;if(pg)return{title:l.name,boss:'',inside:'',bossLine:'',gradeLine:'',subtitle:'Locked',blurb:sg?`Then ${sg.need} stars (you have ${sg.have}).`:'',tiers:[],tierLine:'',heroicLead:'',side:!!l.optional,power:{id:l.id,a:pg.a,hero:S.save.hero,text:pg.text,label:'Go to the Library',go:()=>S?.ctx?.onPowerGate?.(l.id)}};
  /* a won pad next to a power gate carries the same block, so the card the map opens on says why the road stops */
- const near=st==='locked'?null:neighbours(S.chapter,id).map(n=>levelById(n)&&!levelById(n).optional?gateInfo(S.save,n):null).find(Boolean),nearPower=near?{id:near.id,a:near.a,hero:S.save.hero,label:'Go to the Library',text:near.text.replace(/^Needs /,`${near.name} needs `),go:()=>S?.ctx?.onPowerGate?.(near.id)}:null;
+ const near=st==='locked'?null:neighbours(S.chapter,id).map(n=>levelById(n)&&!levelById(n).optional?gateInfo(S.save,n):null).find(Boolean),nearPower=near?{id:near.id,a:near.a,hero:S.save.hero,label:'Go to the Library',text:near.text.replace(/^Needs /,`${near.name} needs `),go:()=>S?.ctx?.onPowerGate?.(near.id)}:null,
+ /* improve20-r15b-nov3 #4 (kidsim3 k8): an open side path (ex1) while a power gate holds the main road repeats the gate line, with the Library
+    button, and offers no Heroic lead in its place */
+ sideGate=!nearPower&&st!=='locked'&&l.optional?waitingGate(S.save):null,sidePower=sideGate?.a?{id:sideGate.level.id,a:sideGate.a,hero:S.save.hero,label:'Go to the Library',text:`Wake ${sideGate.a.name} to open ${sideGate.level.name}.`,go:()=>S?.ctx?.onPowerGate?.(sideGate.level.id)}:null;
 
- return{title:l.name,boss:st==='locked'?'':boss,inside:st==='locked'?'':String(l.blurb||''),bossLine:st==='locked'||!full?'':`Boss: ${full}`,gradeLine:st==='locked'?'':padGrade(S.save,l),subtitle:st==='locked'?'Locked':'',blurb:ladderGoal(S.save,l),tiers:st==='locked'||!tiered(l)?[]:TIER_KEYS.map(k=>({key:k,label:TIERS[k].label,open:tierOpen(S.save,l.id,k),stars:starsOf(S.save,l.id,k),crest:tierCrests(S.save,l.id).includes(k)})),tierLine:st==='locked'?'':tierLine(S.save,l),/* improve20-r10c-nov2 #19 */heroicLead:st==='locked'?'':heroicLead(S.save,l.id)?.text||'',side:!!l.optional,power:nearPower};}
+ return{title:l.name,boss:st==='locked'?'':boss,inside:st==='locked'?'':String(l.blurb||''),bossLine:st==='locked'||!full?'':`Boss: ${full}`,gradeLine:st==='locked'?'':padGrade(S.save,l),subtitle:st==='locked'?'Locked':'',blurb:ladderGoal(S.save,l),tiers:st==='locked'||!tiered(l)?[]:TIER_KEYS.map(k=>({key:k,label:TIERS[k].label,open:tierOpen(S.save,l.id,k),stars:starsOf(S.save,l.id,k),crest:tierCrests(S.save,l.id).includes(k)})),tierLine:st==='locked'?'':tierLine(S.save,l),/* improve20-r10c-nov2 #19 */heroicLead:st==='locked'||sidePower?'':heroicLead(S.save,l.id)?.text||'',side:!!l.optional,power:nearPower||sidePower};}
 /* improve20-r11a-nov2 #6 (audit9 a17): arriving in a new chapter, the card's title was the gate the hero stood on ("Emberkeep", the road back)
    and the news sat under it ("The Veilmoor is open!"). While the arrival's light runs to the first stop, the news is the title and the
    first stop is the line under it; when the light lands the card goes back to the stop (and "Welcome to ..." is the notice). The old

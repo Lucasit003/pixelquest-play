@@ -4424,3 +4424,7 @@ dialog:is([data-view=smith],[data-view=alchemist]) .more-below::after{height:38p
 .m-mode dialog[data-view=result] .level-starline .defeat-progress{font-size:14px}
 /* improve20-r14b-nov3 #4: a piece another piece beats on price and numbers is greyed (ui/gear-ui.js gearDominated) */
 .gear-card:has(.gear-dominated){filter:saturate(.35) brightness(.85)}
+/* improve20-r15b-nov3 #4: a side path's win at a power gate repeats the gate line inside the NEXT GOAL box */
+dialog[data-view=result] .result-gate-line{display:flex;flex-basis:100%;align-items:center;justify-content:center;gap:8px;margin:2px 0 0;font-size:var(--fs);line-height:1.3;color:#ffe08a;font-weight:700}
+dialog[data-view=result] .result-gate-line .ico{flex:none}
+.m-mode dialog[data-view=result] .result-gate-line{grid-column:1 / -1}
