@@ -22,6 +22,9 @@ import {tierLayer,safeLane} from './tier-fx.js';
    sheet's state), bossOnly, uses, forced/onMash, then (a combo), feint (Heroic and up), heroic/legendary (overrides). */
 import {sfx} from '../core/audio.js';
 import {loadSprite,drawSprite} from '../gfx/actors/sprites.js';
+/* improve20-r14b-nov3 #7 (R13C shot 03: "ONLY THE REAL ONE HAS A SHADOW!" read as faint grey, caught in its 0.75 s fade): a boss's move banner is
+   bold and held at full strength for about 2 s (World.text's hold, ui/juice.js); the shadow moves keep a pale violet, lighter than before */
+export const SIG_WORD={color:'#fff3c4',life:2.4,shadow:'#ece4ff'};
 
 const sgn=v=>v<0?-1:1,clampN=(v,a,b)=>v<a?a:v>b?b:v,rnd=w=>(w.rng?w.rng():Math.random());
 export const PILLAR_BEAT={slow:.25,time:1};
@@ -67,13 +70,13 @@ export function resolveMove(e,w,b,a,K){const p=w.player,fx=K.fx(w),f=e.facing,B=
   case 'wave':{const n=a.count||1,cast={hit:false};/* rings from one tell share it: the cast hits the hero at most once */for(let i=0;i<n;i++)fx.push({kind:'wave',owner:e,a,cast,shape:a.shape||'ring',x:e.x+(a.shape==='front'?f*12:0),y:e.y,dir:f,t:-i*(a.gap||.5),r:a.r0||10,hit:false});w.quake?.('aoe',.5);break;}
   case 'sweep':{const far=B.y0+2,near=B.y1-2,from=a.from==='near'?near:far,to=a.from==='near'?far:near;
    fx.push({kind:'sweep',owner:e,a,x0:e.x+f*10,x1:e.x+f*a.len,dir:f,ya:from,yb:to,t:0,dur:a.dur||.9,hit:false});w.quake?.('aoe',.5);break;}
-  case 'dark':w.dark={from:w.time,until:w.time+a.dur,owner:e,lights:(a.lights||[[.25,.5],[.75,.5]]).map(([u,v])=>({x:B.x0+(B.x1-B.x0)*u,y:B.y0+(B.y1-B.y0)*v}))};if(!(w.level?.encounter?.emberkeep||w.level?.encounter?.veilmoor))w.text?.(a.banner||'DARKNESS!',e.x,K.top(e)-4,'#c9b8ff');break;
+  case 'dark':w.dark={from:w.time,until:w.time+a.dur,owner:e,lights:(a.lights||[[.25,.5],[.75,.5]]).map(([u,v])=>({x:B.x0+(B.x1-B.x0)*u,y:B.y0+(B.y1-B.y0)*v}))};if(!(w.level?.encounter?.emberkeep||w.level?.encounter?.veilmoor))w.text?.(a.banner||'DARKNESS!',e.x,K.top(e)-4,SIG_WORD.shadow,true,{life:SIG_WORD.life,hold:true});break;
   case 'split':{const n=a.count||1;for(let i=0;i<n;i++){const side=i%2?-1:1,x=clampN(e.x+side*(46+i*10),B.x0+20,B.x1-20),y=clampN(e.y+(i%2?14:-14),B.y0,B.y1);
     /* a copy pops on the first hit (prop: one hit), whatever the boss was doing when it split (a rally's guard, a stance) */
     const o={...e,brain:null,boss:false,elite:false,decoy:true,noShadow:true,summoned:true,summoner:e,entered:true,hp:100,maxHp:100,prop:{hits:1},shielded:false,ward:0,stance:null,pillar:false,dizzyUntil:0,crackUntil:0,partner:null,mod:null,
      attacks:(e.attacks||[]).filter(x=>x.kind==='melee').map(x=>({...x,dmg:(x.dmg||1)*(a.dmg||.55),cd:x.cd*1.4})),phaseShift:null,stance:null,fade:1,x,y,name:e.name,tint:null,inv:.4,cdMul:1.3};
     o.attacks.length||o.attacks.push({name:'mirror slash',state:'attack',kind:'melee',range:60,band:10,cd:2.4,windup:.7,dmg:.55});
-    (w.admitEnemy?w.admitEnemy(o):w.enemies.push(o));K.puff(w,a.fx||'fx-col-shadow',x,y,e);}if(!w.level?.encounter?.veilmoor)w.text?.(a.banner||'WHICH ONE IS REAL?',e.x,K.top(e)-4,'#c9b8ff');break;}
+    (w.admitEnemy?w.admitEnemy(o):w.enemies.push(o));K.puff(w,a.fx||'fx-col-shadow',x,y,e);}if(!w.level?.encounter?.veilmoor)w.text?.(a.banner||'WHICH ONE IS REAL?',e.x,K.top(e)-4,SIG_WORD.shadow,true,{life:SIG_WORD.life,hold:true});break;}
   case 'lure':{const n=a.count||1;for(let i=0;i<n;i++){const ox=n>1?(i-(n-1)/2)*(a.spread||50):0;fx.push({kind:'lure',owner:e,a,x:e.x+f*16,y:e.y,sx:e.x+f*16,sy:e.y,tx:clampN(p.x+ox,B.x0+10,B.x1-10),ty:clampN(p.y+(i%2?8:-8)*(n>1?1:0),B.y0,B.y1),t:-i*.35});}break;}
   case 'zone':{const z=a.veilZone|| (a.area==='lower'?{x0:B.x0-30,x1:B.x1+30,y0:(B.y0+B.y1)/2+4,y1:B.y1+8}:a.area==='upper'?{x0:B.x0-30,x1:B.x1+30,y0:B.y0-8,y1:(B.y0+B.y1)/2-4}:null);
    fx.push({kind:'zone',owner:e,a,rect:z,x:p.x,y:p.y,r:a.radius||30,t:0,dur:a.dur,slow:a.slow||.35,tick:.6});if(a.flood)w.flooded=Math.max(w.flooded||0,a.dur);w.text?.(a.banner||'',e.x,K.top(e)-4,'#8fe4ff');break;}}}

@@ -5,12 +5,15 @@
    Read-only: nothing here changes what unlocks an ability. */
 import {SUBJECTS} from './data.js';
 import {learningRoad} from '../academics/learning-road.js';
-import {runesPlaceable,runeRoom,runesShown,runeCountText} from './runes.js';
+import {runesPlaceable,runeRoom,runesShown,runeCountText,runesQuiet} from './runes.js';
 export const RUNE_EARN='Master 1 more topic: earn a rune';
 /* improve20-r9e-nov1 #6: the same count and words as Home → Abilities (runes.js runeCountText) */
 export const runePlaceText=s=>runeCountText(s,{where:' at Home → Abilities'});
 /* {kind:'place'|'earn', text} or null; null until the save has its first rune and an ability to hold it (improve20-q-oct31, runesShown) */
-export function runeLead(s){if(!s||!runesShown(s)||!runeRoom(s))return null;const n=runesPlaceable(s);return n>0?{kind:'place',text:runePlaceText(s)}:{kind:'earn',text:RUNE_EARN};}
+/* improve20-r14b-nov3 #3: once the one offer was made and the count has not changed (runes.js runesQuiet), the place lead goes quiet everywhere it
+   is read (the defeat tip, the Library pointer, the town chip, the Journal's lead); quietCount says the count plainly for the Journal */
+export function runeLead(s){if(!s||!runesShown(s)||!runeRoom(s))return null;const n=runesPlaceable(s);if(n>0&&runesQuiet(s))return null;return n>0?{kind:'place',text:runePlaceText(s)}:{kind:'earn',text:RUNE_EARN};}
+export const quietRuneCount=s=>s&&runesShown(s)&&runesQuiet(s)?runeCountText(s):'';
 /* the ability gate as topic dots: one dot per topic on the road, filled for those mastered (counted when the road is long) */
 export function gateDots(s,road=learningRoad(s)){if(!road||road.sleeping||!road.reachable||road.knowledge)return null;const a=road.ability,sub=SUBJECTS[a.subject]?.name||a.subject,{done,total}=road;
  const dots=total<=10?'●'.repeat(done)+'○'.repeat(Math.max(0,total-done)):`${done}/${total}`;return `${a.name} ${dots} ${sub}`;}

@@ -7,17 +7,17 @@ import {unlocked} from '../game/math.js';
 import {TOPICS,mastered} from '../academics/lessons.js';
 import {totalStars,maxStars} from '../game/levels.js';
 import {heroTitle} from '../game/titles.js';
-import {runeLead} from '../game/rune-goal.js';
+import {quietRuneCount,runeLead} from '../game/rune-goal.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 export function adventureSummary(s={}){
  const hero=CLASSES[s.hero]?s.hero:'warrior',cls=CLASSES[hero].name,typed=String(s.heroNames?.[hero]??'').trim().slice(0,24),ab=ABILITIES[hero]||[];
- return {name:typed||null,className:cls,level:Math.max(1,s.level|0),topics:TOPICS.filter(t=>mastered(s,t)).length,abilities:ab.filter(a=>unlocked(s,a)).length,ofAbilities:ab.length,stars:totalStars(s),maxStars:maxStars(),title:heroTitle(s),rune:runeLead(s)};}
+ return {name:typed||null,className:cls,level:Math.max(1,s.level|0),topics:TOPICS.filter(t=>mastered(s,t)).length,abilities:ab.filter(a=>unlocked(s,a)).length,ofAbilities:ab.length,stars:totalStars(s),maxStars:maxStars(),title:heroTitle(s),rune:runeLead(s)||(quietRuneCount(s)?{kind:'quiet',text:quietRuneCount(s)}:null)};}
 
 /* owner decision 31 Oct (GAME_READINESS_OCT30 #14): "4 of 8 abilities" on the last card read as unfinished to a parent; the card
    counts what was earned and names what is still to come as a next goal. */
 /* kidfix-b-oct31: the near goal leads, a rune for the next topic mastered (m.rune, game/rune-goal.js), before the far abilities */
-export function adventureMore(m){const a=Math.max(0,m.ofAbilities-m.abilities),st=Math.max(0,m.maxStars-m.stars),parts=[],lead=m.rune?`<b class="adv-rune" data-rune-lead="${esc(m.rune.kind)}">${esc(m.rune.text)}.</b> `:'';
+export function adventureMore(m){const a=Math.max(0,m.ofAbilities-m.abilities),st=Math.max(0,m.maxStars-m.stars),parts=[],/* improve20-r14b-nov3 #3: a quiet rune count (the one offer made, the count unchanged) is plain small text, not the bold lead */lead=m.rune?(m.rune.kind==='quiet'?`<small class="adv-rune quiet" data-rune-lead="quiet">${esc(m.rune.text)}.</small> `:`<b class="adv-rune" data-rune-lead="${esc(m.rune.kind)}">${esc(m.rune.text)}.</b> `):'';
  if(a)parts.push(`${a} more ${a===1?'ability waits':'abilities wait'} in the Library`);if(st)parts.push(`${st} more ${st===1?'star':'stars'} to win`);
  return parts.length||lead?`<small class="adv-title-note adv-more" data-adv-more>${lead}${parts.length?`Still to come: ${parts.join(' and ')}.`:''}</small>`:'';}
 export function adventureHTML(s,icon=''){const m=adventureSummary(s),stat=(n,label,key)=>`<span class="adv-stat" data-adv="${key}"><strong>${esc(n)}</strong> ${esc(label)}</span>`;

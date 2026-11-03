@@ -91,10 +91,10 @@ export function stageBanners(w){if(!w?.level)return [];const f=w.flow,k=w.flowT|
  if(((f==='go'&&k>=BEATS.clear)||(f==='walk'&&k>1.2&&!step))&&(Math.floor(k*2.5)%2===0||!w.motion||lane))out.push({kind:'go',title:'GO →',x:452+(w.motion?R(Math.sin(k*6)*3):0),y:134,alpha:1});
  if(lane)out.push({kind:'go',way:true,title:'→',x:Math.max(8,Math.min(STAGE.camW-72,R(pl.x-(w.camX||0)+26))),y:R(pl.y-(w.camTop||0)-30-(pl.z||0)),phase:w.motion===false?null:k,alpha:1});
  if(f==='bossintro'){const e=w.boss||w.enemies.find(x=>x.boss);if(e)out.push({kind:'boss',title:(w.level.bossName||e.name).toUpperCase(),sub:w.level.name.toUpperCase(),line:e.intro||'',
-  slide:Math.min(1,Math.max(0,(k-.25)/.35)),open:Math.min(1,k/.3),alpha:1,enemy:e.key});}
+  slide:Math.min(1,Math.max(0,(k-.25)/.35)),open:Math.min(1,k/.3),alpha:1,enemy:e.key,hero:heroCardBox(w)});}
  /* a second life: the risen form's own name card, its title as the subtitle and its line under it */
  if(f==='rebirth'){const e=w.boss,rb=e?.rebirth,kk=k-REBIRTH.fall-.25;if(e&&rb&&kk>=0)out.push({kind:'boss',title:String(e.name).toUpperCase(),sub:String(rb.title||'SECOND LIFE').toUpperCase(),line:rb.line||'',
-  slide:Math.min(1,Math.max(0,kk/.35)),open:Math.min(1,kk/.3),alpha:Math.min(1,(REBIRTH.card-k)/.3),enemy:e.key});}
+  slide:Math.min(1,Math.max(0,kk/.35)),open:Math.min(1,kk/.3),alpha:Math.min(1,(REBIRTH.card-k)/.3),enemy:e.key,hero:heroCardBox(w)});}
  if(f==='victory'&&!w.cinematicTarget)out.push({kind:'victory',title:'VICTORY',alpha:Math.min(1,k/.3)});
  /* kidfix-b-oct31: the first-cast moment's one line, "<ABILITY>!", through the banner queue (scenes/rune-fx.js) */
  if(w.firstCast&&w.run&&f!=='victory'){const t=(w.run.time??0)-w.firstCast.at;if(t>=0&&t<FIRST_BANNER)out.push({kind:'wave',title:`${String(w.firstCast.name).toUpperCase()}!`,y:54,alpha:Math.min(1,t/.12,(FIRST_BANNER-t)/.3),prio:3,dur:FIRST_BANNER});}
@@ -129,6 +129,9 @@ export function queueBanners(w,out){const now=w.run?.time??w.time??0,Q=w.bannerQ
 /* combatpolish-oct28: the ground a telegraph covers this frame, in camera pixels (the boss's markers, as scenes/tier-fx.js softMarker
    draws them: a box's band grows by sqrt 2, a circle is an ellipse of r by .55 r; plus a hazard waiting to land and a tier hazard's zone).
    On a phone the danger banner treats them as hard obstacles, so a warning never sits on the thing it warns about. */
+/* improve20-r14b-nov3 #7 (audit11 #10, shot 28: the boss card's foot sat on the hero's hair at 1280x720): the hero's box in view units, with
+   room for his head and a gap, for the desktop boss card to keep off (ui/stage-banners.js) */
+export function heroCardBox(w){const p=w?.player;if(!p)return null;const x=p.x-(w.camX||0),y=p.y-(w.camTop||0)-(p.z||0);return {left:x-20,right:x+20,top:y-60,bottom:y+6};}
 export function teleRects(w){const ox=w.camX||0,oy=w.camTop||0,out=[],add=(x0,x1,y0,y1)=>out.push({left:x0-ox-3,right:x1-ox+3,top:y0-oy-3,bottom:y1-oy+3}),mk=m=>{if(!m||m.hide)return;if(m.shape==='box'){const b=(m.band||8)*Math.SQRT2;add(Math.min(m.x0,m.x1),Math.max(m.x0,m.x1),m.y-b,m.y+b);}else if(m.r)add(m.x-m.r,m.x+m.r,m.y-m.r*.55,m.y+m.r*.55);};
  for(const e of w.enemies||[])if(e.hp>0&&['tele','act'].includes(e.brain?.mode)){for(const m of e.brain.markers||[])mk(m);for(const m of e.brain.decoys||[])mk(m);}
  for(const f of w.enemyFx||[])if(f.r&&f.x!=null&&(f.kind==='hazard'||f.t<0)&&!f.hit)mk({shape:'circle',x:f.x,y:f.y,r:f.r});

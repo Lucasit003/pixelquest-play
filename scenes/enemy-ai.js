@@ -37,7 +37,7 @@ import {flashHit,TELE_PULSE,FRAME} from '../game/feel.js';
 import {VINE_SPRITE} from '../game/entrances.js';
 import {loadSprite,spriteFrame,spriteImage,drawSprite} from '../gfx/actors/sprites.js';
 import {sfx} from '../core/audio.js';
-import {MOVE_KINDS,tellSound,panOf,tierAttacks,moveMarkers,moveInRange,beginMove,resolveMove,stepMove,echoAttack,pickOption,returnPass,afterHit,updateMoveFx,drawMoveFx,drawFall,darkLayer,drawLinks,perfectDodge} from './boss-moves.js';
+import {SIG_WORD,MOVE_KINDS,tellSound,panOf,tierAttacks,moveMarkers,moveInRange,beginMove,resolveMove,stepMove,echoAttack,pickOption,returnPass,afterHit,updateMoveFx,drawMoveFx,drawFall,darkLayer,drawLinks,perfectDodge} from './boss-moves.js';
 const OWN=new Set(MOVE_KINDS);
 
 const MAX_ATTACKERS=2;
@@ -179,7 +179,7 @@ function resolveHit(e,w,b,k){const a=b.atk,p=w.player,fx=fxList(w),f=e.facing,k2
    /* a lantern or pylon is linked to the boss (boss-moves.js linkShield); a prop takes hits, not damage; an orbiter circles it */
    if(a.link){o.linkTo=e;o.linkColor=a.linkColor;o.linkShare=a.linkShare??o.linkShare;}if(o.propHits||a.propHits)o.prop={hits:a.propHits||o.propHits};if(a.orbit){o.orbitOf=e;o.orbitA=i/(a.count||1)*Math.PI*2;}
    if(a.fx)fx.push({kind:'hazard',owner:e,a:{...a,dmg:0},fx:a.fx,x:m.x,y:m.y,r:0,t:0,hit:true,marker:null,hs:a.fxs});
-   if(!a.fx)puff(w,'fx-portal',m.x,m.y,e);});b.markers=[];if(a.banner)w.text?.(a.banner,e.x,enemyTop(e)-4,'#ffe2a8');break;
+   if(!a.fx)puff(w,'fx-portal',m.x,m.y,e);});b.markers=[];/* improve20-r14b-nov3 #7 (R13C shot 03: "ONLY THE REAL ONE HAS A SHADOW!" read as faint grey, caught in its 0.75 s fade): a signature move's banner is bold, warm white and held at full strength for about 2 s (SIG_WORD) */if(a.banner)w.text?.(a.banner,e.x,enemyTop(e)-4,SIG_WORD.color,true,{life:SIG_WORD.life,hold:true});break;
   case 'buff':e.def=b.baseDef*(a.def||2);b.buffT=a.time||4;w.text?.('ARMOUR',e.x,e.y-(metaOf(e.sprite)?.height||40)*k2-6,'#c9d7e8');break;
   default:if(OWN.has(a.kind))resolveMove(e,w,b,a,K);}}
 function stepAct(e,w,dt,b){const a=b.atk,prev=b.prevT;b.prevT=b.t;
@@ -346,6 +346,13 @@ function shadow(c,x,y,rx,ry,a=.55){const s=loadSprite('fx-shadow');if(!s.ready)r
    crowd the hero was lost among them. Every shadow-twin body (the boss and its copies alike, so "only the real one has a shadow" is still
    the tell between them) gets a cold violet wash over its own frame; the hero's sprite is never touched. Code effect only. */
 export const MIRROR_WASH={color:'#6f58ff',alpha:.34};
+/* improve20-r14b-nov3 #5 (audit11 #11, shot 22: the dark-red Blood Knight was lost on Emberkeep's dark floor): foes whose idle art is dark
+   (mean luminance of the opaque pixels under 50 of 255, measured from the atlases) get a 1 px warm rim drawn from their own frame on a dark
+   floor (every chapter after the Elderwood; World.startLevel calls setDarkFloor). An effect only: the sprite is untouched. The shades and
+   Your Shadow are left out: being dark is their tell. */
+export const DARK_FOES=new Set(['pl-skeleton-warrior','pl-imp','pl-cultist','bramble-knight','forge-construct','obsidian-shard','furnace-stoker','void-spawn','pl-imp-lord','pl-demon-slime']),RIM={color:'#ffd9a8',alpha:.6};
+let darkFloor=false;export const setDarkFloor=v=>{darkFloor=!!v;return darkFloor;};
+export const rimmed=e=>darkFloor&&!!e&&e.hp>0&&DARK_FOES.has(e.sprite)&&!(e.entering>0);
 export const mirrorActor=e=>!!e&&e.key==='shadow-twin'&&e.hp>0;
 export function drawEnemy(c,e,t){if(!e.sprite)return false;const s=loadSprite(e.sprite);if(!s.ready)return true;const m=s.meta,b=e.brain;
  /* Regular enemies were reading almost as large as heroes because their 56–58px
@@ -377,6 +384,7 @@ export function drawEnemy(c,e,t){if(!e.sprite)return false;const s=loadSprite(e.
   if(kind==='tent'){const hop=Math.round(Math.sin(Math.min(1,p*1.3)*Math.PI)*12);drawSprite(c,e.sprite,'walk',p,e.x,e.y-z-hop,{facing:e.facing||1,scale:k,alpha:alpha*Math.min(1,p*3)});return true;}
   drawSprite(c,e.sprite,'idle',0,e.x,e.y-z,{facing:e.facing||1,scale:k,alpha:alpha*p*(.75+.25*Math.sin(p*30))});return true;}
  if(alpha<=0)return true;if(e.hp>0&&(e.pilotArmour||e.pilotGuard)&&!(e.pilotOpen>t)){c.save();c.strokeStyle='#b8dfff';c.lineWidth=2;c.beginPath();const a=(e.pilotFacing||e.facing)===-1?Math.PI:0;c.ellipse(e.x,e.y-12,18,24,0,a-1.2,a+1.2);c.stroke();c.restore();}
+ if(rimmed(e)&&!mirrorActor(e))for(const [dx,dy] of [[-1,0],[1,0],[0,-1],[0,1]])overlay(c,e.sprite,m,state,st,e.x+dx,e.y-z+dy,e.facing||1,k,RIM.color,RIM.alpha*alpha);
  drawSprite(c,e.sprite,state,st,e.x,e.y-z,{facing:e.facing||1,scale:k,alpha});
  /* a fire column over a boss in Pillar Form; a cold glint on a boss holding a guard; stars over a dizzy one */
  /* improve20-r8b-nov1 #4 (audit7 d21: the column hid the Cinder Wraith): the column is half see-through and the boss stays at 70%, so he reads inside his fire */

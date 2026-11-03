@@ -10,5 +10,8 @@ export function laneStride(w,dt){if(!emptyLane(w)){w.laneT=0;return 1;}w.laneT=(
 /* improve20-r13c-nov2 #4 (audit10 a19): the run cycle is timed for running (RUN_PACE, 1.5x walk); in the stride it played at that rate while
    the hero moved at 1.8-2.3x, so the feet slid. The cycle's clock now runs at pace / RUN_PACE, never slower than the run and capped at
    RUN_ANIM_CAP (1.4x: 2.3 / 1.5 would be 1.53, too fast to read). k: the speed factor this frame (laneStride, or 1.5 while running) */
-export const RUN_PACE=1.5,RUN_ANIM_CAP=1.4;
+/* improve20-r14b-nov3 #6 (audit11 #9, shot 03): at the 1.4x cap the 2.3x sprint still covered about 1.1 run strides per cycle step, so the feet
+   glided. The cap is now the sprint's own pace, LANE_SPRINT / RUN_PACE (1.53x): the 16 fps run cycle plays at about 24.5 fps, 3 strides a second,
+   with no glide. The lane speeds are unchanged, so pars and stars are too. */
+export const RUN_PACE=1.5,RUN_ANIM_CAP=LANE_SPRINT/RUN_PACE;
 export const runAnimRate=k=>k>RUN_PACE?Math.min(RUN_ANIM_CAP,k/RUN_PACE):1;

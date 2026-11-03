@@ -118,7 +118,7 @@ export function drawDamageText(c,f,alpha){
  const rise=Math.round((1-(1-life)*(1-life))*(crit?26:20))+slot*7;
  const shake=crit&&life<.25&&!motionReduced()?Math.round(Math.sin(life*90)*1.5):0;
  const x=Math.round(f.x+[0,8,-8][slot]+shake),y=Math.round(f.y-rise);
- c.save();c.globalAlpha=Math.min(1,alpha*1.6);
+ /* improve20-r14b-nov3 #7: a held word (a boss's signature banner) stays at full strength until its last fifth */c.save();c.globalAlpha=Math.min(1,alpha*(f.hold?5:1.6));
  /* The baked bitmap font (ui/font, Pixel Operator): 12 px numbers are the regular cut, 16 px crits
     the bold cut, popping to 2x for their first frames. The font file is the fallback. */
  if(drawPixelText(c,String(f.text),x,y,{scale:pop?2:1,color:f.color||'#f4ead2',outline:'#1a0f0b',bold:crit,align:'center'})!==false){c.restore();return;}

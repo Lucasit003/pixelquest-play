@@ -9,7 +9,7 @@
    Each hero has its own budget of all the points, so a hero switch never strands runes.
    Runes never unlock anything: unlocked() never reads s.runes. Pure: callers pass the save. */
 import {ABILITIES} from './abilities.js';
-import {unlocked,runeRank,RUNE_MAX,RUNE_STEP,RUNE_CDR} from './math.js';
+import {unlocked,runeRank,runeMul,runeCd,RUNE_MAX,RUNE_STEP,RUNE_CDR} from './math.js';
 import {masteredTopics} from './gear.js';
 import {asleep} from '../academics/awakening.js';
 export {RUNE_MAX};
@@ -67,3 +67,30 @@ export const runeHelp=a=>((a?.damage||0)*Math.max(1,a?.count|0||1)+(a?.heal||0)+
 export function runePick(s){const eq=new Set((s?.loadouts?.[s?.hero]||[]).filter(Boolean)),own=ownedAbilities(s).filter(a=>runeRank(s,a.id)<RUNE_MAX);if(!own.length)return null;
  const pool=own.some(a=>eq.has(a.id))?own.filter(a=>eq.has(a.id)):own;return [...pool].sort((a,b)=>runeRank(s,a.id)-runeRank(s,b.id)||runeHelp(b)-runeHelp(a)||a.gate-b.gate)[0];}
 export function autoPlaceRunes(s){const out=[];for(let i=0;i<64&&runesFree(s)>0;i++){const a=runePick(s);if(!a||!placeRune(s,a.id))break;out.push(a.id);}return out;}
+
+/* improve20-r14b-nov3 #1 (audit11 #1, shot 21: a level-9 Warrior lost m1 twice with "6 runes to place" in small print): what placing the
+   waiting runes is worth, worked out, never guessed. Place for me (autoPlaceRunes) runs on a copy; the gain is the change in the output of the
+   abilities on the hotbar, each weighted by what it does per second (runeHelp: damage, healing, shield or attack boost per second of cooldown)
+   and scaled by its rank (runeMul, and rank III's shorter cooldown, runeCd). -> {n: runes placed, pct: whole % more ability power, ids} */
+export function runePlaceGain(s){const n0=runesPlaceable(s);if(!(n0>0))return {n:0,pct:0,ids:[]};const t={...s,runes:{...(s.runes||{})}},ids=autoPlaceRunes(t);if(!ids.length)return {n:0,pct:0,ids:[]};
+ const bar=(s.loadouts?.[s.hero]||[]).filter(Boolean).map(id=>BY_ID[id]).filter(a=>a&&owns(s,a)),pool=bar.length?bar:ownedAbilities(s),out=r=>runeMul(r)/runeCd(r);
+ let w0=0,w1=0;for(const a of pool){const w=runeHelp(a)||1;w0+=w*out(runeRank(s,a.id));w1+=w*out(runeRank(t,a.id));}
+ return {n:ids.length,pct:w0>0?Math.max(0,Math.round((w1/w0-1)*100)):0,ids};}
+/* improve20-r14b-nov3 #3 (audit11 #14: "6 runes to place" in town, on the defeat card and in the Journal, never cleared for you): the nag offers
+   ONE auto-place, on a defeat card or on the second town visit with runes waiting, then goes quiet until the rune count changes (a new topic
+   mastered, or runes placed or reset). Home → Abilities and the Journal keep a quiet count. Additive save field s.settings.runeNag =
+   {n: the free count it is about, visits, offered, done}; a bad or stale record starts over. */
+export const RUNE_NAG_VISITS=2;
+/* runeNagView reads without writing (reading a save never changes it); runeNag stores the fresh record before a change */
+export function runeNagView(s){const free=runesFree(s),v=s?.settings?.runeNag;return !v||typeof v!=='object'||v.n!==free?{n:free,visits:0,offered:false,done:false}:{n:free,visits:Math.max(0,Math.min(99,v.visits|0)),offered:!!v.offered,done:!!v.done};}
+export function runeNag(s){const g=runeNagView(s);if(s?.settings)s.settings.runeNag=g;return g;}
+/* quiet: runes wait, the one offer was made and the count has not changed since */
+export const runesQuiet=s=>runesPlaceable(s)>0&&runeNagView(s).done;
+/* a return to town with runes waiting counts a visit; a visit after the one where the offer showed makes it quiet */
+export function runeTownVisit(s){if(!(runesPlaceable(s)>0))return runeNagView(s);const g=runeNag(s);if(g.done)return g;if(g.offered){g.done=true;return g;}g.visits++;return g;}
+/* the town offer shows from the second visit; showing it marks it offered (it stays up for this visit) */
+export const runeTownOfferDue=s=>runesPlaceable(s)>0&&runesShown(s)&&(g=>!g.done&&g.visits>=RUNE_NAG_VISITS)(runeNagView(s));
+export function markRuneOffer(s,{now=false}={}){const g=runeNag(s);g.offered=true;if(now)g.done=true;return g;}
+/* the defeat card's lead: the first defeat with runes waiting that are not quiet. -> {n, pct, ids} or null */
+export function runeDefeatLead(s){if(!runesShown(s)||runesQuiet(s))return null;const g=runePlaceGain(s);return g.n>0?g:null;}
+export const runeLeadText=g=>`Place ${g.n} ${g.n===1?'rune':'runes'}: +${g.pct}% ability power`;

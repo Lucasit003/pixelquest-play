@@ -171,7 +171,7 @@ export function stageBanner(c,b){
   if(small){
    /* oct25 phone tiers: at 844x390 and 740x360 the one-line card ran under the potion and ability buttons ("...face the warlo").
       The quote wraps and the card takes the nearest spot clear of the touch buttons and HUD plates. */
-   const hud=stageBannerObstacles(c.canvas,W,H,true),top=Math.round(H*.22);let fit=null;
+   const hud=[...stageBannerObstacles(c.canvas,W,H,true),...(b.hero?[b.hero]:[])],top=Math.round(H*.22);let fit=null;
    for(const limit of [W-16,300,260,220,180].filter((n,i,a)=>n<=W-16&&a.indexOf(n)===i)){
     const ql=line?wrapBannerText(line,limit-48):[],cw=Math.min(W-16,Math.max(BW(b.title),BW(b.sub),...ql.map(s=>measurePixelText(s)))+48),ch=line?42+16+(ql.length-1)*12:42;
     const box=placeStageBanner({W,H,width:cw,height:ch+14,top:top-14,obstacles:hud});if(!fit||box.overlap<fit.box.overlap)fit={ql,box,ch};if(!box.overlap)break;}
@@ -181,9 +181,10 @@ export function stageBanner(c,b){
   /* improve20-r13c-nov2 #1 (audit10 shot 30): the card sat at Y(150), its foot on the hotbar for every boss, and the hero stood behind it. It
      now stands at the top, under the cinematic bar (BOSS_CARD_TOP), between the HUD plates: the quote wraps (one line, else narrower
      cards of 2-3 lines) until the card fits clear of every plate; with no clear fit it takes the spot that covers least (placeStageBanner) */
-  const hud=stageBannerObstacles(c.canvas,W,H);let fit=null;
+  /* improve20-r14b-nov3 #7: the hero's box (gfx/stage-view.js heroCardBox) is a hard obstacle: the card never touches him; with no clear spot it falls back to the old soft rules */
+  const hud=stageBannerObstacles(c.canvas,W,H),hard=b.hero?[b.hero]:[];let fit=null;
   for(const limit of [W-16,300,260,220]){const ql=line?wrapBannerText(line,limit-48):[],cw=fitW(Math.max(BW(b.title)*ts,BW(b.sub),...ql.map(q=>measurePixelText(q)))+48),ch=line?76+(ql.length-1)*14:58;
-   const box=placeStageBanner({W,H,width:cw,height:ch+14,top:Y(BOSS_CARD_TOP)-14,obstacles:hud}),score=box.overlap*1e6+Math.abs(box.top+14-Y(BOSS_CARD_TOP))*10+ql.length;if(!fit||score<fit.score)fit={ql,box,cw,ch,score};if(!box.overlap&&box.top+14<=Y(BOSS_CARD_TOP)+2)break;}
+   const box=(hard.length&&placeStageBanner({W,H,width:cw,height:ch+14,top:Y(BOSS_CARD_TOP)-14,obstacles:hud,hardObstacles:hard}))||placeStageBanner({W,H,width:cw,height:ch+14,top:Y(BOSS_CARD_TOP)-14,obstacles:[...hud,...hard]}),score=box.overlap*1e6+Math.abs(box.top+14-Y(BOSS_CARD_TOP))*10+ql.length;if(!fit||score<fit.score)fit={ql,box,cw,ch,score};if(!box.overlap&&box.top+14<=Y(BOSS_CARD_TOP)+2)break;}
   const {ql,box,cw,ch}=fit,bx=R(box.cx),t=Math.min(box.top+14,H-ch-6),o=[30,48,66];
   ok=plank(c,'plank',bx-off,t,cw,ch)&&drawSkin(c,'crest',bx-off,t-14,{align:'center'})&&text(c,b.title,bx-off,t+o[0],{scale:ts,bold:true,color:PARCH})&&text(c,b.sub,bx+off,t+o[1],{color:GOLD})&&ql.every((q,i)=>text(c,q,bx,t+o[2]+i*14,{color:PARCH}));}
  }else if(b.kind==='victory'){

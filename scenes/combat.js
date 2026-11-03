@@ -54,7 +54,7 @@ import {biomeMap} from '../gfx/biomes/index.js';
 import {petProc,petTick} from './pet-fx.js';
 import {partyStart,updateParty,partyFocus,partyHurt,oldTarget,hurtOn} from './party-ai.js';
 import {runCarry,runStart,runTick,runInteract,runSecret,runKill,runLayer,runFinish,runStats,runScore} from './run-fx.js';
-/* v2:enemies */ import {runEnemy,drawEnemy,enemyLayer,tickIdleEnemyFx,enemyTop,holdPose} from './enemy-ai.js';
+/* v2:enemies */ import {runEnemy,drawEnemy,enemyLayer,tickIdleEnemyFx,enemyTop,holdPose,setDarkFloor} from './enemy-ai.js';
 import {stanceBlock,propHit,linkShield,panOf} from './boss-moves.js';
 import {guardHit} from './boss-guard.js';
 import {laneStride,runAnimRate} from './lane-stride.js';
@@ -149,7 +149,7 @@ export class World{
  /* Starts a fight pad from game/levels.js: kind 'level' (waves, then the boss) or 'arena' (endless waves).
     Returns false for pads that are not fights (home, shop) -- main.js handles those. */
  /* opts.fromWave: a kind retry starts at that wave (the boss arena when it is past the last wave). */
- startLevel(id,opts={}){const l=levelById(id);if(!l||(l.kind!=='level'&&l.kind!=='arena'))return false;this.firstCast=null;this.bossGrace=0;/* improve20-r11a-nov2 #4 */this.levelAt=this.time;this.closerShown=false;this.nearAt=null;this.hitAt=null;this.castSlow=0;this.bigFor=null;
+ startLevel(id,opts={}){const l=levelById(id);if(!l||(l.kind!=='level'&&l.kind!=='arena'))return false;/* improve20-r14b-nov3 #5: dark foes get a rim on a dark floor (scenes/enemy-ai.js rimmed) */setDarkFloor(!!l.chapter&&l.chapter!=='elderwood');this.firstCast=null;this.bossGrace=0;/* improve20-r11a-nov2 #4 */this.levelAt=this.time;this.closerShown=false;this.nearAt=null;this.hitAt=null;this.castSlow=0;this.bigFor=null;
   const learned=Number.isInteger(opts.fromWave)&&this.level?.id===id&&this.tut?{done:new Set(this.tut.done),moved:this.tut.moved}:null;
   /* the run layer (scenes/run-fx.js): a wave retry carries the run it retries, so a retried win is graded as one run */
   const prevRun=runCarry(this,id,opts),controls=this.controlsTutorial,thornRetry=id==='e8'&&this.level?.id===id&&this.level.encounter?.elderwood&&Number.isInteger(opts.fromWave)&&(!opts.tier||opts.tier===this.tierKey)&&this.boss?.phase===2;
@@ -425,7 +425,7 @@ export class World{
  /* On a stage at 1x, numbers are drawn 12 px (16 px for a crit) so they read; the UI agent's pixel font replaces the face. */
  /* playtest 24 Oct: a tall boss's named attack (big, at its head) and GUARD (at y-56) drew on top of each other; one label
     per enemy now covers bosses up to 220 tall, and a small word never replaces a named attack */
- text(txt,x,y,color='#e8e6c9',big=false){txt=floatLabel(txt);const owner=this.enemies.find(e=>Math.abs(e.x-x)<1&&y<e.y&&e.y-y<=220),word=!/^[-+]?\d/.test(String(txt));if(owner){const old=this.fx.find(f=>f.type==='text'&&f.enemy===owner&&f.life>0);if(old?.word&&!word||old?.big&&!big)return;this.fx=this.fx.filter(f=>f.type!=='text'||f.enemy!==owner);owner.labelUntil=this.time+.75;}this.effect('text',x,y,{text:String(txt),color,big,enemy:owner,word,life:.75,max:.75,size:this.level?(big?16:12):undefined});}
+ text(txt,x,y,color='#e8e6c9',big=false,opt=null){txt=floatLabel(txt);const owner=this.enemies.find(e=>Math.abs(e.x-x)<1&&y<e.y&&e.y-y<=220),word=!/^[-+]?\d/.test(String(txt));if(owner){const old=this.fx.find(f=>f.type==='text'&&f.enemy===owner&&f.life>0);if(old?.word&&!word||old?.big&&!big)return;this.fx=this.fx.filter(f=>f.type!=='text'||f.enemy!==owner);owner.labelUntil=this.time+.75;}this.effect('text',x,y,{text:String(txt),color,big,enemy:owner,word,life:opt?.life||.75,max:opt?.life||.75,hold:!!opt?.hold,size:this.level?(big?16:12):undefined});}
  /* v2:enemies -- a hit is one downloaded hit-star sheet in the element's colour (gfx/combat-fx.js), not code-drawn particles */
  burst(x,y,color,n=8,grit){const g=GRIT[grit];this.effect('burst',x,y+2,{color:g?.col||color,grit,big:n>=12,life:g?.life||.36,max:g?.life||.36});}
  nearest(origin=this.player,range=500){return this.enemies.filter(e=>e.hp>0&&dist(e,origin)<=range).sort((a,b)=>dist(a,origin)-dist(b,origin))[0];}

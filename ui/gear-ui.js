@@ -141,8 +141,8 @@ export function smithHTML(s,hero,tab='buy',pick=null,confirm=null){const g=s.gea
    const bd=gearBadge({...x,best:x===best}),badge=bd?upBadgeHTML(bd.label,x.trade,bd.kind):'';
    /* improve20-x-nov1 #20b (audit4 #10): the price and Buy (or Equip, or the lock) come first, under the name, so a row of cards shows its
       prices without scrolling; "At the gear limit" sits before the price, not after it */
-   const cap=open&&!owned&&cardClipped(s,hero,it.id)?'<p class="gear-cap-top">At the gear limit: no stronger for you now</p>':'';
-   return card(s,hero,it.id,'',badge+cardNumbersHTML(s,hero,it.id),x.grp===0&&!lock?'gear-up'+(x===best?' gear-best':''):x.grp===2?'gear-no-better':'',cap+(owned?(wornOf(s,hero)[it.slot]===it.id?'<p class="subtle">Equipped ✓</p>':`<button${worthEquip(s,hero,it.id)?' class="primary"':''} data-smith-equip="${it.id}">Equip now</button>`):!open?`<p class="forge-reason gear-locked">🔒 Locked · ${esc(lock)}</p>`:`${btn('gear-buy',it.id,`Buy · ◆ ${it.shop}`,(s.gold||0)>=it.shop,(s.gold||0)>=it.shop?'':`Need ${it.shop-(s.gold||0)} more gold`)}`));};
+   const cap=x.dominated?`<p class="gear-cap-top gear-dominated">${esc(x.dominated)} costs less and is as strong</p>`:open&&!owned&&cardClipped(s,hero,it.id)?'<p class="gear-cap-top">At the gear limit: no stronger for you now</p>':'';
+   return card(s,hero,it.id,'',badge+cardNumbersHTML(s,hero,it.id),x.grp===0&&!lock?'gear-up'+(x===best?' gear-best':''):x.grp===2?'gear-no-better':'',cap+(owned?(wornOf(s,hero)[it.slot]===it.id?'<p class="subtle">Equipped ✓</p>':`<button${worthEquip(s,hero,it.id)?' class="primary"':''} data-smith-equip="${it.id}">Equip now</button>`):!open?`<p class="forge-reason gear-locked">🔒 Locked · ${esc(lock)}</p>`:`${(x.dominated?s=>s.replace(' class="primary"',''):s=>s)(btn('gear-buy',it.id,`Buy · ◆ ${it.shop}`,(s.gold||0)>=it.shop,(s.gold||0)>=it.shop?'':`Need ${it.shop-(s.gold||0)} more gold`))}`));};
   /* improve20-x-nov1 #20a: with the gear at its limit, the smith says where gold can go */
   /* improve20-r8a-nov1 #1: the line and the badges read the same verdict: "at its limit" only with no upgrade on the shelf, "near" when what is left is small */
   /* improve20-r13c-nov2 #5 (audit10 a13): at level 9 it said "near its limit... save for a Showpiece" over a +5% chest. The line is said only
@@ -172,14 +172,22 @@ export function smithHTML(s,hero,tab='buy',pick=null,confirm=null){const g=s.gea
    (gear-guidance.js realGain, "Upgrade") or more gained than lost in damage, toughness and speed together ("Stronger overall"), open
    and affordable first, then by size of gain; side: trades one number for another and comes out behind; rest: worn, owned without a
    gain, or no better anywhere. Groups keep the stock's chapter order inside them. */
+/* improve20-r14b-nov3 #4: x is dominated when another piece y of the same slot, open or already owned, costs no more and is at least as good for this
+   hero in damage, toughness and speed (combatChange, the badge judge's numbers), and is cheaper or better somewhere. Owned x is never dominated (it is
+   free to wear). Lead review: a set or trick piece is never dominated, since damage, toughness and speed leave out its set bonus or trick. -> y or null */
+export const DOM_EPS=1e-3;
+export function gearDominated(x,all){if(!x?.d||x.owned||x.it?.set||x.it?.trick)return null;const ks=['damage','toughness','speed'];return all.find(y=>y!==x&&y.d&&y.it.slot===x.it.slot&&(y.owned||y.open)&&(y.owned?0:y.it.shop)<=x.it.shop&&ks.every(k=>y.d[k]>=x.d[k]-DOM_EPS)&&((y.owned?0:y.it.shop)<x.it.shop||ks.some(k=>y.d[k]>x.d[k]+DOM_EPS))&&!(y.owned&&ks.every(k=>Math.abs(y.d[k])<DOM_EPS)&&ks.some(k=>x.d[k]>DOM_EPS)))||null;}
 export function smithBuyOrder(s,hero,items){const g=s.gear,worn=wornOf(s,hero),out={up:[],side:[],rest:[]};
  for(const it of items){const owned=!!g.owned[it.id],lock=shopLock(s,it.id),x={it,owned,lock,open:!lock,afford:(s.gold||0)>=it.shop};
-  if(worn[it.slot]===it.id){x.grp=2;out.rest.push(x);continue;}
+  if(worn[it.slot]===it.id){x.grp=2;x.d={damage:0,toughness:0,speed:0};out.rest.push(x);continue;}
   /* improve20-r8a-nov1 #1: an upgrade is what the one judge (gear-guidance.js realGain) says it is, a small trade included; "stronger overall"
      with a bigger loss is a side trade now, so the badge, the cap line, Equip and NEXT UPGRADE never disagree */
-  const c=equipComparison(s,hero,it.id),gain=realGain(c),d=combatChange(c),breaks=setChanges(s,hero,it.id).some(ch=>!ch.up);
+  const c=equipComparison(s,hero,it.id),gain=realGain(c),d=combatChange(c),breaks=setChanges(s,hero,it.id).some(ch=>!ch.up);x.d=d;
   if(!breaks&&gain>0){x.grp=0;x.trade=tradeText(c);x.strict=!x.trade;x.gain=gain;out.up.push(x);continue;}
   const better=Object.values(d).some(v=>v>1e-3);x.grp=owned||!better?2:1;(x.grp===1?out.side:out.rest).push(x);}
+ /* improve20-r14b-nov3 #4 (audit11 #13, shot 02: Elderwood Mace at 600 for Attack 26-29 beside Dawnbringer at 350 for 26-30, both "Upgrade for you"):
+    a piece another piece beats (gearDominated) folds into the rest, greyed, with no badge, and says what beats it */
+ {const all=[...out.up,...out.side,...out.rest];for(const g of ['up','side']){out[g]=out[g].filter(x=>{const by=gearDominated(x,all);if(!by)return true;x.grp=2;x.dominated=by.it.name;out.rest.push(x);return false;});}}
  /* improve20-r11c-nov2 #3: affordable first: an owned upgrade (Equip now, free), then what the gold buys now, then open stock to save for, then locked */const rank=x=>!x.open?3:x.owned?0:x.afford?1:2;out.up.sort((a,b)=>rank(a)-rank(b)||b.gain-a.gain);out.side.sort((a,b)=>rank(a)-rank(b));
  return out;}
 export const SMITH_TAB_HELP={buy:'Buy: new gear for your hero. It goes in your bag; press Equip now to wear it.',...SMITH_HELP};

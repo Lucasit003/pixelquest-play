@@ -4365,3 +4365,16 @@ dialog[data-view=result] #modal-content .level-result[data-outcome=lost]>.modal-
 .select-pane .hero-more[open]>summary{margin-bottom:4px}
 .select-pane .hero-more .hero-more-kid{margin:2px 0;color:#d8e3ea}
 .title-screen[data-step=setup] .hero-more{display:none}
+/* improve20-r14b-nov3 #2: the defeat card's progress line fills its empty star row ("Furthest: wave 3 of 4", "Boss at 40% health") */
+dialog[data-view=result] .level-starline .defeat-progress,.hall-step .defeat-progress{margin:0;font-size:18px;line-height:1.15;color:#ffd96b;letter-spacing:.02em}
+/* improve20-r14b-nov3 #1: "Place 6 runes: +10% ability power" leads the defeat card's buttons, on a row of its own above Try again */
+dialog[data-view=result] #modal-content .level-result>.modal-actions>.defeat-runes{order:-3;flex:1 0 100%;display:flex;justify-content:center;margin:0 0 4px}
+dialog[data-view=result] #modal-content .defeat-runes button{display:inline-flex;align-items:center;gap:8px}
+dialog[data-view=result] #modal-content .defeat-runes .rune-nag-gem{flex:none;width:10px;height:10px;background:#7ff0ff;transform:rotate(45deg);box-shadow:0 0 6px #7ff0ffaa}
+.adv-rune.quiet{font-weight:400;opacity:.8}
+/* improve20-r14b-nov3 #4 (audit11 #13, shot 02: "More below" was drawn over the last stat line through a see-through fade): the cue's band is solid
+   under its words, so a line scrolled under it is hidden, never read through */
+dialog:is([data-view=smith],[data-view=alchemist]) .more-below::after{height:38px;margin-top:-38px;line-height:46px;background:linear-gradient(#1a1f3a00 0,#1a1f3ae6 10px,#1a1f3a 16px)}
+.m-mode dialog[data-view=result] .level-starline .defeat-progress{font-size:14px}
+/* improve20-r14b-nov3 #4: a piece another piece beats on price and numbers is greyed (ui/gear-ui.js gearDominated) */
+.gear-card:has(.gear-dominated){filter:saturate(.35) brightness(.85)}

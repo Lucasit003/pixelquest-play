@@ -2,6 +2,7 @@
    each cleared, keepsake, open or locked, and the chosen rung's details with its first-clear reward. initHall(deps) wires the screen and
    runs a rung: one boss after another through main.js startLevel, an interlude card between bosses, and a card at the end (a fall or a
    clear). Art: the existing PixelLab tier icons (ui/skin/pl-icons/tier-*.png) and reward icons; no new art. */
+import {defeatProgress} from './defeat-tip.js';
 import {CHAPTERS,levelById} from '../game/levels.js';
 import {HALL_CHAPTERS,RUNGS,RUNG_LABEL,ROMAN,hallHeal,hallFree,hallBosses,rungState,rungOpen,rungReward,keepsakeName,keepsakes,startRung,hallStep,hallFinish,hallOpen} from '../game/hall.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -37,7 +38,7 @@ export function initHall(D){let sel=null,run=null;
    D.show('hall-next',`<div class="hall-step"><span class="eyebrow">Boss ${run.i} of ${n} down</span><h2>${esc(bossName(next))} is next</h2><p>Boss ${run.i+1} of ${n}. You catch your breath: health back up to ${pct}%.${run.drunk?'':' No potions so far.'}</p><div class="modal-actions"><button id="hall-leave">Leave the Hall</button><button id="hall-on" class="primary">Fight on</button></div></div>`);
    document.getElementById('hall-on').onclick=()=>{D.forceClose();if(!fight()){run=null;D.leaveLevel(r);}};document.getElementById('hall-leave').onclick=()=>{run=null;D.leaveLevel(r);};document.getElementById('hall-on').focus({preventScroll:true});return;}
   if(out==='lost'){const ch=run.chapter,rg=run.rung,at=run.i+1;run=null;
-   D.show('hall-end',`<div class="hall-step" data-outcome="lost"><span class="eyebrow">The echoes fade</span><h2>You fell at boss ${at} of ${n}</h2><p>Nothing is lost. Rest, change your abilities or gear, and try the rung again whenever you like.</p><div class="modal-actions"><button id="hall-leave">Leave</button><button id="hall-again" class="primary">Try again</button></div></div>`);
+   D.show('hall-end',`<div class="hall-step" data-outcome="lost"><span class="eyebrow">The echoes fade</span><h2>You fell at boss ${at} of ${n}</h2>${/* improve20-r14b-nov3 #2: how far that fight got (ui/defeat-tip.js) */(()=>{const b=r.boss,p=b?defeatProgress({boss:true,hp:b.hp,max:b.maxHp}):null;return p?`<p class="defeat-progress" data-progress>${esc(p)}</p>`:'';})()}<p>Nothing is lost. Rest, change your abilities or gear, and try the rung again whenever you like.</p><div class="modal-actions"><button id="hall-leave">Leave</button><button id="hall-again" class="primary">Try again</button></div></div>`);
    document.getElementById('hall-again').onclick=()=>{D.forceClose();run=startRung(D.save(),ch,rg);if(!run||!fight()){run=null;D.leaveLevel(r);}};document.getElementById('hall-leave').onclick=()=>D.leaveLevel(r);document.getElementById('hall-again').focus({preventScroll:true});return;}
   const res=hallFinish(s,run),ch=run.chapter,rg=run.rung;run=null;D.persist();D.updateHUD();
   D.show('hall-end',`<div class="hall-step" data-outcome="won"><span class="eyebrow">Rung cleared</span><h2>${esc(chName(ch))} · Rung ${ROMAN[rg-1]}</h2><p>All ${n} bosses down, one after another.</p>`+
