@@ -4,7 +4,7 @@
 // and M resume it, and main.js asks before any other pad or Home ends the run.
 // main.js also forwards key(k) (lower-cased KeyboardEvent.key; returns true when the map used it) and tap(x,y)
 // (canvas pixels, 480x270). Layout: game/worldmap-layout.js. Drawing: gfx/worldmap-art.js.
-import {LEVELS,CHAPTERS,levelById,levelOpen,levelDone,tiered,tierOpen,tierDone,starsOf,totalStars,maxStars,starsShort,tierCrests,chapterBorder,powerShort} from '../game/levels.js';
+import {LEVELS,CHAPTERS,levelById,levelOpen,levelDone,tiered,tierOpen,tierDone,starsOf,totalStars,maxStars,starsShort,tierCrests,chapterBorder,powerShort,starGateMet} from '../game/levels.js';
 import {gateInfo as gateInfo0} from '../game/power-gate.js';
 /* improve20-r12a-nov2: the card never breaks the map; a partial save (tools, tests) gets no power block rather than an error */
 const gateInfo=(save,id)=>{try{return gateInfo0(save,id);}catch{return null;}};
@@ -140,8 +140,9 @@ export function tierLine(save,l){if(!tiered(l)||!levelOpen(save,l.id))return '';
 /* W1 chapter tabs (24 Oct port): a chapter is open once any of its stops is; its tab lands on that chapter's next stop, the
    same rule as frontier() (the main road first, then a side stop, else the last main stop cleared, else where its road arrives). */
 const shortChapter=c=>c.id==='veilmoor'?'Veilmoor':c.name;
-export function chapterOpen(save,ch){return playableChapter(ch)&&LEVELS.some(l=>l.chapter===ch&&!l.hidden&&l.kind!=='home'&&levelOpen(save,l.id));}
-export function chapterFrontier(save,ch){let best=null,main=null,side=null;for(const l of LEVELS){if(l.chapter!==ch||l.kind!=='level'||l.hidden)continue;if(levelOpen(save,l.id)&&!levelDone(save,l.id)){if(!l.optional)return l.id;side??=l.id;}if(levelDone(save,l.id)){best=l.id;if(!l.optional)main=l.id;}}
+/* a chapter whose stop waits only on a power gate (its road done, its stars met) counts as open, as its road on the map does (improve20-r12a-nov2): the tab and [ ] lead the hero to the gate's card instead of saying the land is locked */
+export function chapterOpen(save,ch){return playableChapter(ch)&&LEVELS.some(l=>l.chapter===ch&&!l.hidden&&l.kind!=='home'&&(levelOpen(save,l.id)||!!powerShort(save,l.id)&&starGateMet(save,l)));}
+export function chapterFrontier(save,ch){let best=null,main=null,side=null;for(const l of LEVELS){if(l.chapter!==ch||l.kind!=='level'||l.hidden)continue;if(!l.optional&&powerShort(save,l.id)&&starGateMet(save,l))return l.id;if(levelOpen(save,l.id)&&!levelDone(save,l.id)){if(!l.optional)return l.id;side??=l.id;}if(levelDone(save,l.id)){best=l.id;if(!l.optional)main=l.id;}}
  /* a cleared chapter opens on its last main-road stop (its boss), not on a side path cleared after it */
  if(side||main||best)return side||main||best;if(ch==='elderwood')return 'home';const g=Object.values(MAPS).flatMap(m=>m.gates).find(g=>g.to===ch);return gateArrival(g)?.id||null;}
 function lockedChapterLine(ch){const c=CHAPTERS.find(c=>c.id===ch);if(!playableChapter(ch))return shortChapter(c)+' is coming soon';for(const l of LEVELS){if(l.chapter!==ch||l.hidden)continue;if(starsShort(S.save,l.id))return ladderGoal(S.save,l);}
