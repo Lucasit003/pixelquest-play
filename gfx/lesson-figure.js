@@ -30,7 +30,12 @@ const col=(k,i=0)=>typeof k==='string'?k:COL[(k??i)%COL.length];
 function stroke(c,P,f){if(f<=0||P.length<2)return;let total=0;for(let i=1;i<P.length;i++)total+=Math.hypot(P[i][0]-P[i-1][0],P[i][1]-P[i-1][1]);
  let left=total*clamp(f);c.beginPath();c.moveTo(...P[0]);for(let i=1;i<P.length&&left>0;i++){const d=Math.hypot(P[i][0]-P[i-1][0],P[i][1]-P[i-1][1]),u=Math.min(1,left/d);c.lineTo(P[i-1][0]+(P[i][0]-P[i-1][0])*u,P[i-1][1]+(P[i][1]-P[i-1][1])*u);left-=d;}c.stroke();}
 
-export const figure=(c,q,p)=>{
+/* picframe2-nov2 #4: labels keep a list of the boxes already drawn (measured at the drawn size, so grown phone labels count). A note (not a bare number, which marks
+   a tick) that would touch an earlier label moves up or down to the nearest clear spot inside the board (a note wider than 560 units first breaks onto two
+   lines), and a point's name that would touch a measurement tries seven other spots round its dot. Positions only; the words are unchanged. */
+const lbox=(c,s,x,y,size,align='center')=>{c.font=`bold ${size}px sans-serif`;const w=c.measureText(String(s)).width,h=Math.max(size*0.36,5*c.measureText('0').width/8+0.5),l=align==='center'?x-w/2:align==='right'?x-w:x;return [l,y-h,l+w,y+h];};
+const lhit=(b,list)=>list.some(o=>b[0]<o[2]-1&&b[2]>o[0]+1&&b[1]<o[3]-1&&b[3]>o[1]+1);
+export const figure=(c,q,p)=>{const taken=[];
  const pts=q.pts||{},names=Object.keys(pts),L=44,R=596,T=q.title?56:38,B=q.grid?240:248;
  /* the world window: the grid, the view, or the points and circles with a margin */
  let x0,x1,y0,y1;
@@ -41,14 +46,14 @@ export const figure=(c,q,p)=>{
   x0=Math.min(...xs);x1=Math.max(...xs);y0=Math.min(...ys);y1=Math.max(...ys);const m=Math.max(x1-x0,y1-y0)*0.12||1;x0-=m;x1+=m;y0-=m;y1+=m;}
  const s=Math.min((R-L)/(x1-x0),(B-T)/(y1-y0)),ox=(L+R)/2-(x0+x1)/2*s,oy=(T+B)/2+(y0+y1)/2*s;
  const X=v=>ox+v*s,Y=v=>oy-v*s,P=n=>[X(pts[n][0]),Y(pts[n][1])];
- if(q.title)fitTitle(c,q.title,34);
- if(q.grid){const sx=stepFor(x1-x0),sy=stepFor(y1-y0),every=(st)=>[1,2,5,10,20,50].map(k=>k*st).find(k=>k*s>=24)||st,lx=every(sx),ly=every(sy);c.lineWidth=1;c.strokeStyle=GRID;
+ if(q.title){fitTitle(c,q.title,34);c.font='bold 15px sans-serif';const h=5*c.measureText('0').width/8+1,two=c.measureText(String(q.title)).width>600,hs=Math.max(9,h+1);taken.push([28,34-(two?hs:0)-h,612,34+(two?hs:0)+h]);}
+ if(q.grid){const sx=stepFor(x1-x0),sy=stepFor(y1-y0),nw=(a,b,st)=>{c.font='11px sans-serif';let m=0;for(let v=Math.ceil(a/st)*st;v<=b+1e-9;v+=st)m=Math.max(m,c.measureText(num(v)).width);return m;},nh0=(c.font='11px sans-serif',2*Math.max(5,5*c.measureText('0').width/7+1)),every=(st,need)=>[1,2,5,10,20,50].map(k=>k*st).find(k=>k*s>=Math.max(24,need))||st,lx=every(sx,nw(x0,x1,sx)+8),ly=every(sy,nh0+6);c.lineWidth=1;c.strokeStyle=GRID;
   for(let v=Math.ceil(x0/sx)*sx;v<=x1+1e-9;v+=sx){c.beginPath();c.moveTo(X(v),Y(y0));c.lineTo(X(v),Y(y1));c.stroke();}
   for(let v=Math.ceil(y0/sy)*sy;v<=y1+1e-9;v+=sy){c.beginPath();c.moveTo(X(x0),Y(v));c.lineTo(X(x1),Y(v));c.stroke();}
   const ax=x0<=0&&x1>=0?X(0):X(x0),ay=y0<=0&&y1>=0?Y(0):Y(y0);c.strokeStyle=AXIS;c.lineWidth=2;c.beginPath();c.moveTo(X(x0),ay);c.lineTo(X(x1),ay);c.moveTo(ax,Y(y0));c.lineTo(ax,Y(y1));c.stroke();
-  /* numbers only as often as there is room for them: at least 24 px apart */
-  for(let v=Math.ceil(x0/lx)*lx;v<=x1+1e-9;v+=lx)if(Math.abs(v)>1e-9)text(c,num(v),X(v),ay+11,11,{color:SOFT});
-  for(let v=Math.ceil(y0/ly)*ly;v<=y1+1e-9;v+=ly)if(Math.abs(v)>1e-9)text(c,num(v),ax-6,Y(v),11,{align:'right',color:SOFT});}
+  /* numbers only as often as there is room for them: at least 24 px apart, and (picframe2-nov2 #4) at least their measured width or height plus a gap */
+  for(let v=Math.ceil(x0/lx)*lx;v<=x1+1e-9;v+=lx)if(Math.abs(v)>1e-9){text(c,num(v),X(v),ay+11,11,{color:SOFT});taken.push(lbox(c,num(v),X(v),ay+11,11));}
+  for(let v=Math.ceil(y0/ly)*ly;v<=y1+1e-9;v+=ly)if(Math.abs(v)>1e-9){text(c,num(v),ax-6,Y(v),11,{align:'right',color:SOFT});taken.push(lbox(c,num(v),ax-6,Y(v),11,'right'));}}
  /* the order shapes trace in, sharing p from 0 to 0.7 */
  const shapes=[...(q.polys||[]).map(o=>['poly',o]),...(q.segs||[]).map(o=>['seg',o]),...(q.circles||[]).map(o=>['circle',o]),...(q.arcs||[]).map(o=>['arc',o])];
  const share=k=>clamp((p/0.7-k/shapes.length)*shapes.length),late=clamp((p-0.7)/0.2);
@@ -69,25 +74,31 @@ export const figure=(c,q,p)=>{
   if(q.grid)c.restore();});
  c.setLineDash?.([]);
  /* marks and measurements */
- if(late>0){c.globalAlpha=late;
+ /* picframe2-nov2: always laid out (drawn at alpha late, so invisible before 0.7), so a point name never jumps when they fade in */{c.globalAlpha=late;
   (q.segs||[]).forEach((o,k)=>{const [a,b]=ids(o.v).map(P),mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2,h=Math.hypot(b[0]-a[0],b[1]-a[1])||1,ux=(b[0]-a[0])/h,uy=(b[1]-a[1])/h;c.strokeStyle=col(o.col,(q.polys||[]).length+k);c.lineWidth=2;
    for(let i=0;i<(o.ticks||0);i++){const off=(i-(o.ticks-1)/2)*6;c.beginPath();c.moveTo(mx+ux*off-uy*7,my+uy*off+ux*7);c.lineTo(mx+ux*off+uy*7,my+uy*off-ux*7);c.stroke();}
    for(let i=0;i<(o.arrows||0);i++){const off=(i-(o.arrows-1)/2)*8+(o.ticks?18:0);c.beginPath();c.moveTo(mx+ux*(off-6)-uy*6,my+uy*(off-6)+ux*6);c.lineTo(mx+ux*off,my+uy*off);c.lineTo(mx+ux*(off-6)+uy*6,my+uy*(off-6)-ux*6);c.stroke();}
-   if(o.label!=null){const n1=[-uy,ux],[hx,hy]=home(ids(o.v)),side=o.side??((n1[0]*(mx-hx)+n1[1]*(my-hy))>=0?1:-1);const d=clear(c,o.label,14,n1[0],n1[1]);text(c,o.label,mx+n1[0]*side*d,my+n1[1]*side*d,14,{bold:true,halo:true,color:col(o.col,(q.polys||[]).length+k)});}});
+   if(o.label!=null){const n1=[-uy,ux],[hx,hy]=home(ids(o.v)),side=o.side??((n1[0]*(mx-hx)+n1[1]*(my-hy))>=0?1:-1);const d=clear(c,o.label,14,n1[0],n1[1]);text(c,o.label,mx+n1[0]*side*d,my+n1[1]*side*d,14,{bold:true,halo:true,color:col(o.col,(q.polys||[]).length+k)});taken.push(lbox(c,o.label,mx+n1[0]*side*d,my+n1[1]*side*d,14));}});
   (q.polys||[]).forEach(o=>{if(!o.label)return;const V=ids(o.v).map(P);text(c,o.label,V.reduce((a,v)=>a+v[0],0)/V.length,V.reduce((a,v)=>a+v[1],0)/V.length,13,{bold:true,color:SOFT});});
   (q.arcs||[]).forEach((o,k)=>{if(o.label==null)return;const [px,py]=P(o.c),A=P(o.from),Bp=P(o.to),r=Math.hypot(A[0]-px,A[1]-py),a0=Math.atan2(A[1]-py,A[0]-px);let a1=Math.atan2(Bp[1]-py,Bp[0]-px);while(a1>a0)a1-=Math.PI*2;const m=(a0+a1)/2;
-   const d=r+clear(c,o.label,14,Math.cos(m),Math.sin(m));text(c,o.label,px+Math.cos(m)*d,py+Math.sin(m)*d,14,{bold:true,halo:true,color:col(o.col,shapes.length-(q.arcs.length-k))});});
+   const d=r+clear(c,o.label,14,Math.cos(m),Math.sin(m));text(c,o.label,px+Math.cos(m)*d,py+Math.sin(m)*d,14,{bold:true,halo:true,color:col(o.col,shapes.length-(q.arcs.length-k))});taken.push(lbox(c,o.label,px+Math.cos(m)*d,py+Math.sin(m)*d,14));});
   (q.angles||[]).forEach((o,k)=>{const [a,v,b]=ids(o.v).map(P),ta=Math.atan2(a[1]-v[1],a[0]-v[0]),tb=Math.atan2(b[1]-v[1],b[0]-v[0]);let d=tb-ta;while(d>Math.PI)d-=Math.PI*2;while(d<-Math.PI)d+=Math.PI*2;
    c.strokeStyle=col(o.col??'#c8372d');c.lineWidth=2;
    if(o.right){const r=12,u=[Math.cos(ta),Math.sin(ta)],w=[Math.cos(tb),Math.sin(tb)];c.beginPath();c.moveTo(v[0]+u[0]*r,v[1]+u[1]*r);c.lineTo(v[0]+(u[0]+w[0])*r,v[1]+(u[1]+w[1])*r);c.lineTo(v[0]+w[0]*r,v[1]+w[1]*r);c.stroke();}
    else for(let i=0;i<(o.arcs||1);i++){c.beginPath();c.arc(v[0],v[1],(o.r||20)+i*5,ta,ta+d,d<0);c.stroke();}
-   if(o.label!=null){const m=ta+d/2,r=o.dist??(o.right?30:Math.max((o.r||20)+14,Math.min(52,16/Math.max(0.2,Math.abs(Math.sin(d/2))))));text(c,o.label,v[0]+Math.cos(m)*r,v[1]+Math.sin(m)*r,14,{bold:true,halo:true,color:col(o.col??'#c8372d')});}});
-  for(const n of q.notes||[])text(c,n.text,X(n.at[0]),Y(n.at[1]),13,{bold:true,halo:true,color:col(n.col??SOFT)});
+   if(o.label!=null){const m=ta+d/2,r=o.dist??(o.right?30:Math.max((o.r||20)+14,Math.min(52,16/Math.max(0.2,Math.abs(Math.sin(d/2))))));text(c,o.label,v[0]+Math.cos(m)*r,v[1]+Math.sin(m)*r,14,{bold:true,halo:true,color:col(o.col??'#c8372d')});taken.push(lbox(c,o.label,v[0]+Math.cos(m)*r,v[1]+Math.sin(m)*r,14));}});
+  for(const n of q.notes||[]){const str=String(n.text),x=X(n.at[0]),y=Y(n.at[1]);c.font='bold 13px sans-serif';let lines=[str];
+   if(c.measureText(str).width>560){const ws=str.split(' ');let best=null;for(let k=1;k<ws.length;k++){const a=ws.slice(0,k).join(' '),b=ws.slice(k).join(' '),m=Math.max(c.measureText(a).width,c.measureText(b).width);if(!best||m<best.m)best={a,b,m};}if(best)lines=[best.a,best.b];}
+   const bs=lines.map(l=>lbox(c,l,x,0,13)),hh=bs[0][3]+1,H=lines.length*hh,wl=Math.min(...bs.map(b=>b[0])),wr=Math.max(...bs.map(b=>b[2])),at=dy=>[wl-3,y+dy-H,wr+3,y+dy+H],ok=dy=>(dy===0||(y+dy-H>=Math.min(T-6,y-H)&&y+dy+H<=Math.max(B+14,y+H)))&&!lhit(at(dy),taken);
+   let dy=0;if(!/^[-−]?[\d.,]+%?$/.test(str)&&!ok(0))for(let k=1;k<=12;k++){const a=k*hh/2;if(ok(a)){dy=a;break;}if(ok(-a)){dy=-a;break;}}
+   lines.forEach((l,i)=>text(c,l,x,y+dy+(i-(lines.length-1)/2)*2*hh,13,{bold:true,halo:true,color:col(n.col??SOFT)}));taken.push(at(dy));}
   c.globalAlpha=1;}
  /* points and their names, from the start so the narration can name them */
  const dots=q.dots==null?names:ids(q.dots),hide=ids(q.hide);
  for(const n of names){const v=P(n);if(dots.includes(n)){c.fillStyle=INK;c.beginPath();c.arc(v[0],v[1],3.5,0,Math.PI*2);c.fill();}
-  if(!hide.includes(n)){const pl=q.place?.[n],[lx,ly]=pl!=null?[v[0]+Math.cos(pl*Math.PI/180)*16,v[1]-Math.sin(pl*Math.PI/180)*16]:away(v,15,home([n]));text(c,n,lx,ly,15,{bold:true,halo:true});}}
+  if(!hide.includes(n)){const pl=q.place?.[n];let [lx,ly]=pl!=null?[v[0]+Math.cos(pl*Math.PI/180)*16,v[1]-Math.sin(pl*Math.PI/180)*16]:away(v,15,home([n]));
+   if(lhit(lbox(c,n,lx,ly,15),taken)){const a0=Math.atan2(ly-v[1],lx-v[0]),r=Math.hypot(lx-v[0],ly-v[1])+2;for(let k=1;k<8;k++){const a=a0+(k%2?1:-1)*Math.ceil(k/2)*Math.PI/4,tx=v[0]+Math.cos(a)*r,ty=v[1]+Math.sin(a)*r;if(!lhit(lbox(c,n,tx,ty,15),taken)){lx=tx;ly=ty;break;}}}
+   text(c,n,lx,ly,15,{bold:true,halo:true});taken.push(lbox(c,n,lx,ly,15));}}
  c.restore();
 };
 const listed=a=>a.map((s,i)=>`${i===0?'':i===a.length-1?' and ':', '}${s}`).join('');

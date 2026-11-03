@@ -8,10 +8,13 @@ const state=n=>n===1?'present':n===0?'absent':'not recorded';
 export function villageRecords(c,{records,set}){
  /* improve20-r11f-nov2 #3: when the object names would touch at the size drawn (12 CSS px in a fitted quiz picture), they are written once, as
     column heads on two staggered rows above the records, instead of under every object */
- c.font='11px sans-serif';const mw=t=>c.measureText?.(t)?.width??t.length*6,cramped=names.some(n=>mw(n)+6>101),hdr=cramped?Math.max(34,mw('M')*4.2):0,h=(220-hdr)/records.length;
- c.fillStyle='#25382f';c.font='15px sans-serif';c.textAlign='center';c.fillText('Fictional Oakhaven'+(set?' • set '+set:'')+' • drawn from the written records',320,20);
- if(cramped){c.font='11px sans-serif';names.forEach((n,i)=>c.fillText(n,255+i*101,33+hdr*(i%2?.72:.3)));}
- records.forEach((r,row)=>{const top=33+hdr+row*h;c.fillStyle='#e2e8d8';c.fillRect(12,top,616,h-4);c.fillStyle='#263c30';c.font='13px sans-serif';c.textAlign='left';c.fillText(r.label,22,top+17);
+ /* picframe2-nov2 #1: the one-line title ran wider than the picture once a phone's labels grew to 12 px, so it was held at 9.5-11 px; when its
+    two halves (each measured at the drawn size) need more than the width, it is written on two lines and the records start lower. Same words. */
+ c.font='11px sans-serif';const mw=t=>c.measureText?.(t)?.width??t.length*6,cramped=names.some(n=>mw(n)+6>101),hdr=cramped?Math.max(34,mw('M')*4.2):0;
+ const t1='Fictional Oakhaven'+(set?' • set '+set:''),t2='drawn from the written records';c.font='15px sans-serif';const w15=t=>c.measureText?.(t)?.width??t.length*8,two=w15(t1)+w15(' • ')+w15(t2)>612,top0=two?52:33,h=(253-top0-hdr)/records.length;
+ c.fillStyle='#25382f';c.textAlign='center';if(two){c.fillText(t1,320,22);c.fillText(t2,320,47);}else c.fillText(t1+' • '+t2,320,20);
+ if(cramped){c.font='11px sans-serif';names.forEach((n,i)=>c.fillText(n,255+i*101,top0+hdr*(i%2?.72:.3)));}
+ records.forEach((r,row)=>{const top=top0+hdr+row*h;c.fillStyle='#e2e8d8';c.fillRect(12,top,616,h-4);c.fillStyle='#263c30';c.font='13px sans-serif';c.textAlign='left';c.fillText(r.label,22,top+17);
  r.values.forEach((v,i)=>{const x=255+i*101,y=top+h-23;c.fillStyle='#7a8f62';c.fillRect(x-32,y-5,64,8);if(v===1){const pn=PROP[kinds[i]],ps=pn&&propSize(pn),sc=ps?Math.max(1,Math.min(2,Math.floor((h-22)/ps.h),Math.floor(90/ps.w))):1;
   if(kinds[i]==='books'?(drawSprite(c,'book-red',x-9,y-18,32)&&drawSprite(c,'book-blue',x+9,y-18,32)):(pn&&drawProp(c,pn,x,y,sc))){}else{c.save();c.translate(x,y);const scale=Math.min(2.4,h/52);c.scale(scale,scale);drawTownDetail(c,{x:0,y:0,kind:kinds[i]});c.restore();}}else{c.strokeStyle='#536751';c.strokeRect(x-20,y-33,40,29);c.fillStyle='#25382f';c.font='19px sans-serif';c.textAlign='center';c.fillText(v===-1?'?':'—',x,y-11);}if(!cramped){c.fillStyle='#25382f';c.font='11px sans-serif';c.textAlign='center';c.fillText(names[i],x,y+16);}});});
  c.fillStyle='#25382f';c.font='12px sans-serif';c.textAlign='center';c.fillText('Object = present    — = absent    ? = not recorded',320,271);

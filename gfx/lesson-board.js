@@ -11,7 +11,8 @@ const text=(c,s,x,y,size,{bold=false,align='left',color=INK}={})=>{c.fillStyle=c
 export const fitTitle=(c,s,y=34,max=600,color=INK)=>{s=String(s);const w=z=>{c.font=`bold ${z}px sans-serif`;return c.measureText(s).width;};
  if(w(16)<=max){text(c,s,320,y,16,{bold:true,align:'center',color});return;}if(w(15)<=max){text(c,s,320,y,15,{bold:true,align:'center',color});return;}
  const words=s.split(' ');let k=1,best=1,bw=1e9;for(;k<words.length;k++){const a=words.slice(0,k).join(' '),b2=words.slice(k).join(' ');c.font='bold 15px sans-serif';const m=Math.max(c.measureText(a).width,c.measureText(b2).width);if(m<bw){bw=m;best=k;}}
- text(c,words.slice(0,best).join(' '),320,y-9,15,{bold:true,align:'center',color});text(c,words.slice(best).join(' '),320,y+9,15,{bold:true,align:'center',color});};
+ /* picframe2-nov2 #4: the two lines are spaced by their measured height (at least the old 18 units), so lines grown to 12 px on a phone never touch */
+ c.font='bold 15px sans-serif';const hs=Math.max(9,5*c.measureText('0').width/7+2);text(c,words.slice(0,best).join(' '),320,y-hs,15,{bold:true,align:'center',color});text(c,words.slice(best).join(' '),320,y+hs,15,{bold:true,align:'center',color});};
 /* improve20-j-nov1 #3 (audit3 #20: "what we want to prove" read as 11 px grey on parchment): a reason beside a line is drawn in ink at
    HELP_PX CSS px. The picture is shown at c.pqCss CSS px per picture unit (gfx/lesson-art.js crispCtx; about 0.7 on a desktop), and the
    label font is 16 picture units, so it grows by HELP_PX / (16 x pqCss) (at most 1.6x, beyond any phone boost the text layer already

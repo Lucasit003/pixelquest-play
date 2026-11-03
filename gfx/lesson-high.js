@@ -18,7 +18,8 @@ const stepFor=range=>[1,2,5,10,20,25,50,100,200,500,1000].find(s=>range/s<=12)||
    rectangle, a half-plane), drawn under everything else and faded in with p. A path joins its points with straight pieces and is drawn only between its first and last x.
    The board inside the parchment border is 28..612 x 28..252; the grid keeps 8 px clear of it. */
 export const plot=(c,{title,x=[-10,10],y=[-10,10],lines=[],curves=[],paths=[],points=[],areas=[],vlines=[]},p)=>{
- const [x0v,x1v]=x,[y0v,y1v]=y,L=70,R=596,T=title?54:40,Bm=236;
+ /* picframe2-nov2 #4: a title that wraps onto two lines (fitTitle) pushes the grid's top down, so the y letter and top number clear its second line */
+ const [x0v,x1v]=x,[y0v,y1v]=y,L=70,R=596,tl=!!title&&(c.font='bold 15px sans-serif',c.measureText(String(title)).width>600),T=title?(tl?68:54):40,Bm=236;
  const X=v=>L+(v-x0v)/(x1v-x0v)*(R-L),Y=v=>Bm-(v-y0v)/(y1v-y0v)*(Bm-T);
  if(title)fitTitle(c,title,34);
  const sx=stepFor(x1v-x0v),sy=stepFor(y1v-y0v);
@@ -31,9 +32,12 @@ export const plot=(c,{title,x=[-10,10],y=[-10,10],lines=[],curves=[],paths=[],po
  /* improve20-r11f-nov2 #3: tick numbers that would touch at the label size drawn (12 CSS px in a fitted quiz picture) label every 2nd, 5th or 10th
     tick; every grid line stays where it is. The axis letters sit clear of the last tick and the title: x past the arrow end, y above the axis unless the title is there, then just right of the axis top. */
  const kx=tickEvery(c,sx*(R-L)/(x1v-x0v),x0v,x1v,sx,false),ky=tickEvery(c,sy*(Bm-T)/(y1v-y0v),y0v,y1v,sy,true),on=(v,s,k)=>Math.round(v/s)%k===0;
- for(let v=Math.ceil(x0v/sx)*sx;v<=x1v+1e-9;v+=sx)if((v!==0||ay===Bm)&&on(v,sx,kx))text(c,num(v),X(v),Math.min(Bm+10,ay+12),11,{color:SOFT});
- for(let v=Math.ceil(y0v/sy)*sy;v<=y1v+1e-9;v+=sy)if((v!==0||ax===L)&&on(v,sy,ky))text(c,num(v),Math.max(L-6,ax-6),Y(v),11,{align:'right',color:SOFT});
- text(c,'x',R+16,ay,12,{bold:true,color:SOFT,align:'left'});{c.font='bold 16px sans-serif';const tw=title?c.measureText(String(title)).width/2+24:0;var yBox;c.font='bold 12px sans-serif';const yw=c.measureText('y').width,yh=Math.max(8,c.measureText('0').width/7*6);if(Math.abs(ax-320)>tw){text(c,'y',ax,T-9,12,{bold:true,color:SOFT});yBox=[ax-yw/2-3,T-9-yh,ax+yw/2+3,T-9+yh];}else{text(c,'y',ax+8,T+2,12,{bold:true,color:SOFT,align:'left'});yBox=[ax+5,T+2-yh,ax+8+yw+3,T+2+yh];}}
+ /* picframe2-nov2 #4: number boxes are measured at the drawn size. A y number that would touch an x number (the corner "0" over the x axis's "0"
+    when both axes run along the edges) moves left, at its own height, just clear of it; the x letter moves above the axis end when the last x number would touch it. */
+ c.font='11px sans-serif';const nh=Math.max(6,5*c.measureText('0').width/7+1),xBx=[],yBx=[],yx=Math.min(Bm+10,ay+12);
+ for(let v=Math.ceil(x0v/sx)*sx;v<=x1v+1e-9;v+=sx)if((v!==0||ay===Bm)&&on(v,sx,kx)){text(c,num(v),X(v),yx,11,{color:SOFT});const w=c.measureText(num(v)).width;xBx.push([X(v)-w/2,yx-nh,X(v)+w/2,yx+nh]);}
+ for(let v=Math.ceil(y0v/sy)*sy;v<=y1v+1e-9;v+=sy)if((v!==0||ax===L)&&on(v,sy,ky)){c.font='11px sans-serif';const w=c.measureText(num(v)).width,yy=Y(v);let xr=Math.max(L-6,ax-6);for(const b of xBx)if(b[0]<xr+1&&b[2]>xr-w-1&&b[1]<yy+nh+1&&b[3]>yy-nh-1)xr=Math.min(xr,b[0]-3);text(c,num(v),xr,yy,11,{align:'right',color:SOFT});yBx.push([xr-w-3,yy-nh-2,xr+3,yy+nh+2]);}
+ {c.font='bold 12px sans-serif';const lw=c.measureText('x').width,hitX=xBx.some(b=>b[2]>R+15&&b[0]<R+17+lw&&b[1]<ay+nh&&b[3]>ay-nh);text(c,'x',R+16,hitX?ay-2*nh-4:ay,12,{bold:true,color:SOFT,align:'left'});}{c.font='bold 16px sans-serif';const tw=title?c.measureText(String(title)).width/2+24:0;var yBox;c.font='bold 12px sans-serif';const yw=c.measureText('y').width,yh=Math.max(8,c.measureText('0').width/7*6);if(Math.abs(ax-320)>tw){text(c,'y',ax,T-9,12,{bold:true,color:SOFT});yBox=[ax-yw/2-3,T-9-yh,ax+yw/2+3,T-9+yh];}else{text(c,'y',ax+8,T+2,12,{bold:true,color:SOFT,align:'left'});yBox=[ax+5,T+2-yh,ax+8+yw+3,T+2+yh];}}
  /* areas, clipped to the grid, faded in under the graphs */
  if(areas.length){c.save();c.beginPath();c.rect(L,T,R-L,Bm-T);c.clip?.();c.globalAlpha=clamp(p*1.5);
   areas.forEach((a,i)=>{const col=AREA[(a.col??i)%AREA.length];c.fillStyle=col[0];c.strokeStyle=col[1];c.lineWidth=1.5;c.beginPath();a.pts.forEach(([u,v],j)=>j?c.lineTo(X(u),Y(v)):c.moveTo(X(u),Y(v)));c.closePath();c.fill();if(a.edge!==false)c.stroke();});
@@ -45,10 +49,11 @@ export const plot=(c,{title,x=[-10,10],y=[-10,10],lines=[],curves=[],paths=[],po
  const fns=[...lines.map(l=>v=>l.m*v+l.b),...curves.map(q=>v=>q.a*(v-q.h)**2+q.k),...paths.map(q=>pathF(q.pts)),...(y0v<=0&&y1v>=0?[()=>0]:[])],cross=(bx,own)=>[own,...fns].filter(Boolean).some(g=>{for(let px=bx[0];px<=bx[2];px+=3){const py=Y(g(x0v+(px-L)/(R-L)*(x1v-x0v)));if(py>=bx[1]-3&&py<=bx[3]+3)return true;}return false;});
  const inGrid=b=>b[0]>=L-4&&b[2]<=R+4&&b[1]>=T-4&&b[3]<=Bm+4;
  /* point labels: the first corner (up-right, up-left, down-right, down-left) clear of every graph and earlier label, inside the grid */
- /* picframe-nov2 #2 (R11F's math-5 "y" against a line label, "12" against a curve label): the y letter and the y numbers' measured column (grown, as a fitted quiz picture grows them) are taken too, so a graph's label keeps clear of them */c.font='11px sans-serif';let tcw=34;for(let v=Math.ceil(y0v/sy)*sy;v<=y1v+1e-9;v+=sy)if(on(v,sy,ky))tcw=Math.max(tcw,c.measureText(num(v)).width+10);const gb=Math.max(1,c.measureText('0').width/7),lh=Math.max(10,5*gb+2);taken.push([ax-tcw,T,ax+2,Bm],[L,ay+3,R,Math.max(ay+20,ay+12+lh)],yBox);
+ /* picframe-nov2 #2 (R11F's math-5 "y" against a line label, "12" against a curve label): the y letter and the y numbers' measured column (grown, as a fitted quiz picture grows them) are taken too, so a graph's label keeps clear of them */c.font='11px sans-serif';let tcw=34;for(let v=Math.ceil(y0v/sy)*sy;v<=y1v+1e-9;v+=sy)if(on(v,sy,ky))tcw=Math.max(tcw,c.measureText(num(v)).width+10);const gb=Math.max(1,c.measureText('0').width/7),lh=Math.max(10,5*gb+2);/* picframe2-nov2 #4: each y number's own box, not the whole column, so a graph label too wide for either side of the axis can sit between two numbers */const axB=[ax-3,T,ax+3,Bm];taken.push(...(tcw>0?yBx:[]),axB,[L,ay+3,R,Math.max(ay+20,ay+12+lh)],yBox);
  const ptAt=new Map();for(const pt of points){if(pt.x<x0v||pt.x>x1v||pt.y<y0v||pt.y>y1v)continue;const px=X(pt.x),py=Y(pt.y);taken.push([px-8,py-8,px+8,py+8]);}
  for(const pt of points){if(!pt.label||pt.x<x0v||pt.x>x1v||pt.y<y0v||pt.y>y1v)continue;const px=X(pt.x),py=Y(pt.y),w=W(pt.label);let first=null,pick=null;
-  for(const [sx,sy] of [[1,-1],[-1,-1],[1,1],[-1,1]]){const x=sx>0?px+10:px-10-w,y=py+sy*14,b=[x,y-10,x+w,y+10];first=first||[x,y,b];if(inGrid(b)&&!hit(b)&&!cross(b)){pick=[x,y,b];break;}}
+  /* picframe2-nov2 #4: then the same four corners a row further out, before falling back to the first */for(const [sx,sy,f=1] of [[1,-1],[-1,-1],[1,1],[-1,1],[1,-1,2],[-1,-1,2],[1,1,2],[-1,1,2]]){const x=sx>0?px+10:px-10-w,y=py+sy*14*f,b=[x,y-10,x+w,y+10];first=first||[x,y,b];if(inGrid(b)&&!hit(b)&&!cross(b)){pick=[x,y,b];break;}}
+  /* picframe2-nov2: none clear of everything: the first clear of every label, even if a graph or the y axis passes under it */if(!pick)for(const [sx,sy,f=1] of [[1,-1],[-1,-1],[1,1],[-1,1],[1,-1,2],[-1,-1,2],[1,1,2],[-1,1,2]]){const x=sx>0?px+10:px-10-w,y=py+sy*14*f,b=[x,y-10,x+w,y+10];if(inGrid(b)&&!taken.some(o=>o!==axB&&b[0]<o[2]&&b[2]>o[0]&&b[1]<o[3]&&b[3]>o[1])){pick=[x,y,b];break;}}
   pick=pick||first;taken.push(pick[2]);ptAt.set(pt,pick);}
  /* lines and curves, clipped to the grid, drawn left to right with p */
  const xEnd=x0v+(x1v-x0v)*clamp(p<=0?0.02:p);

@@ -24,7 +24,10 @@ export const tape=(c,{rows,groups=1,title,solve},p)=>{
 /* numline: {min,max,marks:[{v,label}],span:[a,b] (a bracket between two marks; its length only with solve),title}. */
 export const numline=(c,{min,max,marks=[],span,title,solve},p)=>{
  if(title)text(c,title,320,22,16,{bold:true});
- const x0=40,x1=600,y=170,X=v=>x0+(v-min)/(max-min)*(x1-x0),range=max-min,step=range<=24?1:range<=60?5:10,lab=range<=24?(range<=16?1:2):step;
+ const x0=40,x1=600,y=170,X=v=>x0+(v-min)/(max-min)*(x1-x0),range=max-min,step=range<=24?1:range<=60?5:10,lab0=range<=24?(range<=16?1:2):step;
+ /* picframe2-nov2 #4: numbers are measured at the drawn size and thinned to every 2nd, 5th or 10th labelled tick when neighbours would touch
+    (-140 against -130 once a phone's labels grow); every tick mark stays */
+ c.font='bold 15px sans-serif';let need=0;for(let v=Math.ceil(min/lab0)*lab0;v<=max;v+=lab0)need=Math.max(need,c.measureText(String(v)).width+8);const lab=lab0*([1,2,5,10].find(k=>k*lab0*(x1-x0)/range>=need)||10);
  c.strokeStyle=INK;c.lineWidth=3;c.beginPath();c.moveTo(x0-12,y);c.lineTo(x1+12,y);c.stroke();
  c.beginPath();c.moveTo(x0-12,y);c.lineTo(x0-2,y-6);c.moveTo(x0-12,y);c.lineTo(x0-2,y+6);c.moveTo(x1+12,y);c.lineTo(x1+2,y-6);c.moveTo(x1+12,y);c.lineTo(x1+2,y+6);c.stroke();
  for(let v=Math.ceil(min/step)*step;v<=max;v+=step){const zero=v===0;c.lineWidth=zero?3:1.5;c.beginPath();c.moveTo(X(v),y-(zero?12:8));c.lineTo(X(v),y+(zero?12:8));c.stroke();

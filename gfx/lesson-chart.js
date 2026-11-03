@@ -7,6 +7,7 @@
 // {t:'chart', kind:'numline', title, axis:[min,max], rows:[...]} (see numline below)
 // {t:'chart', kind:'scatter', title, x:[min,max], y:[min,max], points:[[x,y],...], line?:{m,b,label}, residuals?:[[x,y]],
 //  xlabel?, ylabel?}
+import {fitTitle} from './lesson-board.js';
 const INK='#2a1a10',SOFT='#6a5a46',GRID='#d8c79f',AXIS='#4a3a2a',BLUE='#3f6fa0',ORANGE='#b4602e',GREEN='#4f8a3c',RED='#c8372d';
 const clamp=v=>Math.max(0,Math.min(1,v));
 const text=(c,s,x,y,size=13,{bold=false,align='center',color=INK}={})=>{c.fillStyle=color;c.font=`${bold?'bold ':''}${size}px sans-serif`;c.textAlign=align;c.textBaseline='middle';c.fillText(String(s),x,y);};
@@ -62,8 +63,11 @@ function scatter(c,q,p,L,R,T){const [x0,x1]=q.x,[y0,y1]=q.y,B=q.xlabel?222:232,L
 /* bars: labelled bars for categories, negative values below the axis: bars:[{label,value,col?}], unit?:'$', show values */
 function catbars(c,q,p,L,R,T){const bs=q.bars||[],vals=bs.map(b=>b.value),hi=Math.max(0,...vals),lo=Math.min(0,...vals),span=(hi-lo)||1,B=222,Y=v=>B-(v-lo)/span*(B-T-14),zero=Y(0),w=(R-L-20)/bs.length,cols=[BLUE,ORANGE,GREEN,'#8a4f9e',RED];
  line(c,L,zero,R,zero);const two=crowded(c,bs.map(b=>b.label),w);
+ /* picframe2-nov2 #4: a negative bar's value sits under the bar's end; when that would touch the bar's name ("net migration" against "-3" on a
+    phone) it sits just above the zero line in the bar's own column instead */
+ c.font='bold 12px sans-serif';const hh=5*c.measureText('0').width/8,nameY=B+(lo<0?28:14);
  bs.forEach((b,i)=>{const g=clamp(p/0.8*bs.length-i);const x=L+10+i*w+w*0.15,bw=w*0.7,top=zero+(Y(b.value)-zero)*g;c.fillStyle=typeof b.col==='string'?b.col:cols[(b.col??i)%cols.length];c.globalAlpha=0.75;c.fillRect(x,Math.min(zero,top),bw,Math.abs(top-zero));c.globalAlpha=1;
-  text(c,b.label,x+bw/2,B+(lo<0?28:14)+(two&&i%2?22:0),12,{color:SOFT});if(g>=1)text(c,`${q.unit||''}${b.value<0?'-':''}${(q.unit?Math.abs(b.value):Math.abs(b.value)).toLocaleString('en-US')}${q.suffix||''}`,x+bw/2,b.value<0?top+11:top-10,12,{bold:true});});}
+  text(c,b.label,x+bw/2,nameY+(two&&i%2?22:0),12,{color:SOFT});if(g>=1)text(c,`${q.unit||''}${b.value<0?'-':''}${(q.unit?Math.abs(b.value):Math.abs(b.value)).toLocaleString('en-US')}${q.suffix||''}`,x+bw/2,b.value<0?(top+11+2*hh+2>nameY+(two&&i%2?22:0)?zero-10:top+11):top-10,12,{bold:true});});}
 
 /* numline: one or more number lines, each with an inequality drawn on it: a ray from a dot, or a span between two dots.
    A closed dot is included (≤, ≥), an open dot is not (<, >). rows:[{label, ray:{at,dir:'left'|'right',closed}} or
@@ -77,8 +81,10 @@ function numline(c,q,p,L,R,T){const [a,b]=q.axis,rows=q.rows||[],gap=(240-T)/row
   if(r.span){const {from,to,closedFrom,closedTo}=r.span;line(c,X(from),y,X(from+(to-from)*f),y,col,5);dot(from,closedFrom);if(f>=1)dot(to,closedTo);
    if(r.ints&&p>=0.9)for(let v=Math.ceil(from);v<=to;v++){if((v===from&&!closedFrom)||(v===to&&!closedTo))continue;text(c,'•',X(v),y-14,16,{bold:true,color:RED});}}});}
 
-export const chart=(c,q,p)=>{const [L,R]=q.area||[40,600],T=q.title?58:36;
- if(q.title)text(c,q.title,(L+R)/2,34,q.area?14:16,{bold:true});
+/* picframe2-nov2 #4: a full-width chart title too wide for the 16 px line (it dropped to the small size, 8-11 CSS px on a phone) wraps onto two
+   lines (lesson-board fitTitle, the plot's rule) and the chart starts lower */
+export const chart=(c,q,p)=>{const [L,R]=q.area||[40,600],wide=!!q.title&&!q.area&&(c.font='bold 16px sans-serif',c.measureText(String(q.title)).width>600),tl=wide&&(c.font='bold 15px sans-serif',c.measureText(String(q.title)).width>600),T=q.title?(tl?70:58):36;
+ if(q.title){if(wide)fitTitle(c,q.title,tl?32:34);else text(c,q.title,(L+R)/2,34,q.area?14:16,{bold:true});}
  (q.kind==='box'?box:q.kind==='hist'?hist:q.kind==='numline'?numline:q.kind==='bars'?catbars:scatter)(c,q,p,L,R,T);};
 
 const listed=a=>a.map((s,i)=>`${i===0?'':i===a.length-1?' and ':', '}${s}`).join('');

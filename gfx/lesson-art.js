@@ -92,22 +92,36 @@ const flat=(ctx,x,y)=>{for(let r=0;r<10;r++)for(let c=0;c<10;c++)cube(ctx,x+c*8,
 /* improve20-g-nov1 #15 (audit5 b9): a bare place-value picture (a quiz question's: no count labels, no regroup, no solve) used only the top
    left of the 640x280 board, so in a quiz box its rods were about 8 px tall under 6 px labels. It now scales about its own content to fill
    the board (at most 2.4x) and names its columns in the 16px font. */
-const blocksCols=({h,ten:t=0,one:o=0})=>{const W=[...(h==null?[]:[['hundreds',Math.min(h,2)*88-8]]),['tens',Math.min(t,9)*16-7],['ones',Math.min(o,5)*14-3]].map(([n,w])=>[n,Math.max(w,n.length*22)]);let x=0;return W.map(([n,w])=>{const c=[n,x,w];x+=w+56;return c;});};
-const blocksFit=spec=>{const {h,ten:t=0,one:o=0}=spec,cols=blocksCols(spec),x1=Math.max(...cols.map(([,x,w])=>x+w)),y0=8,y1=40+Math.max(Math.ceil((h||0)/2)*88-8,Math.ceil(t/9)*88-8,Math.ceil(o/5)*14-3,14);
- const z=Math.min(2.4,(PIC_W-48)/x1,(PIC_H-28)/(y1-y0));return {z,dx:(PIC_W-x1*z)/2,dy:(PIC_H-(y1-y0)*z)/2-y0*z};};
-const blocks=(ctx,spec,p)=>{const {regroup,count,solve}=spec;if(!count&&!solve&&!regroup&&!spec.fitted){const f=blocksFit(spec);ctx.save();ctx.translate(f.dx,f.dy);ctx.scale(f.z,f.z);blocksAt(ctx,{...spec,fitted:true},p);ctx.restore();return;}return blocksAt(ctx,spec,p);};
-const blocksAt=(ctx,{h,ten:t=0,one:o=0,regroup,count,solve,fitted},p)=>{if(regroup==='split'&&t>=1)return splitBlocks(ctx,{h,ten:t,one:o,count,solve},p);const trade=regroup===true&&o>=10,tp=trade?ease(clamp(p/0.8)):0,snapped=trade&&p>=0.8;
+/* picframe2-nov2 #2: the fitted picture kept 9 rods and 2 flats to a row, so 91 tens stood in 11 rows and the whole picture (labels too) shrank to
+   a quarter: real column names at 3-8 CSS px. When that layout would be drawn smaller than its own size (z<1), the rods and flats per row
+   are chosen to draw it largest; the counts are unchanged. A counted picture (count/solve, no regroup) that would run off the board takes
+   the same fitted layout, with its count lines under the columns. */
+const blocksCols=({h,ten:t=0,one:o=0},g={hp:2,tp:9})=>{const W=[...(h==null?[]:[['hundreds',Math.min(h,g.hp)*88-8]]),['tens',Math.min(t,g.tp)*16-7],['ones',Math.min(o,5)*14-3]].map(([n,w])=>[n,Math.max(w,n.length*22)]);let x=0;return W.map(([n,w])=>{const c=[n,x,w];x+=w+56;return c;});};
+const blocksZ=(spec,g,res=0)=>{const {h,ten:t=0,one:o=0}=spec,cols=blocksCols(spec,g),x1=Math.max(...cols.map(([,x,w])=>x+w)),y0=8,y1=40+Math.max(Math.ceil((h||0)/g.hp)*88-8,Math.ceil(t/g.tp)*88-8,Math.ceil(o/5)*14-3,14);
+ return {z:Math.min(2.4,(PIC_W-48)/x1,(PIC_H-28-res)/(y1-y0)),x1,y0,y1};};
+export const blocksGrid=(spec,res=0)=>{const {h,ten:t=0}=spec;let g={hp:2,tp:9},best=blocksZ(spec,g,res).z;if(best>=1)return g;
+ for(let hp=2;hp<=Math.max(2,h||0);hp++)for(let tp=9;tp<=Math.max(9,t);tp++){const z=blocksZ(spec,{hp,tp},res).z;if(z>best+1e-9){best=z;g={hp,tp};}}return g;};
+const blocksFit=(spec,res=0)=>{const g=blocksGrid(spec,res),{z,x1,y0,y1}=blocksZ(spec,g,res);return {z,g,dx:(PIC_W-x1*z)/2,dy:(PIC_H-res-(y1-y0)*z)/2-y0*z};};
+const blocksTall=({h,ten:t=0})=>Math.ceil(t/9)>2||Math.ceil((h||0)/2)>2;
+const blocks=(ctx,spec,p)=>{const {regroup,count,solve}=spec;if(spec.fitted)return blocksAt(ctx,spec,p);
+ if(!count&&!solve&&!regroup){const f=blocksFit(spec),u=ctx.pqUnit;ctx.save();ctx.translate(f.dx,f.dy);ctx.scale(f.z,f.z);if(u>0)ctx.pqUnit=u*f.z;try{blocksAt(ctx,{...spec,fitted:true,grid:f.g},p);}finally{ctx.pqUnit=u;ctx.restore();}return;}
+ if(!regroup&&blocksTall(spec)){const res=40,f=blocksFit(spec,res),cols=blocksCols(spec,f.g),u=ctx.pqUnit;ctx.save();ctx.translate(f.dx,f.dy);ctx.scale(f.z,f.z);if(u>0)ctx.pqUnit=u*f.z;try{blocksAt(ctx,{...spec,count:false,solve:false,fitted:true,grid:f.g},p);}finally{ctx.pqUnit=u;ctx.restore();}
+  const v={hundreds:[spec.h||0,100],tens:[spec.ten||0,10],ones:[spec.one||0,1]},L=cols.map(([w,x,cw])=>{const [n,u]=v[w];return {s:`${n} ${n===1?w.slice(0,-1):w} = ${n*u}`,x:f.dx+(x+cw/2)*f.z};});
+  ctx.font='bold 15px sans-serif';L.forEach(l=>l.w=ctx.measureText(l.s).width);for(let i=1;i<L.length;i++){const m=L[i-1].x+L[i-1].w/2+10+L[i].w/2;if(L[i].x<m)L[i].x=m;}
+  const over=L.length?L[L.length-1].x+L[L.length-1].w/2-(PIC_W-6):0;if(over>0)L.forEach(l=>l.x-=over);for(const l of L)label(ctx,l.s,l.x,PIC_H-res/2-4,15);return;}
+ return blocksAt(ctx,spec,p);};
+const blocksAt=(ctx,{h,ten:t=0,one:o=0,regroup,count,solve,fitted,grid},p)=>{if(regroup==='split'&&t>=1)return splitBlocks(ctx,{h,ten:t,one:o,count,solve},p);const trade=regroup===true&&o>=10,tp=trade?ease(clamp(p/0.8)):0,snapped=trade&&p>=0.8;
  /* The hundreds column only when the picture has hundreds at all, so two-digit lessons stay uncluttered. */
- const cols=fitted?blocksCols({h,ten:t,one:o}).map(([n,x])=>[n,x]):h==null?[['tens',120],['ones',380]]:[['hundreds',40],['tens',250],['ones',440]],X=Object.fromEntries(cols),top=40,shownT=t+(snapped?1:0),shownO=o-(snapped?10:0);
+ const g=fitted?grid||blocksGrid({h,ten:t,one:o}):{hp:2,tp:9},HP=g.hp,TP=g.tp,cols=fitted?blocksCols({h,ten:t,one:o},g).map(([n,x])=>[n,x]):h==null?[['tens',120],['ones',380]]:[['hundreds',40],['tens',250],['ones',440]],X=Object.fromEntries(cols),top=40,shownT=t+(snapped?1:0),shownO=o-(snapped?10:0);
  ctx.font=fitted?'bold 16px sans-serif':'bold 15px sans-serif';ctx.textAlign='left';ctx.textBaseline='alphabetic';ctx.fillStyle=LABEL;
  for(const [w,x] of cols)ctx.fillText(w,x,top-(fitted?8:12));
- for(let i=0;i<(h||0);i++)flat(ctx,X.hundreds+(i%2)*88,top+Math.floor(i/2)*88);
- for(let i=0;i<shownT;i++)rod(ctx,X.tens+(i%9)*16,top+Math.floor(i/9)*88);
+ for(let i=0;i<(h||0);i++)flat(ctx,X.hundreds+(i%HP)*88,top+Math.floor(i/HP)*88);
+ for(let i=0;i<shownT;i++)rod(ctx,X.tens+(i%TP)*16,top+Math.floor(i/TP)*88);
  const onesAt=i=>({x:X.ones+(i%5)*14,y:top+Math.floor(i/5)*14});
  /* While ten ones slide across they are drawn only in flight, never also in the ones column. */
  const still=trade&&!snapped?o-10:shownO,from=trade?10:0;
  for(let i=0;i<still;i++){const q=onesAt(i+from);cube(ctx,q.x,q.y,11,11);}
- if(trade&&!snapped)for(let i=0;i<10;i++){const a=onesAt(i),b={x:X.tens+(t%9)*16,y:top+Math.floor(t/9)*88+i*8};cube(ctx,lerp(a.x,b.x,tp),lerp(a.y,b.y,tp),lerp(11,9,tp),lerp(11,8,tp));}
+ if(trade&&!snapped)for(let i=0;i<10;i++){const a=onesAt(i),b={x:X.tens+(t%TP)*16,y:top+Math.floor(t/TP)*88+i*8};cube(ctx,lerp(a.x,b.x,tp),lerp(a.y,b.y,tp),lerp(11,9,tp),lerp(11,8,tp));}
  if(count||solve){const shown={hundreds:[h||0,100],tens:[shownT,10],ones:[shownO,1]};
   for(const [w,x] of cols){const [n,v]=shown[w];label(ctx,`${n} ${n===1?w.slice(0,-1):w} = ${n*v}`,x+55,250,15);}}};
 const splitBlocks=(ctx,{h,ten:t,one:o,count,solve},p)=>{const tp=ease(clamp(p/0.8)),done=p>=0.8;
@@ -212,15 +226,20 @@ const matter=(ctx,{jars,change,solve},p)=>{const list=jars||[{state:NEXT[change]
 const timeline=(ctx,{events,fill,solve,ends},p)=>{const n=events.length,x0=50,x1=PIC_W-50,y=150,X=i=>n<2?PIC_W/2:lerp(x0+20,x1-40,i/(n-1)),shown=p*n;
  ctx.strokeStyle=INK;ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(x0,y);ctx.lineTo(x1,y);ctx.stroke();
  ctx.fillStyle=INK;ctx.beginPath();ctx.moveTo(x1+14,y);ctx.lineTo(x1-4,y-10);ctx.lineTo(x1-4,y+10);ctx.closePath();ctx.fill();
- ctx.font='13px sans-serif';ctx.textBaseline='middle';ctx.textAlign='left';ctx.fillText(ends?.[0]??'← earlier',x0,y+95);ctx.textAlign='right';ctx.fillText(ends?.[1]??'later →',x1+14,y+95);
+ /* picframe2-nov2 #4: the end words sat at y+95 whatever the labels below did, so "later →" ran into a three-line last event ("the internet / was /
+    invented"). Every label and stem is measured first; each end word takes the first of y+95, under the lowest label, just under or just above
+    the arrow that touches none of them. */
+ const room=i=>Math.min((n<2?PIC_W:2*(X(1)-X(0)))-14,2*Math.min(X(i),PIC_W-X(i))-8),rowsOf=(e,i)=>{ctx.font='bold 13px sans-serif';const text=String(e==null?(solve&&fill?fill:'?'):e),rows=[];for(const w of text.split(' ')){const last=rows.at(-1);if(last!=null&&ctx.measureText(last+' '+w).width+10<=room(i))rows[rows.length-1]=last+' '+w;else rows.push(w);}return rows;};
+ const below=[];events.forEach((e,i)=>{const x=X(i),up=i%2===0;below.push({l:x-2,r:x+2,t:up?y-38:y+12,b:up?y-12:y+38,up});ctx.font='bold 13px sans-serif';const rs=rowsOf(e,i);rs.forEach((r,k)=>{const w=ctx.measureText(r).width,cy=up?y-52-(rs.length-1-k)*20:y+52+k*20;below.push({l:x-w/2,r:x+w/2,t:cy-11,b:cy+11,up});});});
+ const low=below.filter(b=>!b.up).reduce((m,b)=>Math.max(m,b.b),y+40);ctx.font='13px sans-serif';ctx.textBaseline='middle';
+ const endY=(l,r)=>[y+95,low+14,y+24,y-24].find(ey=>ey<=PIC_H-10&&!below.some(b=>b.l<r+4&&b.r>l-4&&b.t<ey+11&&b.b>ey-11))??y+95;
+ {const a=ends?.[0]??'← earlier',b=ends?.[1]??'later →',wa=ctx.measureText(a).width,wb=ctx.measureText(b).width;ctx.textAlign='left';ctx.fillText(a,x0,endY(x0,x0+wa));ctx.textAlign='right';ctx.fillText(b,x1+14,endY(x1+14-wb,x1+14));}
  events.forEach((e,i)=>{const t=clamp(shown-i);if(t<=0)return;const x=X(i),up=i%2===0;ctx.globalAlpha=t;
   ctx.fillStyle=e==null?PAPER:DOT;ctx.strokeStyle=INK;ctx.lineWidth=2;ctx.beginPath();ctx.arc(x,y,11,0,Math.PI*2);ctx.fill();ctx.stroke();
   ctx.fillStyle=e==null?INK:PAPER;ctx.font='bold 12px sans-serif';ctx.textAlign='center';ctx.fillText(e==null?'?':String(i+1),x,y);
   ctx.strokeStyle=INK;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,y+(up?-12:12));ctx.lineTo(x,y+(up?-38:38));ctx.stroke();
-  const text=String(e==null?(solve&&fill?fill:'?'):e);ctx.font='bold 13px sans-serif';
-  /* 17 Oct: a label wider than the room to its same-side neighbours wraps onto stacked lines, growing away from the arrow */
-  const room=Math.min((n<2?PIC_W:2*(X(1)-X(0)))-14,2*Math.min(x,PIC_W-x)-8),words=text.split(' '),rows=[];for(const w of words){const last=rows.at(-1);if(last!=null&&ctx.measureText(last+' '+w).width+10<=room)rows[rows.length-1]=last+' '+w;else rows.push(w);}
-  rows.forEach((r,k)=>label(ctx,r,x,y+(up?-52-(rows.length-1-k)*20:52+k*20),13));ctx.globalAlpha=1;});};
+  /* 17 Oct: a label wider than the room to its same-side neighbours wraps onto stacked lines, growing away from the arrow (rowsOf) */
+  const rows=rowsOf(e,i);rows.forEach((r,k)=>label(ctx,r,x,y+(up?-52-(rows.length-1-k)*20:52+k*20),13));ctx.globalAlpha=1;});};
 /* Bar: reserved for fractions (topic 2); drawn plainly so a draft that uses it still renders. */
 const bar=(ctx,{parts,shade},p)=>{const x0=80,w=PIC_W-160,y=110,h=60,pw=w/parts;
  for(let i=0;i<parts;i++){ctx.fillStyle=i<shade*clamp(p*1.0001)?SHADE:PAPER;ctx.fillRect(x0+i*pw,y,pw,h);ctx.strokeStyle=INK;ctx.lineWidth=2;ctx.strokeRect(x0+i*pw,y,pw,h);}};
@@ -403,9 +422,11 @@ function drawRun(t,str,x,y,o){if(!ARROWS.test(str))return drawPixelText(t,str,x,
  for(const part of str.split(/([→←])/)){if(!part)continue;if(part==='→'||part==='←'){const aw=ARROW_W*sc,l=cx+2*sc,r=cx+aw-2*sc,h=3*sc;t.fillStyle=o.color;t.fillRect(l,cy-Math.ceil(sc/2),r-l,sc);
    t.beginPath();if(part==='→'){t.moveTo(r+sc,cy);t.lineTo(r-h,cy-h);t.lineTo(r-h,cy+h);}else{t.moveTo(l-sc,cy);t.lineTo(l+h,cy-h);t.lineTo(l+h,cy+h);}t.closePath();t.fill();cx+=aw;continue;}
   if(drawPixelText(t,part,cx,y,{...o,align:'left'})===false)return false;cx+=measurePixelText(part,f);}return w;}
+/* picframe2-nov2 #2: the growth reads ctx.pqUnit when each label is drawn (it was read once), so a painter that draws under its own scale
+   (blocks' fitted layout) can set pqUnit to match and its labels still reach LABEL_MIN */
 function pixelText(ctx){
  if(!pixelReady(ctx))return ctx;
- const U=ctx.pqUnit>0?ctx.pqUnit:0,bm=ctx.pqBoostMax>0?ctx.pqBoostMax:1.6,bOf=em=>labelBoost(U,em,bm);
+ const bm=ctx.pqBoostMax>0?ctx.pqBoostMax:1.6,bOf=em=>labelBoost(ctx.pqUnit>0?ctx.pqUnit:0,em,bm);
  /* inside(t,x,w,al) -> x moved so a w-wide run stays 4px inside the picture; only when unrotated (a rotated axis title is left alone), in picture units */
  const base=ctx.getTransform?.(),inside=(t,x,w,al)=>{const m=t.getTransform?.();if(!m||!base||m.b||m.c||!m.a)return x;const k=m.a/base.a,l=(al==='center'?x-w/2:al==='right'||al==='end'?x-w:x),pl=(m.a*l+m.e-base.e)/base.a,pw=w*k;
   if(pw>PIC_W-8||(pl>=4&&pl+pw<=PIC_W-4))return x;return x+(pl<4?4-pl:PIC_W-4-(pl+pw))/k;},
