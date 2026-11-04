@@ -42,44 +42,44 @@ steps:[{"skill":"choose","say":"A relative word joins a describing clause onto a
 {"skill":"fix","say":"In this sentence, carts crossed the river at the bridge, so where fits. In a different clause, which can fit: the bridge which crosses the river.","pic":{"t":"passages","title":"Check the noun again","texts":["The bridge who carts crossed the river safely every day is well known in Oakhaven."]},"check":{"prompt":"Find the mistake: \"The workshop who the carpenter built the cart is behind the mill.\" Which word should replace \"who\": which, where, whose or who?","answer":"where","options":["which","where","whose","who"],"hint":"A workshop is a place.","pic":{"t":"passages","title":"Find the mistake","texts":["The workshop who the carpenter built the cart is behind the mill."]}}}],
 progression:{"requires":["language-e-complete-sentences"],"operations":2,"demand":"Tell whether a noun names a person, a thing or a place, pick the relative word that matches it, and fix a sentence that uses the wrong one."},
 items(add){
- const passage=text=>({t:'passages',title:'Read it',texts:[text]});
+ const passage=text=>({t:'passages',title:'Read it',texts:[text]});/* improve20-r19a-nov3 #2: "An apprentice", "An orchard" (explanations only; no prompt changes) */const A=n=>(/^[aeiou]/i.test(n)?'An ':'A ')+n;
  PEOPLE.forEach((n,i)=>{
   const s1=`Does "the ${n}" name a person, a thing or a place?`;
-  add('kind',s1,'person',passage(`the ${n}`),`A ${n} is a person.`,['a person']);
+  add('kind',s1,'person',passage(`the ${n}`),`${A(n)} is a person.`,['a person']);
   const s2=`In this sentence about Oakhaven, is "${n}" a person, a thing or a place: "The ${n} ${PCLAUSE[i]}."?`;
-  add('kind',s2,'person',passage(`The ${n} ${PCLAUSE[i]}.`),`A ${n} is a person, so it takes who.`,['a person']);
+  add('kind',s2,'person',passage(`The ${n} ${PCLAUSE[i]}.`),`${A(n)} is a person, so it takes who.`,['a person']);
   [PTAIL1,PTAIL2].forEach((tail,k)=>{
    const opts=rotate3(i+k,'who','which','where'),sent=`The ${n} ___ ${PCLAUSE[i]} ${tail}`;
-   add('choose',`Fill in the blank: "${sent}" Choose: ${opts.join(', ')}.`,'who',passage(sent),`A ${n} is a person, so the word is who.`);
+   add('choose',`Fill in the blank: "${sent}" Choose: ${opts.join(', ')}.`,'who',passage(sent),`${A(n)} is a person, so the word is who.`);
   });
   const wrong=pick3(i,'which','where','whose'),fixSent=`The ${n} ${wrong} ${PCLAUSE[i]} ${PTAIL1}`,fopts=rotate4(i,'who','which','where','whose');
-  add('fix',`Find the mistake: "${fixSent}" Which word should replace "${wrong}": ${fopts.join(', ')}?`,'who',passage(fixSent),`A ${n} is a person, so who belongs there instead of "${wrong}".`);
+  add('fix',`Find the mistake: "${fixSent}" Which word should replace "${wrong}": ${fopts.join(', ')}?`,'who',passage(fixSent),`${A(n)} is a person, so who belongs there instead of "${wrong}".`);
  });
  const ANIMALS=new Set(['goat','horse','fox','duck']);
  THINGS.forEach((n,i)=>{
   const thingAccept=ANIMALS.has(n)?['a thing','an animal','animal']:['a thing'];
   const s1=`Does "the ${n}" name a person, a thing or a place?`;
-  add('kind',s1,'thing',passage(`the ${n}`),ANIMALS.has(n)?`A ${n} is an animal, a kind of thing.`:`A ${n} is a thing, not a person or a place.`,thingAccept);
+  add('kind',s1,'thing',passage(`the ${n}`),ANIMALS.has(n)?`${A(n)} is an animal, a kind of thing.`:`${A(n)} is a thing, not a person or a place.`,thingAccept);
   const s2=`In this sentence about Oakhaven, is "${n}" a person, a thing or a place: "The ${n} ${TCLAUSE[i]}."?`;
-  add('kind',s2,'thing',passage(`The ${n} ${TCLAUSE[i]}.`),`A ${n} is a thing, so it takes which or that.`,thingAccept);
+  add('kind',s2,'thing',passage(`The ${n} ${TCLAUSE[i]}.`),`${A(n)} is a thing, so it takes which or that.`,thingAccept);
   [TTAIL1,TTAIL2].forEach((tail,k)=>{
    const opts=rotate3(i+k,'which','who','where'),sent=`The ${n} ___ ${TCLAUSE[i]} ${tail}`;
    add('choose',`Fill in the blank: "${sent}" Choose: ${opts.join(', ')}.`,'which',passage(sent),`Which or that fits this clause.`+(ANIMALS.has(n)?' Who is also used for animals, especially pets.':''),ANIMALS.has(n)?['that','who']:['that']);
   });
   const w0=pick3(i,'who','where','whose'),wrong=ANIMALS.has(n)&&w0==='who'?'where':w0,fixSent=`The ${n} ${wrong} ${TCLAUSE[i]} ${TTAIL1}`,fopts=rotate4(i,'which','who','where','whose');
-  add('fix',`Find the mistake: "${fixSent}" Which word should replace "${wrong}": ${fopts.join(', ')}?`,'which',passage(fixSent),ANIMALS.has(n)?`A ${n} is an animal, so which or that belongs there instead of "${wrong}" (who is also used for animals, especially pets).`:`A ${n} is a thing, so which (or that) belongs there instead of "${wrong}".`,ANIMALS.has(n)?['that','who']:['that']);
+  add('fix',`Find the mistake: "${fixSent}" Which word should replace "${wrong}": ${fopts.join(', ')}?`,'which',passage(fixSent),ANIMALS.has(n)?`${A(n)} is an animal, so which or that belongs there instead of "${wrong}" (who is also used for animals, especially pets).`:`${A(n)} is a thing, so which (or that) belongs there instead of "${wrong}".`,ANIMALS.has(n)?['that','who']:['that']);
  });
  PLACES.forEach((n,i)=>{
   const s1=`Does "the ${n}" name a person, a thing or a place?`;
-  add('kind',s1,'place',passage(`the ${n}`),`A ${n} is a place.`,['a place']);
+  add('kind',s1,'place',passage(`the ${n}`),`${A(n)} is a place.`,['a place']);
   const s2=`In this sentence about Oakhaven, is "${n}" a person, a thing or a place: "The ${n} is where ${PLCLAUSE[i]}."?`;
-  add('kind',s2,'place',passage(`The ${n} is where ${PLCLAUSE[i]}.`),`A ${n} is a place, so it takes where.`,['a place']);
+  add('kind',s2,'place',passage(`The ${n} is where ${PLCLAUSE[i]}.`),`${A(n)} is a place, so it takes where.`,['a place']);
   [PLTAIL1,PLTAIL2].forEach((tail,k)=>{
    const opts=rotate3(i+k,'where','who','which'),sent=`The ${n} ___ ${PLCLAUSE[i]} ${tail}`;
-   add('choose',`Fill in the blank: "${sent}" Choose: ${opts.join(', ')}.`,'where',passage(sent),`A ${n} is a place, so the word is where.`);
+   add('choose',`Fill in the blank: "${sent}" Choose: ${opts.join(', ')}.`,'where',passage(sent),`${A(n)} is a place, so the word is where.`);
   });
   const wrong=pick3(i,'who','which','whose'),fixSent=`The ${n} ${wrong} ${PLCLAUSE[i]} ${PLTAIL1}`,fopts=rotate4(i,'where','who','which','whose');
-  add('fix',`Find the mistake: "${fixSent}" Which word should replace "${wrong}": ${fopts.join(', ')}?`,'where',passage(fixSent),`A ${n} is a place, so where belongs there instead of "${wrong}".`);
+  add('fix',`Find the mistake: "${fixSent}" Which word should replace "${wrong}": ${fopts.join(', ')}?`,'where',passage(fixSent),`${A(n)} is a place, so where belongs there instead of "${wrong}".`);
  });
  PEOPLE.forEach((n,i)=>{
   [OACT1[i],OACT2[i]].forEach((act,k)=>{

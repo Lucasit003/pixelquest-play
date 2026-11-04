@@ -16,6 +16,7 @@ import {wordChoicesFor} from './word-choices.js';
 import {tileChoices} from './tile-choices.js';
 import {namedOptions,closedOptions} from './placement-choices.js';
 import {POOL,ITEMS} from './lessons.js';
+/* improve20-r18e-nov3 #1 */import {SUM_DISTRACTORS} from './sum-distractors.js';
 
 export const SUM_TILE_MAX=4;
 const h=s=>{let x=2166136261;for(const c of String(s)){x^=c.charCodeAt(0);x=Math.imul(x,16777619)>>>0;}return x;};
@@ -47,9 +48,14 @@ export function peerOptions(q){
  if(!PEER_TOPICS.has(q?.topic))return null;const a=String(q.answer??'').trim(),k=shape(a);
  const peers=[...new Set((POOL[q.topic]||[]).map(id=>String(ITEMS[id]?.answer??'').trim()).filter(x=>x&&low(x)!==low(a)&&shape(x)===k&&!accepts(x,q)))].sort((x,y)=>h(q.id+'~'+x)-h(q.id+'~'+y)).slice(0,SUM_TILE_MAX-1);
  return peers.length>=2?settle(q,[a,...peers]):null;}
+/* improve20-r18e-nov3 #1: the reviewed wrong options (sum-distractors.js, keyed by question id) for the 5 topics the rules above miss;
+   the same check applies (exactly one accepted, 2-4 options) or the question stays typed. Numbers show in order, as the young tiles do. */
+const PLAIN=/^\d+(\.\d+)?$/;
+export function reviewedOptions(q){const w=q&&SUM_DISTRACTORS[q.id];if(!w)return null;const r=settle(q,[q.answer,...w]);
+ return r&&r.every(x=>PLAIN.test(x.value))?r.sort((x,y)=>parseFloat(x.value)-parseFloat(y.value)):r;}
 /* The tiles for one question of the first topic's summed quiz, or null (a choice question keeps choiceFormHTML's buttons; else typing) */
 export function sumTiles(t,q){
  if(!q||choicesOf(q))return null;
- return wordChoicesFor(t,q)||tileChoices(q)||namedOptions(q)||closedOptions(q)||listedOptions(q)||unitCount(q)||peerOptions(q);}
+ return wordChoicesFor(t,q)||tileChoices(q)||namedOptions(q)||closedOptions(q)||listedOptions(q)||unitCount(q)||peerOptions(q)||/* improve20-r18e-nov3 #1 */reviewedOptions(q);}
 /* true when the question is answered by tapping in that quiz (buttons or tiles) */
 export const sumTaps=(t,q)=>!!(q&&(choicesOf(q)||sumTiles(t,q)));

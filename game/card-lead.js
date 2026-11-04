@@ -7,7 +7,9 @@
      play meanwhile (this week's Rift while unplayed, else the best Heroic replay for stars), picked deterministically.
    - The second loss on Story leads with the retry and its potions; the Library is a secondary with its honest size.
    Pure and read-only: it never opens a gate, unlocks, masters or writes. -> {text, primary:{kind,label,subject}, also, library} */
-import {LEVELS,levelById,levelFogged,tierOpen,tierDone,starsOf,awakeCount,powerShort,tiered} from './levels.js';
+import {LEVELS,CHAPTERS,levelById,levelOpen,levelFogged,tierOpen,tierDone,starsOf,awakeCount,powerShort,tiered} from './levels.js';
+import {hallOpen,HALL_CHAPTERS,rungOpen,rungCleared} from './hall.js';
+import {questLive,questState,currentStep} from './quests.js';
 import {adviceLevel,TIERS} from './tiers.js';
 import {SUBJECTS} from './data.js';
 import {gateInfo,powerWants,powerStep,leadSubject} from './power-gate.js';
@@ -25,8 +27,18 @@ export function gateLead(save,id,{place=null}={}){const gi=gateInfo(save,id),g=p
  return {text,a:gi.a,subject:gi.step?.subject||leadSubject(save)||gi.a.subject,level:id};}
 /* one thing to play while the learning goes on: this week's Rift while unplayed, else the Heroic replay that fits the hero best (its advice level
    reached first, a Heroic not yet won before a star chase, then the newest level). Deterministic: the same save gives the same pick. */
-export function whileLearn(save){const r=riftUnplayed(save);if(r){const l=levelById(r.target.id);return {kind:'rift',id:l?.id||null,text:`While you learn: this week's Rift (${l?.name||'a remixed level'}). Press Rift on the world map.`};}
- const lv=save?.level|0,cand=LEVELS.map((l,i)=>({l,i})).filter(({l})=>l.kind==='level'&&!l.hidden&&!levelFogged(l)&&tiered(l)&&tierOpen(save,l.id,'heroic')&&starsOf(save,l.id,'heroic')<3);
+/* improve20-r18a-nov3 #7 (audit13 #18, lead: the v1 gate size stays the owner's): the line rotates BY DAY (the local date's day number, never
+   random) through what is open for this save, in this order: this week's Rift (while unplayed), a Heroic replay for stars, Hall of Echoes
+   Rung I (a chapter's rung I open and not cleared), Wil's quest (open or under way, its step playable now). Same save and day, same line. */
+export const dayNo=(now=Date.now())=>{const d=new Date(now);return Math.floor(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/864e5);};
+export const WHILE_KINDS=['rift','heroic','hall','wil'];
+export function whileOptions(save){const out=[],r=riftUnplayed(save);if(r){const l=levelById(r.target.id);out.push({kind:'rift',id:l?.id||null,text:`While you learn: this week's Rift (${l?.name||'a remixed level'}). Press Rift on the world map.`});}
+ const h=heroicWhile(save);if(h)out.push(h);
+ const ch=hallOpen(save)?HALL_CHAPTERS.find(c=>rungOpen(save,c,1)&&!rungCleared(save,c,1)):null;if(ch)out.push({kind:'hall',id:ch,text:`While you learn: Hall of Echoes Rung I (${CHAPTERS.find(c=>c.id===ch)?.name||ch}). Find the Hall on the Veilmoor map.`});
+ const q='hobs-purse',st=questLive(q)?questState(save,q):'locked',step=st==='open'||st==='active'?currentStep(save,q):null;if(step&&(step.kind!=='clear'||levelOpen(save,step.level)))out.push({kind:'wil',id:q,text:`While you learn: Wil's quest. ${step.text}`});
+ return out;}
+export function whileLearn(save,{now=Date.now()}={}){const o=whileOptions(save);return o.length?o[((dayNo(now)%o.length)+o.length)%o.length]:null;}
+function heroicWhile(save){const lv=save?.level|0,cand=LEVELS.map((l,i)=>({l,i})).filter(({l})=>l.kind==='level'&&!l.hidden&&!levelFogged(l)&&tiered(l)&&tierOpen(save,l.id,'heroic')&&starsOf(save,l.id,'heroic')<3);
  if(!cand.length)return null;cand.sort((x,y)=>((adviceLevel(x.l,'heroic')<=lv?0:1)-(adviceLevel(y.l,'heroic')<=lv?0:1))||((tierDone(save,x.l.id,'heroic')?1:0)-(tierDone(save,y.l.id,'heroic')?1:0))||y.i-x.i);
  const l=cand[0].l;return {kind:'heroic',id:l.id,text:`While you learn: replay ${l.name} on ${TIERS.heroic.label} for stars.`};}
 /* the win card. learn: power-gate.js winLead(save) as main.js worked it out; heroic: ladder-guide.js heroicLead when it leads; chFirst/chName: a
@@ -49,7 +61,7 @@ export function winCardLead(save,{learn=null,heroic=null,chFirst=null,chName='',
  if(finale)return {text:step.text,primary:{kind:'keep'},also:''};
  if(learn?.why==='gate'){const gl=gateLead(save,learn.gate,{place:chFirst&&chFirst.id===learn.gate&&chName?chName:null});if(gl)return {text:`${gl.text}.`,primary:{kind:'learn',label:learn.label,subject:learn.subject||gl.subject},also:whileLearn(save)?.text||'',gate:learn.gate};}
  if(learn?.a){const st=powerStep(save,learn.a),how=st?.topic&&STEP_WORDS[st.stage]?STEP_WORDS[st.stage](st.topic,st):'';return {text:how?`Wake ${learn.a.name}: ${how} at the Library.`:`Wake ${learn.a.name} at the Library.`,primary:{kind:'learn',label:learn.label,subject:learn.subject},also:''};}
- if(holdUp(save,step,id)){const l=levelById(step.target.id);return {text:chFirst?`Next adventure: ${chFirst.name}, the first stop in ${String(chName).replace(/^The /,'the ')}.`:l?`Try your new skills at ${l.name}.`:step.text,primary:{kind:'map'},also:'',hold:true,heroic2:!!heroic?.lead};}
+ if(holdUp(save,step,id)){const l=levelById(step.target.id),pad=chFirst||l;return {text:chFirst?`Next adventure: ${chFirst.name}, the first stop in ${String(chName).replace(/^The /,'the ')}.`:l?`Try your new skills at ${l.name}.`:step.text,primary:pad?{kind:'pad',id:pad.id,label:`Go to ${pad.name}`}/* improve20-r18a-nov3 #4 (audit13 #7): the goal names a pad, so the red button goes there (the map, focused on it), not to town */:{kind:'map'},also:'',hold:true,heroic2:!!heroic?.lead};}
  if(heroic?.lead)return {text:heroic.card||heroic.text,primary:{kind:'heroic',label:'Try Heroic'},also:''};
  if(chFirst)return {text:`Next adventure: ${chFirst.name}, the first stop in ${String(chName).replace(/^The /,'the ')}.`,primary:{kind:'map'},also:'',legendary:legendLead(save,id,legend)};
  if(step?.target?.kind==='library')return {text:step.text,primary:{kind:'library',label:'Go to the Library',subject:step.target.subject||leadSubject(save)||null},also:''};
@@ -62,11 +74,20 @@ export function winCardLead(save,{learn=null,heroic=null,chFirst=null,chName='',
    card too, as on its win card (gateLine; gate: power-gate.js winLead(save) when why==='gate'). */
 export const RUNE_LEAD_AFTER=2;
 export const sideGateText=(a,gl)=>`Wake ${a.name} to open ${gl.name}.`;
-export function defeatCardLead(save,{id,tier='normal',rift=false,boss=false,runes=null,story=false,power=null,refill=false,losses=RUNE_LEAD_AFTER,gate=null}={}){const out=defeatCore(save,{id,tier,rift,boss,runes,story,power,refill,losses});
+/* improve20-r18a-nov3 #1 (audit13 #1, shot 01: m1's second Story loss said "Try again with Story help" / "Try Ashen Gate again." over a red
+   "Place 6 runes"): the helper gives the HEADLINE too (head; tip: ui/defeat-tip.js defeatLead, whose head was the card's own), so headline, NEXT
+   GOAL and red button are one answer. When the runes lead (second loss in a row with runes waiting, Story or not) all three say it: "Get
+   stronger, then try again" / "Place your runes, then try Ashen Gate again." / "Place 6 runes, then retry" (kind 'runes': rune placement,
+   whose done or back restarts the same level on the same tier). The Library secondary is dropped there (one row of at most 4 buttons). */
+export const RUNES_HEAD='Get stronger, then try again',STORY_HEAD='Try again with Story help',REST_HEAD='Regroup and try again';
+export const runeRetryLabel=n=>`Place ${n} ${n===1?'rune':'runes'}, then retry`;
+function runesOut(save,id,runes){const l=levelById(id);return {head:RUNES_HEAD,text:`Place your runes, then try ${l?.name||'it'} again.`,primary:{kind:'runes',label:runeRetryLabel(runes?.n|0)},also:'',library:null};}
+export function defeatCardLead(save,{id,tier='normal',rift=false,boss=false,runes=null,story=false,power=null,refill=false,losses=RUNE_LEAD_AFTER,gate=null,tip=null}={}){const out=defeatCore(save,{id,tier,rift,boss,runes,story,power,refill,losses});
+ out.head??=(out.primary.kind==='library'&&tip?.kind==='power'?tip.head:out.primary.kind==='retry'&&tip&&tip.kind!=='power'?tip.head:REST_HEAD);
  const l=levelById(id),gl=!rift&&l?.optional&&gate?.why==='gate'&&gate.a?levelById(gate.gate):null;if(gl&&gl.id!==id)out.gateLine=sideGateText(gate.a,gl);return out;}
 function defeatCore(save,{id,tier,rift,boss,runes,story,power,refill,losses}){const retry=retryStep(save,{id,tier,rift,boss}),retryText=retry?.text||'';
- if(story&&!rift){const lib=power?.a?{label:`Library · ${powerSize(save,power.a)}`,subject:powerStep(save,power.a)?.subject||power.a.subject}:null;return {text:retryText,primary:{kind:runes&&(losses|0)>=RUNE_LEAD_AFTER?'runes':'retry'}/* the runes' one tap comes before the retry on Story too (R14B's m1 help) */,also:'',library:lib};}
- if(runes&&(losses|0)>=RUNE_LEAD_AFTER)return {text:retryText,primary:{kind:'runes'},also:''};
+ if(story&&!rift){const lib=power?.a?{label:`Library · ${powerSize(save,power.a)}`,subject:powerStep(save,power.a)?.subject||power.a.subject}:null;if(runes&&(losses|0)>=RUNE_LEAD_AFTER)return runesOut(save,id,runes);return {head:STORY_HEAD,text:retryText,primary:{kind:'retry'},also:'',library:lib};}
+ if(runes&&(losses|0)>=RUNE_LEAD_AFTER)return runesOut(save,id,runes);
  if(runes&&!(power?.a&&!rift)){const g=resultGoal(save,{won:false,id,tier,rift,boss});return {text:g?.id==='potions'&&refill?retryText||g.then?.text||g.text:g?.text||retryText,primary:{kind:'retry'},also:'',runes2:true};}
  if(power?.a&&!rift){const w=powerWants(save,power.a),n=w?.topics|0;return {text:n>0?`Wake ${power.a.name} at the Library: ${n} more ${sname(power.a.subject)} ${topicsWord(n)}.`:`Wake ${power.a.name} at the Library.`,primary:{kind:'library',label:'Learn it at the Library',subject:power.a.subject},also:''};}
  const g=resultGoal(save,{won:false,id,tier,rift,boss});

@@ -34,6 +34,7 @@ export const shortName=n=>String(n||'').replace(/^[^,]*?['’]s\s+(?=\S)/,'')||S
    the gold chip's own words line ("gold · next buy: Emberbrand"), so gold points at something; the strip's layout is untouched */
 /* improve20-r8a-nov1 #6: `spare` is gold from potions the full bag sold, already inside `gold`, named in the same chip; #1: a `next` that is a
    craft reads "next: craft Forgeplate" */
+/* improve20-r19b-nov3 #2: main.js passes `next` from featuredUpgrade (+8% or more) now, not affordableUpgrade */
 /* improve20-r16a-nov3 #6 (audit12 finding 9: the tile said +1 when 2 were given): shards = the run's shardsWon, the one value the line under it reads */
 export function youGotHTML({won=true,gold=0,xp=0,riftBonus=0,shard='',shards=1,loot=[],gear=[],stars=0,starsAll=0,icon,starIcon='',next='',spare=0}){
  /* improve20-r8a-nov1 #6 (audit7 d22): "Potion bag full: +8 gold" took a reward tile on every card; its gold joins the gold line instead */{const bf=/^Potion bag full: \+(\d+) gold/.exec(loot.find(x=>x?.bagfull)?.label||'');if(bf){spare+=+bf[1];gold+=+bf[1];}loot=loot.filter(x=>!x?.bagfull);}

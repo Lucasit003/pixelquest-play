@@ -780,6 +780,9 @@ html[data-motion=reduced] .lesson-check.nudge{animation:none}
  .m-mode dialog[data-view=library] .edu-next-actions>[data-find-start]{order:1}
  .m-mode dialog[data-view=library] .edu-next-actions>.edu-read{order:2}
 }
+/* improve20-r18e-nov3 #2 (R18C lead review): the rule above put a red "Find your level" (R17A's lead, data-lead=level) after "Start: Grade 2
+   warm-up" on phones. The red lead of the Library card always comes first in its group, at every size (phones, tablets, desktop). */
+:is(html,.m-mode) dialog[data-view=library] .edu-next-actions>button.primary{order:-1}
 /* oct25-tryit lead review: at 740x360 the narrow ability card ran past the Library's visible area (its count, bar and step line
    were cut). On short phones the icon sits beside the kicker and name, the rest uses the card's full width, and the subject
    word (already in the chooser) is dropped; on the shortest (360px) the "Gives you..." line goes too. Both buttons stay in view. */

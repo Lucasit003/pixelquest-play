@@ -92,5 +92,7 @@ export function runeTownVisit(s){if(!(runesPlaceable(s)>0))return runeNagView(s)
 export const runeTownOfferDue=s=>runesPlaceable(s)>0&&runesShown(s)&&(g=>!g.done&&g.visits>=RUNE_NAG_VISITS)(runeNagView(s));
 export function markRuneOffer(s,{now=false}={}){const g=runeNag(s);g.offered=true;if(now)g.done=true;return g;}
 /* the defeat card's lead: the first defeat with runes waiting that are not quiet. -> {n, pct, ids} or null */
-export function runeDefeatLead(s){if(!runesShown(s)||runesQuiet(s))return null;const g=runePlaceGain(s);return g.n>0?g:null;}
+/* improve20-r18a-nov3 #2 (audit13 #13): an offer worth under RUNE_CARD_MIN % is not shown on result cards ("Place runes: +3%" was noise) */
+export const RUNE_CARD_MIN=5;
+export function runeDefeatLead(s){if(!runesShown(s)||runesQuiet(s))return null;const g=runePlaceGain(s);return g.n>0&&g.pct>=RUNE_CARD_MIN?g:null;}
 export const runeLeadText=g=>`Place ${g.n} ${g.n===1?'rune':'runes'}: +${g.pct}% ability power`;

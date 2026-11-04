@@ -294,14 +294,15 @@ export function recordCheckAttempt(save,t,id){
     const r=rec(save,t);r.tried=[...new Set([...(r.tried||[]),id])];return true;
 }
 /* The lesson's Try-it questions not yet attempted, in step order (learning-flow fix, 17 Oct): what "Finish" says is left. */
-export function checksLeft(save,t,attempted=[]){
-    const attempts=new Set([...(save.lessons?.[t.id]?.tried||[]),...attempted]);
-    return Object.values(CHECKS).filter(q=>q.topic===t.id&&!attempts.has(q.id)).sort((a,b)=>a.step-b.step).map(q=>q.id);
+/* improve20-r18d-nov3 #3: `only` (step indices, the first topic's core path, academics/first-core.js) limits what is left to those steps' Try-its */
+export function checksLeft(save,t,attempted=[],only=null){
+    const attempts=new Set([...(save.lessons?.[t.id]?.tried||[]),...attempted]),on=Array.isArray(only)?new Set(only):null;
+    return Object.values(CHECKS).filter(q=>q.topic===t.id&&!attempts.has(q.id)&&(!on||on.has(q.step))).sort((a,b)=>a.step-b.step).map(q=>q.id);
 }
-export function finishLesson(save,t,attempted){
+export function finishLesson(save,t,attempted,only=null){
     const attempts=new Set([...(save.lessons?.[t.id]?.tried||[]),...attempted]);
     for(const id of attempts)recordCheckAttempt(save,t,id);
-    const skipped=checksLeft(save,t,attempted);
+    const skipped=checksLeft(save,t,attempted,only);
     if(skipped.length)return {xp:0,first:false,skipped};
     const r=setStep(save,t,0);
     if(!r.done){
