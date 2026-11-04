@@ -2,7 +2,7 @@ import {drawTownGround,drawTownDetail,TOWN_DETAILS,townHeight} from './town-art.
 import {actor,portrait as spritePortrait} from './actors/render.js';
 import {BUILDINGS,TOWN,MAP,REGIONS,regionAt,pathX,ENCOUNTERS} from '../game/maps.js';
 import {drawDamageText} from '../ui/juice.js';/* v2:ui */
-import {drawPixelText,measurePixelText} from '../ui/canvas-ui.js';import {labelObstacles,stageBannerObstacles} from '../ui/stage-banners.js';
+import {drawPixelText,measurePixelText} from '../ui/canvas-ui.js';import {labelObstacles,stageBannerObstacles,recentBanners} from '../ui/stage-banners.js';
 /* v2:levels -- stage scenes: the biomes agent's baked Tiled maps (gfx/biomes) under and over the actors. */
 import {STAGE,chapterBiome,stageKey} from '../game/stage.js';
 import {drawStage,drawStageForeground,stageEntities} from './biomes/index.js';
@@ -219,7 +219,7 @@ export const comboBox=A=>({l:A.align==='left'?A.x:A.x-COMBO_W,r:A.align==='left'
 const comboHits=(a,b)=>a.l<b.r&&a.r>b.l&&a.t<b.b&&a.b>b.t;
 export function comboSpot(phone,boxes=[],last=0,W=STAGE.camW,H=STAGE.camH){const S=comboSpots(phone,W,H),clear=i=>S[i]&&!boxes.some(b=>comboHits(comboBox(S[i]),b));if(clear(last))return {...S[last],i:last};for(let i=0;i<S.length;i++)if(clear(i))return {...S[i],i};return {...S[0],i:0};}
 const phoneView=c=>!!c?.canvas?.ownerDocument?.documentElement?.classList?.contains('m-mode');
-function drawCombo(c,s){const v=comboView(s.hitChain,s.time||0);if(!v)return;const cx=Math.round(s.camX||0),cy=Math.round(s.camTop||0),boss=BODIES.filter(b=>b.e.boss||b.e.elite).map(b=>({l:b.l-cx,r:b.r-cx,t:b.t-cy,b:b.b-cy})),A=comboSpot(phoneView(c),boss,s.comboSpot|0);s.comboSpot=A.i;const y=A.y,pop=v.pop&&s.motion!==false;c.save();c.globalAlpha*=v.alpha;
+function drawCombo(c,s){const v=comboView(s.hitChain,s.time||0);if(!v)return;const cx=Math.round(s.camX||0),cy=Math.round(s.camTop||0),boss=BODIES.filter(b=>b.e.boss||b.e.elite).map(b=>({l:b.l-cx,r:b.r-cx,t:b.t-cy,b:b.b-cy})),/* improve20-r21c-nov4 #3: a banner (a boss tell, a quote) counts as a box too; with no clear spot left the counter waits */ban=recentBanners().map(b=>({l:b.left,r:b.right,t:b.top,b:b.bottom})),A=comboSpot(phoneView(c),[...boss,...ban],s.comboSpot|0);s.comboSpot=A.i;if(ban.some(b=>comboHits(comboBox(A),b)))return;const y=A.y,pop=v.pop&&s.motion!==false;c.save();c.globalAlpha*=v.alpha;
  if(A.align==='left'){const nw=measurePixelText(String(v.n),{scale:1,bold:true})||String(v.n).length*7;drawPixelText(c,String(v.n),A.x,y-(pop?2:0),{scale:1,color:COMBO_COL[v.tier],outline:'#1a0f0b',bold:true,align:'left'});drawPixelText(c,'HITS',A.x+nw+4,y,{scale:1,color:'#f4ead2',outline:'#1a0f0b',bold:false,align:'left'});c.restore();return;}
  const x=A.x;
  drawPixelText(c,String(v.n),x-(measurePixelText('HITS',{scale:1})||28)-4,y-(pop?2:0),{scale:1,color:COMBO_COL[v.tier],outline:'#1a0f0b',bold:true,align:'right'});

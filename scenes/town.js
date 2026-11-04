@@ -407,6 +407,12 @@ export function personAhead(S, x0, y0, x1, y1) {
 export const SOUTH_MARGIN = 100, GATE_FADE = .4;
 export const ROOM_HUD_PAD = .19; /* improve20-r10c-nov2 #20: the desktop hotbar band, 135 of 720 px */
 export const gateFade = (S, s, p) => !!(S && !S.room && S.key === 'village' && p && s[5] < 1e6 && s[5] > p.y && s[5] > S.D.h - SOUTH_MARGIN - 60 && s[1] < p.x + 12 && s[1] + s[3] > p.x - 12 && s[2] < p.y && s[2] + s[4] > p.y - 44);
+/* improve20-r21c-nov4 #1 (audit15 #3, the "ghost image" over the gate road): the fast-travel gate spot stood the hero 30 px inside the
+   gatehouse's passage, so the whole gatehouse sprite was drawn at GATE_FADE on arrival, a see-through box of roofs and windows. The gate
+   spot and home from the map now stand him above the gatehouse's top edge (gateTop) in plain view, and the road out offers "Leave
+   Oakhaven" from GATE_OFFER below that edge, so it is still offered at once. Walking down into the passage still fades it (r8b #6). */
+export const GATE_OFFER = 40;
+export const gateTop = (S, x) => { let top = Infinity; for (const s of S?.D?.sprites ?? []) if (s[5] < 1e6 && s[5] > S.D.h - SOUTH_MARGIN - 60 && s[1] < x + 12 && s[1] + s[3] > x - 12) top = Math.min(top, s[2]); return top; };
 export const southEdge = S => S && !S.room && S.key === 'village' ? S.D.h - SOUTH_MARGIN : Infinity;
 const footBlocked = (S, x, y) => y > southEdge(S) || blockedAt(S, x - FOOT.hw, y - FOOT.up) || blockedAt(S, x + FOOT.hw, y - FOOT.up) || blockedAt(S, x - FOOT.hw, y + FOOT.down) || blockedAt(S, x + FOOT.hw, y + FOOT.down) || blockedAt(S, x, y);
 
@@ -544,7 +550,7 @@ function nearest(S, p) {
     if (q.type === 'spawn' || q.type === 'entry') continue;
     /* the road out is wide: any of the last few steps toward the edge offers the World Map */
     /* the road out offers the World Map a few steps before the map's edge, so the hero is never under the prompt (playtest m3) */
-    const out = !S.room && worldExit(q), qx = q.x, qy = out ? Math.min(q.sy, southEdge(S) - 4) : q.y;
+    const out = !S.room && worldExit(q), qx = q.x, qy = out ? Math.min(q.sy, southEdge(S) - 4, gateTop(S, q.x) + GATE_OFFER/* improve20-r21c-nov4 #1 */) : q.y;
     const raw = out ? Math.hypot(p.x - qx, (p.y - qy) * .8) * .6 : Math.min(doorReach(q, p.x, p.y), S.room ? keeperReach(q, p) : Infinity)/* improve20-r18b-nov3 #5 */;
     if (S.room && q.type === 'npc-spot' && Math.hypot(p.x - q.x, p.y - q.y) < PET_PERSON) close = true;
     const d = raw - (out ? 0 : facingBonus(p, q.x, q.y));
@@ -706,6 +712,8 @@ const SPOT_DOOR = {library: 'library', guild: 'guild_shop', smith: 'weaponsmith'
 /* guide-oct26: a room's name where the map, fast travel, the quest arrow and the Journal must agree (game/fasttravel.js FARM_NAME) */
 const SPOT_NAME = {farmhouse: FARM_NAME};
 let spots = null;
+/* improve20-r21c-nov4 #1: the nearest free stand at or above y (never down into the gatehouse) */
+function freeAbove(V, x, y) { for (let r = 0; r <= 48; r += 4) for (const [dx, dy] of [[0, -r], [-r, 0], [r, 0]]) if (!footBlocked(V, x + dx, y + dy) && !footBlocked(V, x + dx, y + dy - 8)) return {x: x + dx, y: y + dy}; return freeNear(V, x, y); }
 function freeNear(V, x, y) {
   for (let r = 0; r <= 48; r += 4) for (const [dx, dy] of [[0, r], [-r, 0], [r, 0], [0, -r]]) if (!footBlocked(V, x + dx, y + dy)) return {x: x + dx, y: y + dy};
   return {x, y};
@@ -716,7 +724,7 @@ export function hubTravelSpots() {
   const V = scene('village'), out = [];
   for (const {id} of TOWN_SPOTS) {
     /* the gate: a step inside the road out, close enough that "Leave Oakhaven" is offered at once (home from the map uses hubGate) */
-    if (id === 'gate') { const q = V.points.find(worldExit), g = q ? freeNear(V, q.x, q.sy - 30) : hubGate(); out.push({id, x: g.x, y: g.y, facing: 'down', door: q ? {x: q.x, y: q.sy} : {x: g.x, y: g.y}, room: null}); continue; }
+    if (id === 'gate') { const q = V.points.find(worldExit), g = q ? freeAbove(V, q.x, Math.min(q.sy - 30, gateTop(V, q.x) - 2)) : hubGate(); out.push({id, x: g.x, y: g.y, facing: 'down', door: q ? {x: q.x, y: q.sy} : {x: g.x, y: g.y}, room: null}); continue; }
     const door = V.points.find(q => q.type === 'entrance' && q.props?.key === SPOT_DOOR[id]);
     if (!door) continue;
     const at = freeNear(V, door.sx, door.sy + 16);
@@ -1098,7 +1106,10 @@ export function drawHub(c, state, t, kit) {
   const [bx0, by0, bx1, by1] = D.bounds ?? [0, 0, D.w, D.h], fit = (lo, hi, view, at) => hi - lo <= view ? Math.round((lo + hi - view) / 2) : Math.round(Math.max(lo, Math.min(hi - view, at - view / 2)));
   /* improve20-r10c-nov2 #20: on desktop the hotbar band covers the foot of the view, so a room's south exit (the Library's) sat under it; a room taller than the view may scroll that band's height past its floor */
   const hudPad = S.room && by1 - by0 > VIEW_H && typeof document !== 'undefined' && !document.documentElement.classList.contains('m-mode') ? Math.round(VIEW_H * ROOM_HUD_PAD) : 0;
-  const ox = fit(bx0, bx1, VIEW_W, H.cam.x), oy = fit(by0, by1 + hudPad, VIEW_H, H.cam.y);
+  /* improve20-r21c-nov4 #8: in the phone Library the camera centres the hero in the band left of the thumb arc, and may look past the room's
+     east wall by the arc's width, so the teachers on the east side (Math, Coding) and their plates are not under the buttons */
+  const arc = S.key === 'library' ? phoneArc(c, VIEW_W) : null, rpad = arc ? Math.max(0, VIEW_W - arc.left) : 0;
+  const ox = fit(bx0, bx1 + rpad, VIEW_W, H.cam.x + rpad / 2), oy = fit(by0, by1 + hudPad, VIEW_H, H.cam.y);
   H.view = {ox, oy};
   c.save();
   c.imageSmoothingEnabled = false;
@@ -1233,11 +1244,13 @@ export function drawHub(c, state, t, kit) {
     if (place) { const sx = place.x - ox, top = sx < 170 ? 82 : sx > 280 ? 46 : 14; c.save(); c.globalAlpha = place.alpha; subjectPlate(c, place.text, place.x, Math.max(place.y, oy + top), 16); c.restore(); }
   }
   /* the Library: every teacher's subject floats over their head, so it is obvious who teaches what (owner, packet #17) */
+  /* improve20-r21c-nov4 #8 (audit15 minor: on a phone the MATH and CODING plates sat under the potion and Attack buttons): a plate level with the
+     thumb arc (phoneArc, the touch buttons' box in view pixels) stays left of it */
   if (S.key === 'library') for (const q of S.points) if (q.type === 'interact' && q.props?.subject) {
     const who = S.points.filter(o => o.type === 'npc-spot').sort((a, b) => Math.hypot(a.x - q.x, a.y - q.y) - Math.hypot(b.x - q.x, b.y - q.y))[0];
     /* improve20-r13b-nov2 #5 (audit10 a18): at the room's top-left the ENGLISH plate sat under the hero plate; a plate that would run under the
        HUD (the same top bands as the doorway names above: hero plate on the left, objective on the right) drops below the teacher's feet */
-    if (who && Math.hypot(who.x - q.x, who.y - q.y) < 120) { const sx = who.x - ox, band = sx < 170 ? 82 : sx > 280 ? 46 : 14, up = who.y - 58; subjectPlate(c, SUBJECT_NAME[q.props.subject] ?? q.props.subject, who.x, up - 10 < oy + band ? who.y + 12 : up, 16, [ox, ox + VIEW_W]); }
+    if (who && Math.hypot(who.x - q.x, who.y - q.y) < 120) { const sx = who.x - ox, band = sx < 170 ? 82 : sx > 280 ? 46 : 14, up = who.y - 58; const py = up - 10 < oy + band ? who.y + 12 : up, low = arc && py + 12 - oy > arc.top; if (low && who.x - ox > arc.left - 8) continue; /* improve20-r21c-nov4 #8: a teacher standing under the arc shows the plate once the camera brings him out */ subjectPlate(c, SUBJECT_NAME[q.props.subject] ?? q.props.subject, who.x, py, 16, [ox, low ? ox + arc.left - 4 : ox + VIEW_W]); }
   }
   c.restore();
   if (H.fade) { c.fillStyle = `rgba(10,8,8,${Math.min(1, H.fade.t < 1 ? H.fade.t : 2 - H.fade.t)})`; c.fillRect(0, 0, VIEW_W, VIEW_H); }
@@ -1265,6 +1278,16 @@ const SUBJECT_NAME = Object.fromEntries(Object.entries(SUBJECTS).map(([id, v]) =
 /* a small dark plate with gold pixel lettering, centred over a teacher */
 /* 24 Oct playtest: "READING" read "READ HO". Pixel Operator is drawn for 16 px; at 8 px its letters lose their shapes
    (R like A, N like H) and sit on half pixels. The teachers' plates now use the font's own 16 px size, on whole pixels. */
+/* improve20-r21c-nov4 #8: on a phone, the left edge and top of the touch buttons on the right half of the view (ui/mobile.js #touch, the potion),
+   in view pixels; null on a desktop. Read at most every 250 ms. */
+let arcAt = -1e9, arcBox = null;
+export function phoneArc(c, viewW) {
+  const d = c?.canvas?.ownerDocument; if (!d?.documentElement?.classList?.contains('m-mode')) return null;
+  const now = globalThis.performance?.now?.() ?? 0; if (now - arcAt < 250) return arcBox; arcAt = now; arcBox = null;
+  const box = c.canvas.getBoundingClientRect?.(); if (!box?.width) return null; const k = box.width / viewW;
+  let l = Infinity, top = Infinity; for (const el of d.querySelectorAll('#touch button,#hud-potion')) { const r = el.getBoundingClientRect(); if (!r.width || !r.height || getComputedStyle(el).visibility === 'hidden' || getComputedStyle(el).display === 'none' || r.left < box.left + box.width / 2 || r.top < box.top + box.height * .25) continue; l = Math.min(l, r.left); top = Math.min(top, r.top); }
+  return arcBox = Number.isFinite(l) ? {left: Math.round((l - box.left) / k), top: Math.round((top - box.top) / k)} : null;
+}
 function subjectPlate(c, text, x, y, size = 16, bounds = null) {
   c.save(); c.font = `${size}px "Pixel Operator", monospace`; c.textAlign = 'left'; c.textBaseline = 'middle';
   const adv = [...text].map(ch => Math.ceil(c.measureText(ch).width)), tw = adv.reduce((a, b) => a + b, 0);
@@ -1516,7 +1539,7 @@ export function hubGate() {
   const V = scene('village'), q = V.points.find(worldExit) ?? V.points.find(o => o.type === 'spawn');
   /* far enough up the road that the "Leave Oakhaven" prompt is not waiting on arrival */
   /* (the exit now sits on the town side of the gatehouse: arrive a few steps up the road from it) */
-  const y0 = Math.min(q.y - 60, V.D.h - 200);
+  const y0 = Math.min(q.y - 60, V.D.h - 200, gateTop(V, q.x) - 2/* improve20-r21c-nov4 #1 */);
   for (let r = 0; r <= 96; r += 4) for (const [dx, dy] of [[0, -r], [-r, 0], [r, 0], [0, r]]) {
     const x = q.x + dx, y = y0 + dy;
     if (!footBlocked(V, x, y) && !footBlocked(V, x, y - 8)) return {x, y, facing: 'up'};

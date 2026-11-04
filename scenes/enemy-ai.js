@@ -98,7 +98,10 @@ let _world=null;
 const w_minions=(e,key)=>_world?[..._world.enemies,...(_world.reinforcements||[])].filter(o=>o.summoner===e&&o.hp>0&&(!key||o.key===key||o.decoy&&key===e.key)).length:0;
 
 function buildMarkers(e,a,w){const p=w.player,f=e.facing,b=bounds(w),band=bandOf(e,a),out=[];
- const circ=(x,y,r)=>out.push({shape:'circle',x:clampN(x,b.x0,b.x1),y:clampN(y,b.y0,b.y1),r});
+ /* improve20-r21c-nov4 #3 (audit15 #8, shot 26: the Sleeper's tentacle circle ran under the desktop hotbar): a boss's circle is held above the
+    bottom HUD band (the hotbar's STAGE.hudBottom on a desktop, the controls' padB on a phone) of the current view, never out of the arena */
+ const vb=e?.boss&&Number.isFinite(w?.camTop)?w.camTop+(STAGE.camH||270)-(STAGE.padB??STAGE.hudBottom??0):Infinity;
+ const circ=(x,y,r)=>out.push({shape:'circle',x:clampN(x,b.x0,b.x1),y:Math.max(b.y0,Math.min(clampN(y,b.y0,b.y1),vb-Math.ceil(r*.5)-2)),r});
  if(OWN.has(a.kind))return moveMarkers(e,a,w,{bounds});
  switch(a.kind){
   /* a tail whip (behind:true) sweeps round behind the boss, and is shown on the ground: standing behind it is the danger */
@@ -322,7 +325,8 @@ function drawLob(c,f,t){const q=lobPoint(f,-f.t);shadow(c,q.x,q.y,3+3*q.k,1.5+1.
    picture only, never its reach or body (bodyR and the move ranges read e.scale and the data). */
 /* improve20-r9a-nov1: a boss with a stand band (enemies.js cthulhu stand:[lo,hi]) keeps its feet between lo and hi units from the floor's
    near edge (bounds y1), so a 2x boss stays whole on screen; its leap lands there too, so the marker shows where it lands */
-export function standY(e,w,y){const s=e?.stand;if(!s)return y;const B=bounds(w);return clampN(y,Math.max(B.y0,B.y1+s[0]),Math.max(B.y0,B.y1+s[1]));}
+/* improve20-r21c-nov4 #3: e.standCap (scenes/combat.js, a desktop's tall boss) holds the stand band's foot above the hotbar band */
+export function standY(e,w,y){const s=e?.stand;if(!s)return y;const B=bounds(w),v=clampN(y,Math.max(B.y0,B.y1+s[0]),Math.max(B.y0,B.y1+s[1]));return e.standCap!=null?Math.max(B.y0,Math.min(v,e.standCap)):v;}
 export const enemyRenderScale=e=>e.boss||e.decoy?Math.max(1,Math.floor((e.scale||1)+1e-6)):e.elite&&e.eliteDraw?e.eliteDraw:Math.max(.65,Math.round((e.scale||1)*.68*100)/100);
 /* improve20-r7b-nov1 #4: half the drawn body width (the atlas's `width` at its render scale) */
 export const bodyHalf=e=>Math.round(((e&&metaOf(e.sprite)?.width)||44)*enemyRenderScale(e||{})/2);

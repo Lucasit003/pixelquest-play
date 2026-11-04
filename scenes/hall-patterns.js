@@ -36,8 +36,9 @@ export const PATTERN_DMG=Object.freeze({rows:.3,ring:.45,strike:.2,storm:.15,pul
    named no place): each line names the safe ground. Rows: between the lit rows. Ring: the dark circle inside it (drawn cool and dark,
    enemy-ai.js hallSafe), or, when the hero hugs the boss and the ring is a plain disc (ringMarkers inner 0), out of it (RING_OUT).
    PATTERN_BANNER_TOUCH is the phone's one short line (gfx/stage-view.js touchTitle). Patterns, timings and damage are unchanged. */
-export const PATTERN_BANNER=Object.freeze({'echo rows':'ECHO ROWS! STAND BETWEEN THE ROWS!','echo ring':'ECHO RING! STAND IN THE DARK CIRCLE!','echo storm':'ECHO STORM! KEEP MOVING!','echo pylon':'ECHO PYLON! BREAK IT!'});
-export const PATTERN_BANNER_TOUCH=Object.freeze({'echo rows':'STAND BETWEEN THE ROWS!','echo ring':'STAND IN THE DARK CIRCLE!','echo storm':'ECHO STORM! KEEP MOVING!','echo pylon':'ECHO PYLON! BREAK IT!'});
+/* improve20-r21c-nov4 #6 (audit15 #11, shot 25: "between the rows" was shown for upright columns): the rows line is "STAND IN A GAP!", which fits either way */
+export const PATTERN_BANNER=Object.freeze({'echo rows':'ECHO ROWS! STAND IN A GAP!','echo ring':'ECHO RING! STAND IN THE DARK CIRCLE!','echo storm':'ECHO STORM! KEEP MOVING!','echo pylon':'ECHO PYLON! BREAK IT!'});
+export const PATTERN_BANNER_TOUCH=Object.freeze({'echo rows':'STAND IN A GAP!','echo ring':'STAND IN THE DARK CIRCLE!','echo storm':'ECHO STORM! KEEP MOVING!','echo pylon':'ECHO PYLON! BREAK IT!'});
 export const RING_OUT=Object.freeze({text:'ECHO RING! STEP OUT OF THE RING!',touch:'STEP OUT OF THE RING!'});
 export const PATTERN_SOUND=Object.freeze({'echo rows':'tell.echo.rows','echo ring':'tell.echo.ring','echo storm':'tell.echo.storm','echo pylon':'tell.echo.pylon'});
 /* the Echo Pylon: the share of each hit on the boss it soaks, the hits that break it, seconds between its rings, and seconds before it crumbles */
@@ -75,7 +76,9 @@ export function hallTellUp(w){const h=w?.hallTellOn;if(!h||!w.level)return false
 export const HALL_EDGE=120;
 export const hallEdge=(w,e)=>w?.hall&&e?.boss&&e.hallP?HALL_EDGE:0;
 /* the floor this pattern plays on: the arena's walkable rect, inside the camera */
-export function patternView(w,B){const cx=w.camX??B.x0,cw=STAGE.camW||480;return {x0:Math.max(B.x0,cx+6),x1:Math.min(B.x1,cx+cw-6),y0:B.y0,y1:B.y1};}
+/* improve20-r21c-nov4 #6 (shot 25: at 844x390 the right lit column ran under the thumb arc): on a phone the floor ends where the action arc's pad
+   starts (STAGE.padR, ui/mobile.js); a desktop's padR is 0, so it is unchanged */
+export function patternView(w,B){const cx=w.camX??B.x0,cw=STAGE.camW||480,pr=STAGE.padB!=null?Math.max(0,STAGE.padR||0):0;return {x0:Math.max(B.x0,cx+6),x1:Math.max(Math.max(B.x0,cx+6)+60,Math.min(B.x1,cx+cw-6-pr)),y0:B.y0,y1:B.y1};}
 /* echo rows: ROW_COLUMNS columns across the view, every other one lit (odd 0 lights the first, odd 1 the second); the second beat keeps the
    first beat's columns (e.hallRows), so a moving camera can never shift them onto each other */
 export function rowMarkers(w,a,B,e){const V=a.odd&&e?.hallRows?e.hallRows:patternView(w,B);if(e)e.hallRows=V;const cw=(V.x1-V.x0)/ROW_COLUMNS,y=(V.y0+V.y1)/2,band=(V.y1-V.y0)/2+6,out=[];

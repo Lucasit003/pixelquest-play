@@ -82,6 +82,12 @@ dialog[data-view=result] .you-got-item small{font-size:calc(var(--fs) * .85);col
 .m-mode dialog[data-view=result] .you-got-compact .you-got-item:not(:has(strong)) .you-got-text{display:none}
 .m-mode dialog[data-view=result] .you-got-compact .you-got-item:not(:has(strong)){padding:2px 4px}
 .m-mode dialog[data-view=result] .you-got-compact .you-got-row{flex-wrap:nowrap;gap:4px 6px}
+/* improve20-r21c-nov4 #2 (audit15 #4: the m7 win card at 667x375, eight tiles in one nowrap row ran to 734 and the finds line to 683): the
+   compact row wraps inside its column, and the finds line is held to the column's width */
+.m-mode dialog[data-view=result] .you-got{min-width:0;max-width:100%}
+.m-mode dialog[data-view=result] .you-got-compact .you-got-row{flex-wrap:wrap;max-width:100%}
+.m-mode dialog[data-view=result] .you-got-found{width:100%;box-sizing:border-box;align-self:stretch}
+@media(max-height:420px){.m-mode dialog[data-view=result] .you-got-compact .you-got-label{display:none}.m-mode dialog[data-view=result] .you-got-compact .you-got-item{padding-top:1px;padding-bottom:1px}}
 dialog[data-view=result] .you-got-found{display:block;margin:0;max-width:100%;text-align:center;font-size:14px;line-height:1.2;color:#e9dcc0;white-space:normal;overflow-wrap:anywhere;text-wrap:balance}
 @media(max-height:500px) and (min-width:600px){.m-mode dialog[data-view=result] .level-result>.you-got{grid-column:2;grid-row:1;align-self:start;margin:2px 0 4px}
  .m-mode dialog[data-view=result] .level-result>.level-result-body{grid-row:2 / 8;max-height:calc(100dvh - 228px)}}`;

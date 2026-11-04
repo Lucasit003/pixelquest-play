@@ -3132,6 +3132,8 @@ html.m-mode .pet-moment{top:10%}
 @media(max-height:380px){.m-mode .title-screen[data-step=setup] .hero-setup :is(#hero-nickname,.pixel-select,#school-mode){min-height:36px;height:auto;padding-block:4px}.m-mode .title-screen[data-step=setup] .hero-setup label{margin:0;line-height:1.1}.m-mode .title-screen[data-step=setup] .hero-setup #begin{min-height:40px}}
 /* improve20-r-oct31: the Rift of the Week: its card, the result lines and the run's modifier tags under the objective */
 .rift-card{display:flex;flex-direction:column;gap:8px;margin:4px 0 8px}
+/* improve20-r21c-nov4 #4 (audit15 #9, shot 23: at 1280x720 only the top edges of Back and Enter the Rift showed under the fold): the action row stays pinned at the bottom of the card while the rest scrolls */
+dialog[data-view=rift] #modal-content .modal-actions{position:sticky;bottom:0;z-index:3;margin-top:0;padding:8px 0 6px;background:#1a1d3c;box-shadow:0 -8px 10px -6px #1a1d3c,0 40px 0 #1a1d3c}
 .rift-level{display:flex;align-items:center;gap:12px;margin:0}
 .rift-level>span:last-child{display:flex;flex-direction:column}
 .rift-level strong{font-size:calc(var(--fs) * 1.5);color:var(--ink)}

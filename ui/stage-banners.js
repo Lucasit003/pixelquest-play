@@ -117,6 +117,8 @@ export function fitStageWarning({W,H,title,top,hardObstacles=[],obstacles=[],max
 /* oct24-endgame (playtest ch3 minor): the stage banners drawn in the last few frames, in camera pixels, plus the DOM HUD plates;
    gfx/world.js keeps floating combat words ("SHIELDED", "ARMOUR CRACKED!") out of them, since both draw over the world */
 const drawnBanners=[],clock=()=>globalThis.performance?.now?.()??0;
+/* improve20-r21c-nov4 #3 (audit15 #8: "Two tentacles! Leave the circles!" hid the combo counter, only "TS" showed): the banners drawn in the last 150 ms, for gfx/world.js drawCombo */
+export const recentBanners=()=>{const now=clock();return drawnBanners.filter(b=>now-b.at<150);};
 export function labelObstacles(canvas,W,H){const now=clock();return [...stageBannerObstacles(canvas,W,H),...drawnBanners.filter(b=>now-b.at<150)];}
 /* improve20-r8b-nov1 #5 (audit7 d24: "WAVE 2/3" was a red ribbon, "WAVE CLEARED" a big parchment and "Dive!" a dark frame): every stage call
    is the red Victory ribbon (skin/btn-primary*), coloured by meaning: a wave or a shout red, a cleared wave bright with gold letters (a

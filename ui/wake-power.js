@@ -50,5 +50,8 @@ export const POWER_CSS=`.power-row{display:flex;flex-wrap:wrap;justify-content:c
 @media(max-width:700px){.finale{grid-template-areas:"banner" "scene" "wake" "story" "next" "actions"}}
 .herocard-stats .power-row{justify-content:flex-start;gap:5px;margin:2px 0}
 .herocard-stats .power-cell{width:34px;height:34px}
-.herocard-stats .power-tag{font-size:13px;line-height:16px}`;
+.herocard-stats .power-tag{font-size:13px;line-height:16px}
+/* improve20-r21c-nov4 #7 (audit15 #17, shot 29: at 844x390 the Champion card's 8 ability icons were cut off by its buttons; 26 px cells were
+   tried and the story column still cut them): on a short phone the row is dropped, and the "N ability earned" line above it still counts them */
+@media(max-height:420px){.m-mode .finale .power-row{display:none}}`;
 export function ensurePowerCSS(doc=globalThis.document){if(!doc||doc.getElementById('wake-power-css'))return;const st=doc.createElement('style');st.id='wake-power-css';st.textContent=POWER_CSS;doc.head.appendChild(st);}
