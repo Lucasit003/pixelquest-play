@@ -4,6 +4,8 @@
 // chosen so every answer is a whole number of dollars or a whole percent. Prices and shops are fictional.
 const money=c=>`$${(c/100).toFixed(2).replace(/\.00$/,'')}`;
 const THINGS=['jacket','bike','game','pair of trainers','backpack','lamp','board game','scooter','tent','guitar'];
+/* improve20-r20g-nov4 #2 (audit14 #7): "an" before a number read with a vowel sound (an 8% tax, an 18-foot shadow, an $80 ticket); a copy of academics/article.js fixNumberArticles. Items keep their ids: the old text is passed as the key. */
+const AN=s=>typeof s!=='string'?s:s.replace(/\b([Aa]) (?=\$?(\d[\d,]*(?:\.\d+)?))/g,(m,a,x)=>{const r=x.split('.')[0].replace(/,+$/,''),d=r.replace(/,/g,'');return d[0]==='8'||/^1[18]/.test(d)&&(d.length%3===2||!r.includes(',')&&d.length===4)?a+'n ':m;});
 export default {
 id:'math-m-percent-change',subject:'math',level:4,grade:7,standard:'CCSS 7.RP.A.3',
 title:'Percent change, discounts and markups',
@@ -21,7 +23,7 @@ steps:[
  {skill:'before',say:'Do not add the percent back onto the new price: 36 plus 20% of 36 is $43.20, not $45, because the 20% was taken from the bigger original.',pic:{t:'setups',title:'A common slip',head:'',rows:[['right','36 ÷ 0.8 = $45'],['wrong','36 × 1.2 = $43.20']],cols:['Working']},
   check:{prompt:'Try it: after a 25% markup, a fictional scooter sells for $100. What did it cost before the markup, in dollars?',answer:80,options:[80,75,125],hint:'$100 is 125% of the cost: divide by 1.25.',pic:{t:'setups',title:'Undoing a markup',head:'',rows:[['selling price','$100'],['markup','25%']],cols:['Amount']}}}],
 progression:{requires:['math-m-ratios','finance-e-discounts'],operations:3,demand:'Divide a change by the original for percent change, multiply by what is left (or added) for a new price, and divide by it to undo a change.'},
-items(add){
+items(add0){/* improve20-r20g-nov4 #2 */let add=(k,p,a,pic,e,acc,key)=>add0(k,AN(p),a,pic,AN(e),acc,key??p);
  const PCT=[5,10,15,20,25,30,40,50,60,75];
  /* Percent change: original and new are whole dollars, and so is the percent. */
  let i=0;

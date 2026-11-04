@@ -9,6 +9,8 @@ const need=N=>{let n=0,v=1;while(v<N){v*=2;n++;}return n;};
 const KB='In this topic 1 kilobyte = 1000 bytes.';
 const facts=(title,rows)=>({t:'setups',title,head:'Given',rows,cols:['Amount']});
 const img=(w,h,b,title)=>({t:'setups',title:title||`A ${w} × ${h} image`,head:'Fact',rows:[['width',`${w} pixels`],['height',`${h} pixels`],['bits per pixel',`${b}`]],cols:['Value']});
+/* improve20-r20g-nov4 #2 (audit14 #7): "an" before a number read with a vowel sound (an 8% tax, an 18-foot shadow, an $80 ticket); a copy of academics/article.js fixNumberArticles. Items keep their ids: the old text is passed as the key. */
+const AN=s=>typeof s!=='string'?s:s.replace(/\b([Aa]) (?=\$?(\d[\d,]*(?:\.\d+)?))/g,(m,a,x)=>{const r=x.split('.')[0].replace(/,+$/,''),d=r.replace(/,/g,'');return d[0]==='8'||/^1[18]/.test(d)&&(d.length%3===2||!r.includes(',')&&d.length===4)?a+'n ':m;});
 export default {
 id:'cs-m-data-size',subject:'cs',level:4,grade:6,standard:'CSTA 2-DA-07',
 title:'Bits, bytes and data size',
@@ -26,7 +28,7 @@ steps:[
  {skill:'image',say:'A colour image stores more bits in each pixel. At 24 bits per pixel, a 10 × 10 image takes 10 × 10 × 24 = 2400 bits, which is 300 bytes. Multiply the pixels by the bits per pixel, then divide by 8 for bytes.',eq:'10 × 10 × 24 = 2400 bits = 300 bytes',pic:img(10,10,24,'A 10 × 10 colour image'),
   check:{prompt:'Try it: a fictional colour icon is 20 pixels wide and 10 pixels tall, with 8 bits per pixel. How many bytes does it take?',answer:200,options:[200,1600,25,30],hint:'Find the bits first: 20 × 10 × 8. Then divide by 8.',pic:img(20,10,8,'A fictional icon')}}],
 progression:{requires:['cs-e-binary'],operations:3,demand:'Double for each extra bit, find the first power of 2 that reaches a count, and chain multiplying and dividing by 8 and 1000 through image sizes.'},
-items(add){
+items(add0){/* improve20-r20g-nov4 #2 */let add=(k,p,a,pic,e,acc,key)=>add0(k,AN(p),a,pic,AN(e),acc,key??p);
  /* Bits and values: n bits -> 2^n, plain and in context, and N values -> the fewest bits. */
  for(let n=1;n<=16;n++)add('values',`How many different values can ${n} bit${n===1?'':'s'} store?`,pow2(n),facts('Bits and values',[['bits',`${n}`],['different values','?']]),`Each bit doubles the count, so ${n} bit${n===1?'':'s'} store${n===1?'s':''} 2 to the power ${n}${n>1&&n<=5?` = ${Array(n).fill(2).join(' × ')}`:''} = ${pow2(n)} values.`);
  const CTX=[[n=>`A fictional game stores each player's level in ${n} bits. How many different levels can it store?`,'levels'],[n=>`A fictional sensor sends a ${n}-bit reading. How many different readings are possible?`,'readings'],[n=>`A fictional robot stores its mood as a ${n}-bit code. How many different moods can it have?`,'moods']];

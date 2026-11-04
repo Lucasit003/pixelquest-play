@@ -13,6 +13,8 @@ const list=a=>a.length===1?a[0]:a.length===2?`${a[0]} and ${a[1]}`:`${a.slice(0,
 const sum=a=>a.reduce((x,y)=>x+y,0);
 const ORD=['first','second','third','fourth'];
 const RULE='This topic\'s rule buys the wants in the order listed and skips any want that no longer fits.';
+/* improve20-r20g-nov4 #2 (audit14 #7): "an" before a number read with a vowel sound (an 8% tax, an 18-foot shadow, an $80 ticket); a copy of academics/article.js fixNumberArticles. Items keep their ids: the old text is passed as the key. */
+const AN=s=>typeof s!=='string'?s:s.replace(/\b([Aa]) (?=\$?(\d[\d,]*(?:\.\d+)?))/g,(m,a,x)=>{const r=x.split('.')[0].replace(/,+$/,''),d=r.replace(/,/g,'');return d[0]==='8'||/^1[18]/.test(d)&&(d.length%3===2||!r.includes(',')&&d.length===4)?a+'n ':m;});
 export default {
 id:'finance-m-needs-wants-opportunity',subject:'finance',level:4,grade:7,standard:'Jump$tart Financial Decision Making, grade 8 benchmark',
 title:'Choices and opportunity cost',
@@ -31,7 +33,7 @@ steps:[
  {skill:'rule',say:'Skipping is not stopping: a later want can still fit after an earlier one is skipped. With $40.00 left and wants of $25.00, $20.00 and $10.00 in that order, the rule buys the $25.00 one, skips the $20.00 one, and still buys the $10.00 one, leaving $5.00.',eq:'$40 − $25 = $15; skip $20; $15 − $10 = $5',pic:sheet('$40.00 left after needs',[['want 1','$25.00'],['want 2','$20.00'],['want 3','$10.00']]),
   check:{prompt:'Try it: a fictional budget has $50.00 left after needs. The wants, in order, cost $30.00, $25.00 and $15.00. Following the rule, how much is left at the end, in dollars?',answer:5,options:[5,20,30],hint:'Buy the $30.00 want, check whether $25.00 still fits, then check $15.00.',pic:sheet('$50.00 left after needs',[['want 1','$30.00'],['want 2','$25.00'],['want 3','$15.00']])}}],
 progression:{requires:['finance-e-needs-and-wants','finance-m-monthly-budget'],operations:3,demand:'Turn a choice into what it gives up (a count, hours of pay, or the next-ranked option that fits), take needs and then wants from a budget, and follow a stated rule step by step, skipping rather than stopping.'},
-items(add){
+items(add0){/* improve20-r20g-nov4 #2 */let add=(k,p,a,pic,e,acc,key)=>add0(k,AN(p),a,pic,AN(e),acc,key??p);
  let w=0;const who=()=>NAMES[w++%NAMES.length];
  /* Opportunity cost as a count of another thing, for one item or two together. */
  [[['video game',4800]],[['pair of sneakers',5000],['cap',2500]],[['concert ticket',5400]],[['skateboard',4200],['helmet',2800]],[['jacket',8400]],[['phone case',1800],['charger',2700]]].forEach((buy,k)=>{const [other,q]=[['movie tickets',1200],['paperback books',1500],['smoothies',450],['pizza slices',350],['bus passes',1400],['comic books',450]][k],P=sum(buy.map(b=>b[1])),n=who(),names=buy.map(b=>`a ${b[0]} for ${money(b[1])}`),the=buy.map(b=>`the ${b[0]}`);

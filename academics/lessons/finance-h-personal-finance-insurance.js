@@ -26,7 +26,8 @@ const disQ=(inc,pct,ask)=>{const b=inc*pct/100;return [`Insurance lab: a fiction
 const svcQ=m=>[`Insurance lab: a fictional identity-protection service costs ${money(m)} per month. What does it cost for one full year, in dollars? Give the exact amount to the cent.`,m*12/100,tab('Fictional service price',[['monthly price',money(m)],['months','12'],['yearly cost','?']]),`12 × ${money(m)} = ${money(m*12)}. Compare that with free tools such as credit freezes and fraud alerts before paying.`];
 const unrecQ=c=>{const bad=c.filter((_,i)=>i!==0&&i!==3).reduce((x,y)=>x+y,0);return [`Insurance lab: a fictional card statement lists charges of ${c.map(money).join(', ')}. The owner recognizes only the first and the fourth charges. What total of unrecognized charges should be reported to the card company, in dollars? Give the exact amount to the cent.`,bad/100,tab('Fictional card statement',[['all five charges',c.map(money).join(' ')],['recognized','1st and 4th'],['unrecognized total','?']]),`Add the second, third and fifth charges: ${money(c[1])} + ${money(c[2])} + ${money(c[4])} = ${money(bad)}. Report them promptly through the issuer's official contact.`];};
 const TRY=[claimQ('renters',D(6400),D(400),D(5000),'insurer'),annualQ(D(210),D(2500),20,D(5000),D(9000)),acvQ(D(1600),8,3,D(150),'payout')];
-const check=(i,options,hint)=>({prompt:`Try it: ${TRY[i][0]}`,answer:TRY[i][1],options,hint,pic:TRY[i][2]});
+/* improve20-r20g-nov4 #2: the Try-it reads "an 8-year life"; it keeps its id through key (academics/lessons.js) */
+const check=(i,options,hint)=>({prompt:`Try it: ${AN(TRY[i][0])}`,key:`Try it: ${TRY[i][0]}`,answer:TRY[i][1],options,hint,pic:TRY[i][2]});
 const CONCEPTS={
  risk:[
  ['a fictional student decides never to ride a motorcycle because of the crash risk. Which risk strategy is that?','avoidance','reduction','transfer','Avoidance means not taking part in the activity that creates the risk.'],
@@ -113,6 +114,8 @@ const CONCEPTS={
  ['an unsolicited caller offers a free policy but needs a card number now. What is wise?','hang up and verify the company through an independent contact','give the number to secure the offer','give the number but ask for a receipt later','Pressure to act now is a warning sign of a scam.'],
  ['which routine helps catch identity theft early?','reviewing account statements and credit reports regularly','sharing passwords with friends','ignoring alerts','Regular review finds unfamiliar activity sooner.']
  ]};
+/* improve20-r20g-nov4 #2 (audit14 #7): "an" before a number read with a vowel sound (an 8% tax, an 18-foot shadow, an $80 ticket); a copy of academics/article.js fixNumberArticles. Items keep their ids: the old text is passed as the key. */
+const AN=s=>typeof s!=='string'?s:s.replace(/\b([Aa]) (?=\$?(\d[\d,]*(?:\.\d+)?))/g,(m,a,x)=>{const r=x.split('.')[0].replace(/,+$/,''),d=r.replace(/,/g,'');return d[0]==='8'||/^1[18]/.test(d)&&(d.length%3===2||!r.includes(',')&&d.length===4)?a+'n ':m;});
 export default {
  id:'finance-h-personal-finance-insurance',subject:'finance',level:5,grade:9,title:'Insurance',points:20,
  standard:'CEE/Jump$tart National Standards for Personal Financial Education (2021), Managing Risk',
@@ -137,7 +140,7 @@ export default {
  {skill:'risk',summary:true,say:'Insurance transfers large, unlikely losses to a pool for a premium. Retain small risks, reduce risks with good habits and compare total cost, not just the premium: deductible, coinsurance, limits and exclusions all matter. Know what each policy covers, keep records, and verify any request for payment or information independently.',eq:'Avoid, reduce, retain, transfer; then compare total cost',pic:board('A repeatable insurance routine',['Name the loss and how likely and large it is','Retain what you can afford; transfer what you cannot','Compare premium + deductible + limits, not price alone','Verify, document and report promptly'])}
  ],
  progression:{requires:['finance-h-personal-finance-banking'],operations:3,demand:'Compute payouts and yearly costs under deductibles, coinsurance, maximums, limits and depreciation, and justify the choice of coverage and protections.'},
- items(add){const tried=new Set(TRY.map(q=>q[0])),put=(skill,q)=>{if(!tried.has(q[0]))add(skill,...q);};for(const [skill,rows] of Object.entries(CONCEPTS))rows.forEach(([p,r,a,b,e],k)=>put(skill,choose(p,r,a,b,e,k)));
+ items(add0){/* improve20-r20g-nov4 #2 */let add=(k,p,a,pic,e,acc,key)=>add0(k,AN(p),a,pic,AN(e),acc,key??p);const tried=new Set(TRY.map(q=>q[0])),put=(skill,q)=>{if(!tried.has(q[0]))add(skill,...q);};for(const [skill,rows] of Object.entries(CONCEPTS))rows.forEach(([p,r,a,b,e],k)=>put(skill,choose(p,r,a,b,e,k)));
  const med=[[1000,20,4000,800],[1000,20,4000,6500],[1500,30,5000,9000],[2000,20,5500,40000],[750,10,3000,12350],[2500,25,6000,14000],[500,20,3500,18000],[3000,20,6500,3000],[1200,15,4800,10000],[1800,40,6000,20000]];
  med.forEach(m=>put('health',medQ(...m.map((v,i)=>i===1?v:D(v)))));
  [[3,35,4,12],[6,25,8,15],[5,40,10,9],[4,30,6,20]].forEach(([v,vc,r,rc])=>put('health',copayQ(v,D(vc),r,D(rc))));

@@ -55,6 +55,8 @@ const choose=(prompt,right,wrong1,wrong2,why,k=0)=>{const opts=[right,wrong1,wro
 const TRY=[netQ('Jo',150000,[I(100),P(60),H(4000)]),ruleQ('Ana',240000,'wants'),sizeQ('Sam',180000,[95000,40000,15000,5000,35000]),
  choose('In a fictional choice, Ren can attend a concert or take a pottery class. Ren prefers the concert and ranks the class next. What is the opportunity cost of choosing the concert?','the pottery class','both activities together','nothing if paying cash','The next-best alternative Ren gives up is the pottery class.',1),fundQ(158925,4,180550),goalQ(104955,18855,7)];
 const check=(q,options,hint)=>({prompt:`Try it: ${q[0]}`,answer:q[1],options,hint,pic:q[2]});
+/* improve20-r20g-nov4 #2 (audit14 #7): "an" before a number read with a vowel sound (an 8% tax, an 18-foot shadow, an $80 ticket); a copy of academics/article.js fixNumberArticles. Items keep their ids: the old text is passed as the key. */
+const AN=s=>typeof s!=='string'?s:s.replace(/\b([Aa]) (?=\$?(\d[\d,]*(?:\.\d+)?))/g,(m,a,x)=>{const r=x.split('.')[0].replace(/,+$/,''),d=r.replace(/,/g,'');return d[0]==='8'||/^1[18]/.test(d)&&(d.length%3===2||!r.includes(',')&&d.length===4)?a+'n ':m;});
 export default {
 id:'finance-h-budget',subject:'finance',level:5,grade:9,standard:'Jump$tart/CEE National Standards for Personal Financial Education (2021)',
 title:'Budgeting a paycheck',
@@ -88,7 +90,7 @@ steps:[
  {skill:'save',say:'Pay yourself first means planning an affordable saving amount when income arrives, before optional spending can use it up. It does not mean ignoring rent or other obligations. A fictional $38.65 transfer per payday builds $154.60 over four paydays with no interest. Automating can help, but schedule transfers around income and bills and review them when income changes.',eq:'38.65 × 4 = 154.60',pic:board('Give saving a place in the plan',['Income arrives','Reserve an affordable saving amount','Cover obligations and planned spending','Review transfers when income changes']),check:check(TRY[5],[123,149.94,861],'Subtract existing savings from the goal before spreading what remains across the seven months.')},
  {skill:'gap',summary:true,say:'Start with net income for the period. Separate needs from wants and fixed bills from variable costs; weigh the next-best use of money. Budget for known future bills, emergency reserves and dated goals. Compare all uses with income, track actual spending, and adjust. Percentage guides help you start, but your plan must fit your circumstances and bill dates.',eq:'net income = planned spending + planned saving + unassigned surplus',pic:board('Build → record → compare → revise',['Read net pay and bill dates','Plan needs, wants and future bills','Include emergency and goal savings','Record actual spending; compare','Revise a plan that fits income'])}],
 progression:{requires:['finance-m-paycheck','finance-m-monthly-budget'],operations:3,demand:'Take percents of gross pay and every dollar deduction away to get net pay, split net pay (not gross pay) with the 50/30/20 rule, and compare a full spending plan with net pay to find and close the gap.'},
-items(add){
+items(add0){/* improve20-r20g-nov4 #2 */let add=(k,p,a,pic,e,acc,key)=>add0(k,AN(p),a,pic,AN(e),acc,key??p);
  let w=0;const who=()=>NAMES[w++%NAMES.length];
  /* A Try-it question is never also a pool question: any prompt equal to one is skipped. */
  const tried=new Set(TRY.map(q=>q[0])),put=(skill,q)=>{if(!tried.has(q[0]))add(skill,...q);};

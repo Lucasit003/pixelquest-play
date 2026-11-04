@@ -42,6 +42,8 @@ const TRY=['The point (5, -3) is dilated about the origin with scale factor 4. W
  'In triangle ABC, a segment DE is parallel to BC, with D on AB and E on AC. AD = 3, DB = 5 and AE = 6. What is EC?',
  'Two angles of a triangle measure 52° and 71°. What is the third angle, in degrees?'];
 const tryIt=s=>`Try it: ${s[0].toLowerCase()+s.slice(1)}`;
+/* improve20-r20g-nov4 #2 (audit14 #7): "an" before a number read with a vowel sound (an 8% tax, an 18-foot shadow, an $80 ticket); a copy of academics/article.js fixNumberArticles. Items keep their ids: the old text is passed as the key. */
+const AN=s=>typeof s!=='string'?s:s.replace(/\b([Aa]) (?=\$?(\d[\d,]*(?:\.\d+)?))/g,(m,a,x)=>{const r=x.split('.')[0].replace(/,+$/,''),d=r.replace(/,/g,'');return d[0]==='8'||/^1[18]/.test(d)&&(d.length%3===2||!r.includes(',')&&d.length===4)?a+'n ':m;});
 export default {
 id:'math-h-math-2-similarity-and-proof',subject:'math',level:5,grade:9,standard:'CCSS G-SRT.1 to G-SRT.5, G-CO.9 to G-CO.11',
 title:'Similarity and proof',
@@ -88,7 +90,7 @@ steps:[
   pic:fig('Rectangle and rhombus diagonals',{pts:DIAG,hide:'MN',polys:[{v:'ABCD',col:0},{v:'PQRS',col:1}],segs:[{v:'AM',ticks:1,col:3},{v:'MC',ticks:1,col:3},{v:'BM',ticks:1,col:3},{v:'MD',ticks:1,col:3},{v:'PN',ticks:1,col:3},{v:'NR',ticks:1,col:3},{v:'QN',ticks:2,col:2},{v:'NS',ticks:2,col:2}],angles:[{v:'PNQ',right:true}]})},
  {skill:'parallelograms',summary:true,say:'Putting Unit 6 together: dilations multiply lengths by k and keep angles, so similar figures have proportional sides and equal angles, perimeters scale by k and areas by k²; a line parallel to a side of a triangle splits the other sides proportionally; and proofs rest on angle facts (vertical, corresponding, alternate interior), triangle facts (180°, exterior angles, isosceles base angles) and parallelogram facts (opposite sides and angles, bisecting diagonals). Traps: matching sides in the wrong order, and squaring k for perimeter instead of for area.',pic:tab('Unit 6 at a glance',[['dilation','lengths × k, angles kept'],['similar','AA, SAS, SSS'],['areas','× k²'],['parallel to a side','splits sides proportionally'],['triangle','angles add to 180°'],['parallelogram','diagonals bisect each other']],['Key idea'])}],
 progression:{requires:['math-h-math-1-congruence-and-constructions','math-m-ratios'],operations:3,demand:'Multiply coordinates and lengths by a scale factor, set up and solve proportions, and chain angle facts to find unknown angles.'},
-items(add){
+items(add0){/* improve20-r20g-nov4 #2 */let add=(k,p,a,pic,e,acc,key)=>add0(k,AN(p),a,pic,AN(e),acc,key??p);
  const seen=new Set(TRY);
  const put=(skill,prompt,answer,pic,explanation,accept)=>{if(seen.has(prompt))return;seen.add(prompt);add(skill,prompt,answer,pic,explanation,accept);};
  /* dilation: images of points, lengths, scale factors and properties */

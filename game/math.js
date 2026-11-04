@@ -93,7 +93,8 @@ export function numberIn(input,q){
   const value=clock?Number(clock[1]):PLAIN_NUMBER.test(raw)?Number(raw.replace(/,/g,'')):NaN;
   return Number.isInteger(value)&&value>=0&&value<24?value:NaN;
  }
- const value=raw.toLowerCase().replace(/\s+/g,' ').replace(/^\$\s*/,'').replace(/\s*(cents?|¢|dollars?|cm|mm|km|m|ml|l|kg|g|grams?|°|degrees?|hours?|hrs?|years?|years? old|people|%|percent|[x×]|m\/s|km\/h|j|joules?|µm|μm|um|kilobytes?|kb|bytes?|bits?)$/,'').replace(/,(?=\d{3}(?:\D|$))/g,'');
+ /* improve20-r20g-nov4 #3: '-$35' reads as -35 (prompts write balances that way; reveals show it so) */
+ const value=raw.toLowerCase().replace(/\s+/g,' ').replace(/^(-?)\$\s*/,'$1').replace(/\s*(cents?|¢|dollars?|cm|mm|km|m|ml|l|kg|g|grams?|°|degrees?|hours?|hrs?|years?|years? old|people|%|percent|[x×]|m\/s|km\/h|j|joules?|µm|μm|um|kilobytes?|kb|bytes?|bits?)$/,'').replace(/,(?=\d{3}(?:\D|$))/g,'');
  if(value==='')return NaN;const n=Number(value);if(!Number.isNaN(n))return n;
  const c=contextNumber(value,q?.prompt||'');if(!Number.isNaN(c))return c;
  /* the unit strip above can bite into a word ("box" loses its x), so the context reading also sees the unstripped answer */
@@ -189,6 +190,12 @@ export function matchAnswer(input,q){if(!answerKey(input))return {ok:false,typo:
  /* choices that differ only in capitals ("paris" / "Paris") are told apart by their capitals */
  const choices=(choicesOf(q)||[]).map(c=>c.value),cased=new Set(choices.map(c=>answerKey(c))).size<choices.length,key=v=>answerKey(v,cased),value=key(input);
  const forms=[q.answer,...q.accept||[]];if(forms.some(a=>key(a)===value))return {ok:true,typo:false};if(cased)return {ok:false,typo:false};
+ /* improve20-r20g-nov4 #1 (audit14 #6): a count written as a word is the same count ("two beats" for "2 beats", "two" for "2"), and a bare
+    count answers "N things" when the question itself uses that thing's word ("two" for "two digits", "2" for "2 beats"); never a measure,
+    a direction, a time or a year (UNIT_WORD, "9 am", "450 BCE": the word must be plain lower case, 3+ letters, and not a unit) */
+ {const canon=v=>{const m=/^(\S+)((?: [a-z]+)?)$/.exec(v);if(!m)return null;const n=/^\d+$/.test(m[1])?+m[1]:numberWord(m[1]);return Number.isFinite(n)?[n,m[2].trim()]:null;};const iv=canon(value);
+  if(iv){const said=new Set((String(q.prompt||'').toLowerCase().match(/[a-z']+/g)||[]).map(stem));for(const a of forms){const f=canon(answerKey(a));if(!f||f[0]!==iv[0])continue;if(f[1]===iv[1]||stem(f[1])===stem(iv[1])&&iv[1])return {ok:true,typo:false};
+   if(!iv[1]&&/^[a-z]{3,}$/.test(f[1])&&!UNIT_WORD.test(stem(f[1]))&&!/^(?:north|south|east|west|northeast|northwest|southeast|southwest|left|right|up|down|above|below|forward|back|backward|clockwise|counterclockwise)$/.test(f[1])/* not a direction ("55 south") */&&said.has(stem(f[1]))&&/^[a-z]{3,}$/.test(String(a).trim().split(' ').slice(1).join(' ')))return {ok:true,typo:false};}}}
  const others=(choicesOf(q)||[]).flatMap(c=>[c.value,c.text||c.value]).map(key).filter(k=>!forms.some(a=>key(a)===k));
  for(const a of forms){const lim=typoLimit(a,q);if(!lim||/[^a-z' -]/.test(value))continue;const d=editDistance(value,key(a),lim);if(d<=lim&&!others.some(o=>editDistance(value,o,lim)<=Math.max(d,lim)))return {ok:true,typo:true,expected:String(a)};}
  return {ok:false,typo:false};}

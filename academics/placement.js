@@ -82,14 +82,36 @@ export function beginPlacement(save,subject,random=Math.random,{stage='elementar
    const q=candidates.shift();items.push(q);topics[q.topic]=(topics[q.topic]||0)+1;const k=q.topic+':'+q.skill;skills[k]=(skills[k]||0)+1;
   }
  }
+ /* improve20-r20g-nov4 #1 (audit14 #6, kidsim5: 226-308 s for 12 questions): the Elementary check is adaptive. Each grade's block of
+    PLACEMENT_PER_GRADE is drawn as before, but only the Grade 3 block is asked first; a block ends as soon as it is decided
+    (PLACEMENT_PASS right, or too many wrong to pass); a pass goes on to Grade 4, a fail to Grade 2, and then the check ends. At most 8
+    questions, about 6 on average, and in simulation as accurate as the 12-question check (docs: the R20G report). Scoring is unchanged:
+    a passed block opens the grade above it, and the placement only ever rises. */
+ if(!STAGE_GRADES[stage]&&ADAPTIVE_FIRST&&gs.includes(ADAPTIVE_FIRST)){const blocks={};gs.forEach((g,k)=>blocks[g]=items.slice(k*PLACEMENT_PER_GRADE,(k+1)*PLACEMENT_PER_GRADE));
+  return {subject,stage,grades:gs,items:[...blocks[ADAPTIVE_FIRST]],blocks,at:ADAPTIVE_FIRST,path:[ADAPTIVE_FIRST],adaptive:true,i:0,right:{},xp:0,closed:false};}
  return {subject,stage,grades:gs,items,i:0,right:{},xp:0,closed:false};
 }
+export const ADAPTIVE_FIRST=3,PLACEMENT_MAX=2*PLACEMENT_PER_GRADE,PLACEMENT_ABOUT=6;
+/* the block of the adaptive check now being asked: decided when it has PLACEMENT_PASS right or more than PER-PASS wrong */
+function adaptiveStep(run){const g=run.at,asked=run.items.slice(0,run.i).filter(q=>rungOf(topic(q.topic))===g),r=asked.filter(q=>run.right[q.id]).length,w=asked.length-r;
+ if(r<PLACEMENT_PASS&&w<=PLACEMENT_PER_GRADE-PLACEMENT_PASS)return;
+ run.items.splice(run.i);/* in place, so a caller walking run.items sees the next block */const next=r>=PLACEMENT_PASS?g+1:g-1;
+ if(run.path.length<2&&run.blocks[next]){run.at=next;run.path.push(next);run.items.push(...run.blocks[next]);}else run.done=true;}
+/* improve20-r20g-nov4 #1 (kidsim5 #3): a second Elementary subject can start at the grade the child's first check gave, with one tap
+   (main.js: "Start at Grade N", startAt only ever raises). The grade is the lowest placement above Grade 2 among the child's other
+   Elementary subjects, so one strong subject never starts another too high; the check stays on offer beside it. Null when there is
+   none, or it would not open anything new in this subject. */
+export function secondStart(save,subject){if(save?.schoolMode&&save.schoolMode!=='elementary')return null;const gs=grades(subject),p=save?.placement||{};
+ const other=Object.entries(p).filter(([k,v])=>k!==subject&&Number.isInteger(v)&&v>2&&v<=5).map(([,v])=>v);if(!other.length)return null;
+ const g=Math.min(...other);return gs.includes(g)&&g>placementGrade(save,subject)?g:null;}
 export function answerPlacement(save,run,id,input){
  if(!run||run.closed||run.items[run.i]?.id!==id||!String(input).trim())return null;
  /* Retirement and XP count as usual; mastering a topic by retiring its last question does not,
     because this check opens grades and nothing else. */
  const r=grade(save,run.items[run.i],input,{master:false});run.right[id]=r.ok;run.i++;run.xp+=r.xp;
  /* improve20-z-nov1 #2: two misses in a row inside one grade's block mark the run to stop (stopPlacement) */
+ /* improve20-r20g-nov4 #1: the adaptive Elementary check moves on per block instead (adaptiveStep); its blocks end as soon as they are decided */
+ if(run.adaptive){adaptiveStep(run);/* PLACEMENT_STREAK misses in a row still end it kindly (improve20-r10a-nov2 #3); what was answered is scored */if(!r.ok&&run.i>=PLACEMENT_STREAK&&run.items.slice(run.i-PLACEMENT_STREAK,run.i).every(q=>run.right[q.id]===false)){run.stop=true;run.streak=true;run.done=true;}return r;}
  const k=run.i-1;if(STAGE_GRADES[run.stage]&&!r.ok&&k%PLACEMENT_PER_GRADE>0&&run.right[run.items[k-1].id]===false)run.stop=true;
  /* improve20-r10a-nov2 #3 (kid sims: Zoe, Grade 3, answered two runs of wrong answers in the 12-question Elementary check): PLACEMENT_STREAK misses in
     a row, in any check and across its grade blocks, end it kindly too (run.streak). What was answered is scored as before; nothing is lowered. */
@@ -114,9 +136,9 @@ export function startGrade(save,subject,stage=save?.schoolMode){if(!STAGE_GRADES
 export function startAt(save,subject,g){if(!grades(subject).includes(g))return false;(save.placement??={})[subject]=Math.max(placementGrade(save,subject),g);return true;}
 export function finishPlacement(save,run){
  const gs=run?.grades||PLACEMENT_GRADES;
- if(!run||run.closed||run.i!==(run.stopped?run.items.length:gs.length*PLACEMENT_PER_GRADE)||run.items.length!==run.i||run.i<1||new Set(run.items.map(q=>q.id)).size!==run.i||run.items.some(q=>ITEMS[q.id]!==q||q.subject!==run.subject||typeof run.right[q.id]!=='boolean'))return null;
+ if(!run||run.closed||run.i!==(run.stopped||run.adaptive/* improve20-r20g-nov4 #1 */?run.items.length:gs.length*PLACEMENT_PER_GRADE)||run.adaptive&&!run.done||run.items.length!==run.i||run.i<1||new Set(run.items.map(q=>q.id)).size!==run.i||run.items.some(q=>ITEMS[q.id]!==q||q.subject!==run.subject||typeof run.right[q.id]!=='boolean'))return null;
  const scores=gs.map(g=>{const qs=run.items.filter(q=>rungOf(topic(q.topic))===g);return {grade:g,total:qs.length,score:qs.filter(q=>run.right[q.id]).length};});
- if(scores.some(r=>run.stopped?r.total>PLACEMENT_PER_GRADE:r.total!==PLACEMENT_PER_GRADE))return null;
+ if(scores.some(r=>run.stopped||run.adaptive?r.total>PLACEMENT_PER_GRADE:r.total!==PLACEMENT_PER_GRADE))return null;
  const before=openGrade(save,run.subject);let floor=0;
  /* balance-oct26 (owner): the highest grade passed opens, even past a failed lower block (Middle 2/4, 4/4, 3/4 opens Grade 8; it
     used to stop at the failed Grade 6 and open nothing). Every grade below a placement is open too (lessons.js gradeOpen), so a

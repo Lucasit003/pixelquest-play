@@ -60,7 +60,7 @@ function install(t){
     id and retirement; the item then carries it as idText, and its id is subject-level-hash(idText) (tests/improve20-n-nov1.test.js) */
  t.items((skill,prompt,answer,pic,explanation,accept,key)=>{const id=idOf(t,key??prompt);claim(id,t.id);const numeric=typeof answer==='number';({answer,explanation}=sigShown(prompt,answer,explanation));
   items[id]=Object.freeze({id,subject:t.subject,level:t.level,topic:t.id,skill,prompt,answer,numeric,pic,explanation,...(accept?.length?{accept:Object.freeze([...accept])}:{}),...(key!=null&&key!==prompt?{idText:key}:{})});ids.push(id);});
- t.steps.forEach((s,i)=>{if(!s.check)return;/* improve20-r20f-nov4 #5: a Try-it may keep its id through key, as items do */const id=idOf(t,s.check.key??s.check.prompt);claim(id,`${t.id} step ${i}`);
+ t.steps.forEach((s,i)=>{if(!s.check)return;/* improve20-r20g-nov4 #2: a Try-it may pass the text its id was first hashed from (key), as items do *//* improve20-r20f-nov4 #5: a Try-it may keep its id through key, as items do */const id=idOf(t,s.check.key??s.check.prompt);claim(id,`${t.id} step ${i}`);
   checks[id]=Object.freeze({id,subject:t.subject,level:t.level,topic:t.id,skill:s.skill,step:i,...s.check,numeric:typeof s.check.answer==='number'});});
  if(JSON.stringify(ids)!==JSON.stringify(pool[t.id]))throw new Error(`Stale lesson catalog: ${t.id}`);}
 /* Node's content audits keep the synchronous API. Browsers load only a requested lesson or placement/course group. */

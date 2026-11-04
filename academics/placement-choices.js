@@ -64,4 +64,47 @@ export function closedOptions(q){
    Order: the quiz's own word tiles, the prompt's named options, a closed set, then a young player's tiles (never for a number). */
 export function placementTiles(q,t,save){
  if(!q||choicesOf(q))return null;
- return wordChoicesFor(t,q)||namedOptions(q)||closedOptions(q)||(!numeric(q)&&youngFor(save,t)?tileChoices(q):null);}
+ return wordChoicesFor(t,q)||/* improve20-r20g-nov4 #1 */(t&&t.grade<6?coinOptions(q):null)||namedOptions(q)||closedOptions(q)||/* improve20-r20g-nov4 #1 */listOptions(q,t)||(!numeric(q)&&youngFor(save,t)?tileChoices(q):null);}
+/* improve20-r20g-nov4 #1 (audit14 #6, shot 07): a Grade 4 child still typed 8 of 12 Elementary placement answers, among them a step copied
+   from the plan beside the question ("rinse them") and a whole sorted list ("57, 70, 7, 83"). Two more ways to tap, Elementary topics only:
+     - listOptions: the answer is one entry of the item's own list, the plan or list it shows (a program picture's lines), the stages or
+       events of its timeline picture, or the chain its prompt writes out ("grass -> rabbit -> fox"). Up to CHOICE_MAX of the list's own
+       entries are offered; the list's entries are different things, the question asks for one place in it, and settle() keeps the set
+       only when exactly one entry is accepted by the answer key, so every other entry is wrong;
+     - orderPieces: the answer is the prompt's own list of numbers in a new order (one bubble-sort pass). The child taps the numbers in
+       order; the taps build the same "a, b, c, d" text a typed answer would, so the same key grades it. Exactly one order is accepted.
+   Pure: no DOM, no save. Items, prompts and ids are untouched. */
+const strip=v=>String(v??'').replace(/^\s*\d+[.)]\s+/,'').trim();
+export function listEntries(q){
+ const out=[];for(const p of [].concat(q?.pic||[])){if(!p||typeof p!=='object')continue;
+  if(p.t==='program'&&Array.isArray(p.lines))out.push(p.lines.map(strip));
+  if(p.t==='timeline'&&Array.isArray(p.events)){const ev=p.events.map(e=>e==null?p.fill:e);if(ev.every(e=>typeof e==='string'&&e.trim()&&!/^(?:\?|\.\.\.|…|older|newer)$/i.test(e.trim())))out.push(ev.map(strip));}}
+ const ch=/((?:[A-Za-z][A-Za-z' ]*?)(?:\s*->\s*[A-Za-z][A-Za-z' ]*?){2,})(?=[,.?:;]|$)/.exec(String(q?.prompt||''));if(ch)out.push(ch[1].split(/\s*->\s*/).map(x=>x.trim()));
+ return out.filter(l=>l.length>=3&&l.length<=10);}
+export function listOptions(q,t){
+ if(!q||!t||t.grade>=6||numeric(q))return null;
+ /* a question that names its own two candidates ("which is done first: X or Y?") is answered from those two only (namedOptions): an entry
+    earlier than both would also be "first" */
+ if(/\sor\s/i.test(String(q.prompt||'')))return null;
+ for(const list of listEntries(q)){const ok=list.filter(v=>accepts(v,q)||accepts(bare(v),q));if(ok.length!==1)continue;
+  const others=[...new Set(list.filter(v=>v!==ok[0]))].sort((x,y)=>h(q.id+'~'+low(x))-h(q.id+'~'+low(y))).slice(0,CHOICE_MAX-1);
+  const r=settle(q,[ok[0],...others]);if(r)return r;}
+ return null;}
+const NUMS=/(?:^|[:\s])(\d{1,4}(?:,\s*\d{1,4}){2,9})(?=[.?!]|\s|,\s*swapping|$)/;
+export function orderPieces(q,t){
+ if(!q||!t||t.grade>=6||choicesOf(q))return null;const a=String(q.answer??'').trim();if(!/^\d{1,4}(?:,\s*\d{1,4}){2,9}$/.test(a))return null;
+ const m=NUMS.exec(String(q.prompt||''));if(!m)return null;const src=m[1].split(/,\s*/),ans=a.split(/,\s*/);
+ if([...src].sort().join()!==[...ans].sort().join()||!accepts(ans.join(', '),q))return null;
+ /* exactly one order is accepted: every other order of the same numbers is marked wrong (checked in full up to 6 numbers) */
+ if(src.length<=6){const perms=xs=>xs.length<2?[xs]:xs.flatMap((x,i)=>perms([...xs.slice(0,i),...xs.slice(i+1)]).map(r=>[x,...r]));const seen=new Set();let n=0;for(const p of perms(src)){const k=p.join(', ');if(seen.has(k))continue;seen.add(k);if(accepts(k,q))n++;}if(n!==1)return null;}
+ return src.map((v,i)=>({value:v,label:v,i}));}
+/* improve20-r20g-nov4 #1 (kidsim5 #8: a non-reader got "Which coin do you count first? Give its value in cents." wrong 3 times; its tiles were
+   the prompt's coin counts, 1, 2, 3): the tiles are the coins in the picture, by name and value ("dime (10¢)"), and the tap still answers
+   with the value in cents, so the key grades it unchanged. US coins: penny 1¢, nickel 5¢, dime 10¢, quarter 25¢ (US Mint). Each coin has its
+   own value, so exactly one tile is the coin worth the most, the one the lesson counts first; settle() checks it against the key. */
+export const COIN_CENTS=Object.freeze({q:25,d:10,n:5,p:1}),COIN_NAME=Object.freeze({q:'quarter',d:'dime',n:'nickel',p:'penny'});
+export function coinOptions(q){
+ const pic=[].concat(q?.pic||[]).find(p=>p&&p.t==='coins'&&Array.isArray(p.coins));if(!pic||!/\bwhich coin\b/i.test(String(q.prompt||''))||!/^\d+$/.test(String(q.answer??'').trim()))return null;
+ const kinds=[...new Set(pic.coins)].filter(k=>COIN_CENTS[k]);if(kinds.length<2)return null;
+ const out=kinds.map(k=>({value:String(COIN_CENTS[k]),label:`${COIN_NAME[k]} (${COIN_CENTS[k]}¢)`}));if(out.filter(o=>accepts(o.value,q)).length!==1)return null;
+ return out.sort((a,b)=>+b.value-+a.value);}

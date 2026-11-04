@@ -5,9 +5,12 @@
 // already meets a title's rule gets it back on load, since it was earned by play).
 import {LEVELS,gameFinale,levelDone} from './levels.js';
 import {worn} from './prizes.js';
+/* improve20-r20j-nov4 #2: each chapter's first opened seal cache gives its keepsake title (game/ability-seals.js) */
+import {SEAL_TITLES,sealChapterDone} from './ability-seals.js';
 
 export const TITLES={
  'thorn-hero':{name:'Hero of the Thorn Kingdom',how:'Free the Thorn Kingdom: win the last Veilmoor level.',earned:s=>LEVELS.some(l=>gameFinale(l.id)&&levelDone(s,l.id))},
+ ...Object.fromEntries(Object.entries(SEAL_TITLES).map(([ch,[id,name]])=>[id,{name,how:`Open a rune seal's cache in the ${ch[0].toUpperCase()+ch.slice(1)}.`,earned:s=>sealChapterDone(s,ch)}])),
 };
 export const TITLE_IDS=Object.keys(TITLES);
 export const cleanTitles=v=>Array.isArray(v)?[...new Set(v.filter(id=>typeof id==='string'&&TITLES[id]))]:[];

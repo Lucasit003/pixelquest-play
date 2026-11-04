@@ -32,6 +32,8 @@ const TRY=['Using the subtraction approximation, a loan has a nominal interest r
 /* lettered choices, the right one moved to position k */
 const choose=(right,wrong,k)=>{const o=[...wrong];o.splice(k%3,0,right);return {text:o.map((x,i)=>`${'ABC'[i]}: ${x}`).join(', '),letter:'ABC'[o.indexOf(right)]};};
 const tryIt=s=>`Try it: ${s[0].toLowerCase()+s.slice(1)}`;
+/* improve20-r20g-nov4 #2 (audit14 #7): "an" before a number read with a vowel sound (an 8% tax, an 18-foot shadow, an $80 ticket); a copy of academics/article.js fixNumberArticles. Items keep their ids: the old text is passed as the key. */
+const AN=s=>typeof s!=='string'?s:s.replace(/\b([Aa]) (?=\$?(\d[\d,]*(?:\.\d+)?))/g,(m,a,x)=>{const r=x.split('.')[0].replace(/,+$/,''),d=r.replace(/,/g,'');return d[0]==='8'||/^1[18]/.test(d)&&(d.length%3===2||!r.includes(',')&&d.length===4)?a+'n ':m;});
 export default {
 id:'finance-h-ap-macro-financial-sector',subject:'finance',level:5,grade:9,standard:'AP Macroeconomics, Unit 4',
 title:'The financial sector',
@@ -59,7 +61,7 @@ steps:[
  {skill:'funds',say:'The loanable funds market sets the real interest rate; the money market sets the nominal rate. Suppose savers supply $100 billion plus $50 billion for each percentage point of the real rate, and borrowers demand $500 billion minus $50 billion for each point. The market clears where 100 + 50r = 500 - 50r, so r = 4% and $300 billion is lent.',eq:'supply of funds = demand for funds',pic:{t:'board',title:'Where the market clears',lines:['100 + 50r = 500 - 50r','100r = 400','r = 4','lent = 100 + 50 × 4 = $300 billion'],why:['supply = demand','add 50r, subtract 100','a real rate of 4%',''],box:true}},
  {skill:'funds',summary:true,say:"Distinguish current yield from total return, potential reward from guaranteed reward, and approximate real-rate subtraction from the exact gross-factor ratio. Money measures differ from financial claims. Bank loans create deposits, while reserve balances settle payments. The reciprocal reserve-ratio multiplier is a conditional textbook ceiling, not a general description of ample-reserves banking. Use the stipulated money-market model for nominal-rate exercises, administered rates for ample-reserves policy, and the loanable-funds model for saving, investment and real rates. State what stays fixed before predicting a policy effect.",pic:tab('Unit 4 at a glance',[['bonds','price down when rates up'],['approximate real rate','nominal − inflation'],['simple-model multiplier','1 ÷ positive reserve ratio'],['money market','nominal rate'],['loanable funds','real rate']],['Rule'])}],
 progression:{requires:['finance-h-ap-macro-economic-indicators-and-the-business-cycle','finance-h-loans'],operations:2,demand:'Subtract and divide to move between nominal and real rates, yields and the money multiplier, solve a market for its interest rate, and trace a policy or a shock through to the interest rate and spending.'},
-items(add){
+items(add0){/* improve20-r20g-nov4 #2 */let add=(k,p,a,pic,e,acc,key)=>add0(k,AN(p),a,pic,AN(e),acc,key??p);
  const seen=new Set(TRY);
  const put=(skill,prompt,answer,pic,explanation,accept)=>{
   if(seen.has(prompt))return;seen.add(prompt);

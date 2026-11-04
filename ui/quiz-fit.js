@@ -8,7 +8,10 @@
      down to a floor (16px on a computer, 14px on a phone); on a computer the question then takes the full width, its picture under it;
    - one that still cannot fit lets the dialog scroll once, as a page does; the question never scrolls inside its own box.
    It runs again when the answer's notes appear and when the window changes size. Layout only: no save, no scoring. */
-const DESK=[24,22,20,19,18,17,16],STACK=[20,19,18,17,16],PHONE=[15,14];
+/* improve20-r20g-nov4 #2 (audit14 #7, shot 08: the phone quiz prompt stepped from 26px straight to 14px, which the pixel font draws about 9px
+   tall; R11F found 16px is the font's own size and the smallest that reads): a phone steps down 22, 20, 18 and stops at 16; a card still too
+   tall then pins its answers and the question scrolls in its own box (q-pin, below) at 16px */
+const DESK=[24,22,20,19,18,17,16],STACK=[20,19,18,17,16],PHONE=[22,20,18,16];
 let ro=null,mo=null,busy=false;
 const shown=e=>e.offsetParent!==null&&e.getClientRects().length>0;
 export function fitQuestion(doc=globalThis.document){

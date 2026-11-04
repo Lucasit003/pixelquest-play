@@ -3486,6 +3486,25 @@ html.m-mode dialog[data-home] .home-tabs button.tab-here::after,dialog[data-home
 /* #2/#4: a leading rune row (its own full-width line) keeps the buttons under it in one wrapping row, even with 4 buttons; the Story Retry never shrinks */
 dialog[data-view=result] #modal-content .level-result>.modal-actions:has(>.defeat-runes:not([data-lead=secondary])){flex-wrap:wrap!important}
 dialog[data-view=result] #modal-content .level-result>.modal-actions>#retry[data-story]{flex-shrink:0;white-space:nowrap}
+/* improve20-r20g-nov4 (round 20 lane R20G: placement and content). Placed before the improve20-v-nov1 #18, picframe-nov2 and tablets-nov2 blocks.
+   #1 (kidsim5 #22): the placement check's Stop is a clear button beside the progress dots from question 1 (it was grey text bottom-left). */
+#modal#modal[data-view=placement] .qf-top .placement-stop-btn{margin-left:auto;min-height:34px;padding:4px 14px;font-size:15px;line-height:1.1;white-space:nowrap}
+/* #1 (audit14 #6): tap-to-order. The numbers placed so far sit on the answer line as chips; a placed tile dims; Check waits for all of them */
+#modal#modal .order-form .order-built{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px 6px;min-height:44px;margin:4px 0 8px;padding:6px 10px;border:2px dashed rgba(240,212,138,.55);border-radius:6px;font-size:22px}
+#modal#modal .order-form .order-built .order-hint{font-size:16px;opacity:.85}
+#modal#modal .order-form .order-built .order-chip{display:inline-block;min-width:44px;padding:2px 8px;text-align:center;background:var(--gold-2,#f0d48a);color:#2a1d10;border-radius:4px}
+#modal#modal .order-form .order-answers button.placed{opacity:.35}
+#modal#modal .order-form .order-check{display:block;margin:6px auto 0;min-width:140px}
+#modal#modal .order-form .tile-alt [data-order-undo]:disabled{opacity:.4;cursor:default}
+/* on a phone the order form is one compact block: the answer line with Check beside it, the number tiles under them, Undo and Type it below,
+   so the question keeps its room above (at 844x390 the stacked form pushed the question out of view) */
+html.m-mode #modal#modal#modal#modal .order-form{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"built check" "tiles tiles" "alt alt";gap:4px 8px;align-items:center}
+html.m-mode #modal#modal#modal#modal .order-form .order-built{grid-area:built;min-height:36px;margin:0;padding:2px 8px;font-size:18px}
+html.m-mode #modal#modal#modal#modal .order-form .order-built .order-hint{font-size:15px}
+html.m-mode #modal#modal#modal#modal .order-form .order-check{grid-area:check;margin:0;min-width:96px;min-height:40px}
+html.m-mode #modal#modal#modal#modal .order-form .order-answers{grid-area:tiles;margin:0}
+html.m-mode #modal#modal#modal#modal .order-form .order-answers button{min-width:72px;min-height:44px!important;font-size:20px}
+html.m-mode #modal#modal#modal#modal .order-form .tile-alt{grid-area:alt;margin:0}
 /* improve20-v-nov1 #18: Text size 125/150% reached panels, dialogue and toasts, but not the quiz question, the HUD, the goal plate or
    the controls strip. They grow too, by less than the panels where the frame is fixed art (the HUD) or the screen is short (phones). The
    quiz rules below only set font-size, and only at 125/150, so the 100% card is exactly as lane M leaves it. */
@@ -3834,6 +3853,9 @@ html.cine-on #arena-chip{visibility:hidden}
 .level-recipe strong{color:#ffd28a}
 .worldmap-info .wm-grade{font:700 15px/18px var(--ui);margin:0 0 4px;color:#ffe9a8}
 .worldmap-info.wm-compact .wm-grade{display:none}
+/* improve20-r20j-nov4 #3: the rune-seal line on the level card */
+.worldmap-info .wm-seal{font:700 14px/17px var(--ui);margin:0 0 4px;color:#d9c8ff}
+.seal-hint{margin:4px 0 6px;padding:4px 8px;border-left:3px solid #a984ff;background:rgba(40,28,70,.55);color:#efe6ff;font:700 15px/19px var(--ui)}
 .run-best-next{display:block;color:#ffe9a8}
 .chapter-seals{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin:4px 0 12px}
 .chapter-seal{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;width:132px;padding:8px 6px;border:2px solid #c19149;border-radius:6px;background:rgba(10,12,30,.55);text-align:center}

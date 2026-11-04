@@ -14,7 +14,7 @@
 import {accepts,choicesOf} from '../game/math.js';
 import {wordChoicesFor} from './word-choices.js';
 import {tileChoices} from './tile-choices.js';
-import {namedOptions,closedOptions} from './placement-choices.js';
+import {namedOptions,closedOptions,coinOptions} from './placement-choices.js';
 import {POOL,ITEMS} from './lessons.js';
 /* improve20-r18e-nov3 #1 */import {SUM_DISTRACTORS} from './sum-distractors.js';
 
@@ -56,9 +56,14 @@ export function reviewedOptions(q){const w=q&&SUM_DISTRACTORS[q.id];if(!w)return
 /* The tiles for one question of the first topic's summed quiz, or null (a choice question keeps choiceFormHTML's buttons; else typing) */
 export function sumTiles(t,q){
  if(!q||choicesOf(q))return null;
- return wordChoicesFor(t,q)||tileChoices(q)||namedOptions(q)||closedOptions(q)||listedOptions(q)||unitCount(q)||peerOptions(q)||/* improve20-r18e-nov3 #1 */reviewedOptions(q);}
+ return wordChoicesFor(t,q)||/* improve20-r20g-nov4 #1 (kidsim5 #8): the coin a child counts first is tapped by name */coinOptions(q)||tileChoices(q)||namedOptions(q)||closedOptions(q)||listedOptions(q)||unitCount(q)||peerOptions(q)||/* improve20-r18e-nov3 #1 */reviewedOptions(q);}
 /* true when the question is answered by tapping in that quiz (buttons or tiles) */
 export const sumTaps=(t,q)=>!!(q&&(choicesOf(q)||sumTiles(t,q)));
+/* improve20-r20g-nov4 #1 (kidsim5 #4: Ava typed money amounts in the Money placement; audit14 #6): an Elementary placement question that the
+   check's own tiles miss taps from the same machinery as the first topic's summed quiz, for every age: a number's tiles (off by one and by
+   ten, always wrong), a count with its unit, a contraction's peers and the reviewed wrong options (sum-distractors.js). Each set has exactly
+   one accepted option or the question stays typed. main.js placementQuestion calls it after placementTiles. */
+export const placementSumTiles=(t,q)=>t&&t.grade<6?sumTiles(t,q):null;
 /* improve20-r20i-nov4 #2 (kidsim5 #7: Ivy, a 35% non-reader, sat the first quiz 5 times and reached 2 of 4): from the 3rd full sitting of the summed
    first quiz (two missed sittings in a row, lessons.js qmiss), a question with 4 tiles shows 3: the right one and two wrong ones, in the order they had.
    The wrong tile dropped is the one nearest the answer for numbers (9 beside 10 is the hardest to tell apart), else the last wrong one. The

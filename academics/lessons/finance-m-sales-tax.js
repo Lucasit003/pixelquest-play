@@ -12,6 +12,8 @@ const RATES=[4,5,6,7,8,9];
 /* A rate is used on an amount only when the tax is a whole number of cents. */
 const exact=(c,r)=>c*r%100===0;
 const receipt=(title,rows)=>({t:'setups',title,head:'Receipt',rows,cols:['Amount']});
+/* improve20-r20g-nov4 #2 (audit14 #7): "an" before a number read with a vowel sound (an 8% tax, an 18-foot shadow, an $80 ticket); a copy of academics/article.js fixNumberArticles. Items keep their ids: the old text is passed as the key. */
+const AN=s=>typeof s!=='string'?s:s.replace(/\b([Aa]) (?=\$?(\d[\d,]*(?:\.\d+)?))/g,(m,a,x)=>{const r=x.split('.')[0].replace(/,+$/,''),d=r.replace(/,/g,'');return d[0]==='8'||/^1[18]/.test(d)&&(d.length%3===2||!r.includes(',')&&d.length===4)?a+'n ':m;});
 export default {
 id:'finance-m-sales-tax',subject:'finance',level:4,grade:6,standard:'Jump$tart Spending and Saving, grade 8 benchmark',
 title:'Sales tax',
@@ -29,7 +31,7 @@ steps:[
  {skill:'before',say:'Taking 6% off the total does not undo the tax, because the tax was 6% of the smaller price, not of the total. 6% of $26.50 is $1.59, and $26.50 − $1.59 = $24.91, which is not the $25.00 price.',eq:'$26.50 − $1.59 = $24.91, not $25.00',pic:receipt('A common slip',[['total paid','$26.50'],['6% of the total','$1.59'],['total minus that','$24.91'],['real price','$25.00']]),
   check:{prompt:'Try it: Jo paid $54.00 for a lamp, and that included a fictional 8% sales tax. What was the price before tax, in dollars?',answer:50,options:[50,49.68,46,58.32],hint:'Divide the total by 1.08, then check by adding 8% back on.',pic:receipt('Working back',[['total paid','$54.00'],['sales tax rate','8%']])}}],
 progression:{requires:['finance-e-discounts','finance-e-prices-going-up'],operations:2,demand:'Find a percent of a price to the cent, add it on for the total, and divide by 1 + the rate (not subtract the rate from the total) to work back to the price before tax.'},
-items(add){
+items(add0){/* improve20-r20g-nov4 #2 */let add=(k,p,a,pic,e,acc,key)=>add0(k,AN(p),a,pic,AN(e),acc,key??p);
  /* The tax on one item, at three fictional rates per item where the tax is an exact number of cents. */
  GOODS.forEach(([g,p],k)=>{for(let j=0;j<3;j++){const r=RATES[(k+j)%6];if(!exact(p,r))continue;const tax=p*r/100;
   add('tax',`A fictional town adds a ${r}% sales tax. A ${g} is priced at ${money(p)}. How much is the sales tax on it, in dollars?`,tax/100,receipt('A fictional shop',[['price',money(p)],['sales tax rate',`${r}%`]]),`${r}% of ${money(p)} is ${r} cents on every dollar: ${p/100} × 0.${String(r).padStart(2,'0')} = ${money(tax)}.`);}});

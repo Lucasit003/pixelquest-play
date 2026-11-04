@@ -22,6 +22,8 @@ import {drawSprite,loadSprite} from '../gfx/actors/sprites.js';
 import {heroAtlas,drawHero as drawHeroSprite} from '../gfx/actors/hero-sprites.js';
 import {ENEMY_TYPES} from '../game/enemies.js';
 import {visitPlace,canTravel,isStop} from '../game/fasttravel.js';
+/* improve20-r20j-nov4 #3: the level card's rune-seal line (game/ability-seals.js) */
+import {sealPadLine} from '../game/ability-seals.js';
 
 /* W1 (owner, 15 Oct; ported 24 Oct): the hero walks at SPEED px/s, faster on long routes, so any trip ends within TRIP_S s */
 const SPEED=150;export const TRIP_S=1.2;
@@ -243,7 +245,7 @@ function info(){const id=S.walk?.to||S.at,n=nodeAt(id),st=stateOf(id);if(!n)retu
     button, and offers no Heroic lead in its place */
  sideGate=!nearPower&&st!=='locked'&&l.optional?waitingGate(S.save):null,sidePower=sideGate?.a?{id:sideGate.level.id,a:sideGate.a,hero:S.save.hero,label:'Go to the Library',text:`Wake ${sideGate.a.name} to open ${sideGate.level.name}.`,go:()=>S?.ctx?.onPowerGate?.(sideGate.level.id)}:null;
 
- return{title:l.name,boss:st==='locked'?'':boss,inside:st==='locked'?'':String(l.blurb||''),bossLine:st==='locked'||!full?'':`Boss: ${full}`,gradeLine:st==='locked'?'':padGrade(S.save,l),subtitle:st==='locked'?'Locked':'',blurb:ladderGoal(S.save,l),tiers:st==='locked'||!tiered(l)?[]:TIER_KEYS.map(k=>({key:k,label:TIERS[k].label,open:tierOpen(S.save,l.id,k),stars:starsOf(S.save,l.id,k),crest:tierCrests(S.save,l.id).includes(k)})),tierLine:st==='locked'?'':tierLine(S.save,l),/* improve20-r10c-nov2 #19 */heroicLead:st==='locked'||sidePower?'':heroicLead(S.save,l.id)?.text||'',side:!!l.optional,power:nearPower||sidePower};}
+ return{title:l.name,boss:st==='locked'?'':boss,inside:st==='locked'?'':String(l.blurb||''),bossLine:st==='locked'||!full?'':`Boss: ${full}`,gradeLine:st==='locked'?'':padGrade(S.save,l),/* improve20-r20j-nov4 #3 */sealLine:st==='locked'?'':sealPadLine(S.save,l.id),subtitle:st==='locked'?'Locked':'',blurb:ladderGoal(S.save,l),tiers:st==='locked'||!tiered(l)?[]:TIER_KEYS.map(k=>({key:k,label:TIERS[k].label,open:tierOpen(S.save,l.id,k),stars:starsOf(S.save,l.id,k),crest:tierCrests(S.save,l.id).includes(k)})),tierLine:st==='locked'?'':tierLine(S.save,l),/* improve20-r10c-nov2 #19 */heroicLead:st==='locked'||sidePower?'':heroicLead(S.save,l.id)?.text||'',side:!!l.optional,power:nearPower||sidePower};}
 /* improve20-r11a-nov2 #6 (audit9 a17): arriving in a new chapter, the card's title was the gate the hero stood on ("Emberkeep", the road back)
    and the news sat under it ("The Veilmoor is open!"). While the arrival's light runs to the first stop, the news is the title and the
    first stop is the line under it; when the light lands the card goes back to the stop (and "Welcome to ..." is the notice). The old

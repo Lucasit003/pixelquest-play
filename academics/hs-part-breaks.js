@@ -109,7 +109,7 @@ export const HS_PART_BREAKS={
  "finance-h-ap-micro-production-cost-and-perfect-competition":{"at":[8],"digest":"1lxslu3"},
  "history-h-apush-period-4-1800-1848":{"at":[9],"digest":"129sdie"},
  "science-h-ap-physics-1-linear-momentum":{"at":[7],"digest":"1tuvt2p"},
- "finance-h-personal-finance-insurance":{"at":[6],"digest":"lt11kt"},
+ "finance-h-personal-finance-insurance":{"at":[6],"digest":"1ktutau"},
  "history-h-ap-world-global-conflict-1900-present":{"at":[6],"digest":"1ymorzs"},
  "cs-h-cybersecurity-how-the-internet-works":{"at":[9],"digest":"1t0hl0g"},
  "cs-h-programming-python-variables-and-data-types":{"at":[8],"digest":"lpyhvp"},

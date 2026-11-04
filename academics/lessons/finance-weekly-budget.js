@@ -1,6 +1,8 @@
 // Facts reviewed 3 Nov 2026 (improve20-r16c): 24 does-the-plan-fit rows and the 3 Try-its re-derived by hand (spending plus saving compared with income); 0 fixed.
 // Limits: one reader, row by row, against those references as known to the reviewer; no page was fetched live. Generated sums are computed, not reviewed.
 // Elementary topic: Plan one week: add income and planned spending, find what remains, and check whether spending plus saving fits. Built from a slot sheet by tools/lesson-kit/build-lesson.mjs.
+/* improve20-r20g-nov4 #2 (audit14 #7): "an" before a number read with a vowel sound (an 8% tax, an 18-foot shadow, an $80 ticket); a copy of academics/article.js fixNumberArticles. Items keep their ids: the old text is passed as the key. */
+const AN=s=>typeof s!=='string'?s:s.replace(/\b([Aa]) (?=\$?(\d[\d,]*(?:\.\d+)?))/g,(m,a,x)=>{const r=x.split('.')[0].replace(/,+$/,''),d=r.replace(/,/g,'');return d[0]==='8'||/^1[18]/.test(d)&&(d.length%3===2||!r.includes(',')&&d.length===4)?a+'n ':m;});
 export default {
  id:"finance-e-weekly-budget",subject:"finance",level:3,grade:4,standard:"Jump$tart 4-1",
  title:"A weekly budget",goal:"Plan one week: add income and planned spending, find what remains, and check whether spending plus saving fits.",points:20,
@@ -16,7 +18,7 @@ export default {
  {skill:"fits",say:"A plan that needs more than the income does not fit. Spending $12 and saving $5 needs $17, but only $14 comes in, so the plan has to change.",pic:[{"t":"rule","cond":"Needs more than income?","yes":"does not fit","no":"fits","input":"$12 + $5 with $14 in"}],eq:"12 + 5 = 17, more than 14",
   check:{prompt:"A weekly plan spends $15 and saves $6. How much income does that plan need to fit?",answer:21,options:[21,9,15,20],hint:"Add the spending and the saving.",pic:{"t":"timeline","events":["$15 spending","$6 saving",null]}}},
  {skill:"save",say:"Add all income, include every planned cost, and decide what to save. Spending plus saving must be no more than income.",pic:[{"t":"timeline","events":["income $14","fixed $9","save $5"]}]}],
- items(add){
+ items(add0){/* improve20-r20g-nov4 #2 */let add=(k,p,a,pic,e,acc,key)=>add0(k,AN(p),a,pic,AN(e),acc,key??p);
   const _SKIP=new Set(["This week you get a $10 allowance and earn $7 raking leaves. What is your income for the week?","Your income this week is $20 and your fixed spending is $12. How much is left to save?","A weekly plan spends $15 and saves $6. How much income does that plan need to fit?","This week you get a $9 allowance and earn $23 doing chores. What is your income for the week?"]),_add=add;
   add=(s,p,a,pic,why,acc)=>{if(!_SKIP.has(String(p)))_add(s,p,a,pic,why,acc);};
 {const _P=[];

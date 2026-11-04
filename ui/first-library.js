@@ -10,7 +10,7 @@
      starts it;
    - lockedText: a shut grade, course or lesson says what opens it, in the child's own stage. Read-only: no save, no gate. */
 import {nextLesson,placementNudge} from '../academics/study-unlock.js';
-import {placementGrades,PLACEMENT_PER_GRADE,startGrade} from '../academics/placement.js';
+import {placementGrades,PLACEMENT_PER_GRADE,startGrade,PLACEMENT_ABOUT} from '../academics/placement.js';
 import {placementGrade,gradeOpen,grades,topicOpen,TOPICS} from '../academics/lessons.js';
 import {coursesFor,builtUnits,HIGH_COURSE_LEVEL} from '../academics/courses.js';
 import {awakenOffer,starterSubject} from '../academics/starter-lesson.js';
@@ -21,7 +21,7 @@ export function firstShelf(save,fallback='math'){return (awakenOffer(save)&&star
 export function firstCheck(save,subject,name=subject){
  const stage=save?.schoolMode;if(stage!=='middle'&&stage!=='high')return null;
  const gs=placementGrades(subject,stage);if(!gs.length)return null;const n=gs.length*PLACEMENT_PER_GRADE;
- const text=stage==='high'?`A short ${name} check (${n} questions, no timer) opens your High School ${name} courses, whatever your score.`:`A short ${name} check (${n} questions, no timer) opens your first lessons: Grade ${gs[0]} for everyone, and higher grades if you know them.`;
+ const text=stage==='high'?`A short ${name} check (about ${n} quick questions) opens your High School ${name} courses, whatever your score.`:`A short ${name} check (about ${n} quick questions) opens your first lessons: Grade ${gs[0]} for everyone, and higher grades if you know them.`;
  return {stage,grades:gs,questions:n,text,note:`Your ${name} ${stage==='high'?'courses':'lessons'} open with the ${STAGE_NAME[stage]} check.`,button:`Start the ${name} check`};
 }
 /* improve20-z-nov1 #2 (audit6 #8): the first visit was a 12-question typed check before any lesson. A lesson now comes first: the main
@@ -29,7 +29,7 @@ export function firstCheck(save,subject,name=subject){
    choice, true to finishPlacement (it can open higher grades, never lower ones). Read-only. */
 export function firstStart(save,subject,name=subject){const fc=firstCheck(save,subject,name);if(!fc)return null;const g=startGrade(save,subject);if(g==null)return null;
  const high=fc.stage==='high';
- return {...fc,grade:g,text:high?`Start your High School ${name} courses with a lesson now. Or take a short check (${fc.questions} questions, no timer) that can open later courses.`:`Start with a Grade ${g} ${name} lesson now. Know it already? A short check (${fc.questions} questions, no timer) can open higher grades.`,
+ return {...fc,grade:g,text:high?`Start your High School ${name} courses with a lesson now. Or take a short check (about ${fc.questions} quick questions) that can open later courses.`:`Start with a Grade ${g} ${name} lesson now. Know it already? A short check (about ${fc.questions} quick questions) can open higher grades.`,
   button:high?'Start a High School lesson now':`Start a Grade ${g} lesson now`,checkButton:`Take the ${name} check instead`};}
 /* What opens a shut grade g of a subject. A stage's check names itself only while it can still open the grade: the child has not yet been
    placed into that stage, and the subject has a check there. Its first grade always opens with it; a later grade only when that part of
@@ -70,8 +70,9 @@ export function gradeLine(save,subject,name=subject,warm=2){const g=save?.school
    (lessons.js gradeOpen: nothing above it is open until it is mastered or a check places higher); the check is offered beside it, never
    pushed, and stops kindly after PLACEMENT_STREAK misses in a row (placement.js). R9D's point holds: the card names the grade picked and the
    way to it in one line. The text stays true: the check only opens lessons, and only ever raises (finishPlacement). */
- const n=gs.length*PLACEMENT_PER_GRADE;
- return {grade:g,warm,questions:n,text:`You picked Grade ${g}. Lessons start at Grade ${warm}, so this one is a warm-up. Know it already? A short check (${n} questions, no timer) can open higher grades.`,button:'Already know this? Show what you know',warmButton:`Start: Grade ${warm} warm-up`};}
+ /* improve20-r20g-nov4 #1 (kidsim5 #22): the Elementary check is adaptive (placement.js), about PLACEMENT_ABOUT questions and at most 8 */
+ const n=PLACEMENT_ABOUT;
+ return {grade:g,warm,questions:n,text:`You picked Grade ${g}. Lessons start at Grade ${warm}, so this one is a warm-up. Know it already? A short check (about ${n} quick questions) can open higher grades.`,button:'Already know this? Show what you know',warmButton:`Start: Grade ${warm} warm-up`};}
 /* improve20-r12a-nov2 #5 (kidsim2 finding 21: placement became opt-in and no Grade 4-5 pick ever opted in, so they only met Grade 2
    warm-ups): the first lesson-complete card of a Grade 4+ Elementary pick offers the check once more, as a secondary button, never
    pushed. Shown once per save (s.settings.placeReoffer, additive in v9; settings keeps its keys). The check itself is unchanged: it only
