@@ -1,0 +1,55 @@
+/* improve20-r18c-nov3 #2 (audit13 #11: Mia's first quiz asked her to type "3" for one question and tap for the next): the save's FIRST topic's
+   summed quiz (lessons.js quizSumOn) taps every answer it can. The tiles come from the machinery that already exists, in this order:
+     - the quiz's word tiles (word-choices.js) and the young player's tiles (tile-choices.js), now for every age on this one quiz;
+     - the placement check's named options and closed sets (placement-choices.js);
+   and three narrow, reviewed rules for answers those miss on the first rung's starter and common topics:
+     - options the prompt itself lists: `which comes first: "X" or "Y"?` (the quoted pair) and `what comes first|last: a, b, c?` (the list
+       after the last colon), as history-e-timelines asks them; the events are the prompt's own, so exactly one is the timeline's answer;
+     - a count with a unit ("2 beats", language-e-syllables): the count one either side and two up, with the same unit (singular for 1);
+     - contractions (language-e-contractions only): other answers of the same topic in the same form ("can't" beside "won't", "We have"
+       beside "They have"); each contraction stands for one pair of words, so another one is never right.
+   Every option set is checked against the answer key (game/math.js accepts: the answer and its alternatives): exactly one option may be
+   accepted and there must be 2-4 options, or the question keeps its typing box. A tap fills the same hidden input a typed answer would
+   (ui/answer-choices.js tileFormHTML), so grading, retirement and ids are unchanged. Pure: no DOM, no save. Other quizzes do not call it. */
+import {accepts,choicesOf} from '../game/math.js';
+import {wordChoicesFor} from './word-choices.js';
+import {tileChoices} from './tile-choices.js';
+import {namedOptions,closedOptions} from './placement-choices.js';
+import {POOL,ITEMS} from './lessons.js';
+
+export const SUM_TILE_MAX=4;
+const h=s=>{let x=2166136261;for(const c of String(s)){x^=c.charCodeAt(0);x=Math.imul(x,16777619)>>>0;}return x;};
+const low=v=>String(v??'').trim().toLowerCase();
+/* 2-4 different options, exactly one accepted, the answer kept, in a fixed order from the item's id: [{value,label}] or null */
+function settle(q,opts,max=SUM_TILE_MAX){
+ const seen=new Set(),out=[];for(const o of opts){const v=String(o??'').trim();if(!v||v.length>60||seen.has(low(v)))continue;seen.add(low(v));out.push(v);}
+ const right=out.filter(v=>accepts(v,q));if(right.length!==1)return null;
+ const wrong=out.filter(v=>v!==right[0]).sort((a,b)=>h(q.id+'#'+a)-h(q.id+'#'+b)).slice(0,max-1);if(wrong.length<1)return null;
+ return [right[0],...wrong].sort((a,b)=>h(q.id+'|'+low(a))-h(q.id+'|'+low(b))).map(v=>({value:v,label:v}));}
+const unq=s=>s.trim().replace(/^["“‘']|["”’']$/g,'').trim();
+export function listedOptions(q){
+ const p=String(q?.prompt||'').trim();if(!/\?\s*$/.test(p))return null;
+ /* `... which comes first: "X" or "Y"?` */
+ const pair=/["“]([^"“”]{1,60})["”]\s+or\s+["“]([^"“”]{1,60})["”]\s*\?\s*$/.exec(p);if(pair)return settle(q,[pair[1],pair[2]]);
+ /* `... what comes first: a, b, c?` */
+ const at=p.lastIndexOf(':');if(at<0)return null;const list=p.slice(at+1).replace(/\?\s*$/,'');if(/["“”]/.test(list))return null;
+ const items=list.split(/\s*,\s*(?:or\s+)?|\s+or\s+/).map(unq).filter(Boolean);if(items.length<2||items.length>8)return null;
+ if(!items.some(x=>accepts(x,q)))return null;
+ /* the answer and up to three of the other listed events */
+ return settle(q,items);}
+export function unitCount(q){
+ const m=/^(\d{1,3}) ([a-z]{2,12})$/i.exec(String(q?.answer??'').trim());if(!m)return null;const n=+m[1],w=m[2],one=w.replace(/s$/i,''),many=/s$/i.test(w)?w:w+'s';
+ const say=k=>`${k} ${k===1?one:many}`,r=settle(q,[say(n),...[n-1,n+1,n+2].filter(k=>k>=1).map(say)]);
+ /* counts in order, as the young tiles show numbers */return r&&r.sort((x,y)=>parseInt(x.value)-parseInt(y.value));}
+export const PEER_TOPICS=Object.freeze(new Set(['language-e-contractions']));
+const shape=a=>/['’]/.test(a)?'short':/\s/.test(a)?'pair':'word';
+export function peerOptions(q){
+ if(!PEER_TOPICS.has(q?.topic))return null;const a=String(q.answer??'').trim(),k=shape(a);
+ const peers=[...new Set((POOL[q.topic]||[]).map(id=>String(ITEMS[id]?.answer??'').trim()).filter(x=>x&&low(x)!==low(a)&&shape(x)===k&&!accepts(x,q)))].sort((x,y)=>h(q.id+'~'+x)-h(q.id+'~'+y)).slice(0,SUM_TILE_MAX-1);
+ return peers.length>=2?settle(q,[a,...peers]):null;}
+/* The tiles for one question of the first topic's summed quiz, or null (a choice question keeps choiceFormHTML's buttons; else typing) */
+export function sumTiles(t,q){
+ if(!q||choicesOf(q))return null;
+ return wordChoicesFor(t,q)||tileChoices(q)||namedOptions(q)||closedOptions(q)||listedOptions(q)||unitCount(q)||peerOptions(q);}
+/* true when the question is answered by tapping in that quiz (buttons or tiles) */
+export const sumTaps=(t,q)=>!!(q&&(choicesOf(q)||sumTiles(t,q)));

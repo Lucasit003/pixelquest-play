@@ -55,7 +55,18 @@ export function armHallPatterns(e,w){const r=w?.hall?.rung;if(!e?.boss||e.summon
 export function hallPatternTick(e,w,b){const P=e.hallP;if(!P||P.i>=P.list.length||b.force||!['move','recover'].includes(b.mode))return false;const n=P.list[P.i];if(e.hp>e.maxHp*n.at)return false;
  P.i++;b.force=n.name;return true;}
 /* the banner, when a pattern's first beat starts its tell */
-export function hallTell(e,w,a,top,SIG){const t=PATTERN_BANNER[a.name];if(!t||!a.first)return;w.text?.(t,e.x,top-4,SIG.color,true,{life:SIG.life,hold:true});}
+/* improve20-r18b-nov3 #1 (audit13 #2, shots 02 and 03: the word was drawn over the boss, so with the boss at the arena's right edge
+   "ECHO RING! STEP IN OR OUT!" ran off screen, and the armour toast and the boss's own "Swing!" warning stacked on the tell): the pattern's
+   banner is the stage's danger banner now (gfx/stage-view.js stageBanners), centred at the top and placed inside the view like every move
+   warning, and while it is up (hallTellUp) main.js holds every other tip and toast and core/audio.js ducks the boss's own tells and the
+   chimes (#2). It stays up for TELL_HOLD seconds, and on through the pattern's own beats (rows ii, the strike, the storm's bursts). */
+export const TELL_HOLD=2.4;
+export function hallTell(e,w,a,top,SIG){const t=PATTERN_BANNER[a.name];if(!t||!a.first)return;w.hallTellOn={text:t,name:a.name,at:w.time||0,boss:e};}
+export function hallTellUp(w){const h=w?.hallTellOn;if(!h||!w.level)return false;const e=h.boss,B=e?.brain;if(!e||!(e.hp>0)||!w.enemies?.includes(e)){w.hallTellOn=null;return false;}if((w.time||0)-h.at<TELL_HOLD)return true;if(B?.atk?.hall&&['tele','act'].includes(B.mode))return true;w.hallTellOn=null;return false;}
+/* improve20-r18b-nov3 #1: a Hall boss on a pattern rung keeps its centre at least HALL_EDGE px inside the locked arena (combat.js bossInset), so a
+   ring or a row centred on it is on screen; the camera keeps its clamp (it already frames the boss with the hero when they fit) */
+export const HALL_EDGE=120;
+export const hallEdge=(w,e)=>w?.hall&&e?.boss&&e.hallP?HALL_EDGE:0;
 /* the floor this pattern plays on: the arena's walkable rect, inside the camera */
 export function patternView(w,B){const cx=w.camX??B.x0,cw=STAGE.camW||480;return {x0:Math.max(B.x0,cx+6),x1:Math.min(B.x1,cx+cw-6),y0:B.y0,y1:B.y1};}
 /* echo rows: ROW_COLUMNS columns across the view, every other one lit (odd 0 lights the first, odd 1 the second); the second beat keeps the

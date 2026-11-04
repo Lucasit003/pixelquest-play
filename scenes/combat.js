@@ -27,7 +27,7 @@ import {runeCastFx,runeHitFx,firstCastMoment,bigNumber,shotRune} from './rune-fx
 import {TOWN} from '../game/maps.js';
 import {levelById,levelDone,recordLevel,levelScore,levelReward,levelXPReward,arenaWave,arenaTier,difficultyOf,resolveOf,fightKey,tiered,tierDone,tierRecord,storyHelp,STORY_POTIONS} from '../game/levels.js';
 import {hallBossHp,hallHit} from '../game/hall.js';
-import {HALL_PIERCE,PATTERN_FLOOR} from './hall-patterns.js';
+import {HALL_PIERCE,PATTERN_FLOOR,hallEdge} from './hall-patterns.js';
 import {TIER_KEYS,tierKey,tierOf,tierLevel,tierScale,applyBossTier,tierBossTrim,rallyPoints,rallyTimeout,vampHeal,checkEnrage,splitParts,MODS,killGold,adviceLevel,killXP,winXP,bossAtkTrim} from '../game/tiers.js';
 import {STAGE,BEATS,REBIRTH,levelGeometry,camTopFor,bossLiftFor,waveGroups,waveSide,stageKey} from '../game/stage.js';
 import {baseDef,makeEnemy,entryEnemy} from '../game/roster.js';
@@ -78,6 +78,12 @@ const bodyR=e=>{const m=e.sprite?spriteMeta(e.sprite):null;return Math.max(6,(m?
 /* kidfix-a-oct31: a hero's ability reach is measured to a boss's or elite's DRAWN body, not its shadow. bodyR is 0.8x the shadow half-width (19 px for the Dungeon Master, whose idle frame is 56 px wide), so a Shield Bash whose blade visibly overlapped his cloak at 50 px said "Move closer to a target." The drawn half-width is meta.width/2, or 1.17x the shadow half-width when a sheet has no width (measured on 35 boss sheets) */
 /* improve20-r16b-nov3 #3: a boss's drawn half-width (reachR) plus a few pixels, for the arena clamp and the fight camera */
 const bossHalf=e=>reachR(e)+6;
+/* improve20-r18b-nov3 #3 (audit13 #4, shot 06: the Sleeper hugged the arena's right edge and its head ran under the boss bar): a boss drawn
+   taller than about half the view (tallBoss; only the Sleeper today) walks on to, and stays, TALL_EDGE px in from the locked arena's edges
+   (its body's edge, not its centre), and its fight camera leans to the right clamp while the hero stays in view, so at 1280x720 its head is
+   left of the boss bar (top right) */
+export const TALL_EDGE=150;
+export const tallBoss=e=>{if(!e?.boss)return false;const m=e.sprite?spriteMeta(e.sprite):null;return (m?.height||0)*Math.max(1,e.scale||1)>(STAGE.camH||270)*.55;};
 const reachR=e=>{const b=bodyR(e);if(!e.boss&&!e.elite)return b;const m=e.sprite?spriteMeta(e.sprite):null;return Math.max(b,(m?.width?m.width/2:(m?.shadow?.[0]||0)*1.17)*Math.max(1,e.scale||1));};
 export const CLOSER_TOAST_GAP=8,LUNGE_REACH=1.5;
 /* improve20-a-oct31 #7: a taunt line waits until the quote before it has had its 2.5 s (2 s on a phone) and a short beat */
@@ -233,7 +239,7 @@ export class World{
     In town (no stage) it is the old 700-wide map. */
  /* improve20-r16b-nov3 #3: how far inside the locked arena's x0/x1 a boss's centre stops (its drawn half-width), 0 when it is not clamped;
     enemy-ai.js charges and wall bonks read it so a charge still ends "in the wall" */
- bossInset(e){if(!this.lock||!e?.boss||!e.entered)return 0;const b=this.bounds(),R=Math.min(bossHalf(e),(b.x1-b.x0)/2-1);return R>HERO_MARGIN-28?R:0;}
+ bossInset(e){if(!this.lock||!e?.boss||!e.entered)return 0;const b=this.bounds(),R=Math.min(Math.max(bossHalf(e),/* improve20-r18b-nov3 #1 */hallEdge(this,e),/* #3 */tallBoss(e)?reachR(e)+TALL_EDGE-10:0),(b.x1-b.x0)/2-1);return R>HERO_MARGIN-28?R:0;}
  bounds(){const L=this.layout;if(!L)return {x0:35,x1:665,y0:70,y1:TOWN.height-25};
   const x0=this.lock?this.lock.x0:this.camFloor,x1=this.lock?this.lock.x1:L.width;return {x0:x0+10,x1:x1-10,y0:L.floorTop+4,y1:L.floorBottom-2};}
  admitEnemy(e){riftEnemy(this,e);pilotEnemy(this,e);return admitEnemy(this,e);}
@@ -284,7 +290,7 @@ export class World{
   /* Heroic and Legendary: the boss's own attacks on a faster pattern, an earlier phase change on Legendary (game/tiers.js) */
   applyBossTier(e,this.tierKey);riftBossFx(this,e);pilotBoss(this,e);return kind?this.enter(e,kind,0,true):e;}
  /* The boss arena locks, the boss walks on under its name card, and only then does the fight start. */
- bossIntro(){const a=this.layout.boss;this.lockTo(a);this.enemies=this.enemies.filter(e=>e.hp>0);const e=this.spawnBoss(a.x1+30);const mk=this.layout.bossMark;if(mk&&mk.x>a.x0+60&&mk.x<a.x1-40)e.y=mk.y;e.introFrom=e.x;e.introTo=mk&&mk.x>a.x0+60&&mk.x<a.x1-40?mk.x:this.clearSpot(a.x1-Math.max(110,Math.round(bodyR(e)*2.4+48)),e.y,a);e.facing=-1;this.boss=e;this.partner=null;
+ bossIntro(){const a=this.layout.boss;this.lockTo(a);this.enemies=this.enemies.filter(e=>e.hp>0);const e=this.spawnBoss(a.x1+30);const mk=this.layout.bossMark;if(mk&&mk.x>a.x0+60&&mk.x<a.x1-40)e.y=mk.y;e.introFrom=e.x;e.introTo=mk&&mk.x>a.x0+60&&mk.x<a.x1-40?mk.x:this.clearSpot(a.x1-Math.max(110,Math.round(bodyR(e)*2.4+48)),e.y,a);/* improve20-r18b-nov3 #3 */if(tallBoss(e))e.introTo=Math.min(e.introTo,a.x1-TALL_EDGE-Math.round(reachR(e)));e.facing=-1;this.boss=e;this.partner=null;
   /* A duo stage (owner, 8 Oct, after Ornstein & Smough: "stages that have 2 similar bosses that fight against u"): the second boss
      walks on beside the first, and the two share the fight; when one falls the other takes its power (kill, duoPower). */
   if(this.level.duo){const d=this.spawnBoss(a.x1+80,this.level.duo);d.y=Math.round(e.y+(e.y>(this.layout.floorTop+this.layout.floorBottom)/2?-26:26));d.introFrom=d.x;d.introTo=this.clearSpot(Math.max(a.x0+90,e.introTo-96),d.y,a);d.facing=-1;e.partner=d;d.partner=e;this.partner=d;}
@@ -336,7 +342,7 @@ export class World{
    this.bossLift=(this.bossLift||0)+(want-(this.bossLift||0))*Math.min(1,dt*4);if(this.bossLift<.5&&!want)this.bossLift=0;this.camTop=Math.max(0,Math.round(this.camTop-this.bossLift));}const lo=this.lock?this.lock.x0:0,hi=this.lock?Math.max(this.lock.x0,this.lock.x1-W):Math.max(0,L.width-W);let target=clamp(this.player.x-W*(this.lock?.5:.4),lo,hi);if(!this.lock)target=Math.max(target,this.camFloor);
   /* improve20-r16b-nov3 #3 (audit12 a10): in a locked fight the camera keeps every live boss's whole body in view with the hero when the two fit
      in one screen (the view moves the least from hero-centred to do it); the phone rules below still win */
-  if(this.lock)for(const e of this.enemies||[])if(e.boss&&e.hp>0&&!e.decoy&&e.entered){const R=bossHalf(e),a=Math.min(this.player.x-24,e.x-R),z=Math.max(this.player.x+24,e.x+R);if(z-a<=W)target=clamp(clamp(target,z-W,a),lo,hi);}
+  if(this.lock)for(const e of this.enemies||[])if(e.boss&&e.hp>0&&!e.decoy&&e.entered){const R=bossHalf(e),a=Math.min(this.player.x-24,e.x-R),z=Math.max(this.player.x+24,e.x+R);if(z-a<=W)target=clamp(clamp(target,z-W,a),lo,hi);}/* improve20-r18b-nov3 #3: a tall boss's fight leans to the right clamp while the hero stays 40 px inside the view */if(this.lock&&(this.enemies||[]).some(e=>e.boss&&e.hp>0&&!e.decoy&&e.entered&&tallBoss(e))&&this.player.x>=hi+40)target=hi;
   /* 25 Oct (phone): the touch controls cover the screen's sides (joystick ghost left, action arc right; ui/mobile.js measures them into STAGE.padL/padR, 0 on desktop). At an arena edge the camera may look past the edge by that much, so the hero never stands under a button. Hero bounds are unchanged. */
   let pr=STAGE.padR||0,pl=0;
   /* camface-oct28 (phone safe zone): the hero stood under the top-left hero panel at the top of the floor band. While his head (46 px above his feet on the ground; a jump does not move the camera) is level with a top HUD obstacle, keep him that far from its side, faded in over 12 px of height so the camera eases and never steps. Desktop has none (ui/mobile.js measurePads) */

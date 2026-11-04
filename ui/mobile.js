@@ -192,6 +192,7 @@ export const overlapArea=(a,b)=>Math.max(0,Math.min(a.right,b.right)-Math.max(a.
 export function pickBannerSpot(spots,actors){let best=null,bestA=Infinity;for(const s of spots){const a=actors.reduce((n,r)=>n+overlapArea(s.box,r),0);if(a===0)return s;if(a<bestA){best=s;bestA=a;}}return best;}
 /* the spots for a banner w x h CSS px. Phone: up top, then the bottom strip. Desktop (the same leftover at 1280x720: the plate at 25% sat on the
    drake and the golem's head): its own place first, then the top strip between the hero panel and the boss bar, then just above the hotbar */
+export const BOSS_GAP=12;
 export function armourBannerSpots(w,h,d=doc()){
  const st=d?.querySelector?.('#stage');if(!st)return null;const sr=st.getBoundingClientRect();if(!sr.width)return null;
  const vis=el=>{const r=el?.getBoundingClientRect();return r&&r.width>0&&r.height>0&&getComputedStyle(el).display!=='none'&&getComputedStyle(el).visibility!=='hidden'?r:null;};
@@ -202,7 +203,7 @@ export function armourBannerSpots(w,h,d=doc()){
   return [spot(sr.width/2,sr.width*.9,sr.height*.25,'own'),...(r-l>=Math.min(w,sr.width*.9)?[spot((l+r)/2-sr.left,r-l,8,'top')]:[]),spot(sr.width/2,sr.width*.9,hb-sr.top-h,'bottom')];}
  let l=sr.left+8,r=sr.right-8,top=sr.top+6;for(const el of d.querySelectorAll('#hud .hero-hud,#hud .hud-sub')){const b=vis(el);if(b&&b.top<sr.top+sr.height*.3&&b.left<sr.left+sr.width/2)l=Math.max(l,b.right+8);}
  for(const el of d.querySelectorAll('#m-menu button')){const b=vis(el);if(b&&b.top<sr.top+sr.height*.3&&b.left>sr.left+sr.width/2)r=Math.min(r,b.left-8);}
- const boss=vis(d.querySelector('#boss-hud'));if(boss&&boss.top<sr.top+sr.height*.3)top=Math.max(top,boss.bottom+4);
+ /* improve20-r18b-nov3 #1 (audit13 shot 26: at 844x390 the armour plate's crest, 6 px over its box, sat on the boss bar): the top strip starts BOSS_GAP under it */const boss=vis(d.querySelector('#boss-hud'));if(boss&&boss.top<sr.top+sr.height*.3)top=Math.max(top,boss.bottom+BOSS_GAP);
  const tw=Math.min(w,r-l),tc=(l+r)/2-sr.left,tt=top-sr.top,bot=compactToastBox(d),bw=Math.min(w,bot?.width||w),bc=bot?.center??sr.width/2,bb=bot?.bottom??12;
  /* the top strip only when the whole one-line plate fits in it (at 740x360 the shield tip does not) */
  return [...(r-l>=w?[{kind:'top',center:Math.round(tc),width:Math.round(tw),top:Math.round(tt),box:{left:tc-tw/2,right:tc+tw/2,top:tt,bottom:tt+h}}]:[]),

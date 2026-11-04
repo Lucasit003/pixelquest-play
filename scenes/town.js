@@ -24,7 +24,7 @@ import {trailOf} from '../game/prizes.js';
 import {FURN, footprint, placeFurniture, spare, wallSpot, wallFits, WALL} from '../game/furniture.js';
 import {talk, talkAndAdvance, nameOf, holds, stepIdOf, STORY} from '../game/npcs.js';
 import {COMPANIONS, ART, joined} from '../game/party.js';
-import {questLive, currentStep, questState} from '../game/quests.js';
+import {questLive, currentStep, questState, QUEST_IDS} from '../game/quests.js';
 import {loadSprite as loadActor, drawSprite as drawActor} from '../gfx/actors/sprites.js';
 import {swayTable, drawSwayed, stepCritters, critterDraws, leafDraws} from '../gfx/motion.js';
 import {TOWN_SPOTS, townPlace, visitPlace, FARM_NAME} from '../game/fasttravel.js';
@@ -501,6 +501,10 @@ function optionFor(S, p) {
   /* improve20-y-nov1 #7 (lane K): once a companion travels with you the roster board no longer says "Hire a companion" */
   if (act === 'barracks' && H.save?.party?.with) return {label: 'Check the roster board', panel: act};
   if (act) return {label: act === 'guild' || act === 'alchemist' ? PANEL_LABEL[act] : pr.label || p.name || PANEL_LABEL[act], panel: act};
+  /* improve20-r18b-nov3 #5 (audit13 #12, shot 13: the smith could not be talked to from beside his counter, so "Pet Ink Cat" took E): a seller
+     who keeps a shop in this room carries that shop's action (talking to the innkeeper orders a meal, as the smith's TALK_PANEL already did);
+     while a villager quest waits on talking to them (talkWaits), talking comes first so the quest still moves on */
+  if (p.type === 'npc-spot' && p.props?.role === 'seller') { const key = p.props?.key, who = nameOf(key, p.name), sq = S.points.find(q => isShop(q) && keeperOf(S, q) === who); if (sq && !talkWaits(key)) { const o = shopOption(S, sq); if (o) return {...o, talk: {key, name: who, fallback: p.props?.talk}}; } }
   if (p.type === 'npc-spot') { const key = p.props?.key, who = nameOf(key, p.name); return {label: `Talk to ${who}`, talk: {key, name: who, fallback: p.props?.talk}}; }
   /* improve20-r10d-nov2 #4: a bed's Sleep is marked so main.js can ask "Sleep now?" the first time in a session */
   if (p.type === 'interact') return {label: pr.label || p.name, say: pr.text ?? flavor(p.name), ...(/^sleep$/i.test(pr.label || p.name) ? {sleep: true} : {})};
@@ -517,6 +521,12 @@ function facingBonus(p, x, y) {
 /* kidfix-a-oct31 (kid-appeal playtest: the smith said "use the counter on the right"): talking to a shopkeeper whose counter opens a
    panel opens it (news he has still comes first, hubInteract) */
 export const TALK_PANEL = {brannoc_the_smith: 'smith'};
+/* improve20-r18b-nov3 #5: a villager quest's open step is "talk to <key>" (the same test as game/quests.js onTalk, without moving it on) */
+const talkWaits = key => !!H.save && !!key && QUEST_IDS.filter(questLive).some(id => { const st = currentStep(H.save, id); return st?.kind === 'talk' && st.who === key && (!st.take || !!H.save.quests?.q?.[id]?.items?.includes(st.take)); });
+/* improve20-r18b-nov3 #5: a seller behind a counter is reached from KEEPER_REACH px of where he is drawn while the hero faces him (the counter
+   keeps the hero a desk-width off, past the 30 px a stand spot allows); a person within PET_PERSON px keeps the pet's prompt quiet */
+export const KEEPER_REACH = 72, PET_PERSON = 80;
+export function keeperReach(q, p) { if (q?.type !== 'npc-spot' || q.props?.role !== 'seller') return Infinity; const r = Math.hypot(p.x - q.x, (p.y - q.y) * .9); return r < KEEPER_REACH && facingBonus(p, q.x, q.y - 20) > 0 ? r * (DOOR_REACH - 2) / KEEPER_REACH : Infinity; }
 /* a Library teacher's subject when that subject has a study station in this room, else null */
 export function tutorSubject(S, p) { const sub = p?.type === 'npc-spot' && p.props?.role === 'tutor' && p.props.subject; return sub && SUBJECT_LABEL[sub] && S.points.some(q => actionOf(q) === 'library' && q.props?.subject === sub) ? sub : null; }
 function nearest(S, p) {
@@ -537,7 +547,8 @@ function nearest(S, p) {
     /* the road out is wide: any of the last few steps toward the edge offers the World Map */
     /* the road out offers the World Map a few steps before the map's edge, so the hero is never under the prompt (playtest m3) */
     const out = !S.room && worldExit(q), qx = q.x, qy = out ? Math.min(q.sy, southEdge(S) - 4) : q.y;
-    const raw = out ? Math.hypot(p.x - qx, (p.y - qy) * .8) * .6 : doorReach(q, p.x, p.y);
+    const raw = out ? Math.hypot(p.x - qx, (p.y - qy) * .8) * .6 : Math.min(doorReach(q, p.x, p.y), S.room ? keeperReach(q, p) : Infinity)/* improve20-r18b-nov3 #5 */;
+    if (S.room && q.type === 'npc-spot' && Math.hypot(p.x - q.x, p.y - q.y) < PET_PERSON) close = true;
     const d = raw - (out ? 0 : facingBonus(p, q.x, q.y));
     /* improve20-r14c-nov3 #3 (audit11 b12): a study station (a subject's table, desk or lectern, or its teacher) keeps the pet quiet from
        STUDY_CLEAR away: beside the Coding table, just outside its reach, "Pet Ink Cat" took E from a kid who had walked up to study */

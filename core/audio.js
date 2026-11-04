@@ -159,6 +159,14 @@ const dbGain=d=>Math.pow(10,(d||0)/20);
 export const TELL_DUCK_DB=-3,TELL_DUCK_MS=300;
 export const isTell=key=>String(key).startsWith('tell.');
 function tellDuck(){if(!tellGain)return;const g=tellGain.gain,now=ac.currentTime,end=now+TELL_DUCK_MS/1000;g.cancelScheduledValues(now);g.setValueAtTime(g.value,now);g.linearRampToValueAtTime(dbGain(TELL_DUCK_DB),now+.02);g.setValueAtTime(dbGain(TELL_DUCK_DB),end);g.linearRampToValueAtTime(1,end+.08);}
+/* improve20-r18b-nov3 #2 (audit13 #20: the Hall's Rung III adds a cue per pattern on top of the boss's own tells and the chimes): while a Hall
+   pattern's tell is up (main.js tellFocus, scenes/hall-patterns.js hallTellUp) the boss's own tells, every other enemy tell and the UI chimes
+   play FOCUS_DUCK_DB quieter, so the pattern's own cue (tell.echo.*) is the one that reads. No new sounds; nothing else changes. */
+export const FOCUS_DUCK_DB=-12,FOCUS_CHIMES=Object.freeze(['ui','ui.open','ui.move','ready','coin']);
+let focus=false;
+export function tellFocus(on){focus=!!on;}
+export const tellFocused=()=>focus;
+export function focusDuck(key,on=focus){key=String(key);return on&&(isTell(key)&&!key.startsWith('tell.echo.')||FOCUS_CHIMES.includes(key))?FOCUS_DUCK_DB:0;}
 const buffers=new Map();
 function bufferFor(key,params){
  let b=buffers.get(key);if(b)return b;
@@ -193,7 +201,7 @@ export function sfx(name,arg,opts={}){
   /* The same sound fired twice inside 30 ms is one sound louder; skip the double. */
   const now=ac.currentTime;if(now-(lastPlayed.get(key)||-1)<.03)return;lastPlayed.set(key,now);
   const rate=(name==='swing'&&typeof arg==='number'?Math.pow(1.08,arg):name==='bolt'?(opts.heavy?.92:1.22):1)*(1+(Math.random()-.5)*.06);
-  playBuffer(bufferFor(key,params),{gain:.38*dbGain(name==='bolt'?(SFX_LEVEL['cast.'+el]||0)-(opts.heavy?3:7):SFX_LEVEL[key]),rate,pan:opts.pan||0});if(isTell(key))tellDuck();
+  playBuffer(bufferFor(key,params),{gain:.38*dbGain(name==='bolt'?(SFX_LEVEL['cast.'+el]||0)-(opts.heavy?3:7):SFX_LEVEL[key])*dbGain(focusDuck(key))/* improve20-r18b-nov3 #2 */,rate,pan:opts.pan||0});if(isTell(key)&&!focusDuck(key))tellDuck();
  }catch{}
 }
 /* Old entry points, kept for existing call sites and tests. */

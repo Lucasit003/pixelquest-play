@@ -1059,6 +1059,12 @@ html.m-mode .lib-power b{grid-area:name;font-size:13px;line-height:1.15}
 html.m-mode .lib-power small{grid-area:line;font-size:11px;line-height:1.2}
 html.m-mode .lib-power em{display:none}
 html.m-mode .lib-powers-more{margin:0;font-size:11px;max-width:90px}
+/* improve20-r18b-nov3 #6 (audit13 #15, shot 19: at 844x390 the power titles sat on their card tops and "…and 4 more powers to find" drew at
+   about 8 px): the cards keep 8 px over the title, and the line is set at the cards' own text size (14 px, the Pixel Operator cut reads about
+   10 px tall there) in a column wide enough for three lines */
+html.m-mode .lib-power{padding:8px 6px 6px;align-content:start}
+html.m-mode .lib-power b{margin-top:2px}
+html.m-mode .lib-powers-more{font-size:14px;line-height:1.2;max-width:104px}
 html.m-mode .lib-tour-first{padding:8px 12px}
 html.m-mode .lib-tour-first .lib-power-ico{width:64px;height:64px}
 html.m-mode .lib-tour-actions .primary{min-width:120px}
