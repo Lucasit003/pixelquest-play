@@ -19,6 +19,9 @@ export const QUEST_ITEMS = {
   'vexx-cog': {name: 'Vexx’s cog', icon: 'quest/vexx-cog', story: 'Ione found the stolen cog deep in the Furnace Depths.'},
   'last-verse': {name: 'The last verse', icon: 'quest/last-verse', story: 'Oakhaven’s ballad has its ending back.'},
   'ember-crest': {name: 'Ember Barracks crest', icon: 'quest/ember-crest', story: 'Sir Cinder’s old crest, won back on Heroic.'},
+  /* improve20-r20n-nov4 #1a: Hob takes his purse back (step 3), so Wil's keepsake is the thank-you he gives instead. It is never a quest item
+     in hand (no step drops or takes it); the picture is the existing gold coin prop (assets/sprites/theater-coin-gold.png, PixelLab) */
+  'hob-coin': {name: 'Hob’s lucky coin', icon: 'quest/hob-coin', img: 'assets/sprites/theater-coin-gold.png', keepsake: true, story: 'Red Hand took the farm’s savings. You brought every coin home.'},
 };
 
 /* every chain as data (§2.2); `opens.done` lists levels that must all be cleared */
@@ -31,7 +34,7 @@ export const QUESTS = {
       {kind: 'clear', level: 'ex1', tier: null, item: 'hob-purse', text: 'Beat Red Hand on Bandit Road.'},
       {kind: 'talk', who: 'farmer_hob', take: 'hob-purse', text: 'Bring the purse back to Farmer Hob.'},
       {kind: 'visit', building: 'barracks', who: 'wil', text: 'Meet Wil at the Barracks.'}],
-    reward: {companion: 'wil', keepsake: 'hob-purse'}},
+    reward: {companion: 'wil', keepsake: 'hob-coin'}},
   'karas-dagger': {companion: 'kara', chapter: 'elderwood', order: 2, title: 'Sam’s Dagger',
     giver: {key: 'sellsword_kara', room: 'guild_shop', name: 'Sellsword Kara'}, opens: {done: ['e5']},
     blurb: 'Kara’s old partner lost his dagger in the Mire.',
@@ -187,5 +190,16 @@ export function nextQuestStep(save, only = all) {
   for (const id of activeQuests(save, only)) { const s = currentStep(save, id); if (s && levelById(s.level)) return pick(id, s, 'clear'); }
   for (const id of openQuests(save, only)) { const s = currentStep(save, id); if (s) return pick(id, s, 'open'); }
   return null;
+}
+/* improve20-r20n-nov4 #1b (§6.4): the Trophy Hall's keepsake shelf, one slot per live chain in quest order: {quest, id, name, story, img, won}.
+   Read from s.quests only (a done quest's reward.keepsake), so nothing new is saved and a hidden chain never shows. */
+export const keepsakeOf = id => { const k = QUESTS[id]?.reward?.keepsake; return k && QUEST_ITEMS[k] ? {id: k, ...QUEST_ITEMS[k]} : null; };
+/* earned once the step that hands the quest item back is done (Hob gives the coin as he takes his purse), or when the quest is done */
+export function keepsakeEarned(save, id) {
+  const Q = QUESTS[id], st = questState(save, id); if (st === 'done') return true; if (st !== 'active') return false;
+  const at = Q.steps.map(x => !!x.take).lastIndexOf(true); return at >= 0 && (save.quests.q[id].step | 0) > at;
+}
+export function keepsakeShelf(save, only = all) {
+  return QUEST_IDS.filter(id => only(id) && keepsakeOf(id)).map(id => { const k = keepsakeOf(id); return {quest: id, title: QUESTS[id].title, id: k.id, name: k.name, story: k.story, img: k.img || 'ui/skin/rewards/chest.png', won: keepsakeEarned(save, id)}; });
 }
 export const questCompanion = id => COMPANIONS[QUESTS[id]?.companion] || null;

@@ -78,7 +78,7 @@ export const HS_PART_BREAKS={
  "cs-h-ap-csa-using-objects-and-methods":{"at":[9],"digest":"1hivcxf"},
  "language-h-english-10-literary-analysis":{"at":[8],"digest":"h5ll28"},
  "language-h-ap-lang-rhetorical-situation":{"at":[8],"digest":"qmg7qw"},
- "language-h-ap-lit-short-fiction":{"at":[6],"digest":"1nlb8q7"},
+ "language-h-ap-lit-short-fiction":{"at":[6],"digest":"1w6agjv"},
  "finance-h-ap-macro-basic-economic-concepts":{"at":[10],"digest":"1q2xwas"},
  "finance-h-ap-micro-basic-economic-concepts":{"at":[10],"digest":"1gltr1g"},
  "history-h-ap-euro-age-of-reformation":{"at":[9],"digest":"1h4qzbt"},

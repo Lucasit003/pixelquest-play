@@ -6,6 +6,7 @@
 import {LEVELS,levelOpen} from '../game/levels.js';
 import {rarPips,rarColor,rarName} from './rarity.js';
 import {BAG} from '../game/potions.js';
+import {WEAR_LINE} from '../game/wear.js';
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 /** True once any level past the first chapter is open: from then on Details shows every line, as before. */
@@ -36,7 +37,7 @@ export const shortName=n=>String(n||'').replace(/^[^,]*?['’]s\s+(?=\S)/,'')||S
    craft reads "next: craft Forgeplate" */
 /* improve20-r19b-nov3 #2: main.js passes `next` from featuredUpgrade (+8% or more) now, not affordableUpgrade */
 /* improve20-r16a-nov3 #6 (audit12 finding 9: the tile said +1 when 2 were given): shards = the run's shardsWon, the one value the line under it reads */
-export function youGotHTML({won=true,gold=0,xp=0,riftBonus=0,shard='',shards=1,loot=[],gear=[],stars=0,starsAll=0,icon,starIcon='',next='',spare=0}){
+export function youGotHTML({secrets=[]/* improve20-r20k-nov4 #1: the run's secret finds, st.secrets */,won=true,gold=0,xp=0,riftBonus=0,shard='',shards=1,loot=[],gear=[],stars=0,starsAll=0,icon,starIcon='',next='',spare=0}){
  /* improve20-r8a-nov1 #6 (audit7 d22): "Potion bag full: +8 gold" took a reward tile on every card; its gold joins the gold line instead */{const bf=/^Potion bag full: \+(\d+) gold/.exec(loot.find(x=>x?.bagfull)?.label||'');if(bf){spare+=+bf[1];gold+=+bf[1];}loot=loot.filter(x=>!x?.bagfull);}
  /* improve20-h-nov1: every chip carries its full words as a title, so a compact chip (below) still names itself */
  /* improve20-s-nov1 #18/#20 (audit5 b18, b15): a found piece carries its rarity: the border and a glow behind its icon in the rarity's
@@ -54,7 +55,10 @@ export function youGotHTML({won=true,gold=0,xp=0,riftBonus=0,shard='',shards=1,l
  if(!parts.length)return '';
  /* improve20-y-nov1 #1 (audit4 #17): a compact phone strip shows a gear piece or jewel as its icon only, so a kid could not tell what the
     run found. One caption under the strip names them ("Found: Jelly Pendant, Bog Waders"); it shows only on a compact phone strip */
- const compact=parts.length>=COMPACT_AT,found=compact&&gear.length?`<p class="you-got-found" data-found title="${esc(gear.map(g=>g.name).join(', '))}">Found: ${gear.map(g=>esc(shortName(g.name))).join(', ')}</p>`:'';
+ /* improve20-r20k-nov4 #1, #2 (kidsim5 #15: "Found: ... Wear it from Home →" and "Secret 1/3: 1 health potion" went before a kid read them; R20H: the
+    caption cut long names with an ellipsis): every find of the run is named on the card, in full and wrapping: a compact phone strip names its gear
+    and jewels; any card with a find says where to wear it (WEAR_LINE, as the toast did) and lists the run's secret finds with their count */
+ const compact=parts.length>=COMPACT_AT,sec=(secrets||[]).filter(x=>x?.label),last=[...sec].reverse().find(x=>x.of),findBits=[...(compact&&gear.length?[`Found: ${gear.map(g=>esc(g.name)).join(', ')}.`]:[]),...(gear.length?[esc(WEAR_LINE)]:[]),...(sec.length?[`${last?`Secrets ${last.count}/${last.of}`:sec.length>1?'Secrets found':'Secret found'}: ${sec.map(x=>esc(x.label)).join(', ')}.`]:[])],found=findBits.length?`<p class="you-got-found" data-found title="${esc(gear.map(g=>g.name).join(', '))}">${findBits.join(' ')}</p>`:'';
  return `<div class="you-got level-rewards${compact?' you-got-compact':''}" data-you-got><small class="you-got-label">${won?'You got':'You kept'}</small><div class="you-got-row">${parts.join('')}</div>${found}</div>`;
 }
 
@@ -78,7 +82,6 @@ dialog[data-view=result] .you-got-item small{font-size:calc(var(--fs) * .85);col
 .m-mode dialog[data-view=result] .you-got-compact .you-got-item:not(:has(strong)) .you-got-text{display:none}
 .m-mode dialog[data-view=result] .you-got-compact .you-got-item:not(:has(strong)){padding:2px 4px}
 .m-mode dialog[data-view=result] .you-got-compact .you-got-row{flex-wrap:nowrap;gap:4px 6px}
-dialog[data-view=result] .you-got-found{display:none;margin:0;max-width:100%;text-align:center;font-size:14px;line-height:1.2;color:#e9dcc0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.m-mode dialog[data-view=result] .you-got-compact .you-got-found{display:block}
+dialog[data-view=result] .you-got-found{display:block;margin:0;max-width:100%;text-align:center;font-size:14px;line-height:1.2;color:#e9dcc0;white-space:normal;overflow-wrap:anywhere;text-wrap:balance}
 @media(max-height:500px) and (min-width:600px){.m-mode dialog[data-view=result] .level-result>.you-got{grid-column:2;grid-row:1;align-self:start;margin:2px 0 4px}
  .m-mode dialog[data-view=result] .level-result>.level-result-body{grid-row:2 / 8;max-height:calc(100dvh - 228px)}}`;

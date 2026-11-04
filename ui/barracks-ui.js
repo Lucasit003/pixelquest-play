@@ -7,7 +7,7 @@
 //   questsJournalHTML the Journal's Quests tab: active, available, coming later, done
 // Only chains whose companion has approved art are shown (questLive, party.js hireable): today, Wil's.
 import {COMPANIONS, ROLES, TRIAL_RUNS, hireable, levelBar, nextTrait, traitsAt, wageText, hireBlock} from '../game/party.js';
-import {QUESTS, QUEST_ITEMS, QUEST_IDS, questLive, questState, currentStep, questGold} from '../game/quests.js';
+import {QUESTS, QUEST_ITEMS, QUEST_IDS, questLive, questState, currentStep, questGold, keepsakeOf} from '../game/quests.js';
 import {levelById} from '../game/levels.js';
 import {FARM_NAME} from '../game/fasttravel.js';
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
@@ -139,7 +139,8 @@ export function resultCompanionHTML(save, party, found, scroll = '') {
   for (const f of found || []) {
     const Q = QUESTS[f.questId];
     if (f.item) out += `<p class="level-record level-quest" data-quest="${f.questId}">${scroll}<strong>Found: ${esc(f.name)}! ${f.questId === 'hobs-purse' ? 'Take it back to Farmer Hob.' : `Take it back to ${esc(Q.giver.name)}.`}</strong></p>`;
-    if (f.done) out += `<p class="level-record level-quest">${scroll}<strong>${esc(COMPANIONS[Q.companion].short)} can now join you at the Barracks!</strong></p>`;
+    /* improve20-r20n-nov4 #1d: a chain that ends on a win names its keepsake too */
+    if (f.done) out += `<p class="level-record level-quest">${scroll}<strong>${esc(COMPANIONS[Q.companion].short)} can now join you at the Barracks!${keepsakeOf(f.questId) ? ` Keepsake: ${esc(keepsakeOf(f.questId).name)}, in your Trophy Hall.` : ''}</strong></p>`;
   }
   if (party) {
     const c = COMPANIONS[party.id];
@@ -176,13 +177,15 @@ export function questsJournalHTML(save) {
   const groups = {active: [], open: [], locked: [], done: []};
   for (const id of live()) groups[questState(save, id)].push(id);
   const entry = (id, body, cls = '') => `<div class="card quest-entry ${cls}" data-quest="${id}"><span class="tag">${esc(QUESTS[id].giver.name.toUpperCase())}</span><h3>${esc(QUESTS[id].title)}</h3>${body}</div>`;
-  const reward = id => `<small class="subtle">Reward: ${esc(COMPANIONS[QUESTS[id].companion].short)} joins the Barracks, and ${questGold(id)} gold.</small>`;
+  /* improve20-r20n-nov4 #1c: the reward names the keepsake, and the done card says where it is */
+  const reward = id => `<small class="subtle">Reward: ${esc(COMPANIONS[QUESTS[id].companion].short)} joins the Barracks, ${questGold(id)} gold${keepsakeOf(id) ? `, and a keepsake, ${esc(keepsakeOf(id).name)}` : ''}.</small>`;
+  const kept = id => keepsakeOf(id) ? `<p class="quest-keepsake" data-keepsake="${esc(keepsakeOf(id).id)}"><span class="quest-keepsake-pic" aria-hidden="true" style="background-image:url(${esc(keepsakeOf(id).img || 'ui/skin/rewards/chest.png')})"></span><span>Keepsake: <strong>${esc(keepsakeOf(id).name)}</strong>, in your Trophy Hall.</span></p>` : '';
   const sec = (title, list) => list.length ? `<h3 class="level-chapter">${title}</h3><div class="quest-list">${list.join('')}</div>` : '';
   const active = groups.active.map(id => { const st = currentStep(save, id), w = stepWhere(id, st); return entry(id, `<p>${esc(QUESTS[id].blurb)}</p><p><strong>Now: ${esc(st?.text)}</strong>${w ? `<br><small>Where: ${esc(w)}</small>` : ''}</p>${reward(id)}`); });
   /* oct26-midgame: an available quest said "Talk to Farmer Hob" with no place; it names the place as an active step does */
   const open = groups.open.map(id => { const w = stepWhere(id, QUESTS[id].steps[0]); return entry(id, `<p>${esc(QUESTS[id].blurb)}</p><p><strong>${esc(QUESTS[id].steps[0].text)}</strong>${w ? `<br><small>Where: ${esc(w)}</small>` : ''}</p>${reward(id)}`); });
   const coming = groups.locked.map(id => entry(id, `<p>${esc(opensText(id))}</p>`, 'coming'));
-  const done = groups.done.map(id => entry(id, `<p>Done! ${esc(QUEST_ITEMS[QUESTS[id].reward.keepsake]?.story || '')}</p>`, 'done'));
+  const done = groups.done.map(id => entry(id, `<p>Done! ${esc(QUEST_ITEMS[QUESTS[id].reward.keepsake]?.story || '')}</p>${kept(id)}`, 'done'));
   const body = sec('Active', active) + sec('Available', open) + sec('Coming later', coming) + sec('Done', done);
   /* oct26-midgame: with every quest done the tab was a lone "Done" card; it says so, and where the next goal lives */
   const allDone = !active.length && !open.length && !coming.length && done.length;
@@ -199,7 +202,9 @@ export function questNewsText(save, moved) {
     if (m.done) {
       const c = COMPANIONS[m.companion];
       if (Q.steps.at(-1).kind === 'visit') say = {speaker: c.short, lines: [c.barks.join]};
-      toasts.push(`Quest complete: ${Q.title}! +${m.gold} gold. ${c.short} has joined the Barracks: hire him at the roster board.`);
+      /* improve20-r20n-nov4 #1d: the quest's last toast says what was earned, the keepsake included */
+      const k = keepsakeOf(m.questId);
+      toasts.push(`Quest complete: ${Q.title}! +${m.gold} gold. ${c.short} has joined the Barracks: hire him at the roster board.${k ? ` Keepsake: ${k.name}, in your Trophy Hall.` : ''}`);
     } else { const st = currentStep(save, m.questId); if (st) toasts.push(st.index === 1 ? `New quest: ${Q.title}. ${st.text}` : `Quest: ${st.text}`); }
   }
   return {toasts, say};

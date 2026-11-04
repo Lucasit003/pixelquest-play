@@ -1068,6 +1068,16 @@ html.m-mode .lib-power b{grid-area:name;font-size:13px;line-height:1.15}
 html.m-mode .lib-power small{grid-area:line;font-size:11px;line-height:1.2}
 html.m-mode .lib-power em{display:none}
 html.m-mode .lib-powers-more{margin:0;font-size:11px;max-width:90px}
+/* improve20-r20k-nov4 #8 (at 844x390 and 667x375 the tour's power cards were taller than their row, cut under the sticky foot): on a phone the
+   "…and N more" line goes under the row, so the four cards share the full width, two or three short lines each */
+html.m-mode dialog[data-view=tour] .lib-tour-show:has(>.lib-powers){flex-wrap:wrap;row-gap:2px}
+html.m-mode dialog[data-view=tour] .lib-tour-show>.lib-powers-more{flex:1 0 100%;max-width:none;text-align:center}
+html.m-mode dialog[data-view=tour] .lib-tour-show>.lib-power-need:empty{display:none}
+html.m-mode dialog[data-view=tour] .lib-tour-show>.lib-power-need{flex:1 0 100%;margin:0;text-align:center}
+@media(max-height:420px){html.m-mode dialog[data-view=tour] .lib-power{grid-template-columns:24px minmax(0,1fr);grid-template-areas:"ico name" "line line";align-items:center;padding:3px 6px}
+ html.m-mode dialog[data-view=tour] .lib-power .lib-power-ico{width:24px;height:24px}
+ html.m-mode dialog[data-view=tour] .lib-power .ico-ab{--s:24px!important}
+ html.m-mode dialog[data-view=tour] .lib-power small{line-height:1.15}}
 /* improve20-r18b-nov3 #6 (audit13 #15, shot 19: at 844x390 the power titles sat on their card tops and "…and 4 more powers to find" drew at
    about 8 px): the cards keep 8 px over the title, and the line is set at the cards' own text size (14 px, the Pixel Operator cut reads about
    10 px tall there) in a column wide enough for three lines */

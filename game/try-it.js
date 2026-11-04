@@ -9,7 +9,7 @@
    who has cleared nothing (or nothing at their level) gets the next open level instead, which is where the
    adventure would send them anyway (Goblin Camp for a new hero). There is no training dummy or practice arena in the
    game, and the arenas are endless-wave runs, so they are never picked. */
-import {LEVELS,levelOpen,levelDone,levelFogged} from './levels.js';
+import {LEVELS,levelOpen,levelDone,levelFogged,powerGate} from './levels.js';
 import {adviceLevel} from './tiers.js';
 import {levelReady} from './stage.js';
 
@@ -26,6 +26,7 @@ export function tryItLevel(save){
  const lv=save?.level||1,open=playable(save),fits=l=>adviceLevel(l,'normal')<=lv;
  const won=open.filter(l=>levelDone(save,l.id));
  const pick=(l,replay,why)=>l?{id:l.id,name:l.name,replay,why}:null;
+ /* improve20-r20l-nov4 #1: a power gate this hero has just opened (its pad open, not won yet, at the hero's advised level) is where the power was woken for, so it is the fight: the e4 card said "Wake Rallying Cry to open Minotaur Hollow", then the wake card sent the kid back to Orc Warcamp */const gate=open.filter(l=>powerGate(l)&&!levelDone(save,l.id)&&fits(l)).sort(byTier)[0];if(gate)return pick(gate,false,'gate');
  const safe=won.filter(fits).sort(byTier)[0];if(safe)return pick(safe,true,'cleared');
  const ahead=open.filter(l=>!levelDone(save,l.id)&&!l.optional).sort((a,b)=>(a.tier|0)-(b.tier|0))[0];
  if(ahead&&fits(ahead))return pick(ahead,false,'next');

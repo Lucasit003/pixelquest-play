@@ -25,7 +25,7 @@ export const FIRST_CORE=Object.freeze({
  'history-e-timelines':P([0,1,2,3,4,6],'1xrs8ea','drops the message-sending example (5); reading direction keeps its Try-it (6)'),
  'math-e-arrays':P([0,1,2,3,4,5],'efc9vq','drops a bigger fact (6) and the recap (7); groups, arrays, skip counting, facts and turn-around stay'),
  'math-e-multiply-bigger':P([0,1,2,3],'jdnuhi','keeps the whole first worked example (23 x 4: split, each part, add back); drops the second (36 x 5)'),
- 'cs-e-guess-number':P([0,1,2,3,4,5],'klf42l','drops the closing recap (6)'),
+ /* improve20-r20k-nov4 #7: step 5 reworked (the count method, worked example, Try-it id kept); reviewed: the path still holds it and drops only the recap */'cs-e-guess-number':P([0,1,2,3,4,5],'4nlvhk','drops the closing recap (6)'),
  'science-e-rocks-and-soil':P([0,1,3,4,5,7],'1awu965','drops grains and measuring (2) and the soil-forming timeline (6); weathering (5) stays for the erosion Try-it (7)'),
  'history-e-how-things-changed':P([0,1,2,3,5,6],'aas7w2','drops "first is older" (4; no pool question asks which is older); keeps step 6, which defines "straight before/after" that the pool asks')});
 /* First topics longer than 6 steps that play whole, and why (a cut would break the teaching) */

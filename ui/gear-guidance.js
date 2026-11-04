@@ -1,5 +1,5 @@
 /* Presentation rules use the same final stats as combat, including caps and set bonuses. */
-import {ITEMS,ITEM,MATS,shopOpen,fits,wornOf,MAX_STARS,FINISHES,finishFits,wornBy,SETS,SET_PIECES,statText,recipeOpen,recipe,canAfford} from '../game/gear.js';
+import {ITEMS,ITEM,MATS,shopOpen,fits,wornOf,MAX_STARS,FINISHES,finishFits,wornBy,SETS,SET_PIECES,statText,/* improve20-r20n-nov4 #4 */wholePct,GEAR_STAT,recipeOpen,recipe,canAfford} from '../game/gear.js';
 import {stats} from '../game/math.js';
 import {equipmentDPS} from '../game/power.js';
 import {CLASSES} from '../game/data.js';
@@ -58,10 +58,15 @@ export const adventureSkillsReady=s=>!!(s.delve?.runs||s.delve?.xp||s.skills?.cr
 /* oct24-progress (playtest r3): the Wayfarer's Coat card showed only a red ▼ although it finished the set, and wearing the
    Waders hid the Wayfarer's bonus it switched off. What equipping `id` does to every worn set: [{up, text}], one line per
    bonus switched on (up) or off. The 2-piece stats are already in the numbers; the line names where they come from. */
+/* improve20-r20n-nov4 #4 (R20L D: "loses -4% Ability wait time"): the set lines say a bonus in plain words, with no sign to undo. gained: the
+   2-piece bonus switched on ("4% faster ability wait", "+15 Health"); lost: the same bonus switched off ("its 4% faster ability wait", "its 15 extra Health") */
+export const SET_WORDS={cdr:n=>`${n}% faster ability wait`,speed:n=>`${n}% extra Speed`,crit:n=>`${n}% extra strong hit chance`};
+export const setGainText=(k,v)=>SET_WORDS[k]?SET_WORDS[k](wholePct(v)):statText(k,v);
+export const setLossText=(k,v)=>`its ${SET_WORDS[k]?SET_WORDS[k](wholePct(v)):`${Math.round(v)} extra ${GEAR_STAT[k]}`}`;
 export function setChanges(s,hero,id){const it=ITEM[id];if(!it)return [];const w=wornOf(s,hero),after={...w,[it.slot]:id},n=(worn,k)=>SET_PIECES[k].filter(p=>Object.values(worn).includes(p)).length,out=[];
- for(const [k,S] of Object.entries(SETS)){const a=n(w,k),b=n(after,k);if(a===b)continue;const two=Object.entries(S.two).map(([st,v])=>statText(st,v)).join(', ');
+ for(const [k,S] of Object.entries(SETS)){const a=n(w,k),b=n(after,k);if(a===b)continue;const two=Object.entries(S.two).map(([st,v])=>setGainText(st,v)).join(', '),lost=Object.entries(S.two).map(([st,v])=>setLossText(st,v)).join(' and ');
   if(b>a){if(b>=3&&a<3)out.push({up:true,text:`Completes ${S.name} set (3/3): ${S.three.text}`});else if(b>=2&&a<2)out.push({up:true,text:`${S.name} set 2/3: ${two}`});}
-  else{if(a>=3&&b<3)out.push({up:false,text:`Breaks ${S.name} set (${a} → ${b}): loses “${S.three.text}”`});if(a>=2&&b<2)out.push({up:false,text:`Breaks ${S.name} set (${a} → ${b}): loses ${two}`});}}
+  else{if(a>=3&&b<3)out.push({up:false,text:`Breaks ${S.name} set (${a} → ${b}): loses “${S.three.text}”`});if(a>=2&&b<2)out.push({up:false,text:`Breaks ${S.name} set (${a} → ${b}): loses ${lost}`});}}
  return out;}
 
 /* improve20-r8a-nov1 #1 (audit7 d1): the result card's Forge Slag, Imp Horn and Magma Core never said what they were for. A material from this

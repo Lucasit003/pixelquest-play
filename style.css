@@ -3505,6 +3505,17 @@ html.m-mode #modal#modal#modal#modal .order-form .order-check{grid-area:check;ma
 html.m-mode #modal#modal#modal#modal .order-form .order-answers{grid-area:tiles;margin:0}
 html.m-mode #modal#modal#modal#modal .order-form .order-answers button{min-width:72px;min-height:44px!important;font-size:20px}
 html.m-mode #modal#modal#modal#modal .order-form .tile-alt{grid-area:alt;margin:0}
+/* improve20-r20n-nov4 (round 20 lane R20N). Placed before the improve20-v-nov1 #18, picframe-nov2 and tablets-nov2 blocks.
+   #2: a just-accepted quest under a learning goal is a second, smaller "Then:" line under the goal (the icon stays beside the first) */
+html.in-town #objective:has(.goal-then){flex-wrap:wrap;row-gap:0}
+html.in-town #objective .goal-then{flex:1 1 100%;margin:2px 0 2px 40px;font-size:var(--fs);line-height:1.25;color:var(--ink-2);white-space:normal;text-align:left}
+.m-mode.in-town #objective .goal-then{margin-left:36px}
+/* #1c: the Journal's done card names its keepsake beside the keepsake's picture (existing art) */
+.quest-keepsake{display:flex;align-items:center;gap:8px;margin:6px 0 0}
+.quest-keepsake-pic{flex:none;width:40px;height:40px;background:center/48px 48px no-repeat;image-rendering:pixelated}
+.story-pic.keepsake-pic{background-size:48px 48px}
+/* #5 (R20L E: "Buy and wear · 400" wrapped its coin to a second line): the price never splits from its coin */
+.gear-price{white-space:nowrap;display:inline-block}
 /* improve20-v-nov1 #18: Text size 125/150% reached panels, dialogue and toasts, but not the quiz question, the HUD, the goal plate or
    the controls strip. They grow too, by less than the panels where the frame is fixed art (the HUD) or the screen is short (phones). The
    quiz rules below only set font-size, and only at 125/150, so the 100% card is exactly as lane M leaves it. */
@@ -3727,6 +3738,13 @@ dialog[data-view=help] #modal-content{display:flex;flex-direction:column;overflo
 .keepsakes .pixel-select{min-width:180px}
 .keepsakes p{flex:1 1 100%;margin:0;font-size:14px}
 .title-today{width:min(400px,36vw)}
+/* lead (4 Nov 2026, owner screenshot at about 1000 px wide: Today's goals covered the right half of Choose hero, Settings and Credits). On a
+   desktop the panel lives in the space right of the 300 px menu column and never crosses it. When that space is narrow, each prize goes
+   under its goal, and below 1100 px wide the panel's margins shrink to 16 px so it keeps a usable width. It stays bottom right: the top right
+   would cover the PIXELQUEST logo. */
+html:not(.m-mode) .title-today{left:calc(50% + 174px);right:28px;width:auto;max-width:400px}
+@media (max-width:1300px){html:not(.m-mode) .title-today li{grid-template-columns:14px minmax(0,1fr)}html:not(.m-mode) .title-today li em{grid-column:2;white-space:normal}}
+@media (max-width:1100px){html:not(.m-mode) .title-today{left:calc(50% + 166px);right:16px;bottom:16px}}
 .herocard-panel:has(.keepsakes) canvas{width:min(100%,900px,calc((100vh - 470px)*1.9))}
 .herocard-panel .keepsakes{align-self:stretch;justify-content:center}
 :root.m-mode .herocard-panel .keepsakes{grid-column:1/-1;gap:4px 10px;margin:0}:root.m-mode .keepsakes label{font-size:13px}:root.m-mode .keepsakes p{display:none}:root.m-mode .keepsakes .pixel-select{min-width:130px}
@@ -4492,6 +4510,11 @@ html:not(.map-open) .worldmap-rift,html.cine-on .worldmap-rift,.m-portrait .worl
 /* #5 (audit13 "also seen": two reds on a lesson step): Read to me while it reads is a pressed secondary button with gold words, so Next is the
    only red on the screen */
 html .edu-voice .edu-speak.speaking{border-image-source:url(ui/skin/pl-button-pressed.png)!important;color:var(--edu-gold,#f0d48a)!important}
+/* improve20-r20l-nov4 #2: a desktop result card with five buttons (a Heroic win with "Try it on Legendary" and a rune lead) squeezed every label
+   ("Try it on Legendar", "Return to Oakhaven" cut at the frame): with a fifth button the row may wrap, and each button keeps its own width. Placed before the tablets-nov2
+   block, whose test reads everything after it as touch-only */
+html:not(.m-mode) dialog[data-view=result] #modal-content .level-result:not([data-story2])>.modal-actions:has(>button:nth-of-type(5)){flex-wrap:wrap;row-gap:6px}
+html:not(.m-mode) dialog[data-view=result] #modal-content .level-result:not([data-story2])>.modal-actions:has(>button:nth-of-type(5))>button{flex:0 0 auto}
 /* tablets-nov2 (round 9 item 12): the tablet sweep (1024x768, 1180x820, 1280x800, 1366x1024, 1180x740 touch). A tablet is a touch screen at
    least 600 css px on its short side (ui/mobile.js tabletSize); phones in landscape are 430 px tall at most, so (min-height:600px) never
    reaches them, and every rule here sits under html.m-mode, so desktops are untouched. */
@@ -4620,3 +4643,8 @@ dialog[data-view=result] #modal-content #result-extra>.loss-more{display:flex;fl
 /* improve20-r20d-nov4 #3 (audit14 #8): a victory chest shows when it opens (its shake, then the pop), never as a greyed tile with no words */
 dialog[data-view=result] .result-chest:not(.open):not(.shake){visibility:hidden}
 dialog[data-view=result] #result-extra>.rating-key{margin:4px 0}
+/* improve20-r20k-nov4 #3: "More about the Library" (main.js libFold) folds the lessons list, subject cards and notes up to the second mastery */
+dialog[data-view=library] .lib-more{margin:8px 0;padding:0 10px;border-left:3px solid var(--gold,#e7c77e);background:rgba(231,199,126,.05)}
+dialog[data-view=library] .lib-more>summary{cursor:pointer;min-height:44px;display:flex;align-items:center;gap:8px;font-weight:700;color:var(--gold)}
+dialog[data-view=library] .lib-more>summary::before{content:'▸'}dialog[data-view=library] .lib-more[open]>summary::before{content:'▾'}dialog[data-view=library] .lib-more>summary::-webkit-details-marker{display:none}
+dialog[data-view=library] .lib-more>summary:focus-visible{outline:2px solid var(--gold);outline-offset:2px}

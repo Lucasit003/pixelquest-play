@@ -20,7 +20,7 @@ import {topicInSchoolMode} from '../academics/study-unlock.js';
 import {TIER_KEYS,TIERS} from './tiers.js';
 import {nextTask} from './skills.js';
 import {potionCount,potionKind,POTIONS} from './potions.js';
-import {nextQuestStep,questLive,QUESTS} from './quests.js';
+import {nextQuestStep,questLive,QUESTS,/* improve20-r20n-nov4 #2 */currentStep as questCurrent,questState as questStateOf,stepTarget,QUEST_ITEMS} from './quests.js';
 import {COMPANIONS,hireable} from './party.js';
 import {starSource} from './ladder-guide.js';
 import {nextShowpiece} from './furniture.js';
@@ -190,7 +190,19 @@ const upgradeFirst=(save,n)=>{const k=n?.target?.kind,u=n&&!n.powerGate&&k!=='pa
 const starterName=save=>starterOf(save?.hero)?.name||'your first power';
 /* improve20-r11f-nov2 #1: phone is the phone strip's shorter wording (ui/controls-tutorial.js), used only when the whole text does not fit; the power name stays */
 export function awakenStep(save,room){const n=starterName(save);return {id:'awaken',text:room==='library'?`Learn your first power, ${n}: start the short lesson.`:`Go to the Library: learn your first power, ${n}!`,...(room==='library'?{}:{phone:`Go to the Library: learn ${n}!`}),target:{kind:'library'}};}
-export function nextStep(save,{room}={}){goalSave=save;
+/* improve20-r20n-nov4 #2 (R20L B: after talking to Hob the goal stayed "Next adventure: Ashen Gate"): accepting a quest sets save.questLead
+   (additive within v9, core/save.js) to that quest's next step id; while that step is current the goal leads with it ("Quest: find Hob’s coin
+   purse on Bandit Road."), once. It goes when the step is done, or when the kid picks another goal (main.js: another level, or a lesson).
+   A learning step (a Library goal: a waiting wake, a quiz, practice, a test) is never covered: the quest is its `questThen`, the HUD's "Then:" line. */
+export function markQuestLead(save,moved){for(const m of moved||[]){if(!m||m.done||!questLive(m.questId))continue;const st=questCurrent(save,m.questId);if(st?.index===1)save.questLead=`quest-${m.questId}-1`;}return save?.questLead||null;}
+export function questLeadStep(save){const m=/^quest-(.+)-(\d+)$/.exec(typeof save?.questLead==='string'?save.questLead:'');if(!m||!questLive(m[1])||questStateOf(save,m[1])!=='active')return null;const st=questCurrent(save,m[1]);if(!st||st.index!==+m[2]||st.kind==='clear'&&!levelOpen(save,st.level))return null;
+ const l=st.kind==='clear'&&levelById(st.level),text=l&&st.item&&QUEST_ITEMS[st.item]?`Quest: find ${QUEST_ITEMS[st.item].name} on ${l.name}.`:`Quest: ${st.text[0].toLowerCase()+st.text.slice(1)}`;
+ return {id:save.questLead,text,target:stepTarget(m[1],st),quest:m[1],questLead:true};}
+/* the lead goes when the kid picks another goal: a level other than the step's, or a lesson (level null) */
+export function dropQuestLead(save,level=null){const q=questLeadStep(save);if(!save?.questLead)return false;if(q&&level&&q.target?.kind==='pad'&&q.target.id===level)return false;save.questLead=null;return true;}
+const learningStep=n=>n?.target?.kind==='library'||!!n?.powerGate;
+export function nextStep(save,opts={}){const n=baseStep(save,opts),q=questLeadStep(save);if(!q||n?.quest===q.quest&&n?.id===q.id)return n;return learningStep(n)?{...n,questThen:q}:q;}
+function baseStep(save,{room}={}){goalSave=save;
  if(gateShut(save))return awakenStep(save,room);
  /* newplayer-oct27: after a lost first fight the HUD no longer reads as if the child had never been to the gate; it offers the Library too, as the defeat card does */
  if(!levelDone(save,'prologue')){const lib=libraryOpening(save)&&awakened(save),n=starterName(save);return {id:'prologue',text:save?.levels?.prologue?.plays>0?(lib?`Goblins still hold the south gate. Try again, and use ${n}!`:'Goblins still hold the south gate. Try again, or awaken an ability at the Library first.'):lib?`Goblins at the south gate! Go and try ${n} on them.`:'Goblins at the south gate! Go and see.',target:{kind:'gate'}};}

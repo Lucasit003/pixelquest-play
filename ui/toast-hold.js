@@ -1,3 +1,4 @@
+import {readHold} from '../game/controls-tutorial.js';/* improve20-r20k-nov4 #1 */
 /* oct25-quizpolish: how long a toast stays up, and the Try-it key line's place in the queue (docs/playtest/oct25-tryit "Left over").
    A message can carry a hold (the Try-it key line: 6 s, a key to remember, read once); every other message stays
    max(3 s, 60 ms a character), as before. The hold is kept by message, so a key line that a banner interrupts and
@@ -10,7 +11,13 @@
 export const KID_MS=90,KID_FLOOR=4000;
 export const FIGHT_FLOOR=4000;
 /* improve20-r17b-nov3 #5 (kidsim4 k12): in a fight a toast keeps a 4 s floor (FIGHT_FLOOR; it was 3 s) */
-export const toastMs=(message,hold,fight=false)=>hold?.get(message)||(fight?Math.max(FIGHT_FLOOR,String(message??'').length*60,(String(message??'').match(/\S+/g)||[]).length*250):Math.max(KID_FLOOR,String(message??'').length*KID_MS,(String(message??'').match(/\S+/g)||[]).length*250));
+/* improve20-r20k-nov4 #1 (kidsim5 #15: "Found: Bramblejaw's Thorn Charm (Rare)! Wear it from Home →" and "Secret 1/3: 1 health potion" went before a kid
+   read them): a find (FIND_TOAST) stays up at least its reading time, R20I's readHold (4 s or 200 words a minute), in a fight too; while it is within that
+   time a line that asks to show at once waits behind it (findHeld), instead of cutting it. The result card lists every find of the run as well */
+export const FIND_TOAST=/^(Found: |Secret)/;
+export const findHeld=({shown,text,message,now,free})=>!!(shown&&text&&text!==message&&FIND_TOAST.test(text)&&now<free);
+export const toastMs=(message,hold,fight=false)=>hold?.get(message)||Math.max(FIND_TOAST.test(String(message??''))?readHold(message)*1000:0,toastBase(message,fight));
+const toastBase=(message,fight)=>(fight?Math.max(FIGHT_FLOOR,String(message??'').length*60,(String(message??'').match(/\S+/g)||[]).length*250):Math.max(KID_FLOOR,String(message??'').length*KID_MS,(String(message??'').match(/\S+/g)||[]).length*250));
 export function requeueShowing(queue,showing,next,max=3){if(showing&&showing!==next&&!queue.includes(showing)){queue.unshift(showing);if(queue.length>max)queue.pop();}return queue;}
 /* A message that asks to show at once (an armour or ability hint) waits while a held message is still within its hold. */
 export const heldUp=({shown,text,message,hold,now,free})=>!!(shown&&text!==message&&now<free&&hold?.has(text)&&!hold.has(message));
@@ -43,7 +50,8 @@ export const readEnough=(message,shownMs)=>shownMs>=Math.max(1500,(String(messag
    so it popped up again at the start of the NEXT level, 20 s later (Theo e1->e2, e3->e4; Nia m3). The victory card already shows the item: a
    Found line naming an item the card shows is done once the card is up. findName reads the item's name; cardFinds picks those lines. */
 export const findName=m=>(/^Found: (.+?) \(/.exec(String(m??''))||[])[1]||null;
-export const cardFinds=(lines,cardText)=>lines.filter(m=>{const n=findName(m);return !!n&&String(cardText??'').includes(n);});
+/* improve20-r20k-nov4 #1: the card lists the run's secret finds too (ui/result-strip.js), so a waiting Secret line is done once a card that names them is up */
+export const cardFinds=(lines,cardText)=>lines.filter(m=>{const n=findName(m),c=String(cardText??'');return n?c.includes(n):/^Secret/.test(String(m??''))&&/Secrets? (\d+\/\d+|found): /.test(c);});
 /* improve20-r13c-nov2 #5 (audit10 a14): the top (page px) that keeps a toast box clear of the hero's box in town: just above him (GAP px) when it
    fits under bounds.top, else just below him when it fits over bounds.bottom; null when they do not cross or neither fits. Pure */
 export const TOWN_TOAST_GAP=8;

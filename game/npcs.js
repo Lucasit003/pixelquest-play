@@ -123,7 +123,7 @@ export const VILLAGERS = {
   farmer_hob: {name: 'Farmer Hob', lines: [
     {when: {quest: {id: 'hobs-purse', state: 'open'}}, say: ['Bandits on the market road. Took the whole year’s savings, they did. Red Hand’s lot.', 'My boy Wil wants to go after them, but he’s never held more than a pitchfork.', 'Bandit Road runs off the forest path past the Warcamp. Mind the trees. They drop out of them.']},
     {when: {quest: {id: 'hobs-purse', step: 1}}, say: ['Bandit Road runs off the forest path past the Warcamp. Mind the trees. They drop out of them.']},
-    {when: {quest: {id: 'hobs-purse', step: 2}}, say: ['That’s it! Every coin!', 'Wil’s been sharpening a spear all week. Says if you’ll have him, he’ll guard your back.', 'Go and see him at the Barracks by the south gate.']},
+    {when: {quest: {id: 'hobs-purse', step: 2}}, say: ['That’s it! Every coin!', /* improve20-r20n-nov4 #1a: the thank-you keepsake */'Here, keep my lucky coin as thanks. It’s for your Trophy Hall.', 'Wil’s been sharpening a spear all week. Says if you’ll have him, he’ll guard your back.', 'Go and see him at the Barracks by the south gate.']},
     {when: {quest: {id: 'hobs-purse', step: 3}}, say: ['Wil’s waiting at the Barracks by the south gate. Go on, he’s been ready since dawn.']},
     {when: {quest: {id: 'hobs-purse', state: 'done'}}, say: ['The savings are back in the tin, and my boy marches with a hero. Mind he eats properly!']},
     {say: ['Apples, eggs and carrots, all from my own fields. Everything I grow goes to the Inn’s kitchen.']}]},

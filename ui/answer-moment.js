@@ -114,9 +114,11 @@ export function masteryCloser(save,t,road=learningRoad(save)){
  return mine?`${name} ${esc(road.done)}/${esc(road.total)} charged! ${left} to go.${lv}`:`Next ability: ${name}, ${left} away.${lv}`;
 }
 /* improve20-r16a-nov3 #3: awake = the names of abilities this mastery woke; the card repeats "<Ability> is awake!" under the banner */
+/* improve20-r20n-nov4 #3 (R20L C: "+6.67 Middle School Math"): the score line says a whole thing a kid understands, "+1 Math topic mastered";
+   the fractional points and the stage are no longer shown (the params stay for callers) */
 export function masteryMomentHTML(save,t,{score=0,total=0,points='',stage='',subjectName='',rune='',awake=[]}={}){
  const closer=masteryCloser(save,t);
- return `<div class="mastery-moment" data-mastery-moment><span class="mm-seal"><span class="am-seal" aria-hidden="true"></span></span><h2 class="mm-banner">Topic mastered!</h2><h3 class="mm-title">“${esc(t.title)}”</h3>${awake.length?`<p class="mm-awake" data-mm-awake>${awake.map(n=>`<b>${esc(n)}</b>`).join(' and ')} ${awake.length>1?'are':'is'} awake!</p>`:''}<p class="mm-score">${esc(score)} of ${esc(total)} right · +${esc(points)} ${esc(stage)} ${esc(subjectName)}</p>${closer?`<p class="mm-closer" data-mm-closer>${closer}</p>`:''}${rune}</div>`;
+ return `<div class="mastery-moment" data-mastery-moment><span class="mm-seal"><span class="am-seal" aria-hidden="true"></span></span><h2 class="mm-banner">Topic mastered!</h2><h3 class="mm-title">“${esc(t.title)}”</h3>${awake.length?`<p class="mm-awake" data-mm-awake>${awake.map(n=>`<b>${esc(n)}</b>`).join(' and ')} ${awake.length>1?'are':'is'} awake!</p>`:''}<p class="mm-score">${esc(score)} of ${esc(total)} right · +1 ${esc(subjectName)} topic mastered</p>${closer?`<p class="mm-closer" data-mm-closer>${closer}</p>`:''}${rune}</div>`;
 }
 /* improve20-m-nov1 (audit3 #18, IMPROVE20 round 3 item 13): the placement result was small text. It is now a short moment with existing
    art: the Library's open book stamping in over the victory sunburst, the starting grade (or "High School") on the victory banner, what the
