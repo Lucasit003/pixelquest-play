@@ -1095,6 +1095,17 @@ html.m-mode dialog.pic-zoomed>.text-zoom>.pic-text.pic-text{position:static;widt
 /* improve20-r14c-nov3 #6 (picframe2 follow-up): on a phone the zoom badge sits on the text card's top-right corner, over the end of its title
    ("[10, 14, 19, 23, 28, 3…"); the title keeps that corner clear, so it wraps before the badge */
 html.m-mode dialog:is([data-view=placement],[data-view=lesson-quiz]):not(.pic-zoomed) .question-reading>.pic-text:has(+.quiz-zoom) .pt-title:first-child{padding-right:26px}
+/* improve20-r20m-nov4 #1 (R20F shot 05: a tall empty band under the picture at 1280x720): main.js fitLessonPic may stack a desktop step (.desk-stack):
+   the guide and his words across the top, the picture centred under them as wide as the height allows, then the Try-it */
+html:not(.m-mode) dialog[data-view=lesson] .lesson-body.lesson-body.lesson-body.lesson-body.lesson-body.desk-stack{grid-template-columns:minmax(0,1fr);align-content:start}
+html:not(.m-mode) dialog[data-view=lesson] .lesson-body.lesson-body.lesson-body.lesson-body.lesson-body.desk-stack>.edu-guide-row{grid-column:1;grid-row:1}
+html:not(.m-mode) dialog[data-view=lesson] .lesson-body.lesson-body.lesson-body.lesson-body.lesson-body.desk-stack>.lesson-visual{grid-column:1;grid-row:2;justify-self:center;width:min(100%,var(--pic-w));min-width:0;margin-left:auto;margin-right:auto}
+html:not(.m-mode) dialog[data-view=lesson] .lesson-body.lesson-body.lesson-body.lesson-body.lesson-body.desk-stack>.lesson-check{grid-column:1;grid-row:3}
+html:not(.m-mode) dialog[data-view=lesson] .lesson-body.lesson-body.lesson-body.lesson-body.lesson-body.desk-stack>.edu-guide-row>.edu-speech{flex:1 1 0}
+html:not(.m-mode) dialog[data-view=lesson] .lesson-body.lesson-body.lesson-body.lesson-body.lesson-body.desk-stack>.lesson-visual>#lesson-pic{margin-left:auto;margin-right:auto}
+/* improve20-r20m-nov4 #4 (R20G open: the second-subject card was never shot on a phone): at 667x375 the cards stack and the ability card
+   filled the visible area, so "Start at Grade N", the one red, sat below the fold. On a narrow short phone that card comes first */
+@media(max-height:400px) and (max-width:699px){.m-mode dialog[data-view=library] .library-content:has(>.edu-next [data-second-start]){display:flex;flex-direction:column}.m-mode dialog[data-view=library] .library-content:has(>.edu-next [data-second-start])>.edu-next{order:-1}}
 /* oct26-phonelesson: phone lesson legibility (docs/playtest/oct26-phonelesson). The lesson sheet takes the whole screen like every other
    phone sheet (it was 92dvh, 29-31px lost). The picture column is exactly as wide as the picture (min-content): a long equation line above
    the picture used to set the column to its full length and squeeze the step's text to one word a line (AP Micro, APUSH). main.js

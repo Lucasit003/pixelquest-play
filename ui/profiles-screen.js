@@ -15,11 +15,14 @@ let manageOn=false;
 /* improve20-r20f-nov4 #6 */export const EMPTY_NAME='Type the new learner\'s name first, then press Add.';
 export const manageToggleHTML=on=>`<p class="learner-manage"><button type="button" class="ghost" data-act="manage" aria-pressed="${on}">${on?'Done managing':'Manage'}</button></p>`;
 /* improve20-r20f-nov4 #6 (audit14 #17, shot 19): right after Add only the new learner's Play is red (`fresh`, its id); the others are plain */
+/* improve20-r20m-nov4 #3 (R20F open: with several learners and no fresh add, every Play was red): the one red Play is the fresh add, else the
+   learner played most recently (`played`, stamped on a switch), else the first in the list; the learner playing now has no Play */
+export function leadLearner(idx,fresh=null){const others=(idx?.list||[]).filter(p=>p.id!==idx.active);if(fresh&&others.some(p=>p.id===fresh))return fresh;let top=null;for(const p of others)if(!top||(p.played||0)>(top.played||0))top=p;return top?.id??null;}
 export function html(manage=manageOn,{fresh=null}={}){
- const idx=readProfiles();
+ const idx=readProfiles(),lead=leadLearner(idx,fresh);
  const rows=idx.list.map(p=>{const s=profileSummary(p.id),c=CLASSES[s.hero],active=p.id===idx.active;
   return `<li class="learner-row${active?' active':''}" data-id="${p.id}">${icon(active?'key':'book-open',{size:32})}<div><strong>${esc(p.name)}</strong><small>${s.started&&c?`${esc(c.name)} · Level ${s.level}`:'New adventure'}</small></div>`+
-   (active?'<span class="tag">Playing now</span>':`<button${fresh&&fresh!==p.id?'':' class="primary"'} data-act="play">Play</button>`)+
+   (active?'<span class="tag">Playing now</span>':`<button${/* improve20-r20m-nov4 #3 */lead===p.id?' class="primary"':''} data-act="play">Play</button>`)+
    (manage?`<button data-act="rename" aria-label="Rename ${esc(p.name)}">Rename</button>${active||idx.list.length<2?'':`<button data-act="remove" class="danger" aria-label="Remove ${esc(p.name)}">Remove</button>`}`:'')+`</li>`;}).join('');
  return `<div class="learners${manage?' is-managing':''}"><p class="subtle">Each learner keeps their own heroes and progress on this device.</p><ul>${rows}</ul>${manageToggleHTML(manage)}`+
   `<form class="learner-new"><label for="learner-name">New learner</label><input id="learner-name" maxlength="20" placeholder="Name" autocomplete="off"><button type="submit">Add</button></form><p id="learner-msg" class="subtle" aria-live="polite"></p></div>`;

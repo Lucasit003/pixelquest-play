@@ -10,6 +10,7 @@ import {asleep} from '../academics/awakening.js';
 import {drawPixelText} from '../ui/canvas-ui.js';
 import {sfx} from '../core/audio.js';
 import {earnTitles} from '../game/titles.js';
+/* improve20-r20m-nov4 #2 */import {bannerActive} from '../gfx/stage-view.js';
 export const POCKET={rx:36,ry:30,lift:4,chestR:20,reach:130,see:110};
 const TINT={elderwood:'#8fe6a0',emberkeep:'#ffb36b',veilmoor:'#c6a8ff'};
 const IMG={};const img=src=>{if(typeof Image==='undefined')return null;if(!IMG[src]){const i=new Image();i.src=new URL(`../${src}`,import.meta.url).href;IMG[src]=i;}return IMG[src].complete&&IMG[src].naturalWidth?IMG[src]:null;};
@@ -43,6 +44,10 @@ export const nearSealChest=w=>{const z=w.aseal,p=w.player;return !!z&&z.broken&&
 /* drawing: depth-sorted items (World.enemyLayer). The barrier: two rune pillars and a translucent dome between them over the chest, one pip
    per ability still needed (lit as each different ability lands), and its words above it while the hero is near. Reduced motion holds it still. */
 const DOME_H=46;
+/* improve20-r20m-nov4 #2 (R20J: the words sat over the far verge, under the level toasts and the WAVE CLEARED banner): they are drawn on the road just under
+   the pocket (WORDS_BELOW units below its base), and only while the hero is near and no centre-screen beat (stage-view bannerActive) is up */
+export const WORDS_BELOW=20;
+export const sealWordsDue=(w,z)=>!!z&&!z.broken&&!!w?.player&&sealDist(w,z)<POCKET.see+40&&!bannerActive(w);
 function pillar(c,x,by,tint,a){c.fillStyle='#2b2438';c.fillRect(x-4,by-30,8,30);c.fillStyle='#4a3f5c';c.fillRect(x-4,by-30,3,30);c.fillStyle='#1a1426';c.fillRect(x-5,by-2,10,3);c.fillRect(x-5,by-33,10,4);
  c.globalAlpha=a;c.fillStyle=tint;c.fillRect(x-1,by-25,3,3);c.fillRect(x-1,by-18,3,3);c.fillRect(x-1,by-11,3,3);c.globalAlpha=1;}
 export function sealLayer(w,c,t,dt=1/60){const z=w.aseal;if(!z)return [];const still=w.motion===false,out=[];z.pulse=Math.max(0,z.pulse-dt);z.burst=Math.max(0,z.burst-dt*1.2);
@@ -58,8 +63,10 @@ export function sealLayer(w,c,t,dt=1/60){const z=w.aseal;if(!z)return [];const s
    const k=9,sp=still?0:t*.35;c.fillStyle='#ffffff';for(let i=0;i<k;i++){const f=((i/k+sp)%1),ang=Math.PI+f*Math.PI,px=cx+Math.cos(ang)*rx,py=by+Math.sin(ang)*DOME_H;c.globalAlpha=.4+.6*Math.sin(f*Math.PI);c.fillRect(Math.round(px)-1,Math.round(py)-1,3,3);}
    c.globalAlpha=1;pillar(c,cx-rx-6,by+2,z.tint,Math.min(1,a));pillar(c,cx+rx+6,by+2,z.tint,Math.min(1,a));
    const n=z.def.cast,gap=9,x0=cx-(n-1)*gap/2,py=by-DOME_H-8;for(let i=0;i<n;i++){const on=i<z.hits.size,px=Math.round(x0+i*gap);c.globalAlpha=1;c.fillStyle='#1a1426';c.fillRect(px-4,py-4,8,8);c.fillStyle=on?'#fff1a8':z.tint;c.globalAlpha=on?1:.5;c.fillRect(px-3,py-3,6,6);}
-   c.globalAlpha=1;if(sealDist(w,z)<POCKET.see+40){const nw=wokenCount(w.save),short=nw<z.def.awake;drawPixelText(c,short?`NEEDS ${z.def.awake} ABILITIES: YOU HAVE ${nw}`:`CAST ${z.def.cast} DIFFERENT ABILITIES`,cx,py-8,{align:'center',color:short?'#ffd27a':'#eaffef',outline:'#18122a'});}}
+   c.globalAlpha=1;}
   else{/* broken: the pillars stay, dark; shards on the ground; a burst as it breaks */pillar(c,cx-rx-6,by+2,z.tint,.15);pillar(c,cx+rx+6,by+2,z.tint,.15);c.globalAlpha=.4;c.fillStyle=z.tint;for(let i=0;i<9;i++){const ang=i/9*Math.PI*2;c.fillRect(Math.round(cx+Math.cos(ang)*rx*.9),Math.round(by+Math.sin(ang)*6),2,2);}
    if(z.burst>0){const r=(1-z.burst)*rx*2;c.globalAlpha=z.burst;c.strokeStyle='#fff1a8';c.lineWidth=2;c.beginPath();c.ellipse(cx,by-DOME_H/2,r,r*.7,0,0,Math.PI*2);c.stroke();for(let i=0;i<14;i++){const ang=i/14*Math.PI*2+.3;c.fillStyle=i%2?'#fff1a8':z.tint;c.fillRect(Math.round(cx+Math.cos(ang)*r),Math.round(by-DOME_H/2+Math.sin(ang)*r*.7),3,3);}}}
   c.restore();}});
+ /* improve20-r20m-nov4 #2: the words are drawn last (over the hero walking past on the road), not in the pocket's depth slot */
+ out.push({y:1e9,draw:()=>{if(!sealWordsDue(w,z))return;const nw=wokenCount(w.save),short=nw<z.def.awake;c.save();c.globalAlpha=1;drawPixelText(c,short?`NEEDS ${z.def.awake} ABILITIES: YOU HAVE ${nw}`:`CAST ${z.def.cast} DIFFERENT ABILITIES`,cx,by+WORDS_BELOW,{align:'center',color:short?'#ffd27a':'#eaffef',outline:'#18122a'});c.restore();}});
  return out;}

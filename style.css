@@ -4510,6 +4510,9 @@ html:not(.map-open) .worldmap-rift,html.cine-on .worldmap-rift,.m-portrait .worl
 /* #5 (audit13 "also seen": two reds on a lesson step): Read to me while it reads is a pressed secondary button with gold words, so Next is the
    only red on the screen */
 html .edu-voice .edu-speak.speaking{border-image-source:url(ui/skin/pl-button-pressed.png)!important;color:var(--edu-gold,#f0d48a)!important}
+/* improve20-r20m-nov4 #4 (R20G open: the placement check's Stop button sat centred, at the end of a top row that stopped short of the picture):
+   with a picture the top row spans every column, so placement-stop-btn (margin-left:auto) sits at the right like the other top-row controls */
+@media(min-height:501px){#modal#modal#modal#modal#modal[data-view=placement] .question.qf>.question-reading:has(>:is(#quiz-pic,.question-text-card)){grid-template-areas:"top top top" "guide say pic" "guide read pic"}}
 /* improve20-r20l-nov4 #2: a desktop result card with five buttons (a Heroic win with "Try it on Legendary" and a rune lead) squeezed every label
    ("Try it on Legendar", "Return to Oakhaven" cut at the frame): with a fifth button the row may wrap, and each button keeps its own width. Placed before the tablets-nov2
    block, whose test reads everything after it as touch-only */

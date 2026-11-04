@@ -14,6 +14,7 @@
    hidden input a typed answer would, so it is graded by the same code: nothing new for XP, retirement or mastery. */
 import {accepts,choicesOf} from '../game/math.js';
 import {rungOf} from './lessons.js';
+/* improve20-r20m-nov4 #4 */import {isMoneyItem} from './money-shown.js';
 
 export const TILE_MAX=4;
 const CARDINAL=['north','south','east','west'];
@@ -48,12 +49,15 @@ function candidates(q){
 const key=v=>String(v).trim().toLowerCase();
 const h=s=>{let x=2166136261;for(const c of String(s)){x^=c.charCodeAt(0);x=Math.imul(x,16777619)>>>0;}return x;};
 
+/* improve20-r20m-nov4 #4 (R20G open: the sales-tax tiles offered "$0.00" from the off-by-one rule): a money amount of tax that is not zero never
+   offers zero as a wrong tile (no tax on a priced item is never a sensible slip); the tiles still keep exactly one accepted option */
+export const noZeroTax=q=>Number(String(q?.answer??'').trim())>0&&/\btax(?:es)?\b/i.test(String(q?.prompt||''))&&isMoneyItem(q);
 /* [{value,label}] (answer included, 3-4 tiles) or null. Numbers in order; words in a fixed order from the item's id, so the
    answer is not always first and a retake shows the same tiles. */
 export function tileChoices(q){
  if(!q||choicesOf(q))return null;const a=String(q.answer??'').trim();if(!SHORT.test(a))return null;
- const seen=new Set([key(a)]),d=[];
- for(const c of candidates(q)){const k=key(c);if(!c||seen.has(k)||!(SHORT.test(c)||/^[A-Za-z]{1,12}'s$/.test(c))||accepts(c,q))continue;seen.add(k);d.push(c);if(d.length>=TILE_MAX-1)break;}
+ const seen=new Set([key(a)]),d=[],nz=noZeroTax(q);
+ for(const c of candidates(q)){const k=key(c);if(!c||nz&&Number(c)===0||seen.has(k)||!(SHORT.test(c)||/^[A-Za-z]{1,12}'s$/.test(c))||accepts(c,q))continue;seen.add(k);d.push(c);if(d.length>=TILE_MAX-1)break;}
  if(d.length<2)return null;
  const all=[a,...d];
  if(/^\d+$/.test(a))all.sort((x,y)=>x-y);else all.sort((x,y)=>h(q.id+'|'+x)-h(q.id+'|'+y));

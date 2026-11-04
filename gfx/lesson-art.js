@@ -376,15 +376,16 @@ export const PRIMITIVES=Object.freeze(Object.keys(DRAW));
    number k of device pixels per unit (its CSS width snapped down to 640*k/dpr) and gets .pixel-fit, which
    style.css renders with image-rendering:pixelated, so sprites and theater scenes are never resampled (style
    rule 2). When snapping would lose more than a third of the room (or on phones) it keeps the old fit and smooth scaling. */
-export function crispCtx(el){const dpr=globalThis.devicePixelRatio||1,live=!!(el.style&&el.clientWidth);if(live)el.style.width='';
+/* improve20-r20m-nov4 #1: el.pqH (picture units, more than PIC_H) asks for a taller lesson frame (main.js tallPic); the context carries it as pqH */
+export function crispCtx(el){const dpr=globalThis.devicePixelRatio||1,live=!!(el.style&&el.clientWidth),PH=el.pqH>PIC_H?el.pqH:PIC_H;if(live)el.style.width='';
  /* content box: clientWidth/Height include padding, the CSS width may include the border too (border-box) */
  let padX=0,padY=0,extra=0;if(live&&typeof getComputedStyle==='function'){const cs=getComputedStyle(el),n=v=>parseFloat(v)||0;padX=n(cs.paddingLeft)+n(cs.paddingRight);padY=n(cs.paddingTop)+n(cs.paddingBottom);
   if(cs.boxSizing==='border-box')extra=padX+n(cs.borderLeftWidth)+n(cs.borderRightWidth);}
- const room=live?Math.min(el.clientWidth-padX,el.clientHeight?(el.clientHeight-padY)*PIC_W/PIC_H:Infinity):PIC_W;
+ const room=live?Math.min(el.clientWidth-padX,el.clientHeight?(el.clientHeight-padY)*PIC_W/PH:Infinity):PIC_W;
  /* snap only when the whole-number size keeps at least 65% of the room (style rule 2: letterbox before blur); a smaller one would be too small, so it fits smoothly instead */
  const kf=Math.floor(dpr*room/PIC_W),fit=live&&kf>=1&&PIC_W*kf/dpr>=.65*room,k=Math.max(1,Math.min(4,fit?kf:Math.ceil(dpr*room/PIC_W)));
  if(fit){el.style.width=`${PIC_W*k/dpr+extra}px`;el.classList?.add('pixel-fit');}else el.classList?.remove('pixel-fit');
- if(el.width!==PIC_W*k){el.width=PIC_W*k;el.height=PIC_H*k;}const ctx=el.getContext('2d');ctx.setTransform?.(k,0,0,k,0,0);
+ if(el.width!==PIC_W*k||el.height!==PH*k){el.width=PIC_W*k;el.height=PH*k;}const ctx=el.getContext('2d');ctx.setTransform?.(k,0,0,k,0,0);if(ctx)ctx.pqH=PH;
  /* oct25-quizpolish (P7): labels grow to LABEL_MIN CSS px on a phone (pixelText) */
  if(ctx)ctx.pqUnit=live&&el.ownerDocument?.documentElement?.classList?.contains('m-mode')?room/PIC_W:0;
  /* improve20-j-nov1 #3: CSS px per picture unit on every screen (0 off the page), for labels that ask for a size in CSS px (lesson-board.js helper labels) */
@@ -469,12 +470,13 @@ export const lastFit=()=>fitLast;
 const stripPic=x=>Array.isArray(x)?x.map(stripPic):x&&typeof x==='object'?Object.fromEntries(Object.entries(x).filter(([k])=>k!=='count'&&k!=='solve')):x;
 const solvePic=x=>Array.isArray(x)?x.map(solvePic):x&&typeof x==='object'?{...x,solve:true}:x;
 /* the fit for a picture list: {s,cx,cy} or null (nothing to gain, or no canvas to measure on) */
-export function fitOf(list,o={}){const MX=o.fitMax||FIT_MAX,MG=o.fitMargin??FIT_MARGIN;let key;try{key=JSON.stringify(stripPic(list))+(o.fitMax?`|${MX}|${MG}`:'');}catch{return null;}if(FITS.has(key))return FITS.get(key);
+/* improve20-r20m-nov4 #1: o.fitH, a taller frame's height in units (the ink is still measured in the PIC_W x PIC_H art space) */
+export function fitOf(list,o={}){const MX=o.fitMax||FIT_MAX,MG=o.fitMargin??FIT_MARGIN,FH=o.fitH>PIC_H?o.fitH:PIC_H;let key;try{key=JSON.stringify(stripPic(list))+(o.fitMax?`|${MX}|${MG}`:'')+(FH>PIC_H?`|h${FH}`:'');}catch{return null;}if(FITS.has(key))return FITS.get(key);
  let out=null;try{const doc=globalThis.document;const cv=typeof OffscreenCanvas==='function'?new OffscreenCanvas(PIC_W,PIC_H):doc?.createElement?.('canvas');if(cv){cv.width=PIC_W;cv.height=PIC_H;const x=cv.getContext('2d');
   if(x?.getImageData){let x0=PIC_W,y0=PIC_H,x1=-1,y1=-1;
    for(const v of [stripPic(list),solvePic(stripPic(list))]){x.setTransform(1,0,0,1,0,0);x.clearRect(0,0,PIC_W,PIC_H);const c=pixelText(x);try{for(const one of v){const f=DRAW[one?.t];if(f)f(c,one,1,{...o,reduced:true});}}catch{continue;}
     const d=x.getImageData(0,0,PIC_W,PIC_H).data;for(let yy=0;yy<PIC_H;yy++)for(let xx=0;xx<PIC_W;xx++)if(d[(yy*PIC_W+xx)*4+3]>24){if(xx<x0)x0=xx;if(xx>x1)x1=xx;if(yy<y0)y0=yy;if(yy>y1)y1=yy;}}
-   if(x1>=x0&&y1>=y0){const bw=x1-x0+1,bh=y1-y0+1,sc=Math.min(MX,(PIC_W-2*MG)/bw,(PIC_H-2*MG)/bh);if(sc>=1.15)out={s:sc,cx:(x0+x1+1)/2,cy:(y0+y1+1)/2,box:[x0,y0,bw,bh]};}}}}catch{out=null;}
+   if(x1>=x0&&y1>=y0){const bw=x1-x0+1,bh=y1-y0+1,sc=Math.min(MX,(PIC_W-2*MG)/bw,(FH-2*MG)/bh);if(sc>=1.15)out={s:sc,cx:(x0+x1+1)/2,cy:(y0+y1+1)/2,box:[x0,y0,bw,bh]};}}}}catch{out=null;}
  if(FITS.size>200)FITS.delete(FITS.keys().next().value);FITS.set(key,out);return out;}
 /* improve20-r15a-nov3 #7 (kidsim3 k19: an empty frame beside "How many cents are 9 nickels?"): does a picture draw anything at the end of its
    animation? Drawn once off screen on a clear canvas without its board (stripped of count/solve unless solve is asked), true when any pixel is
@@ -489,9 +491,11 @@ export function picInk(pic,{solve=false,p=1}={}){const list=[].concat(pic??[]).f
 export const labelProbe={on:false,min:Infinity,list:[],rects:[],reset(){this.on=true;this.min=Infinity;this.list=[];this.rects=[];},note(t,em){const m=t.getTransform?.(),dev=t.pqDev||1,px=em*Math.hypot(m?.a||1,m?.b||0)/dev;this.list.push(px);if(px<this.min)this.min=px;},
  rect(t,x,y,w,em,al,bl,text){const m=t.getTransform?.();if(!m||m.b||m.c||!t.pqDev)return;/* live canvases only (crispCtx sets pqDev), not fitOf's off-screen ink pass */const dev=t.pqDev||1,l=al==='center'?x-w/2:al==='right'?x-w:x,base=bl==='top'?y+em*13/16:bl==='middle'?y+em*5/16:y,top=base-em*10/16,h=em*10/16;this.rects.push({x:(m.a*l+m.e)/dev,y:(m.d*top+m.f)/dev,w:w*m.a/dev,h:h*m.d/dev,text});}};
 export function drawPic(ctx,pic,p=1,o={}){const list=Array.isArray(pic)?pic:[pic],q=o.reduced?1:clamp(p);
- ctx.save();loadCanvasUI();ctx.fillStyle=PAPER;ctx.fillRect(0,0,PIC_W,PIC_H);drawPanel(ctx,'parchment',0,0,PIC_W,PIC_H,{scale:2});
- const lessonFit=o.fit==null&&!ctx.pqFit&&!!ctx.pqLessonFit,fitOn=!!(o.fit??(ctx.pqFit||lessonFit))&&!list.some(x=>x?.t==='theater');if(fitOn)o={...o,tight:true,...(lessonFit?{fitMax:LESSON_FIT_MAX,fitMargin:LESSON_FIT_MARGIN}:{})};const fit=fitOn?fitOf(list,o):null,u0=ctx.pqUnit,c0=ctx.pqCss;fitLast=fit;
- if(fit){ctx.translate(PIC_W/2,PIC_H/2);ctx.scale(fit.s,fit.s);ctx.translate(-fit.cx,-fit.cy);if(u0>0)ctx.pqUnit=u0*fit.s;if(c0>0)ctx.pqCss=c0*fit.s;}
+ /* improve20-r20m-nov4 #1: a taller lesson frame (ctx.pqH) gets a taller parchment; the fit centres in it, any other picture sits at its middle */
+ const PH=ctx.pqLessonFit&&ctx.pqH>PIC_H?ctx.pqH:PIC_H;
+ ctx.save();loadCanvasUI();ctx.fillStyle=PAPER;ctx.fillRect(0,0,PIC_W,PH);drawPanel(ctx,'parchment',0,0,PIC_W,PH,{scale:2});
+ const lessonFit=o.fit==null&&!ctx.pqFit&&!!ctx.pqLessonFit,fitOn=!!(o.fit??(ctx.pqFit||lessonFit))&&!list.some(x=>x?.t==='theater');if(fitOn)o={...o,tight:true,...(lessonFit?{fitMax:LESSON_FIT_MAX,fitMargin:LESSON_FIT_MARGIN,...(PH>PIC_H?{fitH:PH}:{})}:{})};const fit=fitOn?fitOf(list,o):null,u0=ctx.pqUnit,c0=ctx.pqCss;fitLast=fit;
+ if(fit){ctx.translate(PIC_W/2,PH/2);ctx.scale(fit.s,fit.s);ctx.translate(-fit.cx,-fit.cy);if(u0>0)ctx.pqUnit=u0*fit.s;if(c0>0)ctx.pqCss=c0*fit.s;}else if(PH>PIC_H)ctx.translate(0,(PH-PIC_H)/2);
  try{const c=pixelText(ctx);
   for(const one of list){const f=DRAW[one?.t];if(!f)throw new Error(`lesson-art: unknown primitive ${one?.t}`);f(c,one,q,o);}}
  finally{if(fit){ctx.pqUnit=u0;ctx.pqCss=c0;}ctx.restore();}}

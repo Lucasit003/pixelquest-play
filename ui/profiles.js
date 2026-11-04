@@ -51,6 +51,8 @@ try{fixDefaultNames();}catch{}
   const cur=activeRaw(L);if(cur)L.setItem(SLOT(idx.active),cur);
   /* An explicit fresh v5 save prevents load() from falling back to another learner's global rollback keys. */
   const next=L.getItem(SLOT(want));L.setItem(KEY,next??JSON.stringify(fresh()));
+  /* improve20-r20m-nov4 #3: the learner switched away from is stamped `played` (ms), so the picker can lead with the last one played */
+  const was=idx.list.find(p=>p.id===idx.active);if(was)was.played=Date.now();
   idx.active=want;writeProfiles(idx);
  }catch{}
 })();
