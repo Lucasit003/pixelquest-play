@@ -94,4 +94,6 @@ export function promptHTML(text){
  return `${H(r.head)}<span class="q-code">${r.lines.map(l=>`<code>${H(l)}</code>`).join('')}</span>${r.ask?`<span class="q-code-ask">${H(r.ask)}</span>`:''}`;
 }
 /* a question as shown above its choices: the stem when the buttons carry the options, code lines as a block, every character escaped */
-export const questionHTML=q=>promptHTML(shownPrompt(q));
+/* improve20-r21a-nov4 #7 (audit15 #19): a shown multiplication reads "4 × 8", not "4 x 8" (display only: the stored prompt, its id and its narration are unchanged) */
+export const timesSign=t=>String(t??'').replace(/(\d)\s?x\s?(?=\d)/g,'$1 × ');
+export const questionHTML=q=>promptHTML(timesSign(shownPrompt(q)));

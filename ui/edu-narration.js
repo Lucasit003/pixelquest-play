@@ -41,6 +41,10 @@ export function speechText(text){
   .replace(/\s+/g,' ').trim();
 }
 export const clipKey=(text,voice=VOICE)=>hash(`${voice}|${speechText(text)}`);
+/* improve20-r21a-nov4 #1: what Kokoro is handed when a clip is recorded. Its espeak phonemizer reads a decimal next to a full stop as
+   two numbers ("0.4 is four tenths." became "zero. four"), so the recorder spells each decimal out ("0 point 4"; money such as $0.75 is left to the voice). It is not part of
+   the clip key: keys still hash speechText, so no clip already recorded changes, and the browser voice reads speechText as before. */
+export const kokoroText=text=>speechText(text).replace(/(?<![\w.$£€])(\d+)\.(\d+)(?!\d|\.\d)/g,(m,a,b)=>`${a} point ${[...b].join(' ')}`);
 
 /* What the lesson player says for a step, and for each kind of Try-it feedback. The generator
    records exactly these lines, so they are the single source of truth for both. */

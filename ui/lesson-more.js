@@ -1,8 +1,17 @@
 /* improve20-r7c-nov1 #4 (audit6 #22): a Middle or High School step over MORE_WORDS words shows its first sentences (up to about that many) and a
    "more" button for the rest. The step's TEXT only: a Try-it prompt is never cut (its id comes from its text), and Read to me reads it all. */
 export const MORE_WORDS=50;
-export function splitSay(say){const txt=String(say||''),n=txt.trim().split(/\s+/).length;if(n<=MORE_WORDS)return [txt,''];
- const cuts=[...txt.matchAll(/[.!?](?=\s+[A-Z0-9"“(])/g)].map(m=>m.index+1).filter(i=>{const w=txt.slice(0,i).trim().split(/\s+/).length;return w>=15&&w<=MORE_WORDS&&n-w>=6;});
+/* improve20-r21a-nov4 #5 (audit15 #14, shot 28: "Nested loops" step 4 showed the sentence about the last loop while its picture and eq showed
+   the folded sentence's 18): with the step passed in, a fold never hides the sentence its eq (or its picture's text) works out. That sentence is the
+   last one naming the eq's result (its last number), or else the last number in the picture's own text; the fold may only start after it, and a
+   step whose picture or eq names a number the text never says is not folded at all, so nothing the picture shows is ever folded away. */
+const NUMS=/\d+(?:[.,]\d+)*/g;
+const picText=p=>{const out=[];const walk=v=>{if(v==null)return;if(typeof v==='string')out.push(v);else if(Array.isArray(v))v.forEach(walk);else if(typeof v==='object')for(const k of Object.keys(v))if(k!=='t')walk(v[k]);};walk(p);return out.join(' ');};
+export function picAnchor(txt,st){if(!st||!(st.eq||st.pic))return 0;const key=(String(st.eq||'').match(NUMS)||[]).at(-1)||(picText(st.pic).match(NUMS)||[]).at(-1);if(!key)return 0;
+ const re=new RegExp(`(?<![\\d.,])${key.replace(/[.]/g,'\\.')}(?![\\d]|[.,]\\d)`,'g');let end=-1;for(const m of txt.matchAll(re)){const stop=txt.slice(m.index).search(/[.!?](\s|$)/);end=stop<0?txt.length:m.index+stop+1;}return end<0?txt.length:end;}
+export function splitSay(say,st){const txt=String(say||''),n=txt.trim().split(/\s+/).length;if(n<=MORE_WORDS)return [txt,''];
+ const after=picAnchor(txt,st);
+ const cuts=[...txt.matchAll(/[.!?](?=\s+[A-Z0-9"“(])/g)].map(m=>m.index+1).filter(i=>{const w=txt.slice(0,i).trim().split(/\s+/).length;return i>=after&&w>=15&&w<=MORE_WORDS&&n-w>=6;});
  const at=cuts.at(-1);return at?[txt.slice(0,at),txt.slice(at).trim()]:[txt,''];}
 /* improve20-r20f-nov4 #5 (audit14 #15, shot 18: the APUSH "1898 outcomes" table ran past the lesson frame with no sign that it went on): a lesson
    body with a text card picture (.text-pic: a table, passages or a code listing) that is cut off by the frame gets a fade over its bottom edge and a

@@ -11,7 +11,7 @@ export default {
   check:{"prompt":"Fill the blank: 'Come over ___ and sit beside me.'","answer":"here","options":["here","hear"],"hint":"It means in this place.","pic":{"t":"pair","a":"here","b":"hear"}}},
  {skill:"pick",say:"The sentence tells you which one to use.  'I can hear the music' needs the ears one.",pic:[{"t":"word","base":"hear"}],eq:"I can hear the music."},
  {skill:"pick",say:"'Their' belongs to them, 'there' is a place, and 'they're' is short for they are.",pic:[{"t":"pair","a":"their / there","b":"they're"}],
-  check:{prompt:"Fill the blank: 'The children left ___ coats on the hook.'",answer:"their",options:["their","there","they're"],hint:"The coats belong to them.",pic:{"t":"word","base":"their"}}},
+  check:{prompt:"Fill the blank: 'The children left ___ coats on the hook.'",answer:"their",options:["their","there","they're"],hint:"The coats belong to them.",pic:{"t":"word","base":"their / there / they're"}}},
  {skill:"pairs",say:"'Its' belongs to it.  'It's' is short for it is, with the apostrophe standing for the missing i.",pic:[{"t":"pair","a":"its: belongs to it","b":"it's: it is"}],
   check:{prompt:"Fill the blank: '___ raining outside.'",answer:"It's",options:["It's","Its"],hint:"It is raining.",pic:{"t":"pair","a":"its","b":"it's"}}},
  {skill:"pairs",say:"Read the sentence and ask what it means, and the spelling follows.",pic:[{"t":"pair","a":"sounds the same","b":"different meaning"}]}],

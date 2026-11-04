@@ -64,7 +64,7 @@ export function closedOptions(q){
    Order: the quiz's own word tiles, the prompt's named options, a closed set, then a young player's tiles (never for a number). */
 export function placementTiles(q,t,save){
  if(!q||choicesOf(q))return null;
- return wordChoicesFor(t,q)||/* improve20-r20g-nov4 #1 */(t&&t.grade<6?coinOptions(q):null)||namedOptions(q)||closedOptions(q)||/* improve20-r20g-nov4 #1 */listOptions(q,t)||(!numeric(q)&&youngFor(save,t)?tileChoices(q):null);}
+ return wordChoicesFor(t,q)||/* improve20-r21a-nov4 #6 */compareOptions(q)||(t&&t.grade<6?fractionTiles(q):null)||/* improve20-r20g-nov4 #1 */(t&&t.grade<6?coinOptions(q):null)||namedOptions(q)||closedOptions(q)||/* improve20-r20g-nov4 #1 */listOptions(q,t)||(!numeric(q)&&youngFor(save,t)?tileChoices(q):null);}
 /* improve20-r20g-nov4 #1 (audit14 #6, shot 07): a Grade 4 child still typed 8 of 12 Elementary placement answers, among them a step copied
    from the plan beside the question ("rinse them") and a whole sorted list ("57, 70, 7, 83"). Two more ways to tap, Elementary topics only:
      - listOptions: the answer is one entry of the item's own list, the plan or list it shows (a program picture's lines), the stages or
@@ -108,3 +108,18 @@ export function coinOptions(q){
  const kinds=[...new Set(pic.coins)].filter(k=>COIN_CENTS[k]);if(kinds.length<2)return null;
  const out=kinds.map(k=>({value:String(COIN_CENTS[k]),label:`${COIN_NAME[k]} (${COIN_CENTS[k]}¢)`}));if(out.filter(o=>accepts(o.value,q)).length!==1)return null;
  return out.sort((a,b)=>+b.value-+a.value);}
+/* improve20-r21a-nov4 #6 (audit15 #15, shot 16: a Grade 4 check typed "1/2" for "Which is bigger: 1/6 or 1/2 of the same sandwich?" and "10/11"
+   for "9/11 + 1/11"):
+     - compareOptions: a two-way comparison ("Which is bigger|smaller|...: X ... or Y ...?") whose two sides start with a number is a tap
+       with those two tiles, exactly as written in the prompt;
+     - fractionTiles (Elementary): a fraction sum or difference with a fraction answer gets the answer and three common slips as tiles: the
+       denominators added too ((a+c)/(b+d)), and the answer's numerator one either side. settle() keeps the set only when the key accepts
+       exactly one tile, so an equivalent fraction can never be a second right one. The value graded is the tile's text; ids are untouched. */
+const NUMLIKE=/^-?\d+(?:[.\/]\d+)?%?$/;
+export function compareOptions(q){
+ const m=/\b(?:which|what)(?: one)? is (?:bigger|smaller|larger|greater|less|more|longer|shorter|heavier|lighter|taller|wider)\b[^:?]*:\s*(\S+?)[,]?\s(?:.*?\s)?or\s+(\S+?)[,?]?(?:\s|$)/i.exec(String(q?.prompt||''));
+ if(!m||!NUMLIKE.test(m[1])||!NUMLIKE.test(m[2])||m[1]===m[2])return null;return settle(q,[m[1],m[2]]);}
+export function fractionTiles(q){
+ const a=String(q?.answer??'').trim(),m=/(\d+)\/(\d+)\s*([+\-−])\s*(\d+)\/(\d+)/.exec(String(q?.prompt||''));const f=/^(\d+)\/(\d+)$/.exec(a);if(!m||!f)return null;
+ const [x,b,op,y,d]=[+m[1],+m[2],m[3],+m[4],+m[5]],n=+f[1],den=+f[2],top=op==='+'?x+y:x-y;
+ const opts=[a,top>0?`${top}/${b+d}`:null,`${n+1}/${den}`,n>1?`${n-1}/${den}`:`${n+2}/${den}`].filter(Boolean);return settle(q,opts);}

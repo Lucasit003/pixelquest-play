@@ -20,12 +20,20 @@ export function caseLabels(c,q={}){if(q.subject==='language'&&c.some(x=>!/\s/.te
 /* improve20-y-nov1 #8 (lane M's note): bare letter buttons ("A", "B") for a prompt that names its letters ("Shop A ... Shop B") carry the
    names ("Shop A", "Shop B"), as lane M's Try-its do (academics/choice-text.js letterNames). The value graded is still the letter. */
 export function namedLetters(c,q={}){if(!c?.length||c.some(x=>x.text)||!c.every(x=>/^[A-F]$/.test(String(x.label).trim())))return c;const n=letterNames(q.prompt,c.map(x=>String(x.value).trim()));return n?c.map((x,i)=>({...x,label:n[i]})):c;}
+/* improve20-r21a-nov4 #2 (audit15 #5): number options (2/3/4/5) tagged 1/2/3/4 made the "3" key pick the tile showing 4. When any
+   option is a number or starts with a digit, the tags are letters A-H and the A-H keys pick (main.js panelKey reads data-letter-keys on the
+   group; number keys pick nothing there). Word options keep their number tags. Phones hide the tags as before. */
+export const numberish=x=>/^\s*[-−+$£€(]?\s*\d/.test(String(x??''));
+export const letterKeys=labels=>[...labels].some(numberish);
+export const keyTag=(i,letters)=>letters?String.fromCharCode(65+i):String(i+1);
+export const keysLine=(n,letters)=>letters?(n>2?`A-${String.fromCharCode(64+n)}`:'A or B'):(n>2?`1-${n}`:'1 or 2');
+export const letterAttr=letters=>letters?' data-letter-keys':'';
 /* The form for a choice question, or '' when the question needs a typed answer. `extra` goes after the buttons
    (a screen's own Close button, say). The submit button stays (hidden) so code that disables it still finds it. */
 export function choiceFormHTML(q,{form='quiz-form',input='quiz-answer',check='quiz-check',cls='',extra=''}={}){
  const c1=choicesOf(q);if(!c1)return '';const nt=/* improve20-r20i-nov4 #5: numbered options carry their text (caseLabels and namedLetters leave a set with text as it is) */numberTexts(q),c0=nt?c1.map((x,i)=>({...x,label:nt[i],text:nt[i]})):c1;const c2=namedLetters(caseLabels(c0,q),q),/* improve20-r20g-nov4 #3: a money item's number options read as money; the value graded is unchanged (lead merge with R20I: numbered options keep their text) */c=isMoneyItem(q)?c2.map(x=>x.text?x:{...x,label:shownOption(x.label,q)}):c2;
- const long=c.some(x=>x.label.length>34);
- return `<form id="${form}" class="choice-form ${cls}" data-choice-form><input type="hidden" id="${input}" value=""><div class="answers choice-answers${long?' long':''}" role="group" aria-label="Answer choices">${c.map((x,i)=>`<button type="button" data-answer="${esc(x.value)}"><span class="tag" aria-hidden="true">${i+1}</span><span class="choice-text">${esc(x.label)}</span></button>`).join('')}</div><p class="subtle choice-keys">Tap an answer, or press ${c.length>2?`1-${c.length}`:'1 or 2'}.</p>${extra}<button type="submit" id="${check}" hidden>Check</button></form>`;
+ const long=c.some(x=>x.label.length>34),lk=letterKeys(c.map(x=>x.label));
+ return `<form id="${form}" class="choice-form ${cls}" data-choice-form><input type="hidden" id="${input}" value=""><div class="answers choice-answers${long?' long':''}"${letterAttr(lk)} role="group" aria-label="Answer choices">${c.map((x,i)=>`<button type="button" data-answer="${esc(x.value)}"><span class="tag" aria-hidden="true">${keyTag(i,lk)}</span><span class="choice-text">${esc(x.label)}</span></button>`).join('')}</div><p class="subtle choice-keys">Tap an answer, or press ${keysLine(c.length,lk)}.</p>${extra}<button type="submit" id="${check}" hidden>Check</button></form>`;
 }
 
 /* Wire a choice form: a tap fills the hidden input and submits the form; once the screen has taken the answer (it
@@ -50,7 +58,7 @@ export function focusAnswers(root){const b=root?.querySelector?.('[data-answer]:
    "Type it instead" swaps in the typing box (the screen re-binds it). */
 export function tileFormHTML(q,tiles,{form='quiz-form',input='quiz-answer',check='quiz-check'}={}){
  if(!tiles?.length)return '';
- return `<form id="${form}" class="choice-form tile-form" data-choice-form data-tiles><input type="hidden" id="${input}" value=""><div class="answers choice-answers tile-answers" role="group" aria-label="Answer tiles">${tiles.map((x,i)=>`<button type="button" data-answer="${esc(x.value)}"><span class="tag" aria-hidden="true">${i+1}</span><span class="choice-text">${esc(x.label)}</span></button>`).join('')}</div><p class="subtle choice-keys">Tap an answer, or press 1-${tiles.length}.</p><p class="tile-alt"><button type="button" class="tile-type" data-type-instead>Type it instead</button></p><button type="submit" id="${check}" hidden>Check</button></form>`;
+ return `<form id="${form}" class="choice-form tile-form" data-choice-form data-tiles><input type="hidden" id="${input}" value=""><div class="answers choice-answers tile-answers"${letterAttr(letterKeys(tiles.map(x=>x.label)))} role="group" aria-label="Answer tiles">${tiles.map((x,i,a)=>`<button type="button" data-answer="${esc(x.value)}"><span class="tag" aria-hidden="true">${keyTag(i,letterKeys(a.map(y=>y.label)))}</span><span class="choice-text">${esc(x.label)}</span></button>`).join('')}</div><p class="subtle choice-keys">Tap an answer, or press ${keysLine(tiles.length,letterKeys(tiles.map(x=>x.label)))}.</p><p class="tile-alt"><button type="button" class="tile-type" data-type-instead>Type it instead</button></p><button type="submit" id="${check}" hidden>Check</button></form>`;
 }
 
 /* improve20-r9d-nov1 #2 (audit8 a3): an empty Check popped Chrome's raw grey "Please fill out this field" bubble (the answer boxes were
@@ -67,7 +75,7 @@ export function installEmptyHint(doc){doc.addEventListener('submit',e=>{const fo
    input, so the screen's own submit handler grades it: nothing new for XP, retirement or placement. "Type it instead" stays. */
 export function orderFormHTML(q,pieces,{form='quiz-form',input='quiz-answer',check='quiz-check'}={}){
  if(!pieces?.length)return '';
- return `<form id="${form}" class="choice-form tile-form order-form" data-order-form><input type="hidden" id="${input}" value=""><p class="order-built" aria-live="polite" data-order-built><span class="order-hint">Tap the numbers in their new order</span></p><div class="answers choice-answers tile-answers order-answers" role="group" aria-label="Numbers to put in order">${pieces.map((x,i)=>`<button type="button" data-piece="${esc(x.value)}" data-i="${i}"><span class="tag" aria-hidden="true">${i+1}</span><span class="choice-text">${esc(x.label)}</span></button>`).join('')}</div><p class="tile-alt"><button type="button" class="tile-type" data-order-undo disabled>Undo</button><button type="button" class="tile-type" data-type-instead>Type it instead</button></p><button type="submit" id="${check}" class="primary order-check" disabled>Check</button></form>`;
+ return `<form id="${form}" class="choice-form tile-form order-form" data-order-form><input type="hidden" id="${input}" value=""><p class="order-built" aria-live="polite" data-order-built><span class="order-hint">Tap the numbers in their new order</span></p><div class="answers choice-answers tile-answers order-answers"${letterAttr(letterKeys(pieces.map(x=>x.label)))} role="group" aria-label="Numbers to put in order">${pieces.map((x,i,a)=>`<button type="button" data-piece="${esc(x.value)}" data-i="${i}"><span class="tag" aria-hidden="true">${keyTag(i,letterKeys(a.map(y=>y.label)))}</span><span class="choice-text">${esc(x.label)}</span></button>`).join('')}</div><p class="tile-alt"><button type="button" class="tile-type" data-order-undo disabled>Undo</button><button type="button" class="tile-type" data-type-instead>Type it instead</button></p><button type="submit" id="${check}" class="primary order-check" disabled>Check</button></form>`;
 }
 export function wireOrder(form){
  if(!form?.matches?.('[data-order-form]'))return false;

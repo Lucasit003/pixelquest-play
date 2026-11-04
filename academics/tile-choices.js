@@ -30,7 +30,10 @@ function candidates(q){
   if(/binary/i.test(p)&&/^[01]+$/.test(a))return [];
   /* "which digit": only digits; "which one / keeps the bigger / costs less": the other number named in the question first */
   if(/\bdigit\b/i.test(p))return [n-1,n+1,n+2,n-2].filter(x=>x>=0&&x<=9).map(String);
-  const named=/\bwhich\b|\bkeeps?\b|\bcheaper\b/i.test(p)?(p.match(/\d+/g)||[]).filter(x=>x!==a):[];
+  /* improve20-r20o-nov4 #4 (R20O, Ruby's first Middle quiz: "Jonah puts $1,200.00 in fund A, which falls 3%..." offered $0.00, $1.00 and $200.00,
+     the pieces of "1,200.00"): when the question writes a number with a comma or a decimal point, numbers are read whole, and the other numbers count as choices only
+     when the answer is itself one of them; otherwise the off-by-one tiles stand. A question of plain whole numbers keeps the rule as it was */
+  const nums=(p.match(/\d[\d,]*(?:\.\d+)?/g)||[]).map(x=>x.replace(/[.,]+$/,'')),split=nums.some(x=>/[.,]/.test(x)),named=/\bwhich\b|\bkeeps?\b|\bcheaper\b/i.test(p)?(split?(nums.includes(a)?nums.filter(x=>x!==a&&/^\d{1,4}$/.test(x)):[]):(p.match(/\d+/g)||[]).filter(x=>x!==a)):[];
   return [...named,n-1,n+1,...(n>=10?[n+10,n-10]:[n+2])].filter(x=>+x>=0).map(String);}
  const pic=q.pic&&!Array.isArray(q.pic)?q.pic:null;
  if(q.topic==='language-e-plurals'&&pic?.t==='word'&&typeof pic.base==='string'&&(pic.suffix==='s'||pic.suffix==='es')&&a===pic.base+pic.suffix){

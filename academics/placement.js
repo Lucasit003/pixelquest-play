@@ -28,6 +28,10 @@ const low=v=>String(v??'').trim().toLowerCase().replace(/^(a|an|the)\s+/,''),num
 const TURN={right:1,left:-1,around:2},DIRS=['north','east','south','west'],word=(a,s)=>a.length>1&&new RegExp(`(^|[^a-z])${a.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}([^a-z]|$)`).test(low(s));
 /* Pictures that state the rule the question tests (a table mapping each case to its answer). */
 export const DEFINES=Object.freeze(['finance-h-ap-macro-basic-economic-concepts|demand','finance-h-ap-macro-basic-economic-concepts|supply','science-h-moles|spectra']);
+/* improve20-r21a-nov4 #7 (audit15 #19, shot 15: "14 x 8" in a box beside "You are working out 14 x 8 ... What is 4 x 8?"): a word card that only
+   repeats the prompt (its text, or all of its numbers, are already in the prompt) adds nothing, so a placement check does not show it. */
+const NUMS7=s=>String(s??'').match(/\d+(?:[.,/]\d+)*/g)||[],flat=s=>low(s).replace(/×/g,'x').replace(/\s+/g,' ');
+export function echoCard(q,p){if(!p||p.t!=='word'||p.base==null)return false;const b=flat(p.base),P=flat(q?.prompt);if(!b)return true;if(P.includes(b))return true;const n=NUMS7(p.base),pn=new Set(NUMS7(q?.prompt));return n.length>0&&n.every(x=>pn.has(x))&&!/[a-z]{3,}/.test(b.replace(/\bto\b/g,''));}
 export function givesAway(q,pic=q?.pic){
  if(!q||!pic)return false;if(DEFINES.includes(`${q.topic}|${q.skill}`))return true;
  const A=low(q.answer),n=num(q.answer),is=x=>Number.isFinite(n)&&x!=null&&Number.isFinite(+x)&&Math.abs(n-x)<1e-9;
@@ -51,7 +55,8 @@ export function givesAway(q,pic=q?.pic){
   default:return false;}});
 }
 /* 26 Oct leftovers: a filler picture (filler-pic.js) is not shown either */
-export const placementPic=q=>q?.pic&&!givesAway(q)?shownPic(q):null;
+/* improve20-r21a-nov4 #7: nor a word card that only repeats the prompt (echoCard); quizzes keep theirs, where a hint card builds a picture */
+export const placementPic=q=>q?.pic&&!givesAway(q)&&![].concat(q.pic).some(p=>echoCard(q,p))?shownPic(q):null;
 /* oct26 exploit round 3. The Scholar's Seal and the pre-boss knowledge check pay a reward for a right answer, so they are
    checks too: they show placementPic(q). Quizzes, practice, tests and course reviews keep their teaching models (blocks,
    bars, jumps; an owner question), but never a picture that prints the answer itself: a word card that is the answer
