@@ -22,7 +22,6 @@ export const PORTRAITS=['archivist','quartermaster','smith','trader','fishmonger
    name plate only, never someone else's face. */
 const BY_NAME=[[/archivist/i,'archivist'],[/quartermaster/i,'quartermaster'],[/brannoc|smith/i,'smith'],[/netta/i,'fishmonger'],[/old deri|fisher/i,'fisher'],[/trader|vendor/i,'trader']];
 export function portraitFor(name,hint){if(hint&&(PORTRAITS.includes(hint)||CLASSES[hint]||/[/.]/.test(hint)))return hint;for(const [re,id] of BY_NAME)if(re.test(String(name||'')))return id;return null;}
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let world=null,queue=Promise.resolve(),open=false,talking=null,talkClosedAt=-1e9;
 export const dialogueOpen=()=>open;
 /* ready2fix-oct30 #1: a conversation the player started (E at a villager, {talk:true}) owns E / Enter / Space until it ends, even with

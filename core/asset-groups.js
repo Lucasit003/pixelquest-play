@@ -14,7 +14,6 @@ import {stageKey,waveKeys} from '../game/stage.js';
 import {baseDef,ENEMY_TYPES_LOADED} from '../game/roster.js';
 import {biomeKey} from '../gfx/biomes/defs.js';
 import {ELEMENTS} from '../gfx/combat-fx.js';
-import {ABILITIES} from '../game/abilities.js';
 import VILLAGE from '../assets/town/oakhaven-approaches-oct13.js';
 import ROOMS from '../assets/town/interiors-reviewed-oct13.js';
 import {heroSpriteIds,allHeroSpriteIds} from '../gfx/actors/hero-directions.js';

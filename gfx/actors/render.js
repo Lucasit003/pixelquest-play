@@ -15,10 +15,8 @@ function actorFx(c,a,time,x,y,id){
  if(a.statusTime>0){c.save();if(a.status==='freeze'){c.fillStyle='#b7e7ff44';c.beginPath();c.moveTo(x-14,y);c.lineTo(x-17,y-25);c.lineTo(x-10,y-47);c.lineTo(x+12,y-45);c.lineTo(x+18,y-17);c.lineTo(x+14,y);c.closePath();c.fill();c.strokeStyle='#b7e7ff';c.stroke();}
   else if(a.status==='root'){for(let i=0;i<3;i++)line(c,x-10+i*10,y,x-15+i*12,y-18,'#789d62',2);}
   else{const col=a.status==='poison'?'#91c958':'#f0d595';for(let i=0;i<3;i++)rect(c,x+Math.cos(time*3+i*2.1)*13,y-49+Math.sin(time*3+i*2.1)*3,2,2,col);}c.restore();}}
-export function clearActorCache(){}
 /* Grip, tip and strike edge in world coordinates, honouring facing, actor scale and jump height. Heroes read
    their atlas' per-frame weapon points; anything else gets a chest-height point in front of it. */
 export function equipmentAnchors(a,time=0){return heroAnchors(a,time)||anchorsFromMeta(a,null,time);}
-export const equipmentPoint=(a,time=0)=>equipmentAnchors(a,time).tip;
 /* Wherever a portrait is shown: a bust cropped from the hero's own sprite, at a whole-number scale. */
 export function portrait(canvas,cls){drawHeroBust(canvas,cls?.appearance||cls?.name?.toLowerCase()||'warrior');}

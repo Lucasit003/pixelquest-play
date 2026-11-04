@@ -15,7 +15,7 @@
 // - powers: a power gate (improve20-r12a-nov2) -- the pad also needs the hero's Nth ability awake, read from the ladder (see powerGate).
 // Map positions live in game/worldmap-layout.js (worldmap agent), keyed by these ids.
 import {stageWidth} from './stage.js';
-import {TIER_KEYS,tierOf,tierKey,tierPar,tierGold,tierXP,starsFor,STAR_PAR,STAR_CLEAN} from './tiers.js';
+import {TIER_KEYS,tierKey,tierPar,tierGold,tierXP,starsFor,STAR_PAR,STAR_CLEAN} from './tiers.js';
 import {GRADE_STARS,gradeStars} from './grade.js';
 import {ABILITIES} from './abilities.js';
 import {unlocked,xpLevel} from './math.js';

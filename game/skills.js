@@ -11,7 +11,7 @@
    The Adventurer Level is 100 XP a level: 10 per skill level, plus each finished task's XP. No stats come from any of this:
    identity (name colour every 10 levels, an emblem) and a map of what to do next. */
 import {masteredTopics,SET_PIECES,ITEM,SETS} from './gear.js';
-import {LEVELS,levelById,levelDone,tierDone,tierRecord,bestiaryPages,CHAPTERS} from './levels.js';
+import {LEVELS,levelById,levelDone,tierDone,tierRecord,bestiaryPages} from './levels.js';
 import {gradeRank} from './grade.js';
 import {delverLevel} from './delve.js';
 export const SKILLS=['combat','delving','scholarship','crafting','collecting'];
@@ -42,7 +42,6 @@ export const skillLevels=s=>{const x=skillXP(s);return Object.fromEntries(SKILLS
 /* ---- Adventurer tasks: grouped like SkyBlock's Leveling menu; each is a check on the save ------------------------ */
 const bestGrade=(s,id,k)=>tierRecord(s,id,k)?.best?.grade||null;
 const anyGrade=(s,min,pred=()=>true)=>LEVELS.some(l=>l.kind==='level'&&!l.hidden&&pred(l)&&['normal','heroic','legendary'].some(k=>gradeRank(bestGrade(s,l.id,k))>=gradeRank(min)));
-const chapterOf=id=>CHAPTERS.find(c=>c.id===id);
 const story=(id,name)=>({id:`story-${id}`,group:'Story',xp:30,text:`Beat ${name}.`,pad:id,done:s=>tierDone(s,id,'normal')});
 export const TASKS=[
  story('e1','Goblin Camp'),story('e4','Minotaur Hollow'),story('e8','Thorn Keep'),story('m7','Moltar’s throne'),story('v7','the Abyss'),

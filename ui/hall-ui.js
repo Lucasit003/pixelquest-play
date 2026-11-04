@@ -7,7 +7,7 @@ import {defeatCardLead,RUNE_LEAD_AFTER} from '../game/card-lead.js';
 import {runeDefeatLead,autoPlaceRunes} from '../game/runes.js';
 import {refillOffer,refillPotions,bagCount} from '../game/potions.js';
 import {CHAPTERS,levelById} from '../game/levels.js';
-import {HALL_CHAPTERS,RUNGS,RUNG_LABEL,ROMAN,hallHeal,hallFree,hallPatterns,hallBosses,rungState,rungOpen,rungReward,keepsakeName,keepsakes,startRung,hallStep,hallFinish,hallOpen,hallDoor,hallEarly,rungLockText} from '../game/hall.js';
+import {HALL_CHAPTERS,RUNGS,RUNG_LABEL,ROMAN,hallHeal,hallFree,hallPatterns,hallBosses,rungState,rungOpen,rungReward,keepsakeName,keepsakes,startRung,hallStep,hallFinish,hallDoor,hallEarly,rungLockText} from '../game/hall.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const ICON={1:'tier-normal',2:'tier-heroic',3:'tier-legendary'};
 const pic=(n,size=32)=>`<img class="hall-icon" src="ui/skin/pl-icons/${n}.png" width="${size}" height="${size}" alt="" draggable="false">`;

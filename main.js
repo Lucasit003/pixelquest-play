@@ -1,6 +1,6 @@
 import {ACTION_LABELS,abilityKeys,slotKeys,bindingError,applyBinding} from './game/bindings.js';
 import {WEAR_LINE} from './game/wear.js';import {afterWinAt,pickerTier} from './game/after-win.js';import {recapLine,recapGreeting} from './game/recap.js';import {gradeTip,gradeRank} from './game/grade.js';
-import {smithTabs,SMITH_HELP,firstHelp,equipComparison,betterPickup,adventureSkillsReady,featuredUpgrade,recipeChips} from './ui/gear-guidance.js';
+import {smithTabs,firstHelp,equipComparison,betterPickup,adventureSkillsReady,featuredUpgrade,recipeChips} from './ui/gear-guidance.js';
 import {keyLabel,controlsHTML,controlsHUD,armourHintText,abilityNudgeText} from './ui/controls.js';
 import {beginControls,beginTraversal,tickAbilityNudge} from './game/controls-tutorial.js';
 import {createControlsTutorial,tipsBlockedInLevel} from './ui/controls-tutorial.js';
@@ -11,7 +11,7 @@ import {helpHTML} from './ui/help.js';import {adventurePlanHTML,dailyGoalsHTML,t
 /* herocard-oct27: the hero card and daily goals */import {heroCardModel,drawHeroCard,loadCardArt,heroCardPanelHTML,saveCard,shareCard,keepsakesHTML} from './ui/hero-card.js';import {wearPrize,trailOf,grantWinKeepsakes,winKeepsakes} from './game/prizes.js';import {dailyEvent,dailyView} from './game/daily.js';
 import {fieldMission,answerFieldMission,FIELD_TASKS,FIELD_REWARD,supplyIcons} from './game/field-mission.js?v=icons-1';
 import {DRINK,POTIONS,potionKind,potionCount,POTION_WAIT,POTION_CAP,potionsLeftInLevel,BAG,bagCount,bagRoom,bagFull,buyPotion,bagNoteText,addPotions,refillOffer,refillPotions} from './game/potions.js';
-import {runePoints,runesFree,runesPlaced,placeRune,canPlace,canReset,resetRunes,runeLine,RUNE_MAX,RUNE_NUMERALS,autoPlaceRunes,runeCountText,runeDefeatLead,runeLeadText,markRuneOffer,runeTownVisit,runeTownOfferDue} from './game/runes.js';import {runeLead,gateDots} from './game/rune-goal.js';import {runeRank} from './game/math.js';import {slowCast} from './scenes/rune-fx.js';
+import {runePoints,runesFree,placeRune,canPlace,canReset,resetRunes,runeLine,RUNE_MAX,RUNE_NUMERALS,autoPlaceRunes,runeCountText,runeDefeatLead,runeLeadText,markRuneOffer,runeTownVisit,runeTownOfferDue} from './game/runes.js';import {runeLead,gateDots} from './game/rune-goal.js';import {runeRank} from './game/math.js';import {slowCast} from './scenes/rune-fx.js';
 import {abilityTipRetired,noteDefeat,defeatBoost,useDefeatBoost,lowHpHelp,potionHelpText,petPointerDue,markPetPointer,PET_POINTER_TEXT,placementOffer,markOffered,skipAheadDue} from './game/hints.js';
 import {createObjectiveGuidance} from './ui/objective-guidance.js?v=room-context-2';import {createBossPointer} from './ui/boss-pointer.js';
 import {communityBoardHTML,readSuggestions,saveSuggestion,SUGGESTION_LIMIT} from './ui/community-board.js';
@@ -19,7 +19,7 @@ import {activeProfile,nameFromHero,isDefaultProfile} from './ui/profiles.js';
 import {gradeFocus} from './academics/grade-focus.js';
 import {reducedMotion as settingsReducedMotion} from './ui/settings.js';
 import {sceneFade,travelFade,skipTravelFade} from './ui/transitions.js';
-import {CLASSES,SUBJECTS,LEVELS,PETS,WEAPONS,CINEMATIC,CINEMATIC_END,EPILOGUES,chapterCard,FINALE_CARD,armorName} from './game/data.js';
+import {CLASSES,SUBJECTS,LEVELS,PETS,WEAPONS,CINEMATIC,CINEMATIC_END,EPILOGUES,chapterCard,FINALE_CARD} from './game/data.js';
 import {ABILITIES} from './game/abilities.js';
 import {toggleFullscreen,escFromFullscreen} from './ui/fullscreen.js';
 import {pauseAbilitiesHTML,abilityNumbers,abilityWhat,abilityLine} from './ui/ability-panel.js';import {unlockLine} from './ui/ability-blurbs.js';
@@ -32,7 +32,7 @@ import {mastery,unlocked,gainXP,xpFor,stats,XP,xpLevel,levelXP,totalXP,abilityMa
 import {enable,enableMusic,sfx,fanfare,victory,sting,musicNote} from './core/audio.js';
 /* v2:ui */
 import {initUI,titleScreen,wireTitle,GRADE_ROWS,gradeOptsHTML,STAGES,uiSettingsHTML,wireUiSettings,applySettings,abilityIcon,icon,levelUpBanner,banner as uiBanner,dropBanner,celebrate,setMusicOverride,settingsFromTitle,pauseExtrasHTML,wirePauseExtras,say,portraitFor,talkPress,talkJustClosed} from './ui/index.js';
-import {loadLesson,loadPools,poolsLoaded,poolsNeeded,lessonLoaded,stageOf,TOPICS,CHECKS,POOL,QUIZ_SIZE,TEST_SIZE,PASS,topic as lessonTopic,rungOf,rec,left,pickItems,pickQuiz,beginMasteryTest,grade,creditCheck,recordCheckAttempt,recordTryRight,quizSumOn,pickSkillItems,testPracticeSkill,SKILL_PRACTICE,finishLesson,recordQuiz,finishTest,grades,gradeTopics,gradeOpen,gradeDone,mastered,topicOpen,openGrade,testReady,practiceSitting,checksLeft,PRACTICE_NEEDED,stageName,topicPoints,setStep,masterExhausted,pickReview,pickPracticeExam,ITEMS} from './academics/lessons.js';import {drawPic,describe,crispCtx} from './gfx/lesson-art.js';import {loadCountryAtlas,countryAtlasReady} from './gfx/lesson-geography.js';
+import {loadLesson,loadPools,poolsLoaded,poolsNeeded,lessonLoaded,stageOf,TOPICS,CHECKS,POOL,QUIZ_SIZE,PASS,topic as lessonTopic,rungOf,left,pickItems,pickQuiz,beginMasteryTest,grade,creditCheck,recordCheckAttempt,recordTryRight,quizSumOn,pickSkillItems,testPracticeSkill,finishLesson,recordQuiz,finishTest,grades,gradeTopics,gradeOpen,gradeDone,mastered,topicOpen,openGrade,testReady,practiceSitting,checksLeft,PRACTICE_NEEDED,stageName,topicPoints,setStep,masterExhausted,pickReview,pickPracticeExam,ITEMS} from './academics/lessons.js';import {drawPic,describe,crispCtx} from './gfx/lesson-art.js';import {loadCountryAtlas,countryAtlasReady} from './gfx/lesson-geography.js';
 /* improve20-r18d-nov3 #3 */import {coreFor} from './academics/first-core.js';
 import {coursesFor,courseOf,builtUnits,AP_NOTE,EXAMS,examPracticeGroups,HIGH_COURSE_LEVEL,course as courseById} from './academics/courses.js';
 import {hsGrade,courseOrder,firstCourse,startTopic} from './academics/course-grades.js';
@@ -52,8 +52,8 @@ import {youGotHTML,pastFirstChapter,runDrops,YOU_GOT_CSS} from './ui/result-stri
 import {smithLook,smithDollHTML,smithAfterCaption,SMITH_DOLL_CSS,SMITH_HEAD_CSS} from './ui/smith-preview.js';
 import {deliveryHTML,mountDelivery,FIELD_DELIVERY_CSS} from './ui/field-delivery.js';
 import {resultLoot,gearIcon,itemDetailHTML,setTrackerHTML,nextUpgradeHTML,matsHTML,bagHTML,scoreHTML,smithHTML,lootHTML,matIcon,SLOTS as GEAR_SLOTS,SLOT_NAMES as GEAR_SLOT_NAMES,ITEM as GEAR_ITEM,wornOf} from './ui/gear-ui.js';
-import {equip as gearEquip,unequip as gearUnequip,buy as gearBuy,craft as gearCraft,addStar as gearStar,setFinish as gearFinish,salvage as gearSalvage,syncScholar,rarityOf,heroLook as gearLook} from './game/gear.js';
-import {LEVELS as PADS,CHAPTERS,levelById,levelOpen,levelDone,bestiaryPages,levelFogged,DIFFICULTY,levelPar,gameFinale,chapterClear,tiered,tierOpen,tierRecord,starsOf,totalStars,maxStars,starsShort,starGateText,levelParFor,levelStarPar,cleanStars,easierOfferDue,levelReward,levelXPReward,chapterOf,arenaChipText,storyHelp,STORY_POTIONS,fightKey} from './game/levels.js';/* improve20-r16a-nov3 #1/#2: one lead per result card */import {winCardLead,defeatCardLead,gateLead,whileLearn,RUNE_LEAD_AFTER} from './game/card-lead.js';
+import {equip as gearEquip,unequip as gearUnequip,buy as gearBuy,craft as gearCraft,addStar as gearStar,setFinish as gearFinish,salvage as gearSalvage,syncScholar,heroLook as gearLook} from './game/gear.js';
+import {LEVELS as PADS,CHAPTERS,levelById,levelOpen,levelDone,levelFogged,DIFFICULTY,levelPar,gameFinale,chapterClear,tiered,tierOpen,tierRecord,starsOf,totalStars,maxStars,starsShort,starGateText,levelStarPar,cleanStars,easierOfferDue,chapterOf,arenaChipText,storyHelp,STORY_POTIONS,fightKey} from './game/levels.js';/* improve20-r16a-nov3 #1/#2: one lead per result card */import {winCardLead,defeatCardLead,gateLead,whileLearn,RUNE_LEAD_AFTER} from './game/card-lead.js';
 import {notePowerPass} from './game/levels.js';
 import {capStart} from './ui/cap-start.js';import {gateInfo,waitingGate,powerStep,leadSubject,nearPower,winLead,nextPower as sharedPower,powerWants} from './game/power-gate.js';
 import {TIER_KEYS,TIERS,adviceLevel} from './game/tiers.js';
@@ -81,13 +81,13 @@ import {regionAt} from './game/maps.js';
 import {BUILDINGS,drawWorld,drawMap,portrait,prewarm} from './gfx/world.js';
 /* v2:hub */ import {hubReady,hubState,hubUpdate,hubPrompt,hubInteract,hubTakeVisits,hubEvent,hubMapHtml,hubObjective,hubArriveAtGate,hubStartPlacing,hubCancelPlacing,hubPlacing,hubConfirmPlacing,hubNearestUsable,hubTravel,hubTravelHere,hubTravelMap,hubTakeUnlocked,hubStepOut,STEP_OUT,hubHeads,hubHeroBox,hubPlates,hubPeople} from './scenes/town.js';
 import {travelList,travelBlocked,canTravel,placeName,takeTravelHint,townPlace} from './game/fasttravel.js';
-import {travelPickerHTML,travelHintText,TRAVEL_HINT_MS,travelLiftDue} from './ui/fasttravel-ui.js';
+import {travelPickerHTML,travelHintText,TRAVEL_HINT_MS} from './ui/fasttravel-ui.js';
 /* v2:hub */ import {shopView,focusSubject} from './scenes/town-ui.js';
 /* v2:hub */ import {buyWare,settleBounty} from './game/shops.js';
 /* companions and villager quests (25 Oct, docs/design/COMPANIONS_AND_OAKHAVEN.md): the Barracks' hire panel, the level card's wage line, the result card's companion XP */
 import {COMPANIONS,canHire,hire as hireCompanion,dismiss as dismissCompanion,settleRun,hireBlock} from './game/party.js';import {onVisit as questVisit,onLevelEnd as questLevelEnd,questLive} from './game/quests.js';import {barracksHTML,padCompanionHTML,resultCompanionHTML,questsJournalHTML,questNewsText,BARRACKS_CSS,chapterQuestHTML} from './ui/barracks-ui.js';
 import {begin,selectQuestion,answer,poolStatus,LOW_POOL} from './academics/session.js';
-import {BANK,hash} from './academics/bank.js';
+import {hash} from './academics/bank.js';
 import {rescale as rescaleMap,syncZone} from './ui/scale.js';
 import {ladderGoal,ladderTip,heroicLead} from './game/ladder-guide.js';import {tryItLevel,tryItSlot,tryItHint} from './game/try-it.js';import {compactToastBox,syncAttackIcon,armourBannerSpots,pickBannerSpot,tabletSize,bannerSpot,plateOffHero,clampIntoView,daySpot} from './ui/mobile.js';
 import {setBannerPlacer} from './ui/juice.js';import {enemyTop} from './scenes/enemy-ai.js';/* improve20-r10d-nov2 #1 */import {logRecent,recentHTML} from './ui/recent-log.js';import {findHeld/* improve20-r20k-nov4 #1 */,toastMs,requeueShowing,heldUp,cutShowing,LEVEL_TIP,tipAllowed,markTip,recentDup,pushToast,readEnough,cardFinds,townToastTop,townToastSpot} from './ui/toast-hold.js';import {libraryPointer,markLibraryVisit} from './game/library-pointer.js';import {learningRoad} from './academics/learning-road.js';
@@ -302,14 +302,6 @@ function gateBars(a,labels=false) {
   const kp = Math.min(100, a.gate>0?abilityMastery(s, a.subject) / a.gate * 100:100);
   const lp = Math.min(100, totalXP(s) / Math.max(1, levelXP(xpLevel(a))) * 100);
   return `${labels?'<span class="gate-bar-label">Knowledge</span>':''}<div class="progress" aria-label="Knowledge"><i style="width:${kp}%"></i></div>${labels?'<span class="gate-bar-label">Hero level</span>':''}<div class="progress xp" aria-label="Hero level"><i style="width:${lp}%"></i></div>`;
-}
-
-function gateSmall(a) {
-  const sub = SUBJECTS[a.subject].name;
-  const mastery = abilityMastery(s, a.subject).toFixed(1);
-  const level = xpLevel(a);
-  /* v2:edu goals in lessons, never percentages */const n = lessonsToUnlock(s, a);
-  return `${n.lessons ? `${n.lessons} topic${n.lessons === 1 ? '' : 's'} to master` : n.reachable ? 'Topics ✓' : 'Library training'} · Hero level ${level}` + (s.level >= level ? ' ✓' : '');
 }
 
 function nextUnlock(subject) {
@@ -1364,7 +1356,6 @@ function smith(tab='buy',pick=null,confirm=null,note='',bought=null){if(typeof t
  $$('[data-gear-salvage-yes]').forEach(el=>el.onclick=()=>done(gearSalvage(s,el.dataset.gearSalvageYes),'salvage'));}
 function alchemist(){show('alchemist',header('The Apothecary','Choose what your potion key uses, then pack supplies for the road.')+/* ownerbal-oct29: the potion bag (game/potions.js BAG) */`<p class="potion-bag${bagFull(s)?' is-full':''}" role="status">${icon('potion')}<span>Potion bag: <b>${bagCount(s)} of ${BAG.cap}</b> (both kinds share it). ${bagFull(s)?'Your bag is full: drink one in a level to make room.':`Room for ${bagRoom(s)} more.`} You also get 1 free potion at the start of every level.</span></p><p class="potion-purse" role="status">You have <b>◆ ${s.gold} gold</b></p><div class="grid potion-shop">${Object.entries(POTIONS).map(([kind,a])=>`<div class="card"><span class="tag">${kind==='health'?'INSTANT HEALING':'HEALING OVER TIME'}</span><h3>${a.name}</h3><p>${a.text}</p><p class="potion-line"><span>${kind==='regen'?(s.regenPotions||0):s.potions} in your pack</span><span class="potion-price">Price: <b>◆ ${a.price}</b> each</span></p><button ${kind==='health'?'id="buy-potion"':''} data-potion-buy="${kind}" ${s.gold<a.price||bagFull(s)?'disabled':''}>${bagFull(s)?`Bag full · ◆ ${a.price}`:s.gold<a.price?`Need ◆ ${a.price}`:`Buy · ◆ ${a.price}`}</button><button data-potion-equip="${kind}" ${potionKind(s)===kind?'disabled':''}>${potionKind(s)===kind?'Equipped on '+esc(keyLabel(s.settings.bindings.potion)):'Equip'}</button></div>`).join('')}</div>`);$$('[data-potion-buy]').forEach(b=>b.onclick=()=>{const r=buyPotion(s,b.dataset.potionBuy);if(!r.ok){if(r.full)toast(r.message);return;}persist();alchemist();updateHUD();});$$('[data-potion-equip]').forEach(b=>b.onclick=()=>{s.potionKind=b.dataset.potionEquip;persist();alchemist();updateHUD();});}
 /* v2:levels -- the level board (Guild, and M), level results, the trader pad, and startLevel() for the world map. */
-function levelBoard(view,play){show(view,header('The Thorn Kingdom','Short levels, each with its own boss. Clear one to open the next; side paths are optional.')+CHAPTERS.map(ch=>`<h3 class="level-chapter">${esc(ch.name)}</h3><div class="grid level-board">${PADS.filter(l=>l.chapter===ch.id&&l.kind!=='home'&&!l.hidden).map(l=>{const soon=!levelReady(l)||levelFogged(l),open=levelOpen(s,l.id)&&!soon,done=levelDone(s,l.id),best=s.levels?.[l.id]?.best,kind=l.kind==='level'?(l.optional?'SIDE PATH':'LEVEL'):l.kind.toUpperCase();return `<div class="card level-pad" data-kind="${l.kind}" data-state="${done?'done':open?'open':'locked'}"><span class="tag">${kind} · ${done?'CLEARED':soon?'COMING SOON':open?'OPEN':'LOCKED'}</span><h3>${esc(l.name)}</h3><p>${esc(l.blurb||(l.kind==='shop'?'Weapons, armour and potions.':l.kind==='arena'?'Endless waves. How long can you last?':''))}</p>${tiered(l)&&open?`<div class="stats-row tier-row">${TIER_KEYS.map(k=>`<span title="${TIERS[k].label}">${TIERS[k].label} ${tierOpen(s,l.id,k)?starRow(starsOf(s,l.id,k),TIERS[k].label):plIcon(TIER_LOCK_ICON,16)}</span>`).join('')}</div>`:''}${starsShort(s,l.id)?`<p class="subtle star-gate">${esc(starGateText(starsShort(s,l.id)))}</p>`:''}${best&&(best.time||best.score)?`<div class="stats-row"><span>${l.kind==='arena'?`Best: ${best.score} waves`:`Best: ${best.time}s`}</span><strong>${l.kind==='arena'?'':best.score}</strong></div>`:''}${play?`<button data-level="${l.id}" ${open?'':'disabled'} class="${open?'primary':''}">${open?(l.kind==='shop'?'Visit':'Play'):soon?'Coming soon':'Locked'}</button>`:''}</div>`;}).join('')}</div>`).join('')+`<div class="notes">${bagCount(s)} of ${BAG.cap} potions packed · ${totalStars(s)} of ${maxStars()} stars · <strong>${esc(targetText())}</strong></div>`);$$('[data-level]').forEach(el=>el.onclick=()=>{const id=el.dataset.level;if(tiered(levelById(id)))tierPicker(id);else startLevel(id);});}
 function trader(l){show('trader',header(esc(l?.name||'Wandering Trader'),'A travelling stall. Better gear makes you stronger; new abilities still come from what you learn.')+`<div class="grid"><div class="card"><span class="tag">WEAPONS AND ARMOUR</span><h3>The Weaponsmith’s wares</h3><p>Upgrade your weapon and armour.</p><button id="trader-smith" class="primary">Browse</button></div><div class="card"><span class="tag">POTIONS</span><h3>The Apothecary’s shelf</h3><p>Health potions for the road.</p><button id="trader-alchemist" class="primary">Browse</button></div></div>`);$('#trader-smith').onclick=smith;$('#trader-alchemist').onclick=alchemist;}
 let levelExit=null,retryPotionLine=null;
 /* ---- the difficulty ladder (game/tiers.js) ---------------------------------------------------------------------------
@@ -1809,7 +1800,7 @@ canvas.addEventListener('pointerdown',e=>{if(!mapOn||$('#modal').open)return;con
 /* v2:hub -- a seller's shop (game/shops.js): existing panels for the smith, alchemist and guild, a boon shop otherwise. */
 function hubShop(id,keeper){const v=shopView(id,s,{keeper});if(v.say){hubSay({lines:[v.say],talk:true});return;}if(v.panel){({library,guild,smith,alchemist,home,community,barracks})[v.panel]();return;}show('shop',header(esc(v.title),esc(`${v.keeper} runs this counter.`))+v.html);$$('[data-buy-ware]').forEach(b=>b.onclick=()=>{const r=buyWare(s,id,b.dataset.buyWare);toast(r.message);if(r.ok){sfx('ui');persist();updateHUD();}hubShop(id,keeper);});}
 /* v2:hub -- villagers and story beats speak through this. Swap for dist/ui/dialogue.js say(lines,{speaker,portrait}) when it lands. */
-let hubSayTimer=null;function hubSay(e){/* v2:ui -- villager lines in the dialogue box with their ERW bust */return say((e.lines||[e.say]).filter(Boolean),{speaker:e.speaker||'',portrait:portraitFor(e.speaker,e.portrait),passive:!!e.lines,talk:!!e.talk});}
+function hubSay(e){/* v2:ui -- villager lines in the dialogue box with their ERW bust */return say((e.lines||[e.say]).filter(Boolean),{speaker:e.speaker||'',portrait:portraitFor(e.speaker,e.portrait),passive:!!e.lines,talk:!!e.talk});}
 /* Scholar's Seal (game/seal.js): optional review of studied topics. The modal pauses the level; there is no timer; a wrong
    answer shows the explanation and offers a fresh question; closing costs nothing. It never writes answers, mastery or
    lessons -- breaking it pays run Bonus, Essence and Scholarship only (owner, 14 Oct). */

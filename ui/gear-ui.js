@@ -5,8 +5,8 @@ import {affordableUpgrade,featuredUpgrade,smithTabs,equipComparison,betterPickup
    the Weaponsmith's five tabs (Buy, Craft, Stars, Finish, Salvage). HTML builders only; main.js shows them and wires the
    buttons. Every cost is shown in full before anything is pressed, and a disabled button says why. Gains and losses in a
    comparison carry an arrow and a sign (▲ +4 Power / ▼ -2 Defence), so the meaning never rests on colour alone. */
-import {ITEMS,ITEM,MATS,SETS,TRICKS,FINISHES,SLOTS,SLOT_NAMES,GEAR_STAT,PCT,MAX_STARS,CHAPTER_NAMES,rarityOf,itemStats,gearBonus,statText,wholePct,starsOf,masteredTopics,wornOf,compare,setProgress,sourceText,
- recipe,recipeOpen,shopOpen,dropChance,firstLegendary,SET_DROP,starCost,finishCost,finishFits,salvageValue,wornBy,fits,SET_PIECES,starShows,firstVisibleStar,canAfford,costWhy,gearScore,chapterReached,bossBeaten,SCHOLAR_AT,familyOf,bossMat,shopLock} from '../game/gear.js';
+import {ITEMS,ITEM,MATS,SETS,TRICKS,FINISHES,SLOTS,SLOT_NAMES,GEAR_STAT,PCT,MAX_STARS,rarityOf,itemStats,gearBonus,statText,wholePct,starsOf,masteredTopics,wornOf,compare,setProgress,sourceText,
+ recipe,recipeOpen,dropChance,firstLegendary,starCost,finishCost,finishFits,salvageValue,wornBy,fits,SET_PIECES,starShows,firstVisibleStar,canAfford,costWhy,gearScore,bossBeaten,SCHOLAR_AT,familyOf,bossMat,shopLock} from '../game/gear.js';
 import {LEVELS} from '../game/levels.js';
 import {CLASSES} from '../game/data.js';
 import {offenseLimited,equipmentDPS} from '../game/power.js';

@@ -7,7 +7,6 @@
    is adding, subtracting, multiplying, dividing, finding a percent, a rate, a share, a difference or a span the child has
    to work out to choose or type the answer. Tuned by hand against the Middle and High pools of every non-math subject
    (tools/placement-calc-scan.mjs prints hits and near-misses); items, ids and prompts are untouched. */
-export {question as calcQuestion};
 const UNIT='(kg|g|km|m|units?|items?|people|persons|residents|homes|households|voters|adults|respondents|cases|hectares|tons?|dollars|pounds|miles|seats|members|workers|soldiers|acres|bushels|goods|baskets|days|hours)\\b',YEAR=new RegExp(`\\b(c\\. ?)?((1[0-9]{3}|20[0-9]{2})(?!\\s+${UNIT})(?!\\s+(to|and)\\s+[\\d,]+\\s+${UNIT})|[1-9][0-9]{0,2} (BCE|CE|BC|AD))s?\\b`,'g');
 /* where the multiple-choice options start: the last "A: " with a "B: " after it ("copied from account A: ..." is not one) */
 const optAt=s=>{let at=-1;for(const m of s.matchAll(/(^|\s)A: /g))if(/\sB: /.test(s.slice(m.index+1)))at=m.index;return at;};

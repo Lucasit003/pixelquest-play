@@ -28,7 +28,6 @@ export const SKIN_TONES={tone1:{name:'Tone 1',ramp:['a6615a','e8ab94','fde6d8']}
 export const EYE_COLOURS={brown:{name:'Brown',ramp:['2e1408','6b3a1a']},blue:{name:'Blue',ramp:['14306e','3c7fe0']},
  green:{name:'Green',ramp:['123f1e','35a052']},grey:{name:'Grey',ramp:['3a4652','8a9db0']}};
 export const LOOK_PARTS={hair:HAIR_COLOURS,skin:SKIN_TONES,eyes:EYE_COLOURS};
-const ROLE_OF={hair:1,skin:2,eyes:3};
 
 /* ---- per hero body: measured by tools/hero-palette.mjs look-qa (15 Oct) ----
    Lists are hexes, dark to light not required. A part set to null is not offered for that body (the creator hides the

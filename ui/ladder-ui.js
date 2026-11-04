@@ -1,6 +1,6 @@
 /* Ladder explanations only. All rewards have already been paid by combat. */
 import {mechanicPreview,rewardPreview} from '../game/ladder-guide.js';
-import {levelReward,levelXPReward,tierDone,tierOpen} from '../game/levels.js';
+import {levelReward,levelXPReward,tierOpen} from '../game/levels.js';
 import {TIER_KEYS,TIERS} from '../game/tiers.js';
 import {MATS,ITEM,bossMat,TIER_COUNT,setOfBoss,firstKillBonus} from '../game/gear.js';
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

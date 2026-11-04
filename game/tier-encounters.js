@@ -91,4 +91,3 @@ export function validateStep(step=READABLE_STEP){for(const k of ['heroic','legen
 export function stepEncounter(r,k,step=READABLE_STEP){const e=structuredClone(r),t=step[k];if(!t)return e;validateStep(step);validateRules();if(e.hazard)e.hazard.rest=Math.max(2,Math.round(e.hazard.rest*READABLE_RULES[k].hazardRest*100)/100);e.foeHp=Math.round(t.foeHp/e.hp*1000)/1000;e.bossHp=t.bossHp;if(e.atk)e.atk=Math.round(e.atk*t.atk*1000)/1000;else e.atkStep=t.atk;return e;}
 /* Spawn health factor for an actor of a stepped encounter (1 outside encounters). */
 export const encounterHp=(enc,boss)=>enc?(boss?enc.bossHp:enc.foeHp)||1:1;
-export const encounterInventory=()=>Object.entries(ENCOUNTERS).flatMap(([id,ts])=>Object.keys(ts).map(tier=>({id,tier,active:ACTIVE_ENCOUNTERS.includes(id)})));

@@ -100,7 +100,6 @@ export function cleanParty(v) {
 }
 const partyOf = save => (save.party = cleanParty(save.party));
 export const joined = (save, id) => !!save?.party?.crew?.[id];
-export const levelOf = (save, id) => compLevel(save?.party?.crew?.[id]?.xp);
 /* a quest's reward: the companion joins the crew (once) */
 export function join(save, id, now = Date.now()) { const p = partyOf(save); if (!COMPANIONS[id]) return false; if (p.crew[id]) return false; p.crew[id] = {xp: 0, runs: 0, wins: 0, trial: TRIAL_RUNS, joined: now}; return true; }
 export const canHire = (save, id) => joined(save, id) && hireable(id);

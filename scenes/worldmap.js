@@ -39,7 +39,6 @@ const chapterOfLevel=id=>levelById(id)?.chapter;
    skipped Bandit Road and beat Moltar opened the map in the Elderwood while the HUD said "Next adventure: Drowned Shrine" */
 /* improve20-r12a-nov2: a main-road pad held by a power gate is where the map opens, so its card says what wakes the road */
 export function frontier(save){let best='home',side=null;for(const l of LEVELS){if(l.kind!=='level'||l.hidden)continue;if(!l.optional&&powerShort(save,l.id))return l.id;if(levelOpen(save,l.id)&&!levelDone(save,l.id)){if(!l.optional)return l.id;side??=l.id;}if(levelDone(save,l.id))best=l.id;}return side||best;}
-export const artReady=()=>!!art;
 /* opts: {loader, json, mod} for node renders; the browser defaults otherwise. */
 export function preload(opts){if(!art){art=makeArt(opts);artPromise=art.uiReady;}return artPromise;}
 export const sceneReady=chapter=>{preload();return art.scene(chapter).ready;};
@@ -77,7 +76,6 @@ function nodeAt(id){return nodes(S.chapter).find(n=>n.id===id);}
 function lean2(lp,ahead){if(!lp)return[0,0];if(ahead){const dx=ahead.x-S.hero.x,dy=ahead.y-S.hero.y,fit=Math.abs(dx)<=VIEW_W-150&&Math.abs(dy)<=VIEW_H-130;const k=fit?.5:.42;return[Math.max(-170,Math.min(170,dx*k)),Math.max(-70,Math.min(70,dy*k))];}return[(lp.lx|0)*.3,Math.max(-60,Math.min(30,(lp.ly|0)*.3))];}
 /* opening the map starts on the hero, then the camera eases out to frame the way on */
 function snapCam(){if(MAPS[S.chapter]?.fit){S.cam.x=MAPS[S.chapter].w/2;S.cam.y=MAPS[S.chapter].h/2;art?.scene(S.chapter);return;}S.cam.x=S.hero.x;S.cam.y=S.hero.y+(landmarked()?-18:12);art?.scene(S.chapter);}
-const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 function toast(msg){S.toast=msg;S.toastT=2.2;}
 /* fast travel (25 Oct, game/fasttravel.js): a stop unlocks the first time the hero stands on it (view mode too: the hero did walk
    there); main.js saves when unlocked() says so */

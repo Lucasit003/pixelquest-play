@@ -148,7 +148,6 @@ export const quizSumOn=(save,t)=>firstTopic(save,t)&&!mastered(save,t);
    the pass is decided in recordQuiz, when a sitting with at least one answer ends. Practice and the mastery test are unchanged. */
 /* lead review (r17a): Try-its count at most TRY_SUM_MAX of the 4, so the quiz itself always supplies right answers (a 0-right sitting can never pass) */export const TRY_SUM_MAX=2;
 const sumHave=r=>(Array.isArray(r?.qright)?r.qright.length:0)+Math.min(TRY_SUM_MAX,Array.isArray(r?.tright)?r.tright.length:0);
-export const tryRights=(save,t)=>{const r=save.lessons?.[t.id];return Array.isArray(r?.tright)?r.tright.length:0;};
 export function recordTryRight(save,t,id){if(!quizSumOn(save,t)||CHECKS[id]?.topic!==t.id)return false;const r=rec(save,t),have=new Set(Array.isArray(r.tright)?r.tright:[]);if(have.has(id))return false;have.add(id);r.tright=[...have].slice(0,20);return true;}
 export const testReady=(save,t)=>{const r=save.lessons?.[t.id]||{},done=r.done===true,need=Math.ceil(PASS*QUIZ_SIZE-1e-9),quiz=(r.quiz||0)>=need||r.qsum===true||left(save,t)<need,p=practised(save,t),n=practiceNeeded(save,t);
  return {ready:done&&quiz&&p>=n,lesson:done,quiz,quizNeed:need,quizSize:QUIZ_SIZE,practice:Math.min(p,n),needed:n,quizSum:!quiz&&quizSumOn(save,t)?{have:Math.min(need,sumHave(r)),need,...(Array.isArray(r.tright)&&r.tright.length?{tries:r.tright.length}:{})}:null};};

@@ -39,5 +39,3 @@ export function drawHeroXray(c,state,drawHero,drawCover){const over=heroCovers(s
  const after=edge.getImageData(0,0,W,H).data;let hid=0;for(let i=3;i<after.length;i+=4)if(after[i])hid++;if(hid<body*XRAY.share)return false;
  edge.globalCompositeOperation='source-in';edge.fillStyle=XRAY.fill;edge.fillRect(0,0,W,H);edge.globalCompositeOperation='source-over';g.globalCompositeOperation='source-over';g.drawImage(ed,0,0);
  c.drawImage(cv,bx,by);return true;}
-/* the last outline canvas, for tests and shot tools */
-export const xrayCanvas=()=>cv;

@@ -6,7 +6,7 @@
 // Nothing here reads or writes mastery, answers, lessons, XP or abilities. npcs.js may import this module; this module
 // must never import npcs.js.
 import {levelById} from './levels.js';
-import {join, COMPANIONS, hireable} from './party.js';
+import {join, hireable} from './party.js';
 
 const TIERS = ['normal', 'heroic', 'legendary'];
 const CHAPTER_NO = {elderwood: 1, emberkeep: 2, veilmoor: 3};
@@ -202,4 +202,3 @@ export function keepsakeEarned(save, id) {
 export function keepsakeShelf(save, only = all) {
   return QUEST_IDS.filter(id => only(id) && keepsakeOf(id)).map(id => { const k = keepsakeOf(id); return {quest: id, title: QUESTS[id].title, id: k.id, name: k.name, story: k.story, img: k.img || 'ui/skin/rewards/chest.png', won: keepsakeEarned(save, id)}; });
 }
-export const questCompanion = id => COMPANIONS[QUESTS[id]?.companion] || null;

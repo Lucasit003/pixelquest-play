@@ -24,7 +24,7 @@
 
 import {nextStep} from './next-step.js';
 import {libraryOpening} from '../academics/starter-lesson.js';
-import {questState, currentStep, onTalk, questLive, QUESTS} from './quests.js';
+import {questState, currentStep, onTalk, questLive} from './quests.js';
 
 /* Town restoration (docs/review/v2/map/RESTORATION.md): after each Elderwood level part of Oakhaven is
    restored, and the people who live by it say so. The newest change comes first. */

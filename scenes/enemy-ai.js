@@ -43,8 +43,6 @@ const OWN=new Set(MOVE_KINDS);
 
 const MAX_ATTACKERS=2;
 const TELE={fill:'#ff5a1f',rim:'#ffa35a',flash:'#ff8a3a'};
-/* A hit flash lasts two frames at 60 fps. */
-export const FLASH=.03;
 const rnd=w=>(w.rng?w.rng():Math.random());
 const sgn=v=>v<0?-1:1;
 const clampN=(v,a,b)=>v<a?a:v>b?b:v;

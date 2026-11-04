@@ -18,7 +18,7 @@ export const PHASE2_HEAL=.6;
 export const phaseTurn=e=>{const b=e?.brain;return !!(b&&e.phaseShift&&(b.phase===1&&e.hp<=e.maxHp*(e.phaseShift.at||.5)||b.phase===2&&b.mode==='trans'&&(b.t||0)<(b.transDur||0)));};
 import {ABILITIES} from '../game/abilities.js';
 import {controlTime,controlled} from '../game/boss-cc.js';
-import {activeLoadout,asleep} from '../academics/awakening.js';
+import {activeLoadout} from '../academics/awakening.js';
 import {ABILITY_FX,FX_ELEMENT} from '../game/ability-fx.js';
 import {entranceFor,ENTRANCE_TIME,TENT_SPRITE} from '../game/entrances.js';
 import {clamp,damage,stats,unlocked,mastery,abilityPower,abilityGuard,overLevelXP,runeRank,runeMul,runeCd} from '../game/math.js';

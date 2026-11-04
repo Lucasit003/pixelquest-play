@@ -294,8 +294,6 @@ input[type=range]::-moz-range-thumb{width:calc(13*var(--u));height:calc(12*var(-
 .journal-row:first-child strong,.journal-row:first-child span{color:inherit}
 .journal-row small{display:block;color:var(--muted)}
 .journal-row strong{color:var(--ink)}
-.world-map-layout{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
-.world-map-layout canvas{width:100%;height:auto;image-rendering:pixelated;border-style:solid;border-width:calc(3*var(--u));border-color:transparent;border-image:url(ui/skin/pl-slot.png) 5 5 5 5/calc(6.0*var(--u)) calc(6.0*var(--u)) stretch}
 .map-stop{display:flex;align-items:baseline;gap:14px;padding:12px 0;background:url(ui/skin/chain-tile.png) left bottom/auto calc(4*var(--u)) repeat-x;font-size:var(--fs-2);color:var(--ink)}
 .map-stop b{font-size:var(--fs);color:var(--gold-deep)}
 
@@ -357,7 +355,6 @@ dialog[data-view=finale] .level-adventure{margin:2px 0;padding:4px 6px}
 dialog[data-view=finale] .level-adventure .adv-title-note{display:none}
 .finale-trophies{display:flex;align-items:center;justify-content:center;gap:8px;margin:2px 0}
 .finale-next{grid-area:next;width:100%;box-sizing:border-box;margin:0;padding:4px 16px 6px;text-align:left;border-style:solid;border-width:calc(4*var(--u));border-color:transparent;border-image:url(ui/skin/pl-plate.png) 8 8 8 8 fill/calc(12.0*var(--u)) calc(12.0*var(--u)) round;image-rendering:pixelated}
-.finale-eyebrow{display:block;letter-spacing:3px;color:var(--gold)}
 .finale-goal{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;margin:4px 0}
 .finale-goal small{letter-spacing:2px;color:var(--muted)}
 .finale-goal strong{color:#fff1c8}
@@ -551,7 +548,6 @@ html[data-motion=reduced] .ui-banner{transform:translate(-50%,-50%)}
 @media(max-width:860px){
  .stats{grid-template-columns:1fr}
  .hero-select{grid-template-columns:1fr}
- .world-map-layout{grid-template-columns:1fr}
  .binding-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(max-height:620px){.bottomline{display:none}}
@@ -646,7 +642,6 @@ html:not([data-pointer=moved]) #hotbar button:hover:not(:focus-visible) .slot-na
 .rotate-card{display:flex;flex-direction:column;align-items:center;gap:10px}
 .rotate-card strong{font-size:var(--fs-2);color:var(--gold)}
 .rotate-phone{display:block;animation:pq-bob 1.2s steps(3) infinite}
-@keyframes pq-rotate{0%,30%{transform:rotate(0)}60%,100%{transform:rotate(-90deg)}}
 
 /* ---------- pixel grid snap for panels styled elsewhere (dist/ui/library.css) ----------
    Pixel Operator is crisp only on its own grid: 16 px for text, 32 px for titles. */
@@ -730,8 +725,6 @@ dialog[data-view=library] #modal-content{background:none!important}
 .level-result .ui-fx{top:90px}
 #stage:has(#ui-dialogue.show) :is(#hotbar,#next-unlock,#xp-track,#prompt,#boss-hud,.map-panel,.hud-right){visibility:hidden}
 /* class select: the painted portrait beside the class's own sprite, animating */
-.detail-art{display:flex;align-items:flex-end;justify-content:center;gap:4px}
-.detail-art .portrait-frame.big{width:124px;height:140px}
 .detail-sprite{width:144px;height:128px;margin-left:-8px;image-rendering:pixelated;pointer-events:none}
 .hero-detail .fantasy{color:var(--gold-2);font-weight:700;margin:6px 0 2px}
 .m-mode .detail-sprite{width:72px;height:64px;margin:0}
@@ -844,10 +837,6 @@ html[data-text="150"] :is(dialog,#ui-dialogue,#toast,#prompt,.ui-banner){--fs:24
 .learner-remove-type{display:grid;gap:4px}
 .learner-remove-type input{min-height:40px;padding:6px 12px;color:var(--parch-ink);background:none;border-style:solid;border-width:calc(4*var(--u));border-color:transparent;border-image:url(ui/skin/pl-parchment.png) 20 21 20 21 fill/calc(9.52*var(--u)) calc(10.0*var(--u)) round;image-rendering:pixelated;font:400 var(--fs)/1.3 var(--ui)}
 .learner-remove-acts{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
-.learner-hold{position:relative;overflow:hidden}
-.learner-hold::after{content:'';position:absolute;left:0;bottom:0;height:4px;width:0;background:#e8c060}
-.learner-hold.holding::after{animation:learner-hold 2s linear forwards}
-@keyframes learner-hold{to{width:100%}}
 .who-plays .who-row{list-style:none;margin:10px 0;padding:0;display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
 .who-card{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:132px;min-height:132px;padding:10px 14px}
 .who-card .who-bust{width:64px;height:64px;image-rendering:pixelated;display:grid;place-items:center}
@@ -969,7 +958,7 @@ html.map-open #ui-dialogue{bottom:auto;top:16px}
 :root{--bust:3}
 .m-mode{--bust:2}
 :is(.portrait-frame,.hero-card,.dlg-portrait) canvas,.hero-select .hero-card canvas,[data-detail-portrait],[data-stats-portrait]{width:calc(24px*var(--bust))!important;height:calc(24px*var(--bust))!important;max-width:none!important;aspect-ratio:1!important;object-fit:contain!important;image-rendering:pixelated!important;float:none;margin:0 auto}
-.portrait-frame,.portrait-frame.big,.detail-art .portrait-frame.big,.stat-hero .portrait-frame,.m-mode .portrait-frame,.m-mode .portrait-frame.big{width:auto!important;height:auto!important;display:grid;place-items:center;padding:0}
+.portrait-frame,.portrait-frame.big,.stat-hero .portrait-frame,.m-mode .portrait-frame,.m-mode .portrait-frame.big{width:auto!important;height:auto!important;display:grid;place-items:center;padding:0}
 .hero-select .hero-card canvas{margin:4px auto}
 .hero-hud{width:300px}
 .m-mode .hero-hud{width:150px}
@@ -1128,7 +1117,6 @@ dialog[data-view=library] #modal-content[data-school-mode=high] [data-stage=midd
 @keyframes pq-toast{from{transform:translateY(10px);opacity:0}to{transform:none;opacity:1}}
 .ico.ico-ab{background-image:url(ui/skin/ability-icons.png)}
 .ico.ico-jw{background-image:url(ui/skin/jewel-icons.png)}
-.jw-worn{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0}.jw-slot{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px}.jw-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}.jw-item{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}.jw-item.missing{opacity:.55}.jw-item small{line-height:1.25}
 /* ---------- phone mode, round 3 (9 Oct): the thumb arc wins over round 1's corner grid (its top:4px stayed set and pinned
    the abilities over the hero), the minimap goes (it sat half under the menu buttons, and Map opens the full map), and
    the hero select's name fits its card ---------- */
@@ -1224,13 +1212,6 @@ dialog[data-view=pause] #modal-content{padding:6px 10px 10px;overflow:auto}
  .pause-hero canvas{width:96px;height:108px}}
 /* hero select turntable (review round 2, B6): drag the stage or use the arrows to spin the hero */
 .er-stage{touch-action:pan-y;cursor:grab}
-.er-stage .er-turn{position:absolute;bottom:14%;width:40px;height:40px;min-height:0;padding:0;display:grid;place-items:center;font:700 22px/1 var(--ui);color:var(--gold,#e7c77e);opacity:.75;z-index:2}
-.er-stage .er-turn:hover{opacity:1}
-.er-stage .er-turn[data-turn="1"]{left:calc(50% - min(24vh,160px) - 44px)}
-.er-stage .er-turn[data-turn="-1"]{right:calc(50% - min(24vh,160px) - 44px)}
-@media (max-width:900px){.er-stage .er-turn[data-turn="1"]{left:calc(50% - 144px - 30px)}.er-stage .er-turn[data-turn="-1"]{right:calc(50% - 144px - 30px)}}
-.m-mode .er-stage .er-turn[data-turn="1"]{left:calc(50% - 96px - 30px)}
-.m-mode .er-stage .er-turn[data-turn="-1"]{right:calc(50% - 96px - 30px)}
 /* ---------- inventory, review round 2 (B7): a paper doll beside the bag (Stardew, Diablo); rarity is a coloured border on
    a muted slot (Diablo IV) ---------- */
 .inv{display:grid;grid-template-columns:minmax(270px,44%) 1fr;gap:16px;align-items:start;margin-top:8px}
@@ -1633,12 +1614,6 @@ dialog[data-view=journal] .ability-card p{line-height:1.35}
 .gate-bar-label{display:block;font-size:14px;color:var(--muted);margin-top:8px;line-height:1.1}
 .ability-card .gate-bar-label+.progress{margin:4px 0 0}
 dialog[data-view=journal] .bestiary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:stretch}
-dialog[data-view=journal] .bestiary-entry{display:flex;flex-direction:column;padding:16px 14px;border-image-repeat:stretch}
-dialog[data-view=journal] .bestiary-entry .tag{font-size:14px;color:var(--gold);line-height:1.3;margin:8px 0}
-dialog[data-view=journal] .bestiary-entry h3{font-size:22px}
-dialog[data-view=journal] .bestiary-entry p{line-height:1.4;margin:8px 0 12px}
-dialog[data-view=journal] .bestiary-entry .stats-row{margin-top:auto;padding-top:10px;border-top:1px solid #c1914955}
-dialog[data-view=journal] .bestiary-entry[data-state=unknown]::before{content:'?';display:grid;place-items:center;height:104px;font-size:48px;color:var(--muted);background:url(ui/skin/crest.png) center/70px auto no-repeat;text-shadow:0 2px #171728}
 @media(max-width:740px){dialog[data-view=journal] .bestiary,dialog[data-view=journal] #journal-body>.grid{grid-template-columns:repeat(2,minmax(0,1fr))}dialog[data-view=journal] .tabs button{flex:1;padding:6px;font-size:14px}dialog[data-view=journal] .journal-row{min-width:630px}}
 @media(max-width:450px){dialog[data-view=journal] .bestiary,dialog[data-view=journal] #journal-body>.grid{grid-template-columns:1fr}}
 @media(max-height:600px){dialog[data-view=journal] .modal-head p{display:none}dialog[data-view=journal] .modal-head h2{font-size:24px}dialog[data-view=journal] .tabs button{min-height:32px;padding:4px 8px}dialog[data-view=journal] .notes{font-size:14px;margin:2px 0 6px}dialog[data-view=journal] .journal-row{min-height:40px;padding:4px 8px}}
@@ -1978,7 +1953,7 @@ dialog:not([data-view=welcome]):not([data-view=cinematic]) :is(.modal-head,.shee
    Dialogue words stay at the owner's bigger size (8 Oct). The text-size setting (125/150 %) still scales everything that uses --fs. */
 html:not([data-text="125"]):not([data-text="150"]) dialog:not([data-view=welcome]) :is(.modal-head,.sheet-head) h2{font-size:32px}
 html:not([data-text="125"]):not([data-text="150"]) dialog:not([data-view=welcome]) :is(small,.tag,.gate-bar-label,.subtle,.card p,.pq-map-legend p){font-size:16px}
-html:not([data-text="125"]):not([data-text="150"]) dialog:not([data-view=welcome]):not([data-view=result]) :is(.card,.ability-card,.bestiary-card,.grid,.journal-section,section) h3{font-size:16px;font-weight:700}
+html:not([data-text="125"]):not([data-text="150"]) dialog:not([data-view=welcome]):not([data-view=result]) :is(.card,.ability-card,.grid,section) h3{font-size:16px;font-weight:700}
 .pq-map-mark{font-size:16px}
 .dlg-name{font-size:16px}
 /* Weaponsmith: the tier label sat on the card's top tab; it now hangs centred just under it, above the item. */
@@ -2093,7 +2068,7 @@ dialog[data-view=result] .level-gear .gear-loot{border-bottom:2px solid var(--ra
 .gear-pity small{color:var(--ink-2)}
 /* Gear browser check (14 Oct): Pixel Operator only draws a clean "+" at its own size; at 85-95% the plus loses its
    upright and "+15 Health" read as "-15". Every gear line that carries a sign or number sits at the full text size. */
-:is(.gear-lines li,.gear-set li,.gear-set small,.gear-pity,.gear-from,.gear-effect,.gear-need li){font-size:var(--fs)}
+:is(.gear-lines li,.gear-set li,.gear-set small,.gear-pity,.gear-from,.gear-effect){font-size:var(--fs)}
 dialog[data-view=smith] .gear-card :is(p,li){font-size:var(--fs);line-height:1.15}
 .m-mode dialog[data-view=smith] .gear-card :is(p,li){font-size:var(--fs)}
 /* the bag sits above the compare panel, so a panel that grows on hover never pushes the item under the pointer away */
@@ -2102,13 +2077,6 @@ dialog[data-view=smith] .gear-card :is(p,li){font-size:var(--fs);line-height:1.1
 /* the next-upgrade chase: a progress bar and each missing thing with where it comes from */
 div.gear-next{display:block}
 div.gear-next>p{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0}
-.gear-chase{height:8px;margin:6px 0 4px;background:#0008;border:1px solid #6b5a33;overflow:hidden}
-.gear-chase span{display:block;height:100%;background:linear-gradient(#ffe39a,#d9a441);transition:width .4s ease-out}
-.gear-need{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:2px 14px}
-.gear-need li{display:inline-flex;align-items:center;gap:4px;color:#ff9b85}
-.gear-need li.ok{color:#8fe07a}
-.gear-need b{color:var(--ink)}
-.gear-need small{color:var(--ink-2)}
 p.gear-next.ready{border-left-color:#8fe07a}
 /* a found item pops in on the results screen with a glow in its rarity colour */
 dialog[data-view=result] .level-gear .gear-loot:not([hidden]){animation:gear-drop .5s cubic-bezier(.2,1.4,.4,1) both}
@@ -2218,7 +2186,7 @@ html.map-open .bottomline{display:none!important}
 html:not(.map-open) .worldmap-info,.m-portrait .worldmap-info{display:none}
 
 /* Keyboard guidance stays inside the game frame, including short laptop windows. */
-#keyboard-actions{position:absolute;left:26px;bottom:26px;z-index:3;display:flex;gap:10px;padding:7px 10px;background:#17203bed;border:2px solid #d6ac59;color:#fff1c8;font:14px/1.2 var(--ui,sans-serif);pointer-events:none}#keyboard-actions span{white-space:nowrap}#keyboard-actions kbd,.hud-buttons kbd{font-size:12px}.hud-buttons button{position:relative}.hud-buttons kbd{position:absolute;bottom:-4px;right:0;padding:1px 3px}#controls-tutorial{position:absolute;z-index:4;left:50%;top:110px;transform:translateX(-50%);width:min(390px,65%);box-sizing:border-box;padding:10px 14px;background:#17203bf5;border:2px solid #d6ac59;box-shadow:3px 3px #100d15;color:#fff1c8;font:16px/1.25 var(--ui,sans-serif)}#controls-tutorial p{margin:5px 0 8px}#controls-tutorial button{font-size:14px;padding:4px 10px}#controls-tutorial[hidden]{display:none}.controls-table{width:100%;border-collapse:collapse;font-size:16px}.controls-table th{text-align:left;color:#efd080}.controls-table td,.controls-table th{padding:5px 12px;border-bottom:1px solid #5d5360}.m-mode #keyboard-actions,.m-mode kbd{display:none!important}@media(max-height:560px){#controls-tutorial{top:85px;padding:7px 12px;font-size:14px}#keyboard-actions{left:18px;bottom:22px;font-size:12px;gap:7px}.controls-table td,.controls-table th{padding:3px 10px}}
+#keyboard-actions{position:absolute;left:26px;bottom:26px;z-index:3;display:flex;gap:10px;padding:7px 10px;background:#17203bed;border:2px solid #d6ac59;color:#fff1c8;font:14px/1.2 var(--ui,sans-serif);pointer-events:none}#keyboard-actions span{white-space:nowrap}#keyboard-actions kbd{font-size:12px}#controls-tutorial{position:absolute;z-index:4;left:50%;top:110px;transform:translateX(-50%);width:min(390px,65%);box-sizing:border-box;padding:10px 14px;background:#17203bf5;border:2px solid #d6ac59;box-shadow:3px 3px #100d15;color:#fff1c8;font:16px/1.25 var(--ui,sans-serif)}#controls-tutorial p{margin:5px 0 8px}#controls-tutorial button{font-size:14px;padding:4px 10px}#controls-tutorial[hidden]{display:none}.controls-table{width:100%;border-collapse:collapse;font-size:16px}.controls-table th{text-align:left;color:#efd080}.controls-table td,.controls-table th{padding:5px 12px;border-bottom:1px solid #5d5360}.m-mode #keyboard-actions,.m-mode kbd{display:none!important}@media(max-height:560px){#controls-tutorial{top:85px;padding:7px 12px;font-size:14px}#keyboard-actions{left:18px;bottom:22px;font-size:12px;gap:7px}.controls-table td,.controls-table th{padding:3px 10px}}
 #keyboard-actions{left:50%;transform:translateX(-50%);bottom:4px;padding:3px 8px;gap:12px;font-size:14px;line-height:18px}#keyboard-actions kbd,.menu-buttons kbd{display:inline-block;min-width:0;width:auto;height:auto;background:#28334b!important;border:1px solid #a99159!important;border-image:none!important;box-shadow:none;padding:1px 4px;color:#fff1c8;font:12px/14px var(--ui,sans-serif);text-indent:0}.menu-buttons button{position:relative}.menu-buttons kbd{position:absolute;bottom:-8px;right:-4px}.controls-table{font-family:var(--ui,sans-serif)}@media(max-height:560px){#keyboard-actions{left:50%;bottom:3px;font-size:12px;gap:9px;padding:2px 6px}}
 #keyboard-actions{font-size:16px}#keyboard-actions kbd,.menu-buttons kbd{min-height:0;font:16px/16px var(--ui,sans-serif);vertical-align:middle}#keyboard-actions span{display:flex;align-items:center;gap:4px}@media(max-height:560px){#controls-tutorial{top:165px}#keyboard-actions{font-size:16px;gap:8px}#keyboard-actions kbd{font-size:16px}}
 dialog[data-view=controls] .controls-table td,dialog[data-view=controls] .controls-table th{font-size:16px;line-height:18px;padding:2px 10px}dialog[data-view=controls] .modal-head{margin-bottom:8px}dialog[data-view=controls] .modal-actions{margin-top:8px}@media(max-height:560px){dialog[data-view=controls] .eyebrow{display:none}dialog[data-view=controls] .modal-head{padding:0 0 6px;margin-bottom:4px}dialog[data-view=controls] .modal-head h2{font-size:24px;margin:0}dialog[data-view=controls] .modal-head p{margin:2px 0;font-size:14px;line-height:16px}dialog[data-view=controls] .controls-table td,dialog[data-view=controls] .controls-table th{padding:0 8px;line-height:18px}dialog[data-view=controls] .modal-actions{margin-top:4px}dialog[data-view=controls] #controls-back{padding:4px 16px;min-height:28px;font-size:16px}}
@@ -2276,10 +2244,8 @@ dialog[data-view=result] .run-tip{font-size:16px;line-height:1.3}
 .reward-chip[data-reward=xp]::before{content:'';flex:none;width:32px;height:32px;background:url(ui/skin/rewards/xp.png) center/32px no-repeat;image-rendering:pixelated}
 .reward-chip[data-reward=level]{border-color:#9fd36b;color:#d8f5b8}
 /* the mastery-test requirement is its own line above the buttons, not wedged between them */
-.test-gate{margin:10px auto 0;text-align:center;max-width:60ch}
 /* improve20-r7b-nov1 #1 (audit6 #16): on a phone (or a window under 430 px tall) the quiz result drops the "Mastery test opens after" line;
    the Toward mastery bar above it already says what is left, and the card's buttons then sit inside 390 px */
-.m-mode .result>.test-gate{display:none}@media(max-height:430px){.result>.test-gate{display:none}}
 /* short phones (740x360, 667x375): the result's head loses its eyebrow and the score, pips and XP chip their spare room, so the buttons
    stay on the screen */
 @media(max-height:420px){.m-mode dialog[data-view=lesson-summary] .modal-head{padding-top:0;padding-bottom:4px;margin-bottom:4px}.m-mode dialog[data-view=lesson-summary] .modal-head .eyebrow{display:none}.m-mode dialog[data-view=lesson-summary] .result{padding-top:0;margin-top:0}.m-mode dialog[data-view=lesson-summary] .result>.am-pips{margin-bottom:2px}.m-mode dialog[data-view=lesson-summary] .result>.reward-chips{margin:0}.m-mode dialog[data-view=lesson-summary] .result>.reward-chips>*{padding-top:2px;padding-bottom:2px}.m-mode dialog[data-view=lesson-summary] .result>p{margin:2px 0}.m-mode dialog[data-view=lesson-summary] .result>.edu-mastery{margin:2px auto}}
@@ -2573,7 +2539,6 @@ html:not(.map-open) .worldmap-info.wm-compact,.m-portrait .worldmap-info.wm-comp
 /* 25 Oct (phone potion count): the badge shows the bag count and the level's free potion is its own labelled tag above
    the slot ("+1 free"), instead of a bare "3+1". */
 .m-mode #hotbar .potion-slot.free-on .potion-legend{display:block;position:absolute;left:50%;bottom:calc(100% + 4px);transform:translateX(-50%);padding:1px 6px 2px;font:700 14px/16px var(--ui);color:#fff1c8;white-space:nowrap;background:#17203bf0;border:1px solid #d6ac59;pointer-events:none;text-shadow:0 1px 0 #0d0806}
-.m-mode #hotbar .potion-legend .pl-more{display:none}
 /* 25 Oct: Settings uses the existing cog (ui/skin/touch/menu.png), not the hammer that read as the smith */
 .menu-buttons .settings-cog{width:32px;height:32px;image-rendering:pixelated;display:block}
 .menu-buttons #settings-btn{width:56px}
@@ -2617,18 +2582,13 @@ dialog[data-view=tiers] .tier-more[open]>summary{margin-bottom:4px}
 .smith-preview .smith-bought-actions{display:flex;flex-wrap:wrap;gap:8px}
 /* oct25-followups2: the supply delivery's reward moment */
 .field-delivered-title{display:flex;align-items:center;gap:8px;color:#ffd96a;font-size:26px!important;margin:4px 0!important}
-.field-delivered-lead{margin:2px 0 8px}
-.field-delivered-grid{display:grid;grid-template-columns:1.6fr 1fr;gap:10px 18px}
-.field-delivered-grid>section{padding:6px 10px;border:1px solid #e3b85a55;background:#0000002e}
-.field-delivered-grid small{display:block;color:#e3b85a;letter-spacing:1px;text-transform:uppercase;font-size:13px;margin-bottom:4px}
 .field-done-list{list-style:none;margin:0;padding:0;display:grid;gap:4px}
 .field-done-list li{display:grid;grid-template-columns:auto 1fr;gap:0 8px;font-size:16px;line-height:1.25}
 .field-done-list li::before{content:'✓';grid-row:span 2;color:#9fd36b;font-weight:700}
 .field-done-list span{color:#d7c5a5;font-size:15px}
-.field-delivered .field-reward{display:flex;align-items:center;gap:6px;font-size:22px;color:#ffe08a;margin:4px 0}
 .field-delivered .result-goal{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:center;gap:0 8px;margin:10px 0 4px;padding-top:6px;border-top:1px solid #e3b85a44;font-size:18px}
 .field-delivered .result-goal small{color:#e3b85a}
-@media(max-width:700px),(max-height:420px){.field-delivered-grid{grid-template-columns:1.5fr 1fr;gap:6px 10px}.field-delivered-grid>section{padding:4px 8px}.field-delivered-lead{display:none}.field-done-list{gap:0}.field-done-list li{grid-template-columns:auto auto 1fr;align-items:baseline}.field-done-list li::before{grid-row:auto}.field-done-list span{font-size:15px}.field-delivered-title{font-size:20px!important;margin:0!important}.field-delivered .field-reward{font-size:18px;margin:0}.field-delivered .result-goal{margin:6px 0 2px;padding-top:4px}}
+@media(max-width:700px),(max-height:420px){.field-done-list{gap:0}.field-done-list li{grid-template-columns:auto auto 1fr;align-items:baseline}.field-done-list li::before{grid-row:auto}.field-done-list span{font-size:15px}.field-delivered-title{font-size:20px!important;margin:0!important}.field-delivered .result-goal{margin:6px 0 2px;padding-top:4px}}
 /* oct25 phone tiers (docs/playtest/oct25-phone-tiers): with a tall reward column (a Legendary first clear, the finale) the
    left column's rows stretched and pushed the stars, grade and time under the sticky NEXT GOAL bar at 844x390. The spare
    height now goes below the time, so the rating stays at the top of the left column. */
@@ -2683,24 +2643,12 @@ dialog:is([data-view=placement],[data-view=lesson-quiz]) .question:has(#quiz-fee
 .travel-picker{display:flex;flex-direction:column;gap:12px;padding:2px 2px 6px}
 .travel-lead{margin:0;color:var(--muted)}
 .travel-free{display:inline-block;padding:1px 8px;margin-right:4px;background:#2f5a35;color:#d8f5c8;border:1px solid #6fae6a;font-weight:700;text-transform:uppercase;font-size:.85em;letter-spacing:.04em}
-.travel-group h3{margin:0 0 6px;color:var(--gold)}
-.travel-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(176px,1fr));gap:8px}
-.travel-place{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;min-height:48px;padding:6px 14px 7px;text-align:left}
-.travel-place b{font-weight:700}
-.travel-place small{font-weight:400;font-size:.8em;color:var(--muted)}
-.travel-place:not(:disabled) small{color:#cdbb92}
-.travel-place.travel-locked{opacity:.5}
-.travel-place.travel-locked b::before{content:"";display:inline-block;width:16px;height:16px;margin-right:6px;vertical-align:-3px;background:url(ui/skin/pl-icons/tier-lock.png) center/16px 16px no-repeat;image-rendering:pixelated}
-.travel-place.travel-here{opacity:1;cursor:default}
-.travel-place.travel-here small{color:var(--gold);font-weight:700}
-.travel-none{margin:0;color:var(--muted)}
 /* improve20-d-nov1: a group's locked places fold into one line; the names open on a tap */
 .travel-more{margin:6px 0 0;color:var(--muted)}.travel-more summary{cursor:pointer;min-height:32px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.travel-more summary b{color:#cdbb92;font-weight:700}.travel-more summary b::before{content:"";display:inline-block;width:16px;height:16px;margin-right:6px;vertical-align:-3px;background:url(ui/skin/pl-icons/tier-lock.png) center/16px 16px no-repeat;image-rendering:pixelated}.travel-more summary small{font-size:.8em}.travel-more p{margin:4px 0 0 22px;font-size:.85em}
 #scene-fade .travel-caption{display:none}
 #scene-fade.travel .travel-caption{display:flex;position:absolute;inset:0;align-items:center;justify-content:center;color:#f6e7bf;font:700 calc(var(--fs,16px)*1.4)/1 var(--ui);letter-spacing:.06em;text-shadow:0 2px 0 #000}
 #scene-fade.travel .travel-caption::before{content:"Fast travel · ";color:var(--gold);margin-right:.3em}
 #toast.travel-hint{border-color:var(--gold)}
-.m-mode .travel-grid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}
 /* lead review 25 Oct: the picker's title and close stay put; only the list scrolls (as the loadout and the noticeboard do) */
 dialog[data-view=travel] #modal-content{display:flex;flex-direction:column;overflow:hidden}
 dialog[data-view=travel] .modal-head{flex:none}
@@ -3181,7 +3129,7 @@ html.m-mode .pet-moment{top:10%}
 .m-mode .title-screen[data-step=setup] .school-stage{margin:2px 0}.m-mode .title-screen[data-step=setup] .school-stage button{min-height:40px;padding:2px 3px}
 @media(max-height:380px){.m-mode .title-screen[data-step=setup] .school-stage button{min-height:36px}.m-mode .title-screen[data-step=setup] .school-stage button b{font-size:14px}.m-mode .title-screen[data-step=setup] .school-stage button small{font-size:11px}}
 @media(max-height:440px){.m-mode .title-screen[data-step=setup] .er-title{display:none}}
-@media(max-height:380px){.m-mode .title-screen[data-step=setup] .hero-setup :is(#hero-nickname,.pixel-select,#school-mode,.ps-btn){min-height:36px;height:auto;padding-block:4px}.m-mode .title-screen[data-step=setup] .hero-setup label{margin:0;line-height:1.1}.m-mode .title-screen[data-step=setup] .hero-setup #begin{min-height:40px}}
+@media(max-height:380px){.m-mode .title-screen[data-step=setup] .hero-setup :is(#hero-nickname,.pixel-select,#school-mode){min-height:36px;height:auto;padding-block:4px}.m-mode .title-screen[data-step=setup] .hero-setup label{margin:0;line-height:1.1}.m-mode .title-screen[data-step=setup] .hero-setup #begin{min-height:40px}}
 /* improve20-r-oct31: the Rift of the Week: its card, the result lines and the run's modifier tags under the objective */
 .rift-card{display:flex;flex-direction:column;gap:8px;margin:4px 0 8px}
 .rift-level{display:flex;align-items:center;gap:12px;margin:0}

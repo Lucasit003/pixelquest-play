@@ -72,5 +72,3 @@ function play(key,t){
 }
 /* For playtests and tests: what is wanted, what plays, and how many beds are sounding. */
 export const ambienceState=()=>({want,live,playing:cur?.key||null,fading:old.length,hidden});
-/* For browser checks: the live gains along the bed's path (bed, hidden-tab stage), read from the Web Audio graph. */
-export const ambienceLevels=()=>({bed:cur?+cur.g.gain.value.toFixed(4):0,fadingBeds:old.map(v=>+v.g.gain.value.toFixed(4)),tab:out?+out.g.gain.value.toFixed(4):null,ctx:out?.ac?.state||null});

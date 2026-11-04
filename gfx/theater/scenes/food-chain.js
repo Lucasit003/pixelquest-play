@@ -11,7 +11,6 @@
    fox stalks closer, then leaps at the rabbit, which springs away just in time and runs, the fox chasing. Still no
    animal is ever caught or eaten.
    Parts: producer, consumer, chain, hunt, energy. */
-const CHAIN=['sunlight','grass','rabbit','fox'];
 
 export default {
  id:'food-chain',

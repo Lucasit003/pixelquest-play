@@ -17,8 +17,6 @@ export const RUNE_COLOR='#7ff0ff',RUNE_NUMERALS=['','I','II','III'];
 const BY_ID=Object.fromEntries(Object.values(ABILITIES).flat().map(a=>[a.id,a]));
 /* each hero has its own rune budget (review, 31 Oct): every hero may place all the points, so switching heroes never strands runes */
 const HERO_OF=Object.fromEntries(Object.entries(ABILITIES).flatMap(([h,list])=>list.map(a=>[a.id,h])));
-export const heroOfAbility=id=>HERO_OF[id]||null;
-export const abilityById=id=>BY_ID[id]||null;
 export const runePoints=s=>masteredTopics(s);
 export const runesPlaced=(s,hero=s?.hero)=>Object.keys(s?.runes||{}).filter(id=>HERO_OF[id]===hero).reduce((t,id)=>t+runeRank(s,id),0);
 export const runesFree=(s,hero=s?.hero)=>Math.max(0,runePoints(s)-runesPlaced(s,hero));

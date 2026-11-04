@@ -138,7 +138,6 @@ function director(){
  }catch{}
  later(director,250);
 }
-export {levelUpBanner as onLevelUp};
 export function pauseExtrasHTML(inTown){return `${fullscreenSupported()?`<button id="pause-fullscreen" class="fs-toggle">${fullscreenLabel()}</button>`:fullscreenOption()==='home'?'<button id="pause-fullscreen" class="fs-toggle" data-fs="home">Full screen</button>':''}<button id="pause-stats">Stats</button><button id="pause-credits">Credits</button>${inTown?'<button id="pause-title">Title screen</button>':''}`;}
 export function wirePauseExtras({save,welcome}){
  const d=globalThis.document;

@@ -24,8 +24,6 @@ export const sealBroken=(s,id)=>!!s?.abilitySeals?.broken?.includes?.(id);
 export const sealLooted=(s,id)=>!!s?.abilitySeals?.looted?.includes?.(id);
 /* woken abilities: unlocked and not the sleeping starter (game/levels.js awakeCount, the same count the power gates read) */
 export const wokenCount=s=>awakeCount(s);
-export const sealOpenable=(s,z)=>!!z&&wokenCount(s)>=z.awake;
-export const sealReward=z=>({gold:z.gold,essence:z.essence});
 export const rewardText=z=>`${z.gold} gold + ${z.essence} Essence`;
 /* the seal's own words: "Needs 3 woken abilities: you have 2" while the hero is short, else what to do */
 export function sealNeedText(s,z){const n=wokenCount(s);if(n<z.awake)return `Needs ${z.awake} woken abilities: you have ${n}`;return `Cast ${z.cast} different abilities into it`;}
@@ -47,6 +45,5 @@ export function nextSeal(s){const n=wokenCount(s),xs=SEALS.filter(z=>!sealBroken
 export function sealNextLine(s,a){const x=nextSeal(s);if(!x||!a)return '';return `Wake ${a.name} to open the ${x.z.awake}-seal in ${x.name}.`;}
 /* the Trophy Hall row: one tile per seal -> [{id, name, text, won, chapter}] */
 export function sealTrophies(s){return SEALS.map(z=>{const ch=CHAPTERS.find(c=>c.id===z.chapter)?.name?.replace(/^The /,'')||z.chapter,won=sealLooted(s,z.id);return {id:z.id,name:`${ch}: ${z.awake}-seal`,text:won?`Opened in ${lvName(z.level)}.`:sealBroken(s,z.id)?`Broken in ${lvName(z.level)}; its cache waits.`:`In ${lvName(z.level)}. Needs ${z.awake} woken abilities.`,won,chapter:z.chapter};});}
-export const sealsOpened=s=>SEALS.filter(z=>sealLooted(s,z.id)).length;
 /* every seal sits on a real level of its chapter (tests) */
 export const sealLevelsOk=()=>SEALS.every(z=>{const l=LEVELS.find(x=>x.id===z.level);return !!l&&l.chapter===z.chapter&&l.kind==='level';});

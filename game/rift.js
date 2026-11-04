@@ -25,7 +25,6 @@ export const RIFT_ORDER=['swift','elite','storm','glass','echo','thrifty'];
 export const RIFT_OPEN='e8',SHARDS_PER_TIER=4;
 /* The ISO 8601 week of the device's local date: weeks start on Monday, week 1 holds the year's first Thursday. */
 export function isoWeek(date=new Date()){const d=new Date(date.getFullYear(),date.getMonth(),date.getDate()),day=(d.getDay()+6)%7;d.setDate(d.getDate()-day+3);const year=d.getFullYear(),jan4=new Date(year,0,4),week=1+Math.round(((d-jan4)/864e5-3+(jan4.getDay()+6)%7)/7);return {year,week,key:`${year}-W${String(week).padStart(2,'0')}`};}
-export const weekNumber=key=>{const m=/^(\d{4})-W(\d{2})$/.exec(String(key||''));return m?+m[2]:0;};
 export const riftOpen=s=>levelDone(s,RIFT_OPEN);
 /* improve20-r9f-nov1 #3 (audit8 a14: a level-19 hero who had finished the game drew Goblin Camp on Normal, for +1 shard and +97 gold
    while holding 2,067): the pool is the NEWEST chapter the save has cleared a level in (its map levels cleared on Normal, in LEVELS

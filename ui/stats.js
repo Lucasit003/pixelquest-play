@@ -1,7 +1,7 @@
 /* Stats screen. The world map's "Stats" button calls openStats(save). Read-only: it never writes
    the save. save.levels arrives with save v5 (levels agent); a v4 save without it shows the old
    contracts instead, and every field is optional so a fresh or partial save cannot throw. */
-import {CLASSES,SUBJECTS,WEAPONS,PETS,CONTRACTS,armorName} from '../game/data.js';
+import {CLASSES,SUBJECTS,WEAPONS,PETS,CONTRACTS} from '../game/data.js';
 import {mastery,abilityMastery,xpFor,unlocked} from '../game/math.js';
 import {asleep} from '../academics/awakening.js';
 import {ABILITIES} from '../game/abilities.js';
@@ -49,7 +49,6 @@ export function statsModel(save={}){
   lessonsDone:lessons.filter(r=>r&&r.done).length,topicsMastered:lessons.filter(r=>r&&num(r.pts)>0).length,
   bestiary:{seen:[...seen].filter(k=>all.has(k)||save.bestiary).length,total:all.size}};
 }
-const roman=n=>['I','II','III','IV'][n]||'I';
 const bar=(pct,cls='')=>`<div class="meter ${cls}" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(pct)}"><i style="width:${Math.max(0,Math.min(100,pct))}%"></i></div>`;
 export function statsHTML(m){
  const subj=m.subjects.map(s=>`<li style="--accent:${s.color}">${icon(SUBJECT_ICON[s.id]||'book-open',{size:32})}<div><span class="row"><strong>${esc(s.name)}</strong><b>${s.ability.toFixed(1)}%</b></span>${bar(s.ability)}${/* v2:edu playtest S2-12: show the number the ability gates use, lessons included */s.ability-s.mastery>.05?`<small>includes your lessons</small>`:''}</div></li>`).join('');

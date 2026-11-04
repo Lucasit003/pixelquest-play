@@ -12,7 +12,6 @@ import {drawPic,describe} from './lesson-art.js';
 const SCENES=new Map();
 export const registerScene=(kind,factory)=>{if(typeof factory!=='function')throw new Error('registerScene needs a factory');SCENES.set(kind,factory);};
 export const unregisterScene=kind=>SCENES.delete(kind);
-export const hasScene=kind=>SCENES.has(kind);
 
 const base=spec=>({draw:(c,t)=>drawPic(c,spec,t),label:describe(spec)});
 export function painter(spec){

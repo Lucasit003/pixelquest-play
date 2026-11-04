@@ -71,7 +71,6 @@ export function nextGrade(total){const i=GRADES.findIndex(([,min])=>total>=min);
    one line for the card face, in kid words with the points: "A is 48 points away: find the secret (+40)". Exploration's secret is named first
    (it is exact and a kid can plan for it); then whichever of Skill or Speed has the most room ("up to", since those are earned by degree); a
    second step is added only when the first cannot reach the next grade alone. part is what the world-map card remembers (best.tip). */
-export const TIP_PARTS=['explore','skill','speed'];
 export function gradeOptions(run){const need=Math.max(1,run?.need|0||1),found=Math.max(0,run?.found|0),o=[];
  if(found<need){const n=need-found;o.push({part:'explore',pts:Math.round(40*Math.min(1,n/need)),text:need===1?'find the secret':`find ${n} more secret${n>1?'s':''}`,exact:true});}
  const rest=[];if((run?.skill??100)<100)rest.push({part:'skill',pts:100-run.skill,text:'take fewer hits'});if((run?.speed??100)<100)rest.push({part:'speed',pts:100-run.speed,text:'finish faster'});

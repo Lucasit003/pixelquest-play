@@ -102,7 +102,6 @@ export const TRICK_ICD=1.5,TRICK_CAP=.4;
 /* ---- the item table ---------------------------------------------------------------------------------------------- */
 const FAMILIES=['sword','staff','dagger','bow','hammer','axe','focus'];
 export const familyOf=hero=>CLASSES[hero]?.weapon||'sword';
-const HERO_OF=Object.fromEntries(Object.entries(CLASSES).map(([k,c])=>[c.weapon,k]));
 const T=[];
 /* the smith's weapon line: the existing names and icons. Prices raised 24 Oct (docs/playtest/oct24-polish/ECONOMY.md):
    Elderwood's line now takes about one level's first-clear gold per piece instead of all of it after e1. */

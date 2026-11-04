@@ -32,7 +32,6 @@ import {heldImage, dropImage} from '../core/loader.js';
 import {icon as uiIcon} from '../ui/icons.js';
 import {townViewChunks, chunkDist} from '../core/town-view.js';
 
-const BASE = new URL('../assets/town/', import.meta.url).href;
 /* v2:ui-mobile -- the hub camera follows the rendered view (STAGE.camW x camH): 480x270 on desktop, smaller on phones */
 let VIEW_W = 480, VIEW_H = 270; const syncView = () => { VIEW_W = STAGE.hubW || STAGE.camW || 480; VIEW_H = STAGE.hubH || STAGE.camH || 270; }; /* ownernotes-b-nov1 #2: the town's own view (game/stage.js setHubView) */ const PROXY = {x: 350, y: 300}; const FOOT = {hw: 5, up: 4, down: 1};
 /* Actions main.js knows how to open. Shops map onto the existing panels where they fit. */
@@ -130,7 +129,6 @@ export function villageCrew(save) { return barracksCrew(save).filter(m => joined
 /* the hire beat: the companion steps out from beside the roster board to the hero and cheers (main.js runs the lines and banner) */
 export const STEP_OUT = {walk: .9, hold: 3.2};
 export function hubStepOut(id) { const p = H.player, m = BARRACKS.crew[0]; if (!p || current().key !== 'barracks' || !ART[id]) return false; const side = p.x > m.x ? -1 : 1; H.stepOut = {id, t0: H.time, from: {x: m.x, y: m.y}, to: {x: Math.round(p.x + side * 26), y: Math.round(p.y + 2)}}; return true; }
-export const hubSteppingOut = () => !!H.stepOut && H.time - H.stepOut.t0 < STEP_OUT.hold;
 function stepOutNow() { const o = H.stepOut; if (!o) return []; const k = (H.time - o.t0) / STEP_OUT.walk; if (H.time - o.t0 >= STEP_OUT.hold || current().key !== 'barracks') { H.stepOut = null; return []; }
   const f = Math.min(1, k), x = o.from.x + (o.to.x - o.from.x) * f, y = o.from.y + (o.to.y - o.from.y) * f;
   return [{id: o.id, key: o.id, name: COMPANIONS[o.id].short, x, y, clip: f < 1 ? 'walk' : 'cheer', t: f < 1 ? H.time - o.t0 : H.time - o.t0 - STEP_OUT.walk, facing: f < 1 ? Math.sign(o.to.x - o.from.x) || 1 : Math.sign((H.player?.x ?? x) - x) || 1, beat: true}]; }

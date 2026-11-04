@@ -8,7 +8,7 @@ import {lessonGradeLabel} from './lesson-labels.js';
      el.innerHTML=studyPanelHTML(save,{limit:3});              // static markup, or
      mountStudyPanel(el,save,{limit:3,onOpenLibrary:()=>library(),onOpenLesson:id=>startLesson(id)});
    Buttons carry data-edu-lesson="<topic id>" and data-edu-library; mountStudyPanel wires them. */
-import {studyPlan,nextLesson,goalLine,topicStage,placementNudge} from '../academics/study-unlock.js';
+import {studyPlan,nextLesson,topicStage,placementNudge} from '../academics/study-unlock.js';
 import {SUBJECTS} from '../game/data.js';
 import {xpFor,xpLevel} from '../game/math.js';
 import {nextStep} from '../game/next-step.js';

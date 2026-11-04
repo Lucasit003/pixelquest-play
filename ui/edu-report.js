@@ -16,7 +16,7 @@ import {TOPICS,POOL,mastered,topicOpen,stageName,rungOf,gradeTopics,grades} from
 import {guardButton} from './parent-gate.js';
 import {ABILITIES} from '../game/abilities.js';
 import {SUBJECTS,CLASSES} from '../game/data.js';
-import {unlocked,abilityMastery} from '../game/math.js';
+import {unlocked} from '../game/math.js';
 
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const gradeName=g=>g>=6?`Grade ${g} (Middle School)`:`Grade ${g}`;

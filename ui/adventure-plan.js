@@ -2,7 +2,7 @@ import {nextStep} from '../game/next-step.js';
 import {abilityProgressHTML} from './answer-moment.js';
 import {fieldMission,FIELD_REWARD} from '../game/field-mission.js';
 import {dailyView} from '../game/daily.js';
-import {tomorrowLines,dayDone} from '../game/tomorrow.js';
+import {tomorrowLines} from '../game/tomorrow.js';
 import {ABILITIES} from '../game/abilities.js';
 import {abilityIcon} from './icons.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

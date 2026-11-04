@@ -26,7 +26,6 @@ const KEYS=new Set(PETS.map(p=>p.key));
 export function cleanPets(v,old=false){const p=emptyPets();if(old||!v||typeof v!=='object'||Array.isArray(v)){p.all=!!old;return p;}
  p.all=v.all===true;for(const k of ['got','seen'])if(Array.isArray(v[k]))p[k]=[...new Set(v[k].filter(x=>KEYS.has(x)&&x!==FREE_PET))];return p;}
 const P=s=>s.pets||(s.pets=emptyPets());
-export const petSource=key=>PET_SOURCES[key]||null;
 export const petOwned=(s,key)=>KEYS.has(key)&&(key===FREE_PET||s?.pets?.all===true||(s?.pets?.got||[]).includes(key)||!!PET_SOURCES[key]?.met(s||{}));
 export const ownedPets=s=>PETS.filter(p=>petOwned(s,p.key)).map(p=>p.key);
 /* latch every pet whose source is met into got; returns the keys newly latched */

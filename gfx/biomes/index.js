@@ -50,8 +50,6 @@ export function preloadBiome(key) {
 }
 export const biomeReady = key => !!MAPS[biomeKey(key)];
 export const biomeMap = key => MAPS[biomeKey(key)] || null;
-/* [floorTop, floorBottom] of a loaded biome map (STAGE's band when it is not loaded or predates per-map bands) */
-export const biomeBand = key => bandOf(MAPS[biomeKey(key)]);
 
 /* ---------- view ---------- */
 export function stageView(o = {}, c = null) {
