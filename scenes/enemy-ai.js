@@ -5,6 +5,7 @@ import {softMarker,safeLane,escapeRoute,visibleColumn} from './tier-fx.js';
 import {applyMod,keepOf} from '../game/tiers.js';
 import {canBeginThreat} from './encounter-budget.js';
 import {echoCue} from './normal-pacing.js';
+import {armHallPatterns,hallPatternTick,hallTell,rowMarkers,pylonSpot,rowBursts,ringMarkers,ringBursts} from './hall-patterns.js';
 /* Enemy and boss behaviour for v2 sprite enemies (docs/GAME_V2_PLAN.md §Enemies). Owned by the enemies agent.
 
    INTERFACE (kept small so it survives combat.js being rebuilt around horizontal stages)
@@ -73,7 +74,7 @@ function brain(e,w){if(e.brain)return e.brain;const R=()=>rnd(w);
  /* sprites only scale by whole numbers: an elite (roster scales it by .75) is drawn at the largest whole scale below,
     and its reaches shrink with it so no hit lands beyond the art */
  /* the boss's moves as its tier plays them (heroic/legendary overrides, tier-only moves; game/enemies.js) */
- if(e.attacks?.some(a=>a.heroic||a.legendary||a.tiers))e.attacks=tierAttacks(e.attacks,e.tierKey);
+ if(e.attacks?.some(a=>a.heroic||a.legendary||a.tiers))e.attacks=tierAttacks(e.attacks,e.tierKey);armHallPatterns(e,w);
  const want=Math.max(1,Math.floor((e.scale||1)+1e-6)),k=want/(d.scale||want);if(Math.abs(k-1)>1e-6&&e.attacks)e.attacks=e.attacks.map(a=>({...a,range:a.range*k,...(a.radius?{radius:a.radius*k}:{}),...(a.len?{len:a.len*k}:{})}));e.scale=want;
  e.state=hasState(e,'appear')&&e.summoned?'appear':'idle';e.z=e.z||0;
  /* identical clones must not move in lockstep or stack: random animation phase, and a nudge off any twin within 6 px */
@@ -110,14 +111,15 @@ function buildMarkers(e,a,w){const p=w.player,f=e.facing,b=bounds(w),band=bandOf
   case 'leap':circ(p.x,standY(e,w,p.y),a.radius);break;
   case 'line':for(let i=0;i<a.count;i++)circ(e.x+f*(a.gap*(i+1)),e.y+(p.y-e.y)*(i+1)/a.count,a.radius);break;
   /* summons come from the arena's own places: its two sides (pylons), its edges (a drill line marching in), or beside the boss */
-  case 'summon':for(let i=0;i<(a.count||1);i++){if(a.spots==='ember-gate')circ((e.emberGate=((e.brain?.used?.[a.name]||0)%2))?Math.min(b.x1-80,(w.camX??b.x0)+STAGE.camW-80):Math.max(b.x0+80,(w.camX??b.x0)+80),(b.y0+b.y1)/2+(i%2?12:-12),12);else if(a.spots==='pilot-side')circ(clampN((w.camX??b.x0)+64,b.x0+64,b.x1-100)+i*24,(b.y0+b.y1)/2+(i%2?12:-12),12);else if(a.spots==='sides')circ(i%2?b.x1-64:b.x0+64,(b.y0+b.y1)/2+(i%2?10:-10),8);else if(a.spots==='edge')circ(i%2?b.x1-6:b.x0+6,clampN(p.y+(i%2?12:-12),b.y0,b.y1),8);else circ(e.x+f*(26+i*22)*(i%2?-1:1),e.y+(i%2?10:-10),8);}if(!a.visibleTell)out.forEach(m=>m.hide=true);break;
+  case 'summon':for(let i=0;i<(a.count||1);i++){if(a.spots==='ember-gate')circ((e.emberGate=((e.brain?.used?.[a.name]||0)%2))?Math.min(b.x1-80,(w.camX??b.x0)+STAGE.camW-80):Math.max(b.x0+80,(w.camX??b.x0)+80),(b.y0+b.y1)/2+(i%2?12:-12),12);else if(a.spots==='pilot-side')circ(clampN((w.camX??b.x0)+64,b.x0+64,b.x1-100)+i*24,(b.y0+b.y1)/2+(i%2?12:-12),12);else if(a.spots==='hall'){const q=pylonSpot(w,p,b);circ(q.x,q.y,12);}else if(a.spots==='sides')circ(i%2?b.x1-64:b.x0+64,(b.y0+b.y1)/2+(i%2?10:-10),8);else if(a.spots==='edge')circ(i%2?b.x1-6:b.x0+6,clampN(p.y+(i%2?12:-12),b.y0,b.y1),8);else circ(e.x+f*(26+i*22)*(i%2?-1:1),e.y+(i%2?10:-10),8);}if(!a.visibleTell)out.forEach(m=>m.hide=true);break;
   case 'aoe':{const n=a.count||1,lead=a.lead||{dx:0,dy:0},cx=a.at==='self'?e.x:a.at==='front'?e.x+f*a.range*.6:p.x+(lead.dx||0)*40,cy=a.at==='player'?p.y+(lead.dy||0)*20:e.y;
    /* a cross of stars (the Void Knight's Star Cape): the centre and four around it, the gaps between them safe */
+   if(a.pattern==='rows'){out.push(...rowMarkers(w,a,b,e));break;}if(a.pattern==='band'){out.push(...ringMarkers(w,a,b,e));break;}
    if(a.pattern==='cross'){const s=a.spread||40;circ(cx,cy,a.radius);circ(cx-s,cy,a.radius);circ(cx+s,cy,a.radius);circ(cx,cy-s*.55,a.radius);circ(cx,cy+s*.55,a.radius);break;}
    for(let i=0;i<n;i++){const off=n===1?0:(i-(n-1)/2)*a.spread;circ(cx+off,cy+(n>1?(i%2?1:-1)*(a.spread*.25):0),a.radius);}break;}}
  return out;}
 function inMarker(m,p){if(m.shape==='box'){const lo=Math.min(m.x0,m.x1)-2,hi=Math.max(m.x0,m.x1)+2;return p.x>=lo&&p.x<=hi&&Math.abs(p.y-m.y)<=m.band;}
- const dx=(p.x-m.x)/m.r,dy=(p.y-m.y)/(m.r*.55);return dx*dx+dy*dy<=1;}
+ const dx=(p.x-m.x)/m.r,dy=(p.y-m.y)/(m.r*.55);if(m.inner>0&&((p.x-m.x)/m.inner)**2+((p.y-m.y)/(m.inner*.55))**2<1)return false;return dx*dx+dy*dy<=1;}
 
 /* what boss-moves.js may use of this module */
 const K={bounds,fx:w=>fxList(w),puff:(...a)=>puff(...a),hurt:(...a)=>hurtPlayer(...a),inMarker:(m,p)=>inMarker(m,p),stateInfo:(...a)=>stateInfo(...a),setState:(e,s)=>setState(e,s),top:e=>enemyTop(e),
@@ -129,7 +131,7 @@ function puff(w,fx,x,y,owner,hs){if(!fx)return;fxList(w).push({kind:'hazard',own
    hit that landed. */
 function hurtPlayer(e,w,a,from,mult=1){const p=w.player;if(!p||p.hp<=0||(p.z||0)>14)return false;
  if(p.inv>0){perfectDodge(e,w,a);return true;}const hp0=p.hp,inv0=p.inv||0;
- w.hurt(e.atk*(a.dmg||1)*(e.brain?.dmgMul||1)*mult,{x:from.x,y:from.y,kb:e.boss?150:90,by:e,move:a.name,fireGround:(a.kind==='aoe'||a.kind==='line')&&/fire|flame|lava|magma|molten|ember|burn|scorch/i.test(`${a.fx||''} ${a.name||''}`)});
+ w.hurt(e.atk*(a.dmg||1)*(e.brain?.dmgMul||1)*mult,{x:from.x,y:from.y,kb:e.boss?150:90,by:e,move:a.name,...(a.pct>0?{pct:a.pct*mult}:{}),fireGround:(a.kind==='aoe'||a.kind==='line')&&/fire|flame|lava|magma|molten|ember|burn|scorch/i.test(`${a.fx||''} ${a.name||''}`)});
  afterHit(e,w,a,p.hp<hp0||(p.inv||0)>inv0);return true;}
 
 /* ---------- attack lifecycle ---------- */
@@ -149,7 +151,7 @@ function startTele(e,w,b,a){const p=w.player;emberPrepare(e,w,a);a=veilPrepare(e
  b.safeLane=(e.normalPacing&&a.kind==='sweep'||w.level?.encounter?.readable)&&(a.veilBeat!=null||a.kind==='sweep'||(w.level.encounter.emberkeep||w.level.encounter.veilmoor)&&['dash','wave','zone'].includes(a.kind)&&b.markers[0]?.shape==='box')?escapeRoute(w,b.markers[0],b.teleDur):null;
  if(a.veilPush)b.safeLane=veilSafe(w,a,b.markers);
  if((e.normalPacing&&a.kind==='sweep'||w.level?.encounter?.emberkeep||w.level?.encounter?.veilmoor)&&(a.veilBeat!=null||['sweep','dash','wave','zone'].includes(a.kind))&&b.markers[0]?.shape==='box'&&!b.safeLane){b.mode='move';b.gcd=.4;b.markers=[];if(a.forced||a.returnPass)b.force=a.name;if(a.returnPass)b.forceAtk=a;return;}
- (b.used||(b.used={}))[a.name]=(b.used[a.name]||0)+1;tellSound(e,w,a);
+ (b.used||(b.used={}))[a.name]=(b.used[a.name]||0)+1;tellSound(e,w,a);if(a.hall&&e.boss&&!(b.repeat>1))hallTell(e,w,a,enemyTop(e),SIG_WORD);
  /* a boss names a signature move the first time it uses it in a fight, so a child can name the trick afterwards */
  if(e.boss&&a.label&&!(b.named||(b.named=new Set())).has(a.label)){b.named.add(a.label);if(!w.level?.encounter?.readable&&!e.normalPacing) w.text?.(a.label,e.x,enemyTop(e)-6,'#ffe2a8',true);}
  if(a.pose&&hasState(e,a.pose)){setState(e,a.pose);b.freeze=false;}
@@ -172,12 +174,12 @@ function resolveHit(e,w,b,k){const a=b.atk,p=w.player,fx=fxList(w),f=e.facing,k2
     fx.push({kind:'shot',owner:e,a,fx:a.fx,x:muz.x,y:muz.y,h,vx:f*a.speed,vy:clampN((ty-muz.y)*a.speed/dx,-45,45),life:(a.range+40)/a.speed,t:0,homing:a.homing||0});}break;}
   case 'aoe':case 'line':case 'leap':b.markers.forEach((m,i)=>{
    if(a.fx){fx.push({kind:'hazard',owner:e,a,fx:a.fx,x:m.x,y:m.y,r:m.r,t:-(a.delay||0)-(a.kind==='line'?i*.09:a.fall?i*.14:i*.05),marker:m,hit:false,dmgMult:1,hs:a.hs,...(a.lob?lobFrom(e):{})});}
-   else{if(inMarker(m,p)&&!b.hitDone[i]){b.hitDone[i]=1;hurtPlayer(e,w,a,m);}puff(w,a.impact||'fx-dust',m.x,m.y,e,a.impactState);}});
+   else{if(inMarker(m,p)&&!b.hitDone[i]){b.hitDone[i]=1;hurtPlayer(e,w,a,m.shape==='box'?{x:(m.x0+m.x1)/2,y:m.y}:m);}if(a.pattern==='rows')for(const q of rowBursts(m))puff(w,a.impact,q.x,q.y,e);else if(a.pattern==='band')for(const q of ringBursts(m))puff(w,a.impact,q.x,q.y,e);else puff(w,a.impact||'fx-dust',m.x,m.y,e,a.impactState);}});
    if(a.puddle&&a.kind==='leap'){w.enemyFx=w.enemyFx.filter(f=>!(f.pilotPuddle&&f.owner===e));w.enemyFx.push({kind:'zone',pilotPuddle:true,owner:e,a:{dmg:0,tint:'#82cc87',outline:true},x:b.to.x,y:b.to.y,r:30,t:0,dur:1.8,slow:.15,tick:.6});}
    if(!a.fx)w.quake?.('aoe',e.boss?.9:.4);b.markers=a.fx?[]:b.markers;break;
   case 'summon':b.markers.forEach((m,i)=>{if(w_minions(e,a.key)>=(a.max||2))return;let o;if(w.spawn){o=w.spawn({...applyMod(rosterEnemy(a.key,{tier:e.tier||1}),a.mods?.[i]),summoner:e,helper:!!a.link||!!a.pilotGuards},m.x,m.y)||w.enemies[w.enemies.length-1];}else{o=makeEnemy(a.key,m.x,m.y);w.enemies.push(o);}Object.assign(o,{summoned:true,summoner:e,entered:true,facing:e.facing});
    /* a lantern or pylon is linked to the boss (boss-moves.js linkShield); a prop takes hits, not damage; an orbiter circles it */
-   if(a.link){o.linkTo=e;o.linkColor=a.linkColor;o.linkShare=a.linkShare??o.linkShare;}if(o.propHits||a.propHits)o.prop={hits:a.propHits||o.propHits};if(a.orbit){o.orbitOf=e;o.orbitA=i/(a.count||1)*Math.PI*2;}
+   if(a.link){o.linkTo=e;o.linkColor=a.linkColor;o.linkShare=a.linkShare??o.linkShare;}if(o.propHits||a.propHits)o.prop={hits:a.propHits||o.propHits};if(a.orbit){o.orbitOf=e;o.orbitA=i/(a.count||1)*Math.PI*2;}if(a.assign)Object.assign(o,a.assign);
    if(a.fx)fx.push({kind:'hazard',owner:e,a:{...a,dmg:0},fx:a.fx,x:m.x,y:m.y,r:0,t:0,hit:true,marker:null,hs:a.fxs});
    if(!a.fx)puff(w,'fx-portal',m.x,m.y,e);});b.markers=[];/* improve20-r14b-nov3 #7 (R13C shot 03: "ONLY THE REAL ONE HAS A SHADOW!" read as faint grey, caught in its 0.75 s fade): a signature move's banner is bold, warm white and held at full strength for about 2 s (SIG_WORD) */if(a.banner)w.text?.(a.banner,e.x,enemyTop(e)-4,SIG_WORD.color,true,{life:SIG_WORD.life,hold:true});break;
   case 'buff':e.def=b.baseDef*(a.def||2);b.buffT=a.time||4;w.text?.('ARMOUR',e.x,e.y-(metaOf(e.sprite)?.height||40)*k2-6,'#c9d7e8');break;
@@ -258,7 +260,7 @@ function step(e,w,dt,mover){_world=w;const b=brain(e,w);
  if(!ext)for(const k of ['flash','inv','statusTime','exposed','marked','ccGuard'])e[k]=Math.max(0,(e[k]||0)-dt);
  e.stateT=(e.stateT||0)+(b.freeze?0:dt*(b.mode==='move'||b.mode==='recover'?b.rate||1:1));b.t+=dt;
  /* a shadow copy pops when its maker falls */
- if(e.decoy&&e.hp>0&&!(e.summoner?.hp>0))e.hp=0;
+ if((e.decoy||e.hallAdd)&&e.hp>0&&(!(e.summoner?.hp>0)||e.hallAdd&&(e.hallLife-=dt)<=0))e.hp=0;
  if(e.hp<=0){if(e.decoy&&b.mode!=='dead'){puff(w,'fx-aura-shadow',e.x,e.y,e);e.deathTime=.01;}die(e,b);if(e.decoy)e.deathTime=Math.min(e.deathTime,.3);if(e.z>0)e.z=Math.max(0,e.z-dt*60);return;}
  if(e.hp<b.lastHp)onDamaged(e,w,b);b.lastHp=e.hp;
  b.gcd=Math.max(0,b.gcd-dt);b.blockCd=Math.max(0,(b.blockCd||0)-dt);for(const n in b.cd)b.cd[n]=Math.max(0,b.cd[n]-dt);
@@ -268,6 +270,7 @@ function step(e,w,dt,mover){_world=w;const b=brain(e,w);
  if(e.boss&&e.phaseShift&&b.phase===1&&e.hp<=e.maxHp*(e.phaseShift.at||.5)&&b.mode!=='act')enterPhase2(e,w,b);
  /* the Thorn King's phase change is roster.js's cinematic (a second life): follow it into phase two */
  if(e.cinematic&&e.phase===2&&b.phase===1){b.phase=2;b.speedMul=e.p2Speed||1.2;b.cdMul=(e.p2Cd||.75)*(e.cdMul||1);b.cd={};b.markers=[];b.mode='move';e.tint='#9dff7a';puff(w,'fx-explosion',e.x,e.y,e);if(e.phaseLine&&!w.quote)w.quote={text:e.phaseLine,at:w.run?.time||0};}
+ if(e.hallP)hallPatternTick(e,w,b);
  const stunned=e.statusTime>0&&['stun','freeze','root'].includes(e.status);
  const p=w.player;
  switch(b.mode){
@@ -407,13 +410,15 @@ export function drawEnemy(c,e,t){if(!e.sprite)return false;const s=loadSprite(e.
  return true;}
 /* Ground telegraph: red-orange graded Foozle ground cracks (fx-marker), tiled over the danger area, brightening as the
    hit approaches. Authored pilot tells add a static code outline, also visible before the effect atlas loads. */
-function marker(c,m,prog,t){if(m.hide)return;if(m.soft){softMarker(c,m,prog,false,{age:m.age??prog,warning:m.warn||1,motion:m.motion!==false});return;}if(m.outline){c.save();c.strokeStyle='#ffe49a';c.lineWidth=1.5;c.setLineDash([4,3]);if(m.shape==='box')c.strokeRect(Math.min(m.x0,m.x1),m.y-m.band,Math.abs(m.x1-m.x0),m.band*2);else{c.beginPath();c.ellipse(m.x,m.y,m.r,m.r*.55,0,0,Math.PI*2);c.stroke();}c.restore();}const s=loadSprite('fx-marker');if(!s.ready)return;const pulse=.5+.5*Math.sin(t*14),alpha=Math.min(1,(.35+.6*prog)*(.8+.2*pulse))*(m.dim||1);
+function marker(c,m,prog,t){if(m.hide)return;if(m.soft){softMarker(c,m,prog,false,{age:m.age??prog,warning:m.warn||1,motion:m.motion!==false});return;}if(m.outline){c.save();c.strokeStyle='#ffe49a';c.lineWidth=1.5;c.setLineDash([4,3]);if(m.shape==='box')c.strokeRect(Math.min(m.x0,m.x1),m.y-m.band,Math.abs(m.x1-m.x0),m.band*2);else{c.beginPath();c.ellipse(m.x,m.y,m.r,m.r*.55,0,0,Math.PI*2);c.stroke();if(m.inner>0){c.beginPath();c.ellipse(m.x,m.y,m.inner,m.inner*.55,0,0,Math.PI*2);c.stroke();}}c.restore();}const s=loadSprite('fx-marker');if(!s.ready)return;const pulse=.5+.5*Math.sin(t*14),alpha=Math.min(1,(.35+.6*prog)*(.8+.2*pulse))*(m.dim||1);
  const put=(x,y)=>drawSprite(c,'fx-marker','glow',0,Math.round(x),Math.round(y),{alpha});const gx=14,gy=6;
  if(m.shape==='box'){const lo=Math.min(m.x0,m.x1),hi=Math.max(m.x0,m.x1);for(let y=m.y-m.band+gy/2,r=0;y<=m.y+m.band;y+=gy,r++)for(let x=lo+(r%2?gx/2:0);x<=hi;x+=gx)put(x,y);return;}
  /* fill the ellipse with cracks on a staggered grid, so the whole danger area glows red-orange */
- const rx=m.r,ry=m.r*.55;for(let y=-ry+gy/2,r=0;y<=ry;y+=gy,r++)for(let x=-rx+(r%2?gx/2:0);x<=rx;x+=gx)if((x*x)/(rx*rx)+(y*y)/(ry*ry)<=.7)put(m.x+x,m.y+y);
+ const rx=m.r,ry=m.r*.55,ix=m.inner||0,iy=ix*.55;for(let y=-ry+gy/2,r=0;y<=ry;y+=gy,r++)for(let x=-rx+(r%2?gx/2:0);x<=rx;x+=gx)if((x*x)/(rx*rx)+(y*y)/(ry*ry)<=.7&&!(ix&&(x*x)/(ix*ix)+(y*y)/(iy*iy)<=1.3))put(m.x+x,m.y+y);
  /* the edge: cracks around the full perimeter at 12 px or closer, so the boundary of the danger area reads */
- const per=Math.PI*(3*(rx+ry)-Math.sqrt((3*rx+ry)*(rx+3*ry))),n=Math.max(8,Math.ceil(per/12));for(let i=0;i<n;i++){const a=i/n*Math.PI*2;put(m.x+Math.cos(a)*rx,m.y+Math.sin(a)*ry);}}
+ const per=Math.PI*(3*(rx+ry)-Math.sqrt((3*rx+ry)*(rx+3*ry))),n=Math.max(8,Math.ceil(per/12));for(let i=0;i<n;i++){const a=i/n*Math.PI*2;put(m.x+Math.cos(a)*rx,m.y+Math.sin(a)*ry);}
+ /* a ring marker (hall5 echo ring, m.inner): its inner edge too, so the safe floor inside reads as dark */
+ if(ix){const pi=Math.PI*(3*(ix+iy)-Math.sqrt((3*ix+iy)*(ix+3*iy))),k=Math.max(6,Math.ceil(pi/12));for(let i=0;i<k;i++){const a=i/k*Math.PI*2;put(m.x+Math.cos(a)*ix,m.y+Math.sin(a)*iy);}}}
 /* improve20-r8b-nov1 #4 (audit7 d21: Pillar Form was 69% of mx1's damage and had no ground marker a kid could read): while the boss is a
    column, a bright ring on the ground shows exactly where it burns (the hit ellipse, enemy-ai.js inMarker), pulsing, and dimmer during the
    slow beat after a hit. An effect, drawn in code like every telegraph. */

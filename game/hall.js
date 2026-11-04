@@ -62,6 +62,10 @@ export const hallHeal=r=>HALL_HEAL_RUNG[r]??HALL_HEAL;
 export const HALL_HIT_RUNG=Object.freeze({}),HALL_FREE_RUNG=Object.freeze({});
 export const hallHit=r=>HALL_HIT_RUNG[r]??1;
 export const hallFree=r=>HALL_FREE_RUNG[r]??FREE_POTIONS;
+/* hall5-nov3: Rung III's new boss patterns (scenes/hall-patterns.js): a skill test made of telegraphed patterns, not bigger numbers (hall3 and
+   hall4 showed class-blind numbers wall a kid-skill class before they trouble a skilled player). Rungs I-II list none. docs/playtest/hall5-nov3. */
+export const HALL_PATTERN_RUNG=Object.freeze({3:Object.freeze(['echo rows','echo ring','echo storm','echo pylon'])});
+export const hallPatterns=r=>HALL_PATTERN_RUNG[r]||[];
 export const hallCarry=(hp,r)=>Math.min(1,Math.max(0,+hp||0)+hallHeal(r));
 /* ranged-nov2: the free potion comes back at every boss, as it does at every story attempt (it came once a rung). A chained boss-only rung
    with no regeneration decided by kit: Warrior and Paladin open with a shield or a heal and won every kid-bot run, while the Mage, Ranger,

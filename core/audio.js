@@ -111,6 +111,12 @@ const Z={
  'tell.summon':[.8,.05,78,.004,.03,.24,0,2,-2,,,,.12,1],
  'tell.vanish':[.5,.05,880,.05,.06,.2,4,1,-18,,,,,.4],
  'tell.dark': [.7,.03,52,.4,.3,.6,2,2,-.3,,,,,,3],
+ /* hall5-nov3: the Hall's Rung III patterns each have their own cue (scenes/hall-patterns.js PATTERN_SOUND): a two-note chime for the rows,
+    a low rising swell for the ring, a quick bright triple for the storm and a hollow ring for the pylon */
+ 'tell.echo.rows':[.7,.03,330,.02,.12,.3,1,1.5,,,165,.12,.1,,,,.04,.6],
+ 'tell.echo.ring':[.85,.05,60,.08,.2,.35,2,2,1.5,,,,,1.2,,.2,,.6],
+ 'tell.echo.storm':[.6,.02,700,.01,.04,.12,1,1.5,-6,,350,.05,.05,,,,.03,.6],
+ 'tell.echo.pylon':[.7,.02,440,.02,.18,.45,0,1.8,,,-110,.15,,,,,.06,.5],
  /* guard cues: a guarded or armoured hit tinks, a blocked one clanks, wards ping, armour cracks, PERFECT chimes, dizzy chirps */
  'guard':     [.55,.02,1700,.001,.01,.12,1,2.5,,,,,,2,,.2,,.4],
  'blocked':   [.9,.03,860,.001,.03,.2,3,2,-5,,,,,2.5,,.3,,.5],
@@ -145,6 +151,7 @@ export const SFX_LEVEL={'hit.light':-2.5,'hit.heavy':-5,'hit.crit':-4.5,correct:
     or louder at the default volumes (-21.3 on the SFX bus), and a tell ducks the music 3 dB for 300 ms (tellDuck). A kill is
     at least as loud as hit.light; the reward keys sit with the other rewards. Measured whole-buffer RMS, tests/improve20-r8d-nov1. */
  'tell.stance':12.5,guard:12.5,ward:13,'tell.small':6,'tell.shot':5,'tell.melee':2.5,'tell.aoe':3,'tell.beam':2,'tell.pull':.5,
+ 'tell.echo.rows':9.5,'tell.echo.ring':2.5,'tell.echo.storm':11,'tell.echo.pylon':10,
  'reward.star':8,'reward.chest':7,'reward.grade':2};
 const dbGain=d=>Math.pow(10,(d||0)/20);
 /* improve20-r8d-nov1: a boss or enemy tell dips the music 3 dB for 300 ms on its own gain stage (after the panel and voice ducks),

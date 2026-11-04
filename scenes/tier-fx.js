@@ -56,13 +56,14 @@ export function tierTick(w,dt){const r=encOf(w);if(!r||w.hazardsDisabled)return;
    reduced motion); falling rocks also cast a shadow that grows toward impact. The footprint is the exact hit area. o={age,warning,motion,kind} */
 export const FALLING=['stones','rubble','hammers','stars'];
 export function dangerPulse(o={}){if(o.motion===false)return 1;const a=Math.max(0,o.age||0),W=Math.max(.2,o.warning||1);return .5+.5*Math.sin(Math.PI*2*(1.5*a+2.5*a*a/W));}
-export function softMarker(c,m,prog=0,live=false,o={}){if(m.lane){softBand(c,m,prog,live,o);return;}const box=m.shape==='box',x=box?(m.x0+m.x1)/2:m.x,y=m.y,rx=box?Math.abs(m.x1-m.x0)/(m.organic?2:Math.SQRT2):m.r,ry=box?m.band*(m.organic?1:Math.SQRT2):m.r*.55,p=Math.max(0,Math.min(1,prog)),pu=dangerPulse(o),oval=(a,b)=>{c.beginPath();c.ellipse(x,y,a,b,0,0,Math.PI*2);};
- c.save();c.fillStyle=live?'rgba(120,18,6,.55)':`rgba(26,8,4,${(.34+.16*p).toFixed(3)})`;oval(rx+1,ry+1);c.fill();
- c.fillStyle=live?'rgba(255,92,48,.32)':`rgba(255,110,52,${(.10+.16*p*pu).toFixed(3)})`;oval(rx+1,ry+1);c.fill();
+export function softMarker(c,m,prog=0,live=false,o={}){if(m.lane){softBand(c,m,prog,live,o);return;}const box=m.shape==='box',x=box?(m.x0+m.x1)/2:m.x,y=m.y,rx=box?Math.abs(m.x1-m.x0)/(m.organic?2:Math.SQRT2):m.r,ry=box?m.band*(m.organic?1:Math.SQRT2):m.r*.55,p=Math.max(0,Math.min(1,prog)),pu=dangerPulse(o),ix=!box&&m.inner>0?m.inner:0,iy=ix*.55,oval=(a,b)=>{c.beginPath();c.ellipse(x,y,a,b,0,0,Math.PI*2);if(ix&&a>ix+2){c.moveTo(x+ix-1,y);c.ellipse(x,y,ix-1,Math.max(1,iy-1),0,0,Math.PI*2);}};
+ /* hall5 follow-up (the echo ring, m.inner): a ring marker leaves its middle clear, filled even-odd, with a rim on both edges */
+ c.save();c.fillStyle=live?'rgba(120,18,6,.55)':`rgba(26,8,4,${(.34+.16*p).toFixed(3)})`;oval(rx+1,ry+1);c.fill('evenodd');
+ c.fillStyle=live?'rgba(255,92,48,.32)':`rgba(255,110,52,${(.10+.16*p*pu).toFixed(3)})`;oval(rx+1,ry+1);c.fill('evenodd');
  if(FALLING.includes(o.kind)&&!live){const k=.22+.62*p;c.fillStyle=`rgba(0,0,0,${(.22+.34*p).toFixed(3)})`;oval(rx*k,ry*k);c.fill();}
  c.strokeStyle='#2a0d06';c.globalAlpha=.85;c.lineWidth=4.5;oval(rx+1,ry+1);c.stroke();
  c.strokeStyle=live?'#ff6a3d':p>.7?'#ff7a45':'#ffc061';c.globalAlpha=.65+.35*pu;c.lineWidth=2.5;oval(rx+1,ry+1);c.stroke();
- c.globalAlpha=.9;c.strokeStyle='#fff1c4';c.lineWidth=2;c.beginPath();c.ellipse(x,y,rx*.85,ry*.8,0,-Math.PI/2,-Math.PI/2+Math.PI*2*Math.max(.03,p));c.stroke();c.restore();}
+ c.globalAlpha=.9;c.strokeStyle='#fff1c4';c.lineWidth=2;c.beginPath();c.ellipse(x,y,ix?(rx+ix)/2:rx*.85,ix?(ry+iy)/2:ry*.8,0,-Math.PI/2,-Math.PI/2+Math.PI*2*Math.max(.03,p));c.stroke();c.restore();}
 /* A continuous band encloses the exact rectangular hit area, including its corners: dark fill and a thick pulsing rim (CLEAR lanes keep their green) */
 function softBand(c,m,prog,live,o={}){const x=Math.min(m.x0,m.x1),width=Math.abs(m.x1-m.x0),y=m.y-m.band,height=m.band*2,safe=m.safe,p=Math.max(0,Math.min(1,prog)),pu=dangerPulse(o),box=()=>{c.beginPath();c.roundRect(x-2,y-2,width+4,height+4,3);};c.save();
  if(safe){c.strokeStyle='#a5f0cc';c.fillStyle='rgba(82,209,157,.09)';box();c.fill();for(const [line,alpha] of [[7,.08],[4,.16],[1.5,.95]]){c.lineWidth=line;c.globalAlpha=alpha;c.stroke();}}

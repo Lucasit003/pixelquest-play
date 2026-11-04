@@ -43,7 +43,7 @@ export function tierAttacks(list,tk){const rank={heroic:1,legendary:2}[tk]||0;
 /* ---------- markers ---------- */
 export function moveMarkers(e,a,w,K){const p=w.player,f=e.facing,b=K.bounds(w),out=[];
  switch(a.kind){
-  case 'wave':if(a.shape==='front')out.push({shape:'box',x0:e.x+f*10,x1:e.x+f*Math.min(a.reach,120),y:e.y,band:a.band||14});else out.push({shape:'circle',x:e.x,y:e.y,r:a.r0||22});if(a.previewReach)out.push({shape:'circle',x:e.x,y:e.y,r:a.reach,dim:.3});break;
+  case 'wave':if(a.shape==='front')out.push({shape:'box',x0:e.x+f*10,x1:e.x+f*Math.min(a.reach,120),y:e.y,band:a.band||14});else out.push({shape:'circle',x:e.x,y:e.y,r:a.arm||a.r0||22});if(a.previewReach)out.push({shape:'circle',x:e.x,y:e.y,r:a.reach,dim:.3});break;
   case 'sweep':{const mid=(b.y0+b.y1)/2;out.push({shape:'box',x0:e.x+f*10,x1:e.x+f*a.len,y:mid,band:(b.y1-b.y0)/2});break;}
   case 'pillar':out.push({shape:'circle',x:e.x,y:e.y,r:a.radius||18});break;}
  return out;}
@@ -136,7 +136,8 @@ export function afterHit(e,w,a,landed){if(!landed)return;const p=w.player;
 /* ---------- the fx this module adds to world.enemyFx ---------- */
 export function updateMoveFx(f,w,dt,K){const p=w.player;
  if(f.kind==='wave'){if(f.t<0)return true;const a=f.a;f.r+=(a.speed||110)*dt;
-  if(!f.hit&&p&&p.hp>0){let on;if(f.shape==='front'){const x=f.x+f.dir*f.r;on=Math.abs(p.x-x)<(a.th||8)&&Math.abs(p.y-f.y)<=(a.band||14);}else{const rp=Math.hypot(p.x-f.x,(p.y-f.y)/.55);on=Math.abs(rp-f.r)<(a.th||8);}
+  /* hall5-nov3 (arm, the Hall's echo rings): a ring hurts only once it has passed its warning circle, so a hero inside the circle is safe and one just outside it has time to jump */
+  if(!f.hit&&p&&p.hp>0&&!(a.arm&&f.r-(a.th||8)<a.arm)){let on;if(f.shape==='front'){const x=f.x+f.dir*f.r;on=Math.abs(p.x-x)<(a.th||8)&&Math.abs(p.y-f.y)<=(a.band||14);}else{const rp=Math.hypot(p.x-f.x,(p.y-f.y)/.55);on=Math.abs(rp-f.r)<(a.th||8);}
    /* low ground waves: any jump clears them */
    if(on&&f.cast?.hit)f.hit=true;else if(on&&(p.z||0)<=6&&!(p.inv>0)){f.hit=true;if(f.cast)f.cast.hit=true;K.hurt(f.owner,w,a,{x:f.shape==='front'?f.x+f.dir*(f.r-20):f.x,y:f.y});}}
   return f.r<(a.reach||160);}

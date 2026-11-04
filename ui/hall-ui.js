@@ -4,7 +4,7 @@
    clear). Art: the existing PixelLab tier icons (ui/skin/pl-icons/tier-*.png) and reward icons; no new art. */
 import {defeatProgress} from './defeat-tip.js';
 import {CHAPTERS,levelById} from '../game/levels.js';
-import {HALL_CHAPTERS,RUNGS,RUNG_LABEL,ROMAN,hallHeal,hallFree,hallBosses,rungState,rungOpen,rungReward,keepsakeName,keepsakes,startRung,hallStep,hallFinish,hallOpen} from '../game/hall.js';
+import {HALL_CHAPTERS,RUNGS,RUNG_LABEL,ROMAN,hallHeal,hallFree,hallPatterns,hallBosses,rungState,rungOpen,rungReward,keepsakeName,keepsakes,startRung,hallStep,hallFinish,hallOpen} from '../game/hall.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const ICON={1:'tier-normal',2:'tier-heroic',3:'tier-legendary'};
 const pic=(n,size=32)=>`<img class="hall-icon" src="ui/skin/pl-icons/${n}.png" width="${size}" height="${size}" alt="" draggable="false">`;
@@ -17,7 +17,7 @@ export function hallHTML(s,sel=hallDefault(s),{coin='',gem=''}={}){const pct=Mat
  const grid=HALL_CHAPTERS.map(ch=>`<div class="hall-row" role="row"><span class="hall-ch" role="rowheader">${esc(chName(ch))}</span>${RUNGS.map(r=>{const st=rungState(s,ch,r),on=sel&&sel.chapter===ch&&sel.rung===r;
   return `<button type="button" class="hall-rung${on?' sel':''}" role="gridcell" data-hall="${ch}:${r}" data-state="${st}" aria-pressed="${on}"${st==='locked'?' aria-disabled="true"':''}>${pic(st==='locked'?'tier-lock':ICON[r])}<span><b>${ROMAN[r-1]} · ${RUNG_LABEL[r]}</b><small>${STATE[st]}</small></span>${st==='keepsake'?pic('tier-star',16):''}</button>`;}).join('')}</div>`).join('');
  let det='';if(sel){const {chapter:ch,rung:r}=sel,st=rungState(s,ch,r),bs=hallBosses(ch),rw=rungReward(ch,r);
-  det=`<div class="hall-detail"><p class="hall-what"><strong>${esc(chName(ch))} · Rung ${ROMAN[r-1]} (${RUNG_LABEL[r]})</strong> ${bs.length} bosses back to back<span class="hall-boss-list">: ${bs.map(id=>esc(bossName(id))).join(', ')}</span>.</p>`+
+  det=`<div class="hall-detail"><p class="hall-what"><strong>${esc(chName(ch))} · Rung ${ROMAN[r-1]} (${RUNG_LABEL[r]})</strong> ${bs.length} bosses back to back<span class="hall-boss-list">: ${bs.map(id=>esc(bossName(id))).join(', ')}</span>.${/* hall5-nov3: Rung III's new boss patterns (scenes/hall-patterns.js), named in one line that phones show too */hallPatterns(r).length?' <strong class="hall-new">New: the bosses fight with new moves.</strong>':''}</p>`+
    `<p class="hall-rules">Your health carries on from one boss to the next, with ${pct}% of it back between them. ${hallFree(r)?'Potions are allowed.':'No free potion here: bring potions in your bag.'} A fall ends the rung and costs nothing: try again any time.</p>`+
    `<p class="hall-reward">${st==='cleared'||st==='keepsake'?'<span class="hall-chip got">First clear paid</span>':`<span class="hall-k">First clear</span><span class="hall-chip">${coin}<b>+${rw.gold} gold</b></span><span class="hall-chip">${gem}<b>+${rw.essence} Essence</b></span>`}<span class="hall-chip ks${st==='keepsake'?' got':''}">${pic('tier-star',16)}<b>${esc(keepsakeName(ch,r))}</b></span><span class="hall-note">${st==='keepsake'?'Keepsake won.':'Win with no potions for this keepsake.'}</span></p>`+
    (st==='locked'?`<p class="hall-lock">Clear Rung ${ROMAN[r-2]||'I'} of ${esc(chName(ch))} first.</p>`:'')+`</div>`;}
