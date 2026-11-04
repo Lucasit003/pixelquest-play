@@ -22,6 +22,10 @@ export const QUEST_ITEMS = {
   /* improve20-r20n-nov4 #1a: Hob takes his purse back (step 3), so Wil's keepsake is the thank-you he gives instead. It is never a quest item
      in hand (no step drops or takes it); the picture is the existing gold coin prop (assets/sprites/theater-coin-gold.png, PixelLab) */
   'hob-coin': {name: 'Hob’s lucky coin', icon: 'quest/hob-coin', img: 'assets/sprites/theater-coin-gold.png', keepsake: true, story: 'Red Hand took the farm’s savings. You brought every coin home.'},
+  /* improve20-r22w-nov4 #1: Wil's second chapter. The iron is the existing forge-slag material icon (ui/skin/gear/mat-forge-slag.png); the
+     keepsake is the existing bounty shield icon (ui/skin/packicons3/shield.png, PixelLab). No new art. */
+  'ember-iron': {name: 'a lump of ember iron', icon: 'gear/mat-forge-slag', img: 'ui/skin/gear/mat-forge-slag.png', story: 'Glowing iron from the Cinder Forge, for Wil’s new shield.'},
+  'wil-shield': {name: 'Wil’s farm-gate shield', icon: 'packicons3/shield', img: 'ui/skin/packicons3/shield.png', keepsake: true, story: 'Hob made it from the old farm gate. Wil carried it all the way to Emberkeep.'},
 };
 
 /* every chain as data (§2.2); `opens.done` lists levels that must all be cleared */
@@ -87,6 +91,22 @@ export const QUESTS = {
       {kind: 'clear', level: 'm4', tier: 'heroic', item: 'ember-crest', text: 'Win the Ember Barracks on Heroic.'},
       {kind: 'talk', who: 'cinder', take: 'ember-crest', text: 'Talk to Sir Cinder at the Barracks.'}],
     reward: {companion: 'cinder', keepsake: 'ember-crest'}},
+  /* improve20-r22w-nov4 #1 (audit15 plan 4): Wil's second chapter, for a kid who already has him. It brings no companion (reward has no
+     `companion`): it pays a keepsake, a title ('shield-friend', earned from the done quest) and Wil's new barks (reward.barks, scenes/party-ai.js). It opens
+     after the Ember Barracks (m4), which a Story kid clears on the main road; every clear is at tier null. Existing levels (m2, m4) and
+     existing people only. A clear step's `bark` is what Wil says at that level's start while the step is current and he travels with you. */
+  'wils-shield': {companion: 'wil', chapter: 'emberkeep', order: 8, title: 'The Farm-Gate Shield',
+    giver: {key: 'captain_garrick', room: 'barracks', name: 'Captain Garrick'}, opens: {done: ['m4']},
+    blurb: 'Wil’s old shield cracked at the Ember Barracks.',
+    steps: [
+      {kind: 'talk', who: 'captain_garrick', text: 'Talk to Captain Garrick at the Barracks.'},
+      {kind: 'clear', level: 'm2', tier: null, item: 'ember-iron', text: 'Find ember iron in the Cinder Forge.', bark: 'So hot! Good iron for a shield, though.'},
+      {kind: 'talk', who: 'brannoc_the_smith', room: 'weaponsmith', take: 'ember-iron', text: 'Bring the ember iron to Brannoc the smith.'},
+      {kind: 'talk', who: 'farmer_hob', room: 'farmhouse', text: 'Tell Farmer Hob about Wil’s shield.'},
+      {kind: 'clear', level: 'm4', tier: null, text: 'Win the Ember Barracks again, where the shield cracked.', bark: 'New shield, same Wil. Round two!'},
+      {kind: 'visit', building: 'barracks', who: 'wil', text: 'Meet Wil at the Barracks.'}],
+    reward: {keepsake: 'wil-shield', title: 'shield-friend', barks: ['This shield won’t crack!', 'Like guarding the hens, only hotter.', 'Shield-friends, you and me!'],
+      say: ['You came! Brannoc says my new shield is the toughest he’s ever made.', 'I want you to keep my old one. Dad made it from our farm gate. Will you hang it in your Trophy Hall?', 'Shield-friends, you and me. That’s what Dad calls it.']}},
 };
 export const QUEST_IDS = Object.keys(QUESTS).sort((a, b) => QUESTS[a].order - QUESTS[b].order);
 /* A chain is live in the game once its companion has approved combat art (party.js hireable): today only Wil's. The rules below
@@ -94,6 +114,8 @@ export const QUEST_IDS = Object.keys(QUESTS).sort((a, b) => QUESTS[a].order - QU
 export const questLive = id => !!QUESTS[id] && hireable(QUESTS[id].companion);
 const all = () => true;
 export const questGold = id => 50 * (CHAPTER_NO[QUESTS[id]?.chapter] || 1);
+/* improve20-r22w-nov4 #1: does finishing this chain bring its companion? (false for a later chapter of someone already in the crew) */
+export const bringsCompanion = id => !!QUESTS[id]?.reward?.companion;
 
 /* ---- the save's quests (save v9: s.quests = {q:{[id]:{step,items,started,done}}, seen:[]}) ---- */
 export const emptyQuests = () => ({q: {}, seen: []});
@@ -133,7 +155,7 @@ function advance(save, id, now) {
   const r = qOf(save).q[id], Q = QUESTS[id]; r.step++;
   if (r.step < Q.steps.length) return {questId: id, advanced: true, done: false};
   r.done = now || 1; const joinedNow = join(save, Q.reward.companion, now), gold = questGold(id); save.gold = (save.gold || 0) + gold;
-  return {questId: id, advanced: true, done: true, companion: Q.reward.companion, joined: joinedNow, gold};
+  return {questId: id, advanced: true, done: true, companion: Q.reward.companion || null, joined: joinedNow, gold};
 }
 function start(save, id, now) { const q = qOf(save); if (!q.q[id]) q.q[id] = {step: 0, items: [], started: now, done: null}; }
 
@@ -178,7 +200,8 @@ export function onLevelEnd(save, result, now = Date.now(), only = all) {
 export function stepTarget(id, s) {
   if (!s) return null; if (s.kind === 'clear') return {kind: 'pad', id: s.level};
   if (s.kind === 'visit') return {kind: 'building', id: s.building};
-  return {kind: 'npc', key: s.who, room: s.who === QUESTS[id].giver.key ? QUESTS[id].giver.room : null};
+  /* improve20-r22w-nov4 #1: a talk step may name the room of someone who is not the giver (Brannoc, Hob in Wil's second chapter) */
+  return {kind: 'npc', key: s.who, room: s.who === QUESTS[id].giver.key ? QUESTS[id].giver.room : s.room || null};
 }
 /**
  * The quest step worth doing next (§5.5), or null: a hand-in waiting in town first, then an active clear step, then a
@@ -197,8 +220,20 @@ export const keepsakeOf = id => { const k = QUESTS[id]?.reward?.keepsake; return
 /* earned once the step that hands the quest item back is done (Hob gives the coin as he takes his purse), or when the quest is done */
 export function keepsakeEarned(save, id) {
   const Q = QUESTS[id], st = questState(save, id); if (st === 'done') return true; if (st !== 'active') return false;
+  /* improve20-r22w-nov4 #1: a chain that brings no companion gives its keepsake at the end (Wil hands over his old shield as it finishes) */
+  if (!bringsCompanion(id)) return false;
   const at = Q.steps.map(x => !!x.take).lastIndexOf(true); return at >= 0 && (save.quests.q[id].step | 0) > at;
 }
 export function keepsakeShelf(save, only = all) {
   return QUEST_IDS.filter(id => only(id) && keepsakeOf(id)).map(id => { const k = keepsakeOf(id); return {quest: id, title: QUESTS[id].title, id: k.id, name: k.name, story: k.story, img: k.img || 'ui/skin/rewards/chest.png', won: keepsakeEarned(save, id)}; });
 }
+
+/* improve20-r22w-nov4 #1c: Wil's lines in a level (scenes/party-ai.js, the existing start bark). While a live chain's current step is a clear of
+   this level he says that step's `bark`; once a chain is done its reward.barks join his start lines. Lines only: no numbers change. */
+export function questBark(save, comp, levelId, only = all) {
+  for (const id of QUEST_IDS) { if (QUESTS[id].companion !== comp || !only(id) || questState(save, id) !== 'active') continue; const s = currentStep(save, id); if (s?.kind === 'clear' && s.level === levelId && s.bark) return s.bark; }
+  return null;
+}
+export const rewardBarks = (save, comp, only = all) => QUEST_IDS.filter(id => QUESTS[id].companion === comp && only(id) && questState(save, id) === 'done').flatMap(id => QUESTS[id].reward.barks || []);
+/* a companion's later chapters (chains that bring no one), live ones only, in order */
+export const laterChains = (comp, only = all) => QUEST_IDS.filter(id => QUESTS[id].companion === comp && !bringsCompanion(id) && only(id));

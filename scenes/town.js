@@ -22,9 +22,9 @@ import {gateShut, GATE_LINE, GATE_WHERE} from '../academics/starter-lesson.js';
 import {drawTrail} from '../gfx/hero-trail.js';
 import {trailOf} from '../game/prizes.js';
 import {FURN, footprint, placeFurniture, spare, wallSpot, wallFits, WALL} from '../game/furniture.js';
-import {talk, talkAndAdvance, nameOf, holds, stepIdOf, STORY} from '../game/npcs.js';
+import {talk, talkAndAdvance, nameOf, holds, stepIdOf, STORY, /* improve20-r22f-nov4 #1 */beatLines, lineText} from '../game/npcs.js';
 import {COMPANIONS, ART, joined} from '../game/party.js';
-import {questLive, currentStep, questState, QUEST_IDS} from '../game/quests.js';
+import {questLive, currentStep, questState, QUEST_IDS, QUESTS} from '../game/quests.js';
 import {loadSprite as loadActor, drawSprite as drawActor} from '../gfx/actors/sprites.js';
 import {swayTable, drawSwayed, stepCritters, critterDraws, leafDraws} from '../gfx/motion.js';
 import {TOWN_SPOTS, townPlace, visitPlace, FARM_NAME} from '../game/fasttravel.js';
@@ -116,8 +116,8 @@ export function barracksCrew(save) {
   if (!save) return [];
   const out = [];
   for (const id of Object.keys(ART)) {
-    const c = COMPANIONS[id], q = c?.quest, step = q && questLive(q) && questState(save, q) === 'active' ? currentStep(save, q) : null;
-    const waiting = step?.kind === 'visit' && step.building === 'barracks' && step.who === id;
+    /* improve20-r22w-nov4 #3: any live chain of his (his own, or a later chapter) whose visit step meets him here */
+    const c = COMPANIONS[id], waiting = !!c && QUEST_IDS.some(q => QUESTS[q].companion === id && questLive(q) && questState(save, q) === 'active' && (s => s?.kind === 'visit' && s.building === 'barracks' && s.who === id)(currentStep(save, q)));
     if (waiting || joined(save, id) && save.party?.with !== id) out.push({id, key: id, name: c.short});
   }
   return out.slice(0, BARRACKS.crew.length).map((m, i) => ({...m, x: BARRACKS.crew[i].x, y: BARRACKS.crew[i].y}));
@@ -129,14 +129,18 @@ export function villageCrew(save) { return barracksCrew(save).filter(m => joined
 /* the hire beat: the companion steps out from beside the roster board to the hero and cheers (main.js runs the lines and banner) */
 export const STEP_OUT = {walk: .9, hold: 3.2};
 export function hubStepOut(id) { const p = H.player, m = BARRACKS.crew[0]; if (!p || current().key !== 'barracks' || !ART[id]) return false; const side = p.x > m.x ? -1 : 1; H.stepOut = {id, t0: H.time, from: {x: m.x, y: m.y}, to: {x: Math.round(p.x + side * 26), y: Math.round(p.y + 2)}}; return true; }
-function stepOutNow() { const o = H.stepOut; if (!o) return []; const k = (H.time - o.t0) / STEP_OUT.walk; if (H.time - o.t0 >= STEP_OUT.hold || current().key !== 'barracks') { H.stepOut = null; return []; }
+/* improve20-r22w-nov4 #3: hubHoldCrew(id) keeps a stepped-out companion beside the hero (after his cheer, standing) until it is cleared: main.js
+   holds Wil while he says his closing lines of a later chapter, so the words are never spoken by an empty room */
+export function hubHoldCrew(id) { H.holdCrew = id || null; }
+function stepOutNow() { const o = H.stepOut; if (!o) return []; const k = (H.time - o.t0) / STEP_OUT.walk; if (H.time - o.t0 >= STEP_OUT.hold && H.holdCrew !== o.id || current().key !== 'barracks') { H.stepOut = null; return []; }
   const f = Math.min(1, k), x = o.from.x + (o.to.x - o.from.x) * f, y = o.from.y + (o.to.y - o.from.y) * f;
-  return [{id: o.id, key: o.id, name: COMPANIONS[o.id].short, x, y, clip: f < 1 ? 'walk' : 'cheer', t: f < 1 ? H.time - o.t0 : H.time - o.t0 - STEP_OUT.walk, facing: f < 1 ? Math.sign(o.to.x - o.from.x) || 1 : Math.sign((H.player?.x ?? x) - x) || 1, beat: true}]; }
+  return [{id: o.id, key: o.id, name: COMPANIONS[o.id].short, x, y, clip: f < 1 ? 'walk' : H.time - o.t0 >= STEP_OUT.hold ? 'idle' : 'cheer', t: f < 1 ? H.time - o.t0 : H.time - o.t0 - STEP_OUT.walk, facing: f < 1 ? Math.sign(o.to.x - o.from.x) || 1 : Math.sign((H.player?.x ?? x) - x) || 1, beat: true}]; }
 const crewHere = S => S.key === 'barracks' ? [...barracksCrew(H.save), ...stepOutNow()] : S.key === 'village' ? villageCrew(H.save) : [];
 /* someone a live quest is waiting on: an open quest's giver, or a talk step whose item is in hand */
 function questNews(save, key) {
   if (!save || !key) return false;
-  for (const id of Object.keys(COMPANIONS).map(k => COMPANIONS[k].quest)) {
+  /* improve20-r22w-nov4 #3: every chain, so a later chapter's people (Captain Garrick, Brannoc, Hob) get their marker too */
+  for (const id of QUEST_IDS) {
     if (!questLive(id)) continue; const st = questState(save, id), s = st === 'open' || st === 'active' ? currentStep(save, id) : null;
     if (s?.kind === 'talk' && s.who === key && (st === 'open' || !s.take || save.quests?.q?.[id]?.items?.includes(s.take))) return true;
   }
@@ -501,7 +505,8 @@ function optionFor(S, p) {
      still comes first, as with the smith); the table's own spot in front works as before. */
   const tutor = tutorSubject(S, p);
   if (tutor) { const who = nameOf(p.props.key, p.name); return {label: `${who}: ${SUBJECT_LABEL[tutor]}`, panel: 'library', subject: tutor, keeper: who, talk: {key: p.props.key, name: who}}; }
-  if (p.type === 'npc-spot' && TALK_PANEL[p.props?.key]) { const key = p.props.key, who = nameOf(key, p.name), panel = TALK_PANEL[key]; return {label: `${who}: ${PANEL_LABEL[panel]}`, panel, keeper: who, talk: {key, name: who}}; }
+  /* improve20-r22w-nov4 #3: while a quest waits on talking to him (Brannoc takes Wil's ember iron), talking comes first, as for a seller below */
+  if (p.type === 'npc-spot' && TALK_PANEL[p.props?.key] && !talkWaits(p.props.key)) { const key = p.props.key, who = nameOf(key, p.name), panel = TALK_PANEL[key]; return {label: `${who}: ${PANEL_LABEL[panel]}`, panel, keeper: who, talk: {key, name: who}}; }
   /* improve20-y-nov1 #7 (lane K): once a companion travels with you the roster board no longer says "Hire a companion" */
   if (act === 'barracks' && H.save?.party?.with) return {label: 'Check the roster board', panel: act};
   if (act) return {label: act === 'guild' || act === 'alchemist' ? PANEL_LABEL[act] : pr.label || p.name || PANEL_LABEL[act], panel: act};
@@ -785,7 +790,8 @@ function beatDue(trigger, S, p) {
 }
 function fire(b) {
   seenBeats().push(b.id);
-  H.events.push({id: b.id, speaker: b.speaker, lines: [...b.say], ...(b.cine ? {cine: true} : {})});
+  /* improve20-r22f-nov4 #1: a chapter beat's lines are worked out for this save, each naming its speaker */
+  H.events.push({id: b.id, speaker: b.speaker, lines: beatLines(b, H.save), ...(b.cine ? {cine: true} : {}), ...(b.hold ? {hold: true} : {})});
 }
 /* Owner, 8 Oct: "make conversation with npcs happen when u press a button near them". A story beat spoken by someone
    who stands in Oakhaven waits until the player walks up to them and presses the talk key; while it waits they wear
@@ -851,7 +857,7 @@ export function hubInteract() {
   if (o.run) { o.run(); return null; }
   /* someone with news tells it first; the next press does what they usually do (talk, open their shop or panel) */
   const news = personBeat(o.talk?.name ?? o.keeper);
-  if (news) { seenBeats().push(news.id); return {say: news.say.join(' '), speaker: news.speaker, lines: [...news.say]}; }
+  if (news) { seenBeats().push(news.id); const ls = beatLines(news, H.save); /* improve20-r22f-nov4 #1 */return {say: ls.map(lineText).join(' '), speaker: news.speaker, lines: ls}; }
   if (o.panel) return {panel: o.panel, subject: o.subject, keeper: o.keeper};
   if (o.shop) return {shop: o.shop, keeper: o.keeper};
   if (o.worldmap) return {worldmap: true};
@@ -1233,7 +1239,7 @@ export function drawHub(c, state, t, kit) {
     iconImage ??= loadMarkers();
     const bob = state.motion === false ? 0 : Math.floor(t * 2.5) % 2, news = [...S.figures.map(f => [f.name, f.x, f.y]), ...S.points.filter(q => q.type === 'npc-spot').map(q => [nameOf(q.props?.key, q.name), q.x, q.y])];
     for (const q of S.points) if (q.type === 'npc-spot' && questNews(H.save, q.props?.key)) news.push([q.props.key, q.x, q.y, true]);
-    for (const m of crewHere(S)) if (questNews(H.save, m.key) || m.id && H.save && currentStep(H.save, COMPANIONS[m.id].quest)?.kind === 'visit') news.push([m.key, m.x, m.y - 4, true]);
+    for (const m of crewHere(S)) if (questNews(H.save, m.key) || m.id && H.save && QUEST_IDS.some(q => QUESTS[q].companion === m.id && questLive(q) && currentStep(H.save, q)?.kind === 'visit' && currentStep(H.save, q).who === m.id)) news.push([m.key, m.x, m.y - 4, true]);
     for (const [who, x, y, quest] of news) if ((quest || personBeat(who)) && !(H.near && Math.abs(H.near.q.x - x) < 2 && Math.abs(H.near.q.y - y) < 2) && ready(iconImage))
       c.drawImage(iconImage, MARK.talk * 32, 0, 32, 32, Math.round(x) - 16, Math.round(y) - 66 - bob, 32, 32);
   }

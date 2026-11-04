@@ -44,7 +44,8 @@ export const hallEarlyText=ch=>`While you learn: Hall of Echoes Rung I (${CHAPTE
 export function whileOptions(save){const out=[],r=riftUnplayed(save),sk=storyKid(save);if(r){const l=levelById(r.target.id);out.push({kind:'rift',id:l?.id||null,text:sk?storyRiftText(l):`While you learn: this week's Rift (${l?.name||'a remixed level'}). Press Rift on the world map.`});}
  const h=sk?null:heroicWhile(save);if(h)out.push(h);
  const early=hallEarly(save),ch=hallOpen(save)||early?HALL_CHAPTERS.find(c=>rungOpen(save,c,1)&&!rungCleared(save,c,1)):null;if(ch&&early)out.push({kind:'hall',id:ch,text:hallEarlyText(ch)});else if(ch)out.push({kind:'hall',id:ch,text:`While you learn: Hall of Echoes Rung I (${CHAPTERS.find(c=>c.id===ch)?.name||ch}). Find the Hall on the Veilmoor map.`});
- const q='hobs-purse',st=questLive(q)?questState(save,q):'locked',step=st==='open'||st==='active'?currentStep(save,q):null;if(step&&(step.kind!=='clear'||levelOpen(save,step.level)))out.push({kind:'wil',id:q,text:`While you learn: Wil's quest. ${step.text}`});
+ /* improve20-r22w-nov4 #3: Wil's first chain, then his second chapter once the first is done */
+ const q=['hobs-purse','wils-shield'].find(id=>questLive(id)&&questState(save,id)!=='done')||'hobs-purse',st=questLive(q)?questState(save,q):'locked',step=st==='open'||st==='active'?currentStep(save,q):null;if(step&&(step.kind!=='clear'||levelOpen(save,step.level)))out.push({kind:'wil',id:q,text:`While you learn: Wil's quest. ${step.text}`});
  return out;}
 /* improve20-r20d-nov4 #5 (audit14 plan 7, minor notes on v3 and the Bandit Road): runes waiting (worth RUNE_CARD_MIN or more) and a side path never
    played come before the rotation's Heroic, Hall and Rift suggestions. runeWin: the runes' worth, read on a copy ({n, pct} or null). */

@@ -3464,6 +3464,8 @@ html.in-town #objective .goal-then{flex:1 1 100%;margin:2px 0 2px 40px;font-size
 .quest-keepsake{display:flex;align-items:center;gap:8px;margin:6px 0 0}
 .quest-keepsake-pic{flex:none;width:40px;height:40px;background:center/48px 48px no-repeat;image-rendering:pixelated}
 .story-pic.keepsake-pic{background-size:48px 48px}
+/* improve20-r22w-nov4 #3: Wil's shield is a 32 px icon: drawn at its own 32 px on the shelf and in the Journal, so its pixels stay whole */
+.story-tile[data-keepsake=wil-shield] .keepsake-pic{background-size:32px 32px}.quest-keepsake[data-keepsake=wil-shield] .quest-keepsake-pic{background-size:32px 32px}
 /* #5 (R20L E: "Buy and wear · 400" wrapped its coin to a second line): the price never splits from its coin */
 .gear-price{white-space:nowrap;display:inline-block}
 /* improve20-v-nov1 #18: Text size 125/150% reached panels, dialogue and toasts, but not the quiz question, the HUD, the goal plate or
@@ -3626,6 +3628,10 @@ html.m-mode.in-town #next-unlock.charging{display:block}
 @keyframes charge-pop{from{opacity:0;transform:translateY(6px) scale(.8)}to{opacity:1;transform:none}}
 @keyframes charge-glow{0%,100%{filter:none;transform:none}50%{filter:drop-shadow(0 0 6px #ffd25a) brightness(1.35);transform:scale(1.12)}}
 @media (prefers-reduced-motion:reduce){.road-charge-pop,.road.road-charged .road-icon{animation:none}}
+/* improve20-r22f-nov4 #4: the next-power card pulses once when a topic toward a 3+ topic power is mastered (main.js playCharge) */
+#next-unlock.charging.cheer{animation:r22f-card-pulse .9s steps(6) 1}
+@keyframes r22f-card-pulse{0%,100%{box-shadow:none;filter:none}45%{box-shadow:0 0 0 3px #ffd25a,0 0 14px 4px rgba(255,210,90,.55);filter:brightness(1.2)}}
+@media (prefers-reduced-motion:reduce){#next-unlock.charging.cheer{animation:none;box-shadow:0 0 0 3px #ffd25a}}
 /* improve20-r7a-nov1 #10 (audit6 #11): Settings tabs, one section at a time; the grade row under the school stage */
 dialog[data-view=settings] .settings-tabs{flex:none;margin:0 4px 10px;gap:6px}
 dialog[data-view=settings] .settings-tabs button{min-height:44px;padding:6px 14px}
@@ -3823,6 +3829,8 @@ html.cine-on #arena-chip{visibility:hidden}
 .worldmap-info.wm-compact .wm-grade{display:none}
 /* improve20-r20j-nov4 #3: the rune-seal line on the level card */
 .worldmap-info .wm-seal{font:700 14px/17px var(--ui);margin:0 0 4px;color:#d9c8ff}
+/* improve20-r22w-nov4 #3: a quest step on this pad, in the quest gold */
+.worldmap-info .wm-quest{font:700 14px/17px var(--ui);margin:0 0 4px;color:#ffe9a8}
 .seal-hint{margin:4px 0 6px;padding:4px 8px;border-left:3px solid #a984ff;background:rgba(40,28,70,.55);color:#efe6ff;font:700 15px/19px var(--ui)}
 .run-best-next{display:block;color:#ffe9a8}
 .chapter-seals{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin:4px 0 12px}
@@ -3843,6 +3851,18 @@ html.cine-on #arena-chip{visibility:hidden}
 .story-pic.story-icon{background-size:contain;background-position:center;background-color:#1d2333}
 .story-tile.story-dark{opacity:.6;border-color:#706255}.story-tile.story-dark .story-pic{filter:grayscale(1) brightness(.45);border-color:#706255}
 .m-mode .story-tile{width:118px;padding:4px}.m-mode .story-pic{width:40px;height:40px}
+/* improve20-r22f-nov4 #2: the Rift tower in the Trophy Hall (ui/trophy-hall.js riftTowerHTML): the skin's slot frame as floors, the rift portal on top */
+.rift-tower{display:flex;flex-direction:column;align-items:center;margin:0 auto;max-width:340px}
+.rift-tower-top{image-rendering:pixelated;width:48px;height:60px;margin-bottom:-4px;filter:drop-shadow(0 0 6px rgba(170,120,255,.55))}
+.rift-floors{list-style:none;margin:0;padding:0;width:100%;display:flex;flex-direction:column;gap:2px}
+.rift-week{display:flex;align-items:center;gap:8px;padding:3px 8px;border-image:url(ui/skin/pl-slot.png) 5 fill/8px stretch;background:transparent}
+.rift-week-bars{display:flex;flex-direction:column-reverse;gap:2px;flex:none;width:64px}
+.rift-floor{display:block;height:6px;border-radius:1px;background:linear-gradient(90deg,#6a4fb0,#b58cff 50%,#6a4fb0);box-shadow:0 1px 0 #000}
+.rift-week small{font-size:13px;line-height:15px;color:var(--ink-2)}.rift-week small b{color:#e9dcb6;font-weight:400}
+.rift-tower-base{display:block;width:calc(100% + 16px);height:10px;margin-top:2px;border-image:url(ui/skin/pl-slot.png) 5 fill/6px stretch}
+.rift-tower-empty{margin:6px 0;font-size:14px;color:var(--ink-2)}
+.rift-tower-note{text-align:center;margin:6px 0 0;font-size:13px}
+.m-mode .rift-tower-top{width:32px;height:40px}.m-mode .rift-week{padding:2px 6px}.m-mode .rift-week-bars{width:44px}
 dialog[data-view=result] .level-highlights :is(.level-recipe,.level-keepsake){flex-wrap:nowrap}
 dialog[data-view=result] .level-highlights :is(.level-recipe,.level-keepsake) strong{text-align:left;max-width:400px}
 /* improve20-r9c-nov1 (audit8 05/06): the unlock card's swirl (.ui-fx), burst (.edu-unlock-rays) and awaken ring covered the hero preview with an

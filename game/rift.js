@@ -61,7 +61,18 @@ const cleanGrade=g=>GRADE_KEYS.includes(g)?g:null,cleanTime=t=>Number.isFinite(+
 const cleanBest=b=>{if(!b||typeof b!=='object')return null;const time=cleanTime(b.time);return time==null?null:{grade:cleanGrade(b.grade),time};};
 /* normalize(): a missing, broken or partial s.rift becomes a clean record; shards are a whole number, never negative. */
 export function cleanRift(v){const r=emptyRift();if(!v||typeof v!=='object'||Array.isArray(v))return r;r.week=weekKey(v.week);r.level=r.week&&levelById(v.level)&&tiered(levelById(v.level))?v.level:null;r.best=r.week?cleanBest(v.best):null;
- r.shards=Math.max(0,Math.floor(Number(v.shards)||0));const l=v.last&&typeof v.last==='object'?v.last:null,lb=l&&cleanBest(l);r.last=l&&weekKey(l.week)&&lb&&levelById(l.level)?{week:l.week,level:l.level,grade:lb.grade,time:lb.time}:null;r.lastTime=cleanTime(v.lastTime);r.story=Math.max(0,Math.floor(Number(v.story)||0));return r;}
+ r.shards=Math.max(0,Math.floor(Number(v.shards)||0));const l=v.last&&typeof v.last==='object'?v.last:null,lb=l&&cleanBest(l);r.last=l&&weekKey(l.week)&&lb&&levelById(l.level)?{week:l.week,level:l.level,grade:lb.grade,time:lb.time}:null;r.lastTime=cleanTime(v.lastTime);r.story=Math.max(0,Math.floor(Number(v.story)||0));/* improve20-r22f-nov4 #2 */const tw=cleanTower(v.tower);if(tw)r.tower=tw;return r;}
+/* improve20-r22f-nov4 #2 (audit15 section 8, plan item 6): the Rift tower in the Trophy Hall. Every Story Rift win (Normal tier, any week,
+   replays of the same week too) adds one floor: s.rift.tower = {'<ISO week>': floors won that week, early: floors from before the tower}
+   (additive within save v9, cleaned here; absent until the first floor, so older saves keep their exact shape). A save from before the tower
+   starts with its counted Story weeks (s.rift.story) as `early` floors, so nothing already won is lost. No cap, nothing counts missed weeks,
+   nothing is lost for a week skipped; cosmetic only, no ability reads it. */
+export function cleanTower(v){if(!v||typeof v!=='object'||Array.isArray(v))return null;const t={};for(const [k,n] of Object.entries(v)){const c=Math.floor(Number(n)||0);if(c>0&&(k==='early'||weekKey(k)))t[k]=c;}return Object.keys(t).length?t:null;}
+/* the tower's floors grouped by week, oldest first: [{week (null for early floors), n}], and the total */
+export function riftTower(s){const r=s?.rift,t=cleanTower(r?.tower),early=t?t.early|0:Math.max(0,r?.story|0),weeks=Object.keys(t||{}).filter(k=>k!=='early').sort();
+ const rows=[...(early?[{week:null,n:early}]:[]),...weeks.map(w=>({week:w,n:t[w]}))];return {rows,floors:rows.reduce((a,x)=>a+x.n,0)};}
+/* '2026-W45' -> 'Week 45, 2026' */
+export const weekLabel=k=>{const m=/^(\d{4})-W(\d{2})$/.exec(String(k||''));return m?`Week ${+m[2]}, ${m[1]}`:'Before the tower';};
 /* Rolls the save onto this week (mutates s.rift; returns this week's pick or null). A week played moves to `last`; a week not played
    leaves `last` as it was, and nothing at all counts the weeks between. The week's level is kept while it is still cleared. */
 export function riftWeek(s,date=new Date()){const r=s.rift=cleanRift(s.rift),pick=riftPick(s,date);if(!pick)return null;
@@ -88,8 +99,8 @@ export const betterRift=(a,b)=>!b||gradeRank(a.grade)>gradeRank(b.grade)||gradeR
    riftGold (the caller banks the gold). A fall pays nothing extra and changes nothing here. Returns what the result card shows. */
 export function riftFinish(s,{won,level,tier='normal',grade=null,time,date=new Date(),story=false}){const pick=riftWeek(s,date),r=s.rift,prevTime=r.lastTime;if(!pick||level!==r.level)return null;
  const t=cleanTime(time),run={grade:cleanGrade(grade),time:t};if(t!=null)r.lastTime=t;if(!won||t==null)return {won:!!won,paid:false,gold:0,shards:r.shards,newBest:false,prevTime,best:r.best,week:r.week};
- const first=!r.best,newBest=!first&&betterRift(run,r.best),tierBefore=riftTier(r.shards);if(first||newBest)r.best=run;let gold=0;const won_=first?riftShards(tier):0;if(first){r.shards+=won_;gold=riftGold(level,tier);/* improve20-r20e-nov4 #4 */if(story&&tierKey(tier)==='normal')r.story=(r.story|0)+1;}
- return {won:true,paid:first,gold,shardsWon:won_,tier:tierKey(tier),story:!!story&&tierKey(tier)==='normal',shards:r.shards,newBest,first,prevTime,best:r.best,week:r.week,title:riftTier(r.shards)>tierBefore?riftTitle(s):null};}
+ const first=!r.best,newBest=!first&&betterRift(run,r.best),tierBefore=riftTier(r.shards);if(first||newBest)r.best=run;let gold=0;const won_=first?riftShards(tier):0;const early0=r.story|0;if(first){r.shards+=won_;gold=riftGold(level,tier);/* improve20-r20e-nov4 #4 */if(story&&tierKey(tier)==='normal')r.story=(r.story|0)+1;}/* improve20-r22f-nov4 #2: every Story Rift win adds a floor */if(story&&tierKey(tier)==='normal'){const tw=cleanTower(r.tower)||(early0>0?{early:early0}:{});tw[r.week]=(tw[r.week]|0)+1;r.tower=tw;}
+ return {won:true,paid:first,gold,shardsWon:won_,tier:tierKey(tier),story:!!story&&tierKey(tier)==='normal',floors:riftTower(s).floors,shards:r.shards,newBest,first,prevTime,best:r.best,week:r.week,title:riftTier(r.shards)>tierBefore?riftTitle(s):null};}
 /* The run's sanitised modifier set (World.startLevel): only this week's level, on the tier the pick names (opts.tier, Normal when
    absent: improve20-r9f-nov1 #3), with two known modifiers. */
 export function riftRun(opts,id,k){if(!opts||opts.level!==id||tierKey(k)!==k||(opts.tier||'normal')!==k)return null;const mods=(Array.isArray(opts.mods)?opts.mods:[]).filter(m=>RIFT_MODS[m]).slice(0,2);return mods.length?{week:weekKey(opts.week),level:id,mods,...(k==='normal'?{}:{tier:k}),...(k==='normal'&&opts.story?{story:true}:{})/* improve20-r20e-nov4 #1: the Story Rift's scaling, Normal tier only */}:null;}

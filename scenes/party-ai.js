@@ -18,6 +18,8 @@
 import {COMPANIONS, ART, compStats, companionAllowed, compLevel, hireable} from '../game/party.js';
 import {difficultyOf} from '../game/levels.js';
 import {damage} from '../game/math.js';
+/* improve20-r22w-nov4 #2: Wil's chapter lines (lines only, no numbers) */
+import {questBark, rewardBarks, questLive} from '../game/quests.js';
 import {STAGE} from '../game/stage.js';
 import {loadSprite, spriteMeta, frameStart} from '../gfx/actors/sprites.js';
 import {enemyFxTick, bodyHalf} from './enemy-ai.js';
@@ -61,10 +63,16 @@ export function partyStart(w, opts = {}) {
     hp: st.hp, maxHp: st.hp, def: 2 + w.save.level * .5, facing: p.facing || 1, state: 'idle', stateT: 0, mode: 'follow', cd: .6, skillCd: 2, inv: 0, flash: 0,
     hidden: 0, attack: 0, color: '#d8c79a', wave: w.wave, off: 0, slot: Math.random() < .5 ? -8 : 8, dealt: 0, taken: 0, downs: 0, secondWind: st.traits.includes('Second Wind')};
   w.party.push(c);
-  const b = COMPANIONS[id].barks.start; w.schedule?.(.8, () => bark(w, c, b[Math.floor(Math.random() * b.length)]));
+  /* improve20-r22w-nov4 #2: a quest step on this level gives its own line; a finished chapter adds its lines to the start pool */
+  const qb = w.save ? questBark(w.save, id, w.level?.id, questLive) : null, b = [...COMPANIONS[id].barks.start, ...(w.save ? rewardBarks(w.save, id, questLive) : [])];
+  w.schedule?.(.8, () => bark(w, c, b[Math.floor(Math.random() * b.length)]));
+  /* the quest line comes once the level-start toast ("This visit: ...") has gone (it sat over Wil's head at 1280x720), and stays a little longer */
+  if (qb) w.schedule?.(QUEST_BARK.at, () => bark(w, c, qb, {life: QUEST_BARK.life, hold: true}));
   return c;
 }
-const bark = (w, c, line) => { if (line && w.party?.includes(c)) w.text?.(line, c.x, c.y - 52, '#e9f2c6'); };
+/* improve20-r22w-nov4 #2: when a quest step's line is said (s after the start) and how long it shows */
+export const QUEST_BARK = {at: 6.5, life: 2.6};
+const bark = (w, c, line, opt = null) => { if (line && w.party?.includes(c)) w.text?.(line, c.x, c.y - 52, '#e9f2c6', false, opt); };
 const clip = (c, k) => c.art.clips[k] || 'idle';
 function setState(c, k) { const s = clip(c, k); if (c.state !== s) { c.state = s; c.stateT = 0; } }
 function contactOf(c, k) { const st = spriteMeta(c.sprite)?.states?.[clip(c, k)]; return st?.contact?.length ? frameStart(st, st.contact[0]) : .35; }

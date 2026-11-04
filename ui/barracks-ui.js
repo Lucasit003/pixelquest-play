@@ -7,7 +7,8 @@
 //   questsJournalHTML the Journal's Quests tab: active, available, coming later, done
 // Only chains whose companion has approved art are shown (questLive, party.js hireable): today, Wil's.
 import {COMPANIONS, ROLES, TRIAL_RUNS, hireable, levelBar, nextTrait, traitsAt, wageText, hireBlock} from '../game/party.js';
-import {QUESTS, QUEST_ITEMS, QUEST_IDS, questLive, questState, currentStep, questGold, keepsakeOf} from '../game/quests.js';
+import {QUESTS, QUEST_ITEMS, QUEST_IDS, questLive, questState, currentStep, questGold, keepsakeOf, /* improve20-r22w-nov4 #3 */bringsCompanion, laterChains} from '../game/quests.js';
+import {TITLES} from '../game/titles.js';
 import {levelById} from '../game/levels.js';
 import {FARM_NAME} from '../game/fasttravel.js';
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
@@ -20,8 +21,14 @@ function stepWhere(id, st) {
   if (!st) return '';
   if (st.kind === 'clear') return WHERE[st.level] || levelById(st.level)?.name || '';
   if (st.kind === 'visit') return st.building === 'barracks' ? 'The Barracks, by the south gate' : '';
-  return st.who === QUESTS[id].giver.key ? ({farmhouse: `${FARM_NAME}, west of the windmill`}[QUESTS[id].giver.room] || QUESTS[id].giver.name) : '';
+  /* improve20-r22w-nov4 #3: a talk step names its room (the giver's, or the step's own room) */
+  const room = st.who === QUESTS[id].giver.key ? QUESTS[id].giver.room : st.room;
+  return ROOM_WHERE[room] || (st.who === QUESTS[id].giver.key ? QUESTS[id].giver.name : '');
 }
+const ROOM_WHERE = {farmhouse: `${FARM_NAME}, west of the windmill`, barracks: 'The Barracks, by the south gate', weaponsmith: 'Brannoc’s weaponsmith, on the market square'};
+/* improve20-r22w-nov4 #3: what a chain that brings no one pays, in words ("the title “Wil’s Shield-Friend”, new lines for Wil") */
+const titleOf = id => TITLES[QUESTS[id]?.reward?.title]?.name || '';
+const extras = id => { const R = QUESTS[id].reward, c = COMPANIONS[QUESTS[id].companion]; return [titleOf(id) && `the title “${titleOf(id)}”`, R.barks?.length && `new things for ${c.short} to say`].filter(Boolean); };
 
 export const BARRACKS_CSS = `.grid.barracks-grid{grid-template-columns:repeat(auto-fill,minmax(min(100%,400px),1fr));gap:12px}
 :where(.comp-card){display:flex;flex-direction:column;gap:6px}
@@ -45,6 +52,7 @@ export const BARRACKS_CSS = `.grid.barracks-grid{grid-template-columns:repeat(au
 .comp-bar>span{display:block;height:100%;background:linear-gradient(#e9c46a,#b8862f)}
 :where(.comp-facts){margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:3px}
 .comp-card .comp-wage{color:#e3b85a;margin:2px 0 0}
+.comp-hero .comp-chapter{margin:0;color:#e9dcc0}.comp-chapter small{display:block;opacity:.85}.comp-chapter[data-quest-state=active] strong,.comp-chapter[data-quest-state=open] strong{color:#ffe9a8}
 .comp-card .comp-away{opacity:.85;font-size:.92em}
 .barracks-grid .comp-hero{grid-column:1/-1;gap:10px}
 .comp-hero .comp-top{gap:18px;align-items:center}
@@ -87,6 +95,8 @@ export function barracksHTML(save) {
        and "Bring Wil"; the rules sheet sits under a "How companions grow" fold, with the panel's rules note */
     return `<div class="card comp-card comp-hero${hired ? ' selected' : ''}" data-companion="${id}"><div class="comp-top"><canvas class="comp-portrait comp-big" data-comp-sprite="${id}" data-comp-scale="2.5" width="192" height="192" aria-hidden="true"></canvas><div class="comp-head"><span class="tag">${esc(role.toUpperCase())} · LEVEL ${L}</span><h3 class="comp-name">${esc(c.name)}</h3>`
       + `<p class="comp-plain">${esc(c.short)} fights with you and grows with every win.</p>`
+      /* improve20-r22w-nov4 #3: his later chapter (game/quests.js laterChains): what to do next, or the title won */
+      + chapterLine(save, id)
       + `<div class="comp-bar" role="progressbar" aria-label="${esc(c.short)}’s level" aria-valuemin="0" aria-valuemax="${bar.need || 1}" aria-valuenow="${bar.need ? bar.have : 1}"><span style="width:${Math.round(bar.share * 100)}%"></span></div><small class="comp-bar-label">${bar.need ? `Level ${L} · ${num(bar.have)} / ${bar.need} toward level ${L + 1}` : `Level ${L} · the top level`}</small>`
       + `<button data-hire="${id}" class="${hired ? '' : 'primary'}">${hired ? `Leave ${esc(c.short)} at the Barracks` : `Bring ${esc(c.short)}`}</button><p class="comp-wage">${esc(wageText(save, id))}</p>${hired ? `<small class="subtle">${esc(c.short)} travels with you until you change it.</small>` : ''}</div></div>`
       + `<details class="comp-rules"><summary>How companions grow</summary><ul class="comp-facts"><li>${bar.need ? `Level ${L}: ${num(bar.have)} / ${bar.need} toward level ${L + 1}. Adventures together fill this bar: a win adds 1 (a Heroic win 1.5, a Legendary win 2) and a lost try adds a little.` : `Level ${L}: the top level`}</li>`
@@ -99,6 +109,13 @@ export function barracksHTML(save) {
   /* oct25-exploit2 O1: the rules note is the grid's last cell, beside the card on a wide screen (at 1280x720 it ran under the frame's
      bottom edge below the card); on a phone it still sits under the card */
   return `<div class="grid barracks-grid">${cards}${ids.some(id => save?.party?.crew?.[id]) ? '' : NOTE}</div>`;
+}
+
+/* improve20-r22w-nov4 #3: one line on a joined companion's card for his next chapter: not open yet, the step to do now, or done */
+export function chapterLine(save, id) {
+  return laterChains(id, questLive).map(q => { const Q = QUESTS[q], st = questState(save, q), cur = currentStep(save, q), w = cur && stepWhere(q, cur);
+    const body = st === 'done' ? `Done! You are ${esc(COMPANIONS[id].short)}’s ${esc(titleOf(q).replace(/^.*’s /, ''))}.` : st === 'locked' ? esc(opensText(q)) : `${esc(cur.text)}${w && !cur.text.includes(w) ? ` <small>Where: ${esc(w)}</small>` : ''}`;
+    return `<p class="comp-chapter" data-quest="${q}" data-quest-state="${st}"><span class="tag">${esc(COMPANIONS[id].short.toUpperCase())}’S STORY</span> <strong>${esc(Q.title)}</strong>: ${body}</p>`; }).join('');
 }
 
 /* improve20-b-oct31 #11 (kid-appeal playtest, shot 15: one silhouette card in a big empty panel; "Who's that? How do I get him?"): a
@@ -123,7 +140,9 @@ export function padCompanionHTML(save, level, scroll = '') {
   let out = '';
   for (const id of live()) {
     if (questState(save, id) !== 'active') continue; const st = currentStep(save, id);
-    if (st?.kind === 'clear' && st.level === level.id) out += `<p class="pad-quest" data-quest="${id}">${scroll}<span>Quest: ${esc(st.item ? `find ${QUEST_ITEMS[st.item].name}` : st.text)}</span></p>`;
+    /* improve20-r22w-nov4 #3: a later chapter's step says its companion has a word to say here, while he stays at the Barracks */
+    const c = COMPANIONS[QUESTS[id].companion], away = !bringsCompanion(id) && st?.bark && save?.party?.crew?.[QUESTS[id].companion] && save.party.with !== QUESTS[id].companion;
+    if (st?.kind === 'clear' && st.level === level.id) out += `<p class="pad-quest" data-quest="${id}">${scroll}<span>Quest: ${esc(st.item ? `find ${QUEST_ITEMS[st.item].name}` : st.text)}${away ? `<small class="pad-quest-bring"> Bring ${esc(c.short)} from the Barracks: he has something to say here.</small>` : ''}</span></p>`;
   }
   const id = save?.party?.with;
   if (id && hireable(id) && save.party.crew?.[id]) {
@@ -138,9 +157,12 @@ export function resultCompanionHTML(save, party, found, scroll = '') {
   let out = '';
   for (const f of found || []) {
     const Q = QUESTS[f.questId];
-    if (f.item) out += `<p class="level-record level-quest" data-quest="${f.questId}">${scroll}<strong>Found: ${esc(f.name)}! ${f.questId === 'hobs-purse' ? 'Take it back to Farmer Hob.' : `Take it back to ${esc(Q.giver.name)}.`}</strong></p>`;
+    /* improve20-r22w-nov4 #3: a later chapter says where the item goes next (its next step: the ember iron goes to Brannoc, not back to the giver) */
+    const nx = !bringsCompanion(f.questId) && currentStep(save, f.questId);
+    if (f.item) out += `<p class="level-record level-quest" data-quest="${f.questId}">${scroll}<strong>Found: ${esc(f.name)}! ${f.questId === 'hobs-purse' ? 'Take it back to Farmer Hob.' : nx?.take === f.item ? esc(nx.text) : `Take it back to ${esc(Q.giver.name)}.`}</strong></p>`;
+    else if (nx && !f.done) out += `<p class="level-record level-quest" data-quest="${f.questId}">${scroll}<strong>Quest: ${esc(nx.text)}</strong></p>`;
     /* improve20-r20n-nov4 #1d: a chain that ends on a win names its keepsake too */
-    if (f.done) out += `<p class="level-record level-quest">${scroll}<strong>${esc(COMPANIONS[Q.companion].short)} can now join you at the Barracks!${keepsakeOf(f.questId) ? ` Keepsake: ${esc(keepsakeOf(f.questId).name)}, in your Trophy Hall.` : ''}</strong></p>`;
+    if (f.done) out += `<p class="level-record level-quest">${scroll}<strong>${bringsCompanion(f.questId) ? `${esc(COMPANIONS[Q.companion].short)} can now join you at the Barracks!` : `${esc(Q.title)}: done!`}${keepsakeOf(f.questId) ? ` Keepsake: ${esc(keepsakeOf(f.questId).name)}, in your Trophy Hall.` : ''}</strong></p>`;
   }
   if (party) {
     const c = COMPANIONS[party.id];
@@ -166,7 +188,8 @@ export function chapterQuestHTML(save, chapter, scroll = '', skip = null) {
     const Q = QUESTS[id], st = questState(save, id); if (Q.chapter !== chapter || id === skip || (st !== 'open' && st !== 'active')) continue;
     const step = currentStep(save, id); if (!step) continue;
     const c = COMPANIONS[Q.companion], what = st === 'open' ? `${Q.blurb} ${step.text}` : `${Q.title}. ${step.text}`;
-    const text = `Side quest: ${what.replace(/[.!]\s*$/, '')}${step.who === Q.companion ? '.' : `, and ${c.short} can join you.`}`;
+    /* improve20-r22w-nov4 #3: a later chapter of someone already in the crew never says he "can join you" */
+    const text = `Side quest: ${what.replace(/[.!]\s*$/, '')}${step.who === Q.companion || !bringsCompanion(id) ? '.' : `, and ${c.short} can join you.`}`;
     return `<p class="level-record level-quest level-quest-pointer" data-quest="${id}">${scroll}<span>${esc(text)}</span></p>`;
   }
   return '';
@@ -178,14 +201,16 @@ export function questsJournalHTML(save) {
   for (const id of live()) groups[questState(save, id)].push(id);
   const entry = (id, body, cls = '') => `<div class="card quest-entry ${cls}" data-quest="${id}"><span class="tag">${esc(QUESTS[id].giver.name.toUpperCase())}</span><h3>${esc(QUESTS[id].title)}</h3>${body}</div>`;
   /* improve20-r20n-nov4 #1c: the reward names the keepsake, and the done card says where it is */
-  const reward = id => `<small class="subtle">Reward: ${esc(COMPANIONS[QUESTS[id].companion].short)} joins the Barracks, ${questGold(id)} gold${keepsakeOf(id) ? `, and a keepsake, ${esc(keepsakeOf(id).name)}` : ''}.</small>`;
+  /* improve20-r22w-nov4 #3: a later chapter's reward is gold, its title, the companion's new lines and the keepsake */
+  const reward = id => bringsCompanion(id) ? `<small class="subtle">Reward: ${esc(COMPANIONS[QUESTS[id].companion].short)} joins the Barracks, ${questGold(id)} gold${keepsakeOf(id) ? `, and a keepsake, ${esc(keepsakeOf(id).name)}` : ''}.</small>`
+    : `<small class="subtle">Reward: ${esc([`${questGold(id)} gold`, ...extras(id)].join(', '))}${keepsakeOf(id) ? `, and a keepsake, ${esc(keepsakeOf(id).name)}` : ''}.</small>`;
   const kept = id => keepsakeOf(id) ? `<p class="quest-keepsake" data-keepsake="${esc(keepsakeOf(id).id)}"><span class="quest-keepsake-pic" aria-hidden="true" style="background-image:url(${esc(keepsakeOf(id).img || 'ui/skin/rewards/chest.png')})"></span><span>Keepsake: <strong>${esc(keepsakeOf(id).name)}</strong>, in your Trophy Hall.</span></p>` : '';
   const sec = (title, list) => list.length ? `<h3 class="level-chapter">${title}</h3><div class="quest-list">${list.join('')}</div>` : '';
   const active = groups.active.map(id => { const st = currentStep(save, id), w = stepWhere(id, st); return entry(id, `<p>${esc(QUESTS[id].blurb)}</p><p><strong>Now: ${esc(st?.text)}</strong>${w ? `<br><small>Where: ${esc(w)}</small>` : ''}</p>${reward(id)}`); });
   /* oct26-midgame: an available quest said "Talk to Farmer Hob" with no place; it names the place as an active step does */
   const open = groups.open.map(id => { const w = stepWhere(id, QUESTS[id].steps[0]); return entry(id, `<p>${esc(QUESTS[id].blurb)}</p><p><strong>${esc(QUESTS[id].steps[0].text)}</strong>${w ? `<br><small>Where: ${esc(w)}</small>` : ''}</p>${reward(id)}`); });
   const coming = groups.locked.map(id => entry(id, `<p>${esc(opensText(id))}</p>`, 'coming'));
-  const done = groups.done.map(id => entry(id, `<p>Done! ${esc(QUEST_ITEMS[QUESTS[id].reward.keepsake]?.story || '')}</p>${kept(id)}`, 'done'));
+  const done = groups.done.map(id => entry(id, `<p>Done! ${esc(QUEST_ITEMS[QUESTS[id].reward.keepsake]?.story || '')}</p>${kept(id)}${/* improve20-r22w-nov4 #3 */titleOf(id) ? `<p class="quest-title-won">Title: <strong>${esc(titleOf(id))}</strong>. Wear it from your hero card.</p>` : ''}`, 'done'));
   const body = sec('Active', active) + sec('Available', open) + sec('Coming later', coming) + sec('Done', done);
   /* oct26-midgame: with every quest done the tab was a lone "Done" card; it says so, and where the next goal lives */
   const allDone = !active.length && !open.length && !coming.length && done.length;
@@ -199,7 +224,12 @@ export function questNewsText(save, moved) {
   const toasts = []; let say = null;
   for (const m of moved || []) {
     const Q = QUESTS[m.questId]; if (!Q) continue;
-    if (m.done) {
+    /* improve20-r22w-nov4 #3: a later chapter ends with its companion's thanks, the title and the keepsake (he has joined already) */
+    if (m.done && !bringsCompanion(m.questId)) {
+      const c = COMPANIONS[Q.companion], k = keepsakeOf(m.questId);
+      if (Q.reward.say?.length) say = {speaker: c.short, lines: [...Q.reward.say]};
+      toasts.push(`Quest complete: ${Q.title}! +${m.gold} gold.${titleOf(m.questId) ? ` New title: ${titleOf(m.questId)}.` : ''}${k ? ` Keepsake: ${k.name}, in your Trophy Hall.` : ''}`);
+    } else if (m.done) {
       const c = COMPANIONS[m.companion];
       if (Q.steps.at(-1).kind === 'visit') say = {speaker: c.short, lines: [c.barks.join]};
       /* improve20-r20n-nov4 #1d: the quest's last toast says what was earned, the keepsake included */

@@ -25,6 +25,9 @@
 import {nextStep} from './next-step.js';
 import {libraryOpening} from '../academics/starter-lesson.js';
 import {questState, currentStep, onTalk, questLive} from './quests.js';
+/* improve20-r22f-nov4 #1: the chapter beats name the next level's real lock (game/power-gate.js gateInfo, game/levels.js starsShort) */
+import {gateInfo} from './power-gate.js';
+import {levelById, levelOpen, starsShort} from './levels.js';
 
 /* Town restoration (docs/review/v2/map/RESTORATION.md): after each Elderwood level part of Oakhaven is
    restored, and the people who live by it say so. The newest change comes first. */
@@ -80,7 +83,12 @@ export const VILLAGERS = {
     {say: ['I want to be an adventurer too! I like learning new powers at the Library.']}]},
   v12517: {name: 'Hilda', lines: [{say: ['The Inn’s honey buns make you quick on your feet. Try one before you go out.']}]},
   v12585: {name: 'Digger Moss', lines: [{say: ['A real dragon, this was. Fossils are history you can touch!']}]},
-  'w:Market shopper': {name: 'Agnes', lines: [{say: ['Apples, eggs, bread... I always forget something.']}]},
+  /* improve20-r22f-nov4 #1: Agnes in the market has a new line after each chapter clear (the newest first) */
+  'w:Market shopper': {name: 'Agnes', lines: [
+    {when: {done: 'v7'}, say: ['You beat the Sleeper in the Deep? I can’t even beat my shopping list. Eggs! I forgot the eggs again.']},
+    {when: {done: 'm7'}, say: ['You beat Moltar! Next it’s the Veilmoor, they say. Too misty for me. Now, what did I come here for?']},
+    {when: {done: 'e8'}, say: ['The Thorn King, beaten! I bought extra bread to celebrate. And then I forgot the apples.']},
+    {say: ['Apples, eggs, bread... I always forget something.']}]},
   'w:Town courier': {name: 'Robin the courier', lines: [
     {when: {done: 'e1'}, say: ['Letters for you! Well, about you. Everyone writes about the goblin camp now.']},
     {say: ['Can’t stop, letters to deliver! The Guild has a new contract, by the way.']}]},
@@ -112,7 +120,9 @@ export const VILLAGERS = {
     {say: ['Welcome, adventurer! Goblins have taken the camp past the south gate.', 'Read the contract board, then head out through the south gate.']}]},
   innkeeper_odell: {name: 'Innkeeper Odell', lines: [{say: ['All of Oakhaven’s food is cooked here now: Hob’s apples, Netta’s fish, the mill’s flour. A hot meal keeps you strong for one whole adventure. Ask at the counter!']}]},
   innkeeper: {name: 'Innkeeper Odell', lines: [{say: ['All of Oakhaven’s food is cooked here now: Hob’s apples, Netta’s fish, the mill’s flour. A hot meal keeps you strong for one whole adventure. Ask at the counter!']}]},
-  brannoc_the_smith: {name: 'Brannoc the smith', lines: [{say: ['Welcome! Have a look at my weapons and armour.', 'Choose a stronger weapon or armour and pay with gold. Abilities unlock through learning and hero levels.']}]},
+  brannoc_the_smith: {name: 'Brannoc the smith', lines: [
+    /* improve20-r22w-nov4 #2: Wil's second chapter, 'wils-shield' (heard before the step moves on, as above) */
+    {when: {quest: {id: 'wils-shield', step: 2}}, say: ['Ember iron! Now that is proper metal. Let me see this shield of Wil’s.', 'Farm-gate oak, held together with nails and hope. I’ll make him a new one, iron from rim to rim.', 'Look here: someone carved a little wheat sheaf inside the old one. Farmer Hob will want to hear about this.']},{say: ['Welcome! Have a look at my weapons and armour.', 'Choose a stronger weapon or armour and pay with gold. Abilities unlock through learning and hero levels.']}]},
   master_coll: {name: 'Master Coll', lines: [{say: ['Measure twice. Drink once. Potions at the counter.']}]},
   goodwife_enid: {name: 'Goodwife Enid', lines: [{say: ['Woundwort for cuts, swiftroot for tired legs. Find my remedies at the Apothecary, beside Master Coll.']}]},
   chaplain_aurel: {name: 'Chaplain Aurel', lines: [{say: ['A blessing for the road? It lasts one journey, and that is enough.']}]},
@@ -121,6 +131,10 @@ export const VILLAGERS = {
   /* hobs-purse (docs/design/COMPANIONS_AND_OAKHAVEN.md §2.3): quest lines first, in quest order; `quest` reads game/quests.js. A line is
      chosen BEFORE talking moves the quest on (talkAndAdvance), so the offer, the hand-in and the send-off are each heard once, in turn. */
   farmer_hob: {name: 'Farmer Hob', lines: [
+    /* improve20-r22w-nov4 #2: Wil's second chapter, 'wils-shield' (heard before the step moves on, as above) */
+    {when: {quest: {id: 'wils-shield', step: 3}}, say: ['Wil’s shield cracked? Oh, that old thing.', 'I made it from our farm gate when he was six. A fox kept coming for the hens, so Wil stood by the hen house all night with it.', 'That fox never got a single hen. Not one.', 'A new shield, eh? Then win the Ember Barracks with him again. Show that place my boy isn’t done.']},
+    {when: {quest: {id: 'wils-shield', step: 4}}, say: ['Go on, back to the Ember Barracks. My boy has something to prove.']},
+    {when: {quest: {id: 'wils-shield', state: 'done'}}, say: ['Wil gave you his old shield? Then you’re family now. Mind it, it was a good gate.']},
     {when: {quest: {id: 'hobs-purse', state: 'open'}}, say: ['Bandits on the market road. Took the whole year’s savings, they did. Red Hand’s lot.', 'My boy Wil wants to go after them, but he’s never held more than a pitchfork.', 'Bandit Road runs off the forest path past the Warcamp. Mind the trees. They drop out of them.']},
     {when: {quest: {id: 'hobs-purse', step: 1}}, say: ['Bandit Road runs off the forest path past the Warcamp. Mind the trees. They drop out of them.']},
     {when: {quest: {id: 'hobs-purse', step: 2}}, say: ['That’s it! Every coin!', /* improve20-r20n-nov4 #1a: the thank-you keepsake */'Here, keep my lucky coin as thanks. It’s for your Trophy Hall.', 'Wil’s been sharpening a spear all week. Says if you’ll have him, he’ll guard your back.', 'Go and see him at the Barracks by the south gate.']},
@@ -128,10 +142,18 @@ export const VILLAGERS = {
     {when: {quest: {id: 'hobs-purse', state: 'done'}}, say: ['The savings are back in the tin, and my boy marches with a hero. Mind he eats properly!']},
     {say: ['Apples, eggs and carrots, all from my own fields. Everything I grow goes to the Inn’s kitchen.']}]},
   wil: {name: 'Wil', lines: [
+    /* improve20-r22w-nov4 #2: Wil's second chapter, 'wils-shield' (heard before the step moves on, as above) */
+    {when: {quest: {id: 'wils-shield', state: 'done'}}, say: ['New shield, same old Wil. Ready when you are, shield-friend!']},
+    {when: {quest: {id: 'wils-shield', state: 'active'}}, say: ['My shield? It’s fine. Mostly. Don’t look at the crack.']},
     {when: {quest: {id: 'hobs-purse', step: 3}}, say: ['Dad says I talk too much. I’ll talk less and hit more. For the farm!']},
     {when: {quest: {id: 'hobs-purse', state: 'done'}}, say: ['Shield’s polished, spear’s sharp. Sign me on at the roster board whenever you’re ready.']},
     {say: ['I’m Wil. I help Dad on the farm. For now.']}]},
   captain_garrick: {name: 'Captain Garrick', lines: [
+    /* improve20-r22w-nov4 #2: Wil's second chapter, 'wils-shield' (heard before the step moves on, as above) */
+    {when: {quest: {id: 'wils-shield', state: 'open'}}, say: ['A word about Wil, if you have a moment.', 'He came back from the Ember Barracks with a crack right down his shield. He keeps hiding it behind his back.', 'Brannoc the smith could make him a new one with good iron. The Cinder Forge is full of ember iron.']},
+    {when: {quest: {id: 'wils-shield', step: 1}}, say: ['Ember iron, from the Cinder Forge. Brannoc will know what to do with it.']},
+    {when: {quest: {id: 'wils-shield', state: 'active'}}, say: ['Wil keeps asking about his shield. Go on, help him finish what he started.']},
+    {when: {quest: {id: 'wils-shield', state: 'done'}}, say: ['Wil hasn’t stopped grinning since you came back. Shield-friends, he calls you. Bounties are on my desk, as ever.']},
     {when: {quest: {id: 'hobs-purse', state: 'done'}}, say: ['The Barracks has its first recruit! Hire a companion at the roster board. Bounties are on my desk, as ever.']},
     {say: ['Welcome to the Barracks. Bounties are on my desk: a job with a gold reward.', 'Fighters who sign on here are listed on the roster board.']}]},
   watchman_tam: {name: 'Watchman Tam', lines: [{say: ['Captain Garrick has moved to the new Barracks by the south gate. Bounties are posted there now.', 'I keep the watch, and the valley map.']}]},
@@ -139,7 +161,40 @@ export const VILLAGERS = {
 
 for (const key of new Set(Object.values(RESTORED_BY).flat())) if (VILLAGERS[key]) VILLAGERS[key].lines.unshift(...restoredLines(key));
 
+/* improve20-r22f-nov4 #1 (audit15 section 8, plan item 3): a short beat with Oakhaven's people the first time the hero comes home after a
+   chapter clear (e8, m7). They react to the win and point at the next chapter's first level, with its real lock from the game's own gate
+   rules (never a number written here). Played once per save like every beat (save.hub.seen). The speaker 'Oakhaven' is nobody standing in
+   town, so the beat plays by itself at the south gate (scenes/town.js hubArriveAtGate); each line names who says it. `hold`: one blocking box
+   (main.js hubSay), read line by line with E, so the gate's own E prompt never closes it after the first line. */
+const AL = 'Archivist Aldous', HOB = 'Farmer Hob', BESS = 'Bess';
+const line = (speaker, text) => ({speaker, text, ...(speaker === AL ? {portrait: 'archivist'} : {})});
+export function wayIn(save, id) {
+  const l = levelById(id); if (!l) return '';
+  if (levelOpen(save, id)) return `Its gate is open. Find ${l.name} on the world map when you are ready!`;
+  const g = gateInfo(save, id), st = starsShort(save, id), out = [];
+  if (g?.text) out.push(`Its gate is still shut. ${g.text.replace(/^Needs /, 'It needs ')}`);
+  if (st) out.push(`${g?.text ? 'It also needs' : 'Its gate needs'} ${st.need} stars, and you have ${st.have}. Replay levels on Heroic or Legendary, or win them with a better grade, for more stars.`);
+  return out.join(' ') || `Its card on the world map says what it needs.`;
+}
+export const CHAPTER_BEATS = Object.freeze({
+  e8: {next: 'm1', say: save => [
+    line('Oakhaven', 'People come running to the south gate. The hero who beat the Thorn King is home!'),
+    line(AL, 'The thorns have pulled back from the Elderwood. Every power you learned helped do that.'),
+    line(HOB, 'Safe roads again! Even my sheep look happier.'),
+    line(BESS, 'Travellers say fire creatures guard Emberkeep, a castle built on a cooling volcano.'),
+    line(AL, `Its first stop is the ${levelById('m1').name}. ${wayIn(save, 'm1')}`)]},
+  m7: {next: 'v1', say: save => [
+    line('Oakhaven', 'Bells ring all over Oakhaven. Moltar, the Forge Ogre, is beaten, and Emberkeep is free!'),
+    line(HOB, 'Emberkeep! I would have run the other way. Well done, hero.'),
+    line(BESS, 'The whole market is talking about you. Agnes even forgot her shopping list. Well, she always does.'),
+    line(AL, `One land is left: the Veilmoor, where violet mists bend the rules. Its first stop is the ${levelById('v1').name}.`),
+    line(AL, wayIn(save, 'v1'))]},
+});
+
 export const STORY = [
+  /* improve20-r22f-nov4 #1: first in the list, so a waiting talk-to-Bess beat never stands in front of it (beatDue takes the first due beat) */
+  {id: 'chapter-elderwood', trigger: 'return', speaker: 'Oakhaven', hold: true, when: {done: 'e8', notDone: 'm1'}, say: CHAPTER_BEATS.e8.say},
+  {id: 'chapter-emberkeep', trigger: 'return', speaker: 'Oakhaven', hold: true, when: {done: 'm7', notDone: 'v1'}, say: CHAPTER_BEATS.m7.say},
   /* libraryfirst-nov1: a Library-first game wakes to a note from Aldous instead of shouts at the gate; main.js then takes the hero to
      the Library door (a short scene change), and Aldous's tour starts inside. The older opening keeps its own beat. */
   {id: 'wake-library', trigger: 'new-game', room: 'home', at: 'Sleep', speaker: 'Home', when: {library: true},
@@ -179,6 +234,9 @@ export const STORY = [
    every town frame (3.3x the fresh-town cost) in headless Chrome, more on a busy laptop. holds() takes an optional `step` function so a
    caller can work it out once per frame (scenes/town.js stepNow); without one it is worked out here, as before. */
 export const stepIdOf = save => { const ns = nextStep(save ?? {}); return (ns.then || ns).id; };
+/** improve20-r22f-nov4 #1: a beat's lines for this save: a list of strings or {speaker, text} lines (a chapter beat works its lines out) */
+export const beatLines = (b, save) => typeof b?.say === 'function' ? b.say(save ?? {}) : [...(b?.say ?? [])];
+export const lineText = l => typeof l === 'string' ? l : l?.text ?? '';
 /** Does a `when` hold for this save? */
 export function holds(when, save, step = null) {
   if (!when) return true;

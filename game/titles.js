@@ -10,6 +10,8 @@ import {SEAL_TITLES,sealChapterDone} from './ability-seals.js';
 
 export const TITLES={
  'thorn-hero':{name:'Hero of the Thorn Kingdom',how:'Free the Thorn Kingdom: win the last Veilmoor level.',earned:s=>LEVELS.some(l=>gameFinale(l.id)&&levelDone(s,l.id))},
+ /* improve20-r22w-nov4 #1: Wil's second chapter (game/quests.js 'wils-shield', reward.title); read from the save's done quest, which never goes back */
+ 'shield-friend':{name:'Wil’s Shield-Friend',how:'Finish The Farm-Gate Shield, Wil’s second quest.',earned:s=>!!s?.quests?.q?.['wils-shield']?.done},
  ...Object.fromEntries(Object.entries(SEAL_TITLES).map(([ch,[id,name]])=>[id,{name,how:`Open a rune seal's cache in the ${ch[0].toUpperCase()+ch.slice(1)}.`,earned:s=>sealChapterDone(s,ch)}])),
 };
 export const TITLE_IDS=Object.keys(TITLES);

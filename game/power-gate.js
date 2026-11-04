@@ -67,3 +67,8 @@ export function nextPower(save,{hero=save?.hero}={}){if(!save)return null;const 
 /* the helper's words, for every card: "Hammer of Light: 2 more History topics (hero level 3)"; never a "(then N more topics)" tail */
 export function powerLine(x){if(!x?.a)return '';const t=x.topics|0,lv=x.lvlOk?'':` (hero level ${x.lvl})`;
  if(!x.reachable)return `${x.a.name}: keep training ${x.subject}${lv}`;if(t>0)return `${x.a.name}: ${t} more ${x.subject} topic${t===1?'':'s'}${lv}${x.place?` (find your level in ${x.subject} first)`:''}`;return x.lvlOk?`${x.a.name}: ready`:`${x.a.name}: reach hero level ${x.lvl}`;}
+/* improve20-r22f-nov4 #4 (audit15 plan item 8): a topic mastered toward a next power that needs 3 or more topics gets a one-time cheer (main.js
+   playCharge: a toast, the next-power card pulsing once, the existing 'correct' sound): "Ground Slam: 3 of 10 topics!". Shorter roads keep the
+   charge line alone. No timer, no streak, nothing lost. c = {name, done, total} -> the line, or null */
+export const CHEER_MIN=3;
+export const powerCheer=c=>c&&c.name&&(c.total|0)>=CHEER_MIN&&(c.done|0)>0&&(c.done|0)<=(c.total|0)?`${c.name}: ${c.done|0} of ${c.total|0} topics!`:null;

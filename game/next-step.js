@@ -126,8 +126,9 @@ export function chargeStep(save){if(save?.goalTurn!=='learn'||!earned(save)||gam
 /* improve20-r8a-nov1 #3 (audit7 d9): Wil, the only companion, was never suggested: adventure() returned the next main-road pad before it looked
    at quests. Once e5 is cleared, right after a win (goalTurn 'learn'), his quest is the goal on the first win counted (save.questNudge, additive
    within v9: wins since e5, game/levels.js recordLevel) and then on every third, until the quest is done; a hand-in already comes first. */
+const goalQuest=save=>id=>questLive(id)&&(!!QUESTS[id]?.reward?.companion||questStateOf(save,id)!=='open');
 export function wilNudge(save){if(save?.goalTurn!=='learn'||!levelDone(save,'e5')||gameCleared(save))return null;const n=save.questNudge|0;if(n<1||(n-1)%3)return null;
- const q=nextQuestStep(save,questLive);if(!q||q.rank==='handin'||QUESTS[q.quest]?.companion!=='wil')return null;const qs=questStep(q);return {...qs,text:`${qs.text.replace(/[.!]\s*$/,'')}: Wil, a new companion, can join you.`,nudge:true};}
+ const q=nextQuestStep(save,questLive);if(!q||q.rank==='handin'||QUESTS[q.quest]?.companion!=='wil'||/* improve20-r22w-nov4 #3: never for his later chapter (he has joined) */!QUESTS[q.quest]?.reward?.companion)return null;const qs=questStep(q);return {...qs,text:`${qs.text.replace(/[.!]\s*$/,'')}: Wil, a new companion, can join you.`,nudge:true};}
 /* a goal after a fresh charge that is an adventure on the map: "Try your new skills" leads it */
 /* improve20-r12a-nov2 (kid sims round 2 finding 1): the goal at a power gate names the pad, the power and the one step that wakes it
    (game/power-gate.js); a gate short only of the hero level points at XP (a won level again, or a lesson). Ids: 'power-<pad>'. */
@@ -150,7 +151,9 @@ const tryNew=(save,n)=>{if(save?.goalTurn!=='fight'||!earned(save)||n?.target?.k
  return {...n,text:n.id==='level-'+n.target.id&&l?`Try your new skills at ${l.name}.`:`Try your new skills! ${n.text}`,tryNew:true};};
 function adventure(save){
  const h=hireStep(save);if(h)return h;
- const q=nextQuestStep(save,questLive);if(q?.rank==='handin')return questStep(q);
+ /* improve20-r22w-nov4 #3: a companion's later chapter that has not been taken yet never takes the adventure goal (main road, star wall or post-game);
+    once accepted it leads through the quest lead (R20N) and, under way, keeps its place as any quest does */
+ const q=nextQuestStep(save,goalQuest(save));if(q?.rank==='handin')return questStep(q);
  const road=nextLevel(save);if(road)return pad(road);
  /* improve20-r12a-nov2: a power gate holds the main road (game/levels.js powerGate): the goal is the learning step that wakes its power */
  {const pg=powerGoal(save);if(pg)return pg;}

@@ -39,7 +39,13 @@ export const hallBosses=ch=>LEVELS.filter(l=>l.chapter===ch&&tiered(l)&&!l.optio
 export const HALL_CHAPTERS=CHAPTERS.map(c=>c.id).filter(ch=>hallBosses(ch).length);
 const key=(ch,r)=>`${ch}:${r}`,okKey=k=>{const [ch,r]=String(k).split(':');return HALL_CHAPTERS.includes(ch)&&RUNGS.includes(+r);};
 export const emptyHall=()=>({cleared:{},keepsakes:{}});
-export function cleanHall(v){const h=emptyHall();if(!v||typeof v!=='object'||Array.isArray(v))return h;for(const f of ['cleared','keepsakes']){const o=v[f];if(o&&typeof o==='object'&&!Array.isArray(o))for(const k of Object.keys(o))if(o[k]===true&&okKey(k))h[f][k]=true;}return h;}
+export function cleanHall(v){const h=emptyHall();if(!v||typeof v!=='object'||Array.isArray(v))return h;for(const f of ['cleared','keepsakes']){const o=v[f];if(o&&typeof o==='object'&&!Array.isArray(o))for(const k of Object.keys(o))if(o[k]===true&&okKey(k))h[f][k]=true;}/* improve20-r22f-nov4 #3 */const b=v.beat;if(b&&typeof b==='object'&&!Array.isArray(b)){const o={};for(const k of Object.keys(b))if(b[k]===true&&HALL_BOSS_IDS().includes(k))o[k]=true;if(Object.keys(o).length)h.beat=o;}return h;}
+/* improve20-r22f-nov4 #3 (audit15 plan item 7, the Hall boss diary): s.hall.beat = {[boss level id]: true} for each boss beaten in a Hall
+   fight, on any rung (additive within save v9; absent until the first one, kept by cleanHall). A rung cleared before this counts its chapter's
+   bosses as beaten too (hallBossBeat), so no win is lost. A fall in a later fight keeps the bosses already beaten in that run. */
+let BOSS_IDS=null;const HALL_BOSS_IDS=()=>BOSS_IDS??=HALL_CHAPTERS.flatMap(hallBosses);
+export function markHallBoss(s,id){if(!HALL_BOSS_IDS().includes(id))return false;const h=H(s);h.beat??={};const fresh=!h.beat[id];h.beat[id]=true;return fresh;}
+export const hallBossBeat=(s,id)=>!!s?.hall?.beat?.[id]||HALL_CHAPTERS.some(ch=>hallBosses(ch).includes(id)&&RUNGS.some(r=>rungCleared(s,ch,r)));
 const H=s=>s.hall&&typeof s.hall==='object'&&s.hall.cleared&&s.hall.keepsakes?s.hall:(s.hall=cleanHall(s.hall));
 /* followups-nov2 (rungs timed in tools/balance-sim.mjs --hall): a Hall-only scale on boss health, per chapter and rung. Story levels never
    read it (combat.js applies it only to a Hall fight's bosses). Missing = 1. Part 3 made Hall fights boss-only (each starts at its boss

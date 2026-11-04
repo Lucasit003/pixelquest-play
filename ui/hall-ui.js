@@ -7,7 +7,7 @@ import {defeatCardLead,RUNE_LEAD_AFTER} from '../game/card-lead.js';
 import {runeDefeatLead,autoPlaceRunes} from '../game/runes.js';
 import {refillOffer,refillPotions,bagCount} from '../game/potions.js';
 import {CHAPTERS,levelById} from '../game/levels.js';
-import {HALL_CHAPTERS,RUNGS,RUNG_LABEL,ROMAN,hallHeal,hallFree,hallPatterns,hallBosses,rungState,rungOpen,rungReward,keepsakeName,keepsakes,startRung,hallStep,hallFinish,hallDoor,hallEarly,rungLockText} from '../game/hall.js';
+import {HALL_CHAPTERS,RUNGS,RUNG_LABEL,ROMAN,hallHeal,hallFree,hallPatterns,hallBosses,rungState,rungOpen,rungReward,keepsakeName,keepsakes,startRung,hallStep,hallFinish,hallDoor,hallEarly,rungLockText,/* improve20-r22f-nov4 #3 */markHallBoss} from '../game/hall.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const ICON={1:'tier-normal',2:'tier-heroic',3:'tier-legendary'};
 const pic=(n,size=32)=>`<img class="hall-icon" src="ui/skin/pl-icons/${n}.png" width="${size}" height="${size}" alt="" draggable="false">`;
@@ -40,7 +40,7 @@ export function initHall(D){let sel=null,run=null;/* improve20-r20d-nov4 #1: fal
   document.getElementById('hall-back').onclick=()=>D.forceClose();const go=document.getElementById('hall-go');go.onclick=()=>begin(sel.chapter,sel.rung);if(!go.disabled)go.focus({preventScroll:true});}
  function fight(){const id=run.bosses[run.i];return D.startLevel(id,{tier:run.tier,hall:{chapter:run.chapter,rung:run.rung,i:run.i,of:run.bosses.length,hp:run.hp,free:run.free},onLevelEnd:back});}
  function begin(ch,r){const s=D.save();if(!rungOpen(s,ch,r))return;run=startRung(s,ch,r);D.forceClose();if(D.mapOn())D.closeMap();if(!fight()){run=null;back();}}
- function levelEnd(r){const s=D.save(),h=r.hall||{};if(!run||h.chapter!==run.chapter||h.rung!==run.rung){D.leaveLevel(r);return;}const out=hallStep(run,{won:r.won,hp:h.hp,drunk:h.drunk,free:h.free}),n=run.bosses.length;
+ function levelEnd(r){const s=D.save(),h=r.hall||{};if(!run||h.chapter!==run.chapter||h.rung!==run.rung){D.leaveLevel(r);return;}/* improve20-r22f-nov4 #3: a Hall boss beaten fills its diary page (Journal, Bestiary), kept even if a later fight is lost */if(r.won&&markHallBoss(s,run.bosses[run.i]))D.persist();const out=hallStep(run,{won:r.won,hp:h.hp,drunk:h.drunk,free:h.free}),n=run.bosses.length;
   if(out==='next'){const next=run.bosses[run.i],pct=Math.round(run.hp*100);
    D.show('hall-next',`<div class="hall-step"><span class="eyebrow">Boss ${run.i} of ${n} down</span><h2>${esc(bossName(next))} is next</h2><p>Boss ${run.i+1} of ${n}. You catch your breath: health back up to ${pct}%.${run.drunk?'':' No potions so far.'}</p><div class="modal-actions"><button id="hall-leave">Leave the Hall</button><button id="hall-on" class="primary">Fight on</button></div></div>`);
    document.getElementById('hall-on').onclick=()=>{D.forceClose();if(!fight()){run=null;D.leaveLevel(r);}};document.getElementById('hall-leave').onclick=()=>{run=null;D.leaveLevel(r);};document.getElementById('hall-on').focus({preventScroll:true});return;}
