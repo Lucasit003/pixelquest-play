@@ -7,8 +7,9 @@
      play meanwhile (this week's Rift while unplayed, else the best Heroic replay for stars), picked deterministically.
    - The second loss on Story leads with the retry and its potions; the Library is a secondary with its honest size.
    Pure and read-only: it never opens a gate, unlocks, masters or writes. -> {text, primary:{kind,label,subject}, also, library} */
-import {LEVELS,CHAPTERS,levelById,levelOpen,levelFogged,tierOpen,tierDone,starsOf,awakeCount,powerShort,tiered} from './levels.js';
-import {hallOpen,HALL_CHAPTERS,rungOpen,rungCleared} from './hall.js';
+import {LEVELS,CHAPTERS,levelById,levelOpen,levelFogged,tierOpen,tierDone,starsOf,awakeCount,powerShort,tiered,levelDone} from './levels.js';
+import {hallOpen,HALL_CHAPTERS,rungOpen,rungCleared,hallEarly,HALL_EARLY} from './hall.js';
+import {riftOpen,riftPick} from './rift.js';
 import {questLive,questState,currentStep} from './quests.js';
 import {adviceLevel,TIERS} from './tiers.js';
 import {SUBJECTS} from './data.js';
@@ -32,9 +33,15 @@ export function gateLead(save,id,{place=null}={}){const gi=gateInfo(save,id),g=p
    Rung I (a chapter's rung I open and not cleared), Wil's quest (open or under way, its step playable now). Same save and day, same line. */
 export const dayNo=(now=Date.now())=>{const d=new Date(now);return Math.floor(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/864e5);};
 export const WHILE_KINDS=['rift','heroic','hall','wil'];
-export function whileOptions(save){const out=[],r=riftUnplayed(save);if(r){const l=levelById(r.target.id);out.push({kind:'rift',id:l?.id||null,text:`While you learn: this week's Rift (${l?.name||'a remixed level'}). Press Rift on the world map.`});}
- const h=heroicWhile(save);if(h)out.push(h);
- const ch=hallOpen(save)?HALL_CHAPTERS.find(c=>rungOpen(save,c,1)&&!rungCleared(save,c,1)):null;if(ch)out.push({kind:'hall',id:ch,text:`While you learn: Hall of Echoes Rung I (${CHAPTERS.find(c=>c.id===ch)?.name||ch}). Find the Hall on the Veilmoor map.`});
+/* improve20-r20e-nov4 #5 (audit14 #2: "While you learn" pointed a Story kid after m7 at Heroic): a Story kid after m7 (m7 won, and this week's Rift
+   is the Story Rift, game/rift.js riftStory: no Heroic won in its chapter) is pointed at the Story Rift and at Hall Rung I (open after m7,
+   game/hall.js hallEarly), never at a Heroic replay. Same kinds, same order; only these entries' words and the Heroic skip are new. */
+export const storyKid=save=>{if(!levelDone(save,HALL_EARLY)||!riftOpen(save))return false;let p=null;try{p=riftPick(save);}catch{p=null;}return !!p?.story;};
+export const storyRiftText=l=>`While you learn: this week's Story Rift (${l?.name||'a remixed level'}), at your tier. Press Rift on the world map.`;
+export const hallEarlyText=ch=>`While you learn: Hall of Echoes Rung I (${CHAPTERS.find(c=>c.id===ch)?.name||ch}): practise reading the bosses. Find the Hall on the Emberkeep map.`;
+export function whileOptions(save){const out=[],r=riftUnplayed(save),sk=storyKid(save);if(r){const l=levelById(r.target.id);out.push({kind:'rift',id:l?.id||null,text:sk?storyRiftText(l):`While you learn: this week's Rift (${l?.name||'a remixed level'}). Press Rift on the world map.`});}
+ const h=sk?null:heroicWhile(save);if(h)out.push(h);
+ const early=hallEarly(save),ch=hallOpen(save)||early?HALL_CHAPTERS.find(c=>rungOpen(save,c,1)&&!rungCleared(save,c,1)):null;if(ch&&early)out.push({kind:'hall',id:ch,text:hallEarlyText(ch)});else if(ch)out.push({kind:'hall',id:ch,text:`While you learn: Hall of Echoes Rung I (${CHAPTERS.find(c=>c.id===ch)?.name||ch}). Find the Hall on the Veilmoor map.`});
  const q='hobs-purse',st=questLive(q)?questState(save,q):'locked',step=st==='open'||st==='active'?currentStep(save,q):null;if(step&&(step.kind!=='clear'||levelOpen(save,step.level)))out.push({kind:'wil',id:q,text:`While you learn: Wil's quest. ${step.text}`});
  return out;}
 export function whileLearn(save,{now=Date.now()}={}){const o=whileOptions(save);return o.length?o[((dayNo(now)%o.length)+o.length)%o.length]:null;}

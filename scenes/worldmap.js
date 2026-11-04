@@ -14,9 +14,9 @@ import {updateMapPanel,clearMapPanel} from '../ui/worldmap-panel.js';
 import {reducedMotion} from '../ui/settings.js';
 import {TIER_KEYS,TIERS} from '../game/tiers.js';
 import {riftOpen} from '../game/rift.js';
-import {hallOpen} from '../game/hall.js';
+import {hallOpen,hallEarly} from '../game/hall.js';
 import {activeQuests,currentStep,questLive} from '../game/quests.js';
-import {HALL_PAD,RIFT_PADS,MAPS,PADS,ROADS,nodes,edges,neighbours,pathPoints,roadRoute,nodeState,isGate,gateById,gateArrival,playableChapter} from '../game/worldmap-layout.js';
+import {HALL_PAD,HALL_PAD_EARLY,RIFT_PADS,MAPS,PADS,ROADS,nodes,edges,neighbours,pathPoints,roadRoute,nodeState,isGate,gateById,gateArrival,playableChapter} from '../game/worldmap-layout.js';
 import {drawWorldmap,makeArt,camera,boardPoint,VIEW_W,VIEW_H,BAR_HIT,signHit,tabHit,travelTabHit} from '../gfx/worldmap-art.js';
 import {drawSprite,loadSprite} from '../gfx/actors/sprites.js';
 import {heroAtlas,drawHero as drawHeroSprite} from '../gfx/actors/hero-sprites.js';
@@ -265,7 +265,8 @@ function closedRoads(rv){if(!ROADS[S.chapter])return null;const shut=id=>['locke
 export function riftNode(){if(!S||S.view||S.ctx.look||!S.ctx.onRift||!MAPS[S.chapter]?.art||!RIFT_PADS[S.chapter]||!riftOpen(S.save))return null;/* improve20-r14c-nov3 #5 (audit11 also-seen): a save that has never played it gets one line saying what it is and when it changes */const r=S.save.rift,fresh=!r?.best&&!r?.last;return {...RIFT_PADS[S.chapter],label:'The Rift',key:'R',...(fresh?{note:RIFT_NOTE}:{})};}
 export const RIFT_NOTE='A remixed level, new each Monday';
 /* improve20-r9a-nov1: the Hall of Echoes' door (HALL_PAD), or null before the final boss falls, off its board, in view mode and in a look-only visit */
-export function hallNode(){if(!S||S.view||S.ctx.look||!S.ctx.onHall||S.chapter!==HALL_PAD.chapter||!MAPS[S.chapter]?.art||!hallOpen(S.save))return null;return {x:HALL_PAD.x,y:HALL_PAD.y,label:'Hall of Echoes',key:'B'};}
+/* improve20-r20e-nov4 #2: before the finale, after m7, the door is HALL_PAD_EARLY on the Emberkeep board (Rung I only) */
+export function hallNode(){if(!S||S.view||S.ctx.look||!S.ctx.onHall||!MAPS[S.chapter]?.art)return null;const P=hallOpen(S.save)?HALL_PAD:hallEarly(S.save)?HALL_PAD_EARLY:null;if(!P||S.chapter!==P.chapter)return null;return {x:P.x,y:P.y,label:'Hall of Echoes',key:'B'};}
 /* improve20-k-nov1 #2: the pads an active villager quest sends the hero to win (its current clear step); gone once that step is done */
 export function questPads(save){const out=new Set();for(const id of activeQuests(save||{},questLive)){const s=currentStep(save,id);if(s?.kind==='clear'&&s.level)out.add(s.level);}return out;}
 export function view(t){const ch=CHAPTERS.find(c=>c.id===S.chapter),board=!!MAPS[S.chapter]?.art,qp=questPads(S.save);const ns=nodes(S.chapter).map(n=>{const st=stateOf(n.id),o={...n,state:st,boss:isFinale(n.id)};if(board&&n.level&&tiered(n.level)&&st==='done'){o.tier=bestTier(n.id);o.stars=starsOf(S.save,n.id,o.tier||'normal');}if(board&&st==='open'&&(n.kind==='level'||n.kind==='arena')&&!levelDone(S.save,n.id))o.next=true;if(board&&qp.has(n.id)&&st!=='locked'&&st!=='soon'&&!S.ctx.look)o.quest=true;return o;});

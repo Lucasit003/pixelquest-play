@@ -18,6 +18,19 @@ export const HALL_HEAL=.35,RUNGS=[1,2,3],RUNG_TIER={1:'normal',2:'heroic',3:'leg
 export const HALL_FINAL=LEVELS.find(l=>gameFinale(l.id))?.id||null;
 export const ESSENCE_KEY='elite-shard';
 export const hallOpen=s=>!!HALL_FINAL&&levelDone(s,HALL_FINAL);
+/* improve20-r20e-nov4 #2 (audit14 #2, plan item 2: the Hall opened only after the finale, so a Story kid after m7 had nothing at their tier):
+   Rung I opens early, after HALL_EARLY (m7, Emberkeep's last boss), as "practise reading the boss": the bosses' own tells and banners on
+   Normal numbers, for every chapter whose story bosses are all beaten. Rungs II and III stay shut until the finale (hallOpen). The first
+   clear pays rungReward once, whenever it comes (s.hall.cleared is the one record), and the keepsake is the same; nothing changes the
+   save shape. The door stands on the Emberkeep board until the finale (worldmap-layout.js HALL_PAD_EARLY), then on the Veilmoor board. */
+/* Rung I's numbers were measured for this (balance-sim --hall=elderwood,emberkeep --rungs=1, post-m7 saves at hero level 12, warrior/mage/ranger,
+   docs/playtest/improve20-r20e-nov4) and left as they are: the kid bot clears both rungs every run on about 90% health a boss, the crude masher
+   (skill 0) every run on 3-12 potions, the good bot on about 96% with none. Each Hall-only lever that moved the good bot at all (boss health
+   x1.25-1.5, hits x1.15-1.8, more free potions) cut the crude kid's clears to 17-67% (its wall is e6) and left the good bot at 90-94%: the gap is
+   dodging, not numbers. The no-potion keepsake stays the skilled player's goal on Rung I; Rungs II-III are its challenge after the finale. */
+export const HALL_EARLY='m7';
+export const hallEarly=s=>!hallOpen(s)&&levelDone(s,HALL_EARLY);
+export const hallDoor=s=>hallOpen(s)||hallEarly(s);
 /* a chapter's story bosses in play order: its main-path boss levels */
 export const hallBosses=ch=>LEVELS.filter(l=>l.chapter===ch&&tiered(l)&&!l.optional&&l.boss).map(l=>l.id);
 export const HALL_CHAPTERS=CHAPTERS.map(c=>c.id).filter(ch=>hallBosses(ch).length);
@@ -34,7 +47,9 @@ export const hallBossHp=(ch,r)=>HALL_BOSS_HP[key(ch,r)]??1;
 export const rungCleared=(s,ch,r)=>!!s?.hall?.cleared?.[key(ch,r)];
 export const hasKeepsake=(s,ch,r)=>!!s?.hall?.keepsakes?.[key(ch,r)];
 /* a rung opens once the Hall is open and the rung below it in the same chapter is cleared */
-export const rungOpen=(s,ch,r)=>hallOpen(s)&&HALL_CHAPTERS.includes(ch)&&RUNGS.includes(r)&&(r===1||rungCleared(s,ch,r-1));
+export const rungOpen=(s,ch,r)=>HALL_CHAPTERS.includes(ch)&&RUNGS.includes(r)&&(r===1?hallOpen(s)||hallEarly(s)&&hallBosses(ch).every(id=>levelDone(s,id)):hallOpen(s)&&rungCleared(s,ch,r-1));
+/* improve20-r20e-nov4 #2: why a rung is shut, in words (null when open) */
+export const rungLockText=(s,ch,r)=>rungOpen(s,ch,r)?null:r>1&&!hallOpen(s)?'Rungs II and III open after you beat the final boss.':r===1?`Beat every ${chName(ch)} boss first.`:`Clear Rung ${ROMAN[r-2]} of ${chName(ch)} first.`;
 export const rungState=(s,ch,r)=>hasKeepsake(s,ch,r)?'keepsake':rungCleared(s,ch,r)?'cleared':rungOpen(s,ch,r)?'open':'locked';
 const chName=ch=>(CHAPTERS.find(c=>c.id===ch)?.name||ch).replace(/^The /,'');
 export const keepsakeName=(ch,r)=>`${chName(ch)} Echo ${ROMAN[r-1]}`;

@@ -21,3 +21,10 @@ export function plateSide({faces=[],host,plate,top=false,margin=0}){
 /* a spoken line (it opens with a quotation mark) carries its speaker's name on a small tab over the plate */
 export const spoken=text=>/^[“"]/.test(String(text||'').trim());
 export function withSpeaker(list,who){return who?list.map(b=>b&&!b.by&&!b.card&&!b.view&&spoken(b.text)?{...b,by:who}:b):list;}
+/* improve20-r20a-nov4 #2: a tall boss's ending on a short view (main.js cineFrame), as pure arithmetic. Screen values are CSS px from the
+   canvas top; k is CSS px per world row. The bottom letterbox gives up only the px still missing for the body (H rows) plus gap rows above
+   and below it, never below minBar; the shot's centre row cy puts the body's middle in the middle of the room left, kept where gfx/world.js
+   can draw it (camTop+vh/2-40 .. camTop+vh/2). Returns {barH, barTop, cy}. */
+export function tallFit({plateBottom,barTop,barH,minBar=0,H,k,vh,camTop=0,kingY,gap=6}){
+ const top=plateBottom+gap*k,miss=top+(H+gap)*k-barTop,nb=miss>0?Math.max(minBar,barH-Math.ceil(miss)):barH,bt=barTop+(barH-nb),mid=(top+bt-gap*k)/2,T=Math.round(camTop)+vh/2;
+ return {barH:nb,barTop:bt,cy:Math.max(T-40,Math.min(T,Math.round(kingY-H/2-(mid/k-vh/2))))};}

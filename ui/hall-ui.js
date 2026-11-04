@@ -4,7 +4,7 @@
    clear). Art: the existing PixelLab tier icons (ui/skin/pl-icons/tier-*.png) and reward icons; no new art. */
 import {defeatProgress} from './defeat-tip.js';
 import {CHAPTERS,levelById} from '../game/levels.js';
-import {HALL_CHAPTERS,RUNGS,RUNG_LABEL,ROMAN,hallHeal,hallFree,hallPatterns,hallBosses,rungState,rungOpen,rungReward,keepsakeName,keepsakes,startRung,hallStep,hallFinish,hallOpen} from '../game/hall.js';
+import {HALL_CHAPTERS,RUNGS,RUNG_LABEL,ROMAN,hallHeal,hallFree,hallPatterns,hallBosses,rungState,rungOpen,rungReward,keepsakeName,keepsakes,startRung,hallStep,hallFinish,hallOpen,hallDoor,hallEarly,rungLockText} from '../game/hall.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const ICON={1:'tier-normal',2:'tier-heroic',3:'tier-legendary'};
 const pic=(n,size=32)=>`<img class="hall-icon" src="ui/skin/pl-icons/${n}.png" width="${size}" height="${size}" alt="" draggable="false">`;
@@ -20,14 +20,14 @@ export function hallHTML(s,sel=hallDefault(s),{coin='',gem=''}={}){const pct=Mat
   det=`<div class="hall-detail"><p class="hall-what"><strong>${esc(chName(ch))} · Rung ${ROMAN[r-1]} (${RUNG_LABEL[r]})</strong> ${bs.length} bosses back to back<span class="hall-boss-list">: ${bs.map(id=>esc(bossName(id))).join(', ')}</span>.${/* hall5-nov3: Rung III's new boss patterns (scenes/hall-patterns.js), named in one line that phones show too */hallPatterns(r).length?' <strong class="hall-new">New: the bosses fight with new moves.</strong>':''}</p>`+
    `<p class="hall-rules">Your health carries on from one boss to the next, with ${pct}% of it back between them. ${hallFree(r)?'Potions are allowed.':'No free potion here: bring potions in your bag.'} A fall ends the rung and costs nothing: try again any time.</p>`+
    `<p class="hall-reward">${st==='cleared'||st==='keepsake'?'<span class="hall-chip got">First clear paid</span>':`<span class="hall-k">First clear</span><span class="hall-chip">${coin}<b>+${rw.gold} gold</b></span><span class="hall-chip">${gem}<b>+${rw.essence} Essence</b></span>`}<span class="hall-chip ks${st==='keepsake'?' got':''}">${pic('tier-star',16)}<b>${esc(keepsakeName(ch,r))}</b></span><span class="hall-note">${st==='keepsake'?'Keepsake won.':'Win with no potions for this keepsake.'}</span></p>`+
-   (st==='locked'?`<p class="hall-lock">Clear Rung ${ROMAN[r-2]||'I'} of ${esc(chName(ch))} first.</p>`:'')+`</div>`;}
+   (st==='locked'?`<p class="hall-lock">${esc(rungLockText(s,ch,r)||'')}</p>`/* improve20-r20e-nov4 #2 */:'')+`</div>`;}
  const ks=keepsakes(s);
  return `<div class="hall-card"><div class="hall-grid" role="grid" aria-label="Rungs">${grid}</div>${det}<p class="hall-ks">Keepsakes: ${ks.length?ks.map(k=>esc(k.name)).join(', '):'none yet'}</p></div>`;}
 /* deps: {save(), show, header, forceClose, startLevel(id,opts), openMap(), closeMap(), mapOn(), persist, updateHUD, leaveLevel(r), coin, gem} */
 export function initHall(D){let sel=null,run=null;
  const back=()=>D.openMap();
- function card(){const s=D.save();if(!hallOpen(s))return;sel=sel&&RUNGS.includes(sel.rung)?sel:hallDefault(s);const st=rungState(s,sel.chapter,sel.rung);
-  D.show('hall',D.header('The Hall of Echoes','Every chapter’s bosses, back to back, in their own arenas. Three rungs a chapter.')+hallHTML(s,sel,{coin:D.coin,gem:D.gem})+
+ function card(){const s=D.save();if(!hallDoor(s))return;sel=sel&&RUNGS.includes(sel.rung)?sel:hallDefault(s);const st=rungState(s,sel.chapter,sel.rung);
+  D.show('hall',D.header('The Hall of Echoes',hallEarly(s)?/* improve20-r20e-nov4 #2: Rung I before the finale */'Practise reading the bosses: Rung I plays a chapter’s bosses back to back, with their own warnings. Rungs II and III open after the final boss.':'Every chapter’s bosses, back to back, in their own arenas. Three rungs a chapter.')+hallHTML(s,sel,{coin:D.coin,gem:D.gem})+
    `<div class="modal-actions"><button id="hall-back">Back</button><button id="hall-go" class="primary"${st==='locked'?' disabled':''}>${st==='open'?'Enter':'Play again'}</button></div>`);
   document.querySelectorAll('[data-hall]').forEach(b=>b.onclick=()=>{const [ch,r]=b.dataset.hall.split(':');sel={chapter:ch,rung:+r};card();document.querySelector(`[data-hall="${ch}:${r}"]`)?.focus({preventScroll:true});});
   document.getElementById('hall-back').onclick=()=>D.forceClose();const go=document.getElementById('hall-go');go.onclick=()=>begin(sel.chapter,sel.rung);if(!go.disabled)go.focus({preventScroll:true});}

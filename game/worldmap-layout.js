@@ -45,6 +45,9 @@ export const RIFT_PADS={elderwood:{x:62,y:66},emberkeep:{x:56,y:128},veilmoor:{x
 /* improve20-r9a-nov1: the Hall of Echoes' door (game/hall.js), one only: on the Veilmoor board just above its Rift portal, shown once the final
    boss is beaten. Not a road stop: a tap (or B) opens its screen. */
 export const HALL_PAD={chapter:'veilmoor',x:68,y:78};
+/* improve20-r20e-nov4 #2: before the finale, while only Rung I is open (game/hall.js hallEarly, after m7), the door stands on the Emberkeep board in
+   the same open corner above its Rift portal; after the finale it moves to HALL_PAD. */
+export const HALL_PAD_EARLY={chapter:'emberkeep',x:68,y:78};
 /* Painted chapters follow their traced waypoints below; later chapters use these quadratic bends. */
 export const BENDS={'m1>m2':[0,30],'m2>shop2':[30,0],'m2>m3':[0,72],'m3>mx1':[30,0],'m3>m4':[0,72],'m4>arena2':[-30,0],'m4>m5':[60,-60],'m5>m6':[90,30],'m6>m7':[90,30],'v1>v2':[0,30],'v2>shop3':[30,0],'v2>v3':[0,72],'v3>vx1':[-30,0],'v3>v4':[0,60],'v4>arena3':[-42,0],'v4>v5':[60,-30],'v5>v6':[78,30],'v6>v7':[150,30]};
 export const PAD_RX=36,PAD_RY=20;

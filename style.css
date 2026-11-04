@@ -339,6 +339,8 @@ html.cine-on #worldmap-info{visibility:hidden!important}
 #overlay .cine-who{position:absolute;left:18px;top:0;transform:translateY(-62%);padding:3px 14px 4px;font-size:var(--fs);letter-spacing:1px;color:#fff2d0;text-shadow:0 2px 0 #3a0a06;border-style:solid;border-width:calc(2*var(--u)) calc(6*var(--u));border-color:transparent;border-image:url(ui/skin/pl-button-primary.png) 12 22 12 18 fill/calc(4.91*var(--u)) calc(9.0*var(--u)) stretch;image-rendering:pixelated}
 #overlay .cine-caption.cine-card{top:50%;bottom:auto;left:50%;right:auto;width:min(780px,84%);transform:translate(-50%,-50%);padding:18px 26px 12px;background:none}
 #overlay .cine-caption .cine-step{margin-top:4px}
+/* improve20-r20a-nov4 #2: a tall boss's ending on a short view (main.js cineFrame): the step and the cue flow on the caption's last line, and the beat bar rides the plate's bottom edge, so the plate is one line shorter */
+#overlay .cine-caption.cine-tight p{display:inline}#overlay .cine-caption.cine-tight .cine-step{display:inline;margin:0 8px 0 14px;white-space:nowrap}#overlay .cine-caption.cine-tight .cine-cue{display:inline;margin:0;white-space:nowrap}#overlay .cine-caption.cine-tight::after{position:absolute;left:30%;bottom:1px;margin:0}
 @media(max-height:500px){#overlay .cine-caption{padding:4px 16px 3px;width:min(760px,82%)}#overlay .cine-caption p{font-size:var(--fs);line-height:1.25}#overlay .cine-caption .cine-step{display:inline;margin:0 10px 0 0}#overlay .cine-caption .cine-cue{display:inline;margin:0}#overlay .cine-caption::after{margin-top:3px}#overlay .cine-caption.cine-card{padding:10px 18px 8px}#overlay .cine-card p{font-size:calc(var(--fs-2)*1.2)}}
 /* improve20-t-oct31 #17 (audit2 #8): the finale card. The result card's own victory banner (PixelLab) reads CHAMPION!, over the hero
    standing before the key art (the hero card's), then the totals, trophies and what's next on a plate. */
@@ -3840,6 +3842,15 @@ html.cine-on #arena-chip{visibility:hidden}
 .chapter-seal.seal-stamp small{animation:seal-stamp .55s cubic-bezier(.2,1.6,.4,1) .35s both}
 @keyframes seal-stamp{from{transform:translateX(-50%) rotate(-12deg) scale(2.6);opacity:0}to{transform:translateX(-50%) rotate(-12deg) scale(1);opacity:1}}
 @media (prefers-reduced-motion:reduce){.chapter-seal.seal-stamp small{animation:none}}
+/* improve20-r20e-nov4 #4: the Story row in the Trophy Hall (ui/trophy-hall.js storyRowHTML): bronze tiles, existing pictures only */
+.story-row{margin:0 0 12px}.story-row-head{margin:0 0 6px;text-align:center;font-size:16px;color:#e9c08a}.story-row-head small{color:var(--ink-2);font-weight:400}
+.story-tiles{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.story-tile{display:flex;flex-direction:column;align-items:center;gap:2px;width:132px;padding:6px;border:2px solid #c07a3a;border-radius:6px;background:rgba(10,12,30,.55);text-align:center}
+.story-tile strong{font-size:14px;line-height:16px}.story-tile small{font-size:12px;line-height:14px;color:var(--ink-2)}
+.story-pic{width:56px;height:56px;border-radius:50%;border:3px solid #c07a3a;background:#111 center bottom/cover no-repeat;image-rendering:pixelated}
+.story-pic.story-icon{background-size:contain;background-position:center;background-color:#1d2333}
+.story-tile.story-dark{opacity:.6;border-color:#706255}.story-tile.story-dark .story-pic{filter:grayscale(1) brightness(.45);border-color:#706255}
+.m-mode .story-tile{width:118px;padding:4px}.m-mode .story-pic{width:40px;height:40px}
 dialog[data-view=result] .level-highlights :is(.level-recipe,.level-keepsake){flex-wrap:nowrap}
 dialog[data-view=result] .level-highlights :is(.level-recipe,.level-keepsake) strong{text-align:left;max-width:400px}
 /* improve20-r9c-nov1 (audit8 05/06): the unlock card's swirl (.ui-fx), burst (.edu-unlock-rays) and awaken ring covered the hero preview with an
