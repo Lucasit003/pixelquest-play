@@ -18,6 +18,7 @@ import {nextStep,resultGoal,retryStep,riftUnplayed,STEP_WORDS} from './next-step
 import {gradeRank} from './grade.js';
 import {nextPowerLine} from '../academics/starter-lesson.js';
 import {runeDefeatLead} from './runes.js';
+/* improve20-r21b-nov4 #4 */import {sealBackLine} from './ability-seals.js';
 const sname=id=>SUBJECTS[id]?.name||id;
 const topicsWord=n=>`topic${n===1?'':'s'}`;
 /* the honest size of a power: "Frost Nova: 3 Science topics" (and the hero level when it is still ahead) */
@@ -70,7 +71,10 @@ export function legendLead(save,id,legend,{learn=false,hold=false}={}){if(!legen
 /* improve20-r17b-nov3 #9 (kidsim4 k18: Mia, a Math starter, was sent to an English lesson with no word why): the prologue card's "Next power: X."
    says where X is learned ("Next power: Spirit Wisp, learned in English.") */
 export function prologueText(save,text){const np=nextPowerLine(save),sub=np?.a&&SUBJECTS[np.a.subject]?.name;if(!sub||typeof text!=='string')return text;const head=`Next power: ${np.a.name}.`;return text.startsWith(head)?`Next power: ${np.a.name}, learned in ${sub}.${text.slice(head.length)}`:text;}
-export function winCardLead(save,{learn=null,heroic=null,chFirst=null,chName='',prologue=false,finale=false,id=null,legend=null}={}){const step=nextStep(save);
+/* improve20-r21b-nov4 #4 (audit15 #16: a seal walked past had nothing pointing back to it): a win card with no "While" line names a seal the hero
+   can break now on a level already won (not this one, whose card says so itself), under NEXT GOAL; the red button stays the card's own */
+export function winCardLead(save,o={}){const c=winCardLead0(save,o);if(c&&!c.also&&!o.prologue&&!o.finale&&c.primary?.kind!=='runes'/* a rune-led card keeps its own two lines (R20D #5) */){const b=sealBackLine(save,o.id);if(b)c.also=b;}return c;}
+function winCardLead0(save,{learn=null,heroic=null,chFirst=null,chName='',prologue=false,finale=false,id=null,legend=null}={}){const step=nextStep(save);
  if(prologue)return {text:prologueText(save,step.text),primary:{kind:'keep'},also:''};
  if(finale)return {text:step.text,primary:{kind:'keep'},also:''};
  if(learn?.why==='gate'){const gl=gateLead(save,learn.gate,{place:chFirst&&chFirst.id===learn.gate&&chName?chName:null});if(gl)return {text:`${gl.text}.`,primary:{kind:'learn',label:learn.label,subject:learn.subject||gl.subject},also:whileLearn(save)?.text||'',gate:learn.gate};}

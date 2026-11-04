@@ -12,6 +12,7 @@
 import {LEVELS,levelOpen,levelDone,levelFogged,powerGate} from './levels.js';
 import {adviceLevel} from './tiers.js';
 import {levelReady} from './stage.js';
+/* improve20-r21b-nov4 #2 */import {sealToBreak} from './ability-seals.js';
 
 const playable=save=>LEVELS.filter(l=>l.kind==='level'&&!l.hidden&&!levelFogged(l)&&levelReady(l)&&levelOpen(save,l.id));
 /* main path first among equals: an optional side level is only picked when it is the higher tier */
@@ -27,6 +28,7 @@ export function tryItLevel(save){
  const won=open.filter(l=>levelDone(save,l.id));
  const pick=(l,replay,why)=>l?{id:l.id,name:l.name,replay,why}:null;
  /* improve20-r20l-nov4 #1: a power gate this hero has just opened (its pad open, not won yet, at the hero's advised level) is where the power was woken for, so it is the fight: the e4 card said "Wake Rallying Cry to open Minotaur Hollow", then the wake card sent the kid back to Orc Warcamp */const gate=open.filter(l=>powerGate(l)&&!levelDone(save,l.id)&&fits(l)).sort(byTier)[0];if(gate)return pick(gate,false,'gate');
+ /* improve20-r21b-nov4 #2 (audit15 #6, shots 08-09: the wake card replayed Goblin Camp while the mastery card sent the kid to Slime Bog, whose seal the new ability had just made breakable): a seal the woken abilities can break now, on a playable level, is the fight (the mastery card leads there too) */const sl=sealToBreak(save),sv=sl&&open.find(l=>l.id===sl.id);if(sv)return pick(sv,levelDone(save,sv.id),'seal');
  const safe=won.filter(fits).sort(byTier)[0];if(safe)return pick(safe,true,'cleared');
  const ahead=open.filter(l=>!levelDone(save,l.id)&&!l.optional).sort((a,b)=>(a.tier|0)-(b.tier|0))[0];
  if(ahead&&fits(ahead))return pick(ahead,false,'next');

@@ -30,20 +30,27 @@ export function sealCast(w,a,pose){const z=w.aseal,p=w.player;if(!z||z.broken||!
  w.effect?.('nova',z.x,z.cy+z.ry*.5,{element:a.element||'arcane',radius:28,life:.5,max:.5});z.pulse=.5;
  const n=wokenCount(w.save),need=z.def.cast,was=z.hits.has(a.id);z.hits.add(a.id);
  if(n<z.def.awake){w.text?.(sealNeedText(w.save,z.def),z.x,z.cy-26,'#ffd27a',true);sfx('blocked');return true;}
- if(z.hits.size>=need){z.broken=true;z.burst=1;breakSeal(w.save,z.id);w.effect?.('nova',z.x,z.cy+z.ry*.5,{element:'holy',radius:56,life:.9,max:.9});w.quake?.('aoe');w.text?.('SEAL BROKEN!',z.x,z.cy-30,'#fff1a8',true);w.text?.('Walk in for the cache',z.x,z.cy+30,'#f3d98a');sfx('unlock');w.events.persist?.();return true;}
+ if(z.hits.size>=need){z.broken=true;z.burst=1;z.brokeNow=true/* improve20-r21b-nov4 #4 */;breakSeal(w.save,z.id);w.effect?.('nova',z.x,z.cy+z.ry*.5,{element:'holy',radius:56,life:.9,max:.9});w.quake?.('aoe');w.text?.('SEAL BROKEN!',z.x,z.cy-30,'#fff1a8',true);w.text?.('Walk in for the cache',z.x,z.cy+30,'#f3d98a');sfx('unlock');w.events.persist?.();return true;}
  w.text?.(was?'A different ability!':`${z.hits.size} of ${need}`,z.x,z.cy-26,was?'#ffd27a':'#e9f6ff',true);sfx(was?'blocked':'ward');return true;}
 /* each move: the seal's words once a run as the hero comes near, and the cache when the hero steps in (or presses interact beside it) */
-export function sealTouch(w,pressed){const z=w.aseal,p=w.player;if(!z||!p||!w.level||w.ended)return null;
+export function sealTouch(w,pressed){const z=w.aseal,p=w.player;if(!z||!p||!w.level||w.ended)return null;/* improve20-r21b-nov4 #4: the hero walked on past the closed pocket */if(!z.broken&&p.x>z.x+POCKET.reach)z.passed=true;
  /* the barrier's own words are drawn over it (sealLayer); a toast would sit on top of the pocket, so the approach line is a floating text */if(!z.broken&&!z.said&&sealDist(w,z)<POCKET.see){z.said=true;w.text?.(`Inside: ${rewardText(z.def)}`,z.x,z.cy-4,'#f3d98a');}
  if(!z.broken||z.looted)return null;if(Math.hypot(p.x-z.chest.x,(p.y-z.chest.y)*1.2)>(pressed?POCKET.chestR+10:POCKET.chestR))return null;
- const got=lootSeal(w.save,z.id);z.looted=true;if(!got)return null;earnTitles(w.save);w.text?.(`+${got.gold} gold, +${got.essence} Essence`,z.chest.x,z.chest.y-22,'#f3d98a',true);
- w.events.toast?.(got.title?`Seal cache: ${got.gold} gold and ${got.essence} Essence. New title: ${got.title}!`:`Seal cache: ${got.gold} gold and ${got.essence} Essence.`);sfx('coin');w.events.sealLoot?.(z.def,got);w.events.persist?.();return got;}
+ const got=lootSeal(w.save,z.id);z.looted=true;if(!got)return null;z.got=got;earnTitles(w.save);
+ /* improve20-r21b-nov4 #4 (audit15 #16, shot 12: the cache toast sat over the hero standing in the pocket): the cache's words float on the road by the pocket (cacheY), not in a screen toast over the hero; the win card names it again */
+ w.text?.(`Seal cache: +${got.gold} gold, +${got.essence} Essence`,z.chest.x,cacheY(z),'#f3d98a',false,{life:CACHE_LIFE});if(got.title)w.text?.(`New title: ${got.title}!`,z.chest.x,cacheY(z)+24,'#fff1a8',false,{life:CACHE_LIFE});sfx('coin');w.events.sealLoot?.(z.def,got);w.events.persist?.();return got;}
 /* is the hero beside something the seal offers (main.js's interact verb and the phone's interact button can read it) */
 export const nearSealChest=w=>{const z=w.aseal,p=w.player;return !!z&&z.broken&&!z.looted&&!!p&&Math.hypot(p.x-z.chest.x,(p.y-z.chest.y)*1.2)<POCKET.chestR+10;};
 
 /* drawing: depth-sorted items (World.enemyLayer). The barrier: two rune pillars and a translucent dome between them over the chest, one pip
    per ability still needed (lit as each different ability lands), and its words above it while the hero is near. Reduced motion holds it still. */
 const DOME_H=46;
+/* improve20-r21b-nov4 #4: the cache line's height. The pocket sits at the far verge, so a hero standing in it is near the top of the view, where
+   world/stage labels are kept clear of the HUD (gfx/world.js clearLabel) and pile onto the hero; the words go on the open road just under the
+   pocket (as the seal's own words do, WORDS_BELOW), clear of the hero, and stay up as long as the old toast did */
+export const CACHE_LIFE=2.6;export const cacheY=z=>Math.round(z.chest.y+6+WORDS_BELOW+30);
+/* improve20-r21b-nov4 #4: what the seal did on this run, for the win card (game/ability-seals.js sealRunLine), or null */
+export function sealRunNote(w){const z=w?.aseal;if(!z||!z.def)return null;return {id:z.id,level:z.def.level,broke:!!z.brokeNow,got:z.got||null,passed:!!z.passed,broken:!!z.broken,openable:wokenCount(w.save)>=z.def.awake};}
 /* improve20-r20m-nov4 #2 (R20J: the words sat over the far verge, under the level toasts and the WAVE CLEARED banner): they are drawn on the road just under
    the pocket (WORDS_BELOW units below its base), and only while the hero is near and no centre-screen beat (stage-view bannerActive) is up */
 export const WORDS_BELOW=20;

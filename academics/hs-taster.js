@@ -29,6 +29,10 @@ export const tasterSeen=(save,id)=>(save?.hub?.seen||[]).includes(tasterKey(id))
 export const lessonBegun=(save,id)=>{const r=save?.lessons?.[id];return !!r&&((r.at|0)>0||(r.reached|0)>0||!!r.done||(Array.isArray(r.tried)&&r.tried.length>0));};
 export const tasterDue=(save,t)=>!!t&&hasTaster(t.id)&&stageOf(t)==='high'&&!tasterSeen(save,t.id)&&!lessonBegun(save,t.id)&&!mastered(save,t);
 /* writes: the Quick start was seen (finished, or skipped by the starter's awakening) */
+/* improve20-r21b-nov4 #5 (audit15 #18): one Quick start per session. played: the topic id whose Quick start played this session (main.js keeps it,
+   never the save). True when t is another topic whose Quick start would play now (tasterDue with a save; without one, any other topic with a taster),
+   so it is skipped: the lesson opens on Part 1 and a lead goes to the played one's subject instead */
+export const tasterHold=(played,t,save=null)=>!!played&&!!t&&t.id!==played&&(save?tasterDue(save,t):hasTaster(t.id));
 export function markTaster(save,id){const hub=(save.hub??={seen:[]}),seen=Array.isArray(hub.seen)?hub.seen:(hub.seen=[]);if(!seen.includes(tasterKey(id)))seen.push(tasterKey(id));}
 
 let mod=null,task=null;
