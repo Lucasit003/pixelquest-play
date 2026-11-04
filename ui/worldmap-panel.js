@@ -1,6 +1,6 @@
 /* The map's information card lives at screen resolution: whole-size Pixel Operator,
    the same pl-window frame as the modals, and measured placement away from the route. */
-import {placeBoardCard,riftView,riftLabel} from '../gfx/worldmap-art.js';
+import {placeBoardCard,riftView,riftLabel,hallView,hallLabel} from '../gfx/worldmap-art.js';
 import {abilityIcon} from './icons.js';
 let el=null,contentKey='',layoutKey='',sizes=[],compactSizes=[],expanded='';
 const make=(tag,cls,text)=>{const n=document.createElement(tag);n.className=cls;if(text)n.textContent=text;return n;};
@@ -16,9 +16,20 @@ export function placeRiftLabel(v,canvas){const doc=globalThis.document;if(!doc?.
  if(!riftEl){riftEl=make('div','worldmap-rift');riftEl.id='worldmap-rift';riftEl.setAttribute('aria-hidden','true');doc.body.append(riftEl);}
  const k=riftLabel(v)+'|'+(v.rift.note||'');if(riftEl.dataset.k!==k){riftEl.dataset.k=k;riftEl.replaceChildren(make('strong','wm-rift-name',riftLabel(v)),...(v.rift.note?[make('span','wm-rift-note',v.rift.note)]:[]));}
  riftEl.hidden=false;const w=riftEl.offsetWidth||0,x=b.left+at.x*scale,left=Math.max(b.left+6,Math.min(b.left+b.width-w-6,x-w/2));riftEl.style.left=Math.round(left)+'px';riftEl.style.top=Math.round(b.top+(at.y+6)*scale)+'px';return riftEl;}
-export function clearMapPanel(){riftEl?.remove();riftEl=null;el?.remove();el=null;pool.clear();contentKey=layoutKey=expanded='';sizes=[];compactSizes=[];}
-export function updateMapPanel(v,canvas){if(!globalThis.document?.body||!canvas?.getBoundingClientRect||!v.board){if(riftEl)riftEl.hidden=true;return false;}
- const b=canvas.getBoundingClientRect(),scale=b.width/480;if(!scale)return false;placeRiftLabel(v,canvas);
+/* improve20-r20h-nov4 #4: the Hall of Echoes' name plate, in the Rift label's style and size (one row, 16 px, the same baseline rule), under
+   its door; when that would meet the Rift's label or portal it goes beside the door, then above it */
+let hallEl=null;const meets=(a,b,g=4)=>a.left<b.right+g&&a.right>b.left-g&&a.top<b.bottom+g&&a.bottom>b.top-g;
+export function placeHallLabel(v,canvas){const doc=globalThis.document;if(!doc?.body)return null;const at=v?.hall&&hallView(v),b=canvas?.getBoundingClientRect?.(),scale=b?.width/480;
+ if(!at||!scale){if(hallEl)hallEl.hidden=true;return null;}
+ if(!hallEl){hallEl=make('div','worldmap-rift worldmap-hall');hallEl.id='worldmap-hall';hallEl.setAttribute('aria-hidden','true');doc.body.append(hallEl);}
+ const lb=hallLabel(v);if(hallEl.dataset.k!==lb){hallEl.dataset.k=lb;hallEl.replaceChildren(make('strong','wm-rift-name',lb));}
+ hallEl.hidden=false;const w=hallEl.offsetWidth||0,h=hallEl.offsetHeight||18,x=b.left+at.x*scale,y=b.top+at.y*scale,clampX=l=>Math.max(b.left+6,Math.min(b.left+b.width-w-6,l)),clampY=t=>Math.max(b.top+2,Math.min(b.top+b.height-h-2,t));
+ const avoid=[];if(riftEl&&!riftEl.hidden&&riftEl.offsetWidth){const r=riftEl.getBoundingClientRect();avoid.push(r);}const rv=v.rift&&riftView(v);if(rv)avoid.push({left:b.left+(rv.x-16)*scale,right:b.left+(rv.x+16)*scale,top:b.top+(rv.y-36)*scale,bottom:b.top+(rv.y+6)*scale});
+ const box=(l,t)=>({left:l,top:t,right:l+w,bottom:t+h}),spots=[[clampX(x-w/2),clampY(y+6*scale)],[clampX(x+18*scale),clampY(y-14*scale-h/2)],[clampX(x-18*scale-w),clampY(y-14*scale-h/2)],[clampX(x-w/2),clampY(y-34*scale-h)]];
+ const [l,t]=spots.find(([l,t])=>!avoid.some(a=>meets(box(l,t),a)))||spots[0];hallEl.style.left=Math.round(l)+'px';hallEl.style.top=Math.round(t)+'px';return hallEl;}
+export function clearMapPanel(){riftEl?.remove();riftEl=null;hallEl?.remove();hallEl=null;el?.remove();el=null;pool.clear();contentKey=layoutKey=expanded='';sizes=[];compactSizes=[];}
+export function updateMapPanel(v,canvas){if(!globalThis.document?.body||!canvas?.getBoundingClientRect||!v.board){if(riftEl)riftEl.hidden=true;if(hallEl)hallEl.hidden=true;return false;}
+ const b=canvas.getBoundingClientRect(),scale=b.width/480;if(!scale)return false;placeRiftLabel(v,canvas);placeHallLabel(v,canvas);
  if(!el){el=make('aside','worldmap-info');el.id='worldmap-info';el.setAttribute('aria-label','Selected stop');
   /* a compact card opens to the full card on a tap, and closes again on the next */
   el.addEventListener('click',e=>{if(!el.classList.contains('wm-compact')&&expanded!==contentKey)return;e.stopPropagation();expanded=expanded===contentKey?'':contentKey;layoutKey='';});document.body.append(el);}

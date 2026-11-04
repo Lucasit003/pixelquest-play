@@ -59,11 +59,22 @@ export function dangerPulse(o={}){if(o.motion===false)return 1;const a=Math.max(
 export function softMarker(c,m,prog=0,live=false,o={}){if(m.lane){softBand(c,m,prog,live,o);return;}const box=m.shape==='box',x=box?(m.x0+m.x1)/2:m.x,y=m.y,rx=box?Math.abs(m.x1-m.x0)/(m.organic?2:Math.SQRT2):m.r,ry=box?m.band*(m.organic?1:Math.SQRT2):m.r*.55,p=Math.max(0,Math.min(1,prog)),pu=dangerPulse(o),ix=!box&&m.inner>0?m.inner:0,iy=ix*.55,oval=(a,b)=>{c.beginPath();c.ellipse(x,y,a,b,0,0,Math.PI*2);if(ix&&a>ix+2){c.moveTo(x+ix-1,y);c.ellipse(x,y,ix-1,Math.max(1,iy-1),0,0,Math.PI*2);}};
  /* hall5 follow-up (the echo ring, m.inner): a ring marker leaves its middle clear, filled even-odd, with a rim on both edges */
  c.save();c.fillStyle=live?'rgba(120,18,6,.55)':`rgba(26,8,4,${(.34+.16*p).toFixed(3)})`;oval(rx+1,ry+1);c.fill('evenodd');
+ /* improve20-r20h-nov4 #3: the ring's safe middle is the "dark circle" its banner names: a cool, dark disc, unlike the warm danger band */
+ if(ix&&!live){c.fillStyle='rgba(4,8,30,.5)';c.beginPath();c.ellipse(x,y,Math.max(1,ix-1),Math.max(1,iy-1),0,0,Math.PI*2);c.fill();}
  c.fillStyle=live?'rgba(255,92,48,.32)':`rgba(255,110,52,${(.10+.16*p*pu).toFixed(3)})`;oval(rx+1,ry+1);c.fill('evenodd');
  if(FALLING.includes(o.kind)&&!live){const k=.22+.62*p;c.fillStyle=`rgba(0,0,0,${(.22+.34*p).toFixed(3)})`;oval(rx*k,ry*k);c.fill();}
  c.strokeStyle='#2a0d06';c.globalAlpha=.85;c.lineWidth=4.5;oval(rx+1,ry+1);c.stroke();
  c.strokeStyle=live?'#ff6a3d':p>.7?'#ff7a45':'#ffc061';c.globalAlpha=.65+.35*pu;c.lineWidth=2.5;oval(rx+1,ry+1);c.stroke();
  c.globalAlpha=.9;c.strokeStyle='#fff1c4';c.lineWidth=2;c.beginPath();c.ellipse(x,y,ix?(rx+ix)/2:rx*.85,ix?(ry+iy)/2:ry*.8,0,-Math.PI/2,-Math.PI/2+Math.PI*2*Math.max(.03,p));c.stroke();c.restore();}
+/* improve20-r20h-nov4 #3 (audit14 #13, shots 14-16: the Hall's danger ring hid under the boss, the hero and the pet): the edge of a soft
+   marker (the same shape softMarker or softBand fills), stroked dark then dashed gold, for a pass drawn over the actors (enemy-ai.js
+   hallOutlines). Thin and dashed, so a sprite under it still reads. */
+export function softOutline(c,m,o={}){const box=m.shape==='box',ring=(a,b,x,y)=>{c.beginPath();c.ellipse(x,y,Math.max(1,a),Math.max(1,b),0,0,Math.PI*2);c.stroke();};c.save();
+ for(const [col,lw,dash,al] of [['#1a0804',3,[],.6],['#ffd27a',1.5,[5,3],.95]]){c.strokeStyle=col;c.lineWidth=lw;c.setLineDash(dash);c.globalAlpha=al*(o.alpha??1);
+  if(box&&m.lane){c.beginPath();c.roundRect(Math.min(m.x0,m.x1)-2,m.y-m.band-2,Math.abs(m.x1-m.x0)+4,m.band*2+4,3);c.stroke();}
+  else if(box){const x=(m.x0+m.x1)/2,rx=Math.abs(m.x1-m.x0)/(m.organic?2:Math.SQRT2),ry=m.band*(m.organic?1:Math.SQRT2);ring(rx+1,ry+1,x,m.y);}
+  else{ring(m.r+1,m.r*.55+1,m.x,m.y);if(m.inner>0)ring(m.inner-1,m.inner*.55-1,m.x,m.y);}}
+ c.restore();}
 /* A continuous band encloses the exact rectangular hit area, including its corners: dark fill and a thick pulsing rim (CLEAR lanes keep their green) */
 function softBand(c,m,prog,live,o={}){const x=Math.min(m.x0,m.x1),width=Math.abs(m.x1-m.x0),y=m.y-m.band,height=m.band*2,safe=m.safe,p=Math.max(0,Math.min(1,prog)),pu=dangerPulse(o),box=()=>{c.beginPath();c.roundRect(x-2,y-2,width+4,height+4,3);};c.save();
  if(safe){c.strokeStyle='#a5f0cc';c.fillStyle='rgba(82,209,157,.09)';box();c.fill();for(const [line,alpha] of [[7,.08],[4,.16],[1.5,.95]]){c.lineWidth=line;c.globalAlpha=alpha;c.stroke();}}

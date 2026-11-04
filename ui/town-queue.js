@@ -25,4 +25,7 @@ export const helloMoved=(from,p)=>!!from&&!!p&&Math.hypot(p.x-from.x,p.y-from.y)
    hero is in the Library or the goal is not the Library. Only a suggestion: nothing is locked or timed. */
 export const LIB_NUDGE_S=90;
 export const lessonStarted=save=>Object.values(save?.lessons||{}).some(l=>l&&typeof l==='object'&&((l.at|0)>0||!!l.done||(l.sat|0)>0||(l.pts||0)>0));
-export const libNudgeDue=(save,secs,{room=null,library=false,busy=false}={})=>secs>=LIB_NUDGE_S&&!busy&&!!library&&room!=='library'&&!save?.settings?.libNudge&&!lessonStarted(save);
+/* improve20-r20f-nov4 #3 (audit14 #12, shot 13: the Library-first tour always starts a lesson, so `!lessonStarted` meant the card never came): secs is
+   now the town time since the last lesson step or quiz answer (main.js learnTick resets it), and the card comes at most once per town visit (`shown`,
+   reset when the hero leaves town), whenever the goal is a Library step. Never in a fight (main.js only counts town frames), and no timer is shown. */
+export const libNudgeDue=(save,secs,{room=null,library=false,busy=false,shown=false}={})=>secs>=LIB_NUDGE_S&&!busy&&!!library&&room!=='library'&&!shown;

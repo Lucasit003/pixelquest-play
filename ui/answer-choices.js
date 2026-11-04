@@ -4,7 +4,7 @@
    The form keeps the ids and the hidden input each screen already reads, so a screen's own submit handler grades the
    pick exactly as it graded a typed answer: no new path to XP, mastery or retirement. */
 import {choicesOf,accepts} from '../game/math.js';
-import {letterNames} from '../academics/choice-text.js';
+import {letterNames,numberTexts} from '../academics/choice-text.js';
 
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -22,7 +22,7 @@ export function namedLetters(c,q={}){if(!c?.length||c.some(x=>x.text)||!c.every(
 /* The form for a choice question, or '' when the question needs a typed answer. `extra` goes after the buttons
    (a screen's own Close button, say). The submit button stays (hidden) so code that disables it still finds it. */
 export function choiceFormHTML(q,{form='quiz-form',input='quiz-answer',check='quiz-check',cls='',extra=''}={}){
- const c0=choicesOf(q);if(!c0)return '';const c=namedLetters(caseLabels(c0,q),q);
+ const c1=choicesOf(q);if(!c1)return '';const nt=/* improve20-r20i-nov4 #5: numbered options carry their text (caseLabels and namedLetters leave a set with text as it is) */numberTexts(q),c0=nt?c1.map((x,i)=>({...x,label:nt[i],text:nt[i]})):c1;const c=namedLetters(caseLabels(c0,q),q);
  const long=c.some(x=>x.label.length>34);
  return `<form id="${form}" class="choice-form ${cls}" data-choice-form><input type="hidden" id="${input}" value=""><div class="answers choice-answers${long?' long':''}" role="group" aria-label="Answer choices">${c.map((x,i)=>`<button type="button" data-answer="${esc(x.value)}"><span class="tag" aria-hidden="true">${i+1}</span><span class="choice-text">${esc(x.label)}</span></button>`).join('')}</div><p class="subtle choice-keys">Tap an answer, or press ${c.length>2?`1-${c.length}`:'1 or 2'}.</p>${extra}<button type="submit" id="${check}" hidden>Check</button></form>`;
 }

@@ -4,6 +4,10 @@
    every key and both wrong options were checked. Sources: College Board AP U.S. History CED Unit 7; Library of Congress "NAACP: A Century in the Fight for Freedom" (founded 1909 by Black and white activists; loc.gov/exhibits/naacp), fetched 3 Nov 2026; Britannica "Niagara Movement" (founded 1905); Office of the Historian "The League of Nations, 1920" (Senate defeated the treaty, the U.S. never joined), fetched 3 Nov 2026; National Archives, 18th and 21st Amendments; TVA history (tva.com) and Britannica "Tennessee Valley Authority"; National Archives, declarations of war on Japan (8 Dec 1941) and Germany/Italy (11 Dec 1941); Office of the Historian "The Potsdam Conference, 1945" (Truman, 17 July-2 August 1945), fetched 3 Nov 2026; daily output change derived (120 - 80 = 40).
    Limits: pages marked "fetched" were read on 3 Nov 2026; the others are standard reference entries cited, not re-read line by line. Numbers
    marked fictional are invented and checked by derivation only. Step text was not changed. */
+/* improve20-r20f-nov4 #5 (4 Nov 2026, audit14 #15): step 8's Try-it (7.2) checks the Treaty of Paris terms taught in step 6, not step 8's own
+   Caribbean content; its prompt now refers back ("Two steps back you read about the 1898 Treaty of Paris."; the step number shown depends on the part
+   layout, so it says "two steps back", true in every layout: no part break falls between steps 6 and 8, as neither 6 nor 7 has a Try-it) and keeps its id through checkKey. The key and
+   both wrong options are unchanged (Office of the Historian, the Treaty of Paris 1898 cessions, as audit14 checked). */
 /* improve20-r20b-nov4 #3 (4 Nov 2026): 4 of R19C's recall Try-its (steps 13, 29, 35, 40, counted from 1) were rewritten as application
    questions (a new case, a claim to correct, or "which example"), so the step's speech never states the key; each row carries revised and keeps
    added. Sources: Step 13: Library of Congress NAACP exhibit, "Founding and Early Years" (fetched 4 Nov 2026: goals were the abolition of segregation, discrimination, disenfranchisement and racial violence); Buchanan v. Warley, 245 U.S. 60 (1917), the NAACP’s challenge to Louisville’s residential segregation ordinance (standard reference); step 29: the Twenty-first Amendment, sections 1-2 (repeal; states keep power over alcohol), and states such as Mississippi stayed dry after 1933 (standard reference); step 35: the step’s definition of work relief; step 40: the step’s own 1937-1938 downturn, the recession of 1937-38 (standard reference).
@@ -1043,8 +1047,9 @@ const sections=[
     "A justification is evidence of purpose. Its effects and reception require evidence beyond the justification itself."
    ]
   ],
+  "checkKey": "Try it: a student lists Cuba and the Philippines as identical U.S. acquisitions under the 1898 treaty. Which correction is strongest?",
   "check": [
-   "Try it: a student lists Cuba and the Philippines as identical U.S. acquisitions under the 1898 treaty. Which correction is strongest?",
+   "Two steps back you read about the 1898 Treaty of Paris. Try it: a student lists Cuba and the Philippines as identical U.S. acquisitions under that treaty. Which correction is strongest?",
    "Spain ceded the Philippines but relinquished its claim to Cuba, which faced U.S. occupation",
    "Spain ceded both as immediate U.S. states",
    "Spain transferred neither and retained both permanently",
@@ -1580,7 +1585,7 @@ const sections=[
    "t": "passages",
    "title": "Try it: use the evidence",
    "texts": [
-    "Try it: a student lists Cuba and the Philippines as identical U.S. acquisitions under the 1898 treaty. Which correction is strongest?"
+    "Two steps back you read about the 1898 Treaty of Paris. Try it: a student lists Cuba and the Philippines as identical U.S. acquisitions under that treaty. Which correction is strongest?"
    ],
    "small": false
   }
@@ -10070,7 +10075,7 @@ const questionPic=prompt=>{const lines=[];let line='';for(const word of prompt.s
 const options=(r,i)=>{const a=r.slice(2,4);a.splice(i%3,0,r[1]);return a;};
 /* improve20-r19c-nov3 #1: reviewed Try-its added to steps that had none (see the header), so no stretch runs more than 4 steps without one. Same shape as the unit's own Try-it; `added` marks them. */
 const tryit=(r,k)=>({prompt:r[0],answer:r[1],options:options(r,k),hint:r[4],pic:{t:'passages',title:'Try it: check the step',texts:[r[0]],small:false},added:'improve20-r19c-nov3',/* improve20-r20b-nov4 #3: a row's 6th entry marks a Try-it rewritten as an application question */...(r[5]?{revised:r[5]}:{})});
-const steps=sections.flatMap((s,i)=>s.teach.map((say,j)=>({skill:s.skill,say,...(s.eqs?.[j]?{eq:s.eqs[j]}:{}),pic:s.pics?.[j]||board(s.code+' · '+(s.boardTitle||s.name),s.boards[j]),...(j===s.teach.length-1&&(i%3===2||i===sections.length-1)?{check:{prompt:s.check[0],answer:s.check[1],options:options(s.check,i),hint:s.check[4],pic:s.checkPic||questionPic(s.check[0])}}:tryits[s.code+'/'+j]?{check:tryit(tryits[s.code+'/'+j],i+j)}:{})})));
+const steps=sections.flatMap((s,i)=>s.teach.map((say,j)=>({skill:s.skill,say,...(s.eqs?.[j]?{eq:s.eqs[j]}:{}),pic:s.pics?.[j]||board(s.code+' · '+(s.boardTitle||s.name),s.boards[j]),...(j===s.teach.length-1&&(i%3===2||i===sections.length-1)?{check:{prompt:s.check[0],/* improve20-r20f-nov4 #5: a reworded prompt keeps its id (checkKey: the text it was hashed from) */...(s.checkKey?{key:s.checkKey}:{}),answer:s.check[1],options:options(s.check,i),hint:s.check[4],pic:s.checkPic||questionPic(s.check[0])}}:tryits[s.code+'/'+j]?{check:tryit(tryits[s.code+'/'+j],i+j)}:{})})));
 steps.push({skill:sections.at(-1).skill,summary:true,say:"Compare changes along a defined dimension: federal responsibility, participation, cultural life or world power. Progressive regulation, the New Deal and wartime mobilization expanded public action through different mechanisms. Economic opportunity and democratic claims coexisted with racial discrimination, exclusion and coercion. Overseas debates involved commerce, strategy and competing ideas about self-government. Distinguish an event’s date, a speaker’s justification and evidence of its effects. Use migration accounts, laws, economic data and opposing arguments together; a single source cannot establish everyone’s experience. Make a defensible claim, connect evidence to a causal mechanism and qualify the claim when groups, regions or time periods differed.",pic:board('Connect the ideas',['Identify the process and its context','Find the evidence that distinguishes it','Check alternatives and limits'])});
 export default {...{"id":"history-h-apush-period-7-1890-1945","subject":"history","level":5,"grade":9,"standard":"AP U.S. History Unit 7, topics 7.1–7.15; CED effective Fall 2026","title":"Period 7: 1890-1945","goal":"Connect reform, migration, economic crisis and global war to changes in American power and society from 1890 to 1945.","points":20,"progression":{"requires":["history-h-apush-period-6-1865-1898"],"operations":3,"demand":"Analyze competing perspectives and multiple causes, interpret original data and qualify historical comparisons."}},skills:Object.fromEntries(sections.map(s=>[s.skill,s.name])),outline:sections.map(s=>[s.code,s.name,[s.skill]]),steps,
 items(put){let i=0;for(const s of sections)for(const [j,r] of s.questions.entries()){const a=options(r,i++),prompt=r[0]+' '+a.map((v,k)=>'ABC'[k]+': '+v).join('; ')+'. Answer A, B or C.';put(s.skill,prompt,'ABC'[a.indexOf(r[1])],s.qpics?.[j]||questionPic(r[0]),r[4],[r[1]]);}}

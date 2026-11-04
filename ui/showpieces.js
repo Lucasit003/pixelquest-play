@@ -16,7 +16,7 @@ export function showpieceGoal(s){const f=nextShowpiece(s);if(!f)return null;cons
 export function showpieceGoalHTML(s){const g=showpieceGoal(s);if(!g)return '';
  return `<div class="smith-goal${g.ready?' ready':''}" data-showpiece-goal="${esc(g.id)}"><img src="${esc(g.img)}" alt="" draggable="false"><span><strong>Showpiece: ${esc(g.name)} — ${num(Math.min(g.have,g.price))} / ${num(g.price)} gold</strong><span class="deco-save-bar" aria-hidden="true"><span style="width:${g.pct}%"></span></span><small>${g.ready?'You can buy it now at Home (Decorate tab). Just for show: it never changes stats.':`${num(g.price-g.have)} more gold. Buy it at Home (Decorate tab). Just for show.`}</small></span></div>`;}
 /* the HUD wallet's copy: "/ 800" and the piece's own picture, its name in the title */
-export function goldGoalHTML(s){const g=showpieceGoal(s);if(!g)return '';return `<span class="gold-goal-n">/ ${num(g.price)}</span><img src="${esc(g.img)}" alt="" draggable="false">`;}
+export function goldGoalHTML(s){const g=showpieceGoal(s);if(!g)return '';/* lead (4 Nov, R20H merge): once the gold covers the price, a check replaces "/ price", so the HUD never reads "2067 / 600" */return `<span class="gold-goal-n">${g.ready?'✓':'/ '+num(g.price)}</span><img src="${esc(g.img)}" alt="" draggable="false">`;}
 export const goldGoalTitle=s=>{const g=showpieceGoal(s);return g?`Showpiece goal: ${g.name}, ${num(g.price)} gold${g.ready?' (you can buy it now at Home)':''}`:'';};
 /** The Trophy Hall entry: shown once one Showpiece is owned, gold-framed when all are. */
 export function showpieceTrophyHTML(s){const n=SHOWPIECES.length,k=showpiecesOwned(s);if(!k)return '';const all=allShowpieces(s);

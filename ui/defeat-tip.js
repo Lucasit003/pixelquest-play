@@ -8,15 +8,21 @@ export const POWER_AFTER=2,ABIL_LOW=.25;
 export function lossCount(save,id){return Math.max(0,save?.levels?.[id]?.resolve|0);}
 /* np: academics/starter-lesson.js nextPowerLine(save); run: {drank, abilDamage}; potions: potions the hero could have drunk (the bag plus the free one);
    abilities: how many abilities sit on the bar; phone: touch controls; potionKey: the potion key's label */
-export function defeatLead({losses=0,np=null,run={},potions=0,abilities=0,phone=false,potionKey='Q',arena=false,rift=false}={}){
+/* improve20-r20i-nov4 #6 (kidsim5 #12: Mia, with one power, read "use your abilities (1-4)"): the ability tip names what is on the bar. bar: [{name,key}]
+   in slot order. One power: "press 1 for Spirit Bolt" (a phone: "tap the Spirit Bolt button"); more: their own keys ("(1, 2)"); no bar given: the old words */
+export function abilityTip({bar=null,phone=false}={}){const b=Array.isArray(bar)?bar.filter(x=>x&&x.name):[];
+ if(b.length===1)return phone?`Tip: tap the ${b[0].name} button, it hits harder`:`Tip: press ${b[0].key||'1'} for ${b[0].name}, it hits harder`;
+ if(phone)return 'Tip: tap your ability buttons, they hit harder';
+ const keys=b.map(x=>x.key).filter(Boolean);return `Tip: use your abilities (${keys.length>1?keys.join(', '):'1-4'}), they hit harder`;}
+export function defeatLead({losses=0,np=null,run={},potions=0,abilities=0,phone=false,potionKey='Q',arena=false,rift=false,bar=null}={}){
  if(arena)return null;
  if(!rift&&losses>=POWER_AFTER&&np?.a&&(np.lessons|0)>0)return {kind:'power',head:`A new power can help: ${np.a.name}`,ability:np.a.id,subject:np.a.subject,topic:np.topic?.id||null};
  /* improve20-r14b-nov3 #1 (measured on m1 with the typical-ember saves, docs/playtest/improve20-r14b-nov3): a kid who uses the hotbar clears m1 in
     one try even with no rolls at all, while one who only swings and never rolls loses to the Dungeon Master in all three melee classes, potions or
     not. So when abilities sat on the bar but did under ABIL_LOW of the run's damage, using them is the tip, ahead of the potion */
- if(abilities>0&&run?.damage>0&&(run.abilDamage||0)/run.damage<ABIL_LOW)return {kind:'ability',head:phone?'Tip: tap your ability buttons, they hit harder':'Tip: use your abilities (1-4), they hit harder'};
+ if(abilities>0&&run?.damage>0&&(run.abilDamage||0)/run.damage<ABIL_LOW)return {kind:'ability',head:abilityTip({bar,phone})/* improve20-r20i-nov4 #6 */};
  if(!run?.drank&&potions>0)return {kind:'potion',head:phone?'Tip: tap the potion when health is low':`Tip: drink a potion (${potionKey}) when health is low`};
- if(abilities>0&&!(run?.abilDamage>0))return {kind:'ability',head:phone?'Tip: tap your ability buttons, they hit harder':'Tip: use your abilities (1-4), they hit harder'};
+ if(abilities>0&&!(run?.abilDamage>0))return {kind:'ability',head:abilityTip({bar,phone})/* improve20-r20i-nov4 #6 */};
  return {kind:'dodge',head:phone?'Tip: tap Dodge to roll away from big hits':'Tip: roll away (Shift) from big hits'};
 }
 /* "Start over" (back to wave 1) only from the second loss in a row on that level; the first defeat offers Retry and the map only */

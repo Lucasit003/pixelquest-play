@@ -143,7 +143,11 @@ export function riftView(v){if(!v?.rift)return null;const {x:ox,y:oy}=camera(v.c
 let hCrest=null;const hallCrest=()=>{if(hCrest||typeof Image==='undefined')return hCrest;hCrest=new Image();hCrest.decoding='async';hCrest.src=new URL('../ui/skin/pl-icons/tier-legendary.png',import.meta.url).href;return hCrest;};
 function drawHall(c,v,art,t){const {x,y}=v.hall,P=MAPS[v.chapter].pad||[9,4],pulse=v.reduced?.7:.55+.3*Math.sin(t*Math.PI*2/2.2);c.save();c.fillStyle='#4a3312';pixEllipse(c,x,y,P[0]+1,P[1]+1);c.globalAlpha=pulse;c.fillStyle='#f2c25a';pixEllipse(c,x,y,P[0],P[1]);c.globalAlpha=1;
  const im=hallCrest();if(ready(im)){c.imageSmoothingEnabled=false;c.drawImage(im,x-16,y-32);}
- const lb=v.touch?v.hall.label:`${v.hall.label} (${v.hall.key})`,w=textWidth(lb)+8;c.fillStyle='rgba(40,26,8,.8)';c.fillRect(Math.round(x-w/2),y+6,Math.round(w),15);text(c,lb,x,y+5,{color:'#ffe7b0',align:'center'});c.restore();}
+ /* improve20-r20h-nov4 #4 (audit14 #18, shot 20: the name was drawn on the board in a bigger, off-baseline font and met the Rift's label on a
+    phone): the name is a screen label now, like the Rift's (ui/worldmap-panel.js placeHallLabel, from hallView); the board draws only the door */
+ c.restore();}
+export const hallLabel=v=>v?.hall?(v.touch?v.hall.label:`${v.hall.label} (${v.hall.key})`):'';
+export function hallView(v){if(!v?.hall)return null;const {x:ox,y:oy}=camera(v.chapter,v.cam),[dx,dy,k]=MAPS[v.chapter]?.view||[0,0,1];return {x:(v.hall.x-ox)*k+dx,y:(v.hall.y-oy)*k+dy};}
 /* A clean half-size token: about 24 px tall, comparable to the huts and stop flags. */
 let heroCv=null;export const HERO_K=.5;
 function drawSmallHero(c,v,t){heroCv||=makeCanvas(160,128);const g=heroCv.getContext('2d');g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,160,128);g.imageSmoothingEnabled=false;

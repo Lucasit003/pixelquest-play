@@ -28,7 +28,11 @@ export const LEVEL_HINT_WAIT=30,TIP_WAIT=30;
    STEP_HOLD seconds of on-screen time, or until its action is done, whichever is later. ui/controls-tutorial.js keeps showing the step the
    card had (a held copy) while the game's own step has moved on; a step skipped without being shown, and the boss-fight close, are not held. */
 export const STEP_HOLD=3;
-export const holdStep=(cur,shown,t,vis)=>!!cur&&shown>=0&&shown<cur.steps.length&&vis>0&&vis<STEP_HOLD&&(t===cur&&t.index!==shown||!t&&cur.index>=cur.steps.length);
+/* improve20-r20i-nov4 #7 (kidsim5 #13: "Getting started · 5/6 · next wave: Press Shift to roll" changed before a 150 wpm reader finished it, 9 times): the card
+   holds what it shows for at least its reading time, READ_FLOOR s or READ_WPM words a minute, whichever is longer (ui/controls-tutorial.js passes it as hold) */
+export const READ_FLOOR=4,READ_WPM=200;
+export const readHold=text=>{const n=String(text||'').trim().split(/\s+/).filter(Boolean).length;return Math.max(READ_FLOOR,n*60/READ_WPM);};
+export const holdStep=(cur,shown,t,vis,hold=STEP_HOLD)=>!!cur&&shown>=0&&shown<cur.steps.length&&vis>0&&vis<hold&&(t===cur&&t.index!==shown||!t&&cur.index>=cur.steps.length);
 export function tickControls(t,age,inLevel=false,bossFight=false){const step=t?.steps[t.index],tips=t?.steps[0]==='run';if(t&&bossFight&&!tips)return null;return t&&(age>(tips?TIP_WAIT:inLevel?LEVEL_HINT_WAIT:HINT_WAIT)||inLevel&&step==='interact')?advanceControls(t,step):t;}
 
 /* improve20-u-nov1 #2: the first hit Grubnak's guard soaks (w.guardNudge, scenes/boss-guard.js) shows the tip and pulses the button at once,

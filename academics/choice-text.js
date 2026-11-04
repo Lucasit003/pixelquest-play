@@ -30,7 +30,7 @@ function parse(prompt,letters){
 }
 export const optionTexts=(prompt,letters)=>parse(prompt,letters)?.texts||null;
 /* "Answer A, B or C." and its kin, at the end or before a closing remark */
-const ASK=/\s*\(?(?:answer|type|choose|pick|select|reply|circle)\b:?\s+(?:(?:[A-F]|one)\s*,\s*)*[A-F]\s+or\s+[A-F]\s*[.?!)]*\s*/gi;
+const ASK=/\s*\(?(?:answer|type|choose|pick|select|reply|circle)\b:?\s+(?:(?:[A-F1-8]|one)\s*,\s*)*[A-F1-8]\s+or\s+[A-F1-8]\s*[.?!)]*\s*/gi;/* improve20-r20i-nov4 #5: and "Answer 1 or 2." */
 const tidy=s=>s.replace(/\s+([?.!,;:])/g,'$1').replace(/[\s:;,|–—-]+([?.!])(?=\s|$)/g,'$1').replace(/[\s:;,|–—-]+$/,'').replace(/^[\s.;:,|]+/,'').replace(/\s{2,}/g,' ').trim();
 export function questionStem(prompt,letters){
  const p=String(prompt||''),r=parse(p,letters);if(!r)return p;const at=r.at;
@@ -43,7 +43,12 @@ export function questionStem(prompt,letters){
  return stem.length>=8?stem:p;
 }
 /* The question shown above choice buttons: the stem when every button carries its option's text, else the prompt as stored. */
+/* improve20-r20i-nov4 #5 (kidsim5 #20: context-clue buttons said only "1" and "2", the options inside the prompt): numbered options ("1: the season
+   after winter. 2: a coiled piece of metal. Answer 1 or 2.") give their text to the buttons, as letterButtons does for A/B, and the prompt shows its stem.
+   Values 1..n in order only; null when the texts do not parse. Labels only: the value graded stays the number and the stored prompt is untouched. */
+export function numberTexts(q){const c=choicesOf(q);if(!c||c.length<2||!c.every((x,i)=>String(x.value).trim()===String(i+1)&&String(x.label).trim()===String(i+1)))return null;const t=optionTexts(q.prompt,c.map(x=>String(x.value).trim()));return t&&t.length===c.length&&t.every(x=>x&&x.length<=160)?t:null;}
 export function shownPrompt(q){
+ {const nt=numberTexts(q);if(nt){const st=questionStem(q.prompt,nt.map((_,i)=>String(i+1)));return st;}}
  const c=choicesOf(q);if(!c||!c.every(x=>x.text)||!c.every(x=>isLetter(x.value)))return String(q?.prompt||'');
  return questionStem(q.prompt,c.map(x=>x.value));
 }

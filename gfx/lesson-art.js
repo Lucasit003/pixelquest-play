@@ -96,16 +96,21 @@ const flat=(ctx,x,y)=>{for(let r=0;r<10;r++)for(let c=0;c<10;c++)cube(ctx,x+c*8,
    a quarter: real column names at 3-8 CSS px. When that layout would be drawn smaller than its own size (z<1), the rods and flats per row
    are chosen to draw it largest; the counts are unchanged. A counted picture (count/solve, no regroup) that would run off the board takes
    the same fitted layout, with its count lines under the columns. */
-const blocksCols=({h,ten:t=0,one:o=0},g={hp:2,tp:9})=>{const W=[...(h==null?[]:[['hundreds',Math.min(h,g.hp)*88-8]]),['tens',Math.min(t,g.tp)*16-7],['ones',Math.min(o,5)*14-3]].map(([n,w])=>[n,Math.max(w,n.length*22)]);let x=0;return W.map(([n,w])=>{const c=[n,x,w];x+=w+56;return c;});};
+/* improve20-r20f-nov4 #4 (shot 17): a column is as wide as its blocks or its name, with 48 between columns (was 56). The 16 px bold name draws
+   about 16 units a letter (it was allowed 22); a layout that is drawn at least BLOCKS_SMALL_Z times (a few blocks) names its columns in the 15 px
+   face (about 9 units a letter, g.sm), so the blocks, not the names, set the size: the names still read at the old size or larger. */
+const BLOCKS_SMALL_Z=1.5;
+const blocksCols=({h,ten:t=0,one:o=0},g={hp:2,tp:9})=>{const W=[...(h==null?[]:[['hundreds',Math.min(h,g.hp)*88-8]]),['tens',Math.min(t,g.tp)*16-7],['ones',Math.min(o,5)*14-3]].map(([n,w])=>[n,Math.max(w,n.length*(g.sm?9:17))]);let x=0;return W.map(([n,w])=>{const c=[n,x,w];x+=w+48;return c;});};
 const blocksZ=(spec,g,res=0)=>{const {h,ten:t=0,one:o=0}=spec,cols=blocksCols(spec,g),x1=Math.max(...cols.map(([,x,w])=>x+w)),y0=8,y1=40+Math.max(Math.ceil((h||0)/g.hp)*88-8,Math.ceil(t/g.tp)*88-8,Math.ceil(o/5)*14-3,14);
  return {z:Math.min(2.4,(PIC_W-48)/x1,(PIC_H-28-res)/(y1-y0)),x1,y0,y1};};
 export const blocksGrid=(spec,res=0)=>{const {h,ten:t=0}=spec;let g={hp:2,tp:9},best=blocksZ(spec,g,res).z;if(best>=1)return g;
  for(let hp=2;hp<=Math.max(2,h||0);hp++)for(let tp=9;tp<=Math.max(9,t);tp++){const z=blocksZ(spec,{hp,tp},res).z;if(z>best+1e-9){best=z;g={hp,tp};}}return g;};
-const blocksFit=(spec,res=0)=>{const g=blocksGrid(spec,res),{z,x1,y0,y1}=blocksZ(spec,g,res);return {z,g,dx:(PIC_W-x1*z)/2,dy:(PIC_H-res-(y1-y0)*z)/2-y0*z};};
+const blocksFit=(spec,res=0)=>{let g=blocksGrid(spec,res);/* improve20-r20f-nov4 #4 */if(blocksZ(spec,g,res).z>=BLOCKS_SMALL_Z&&blocksZ(spec,{...g,sm:true},res).z>=BLOCKS_SMALL_Z)g={...g,sm:true};const {z,x1,y0,y1}=blocksZ(spec,g,res);return {z,g,dx:(PIC_W-x1*z)/2,dy:(PIC_H-res-(y1-y0)*z)/2-y0*z};};
+/* improve20-r20f-nov4 #4: for tests */export const blocksFitOf=(spec,res=0)=>blocksFit(spec,res);
 const blocksTall=({h,ten:t=0})=>Math.ceil(t/9)>2||Math.ceil((h||0)/2)>2;
 const blocks=(ctx,spec,p)=>{const {regroup,count,solve}=spec;if(spec.fitted)return blocksAt(ctx,spec,p);
  if(!count&&!solve&&!regroup){const f=blocksFit(spec),u=ctx.pqUnit;ctx.save();ctx.translate(f.dx,f.dy);ctx.scale(f.z,f.z);if(u>0)ctx.pqUnit=u*f.z;try{blocksAt(ctx,{...spec,fitted:true,grid:f.g},p);}finally{ctx.pqUnit=u;ctx.restore();}return;}
- if(!regroup&&blocksTall(spec)){const res=40,f=blocksFit(spec,res),cols=blocksCols(spec,f.g),u=ctx.pqUnit;ctx.save();ctx.translate(f.dx,f.dy);ctx.scale(f.z,f.z);if(u>0)ctx.pqUnit=u*f.z;try{blocksAt(ctx,{...spec,count:false,solve:false,fitted:true,grid:f.g},p);}finally{ctx.pqUnit=u;ctx.restore();}
+ if(!regroup&&(blocksTall(spec)||/* improve20-r20f-nov4 #4 (shot 17): a counted picture of a few blocks took fixed 1x columns over an empty middle; it takes the fitted layout too */count||solve)){const res=40,f=blocksFit(spec,res),cols=blocksCols(spec,f.g),u=ctx.pqUnit;ctx.save();ctx.translate(f.dx,f.dy);ctx.scale(f.z,f.z);if(u>0)ctx.pqUnit=u*f.z;try{blocksAt(ctx,{...spec,count:false,solve:false,fitted:true,grid:f.g},p);}finally{ctx.pqUnit=u;ctx.restore();}
   const v={hundreds:[spec.h||0,100],tens:[spec.ten||0,10],ones:[spec.one||0,1]},L=cols.map(([w,x,cw])=>{const [n,u]=v[w];return {s:`${n} ${n===1?w.slice(0,-1):w} = ${n*u}`,x:f.dx+(x+cw/2)*f.z};});
   ctx.font='bold 15px sans-serif';L.forEach(l=>l.w=ctx.measureText(l.s).width);for(let i=1;i<L.length;i++){const m=L[i-1].x+L[i-1].w/2+10+L[i].w/2;if(L[i].x<m)L[i].x=m;}
   const over=L.length?L[L.length-1].x+L[L.length-1].w/2-(PIC_W-6):0;if(over>0)L.forEach(l=>l.x-=over);for(const l of L)label(ctx,l.s,l.x,PIC_H-res/2-4,15);return;}
@@ -113,7 +118,7 @@ const blocks=(ctx,spec,p)=>{const {regroup,count,solve}=spec;if(spec.fitted)retu
 const blocksAt=(ctx,{h,ten:t=0,one:o=0,regroup,count,solve,fitted,grid},p)=>{if(regroup==='split'&&t>=1)return splitBlocks(ctx,{h,ten:t,one:o,count,solve},p);const trade=regroup===true&&o>=10,tp=trade?ease(clamp(p/0.8)):0,snapped=trade&&p>=0.8;
  /* The hundreds column only when the picture has hundreds at all, so two-digit lessons stay uncluttered. */
  const g=fitted?grid||blocksGrid({h,ten:t,one:o}):{hp:2,tp:9},HP=g.hp,TP=g.tp,cols=fitted?blocksCols({h,ten:t,one:o},g).map(([n,x])=>[n,x]):h==null?[['tens',120],['ones',380]]:[['hundreds',40],['tens',250],['ones',440]],X=Object.fromEntries(cols),top=40,shownT=t+(snapped?1:0),shownO=o-(snapped?10:0);
- ctx.font=fitted?'bold 16px sans-serif':'bold 15px sans-serif';ctx.textAlign='left';ctx.textBaseline='alphabetic';ctx.fillStyle=LABEL;
+ ctx.font=fitted&&!g.sm?'bold 16px sans-serif':'bold 15px sans-serif';ctx.textAlign='left';ctx.textBaseline='alphabetic';ctx.fillStyle=LABEL;
  for(const [w,x] of cols)ctx.fillText(w,x,top-(fitted?8:12));
  for(let i=0;i<(h||0);i++)flat(ctx,X.hundreds+(i%HP)*88,top+Math.floor(i/HP)*88);
  for(let i=0;i<shownT;i++)rod(ctx,X.tens+(i%TP)*16,top+Math.floor(i/TP)*88);
@@ -386,7 +391,7 @@ export function crispCtx(el){const dpr=globalThis.devicePixelRatio||1,live=!!(el
  if(ctx)ctx.pqCss=live?(fit?k/dpr:room/PIC_W):0;
  /* improve20-r11d-nov2 #2: the quiz and practice picture (#quiz-pic) is fitted to its frame (drawPic) and its labels reach LABEL_MIN CSS px on
    every screen, not only on phones; pqDev is device px per CSS px, for labelProbe */
- if(ctx){ctx.pqDev=live&&ctx.pqCss>0?k/ctx.pqCss:1;ctx.pqFit=el.id==='quiz-pic';if(ctx.pqFit&&live)ctx.pqUnit=ctx.pqCss;ctx.pqBoostMax=ctx.pqFit?2.15:0;}return ctx;}
+ if(ctx){ctx.pqDev=live&&ctx.pqCss>0?k/ctx.pqCss:1;ctx.pqFit=el.id==='quiz-pic';if(ctx.pqFit&&live)ctx.pqUnit=ctx.pqCss;ctx.pqBoostMax=ctx.pqFit?2.15:0;/* improve20-r20f-nov4 #4 */ctx.pqLessonFit=el.id==='lesson-pic';}return ctx;}
 /* How long a step's picture runs, and whether it keeps drawing after that (theater idle loops). */
 export const picLength=(pic,dur=2.5)=>{const one=[].concat(pic)[0];return one?.t==='theater'?theaterLength(one):dur;};
 export const picLive=pic=>[].concat(pic).some(one=>one?.t==='theater'&&theaterLive(one));
@@ -455,17 +460,21 @@ function pixelText(ctx){
    Labels then read at pqUnit*s CSS px per unit, and any still under LABEL_MIN grow through labelBoost (pixelText), up to 2.15x here (pqBoostMax). Theater scenes, which
    fill their stage, are never fitted. */
 export const FIT_MAX=3,FIT_MARGIN=16;
+/* improve20-r20f-nov4 #4 (audit14 #14, shot 17: small blocks in a big empty parchment): the lesson picture (#lesson-pic, ctx.pqLessonFit) is fitted the
+   same way, gentler: at most LESSON_FIT_MAX times, with LESSON_FIT_MARGIN units of margin, so a diagram drawn small grows toward the frame. Uniform
+   scaling, measured on the picture's end and solved states, so labels keep their spacing (no new touching labels) and only ever grow. */
+export const LESSON_FIT_MAX=2.6,LESSON_FIT_MARGIN=22;
 const FITS=new Map();let fitLast=null;
 export const lastFit=()=>fitLast;
 const stripPic=x=>Array.isArray(x)?x.map(stripPic):x&&typeof x==='object'?Object.fromEntries(Object.entries(x).filter(([k])=>k!=='count'&&k!=='solve')):x;
 const solvePic=x=>Array.isArray(x)?x.map(solvePic):x&&typeof x==='object'?{...x,solve:true}:x;
 /* the fit for a picture list: {s,cx,cy} or null (nothing to gain, or no canvas to measure on) */
-export function fitOf(list,o={}){let key;try{key=JSON.stringify(stripPic(list));}catch{return null;}if(FITS.has(key))return FITS.get(key);
+export function fitOf(list,o={}){const MX=o.fitMax||FIT_MAX,MG=o.fitMargin??FIT_MARGIN;let key;try{key=JSON.stringify(stripPic(list))+(o.fitMax?`|${MX}|${MG}`:'');}catch{return null;}if(FITS.has(key))return FITS.get(key);
  let out=null;try{const doc=globalThis.document;const cv=typeof OffscreenCanvas==='function'?new OffscreenCanvas(PIC_W,PIC_H):doc?.createElement?.('canvas');if(cv){cv.width=PIC_W;cv.height=PIC_H;const x=cv.getContext('2d');
   if(x?.getImageData){let x0=PIC_W,y0=PIC_H,x1=-1,y1=-1;
    for(const v of [stripPic(list),solvePic(stripPic(list))]){x.setTransform(1,0,0,1,0,0);x.clearRect(0,0,PIC_W,PIC_H);const c=pixelText(x);try{for(const one of v){const f=DRAW[one?.t];if(f)f(c,one,1,{...o,reduced:true});}}catch{continue;}
     const d=x.getImageData(0,0,PIC_W,PIC_H).data;for(let yy=0;yy<PIC_H;yy++)for(let xx=0;xx<PIC_W;xx++)if(d[(yy*PIC_W+xx)*4+3]>24){if(xx<x0)x0=xx;if(xx>x1)x1=xx;if(yy<y0)y0=yy;if(yy>y1)y1=yy;}}
-   if(x1>=x0&&y1>=y0){const bw=x1-x0+1,bh=y1-y0+1,sc=Math.min(FIT_MAX,(PIC_W-2*FIT_MARGIN)/bw,(PIC_H-2*FIT_MARGIN)/bh);if(sc>=1.15)out={s:sc,cx:(x0+x1+1)/2,cy:(y0+y1+1)/2,box:[x0,y0,bw,bh]};}}}}catch{out=null;}
+   if(x1>=x0&&y1>=y0){const bw=x1-x0+1,bh=y1-y0+1,sc=Math.min(MX,(PIC_W-2*MG)/bw,(PIC_H-2*MG)/bh);if(sc>=1.15)out={s:sc,cx:(x0+x1+1)/2,cy:(y0+y1+1)/2,box:[x0,y0,bw,bh]};}}}}catch{out=null;}
  if(FITS.size>200)FITS.delete(FITS.keys().next().value);FITS.set(key,out);return out;}
 /* improve20-r15a-nov3 #7 (kidsim3 k19: an empty frame beside "How many cents are 9 nickels?"): does a picture draw anything at the end of its
    animation? Drawn once off screen on a clear canvas without its board (stripped of count/solve unless solve is asked), true when any pixel is
@@ -481,7 +490,7 @@ export const labelProbe={on:false,min:Infinity,list:[],rects:[],reset(){this.on=
  rect(t,x,y,w,em,al,bl,text){const m=t.getTransform?.();if(!m||m.b||m.c||!t.pqDev)return;/* live canvases only (crispCtx sets pqDev), not fitOf's off-screen ink pass */const dev=t.pqDev||1,l=al==='center'?x-w/2:al==='right'?x-w:x,base=bl==='top'?y+em*13/16:bl==='middle'?y+em*5/16:y,top=base-em*10/16,h=em*10/16;this.rects.push({x:(m.a*l+m.e)/dev,y:(m.d*top+m.f)/dev,w:w*m.a/dev,h:h*m.d/dev,text});}};
 export function drawPic(ctx,pic,p=1,o={}){const list=Array.isArray(pic)?pic:[pic],q=o.reduced?1:clamp(p);
  ctx.save();loadCanvasUI();ctx.fillStyle=PAPER;ctx.fillRect(0,0,PIC_W,PIC_H);drawPanel(ctx,'parchment',0,0,PIC_W,PIC_H,{scale:2});
- const fitOn=!!(o.fit??ctx.pqFit)&&!list.some(x=>x?.t==='theater');if(fitOn)o={...o,tight:true};const fit=fitOn?fitOf(list,o):null,u0=ctx.pqUnit,c0=ctx.pqCss;fitLast=fit;
+ const lessonFit=o.fit==null&&!ctx.pqFit&&!!ctx.pqLessonFit,fitOn=!!(o.fit??(ctx.pqFit||lessonFit))&&!list.some(x=>x?.t==='theater');if(fitOn)o={...o,tight:true,...(lessonFit?{fitMax:LESSON_FIT_MAX,fitMargin:LESSON_FIT_MARGIN}:{})};const fit=fitOn?fitOf(list,o):null,u0=ctx.pqUnit,c0=ctx.pqCss;fitLast=fit;
  if(fit){ctx.translate(PIC_W/2,PIC_H/2);ctx.scale(fit.s,fit.s);ctx.translate(-fit.cx,-fit.cy);if(u0>0)ctx.pqUnit=u0*fit.s;if(c0>0)ctx.pqCss=c0*fit.s;}
  try{const c=pixelText(ctx);
   for(const one of list){const f=DRAW[one?.t];if(!f)throw new Error(`lesson-art: unknown primitive ${one?.t}`);f(c,one,q,o);}}

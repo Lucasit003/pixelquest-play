@@ -32,7 +32,13 @@ export const PATTERN_FLOOR=.15;
 export const PATTERN_SCALE=.45;
 export const PATTERN_DMG=Object.freeze({rows:.3,ring:.45,strike:.2,storm:.15,pulse:.15});
 /* what the hero is told when each pattern begins (held like a signature move's banner) */
-export const PATTERN_BANNER=Object.freeze({'echo rows':'ECHO ROWS! STAND IN THE DARK!','echo ring':'ECHO RING! STEP IN OR OUT!','echo storm':'ECHO STORM! KEEP MOVING!','echo pylon':'ECHO PYLON! BREAK IT!'});
+/* improve20-r20h-nov4 #3 (audit14 #13, shots 14-16: "STAND IN THE DARK" read as the dark-filled boxes, which are the danger, and "STEP IN OR OUT"
+   named no place): each line names the safe ground. Rows: between the lit rows. Ring: the dark circle inside it (drawn cool and dark,
+   enemy-ai.js hallSafe), or, when the hero hugs the boss and the ring is a plain disc (ringMarkers inner 0), out of it (RING_OUT).
+   PATTERN_BANNER_TOUCH is the phone's one short line (gfx/stage-view.js touchTitle). Patterns, timings and damage are unchanged. */
+export const PATTERN_BANNER=Object.freeze({'echo rows':'ECHO ROWS! STAND BETWEEN THE ROWS!','echo ring':'ECHO RING! STAND IN THE DARK CIRCLE!','echo storm':'ECHO STORM! KEEP MOVING!','echo pylon':'ECHO PYLON! BREAK IT!'});
+export const PATTERN_BANNER_TOUCH=Object.freeze({'echo rows':'STAND BETWEEN THE ROWS!','echo ring':'STAND IN THE DARK CIRCLE!','echo storm':'ECHO STORM! KEEP MOVING!','echo pylon':'ECHO PYLON! BREAK IT!'});
+export const RING_OUT=Object.freeze({text:'ECHO RING! STEP OUT OF THE RING!',touch:'STEP OUT OF THE RING!'});
 export const PATTERN_SOUND=Object.freeze({'echo rows':'tell.echo.rows','echo ring':'tell.echo.ring','echo storm':'tell.echo.storm','echo pylon':'tell.echo.pylon'});
 /* the Echo Pylon: the share of each hit on the boss it soaks, the hits that break it, seconds between its rings, and seconds before it crumbles */
 export const ROW_COLUMNS=6,RING_BAND=24,PYLON={share:.35,hits:3,every:4.5,life:14};
@@ -61,7 +67,8 @@ export function hallPatternTick(e,w,b){const P=e.hallP;if(!P||P.i>=P.list.length
    warning, and while it is up (hallTellUp) main.js holds every other tip and toast and core/audio.js ducks the boss's own tells and the
    chimes (#2). It stays up for TELL_HOLD seconds, and on through the pattern's own beats (rows ii, the strike, the storm's bursts). */
 export const TELL_HOLD=2.4;
-export function hallTell(e,w,a,top,SIG){const t=PATTERN_BANNER[a.name];if(!t||!a.first)return;w.hallTellOn={text:t,name:a.name,at:w.time||0,boss:e};}
+export function hallTell(e,w,a,top,SIG){const t=PATTERN_BANNER[a.name];if(!t||!a.first)return;/* improve20-r20h-nov4 #3: a ring with no inner circle says "out" */const disc=a.name==='echo ring'&&e?.brain?.markers?.[0]?.shape==='circle'&&!(e.brain.markers[0].inner>0);
+ w.hallTellOn={text:disc?RING_OUT.text:t,touch:disc?RING_OUT.touch:PATTERN_BANNER_TOUCH[a.name],name:a.name,at:w.time||0,boss:e};}
 export function hallTellUp(w){const h=w?.hallTellOn;if(!h||!w.level)return false;const e=h.boss,B=e?.brain;if(!e||!(e.hp>0)||!w.enemies?.includes(e)){w.hallTellOn=null;return false;}if((w.time||0)-h.at<TELL_HOLD)return true;if(B?.atk?.hall&&['tele','act'].includes(B.mode))return true;w.hallTellOn=null;return false;}
 /* improve20-r18b-nov3 #1: a Hall boss on a pattern rung keeps its centre at least HALL_EDGE px inside the locked arena (combat.js bossInset), so a
    ring or a row centred on it is on screen; the camera keeps its clamp (it already frames the boss with the hero when they fit) */

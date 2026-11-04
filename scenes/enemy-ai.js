@@ -1,7 +1,7 @@
 import {veilPrepare,veilMarkers,veilEnd,veilOverlay,veilSafe} from './veilmoor.js';
 import {emberPrepare,emberMarkers,emberEnd} from './emberkeep.js';
 import {woodEnd} from './elderwood.js';
-import {softMarker,safeLane,escapeRoute,visibleColumn} from './tier-fx.js';
+import {softMarker,softOutline,safeLane,escapeRoute,visibleColumn} from './tier-fx.js';
 import {applyMod,keepOf} from '../game/tiers.js';
 import {canBeginThreat} from './encounter-budget.js';
 import {echoCue} from './normal-pacing.js';
@@ -427,12 +427,16 @@ export function pillarRing(c,e,b,t){const r=b.atk?.radius||18,slow=b.pSlow>0,pul
  c.fillStyle='rgba(255,90,20,.22)';c.beginPath();c.ellipse(Math.round(e.x),Math.round(e.y),r,r*.55,0,0,Math.PI*2);c.fill();
  c.lineWidth=2;c.strokeStyle='#ffb347';c.beginPath();c.ellipse(Math.round(e.x),Math.round(e.y),r,r*.55,0,0,Math.PI*2);c.stroke();
  c.lineWidth=1;c.strokeStyle='#fff1c2';c.beginPath();c.ellipse(Math.round(e.x),Math.round(e.y),r+3+pulse*2,(r+3+pulse*2)*.55,0,0,Math.PI*2);c.stroke();c.restore();}
+/* improve20-r20h-nov4 #3: every live Hall pattern marker's edge, over the actors, in the shape its fill used */
+export function hallOutlines(c,w){for(const e of w.enemies||[]){const b=e.brain;if(e.hp<=0||!b?.atk?.hall||b.mode!=='tele'||!b.markers?.length)continue;for(const m0 of b.markers){const m=visibleColumn(w,m0);if(m.hide)continue;softOutline(c,{...m,lane:(e.normalPacing||w.level?.encounter?.readable)&&m.shape==='box'});}}}
 /* Telegraph markers (painted now, under the actors) plus depth-sorted entries for enemy projectiles, hazards and beams. */
 export function enemyLayer(c,w,t){const out=w.level?.encounter?.readable?[{y:1e9,draw:()=>veilOverlay(c,w)}]:[];if(!w.enemies?.some(e=>e.brain)){if(w.enemyFx)w.enemyFx.length=0;return out;}
  for(const e of w.enemies)if(e.pillar&&e.hp>0&&e.brain?.atk?.kind==='pillar')pillarRing(c,e,e.brain,t);
  for(const e of w.enemies){const b=e.brain;if(!b||e.hp<=0||!b.markers?.length)continue;
   if(e.normalPacing||w.level?.encounter?.readable)safeLane(c,b.safeLane,!w.level?.encounter?.veilmoor,w);
   const prog=b.mode==='tele'?Math.min(1,b.t/Math.max(.01,b.teleDur)):1;for(const m0 of b.markers){const m=visibleColumn(w,m0);marker(c,e.normalPacing||w.level?.encounter?{...m,soft:true,lane:(e.normalPacing||w.level.encounter.readable)&&m.shape==='box',age:b.mode==='tele'?b.t:b.teleDur,warn:b.teleDur,motion:w.motion}:m,prog,t);}}
+ /* improve20-r20h-nov4 #3: a Hall pattern's ground warning also draws its edge over the actors (tier-fx.js softOutline) */
+ if(w.hall&&w.enemies.some(e=>e.hp>0&&e.brain?.atk?.hall&&e.brain.mode==='tele'&&e.brain.markers?.length))out.push({y:1e9,draw:()=>hallOutlines(c,w)});
  /* a vanished boss's decoy exits, drawn dimmer than the real one (Heroic and up) */
  for(const e of w.enemies){const b=e.brain;if(!b||e.hp<=0||b.mode!=='act'||b.atk?.kind!=='vanish')continue;if(!w.level?.encounter?.veilmoor)for(const m of b.decoys||[])marker(c,m,1,t);
   const gate=b.atk.gate;if(gate&&!e.fade)for(const m of [...(b.markers||[]),...(b.decoys||[])])out.push({y:m.y-1,draw:()=>drawSprite(c,gate,'rise',Math.min(.45,b.t*.6),m.x,m.y,{alpha:m.dim?.45:1})});}

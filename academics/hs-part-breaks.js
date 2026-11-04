@@ -173,7 +173,7 @@ export const HS_PART_BREAKS={
  "science-h-ap-enviro-global-change":{"at":[9,17,24],"digest":"r1t8su"},
  "science-h-ap-psych-mental-and-physical-health":{"at":[10,18,28,38],"digest":"1g86vx0"},
  "history-h-apush-period-6-1865-1898":{"at":[8,16,23,31],"digest":"10qewa9"},
- "history-h-apush-period-7-1890-1945":{"at":[8,18,25,35,44,54],"digest":"1ua0iqv"},
+ "history-h-apush-period-7-1890-1945":{"at":[8,18,25,35,44,54],"digest":"s6w9vf"},
  "history-h-apush-period-8-1945-1980":{"at":[9,17,25,33,41],"digest":"11lrteq"},
  "history-h-apush-period-9-1980-present":{"at":[8,15,23],"digest":"cg2upn"},
  "history-h-ap-euro-industrialization-and-its-effects":{"at":[10,18,28],"digest":"yuffa1"},

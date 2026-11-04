@@ -1,7 +1,7 @@
 /* The Hall of Echoes (improve20-r9a-nov1, IMPROVE20_ROUND9 lane R9A d6): a post-game boss gauntlet. It opens once the save has beaten
    the final story boss (levels.js gameFinale, the same level finale.js FINALE_LEVEL names). Each chapter has three rungs; a rung is that
    chapter's story bosses (main-path boss levels, no side paths, no prologue) fought back to back in their own boss arenas, at the hero's
-   own power. Rung I plays them on Normal numbers ("Standard"), II on Heroic, III on Legendary (game/tiers.js, no new tables). Health
+   own power. Rung I plays them on Normal numbers ("Normal"), II on Heroic, III on Legendary (game/tiers.js, no new tables). Health
    carries over from one boss to the next with a fixed heal of hallHeal(rung) of max health between them; potions are allowed (each boss fight
    brings the one free potion a story attempt brings, ranged-nov2; the bag is carried). A fall ends the rung: nothing is lost and it can be tried
    again at once.
@@ -14,7 +14,10 @@
    Pure: functions that write the save say so. */
 import {LEVELS,CHAPTERS,levelDone,levelReward,tiered,gameFinale} from './levels.js';
 import {FREE_POTIONS} from './potions.js';
-export const HALL_HEAL=.35,RUNGS=[1,2,3],RUNG_TIER={1:'normal',2:'heroic',3:'legendary'},RUNG_LABEL={1:'Standard',2:'Heroic',3:'Legendary'},ROMAN=['I','II','III'];
+export const HALL_HEAL=.35,RUNGS=[1,2,3],RUNG_TIER={1:'normal',2:'heroic',3:'legendary'},RUNG_LABEL={1:'Normal',2:'Heroic',3:'Legendary'},ROMAN=['I','II','III'];
+/* improve20-r20h-nov4 #5 (R20E lead review: "I · Standard Open"): Rung I was "Standard", which is the Settings difficulty's name for the full
+   challenge (levels.js DIFFICULTY) and not a tier. The rungs are the Normal, Heroic and Legendary tiers (RUNG_TIER), so they say so, as every
+   level card's tier chips do (tiers.js TIERS labels). Not "Story": that is the Settings assist, which a Hall fight's Normal numbers sit under. */
 export const HALL_FINAL=LEVELS.find(l=>gameFinale(l.id))?.id||null;
 export const ESSENCE_KEY='elite-shard';
 export const hallOpen=s=>!!HALL_FINAL&&levelDone(s,HALL_FINAL);

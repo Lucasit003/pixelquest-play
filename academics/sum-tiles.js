@@ -59,3 +59,14 @@ export function sumTiles(t,q){
  return wordChoicesFor(t,q)||tileChoices(q)||namedOptions(q)||closedOptions(q)||listedOptions(q)||unitCount(q)||peerOptions(q)||/* improve20-r18e-nov3 #1 */reviewedOptions(q);}
 /* true when the question is answered by tapping in that quiz (buttons or tiles) */
 export const sumTaps=(t,q)=>!!(q&&(choicesOf(q)||sumTiles(t,q)));
+/* improve20-r20i-nov4 #2 (kidsim5 #7: Ivy, a 35% non-reader, sat the first quiz 5 times and reached 2 of 4): from the 3rd full sitting of the summed
+   first quiz (two missed sittings in a row, lessons.js qmiss), a question with 4 tiles shows 3: the right one and two wrong ones, in the order they had.
+   The wrong tile dropped is the one nearest the answer for numbers (9 beside 10 is the hardest to tell apart), else the last wrong one. The
+   4-different-right rule is unchanged; only the number of tiles is. Pure. */
+export const FEWER_AFTER=2,FEWER_TILES=3;
+export const fewerDue=(rec)=>(rec?.qmiss|0)>=FEWER_AFTER;
+export function fewerTiles(q,tiles,n=FEWER_TILES){
+ if(!Array.isArray(tiles)||tiles.length<=n)return tiles;const right=tiles.filter(x=>accepts(x.value,q));if(right.length!==1)return tiles;
+ const wrong=tiles.filter(x=>x!==right[0]),a=parseFloat(right[0].value),num=Number.isFinite(a)&&wrong.every(x=>Number.isFinite(parseFloat(x.value)));
+ const keep=new Set([right[0],...(num?[...wrong].sort((x,y)=>Math.abs(parseFloat(y.value)-a)-Math.abs(parseFloat(x.value)-a)):wrong).slice(0,n-1)]);
+ return tiles.filter(x=>keep.has(x));}

@@ -857,6 +857,8 @@ html[data-text="150"] :is(dialog,#ui-dialogue,#toast,#prompt,.ui-banner){--fs:24
 .who-manage{text-align:center;margin:4px 0 0}
 .learner-new{display:flex;align-items:center;gap:10px;margin-top:10px}
 .learner-new input,.learner-rename,.code-row textarea,#code-out{flex:1;min-height:40px;padding:6px 12px;color:var(--parch-ink);background:none;border-style:solid;border-width:calc(4*var(--u));border-color:transparent;border-image:url(ui/skin/pl-parchment.png) 20 21 20 21 fill/calc(9.52*var(--u)) calc(10.0*var(--u)) round;image-rendering:pixelated;font:400 var(--fs)/1.3 var(--ui);resize:vertical;border-radius:0}
+/* improve20-r20f-nov4 #6: an empty Add marks the name box (the line under it says what to do) */
+.learner-new input[aria-invalid=true]{outline:3px solid #e8b04a;outline-offset:2px}
 #code-out{width:100%;word-break:break-all}
 .code-row{display:flex;align-items:center;gap:10px;margin:6px 0}
 .title-pane .learner{position:absolute;left:16px;bottom:12px;display:flex;align-items:center;gap:8px;color:var(--ink-2);text-transform:none;letter-spacing:0}
@@ -3936,6 +3938,10 @@ html.m-mode dialog[data-view=library] .edu-grade-go .gl-lead{display:none}
  html.m-mode dialog[data-view=smith] .smith-stock:is([data-tab=buy],[data-tab=craft]) .gear-card:not(.open)>.smith-ico{display:flex;grid-area:ico;width:36px;height:36px;margin:0;border-width:2px}
  html.m-mode dialog[data-view=smith] .smith-stock:is([data-tab=buy],[data-tab=craft]) .gear-card:not(.open)>.smith-ico .gear-ico{width:28px;height:28px}
  html.m-mode dialog[data-view=smith] .smith-stock:is([data-tab=buy],[data-tab=craft]) .gear-card:not(.open)>h3{display:block;grid-area:name;margin:0;font-size:16px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ /* improve20-r20h-nov4 #6 (audit14 minor: "Runebound Champion A…"): the name shows in full, on two lines if it needs them */
+ html.m-mode dialog[data-view=smith] .smith-stock:is([data-tab=buy],[data-tab=craft]) .gear-card:not(.open)>h3{grid-column:2/-1;white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:break-word;line-height:1.1}
+ html.m-mode dialog[data-view=smith] .smith-stock:is([data-tab=buy],[data-tab=craft]) .gear-card:not(.open){grid-template-areas:"ico name name" "ico gain price";row-gap:2px}
+ html.m-mode dialog[data-view=smith] .smith-stock:is([data-tab=buy],[data-tab=craft]) .gear-card:not(.open) :is(.gear-card-top button,>button){max-width:9em;white-space:normal;line-height:1.1}
  html.m-mode dialog[data-view=smith] .smith-stock:is([data-tab=buy],[data-tab=craft]) .gear-card:not(.open)>.gear-trade,
  html.m-mode dialog[data-view=smith] .smith-stock:is([data-tab=buy],[data-tab=craft]) .gear-card:not(.open):not(:has(>.gear-trade))>.gear-up-badge,
  html.m-mode dialog[data-view=smith] .smith-stock:is([data-tab=buy],[data-tab=craft]) .gear-card:not(.open):not(:has(>.gear-trade,>.gear-up-badge))>.tag{display:block;grid-area:gain;margin:0;font-size:14px;line-height:1.2;overflow-wrap:anywhere;text-align:left}
@@ -4016,6 +4022,9 @@ html.m-mode .herocard-stats{flex:0 0 200px;min-width:0;padding:4px 8px;gap:3px;l
 .hall-rung[data-state=locked]{opacity:.6}
 .hall-rung[data-state=keepsake] small,.hall-rung[data-state=cleared] small{color:#bfe8a0}
 .hall-icon{image-rendering:pixelated;flex:none}
+/* improve20-r20h-nov4 #5 (R20E lead review: the tile read "I · Standard Open"): the rung's state is a small pill of its own */
+.hall-rung small.hall-state{align-self:flex-start;margin-top:2px;padding:0 6px;border:1px solid #f2c25a80;border-radius:9px;background:#0000004d;font-size:.86em;line-height:1.3;opacity:1}
+html.m-mode .hall-rung small.hall-state{margin-top:0;align-self:center}
 .hall-detail p{margin:4px 0}
 .hall-reward{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
 .hall-chip{display:inline-flex;align-items:center;gap:6px;padding:2px 12px 2px 4px;border:2px solid #f2c25a;border-radius:18px;background:#4a3312;color:#ffeccb}
@@ -4433,6 +4442,8 @@ html:not(.m-mode) dialog[data-view=result] #modal-content .level-result:not([dat
 .worldmap-rift .wm-rift-note{font-weight:400;color:#fff2d0}
 html:not(.map-open) .worldmap-rift,html.cine-on .worldmap-rift,.m-portrait .worldmap-rift{display:none}
 .worldmap-rift[hidden]{display:none}
+/* improve20-r20h-nov4 #4 (audit14 #18): the Hall of Echoes' label, the Rift label's size and baseline in the Hall's gold */
+.worldmap-hall>*{background:#2a1a06db;color:#ffe7b0}
 /* #9 (audit12 a17, shot 25: on the phone's prologue win the right column ended high and left a dead band over NEXT GOAL; the next-power box also ran
    over the hero-level bar): the column's rows wrap, a next-power box takes its own full-width row, and the rows sit in the column's middle while
    they fit (safe centring, so a column that scrolls still starts at its top) */

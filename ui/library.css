@@ -981,6 +981,12 @@ html.m-mode dialog:is([data-view=placement],[data-view=lesson-quiz]).pic-zoomed 
 html dialog[data-view=lesson] .lesson[data-older] .lesson-body .lesson-say{font-size:calc(var(--fs,16px)*1.25);line-height:1.4}
 html.m-mode dialog[data-view=lesson] .lesson[data-older] .lesson-body .lesson-say{font-size:calc(var(--fs,16px)*1.125);line-height:1.3}
 html dialog[data-view=lesson] .lesson-say .lesson-more{display:inline;min-height:0!important;min-width:0!important;height:auto;padding:0 6px!important;margin:0;border:0!important;background:none!important;box-shadow:none;font:inherit;line-height:inherit;vertical-align:baseline;color:var(--edu-gold-dark,#7a4f12)!important;text-decoration:underline;cursor:pointer}
+/* improve20-r20f-nov4 #5 (audit14 #15: the "more" link was tiny): "Read more ▾" is a real button, a bordered chip on the parchment, still inline after
+   the text; and a text card cut off by the frame (a long table) gets a fade over the body's bottom edge with a "scroll ▾" button (ui/lesson-more.js scrollCue) */
+html dialog[data-view=lesson] .lesson-say .lesson-more.lesson-more{display:inline-block;padding:2px 10px!important;margin:2px 0 0;border:2px solid var(--edu-gold-dark,#7a4f12)!important;border-radius:3px;background:#f6e7bf!important;text-decoration:none;font-size:.8em;line-height:1.4;white-space:nowrap;vertical-align:baseline}
+html dialog[data-view=lesson] .lesson-say .lesson-more.lesson-more:is(:hover,:focus-visible){background:#fff4d6!important;outline:2px solid var(--edu-gold-dark,#7a4f12);outline-offset:1px}
+dialog[data-view=lesson] .lesson-body>.lesson-scroll-cue{grid-column:-2/-1;position:sticky;bottom:0;z-index:2;height:56px;margin-top:-56px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:4px;pointer-events:none;background:linear-gradient(to bottom,rgba(16,22,44,0),rgba(16,22,44,.92) 70%)}
+dialog[data-view=lesson] .lesson-body>.lesson-scroll-cue>.lesson-scroll-go{pointer-events:auto;min-height:32px;padding:4px 18px;font-size:16px}
 /* ---------- Library first (libraryfirst-nov1): Aldous's tour, the "wake up your first power" card, the victory card's next power ----------
    Existing art only: Aldous's dialogue bust, the parchment 9-slice, the UI strip's icons and the ability icons. */
 dialog[data-view=tour] .lib-tour{display:flex;flex-direction:column;gap:12px;min-height:0}
@@ -1188,3 +1194,15 @@ html.m-mode dialog[data-view=lesson] .lesson[data-young] .lesson-body.young-snug
 }
 /* improve20-r13a-nov2 #5 (audit10 #16): while a Try-it waits, "Try it later" is a quiet secondary; answering is the main action */
 dialog[data-view=lesson] .lesson-footer #lesson-next.try-later{opacity:.82;font-size:.92em}
+/* improve20-r20i-nov4 #3: the summed first quiz's count, a chip beside "Brilliant!" in the feedback's first row (always in view, phones too) */
+#modal#modal #quiz-feedback .am .qf-sum-chip.qf-sum-chip{display:inline-block;margin:0;padding:2px 8px;font:700 var(--fs)/1.2 var(--edu-font);color:#2f2410;background:#ffe7a3;border:2px solid #8a6a2a;box-shadow:0 2px 0 #8a6a2a;white-space:nowrap}
+/* improve20-r20i-nov4 #4: "Try it again" opens from the feedback's first row; the closed retry box below the explanation takes no room */
+#quiz-feedback .answer-review.has-head:not([open]){display:none}#quiz-feedback .answer-review.has-head>summary{display:none}
+#quiz-feedback .am .am-retry{margin-left:auto;min-height:32px;padding:2px 12px;font-size:var(--fs,16px)}
+/* improve20-r20i-nov4 #8: the tour's power cards answer a tap: the glowing one starts its lesson, a locked one shakes and its need shows under the row */
+.lib-power[data-power-tap]{cursor:pointer}.lib-power[data-power-tap]:focus-visible{outline:3px solid var(--edu-gold);outline-offset:2px}
+.lib-power.lib-shake{animation:lib-shake .42s steps(6) both}
+@keyframes lib-shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(5px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+@media(prefers-reduced-motion:reduce){.lib-power.lib-shake{animation:none;outline:3px solid #e0a040}}:root[data-motion=reduced] .lib-power.lib-shake{animation:none;outline:3px solid #e0a040}
+.lib-power-need{min-height:1.3em;margin:6px 0 0;text-align:center;font:700 var(--fs,16px)/1.3 var(--edu-font,inherit);color:#ffe7a3}.lib-power-need:empty{visibility:hidden}
+.m-mode .lib-power-need{margin:2px 0 0;font-size:14px}
