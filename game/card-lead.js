@@ -17,6 +17,7 @@ import {gateInfo,powerWants,powerStep,leadSubject} from './power-gate.js';
 import {nextStep,resultGoal,retryStep,riftUnplayed,STEP_WORDS} from './next-step.js';
 import {gradeRank} from './grade.js';
 import {nextPowerLine} from '../academics/starter-lesson.js';
+import {runeDefeatLead} from './runes.js';
 const sname=id=>SUBJECTS[id]?.name||id;
 const topicsWord=n=>`topic${n===1?'':'s'}`;
 /* the honest size of a power: "Frost Nova: 3 Science topics" (and the hero level when it is still ahead) */
@@ -44,7 +45,13 @@ export function whileOptions(save){const out=[],r=riftUnplayed(save),sk=storyKid
  const early=hallEarly(save),ch=hallOpen(save)||early?HALL_CHAPTERS.find(c=>rungOpen(save,c,1)&&!rungCleared(save,c,1)):null;if(ch&&early)out.push({kind:'hall',id:ch,text:hallEarlyText(ch)});else if(ch)out.push({kind:'hall',id:ch,text:`While you learn: Hall of Echoes Rung I (${CHAPTERS.find(c=>c.id===ch)?.name||ch}). Find the Hall on the Veilmoor map.`});
  const q='hobs-purse',st=questLive(q)?questState(save,q):'locked',step=st==='open'||st==='active'?currentStep(save,q):null;if(step&&(step.kind!=='clear'||levelOpen(save,step.level)))out.push({kind:'wil',id:q,text:`While you learn: Wil's quest. ${step.text}`});
  return out;}
-export function whileLearn(save,{now=Date.now()}={}){const o=whileOptions(save);return o.length?o[((dayNo(now)%o.length)+o.length)%o.length]:null;}
+/* improve20-r20d-nov4 #5 (audit14 plan 7, minor notes on v3 and the Bandit Road): runes waiting (worth RUNE_CARD_MIN or more) and a side path never
+   played come before the rotation's Heroic, Hall and Rift suggestions. runeWin: the runes' worth, read on a copy ({n, pct} or null). */
+export function runeWin(save){try{return runeDefeatLead(save,{loud:true});}catch{return null;}}
+export const unplayedSide=save=>LEVELS.filter(l=>l.optional&&l.kind==='level'&&!l.hidden&&!levelFogged(l)&&levelOpen(save,l.id)&&!levelDone(save,l.id));
+export const runesText=g=>`Place your ${g.n} ${g.n===1?'rune':'runes'} at Home → Abilities: +${g.pct}% ability power.`;
+export function whileFirst(save){const g=runeWin(save);if(g)return {kind:'runes',id:null,text:`While you learn: ${runesText(g).replace(/^P/,'p')}`};const l=unplayedSide(save)[0];return l?{kind:'side',id:l.id,text:`While you learn: ${l.name}, a side path you have not played yet.`}:null;}
+export function whileLearn(save,{now=Date.now()}={}){{const f=whileFirst(save);if(f)return f;}const o=whileOptions(save);return o.length?o[((dayNo(now)%o.length)+o.length)%o.length]:null;}
 function heroicWhile(save){const lv=save?.level|0,cand=LEVELS.map((l,i)=>({l,i})).filter(({l})=>l.kind==='level'&&!l.hidden&&!levelFogged(l)&&tiered(l)&&tierOpen(save,l.id,'heroic')&&starsOf(save,l.id,'heroic')<3);
  if(!cand.length)return null;cand.sort((x,y)=>((adviceLevel(x.l,'heroic')<=lv?0:1)-(adviceLevel(y.l,'heroic')<=lv?0:1))||((tierDone(save,x.l.id,'heroic')?1:0)-(tierDone(save,y.l.id,'heroic')?1:0))||y.i-x.i);
  const l=cand[0].l;return {kind:'heroic',id:l.id,text:`While you learn: replay ${l.name} on ${TIERS.heroic.label} for stars.`};}
@@ -69,6 +76,10 @@ export function winCardLead(save,{learn=null,heroic=null,chFirst=null,chName='',
  if(learn?.why==='gate'){const gl=gateLead(save,learn.gate,{place:chFirst&&chFirst.id===learn.gate&&chName?chName:null});if(gl)return {text:`${gl.text}.`,primary:{kind:'learn',label:learn.label,subject:learn.subject||gl.subject},also:whileLearn(save)?.text||'',gate:learn.gate};}
  if(learn?.a){const st=powerStep(save,learn.a),how=st?.topic&&STEP_WORDS[st.stage]?STEP_WORDS[st.stage](st.topic,st):'';return {text:how?`Wake ${learn.a.name}: ${how} at the Library.`:`Wake ${learn.a.name} at the Library.`,primary:{kind:'learn',label:learn.label,subject:learn.subject},also:''};}
  if(holdUp(save,step,id)){const l=levelById(step.target.id),pad=chFirst||l;return {text:chFirst?`Next adventure: ${chFirst.name}, the first stop in ${String(chName).replace(/^The /,'the ')}.`:l?`Try your new skills at ${l.name}.`:step.text,primary:pad?{kind:'pad',id:pad.id,label:`Go to ${pad.name}`}/* improve20-r18a-nov3 #4 (audit13 #7): the goal names a pad, so the red button goes there (the map, focused on it), not to town */:{kind:'map'},also:'',hold:true,heroic2:!!heroic?.lead};}
+ /* improve20-r20d-nov4 #5 (audit14 shot 23: after v3 "Talk to Farmer Hob" led while 12 runes waited): runes worth placing lead before a Heroic,
+    Legendary, Rift, quest, Showpiece or star-chase step (never before a new adventure, a learning step or a chapter's first stop); the step
+    they displaced stays as the line under it. Red: "Place N runes" (the rune screen; leaving it goes on to the map). */
+ {const later=heroic?.lead||!!step&&(step.nudge||step.quest||!!step.target?.tier||/^(tier-|stars-|showpiece-|task-|rift-|replay)/.test(String(step.id||'')));const g=later&&!chFirst?runeWin(save):null;if(g)return {text:runesText(g),primary:{kind:'runes',label:`Place ${g.n} ${g.n===1?'rune':'runes'}`},also:heroic?.lead?'':`Then: ${step.text}`,runes:g,legendary:legendLead(save,id,legend)};}
  if(heroic?.lead)return {text:heroic.card||heroic.text,primary:{kind:'heroic',label:'Try Heroic'},also:''};
  if(chFirst)return {text:`Next adventure: ${chFirst.name}, the first stop in ${String(chName).replace(/^The /,'the ')}.`,primary:{kind:'map'},also:'',legendary:legendLead(save,id,legend)};
  if(step?.target?.kind==='library')return {text:step.text,primary:{kind:'library',label:'Go to the Library',subject:step.target.subject||leadSubject(save)||null},also:''};
@@ -88,15 +99,24 @@ export const sideGateText=(a,gl)=>`Wake ${a.name} to open ${gl.name}.`;
    whose done or back restarts the same level on the same tier). The Library secondary is dropped there (one row of at most 4 buttons). */
 export const RUNES_HEAD='Get stronger, then try again',STORY_HEAD='Try again with Story help',REST_HEAD='Regroup and try again';
 export const runeRetryLabel=n=>`Place ${n} ${n===1?'rune':'runes'}, then retry`;
-function runesOut(save,id,runes){const l=levelById(id);return {head:RUNES_HEAD,text:`Place your runes, then try ${l?.name||'it'} again.`,primary:{kind:'runes',label:runeRetryLabel(runes?.n|0)},also:'',library:null};}
-export function defeatCardLead(save,{id,tier='normal',rift=false,boss=false,runes=null,story=false,power=null,refill=false,losses=RUNE_LEAD_AFTER,gate=null,tip=null}={}){const out=defeatCore(save,{id,tier,rift,boss,runes,story,power,refill,losses});
+/* improve20-r20d-nov4 #1 (audit14 #1, #3): the Rift, Heroic, Legendary and the Hall use this helper too, in one order: the runes (from the second
+   loss in a row, RUNE_CARD_MIN), then a refill when the bag is out of potions (refillLead {n,cost}: one tap buys them and retries), then the retry.
+   The NEXT GOAL line always says what the red button does: the potions step's "Out of potions: buy some..." never sits over a Retry. again(): the
+   retry in words for each mode (hall: {name} of the rung). */
+export const REFILL_HEAD='Stock up, then try again';
+export const refillRetryLabel=o=>`Refill ${o.n|0} ${(o.n|0)===1?'potion':'potions'}, then retry`;
+const again=(id,{rift=false,hall=null}={})=>hall?`try ${hall.name||'the rung'} again`:rift?"try this week's Rift again":`try ${levelById(id)?.name||'it'} again`;
+function runesOut(save,id,runes,o={}){return {head:RUNES_HEAD,text:`Place your runes, then ${again(id,o)}.`,primary:{kind:'runes',label:runeRetryLabel(runes?.n|0)},also:'',library:null};}
+export function defeatCardLead(save,{id,tier='normal',rift=false,boss=false,runes=null,story=false,power=null,refill=false,losses=RUNE_LEAD_AFTER,gate=null,tip=null,refillLead=null,hall=null}={}){const out=defeatCore(save,{id,tier,rift,boss,runes,story,power,refill,losses,refillLead,hall});
  out.head??=(out.primary.kind==='library'&&tip?.kind==='power'?tip.head:out.primary.kind==='retry'&&tip&&tip.kind!=='power'?tip.head:REST_HEAD);
  const l=levelById(id),gl=!rift&&l?.optional&&gate?.why==='gate'&&gate.a?levelById(gate.gate):null;if(gl&&gl.id!==id)out.gateLine=sideGateText(gate.a,gl);return out;}
-function defeatCore(save,{id,tier,rift,boss,runes,story,power,refill,losses}){const retry=retryStep(save,{id,tier,rift,boss}),retryText=retry?.text||'';
- if(story&&!rift){const lib=power?.a?{label:`Library · ${powerSize(save,power.a)}`,subject:powerStep(save,power.a)?.subject||power.a.subject}:null;if(runes&&(losses|0)>=RUNE_LEAD_AFTER)return runesOut(save,id,runes);return {head:STORY_HEAD,text:retryText,primary:{kind:'retry'},also:'',library:lib};}
- if(runes&&(losses|0)>=RUNE_LEAD_AFTER)return runesOut(save,id,runes);
- if(runes&&!(power?.a&&!rift)){const g=resultGoal(save,{won:false,id,tier,rift,boss});return {text:g?.id==='potions'&&refill?retryText||g.then?.text||g.text:g?.text||retryText,primary:{kind:'retry'},also:'',runes2:true};}
+function defeatCore(save,{id,tier,rift,boss,runes,story,power,refill,losses,refillLead=null,hall=null}){const retry=hall?{text:`${again(id,{hall}).replace(/^t/,'T')}.`}:retryStep(save,{id,tier,rift,boss}),retryText=retry?.text||'',mo={rift,hall};
+ if(story&&!rift&&!hall){const lib=power?.a?{label:`Library · ${powerSize(save,power.a)}`,subject:powerStep(save,power.a)?.subject||power.a.subject}:null;if(runes&&(losses|0)>=RUNE_LEAD_AFTER)return runesOut(save,id,runes);return {head:STORY_HEAD,text:retryText,primary:{kind:'retry'},also:'',library:lib};}
+ if(runes&&(losses|0)>=RUNE_LEAD_AFTER)return runesOut(save,id,runes,mo);
+ /* improve20-r20d-nov4 #1: out of potions with the gold for some: the refill leads, and its one tap also retries */if(refillLead?.n>0)return {head:REFILL_HEAD,text:`Refill your potions (${refillLead.cost|0} gold), then ${again(id,mo)}.`,primary:{kind:'refill',label:refillRetryLabel(refillLead)},also:'',runes2:!!runes};
+ if(hall)return {text:retryText,primary:{kind:'retry'},also:'',runes2:!!runes};
+ if(runes&&!(power?.a&&!rift)){const g=resultGoal(save,{won:false,id,tier,rift,boss});return {text:/* improve20-r20d-nov4 #1: the line under a red Retry is the retry */retryText||g?.text,primary:{kind:'retry'},also:'',runes2:true};}
  if(power?.a&&!rift){const w=powerWants(save,power.a),n=w?.topics|0;return {text:n>0?`Wake ${power.a.name} at the Library: ${n} more ${sname(power.a.subject)} ${topicsWord(n)}.`:`Wake ${power.a.name} at the Library.`,primary:{kind:'library',label:'Learn it at the Library',subject:power.a.subject},also:''};}
  const g=resultGoal(save,{won:false,id,tier,rift,boss});
- if(g?.id==='potions'&&refill)return {text:retryText||g.then?.text||g.text,primary:{kind:'retry'},also:''};
- return {text:g?.text||retryText,primary:{kind:'retry'},also:''};}
+ /* improve20-r20d-nov4 #1 (audit14 #1, shot 01: "Out of potions: buy some at the Apothecary" over a red "Retry boss fight"): a red Retry's line is the retry */
+ return {text:retryText||g?.text||'',primary:{kind:'retry'},also:''};}

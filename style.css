@@ -4187,6 +4187,8 @@ html.m-mode:has(#scene-fade.on.travel) #controls-tutorial{visibility:hidden}
 #modal#modal[data-view=placement] .question.qf:has(#quiz-feedback:not(:empty)) .pd-canvas{width:132px;height:75px}
 @media(min-height:501px){html:not(.m-mode) #modal#modal[data-view=placement] .question.qf:has(#quiz-feedback:not(:empty))>.question-reading:has(>:is(#quiz-pic,.question-text-card)){grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"top top pic" "guide say pic" "guide read pic"}}
 @media(min-height:501px){html:not(.m-mode) #modal#modal[data-view=placement] .question.qf:has(#quiz-feedback:not(:empty))>.question-reading:has(>:is(#quiz-pic,.question-text-card))>.edu-read{align-self:start;justify-self:start}}
+/* kidsim5-nov4 (Leo, fresh Grade 5, English placement Q12 at 453 s): once answered, a text card (passages, setups, program) took its one-line max-content width in the "auto" picture column, the question fell to a 56 px column 740 px tall and Next left the screen. A text card wraps, so its column is capped as before the answer (44%); a canvas keeps its own size */
+@media(min-height:501px){html:not(.m-mode) #modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question.qf:has(#quiz-feedback:not(:empty))>.question-reading:has(>:is(#quiz-pic,.question-text-card)):has(>.question-text-card){grid-template-columns:auto minmax(0,1fr) minmax(0,44%)}}
 @media(max-height:500px){#modal#modal#modal#modal[data-view=placement] .question.qf.qf:has(.test-open-note)>#quiz-form{display:none}}
 html[data-text="125"] #modal#modal#modal#modal#modal[data-view=placement] .question.qf.qf>.question-reading>h3,html[data-text="150"] #modal#modal#modal#modal#modal[data-view=placement] .question.qf.qf>.question-reading>h3{font-size:var(--tx-q)}
 html[data-text="125"] #modal#modal#modal#modal#modal[data-view=placement] .question.qf.qf:has(#quiz-feedback:not(:empty))>.question-reading>h3,html[data-text="150"] #modal#modal#modal#modal#modal[data-view=placement] .question.qf.qf:has(#quiz-feedback:not(:empty))>.question-reading>h3{font-size:var(--tx-qa)}
@@ -4576,3 +4578,12 @@ dialog[data-view=result] #modal-content .level-result[data-story2]>.modal-action
 dialog[data-view=result] #modal-content .level-result[data-story2]>.modal-actions>button{flex:0 1 auto;min-width:0;padding-left:10px;padding-right:10px;font-size:14px;white-space:normal}
 dialog[data-view=result] #modal-content .level-result[data-story2]>.modal-actions>button.primary{flex-shrink:0;white-space:nowrap}
 dialog[data-view=result] #modal-content .level-result>.modal-actions>#defeat-library small{display:block;font-size:12px;line-height:1.2;opacity:.85}
+
+/* improve20-r20d-nov4 #1 (audit14 #3): every loss card keeps Details and at most 3 buttons in ONE row, the red last (main.js lossRow); the rest
+   sit behind Details in their own row */
+dialog[data-view=result] #modal-content .level-result>.modal-actions[data-loss-row]{flex-wrap:nowrap!important;gap:6px}
+dialog[data-view=result] #modal-content .level-result>.modal-actions[data-loss-row]>button{flex:0 1 auto;min-width:0;padding-left:10px;padding-right:10px;font-size:14px;white-space:nowrap;order:0}
+dialog[data-view=result] #modal-content #result-extra>.loss-more{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:8px 0 0;padding:0;border:0;position:static}
+/* improve20-r20d-nov4 #3 (audit14 #8): a victory chest shows when it opens (its shake, then the pop), never as a greyed tile with no words */
+dialog[data-view=result] .result-chest:not(.open):not(.shake){visibility:hidden}
+dialog[data-view=result] #result-extra>.rating-key{margin:4px 0}

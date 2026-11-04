@@ -94,5 +94,6 @@ export function markRuneOffer(s,{now=false}={}){const g=runeNag(s);g.offered=tru
 /* the defeat card's lead: the first defeat with runes waiting that are not quiet. -> {n, pct, ids} or null */
 /* improve20-r18a-nov3 #2 (audit13 #13): an offer worth under RUNE_CARD_MIN % is not shown on result cards ("Place runes: +3%" was noise) */
 export const RUNE_CARD_MIN=5;
-export function runeDefeatLead(s){if(!runesShown(s)||runesQuiet(s))return null;const g=runePlaceGain(s);return g.n>0&&g.pct>=RUNE_CARD_MIN?g:null;}
+/* improve20-r20d-nov4 #1 (audit14 #1: 6 runes waited in grey small print on the Rift's second loss): loud, from the second loss in a row, the offer leads even after the one town/card offer went quiet (a loss is when the runes help) */
+export function runeDefeatLead(s,{loud=false}={}){if(!runesShown(s)||!loud&&runesQuiet(s))return null;const g=runePlaceGain(s);return g.n>0&&g.pct>=RUNE_CARD_MIN?g:null;}
 export const runeLeadText=g=>`Place ${g.n} ${g.n===1?'rune':'runes'}: +${g.pct}% ability power`;

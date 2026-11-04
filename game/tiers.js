@@ -198,6 +198,14 @@ export const XP_TUNE={scale:.25,kill:{normal:.75,heroic:.5,legendary:.35},win:{n
 export const GROWTH_CAP={heroic:20,legendary:20};
 export const killXP=(e,k)=>Math.round((e?.boss?KILL_XP.boss:e?.elite||e?.mod?KILL_XP.elite:KILL_XP.foe)*Math.pow(1+KILL_XP.growth,Math.min(Math.max(1,e?.tier||1),GROWTH_CAP[tierKey(k)]||99)-1)*XP_TUNE.scale*(XP_TUNE.kill[tierKey(k)]??1));
 export const winXP=(kills,k)=>Math.round(Math.max(0,+kills||0)*(XP_TUNE.win[tierKey(k)]||0));
+/* improve20-r20d-nov4 #2 (audit14 #19: a long Rift boss attempt kept +7 XP): a loss keeps a little progress, scaled to how far the run got. It
+   already keeps every kill's XP; on top it keeps LOSS_SHARE of the victory bonus this run would have paid (winXP of its kills plus the boss),
+   times the share of the boss's health it took (bossFrac, 0..1). Why this curve: it is linear in damage actually dealt, so walking into the boss
+   (the oct26 --suicide farm) adds nothing, and every second of boss fighting pays at most 0.3x what a win pays for it; it is capped below the
+   bonus, so a loss never matches a win (the win also pays the boss's own kill XP and any first-clear XP). Nothing random; gold is unchanged;
+   XP never unlocks an ability on its own. tests/improve20-r20d-nov4.test.js measures fall-at-90% runs against wins. */
+export const LOSS_SHARE=.3;
+export function lossKeepXP({killXP=0,killCarry=0,bossXP=0,bossFrac=0,tier='normal'}={}){const f=Math.max(0,Math.min(1,+bossFrac||0));if(!(f>0))return 0;return Math.round(LOSS_SHARE*f*winXP((+killXP||0)+(+killCarry||0)+(+bossXP||0),tier));}
 /* The hero level a tier is tuned for: about one hero level per level tier on Normal (the balance sim reaches 19 by the
    Veilmoor's end), +3 on Heroic, +6 on Legendary. Advice only -- nothing is gated on it. */
 export const recLevel=(l,k)=>Math.max(1,Math.round(1+(Math.max(1,l?.tier||1)-1)*.85)+tierOf(k).rec);

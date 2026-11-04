@@ -28,7 +28,7 @@ import {TOWN} from '../game/maps.js';
 import {levelById,levelDone,recordLevel,levelScore,levelReward,levelXPReward,arenaWave,arenaTier,difficultyOf,resolveOf,fightKey,tiered,tierDone,tierRecord,storyHelp,STORY_POTIONS} from '../game/levels.js';
 import {hallBossHp,hallHit} from '../game/hall.js';
 import {HALL_PIERCE,PATTERN_FLOOR,hallEdge} from './hall-patterns.js';
-import {TIER_KEYS,tierKey,tierOf,tierLevel,tierScale,applyBossTier,tierBossTrim,rallyPoints,rallyTimeout,vampHeal,checkEnrage,splitParts,MODS,killGold,adviceLevel,killXP,winXP,bossAtkTrim} from '../game/tiers.js';
+import {TIER_KEYS,tierKey,tierOf,tierLevel,tierScale,applyBossTier,tierBossTrim,rallyPoints,rallyTimeout,vampHeal,checkEnrage,splitParts,MODS,killGold,adviceLevel,killXP,winXP,bossAtkTrim,lossKeepXP} from '../game/tiers.js';
 import {STAGE,BEATS,REBIRTH,levelGeometry,camTopFor,bossLiftFor,BOSS_ROOM,waveGroups,waveSide,stageKey} from '../game/stage.js';
 import {baseDef,makeEnemy,entryEnemy} from '../game/roster.js';
 import {shadowDef} from '../game/shadow.js';
@@ -413,6 +413,7 @@ export class World{
   const riftR=riftEnd(this,won,runR,Math.round((time+(this.run.carry||0))*10)/10);if(riftR?.gold){this.save.gold+=riftR.gold;gold+=riftR.gold;}
   /* balance-oct26: the victory bonus (game/tiers.js winXP), a share of the run's kill XP, only on a win; a fall keeps what it earned */
   let winBonus=0;if(won&&!this.arena&&l.kind==='level'){winBonus=winXP((this.run.killXP||0)+(this.run.killCarry||0),k);if(winBonus){this.run.xp+=winBonus;this.events.xp?.(winBonus);}}
+  /* improve20-r20d-nov4 #2 (audit14 #19): a loss keeps a share of the victory bonus by the boss damage done (game/tiers.js lossKeepXP) */if(!won&&!this.arena&&l.kind==='level'){const b=this.enemies.find(e=>e.boss&&e.maxHp>0);const x=b?this.runXP(lossKeepXP({killXP:this.run.killXP,killCarry:this.run.killCarry,bossXP:killXP(b,k),bossFrac:1-Math.max(0,b.hp)/b.maxHp,tier:k})):0;this.run.keepXP=x;if(x){this.run.xp+=x;this.events.xp?.(x);}}
   const loot=[];let clearXP=0;if(rec.first){const pb=addPotions(this.save,1);loot.push(pb.added?'Health potion':`Potion bag full (${BAG.cap} of ${BAG.cap}): +${pb.gold} gold instead`);const x=clearXP=this.runXP(levelXPReward(l,k));if(x){this.run.xp+=x;this.events.xp?.(x);}}
   this.events.persist?.();
   const top=this.save.levels[l.id],r=k==='normal'?top:top.tiers[k];this.lastResult={id:l.id,won,tier:k,rift:riftR,riftRun:this.rift||null,tierLabel:tierOf(k).label,boss:l.boss?this.enemies.find(e=>e.boss)||null:null,stats:{levelUp:this.run.levelUp||null,reducedXP:this.run.damped?this.run.rec:0,clearXP,winXP:winBonus,retryWave:won?null:Math.min(this.wave,this.layout.arenas.length),resolve:resolveOf(this.save,l.id),bestiary:[...this.run.bestiary],secrets:[...this.run.secrets],gear:[...(this.run.gear||[])],/* improve20-t-oct31: the jewels found on this run, for the result card's strip */jewels:[...(this.run.jewels||[])],mats:{...(this.run.mats||{})},/* late playtest 24 Oct: after "Retry boss fight" the result showed only the retry (0:13) beside stars and a record

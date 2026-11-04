@@ -3,6 +3,9 @@
    runs a rung: one boss after another through main.js startLevel, an interlude card between bosses, and a card at the end (a fall or a
    clear). Art: the existing PixelLab tier icons (ui/skin/pl-icons/tier-*.png) and reward icons; no new art. */
 import {defeatProgress} from './defeat-tip.js';
+import {defeatCardLead,RUNE_LEAD_AFTER} from '../game/card-lead.js';
+import {runeDefeatLead,autoPlaceRunes} from '../game/runes.js';
+import {refillOffer,refillPotions,bagCount} from '../game/potions.js';
 import {CHAPTERS,levelById} from '../game/levels.js';
 import {HALL_CHAPTERS,RUNGS,RUNG_LABEL,ROMAN,hallHeal,hallFree,hallPatterns,hallBosses,rungState,rungOpen,rungReward,keepsakeName,keepsakes,startRung,hallStep,hallFinish,hallOpen,hallDoor,hallEarly,rungLockText} from '../game/hall.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -24,7 +27,7 @@ export function hallHTML(s,sel=hallDefault(s),{coin='',gem=''}={}){const pct=Mat
  const ks=keepsakes(s);
  return `<div class="hall-card"><div class="hall-grid" role="grid" aria-label="Rungs">${grid}</div>${det}<p class="hall-ks">Keepsakes: ${ks.length?ks.map(k=>esc(k.name)).join(', '):'none yet'}</p></div>`;}
 /* deps: {save(), show, header, forceClose, startLevel(id,opts), openMap(), closeMap(), mapOn(), persist, updateHUD, leaveLevel(r), coin, gem} */
-export function initHall(D){let sel=null,run=null;
+export function initHall(D){let sel=null,run=null;/* improve20-r20d-nov4 #1: falls in a row on one rung, this session (a clear or another rung starts over) */const falls={};
  const back=()=>D.openMap();
  function card(){const s=D.save();if(!hallDoor(s))return;sel=sel&&RUNGS.includes(sel.rung)?sel:hallDefault(s);const st=rungState(s,sel.chapter,sel.rung);
   D.show('hall',D.header('The Hall of Echoes',hallEarly(s)?/* improve20-r20e-nov4 #2: Rung I before the finale */'Practise reading the bosses: Rung I plays a chapter’s bosses back to back, with their own warnings. Rungs II and III open after the final boss.':'Every chapter’s bosses, back to back, in their own arenas. Three rungs a chapter.')+hallHTML(s,sel,{coin:D.coin,gem:D.gem})+
@@ -37,10 +40,19 @@ export function initHall(D){let sel=null,run=null;
   if(out==='next'){const next=run.bosses[run.i],pct=Math.round(run.hp*100);
    D.show('hall-next',`<div class="hall-step"><span class="eyebrow">Boss ${run.i} of ${n} down</span><h2>${esc(bossName(next))} is next</h2><p>Boss ${run.i+1} of ${n}. You catch your breath: health back up to ${pct}%.${run.drunk?'':' No potions so far.'}</p><div class="modal-actions"><button id="hall-leave">Leave the Hall</button><button id="hall-on" class="primary">Fight on</button></div></div>`);
    document.getElementById('hall-on').onclick=()=>{D.forceClose();if(!fight()){run=null;D.leaveLevel(r);}};document.getElementById('hall-leave').onclick=()=>{run=null;D.leaveLevel(r);};document.getElementById('hall-on').focus({preventScroll:true});return;}
-  if(out==='lost'){const ch=run.chapter,rg=run.rung,at=run.i+1;run=null;
-   D.show('hall-end',`<div class="hall-step" data-outcome="lost"><span class="eyebrow">The echoes fade</span><h2>You fell at boss ${at} of ${n}</h2>${/* improve20-r14b-nov3 #2: how far that fight got (ui/defeat-tip.js) */(()=>{const b=r.boss,p=b?defeatProgress({boss:true,hp:b.hp,max:b.maxHp}):null;return p?`<p class="defeat-progress" data-progress>${esc(p)}</p>`:'';})()}<p>Nothing is lost. Rest, change your abilities or gear, and try the rung again whenever you like.</p><div class="modal-actions"><button id="hall-leave">Leave</button><button id="hall-again" class="primary">Try again</button></div></div>`);
-   document.getElementById('hall-again').onclick=()=>{D.forceClose();run=startRung(D.save(),ch,rg);if(!run||!fight()){run=null;D.leaveLevel(r);}};document.getElementById('hall-leave').onclick=()=>D.leaveLevel(r);document.getElementById('hall-again').focus({preventScroll:true});return;}
-  const res=hallFinish(s,run),ch=run.chapter,rg=run.rung;run=null;D.persist();D.updateHUD();
+  if(out==='lost'){const ch=run.chapter,rg=run.rung,at=run.i+1,run0=run.bosses[run.i];run=null;
+   /* improve20-r20d-nov4 #1 (audit14 #1): a Hall fall goes through the same loss helper as every level (game/card-lead.js defeatCardLead): from
+      the second fall in a row on this rung the runes lead ("Place N runes, then retry": Place for me, then the rung again), then a refill when
+      the bag is out, then Try again; its NEXT GOAL line says the same as the one red button, and the card keeps at most 3 buttons. */
+   const k=`${ch}:${rg}`;falls[k]=(falls[k]|0)+1;for(const x in falls)if(x!==k)delete falls[x];const losses=falls[k],ru=runeDefeatLead(s,{loud:losses>=RUNE_LEAD_AFTER}),rf=refillOffer(s),lead=defeatCardLead(s,{id:run0,tier:'normal',runes:ru,losses,refillLead:rf&&!bagCount(s)?rf:null,hall:{name:`${chName(ch)} Rung ${ROMAN[rg-1]}`}}),kind=lead.primary.kind;
+   const help=kind==='retry'&&ru?`<button id="hall-runes" data-lead="secondary">Place runes: +${ru.pct}%</button>`:'',again=kind==='retry'?'<button id="hall-again" class="primary">Try again</button>':`<button id="hall-again">Retry now</button><button id="hall-lead" class="primary" data-kind="${kind}">${esc(lead.primary.label)}</button>`;
+   D.show('hall-end',`<div class="hall-step" data-outcome="lost"><span class="eyebrow">The echoes fade</span><h2>You fell at boss ${at} of ${n}</h2>${/* improve20-r14b-nov3 #2: how far that fight got (ui/defeat-tip.js) */(()=>{const b=r.boss,p=b?defeatProgress({boss:true,hp:b.hp,max:b.maxHp}):null;return p?`<p class="defeat-progress" data-progress>${esc(p)}</p>`:'';})()}<p>Nothing is lost. Rest, change your abilities or gear, and try the rung again whenever you like.</p><p class="result-goal hall-goal"><small>NEXT GOAL</small> <strong>${esc(lead.text)}</strong></p><div class="modal-actions"><button id="hall-leave">Leave</button>${help}${again}</div></div>`);
+   const go=()=>{D.forceClose();run=startRung(D.save(),ch,rg);if(!run||!fight()){run=null;D.leaveLevel(r);}};
+   document.getElementById('hall-again').onclick=go;document.getElementById('hall-leave').onclick=()=>D.leaveLevel(r);
+   const hr=document.getElementById('hall-runes');if(hr)hr.onclick=()=>{if(autoPlaceRunes(s).length){D.persist();D.updateHUD();}hr.disabled=true;hr.textContent=`Runes placed: +${ru.pct}%`;};
+   const hl=document.getElementById('hall-lead');if(hl)hl.onclick=()=>{if(kind==='runes')autoPlaceRunes(s);else if(kind==='refill')refillPotions(s);D.persist();D.updateHUD();go();};
+   (hl||document.getElementById('hall-again')).focus({preventScroll:true});return;}
+  const res=hallFinish(s,run),ch=run.chapter,rg=run.rung;run=null;delete falls[`${ch}:${rg}`];D.persist();D.updateHUD();
   D.show('hall-end',`<div class="hall-step" data-outcome="won"><span class="eyebrow">Rung cleared</span><h2>${esc(chName(ch))} · Rung ${ROMAN[rg-1]}</h2><p>All ${n} bosses down, one after another.</p>`+
    (res.first?`<p class="hall-reward"><span class="hall-chip">${D.coin}<b>+${res.gold} gold</b></span><span class="hall-chip">${D.gem}<b>+${res.essence} Essence</b></span></p>`:'<p class="hall-note">You cleared this rung before, so there is no reward this time.</p>')+
    (res.keepsake?`<p class="hall-reward"><span class="hall-chip ks got">${pic('tier-star',16)}<b>${esc(res.keepsake)}</b></span><span class="hall-note">${res.keepsakeNew?'No potions! A new keepsake for your hero card.':'Won again with no potions.'}</span></p>`:`<p class="hall-note">Win it with no potions for the keepsake ${esc(keepsakeName(ch,rg))}.</p>`)+
