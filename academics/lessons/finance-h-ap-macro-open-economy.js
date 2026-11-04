@@ -1,5 +1,15 @@
 /* Original course unit. Review record: docs/review/lessons/high-completion/ap-macro-u6-accuracy.json.
    Deterministic choices preserve prompt-derived identities. */
+/* improve20-r19d-nov3 #2 (round 19, reviewed Try-its, batch 2): 3 Try-its added as sections[].tries (teach index -> [prompt, key,
+   wrong, wrong, hint]); each sits on the step whose text it checks and uses only that step's facts or a derivation from its stated rule.
+   Reviewed 3 Nov 2026: every key and both wrong options checked against the source named per item, or recomputed by hand. Existing steps,
+   Try-its and question ids are unchanged; new ids come from the new prompts. Numbers in the new items are fictional exercise values.
+   step 5 (6.2, teach 0): "Let e = 2 crowns per dollar. An item is priced at 50 crowns. Ignoring fees, how many dollars does it cost?" Key: 25 dollars. Source: derivation from the step's unit rule.
+   step 13 (6.4, teach 2): "A fictional central bank cuts rates, so home bonds pay a lower real return while foreign returns stay the same. Other things fixed, what tends to happen to the home currency?" Key: It tends to depreciate as fewer foreign buyers want home assets. Source: AP Macro CED topic 6.4 (Effect of Changes in Policies and Economic Conditions on the Foreign Exchange Market); cause and effect from the step's model.
+   step 17 (6.5, teach 2): "Real exports fall from 150 to 140 while real imports rise from 120 to 135. How do real net exports change?" Key: A decrease of 25. Source: derivation from NX = exports − imports.
+   Limits: a CED citation names the College Board course topic whose scope the item sits in; the CED PDFs and the IPCC glossary were not
+   re-opened in this pass (standard definitions). Web sources opened or searched: EPA, EIA, NASA, Te Ara, UN ESCWA. The step's own text
+   was not re-reviewed. Options are 3 (the lesson's existing Try-it format); the hint is the feedback line after a miss. */
 const sections=[
  {
   "code": "6.1",
@@ -969,7 +979,16 @@ const sections=[
     "circles": []
    },
    null
-  ]
+  ],
+  "tries": {
+   "0": [
+    "Let e = 2 crowns per dollar. An item is priced at 50 crowns. Ignoring fees, how many dollars does it cost?",
+    "25 dollars",
+    "100 dollars",
+    "52 dollars",
+    "Divide crowns by crowns per dollar: 50 ÷ 2 = 25 dollars. Multiplying would give the wrong units."
+   ]
+  }
  },
  {
   "code": "6.3",
@@ -3206,7 +3225,16 @@ const sections=[
     ]
    }
   ],
-  "boardTitle": "Policies and exchange markets"
+  "boardTitle": "Policies and exchange markets",
+  "tries": {
+   "2": [
+    "A fictional central bank cuts rates, so home bonds pay a lower real return while foreign returns stay the same. Other things fixed, what tends to happen to the home currency?",
+    "It tends to depreciate as fewer foreign buyers want home assets",
+    "It tends to appreciate as more foreign buyers want home assets",
+    "It tends to appreciate as fewer foreign buyers want home assets",
+    "A lower relative real return makes home assets less attractive, so less home currency is demanded and it tends to depreciate."
+   ]
+  }
  },
  {
   "code": "6.5",
@@ -3973,6 +4001,15 @@ const sections=[
      ]
     ]
    }
+  },
+  "tries": {
+   "2": [
+    "Real exports fall from 150 to 140 while real imports rise from 120 to 135. How do real net exports change?",
+    "A decrease of 25",
+    "An increase of 25",
+    "A decrease of 5",
+    "Net exports go from 150 − 120 = 30 to 140 − 135 = 5, a decrease of 25."
+   ]
   }
  },
  {
@@ -4744,7 +4781,7 @@ const sections=[
 const board=(title,lines)=>({t:'board',title,lines,box:true});
 const questionPic=prompt=>{const lines=[];let line='';for(const word of prompt.split(' ')){if((line+' '+word).trim().length>34){lines.push(line);line=word;}else line+=(line?' ':'')+word;}if(line)lines.push(line);return board('Read the evidence',lines);};
 const options=(r,i)=>{const a=r.slice(2,4);a.splice(i%3,0,r[1]);return a;};
-const steps=sections.flatMap((s,i)=>s.teach.map((say,j)=>({skill:s.skill,say,...(s.eqs?.[j]?{eq:s.eqs[j]}:{}),pic:s.pics?.[j]||board(s.code+' · '+(s.boardTitle||s.name),s.boards[j]),...(j===s.teach.length-1&&(i%3===2||i===sections.length-1)?{check:{prompt:s.check[0],answer:s.check[1],options:options(s.check,i),hint:s.check[4],pic:s.checkPic||questionPic(s.check[0])}}:{})})));
+const steps=sections.flatMap((s,i)=>s.teach.map((say,j)=>({skill:s.skill,say,...(s.eqs?.[j]?{eq:s.eqs[j]}:{}),pic:s.pics?.[j]||board(s.code+' · '+(s.boardTitle||s.name),s.boards[j]),/* improve20-r19d-nov3 #1 */...(s.tries?.[j]?{check:{prompt:s.tries[j][0],answer:s.tries[j][1],options:options(s.tries[j],i+j),hint:s.tries[j][4],pic:questionPic(s.tries[j][0])}}:{}),...(j===s.teach.length-1&&(i%3===2||i===sections.length-1)?{check:{prompt:s.check[0],answer:s.check[1],options:options(s.check,i),hint:s.check[4],pic:s.checkPic||questionPic(s.check[0])}}:{})})));
 steps.push({skill:sections.at(-1).skill,summary:true,say:"Start with the account definition, sign convention and currency units. Separate a trade or income transaction from financing and from asset revaluation. Reciprocal quotes move in opposite directions but not by equal percentages. Name the currency market before shifting demand or supply, and distinguish a shift from movement along a curve. Trace relative prices and returns through conditional channels while holding the stated influences fixed. Separate a model tendency from an immediate real-world forecast. Use consistent spending measures, exact or approximate real-rate calculations as requested, and saving-investment identities only with their assumptions.",pic:board('Connect the ideas',['Identify the process and its context','Find the evidence that distinguishes it','Check alternatives and limits'])});
 export default {...{"id":"finance-h-ap-macro-open-economy","subject":"finance","level":5,"grade":9,"standard":"AP Macroeconomics Course and Exam Description, effective Fall 2026, Unit 6, topics 6.1–6.6","title":"Open Economy","goal":"Reconcile international accounts, convert currency quotations and trace policy and return changes through exchange markets, trade and domestic spending.","points":20,"progression":{"requires":["finance-h-ap-macro-long-run-consequences-of-stabilization-policies"],"operations":3,"demand":"Integrate international accounting, reciprocal prices, currency and funds markets, and conditional policy effects using original scenarios and independently solvable data."}},skills:Object.fromEntries(sections.map(s=>[s.skill,s.name])),outline:sections.map(s=>[s.code,s.name,[s.skill]]),steps,
 items(put){let i=0;for(const s of sections)for(const [j,r] of s.questions.entries()){const a=options(r,i++),prompt=r[0]+' '+a.map((v,k)=>'ABC'[k]+': '+v).join('; ')+'. Answer A, B or C.';put(s.skill,prompt,'ABC'[a.indexOf(r[1])],s.qpics?.[j]||questionPic(r[0]),r[4],[r[1]]);}}

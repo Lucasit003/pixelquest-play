@@ -1,5 +1,14 @@
 /* Original course unit. Review record: docs/review/lessons/high-completion/world-geography-u6-accuracy.json.
    Deterministic choices preserve prompt-derived identities. */
+/* improve20-r19d-nov3 #2 (round 19, reviewed Try-its, batch 2): 2 Try-its added as sections[].tries (teach index -> [prompt, key,
+   wrong, wrong, hint]); each sits on the step whose text it checks and uses only that step's facts or a derivation from its stated rule.
+   Reviewed 3 Nov 2026: every key and both wrong options checked against the source named per item, or recomputed by hand. Existing steps,
+   Try-its and question ids are unchanged; new ids come from the new prompts. Numbers in the new items are fictional exercise values.
+   step 5 (NGS 4, teach 1): "Upstream dams on a fictional river trap much of the sediment the river used to carry. What can happen to the delta downstream?" Key: Less sediment arrives, so the delta builds up less new land. Source: the step's own text applied as cause and effect (deltas accumulate river-borne sediment; upstream sediment changes affect downstream places); USGS and NASA Earth Observatory describe deltas as river-sediment deposits.
+   step 15 (NGS 10, teach 1): "A fictional map shades Australia in one colour labelled "Aboriginal culture". What is the problem with it?" Key: It merges many separate peoples, each with its own languages, into one. Source: AIATSIS Map of Indigenous Australia (aiatsis.gov.au/explore/map-indigenous-australia, not opened this pass: it shows hundreds of language and nation groups); the step's own statement applied to a new map.
+   Limits: a CED citation names the College Board course topic whose scope the item sits in; the CED PDFs and the IPCC glossary were not
+   re-opened in this pass (standard definitions). Web sources opened or searched: EPA, EIA, NASA, Te Ara, UN ESCWA. The step's own text
+   was not re-reviewed. Options are 3 (the lesson's existing Try-it format); the hint is the feedback line after a miss. */
 const sections=[
  {
   "code": "NGS 1",
@@ -3363,6 +3372,15 @@ const sections=[
     ],
     "circles": []
    }
+  },
+  "tries": {
+   "1": [
+    "Upstream dams on a fictional river trap much of the sediment the river used to carry. What can happen to the delta downstream?",
+    "Less sediment arrives, so the delta builds up less new land",
+    "More sediment arrives, so the delta grows faster",
+    "Nothing changes downstream of a dam",
+    "Deltas are built from sediment the river drops at its mouth; trapping sediment upstream leaves less to build or renew the delta, and floods, subsidence and salinity can also matter."
+   ]
   }
  },
  {
@@ -4556,7 +4574,16 @@ const sections=[
     "Every resident must have the same experience",
     "A limited observation is not a sufficient basis for a sweeping cultural claim across a diverse region."
    ]
-  ]
+  ],
+  "tries": {
+   "1": [
+    "A fictional map shades Australia in one colour labelled \"Aboriginal culture\". What is the problem with it?",
+    "It merges many separate peoples, each with its own languages, into one",
+    "Aboriginal cultures no longer exist today",
+    "No map can show any cultural pattern",
+    "Aboriginal and Torres Strait Islander peoples are many distinct, living communities with different languages and traditions; a broad map is a generalization."
+   ]
+  }
  },
  {
   "code": "NGS 11",
@@ -5422,7 +5449,7 @@ const sections=[
 const board=(title,lines)=>({t:'board',title,lines,box:true});
 const questionPic=prompt=>{const lines=[];let line='';for(const word of prompt.split(' ')){if((line+' '+word).trim().length>34){lines.push(line);line=word;}else line+=(line?' ':'')+word;}if(line)lines.push(line);return board('Read the evidence',lines);};
 const options=(r,i)=>{const a=r.slice(2,4);a.splice(i%3,0,r[1]);return a;};
-const steps=sections.flatMap((s,i)=>s.teach.map((say,j)=>({skill:s.skill,say,...(s.eqs?.[j]?{eq:s.eqs[j]}:{}),pic:s.pics?.[j]||board(s.code+' · '+(s.boardTitle||s.name),s.boards[j]),...(j===s.teach.length-1&&(i%3===2||i===sections.length-1)?{check:{prompt:s.check[0],answer:s.check[1],options:options(s.check,i),hint:s.check[4],pic:s.checkPic||questionPic(s.check[0])}}:{})})));
+const steps=sections.flatMap((s,i)=>s.teach.map((say,j)=>({skill:s.skill,say,...(s.eqs?.[j]?{eq:s.eqs[j]}:{}),pic:s.pics?.[j]||board(s.code+' · '+(s.boardTitle||s.name),s.boards[j]),/* improve20-r19d-nov3 #1 */...(s.tries?.[j]?{check:{prompt:s.tries[j][0],answer:s.tries[j][1],options:options(s.tries[j],i+j),hint:s.tries[j][4],pic:questionPic(s.tries[j][0])}}:{}),...(j===s.teach.length-1&&(i%3===2||i===sections.length-1)?{check:{prompt:s.check[0],answer:s.check[1],options:options(s.check,i),hint:s.check[4],pic:s.checkPic||questionPic(s.check[0])}}:{})})));
 steps.push({skill:sections.at(-1).skill,summary:true,say:"Locate places with coordinates, scale and a stated regional convention before explaining their connections. Distinguish continental collision, volcanic arcs, coral atolls and river deltas, and relate climates to circulation, relief and hemisphere without assuming uniform conditions. Read population and climate data with the correct denominator and time period. Recognize diverse living cultures and historical exchange, colonial effects and community agency. Trace economic and environmental networks across land and ocean, assess who benefits and who bears costs, and distinguish a measured pattern from proof of its cause. Compare local and regional outcomes rather than relying on a single average or a policy label.",pic:board('Connect the ideas',['Identify the process and its context','Find the evidence that distinguishes it','Check alternatives and limits'])});
 export default {...{"id":"geography-h-world-geography-asia-and-oceania","subject":"geography","level":5,"grade":9,"standard":"Geography for Life: National Geography Standards (2nd ed., 2012), standards 1, 4, 5, 9, 10, 11 and 14","title":"Asia and Oceania","goal":"Use spatial evidence to compare the environments, populations, cultures and economic connections of Asia and Oceania, and evaluate regional environmental decisions.","points":20,"progression":{"requires":["geography-h-world-geography-europe-and-africa","geography-h-world-geography-climate-and-weather"],"operations":3,"demand":"Use coordinates and scale, explain regional processes, compare population and economic data, and evaluate linked environmental evidence."}},skills:Object.fromEntries(sections.map(s=>[s.skill,s.name])),outline:sections.map(s=>[s.code,s.name,[s.skill]]),steps,
 items(put){let i=0;for(const s of sections)for(const [j,r] of s.questions.entries()){const a=options(r,i++),prompt=r[0]+' '+a.map((v,k)=>'ABC'[k]+': '+v).join('; ')+'. Answer A, B or C.';put(s.skill,prompt,'ABC'[a.indexOf(r[1])],s.qpics?.[j]||questionPic(r[0]),r[4],[r[1]]);}}

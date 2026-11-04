@@ -1,5 +1,15 @@
 /* Original course unit. Review record: docs/review/lessons/high-completion/ap-macro-u5-accuracy.json.
    Deterministic choices preserve prompt-derived identities. */
+/* improve20-r19d-nov3 #2 (round 19, reviewed Try-its, batch 2): 3 Try-its added as sections[].tries (teach index -> [prompt, key,
+   wrong, wrong, hint]); each sits on the step whose text it checks and uses only that step's facts or a derivation from its stated rule.
+   Reviewed 3 Nov 2026: every key and both wrong options checked against the source named per item, or recomputed by hand. Existing steps,
+   Try-its and question ids are unchanged; new ids come from the new prompts. Numbers in the new items are fictional exercise values.
+   step 5 (5.2, teach 0): "A fictional economy sits at 5% unemployment and 3% inflation on a fixed short-run Phillips curve. Government spending then rises. Which new point fits this movement?" Key: 4% unemployment and 5% inflation. Source: AP Macro CED topic 5.2 (The Phillips Curve); the step's rule applied to a new case.
+   step 8 (5.2, teach 3): "A fictional model uses inflation = expected inflation − 2 × (unemployment − natural rate). Expected inflation is 2%, the natural rate 5% and unemployment 6%. What is inflation?" Key: 0%. Source: derivation from the step's own equation.
+   step 16 (5.5, teach 1): "A fictional loanable-funds model has S = 40 + 10r and I = 100 − 10r. Government borrowing rises from 0 to 40, and private investment falls from 70 to 50. Why does investment fall by 20 rather than 40?" Key: The higher real rate draws out 20 more saving. Source: derivation from the step's model (CED topic 5.5, Crowding Out).
+   Limits: a CED citation names the College Board course topic whose scope the item sits in; the CED PDFs and the IPCC glossary were not
+   re-opened in this pass (standard definitions). Web sources opened or searched: EPA, EIA, NASA, Te Ara, UN ESCWA. The step's own text
+   was not re-reviewed. Options are 3 (the lesson's existing Try-it format); the hint is the feedback line after a miss. */
 const sections=[
  {
   "code": "5.1",
@@ -1315,7 +1325,23 @@ const sections=[
     ]
    },
    null
-  ]
+  ],
+  "tries": {
+   "0": [
+    "A fictional economy sits at 5% unemployment and 3% inflation on a fixed short-run Phillips curve. Government spending then rises. Which new point fits this movement?",
+    "4% unemployment and 5% inflation",
+    "6% unemployment and 5% inflation",
+    "4% unemployment and 1% inflation",
+    "A demand expansion moves along a downward-sloping short-run Phillips curve: unemployment falls while inflation rises."
+   ],
+   "3": [
+    "A fictional model uses inflation = expected inflation − 2 × (unemployment − natural rate). Expected inflation is 2%, the natural rate 5% and unemployment 6%. What is inflation?",
+    "0%",
+    "4%",
+    "−2%",
+    "2 − 2 × (6 − 5) = 2 − 2 = 0%. Unemployment above the natural rate pulls inflation below its expected value."
+   ]
+  }
  },
  {
   "code": "5.3",
@@ -2706,7 +2732,16 @@ const sections=[
      ]
     ]
    }
-  ]
+  ],
+  "tries": {
+   "1": [
+    "A fictional loanable-funds model has S = 40 + 10r and I = 100 − 10r. Government borrowing rises from 0 to 40, and private investment falls from 70 to 50. Why does investment fall by 20 rather than 40?",
+    "The higher real rate draws out 20 more saving",
+    "Government borrowing is not part of the demand for funds",
+    "The real interest rate falls from 3 to 1",
+    "Equilibrium needs S = I + 40. The real rate rises from 3 to 5, so saving rises by 20 and private investment falls by 20."
+   ]
+  }
  },
  {
   "code": "5.6",
@@ -4867,7 +4902,7 @@ const sections=[
 const board=(title,lines)=>({t:'board',title,lines,box:true});
 const questionPic=prompt=>{const lines=[];let line='';for(const word of prompt.split(' ')){if((line+' '+word).trim().length>34){lines.push(line);line=word;}else line+=(line?' ':'')+word;}if(line)lines.push(line);return board('Read the evidence',lines);};
 const options=(r,i)=>{const a=r.slice(2,4);a.splice(i%3,0,r[1]);return a;};
-const steps=sections.flatMap((s,i)=>s.teach.map((say,j)=>({skill:s.skill,say,...(s.eqs?.[j]?{eq:s.eqs[j]}:{}),pic:s.pics?.[j]||board(s.code+' · '+(s.boardTitle||s.name),s.boards[j]),...(j===s.teach.length-1&&(i%3===2||i===sections.length-1)?{check:{prompt:s.check[0],answer:s.check[1],options:options(s.check,i),hint:s.check[4],pic:s.checkPic||questionPic(s.check[0])}}:{})})));
+const steps=sections.flatMap((s,i)=>s.teach.map((say,j)=>({skill:s.skill,say,...(s.eqs?.[j]?{eq:s.eqs[j]}:{}),pic:s.pics?.[j]||board(s.code+' · '+(s.boardTitle||s.name),s.boards[j]),/* improve20-r19d-nov3 #1 */...(s.tries?.[j]?{check:{prompt:s.tries[j][0],answer:s.tries[j][1],options:options(s.tries[j],i+j),hint:s.tries[j][4],pic:questionPic(s.tries[j][0])}}:{}),...(j===s.teach.length-1&&(i%3===2||i===sections.length-1)?{check:{prompt:s.check[0],answer:s.check[1],options:options(s.check,i),hint:s.check[4],pic:s.checkPic||questionPic(s.check[0])}}:{})})));
 steps.push({skill:sections.at(-1).skill,summary:true,say:"Choose the model and horizon before predicting policy effects. Combine fiscal and monetary channels without assuming their rate effects agree. Distinguish movement along the SRPC from shifts and the natural-rate LRPC. Use the quantity equation with consistent price scales and explicit growth assumptions. Reconcile budget flows with debt stocks without double-counting interest. Separate private investment from total borrowing in crowding-out analysis. Evaluate real output per person, productivity and capacity rather than nominal totals alone, and assess policy mechanisms, costs and evidence before claiming a growth benefit.",pic:board('Connect the ideas',['Identify the process and its context','Find the evidence that distinguishes it','Check alternatives and limits'])});
 export default {...{"id":"finance-h-ap-macro-long-run-consequences-of-stabilization-policies","subject":"finance","level":5,"grade":9,"standard":"AP Macroeconomics Course and Exam Description, effective Fall 2026, Unit 5, topics 5.1–5.7","title":"Long-Run Consequences of Stabilization Policies","goal":"Trace combined policies, inflation expectations, money growth, debt and investment through explicit models, and distinguish demand recovery from long-run capacity growth.","points":20,"progression":{"requires":["finance-h-ap-macro-financial-sector","finance-h-ap-macro-national-income-and-price-determination"],"operations":3,"demand":"Integrate graphs and policy mechanisms, solve original accounts and equilibria, and distinguish conditional model predictions from causal evidence."}},skills:Object.fromEntries(sections.map(s=>[s.skill,s.name])),outline:sections.map(s=>[s.code,s.name,[s.skill]]),steps,
 items(put){let i=0;for(const s of sections)for(const [j,r] of s.questions.entries()){const a=options(r,i++),prompt=r[0]+' '+a.map((v,k)=>'ABC'[k]+': '+v).join('; ')+'. Answer A, B or C.';put(s.skill,prompt,'ABC'[a.indexOf(r[1])],s.qpics?.[j]||questionPic(r[0]),r[4],[r[1]]);}}

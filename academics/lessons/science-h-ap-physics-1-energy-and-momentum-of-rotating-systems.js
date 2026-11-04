@@ -1,5 +1,16 @@
 /* Original course unit. Review record: docs/review/lessons/high-completion/ap-physics1-u6-accuracy.json.
    Deterministic choices preserve prompt-derived identities. */
+/* improve20-r19d-nov3 #2 (round 19, reviewed Try-its, batch 2): 4 Try-its added as sections[].tries (teach index -> [prompt, key,
+   wrong, wrong, hint]); each sits on the step whose text it checks and uses only that step's facts or a derivation from its stated rule.
+   Reviewed 3 Nov 2026: every key and both wrong options checked against the source named per item, or recomputed by hand. Existing steps,
+   Try-its and question ids are unchanged; new ids come from the new prompts. Numbers in the new items are fictional exercise values.
+   step 5 (6.2, teach 0): "A constant +5 N·m torque turns a rotor through +4 rad. How much work does the torque do?" Key: 20 J. Source: derivation from W = τΔθ (AP Physics 1 CED topic 6.2).
+   step 9 (6.3, teach 0): "A rotor with I = 3 kg·m² spins at ω = −2 rad/s. What is its angular momentum about the axis?" Key: −6 kg·m²/s. Source: derivation from L = Iω (CED topic 6.3).
+   step 17 (6.4, teach 3): "A 2 kg point mass moving tangentially at 3 m/s at radius 1 m sticks to a stationary rotor with I = 4 kg·m². Axle torque is negligible. What is the final angular speed?" Key: 1 rad/s. Source: derivation from conservation of angular momentum (CED topic 6.4); a variant of the step's example.
+   step 22 (6.5, teach 4): "A wheel with no spin slides to the left on a rough, stationary floor. Which way does kinetic friction on the wheel point?" Key: Right, against the sliding at the contact. Source: CED topic 6.5 (Rolling); the mirror image of the step's case.
+   Limits: a CED citation names the College Board course topic whose scope the item sits in; the CED PDFs and the IPCC glossary were not
+   re-opened in this pass (standard definitions). Web sources opened or searched: EPA, EIA, NASA, Te Ara, UN ESCWA. The step's own text
+   was not re-reviewed. Options are 3 (the lesson's existing Try-it format); the hint is the feedback line after a miss. */
 const sections=[
  {
   "code": "6.1",
@@ -1178,6 +1189,15 @@ const sections=[
      ]
     ]
    }
+  },
+  "tries": {
+   "0": [
+    "A constant +5 N·m torque turns a rotor through +4 rad. How much work does the torque do?",
+    "20 J",
+    "1.25 J",
+    "9 J",
+    "For constant torque, W = τΔθ with the angle in radians: 5 × 4 = 20 J."
+   ]
   }
  },
  {
@@ -2432,6 +2452,15 @@ const sections=[
      "+3 N·m / 3 s"
     ]
    ]
+  },
+  "tries": {
+   "0": [
+    "A rotor with I = 3 kg·m² spins at ω = −2 rad/s. What is its angular momentum about the axis?",
+    "−6 kg·m²/s",
+    "+6 kg·m²/s",
+    "−12 kg·m²/s",
+    "L = Iω keeps the sign of ω: 3 × (−2) = −6. Angular momentum does not square ω; kinetic energy does."
+   ]
   }
  },
  {
@@ -2879,6 +2908,15 @@ const sections=[
      ]
     ]
    }
+  },
+  "tries": {
+   "3": [
+    "A 2 kg point mass moving tangentially at 3 m/s at radius 1 m sticks to a stationary rotor with I = 4 kg·m². Axle torque is negligible. What is the final angular speed?",
+    "1 rad/s",
+    "1.5 rad/s",
+    "3 rad/s",
+    "Initial L = 2 × 3 × 1 = 6 kg·m²/s. Combined inertia is 4 + 2 × 1² = 6 kg·m², so ω = 6 ÷ 6 = 1 rad/s."
+   ]
   }
  },
  {
@@ -3440,6 +3478,15 @@ const sections=[
      ]
     ]
    }
+  },
+  "tries": {
+   "4": [
+    "A wheel with no spin slides to the left on a rough, stationary floor. Which way does kinetic friction on the wheel point?",
+    "Right, against the sliding at the contact",
+    "Left, along the sliding",
+    "Nowhere: a wheel with no spin feels no friction",
+    "Kinetic friction opposes the relative sliding at the contact, so for leftward sliding it points right and starts counterclockwise spin."
+   ]
   }
  },
  {
@@ -6318,7 +6365,7 @@ const sections=[
 const board=(title,lines)=>({t:'board',title,lines,box:true});
 const questionPic=prompt=>{const lines=[];let line='';for(const word of prompt.split(' ')){if((line+' '+word).trim().length>34){lines.push(line);line=word;}else line+=(line?' ':'')+word;}if(line)lines.push(line);return board('Read the evidence',lines);};
 const options=(r,i)=>{const a=r.slice(2,4);a.splice(i%3,0,r[1]);return a;};
-const steps=sections.flatMap((s,i)=>s.teach.map((say,j)=>({skill:s.skill,say,...(s.eqs?.[j]?{eq:s.eqs[j]}:{}),pic:s.pics?.[j]||board(s.code+' · '+(s.boardTitle||s.name),s.boards[j]),...(j===s.teach.length-1&&(i%3===2||i===sections.length-1)?{check:{prompt:s.check[0],answer:s.check[1],options:options(s.check,i),hint:s.check[4],pic:s.checkPic||questionPic(s.check[0])}}:{})})));
+const steps=sections.flatMap((s,i)=>s.teach.map((say,j)=>({skill:s.skill,say,...(s.eqs?.[j]?{eq:s.eqs[j]}:{}),pic:s.pics?.[j]||board(s.code+' · '+(s.boardTitle||s.name),s.boards[j]),/* improve20-r19d-nov3 #1 */...(s.tries?.[j]?{check:{prompt:s.tries[j][0],answer:s.tries[j][1],options:options(s.tries[j],i+j),hint:s.tries[j][4],pic:questionPic(s.tries[j][0])}}:{}),...(j===s.teach.length-1&&(i%3===2||i===sections.length-1)?{check:{prompt:s.check[0],answer:s.check[1],options:options(s.check,i),hint:s.check[4],pic:s.checkPic||questionPic(s.check[0])}}:{})})));
 steps.push({skill:sections.at(-1).skill,summary:true,say:"Choose the system and a consistent reference axis. Kinetic energy is a nonnegative scalar, while angular momentum uses a signed convention in the one-axis model. Torque-angle area transfers energy; torque-time area transfers angular momentum. Zero external torque can conserve angular momentum without conserving rotational kinetic energy. For rolling, include both center-of-mass motion and spin and justify any no-slip relation. For satellites, use center-to-center distance, the gravitational potential zero at infinity and the correct circular, elliptical or escape conditions. Check graphs, units, energy accounts and limiting cases.",pic:board('Connect the ideas',['Identify the process and its context','Find the evidence that distinguishes it','Check alternatives and limits'])});
 export default {...{"id":"science-h-ap-physics-1-energy-and-momentum-of-rotating-systems","subject":"science","level":5,"grade":9,"standard":"AP Physics 1 CED, effective Fall 2024 with Fall 2026 clarifications, Unit 6, topics 6.1–6.6","title":"Energy and Momentum of Rotating Systems","goal":"Choose energy, angular impulse or angular momentum conservation to explain rotating, rolling and orbiting systems with explicit system boundaries.","points":20,"progression":{"requires":["science-h-ap-physics-1-torque-and-rotational-dynamics"],"operations":3,"demand":"Interpret graphs, select system boundaries and solve energy and angular-momentum balances."}},skills:Object.fromEntries(sections.map(s=>[s.skill,s.name])),outline:sections.map(s=>[s.code,s.name,[s.skill]]),steps,
 items(put){let i=0;for(const s of sections)for(const [j,r] of s.questions.entries()){const a=options(r,i++),prompt=r[0]+' '+a.map((v,k)=>'ABC'[k]+': '+v).join('; ')+'. Answer A, B or C.';put(s.skill,prompt,'ABC'[a.indexOf(r[1])],s.qpics?.[j]||questionPic(r[0]),r[4],[r[1]]);}}

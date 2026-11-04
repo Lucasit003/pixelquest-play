@@ -1,5 +1,16 @@
 /* Original course unit. Review record: docs/review/lessons/high-completion/ap-physics1-u5-accuracy.json.
    Deterministic choices preserve prompt-derived identities. */
+/* improve20-r19d-nov3 #2 (round 19, reviewed Try-its, batch 2): 4 Try-its added as sections[].tries (teach index -> [prompt, key,
+   wrong, wrong, hint]); each sits on the step whose text it checks and uses only that step's facts or a derivation from its stated rule.
+   Reviewed 3 Nov 2026: every key and both wrong options checked against the source named per item, or recomputed by hand. Existing steps,
+   Try-its and question ids are unchanged; new ids come from the new prompts. Numbers in the new items are fictional exercise values.
+   step 5 (5.2, teach 0): "A point 0.5 m from a fixed axis turns through 2 rad. How far does it travel along its arc?" Key: 1 m. Source: derivation from s = rθ (AP Physics 1 CED topic 5.2).
+   step 9 (5.3, teach 0): "A 10 N force acts perpendicular to a wrench, 0.3 m from the axis. What is the torque magnitude?" Key: 3 N·m. Source: derivation from τ = rF sinφ (CED topic 5.3).
+   step 15 (5.4, teach 2): "An object has Icm = 3 kg·m² and mass 2 kg. What is its inertia about a parallel axis 1 m from the center of mass?" Key: 5 kg·m². Source: derivation from the parallel-axis theorem (CED topic 5.4).
+   step 20 (5.5, teach 3): "On a massless level seesaw, a 6 N downward force acts 2 m left of the pivot. What downward force 3 m right of the pivot balances it?" Key: 4 N. Source: derivation from torque balance (CED topic 5.5).
+   Limits: a CED citation names the College Board course topic whose scope the item sits in; the CED PDFs and the IPCC glossary were not
+   re-opened in this pass (standard definitions). Web sources opened or searched: EPA, EIA, NASA, Te Ara, UN ESCWA. The step's own text
+   was not re-reviewed. Options are 3 (the lesson's existing Try-it format); the hint is the feedback line after a miss. */
 const sections=[
  {
   "code": "5.1",
@@ -1594,6 +1605,15 @@ const sections=[
      ]
     ]
    }
+  },
+  "tries": {
+   "0": [
+    "A point 0.5 m from a fixed axis turns through 2 rad. How far does it travel along its arc?",
+    "1 m",
+    "0.25 m",
+    "4 m",
+    "Arc length s = rθ with θ in radians: 0.5 × 2 = 1 m."
+   ]
   }
  },
  {
@@ -2311,6 +2331,15 @@ const sections=[
      "3"
     ]
    ]
+  },
+  "tries": {
+   "0": [
+    "A 10 N force acts perpendicular to a wrench, 0.3 m from the axis. What is the torque magnitude?",
+    "3 N·m",
+    "33.3 N·m",
+    "10.3 N·m",
+    "With the force perpendicular, τ = rF = 0.3 × 10 = 3 N·m."
+   ]
   }
  },
  {
@@ -2799,6 +2828,15 @@ const sections=[
      ]
     ]
    }
+  },
+  "tries": {
+   "2": [
+    "An object has Icm = 3 kg·m² and mass 2 kg. What is its inertia about a parallel axis 1 m from the center of mass?",
+    "5 kg·m²",
+    "1 kg·m²",
+    "3 kg·m²",
+    "Parallel-axis theorem: I = Icm + Md² = 3 + 2 × 1² = 5 kg·m²."
+   ]
   }
  },
  {
@@ -3306,6 +3344,15 @@ const sections=[
      ]
     ]
    }
+  },
+  "tries": {
+   "3": [
+    "On a massless level seesaw, a 6 N downward force acts 2 m left of the pivot. What downward force 3 m right of the pivot balances it?",
+    "4 N",
+    "9 N",
+    "6 N",
+    "At balance the two torques are equal: 6 × 2 = 12 N·m, so the force is 12 ÷ 3 = 4 N."
+   ]
   }
  },
  {
@@ -3840,7 +3887,7 @@ const sections=[
 const board=(title,lines)=>({t:'board',title,lines,box:true});
 const questionPic=prompt=>{const lines=[];let line='';for(const word of prompt.split(' ')){if((line+' '+word).trim().length>34){lines.push(line);line=word;}else line+=(line?' ':'')+word;}if(line)lines.push(line);return board('Read the evidence',lines);};
 const options=(r,i)=>{const a=r.slice(2,4);a.splice(i%3,0,r[1]);return a;};
-const steps=sections.flatMap((s,i)=>s.teach.map((say,j)=>({skill:s.skill,say,...(s.eqs?.[j]?{eq:s.eqs[j]}:{}),pic:s.pics?.[j]||board(s.code+' · '+(s.boardTitle||s.name),s.boards[j]),...(j===s.teach.length-1&&(i%3===2||i===sections.length-1)?{check:{prompt:s.check[0],answer:s.check[1],options:options(s.check,i),hint:s.check[4],pic:s.checkPic||questionPic(s.check[0])}}:{})})));
+const steps=sections.flatMap((s,i)=>s.teach.map((say,j)=>({skill:s.skill,say,...(s.eqs?.[j]?{eq:s.eqs[j]}:{}),pic:s.pics?.[j]||board(s.code+' · '+(s.boardTitle||s.name),s.boards[j]),/* improve20-r19d-nov3 #1 */...(s.tries?.[j]?{check:{prompt:s.tries[j][0],answer:s.tries[j][1],options:options(s.tries[j],i+j),hint:s.tries[j][4],pic:questionPic(s.tries[j][0])}}:{}),...(j===s.teach.length-1&&(i%3===2||i===sections.length-1)?{check:{prompt:s.check[0],answer:s.check[1],options:options(s.check,i),hint:s.check[4],pic:s.checkPic||questionPic(s.check[0])}}:{})})));
 steps.push({skill:sections.at(-1).skill,summary:true,say:"Choose the body, axis, viewing side and positive sense first. Radians connect angular quantities to arc length and tangential motion. Keep inward acceleration separate from tangential acceleration, and use constant-acceleration equations only when justified. Torque uses a perpendicular lever arm and a sign; inertia uses positive squared distances about that same axis. Static equilibrium requires rest and both force and moment balance. In dynamics, include every external torque and solve any linked translational motion as well. Check units, limiting cases, graph meanings, slipping assumptions and experimental uncertainty before accepting a result.",pic:board('Connect the ideas',['Identify the process and its context','Find the evidence that distinguishes it','Check alternatives and limits'])});
 export default {...{"id":"science-h-ap-physics-1-torque-and-rotational-dynamics","subject":"science","level":5,"grade":9,"standard":"AP Physics 1 CED, effective Fall 2024 with Fall 2026 clarifications, Unit 5, topics5.1–5.6","title":"Torque and Rotational Dynamics","goal":"Describe rigid rotation, connect angular and linear motion, calculate moments and axis-dependent inertia, and solve force and torque balances with explicit physical assumptions.","points":20,"progression":{"requires":["science-h-ap-physics-1-linear-momentum"],"operations":3,"demand":"Interpret signed angular graphs, resolve perpendicular moments, sum mass-distance contributions and solve linked force/torque equations."}},skills:Object.fromEntries(sections.map(s=>[s.skill,s.name])),outline:sections.map(s=>[s.code,s.name,[s.skill]]),steps,
 items(put){let i=0;for(const s of sections)for(const [j,r] of s.questions.entries()){const a=options(r,i++),prompt=r[0]+' '+a.map((v,k)=>'ABC'[k]+': '+v).join('; ')+'. Answer A, B or C.';put(s.skill,prompt,'ABC'[a.indexOf(r[1])],s.qpics?.[j]||questionPic(r[0]),r[4],[r[1]]);}}

@@ -1,5 +1,15 @@
 /* Original course unit. Review record: docs/review/lessons/high-completion/ap-micro-u6-accuracy.json.
    Deterministic choices preserve prompt-derived identities. */
+/* improve20-r19d-nov3 #2 (round 19, reviewed Try-its, batch 2): 3 Try-its added as sections[].tries (teach index -> [prompt, key,
+   wrong, wrong, hint]); each sits on the step whose text it checks and uses only that step's facts or a derivation from its stated rule.
+   Reviewed 3 Nov 2026: every key and both wrong options checked against the source named per item, or recomputed by hand. Existing steps,
+   Try-its and question ids are unchanged; new ids come from the new prompts. Numbers in the new items are fictional exercise values.
+   step 5 (6.2, teach 0): "At a fictional quantity, marginal private cost is 20 and marginal external cost is 5. What is marginal social cost?" Key: 25. Source: AP Micro CED topic 6.2 (Externalities); derivation from the step's equation.
+   step 10 (6.3, teach 0): "In an unfenced public forest, anyone can gather firewood, and wood one person takes is gone for everyone else. What kind of good is the firewood?" Key: A common resource. Source: CED topic 6.3 (Public and Private Goods); the step's classification applied to a new case.
+   step 18 (6.4, teach 4): "A fictional utility has total cost 240 + 10Q. As it serves more customers, what happens to its average total cost?" Key: It falls toward 10. Source: derivation, a variant of the step's cost function (CED topic 6.4, The Effects of Government Intervention in Different Market Structures).
+   Limits: a CED citation names the College Board course topic whose scope the item sits in; the CED PDFs and the IPCC glossary were not
+   re-opened in this pass (standard definitions). Web sources opened or searched: EPA, EIA, NASA, Te Ara, UN ESCWA. The step's own text
+   was not re-reviewed. Options are 3 (the lesson's existing Try-it format); the hint is the feedback line after a miss. */
 const sections=[
  {
   "code": "6.1",
@@ -2522,7 +2532,16 @@ const sections=[
     ]
    }
   },
-  "boardTitle": "Externalities"
+  "boardTitle": "Externalities",
+  "tries": {
+   "0": [
+    "At a fictional quantity, marginal private cost is 20 and marginal external cost is 5. What is marginal social cost?",
+    "25",
+    "15",
+    "4",
+    "With no other spillovers, MSC = MPC + MEC = 20 + 5 = 25."
+   ]
+  }
  },
  {
   "code": "6.3",
@@ -3169,6 +3188,15 @@ const sections=[
      "4",
      "4"
     ]
+   ]
+  },
+  "tries": {
+   "0": [
+    "In an unfenced public forest, anyone can gather firewood, and wood one person takes is gone for everyone else. What kind of good is the firewood?",
+    "A common resource",
+    "A public good",
+    "A club good",
+    "It is rival (one person's wood is gone for others) and hard to exclude people from, so it is a common resource."
    ]
   }
  },
@@ -5519,7 +5547,16 @@ const sections=[
     ]
    }
   },
-  "boardTitle": "Government policy"
+  "boardTitle": "Government policy",
+  "tries": {
+   "4": [
+    "A fictional utility has total cost 240 + 10Q. As it serves more customers, what happens to its average total cost?",
+    "It falls toward 10",
+    "It rises with each unit",
+    "It stays constant at 10",
+    "Average total cost is 240/Q + 10. The fixed 240 spreads over more units, so ATC falls toward the marginal cost of 10."
+   ]
+  }
  },
  {
   "code": "6.5",
@@ -6225,7 +6262,7 @@ const sections=[
 const board=(title,lines)=>({t:'board',title,lines,box:true});
 const questionPic=prompt=>{const lines=[];let line='';for(const word of prompt.split(' ')){if((line+' '+word).trim().length>34){lines.push(line);line=word;}else line+=(line?' ':'')+word;}if(line)lines.push(line);return board('Read the evidence',lines);};
 const options=(r,i)=>{const a=r.slice(2,4);a.splice(i%3,0,r[1]);return a;};
-const steps=sections.flatMap((s,i)=>s.teach.map((say,j)=>({skill:s.skill,say,...(s.eqs?.[j]?{eq:s.eqs[j]}:{}),pic:s.pics?.[j]||board(s.code+' · '+(s.boardTitle||s.name),s.boards[j]),...(j===s.teach.length-1&&(i%3===2||i===sections.length-1)?{check:{prompt:s.check[0],answer:s.check[1],options:options(s.check,i),hint:s.check[4],pic:s.checkPic||questionPic(s.check[0])}}:{})})));
+const steps=sections.flatMap((s,i)=>s.teach.map((say,j)=>({skill:s.skill,say,...(s.eqs?.[j]?{eq:s.eqs[j]}:{}),pic:s.pics?.[j]||board(s.code+' · '+(s.boardTitle||s.name),s.boards[j]),/* improve20-r19d-nov3 #1 */...(s.tries?.[j]?{check:{prompt:s.tries[j][0],answer:s.tries[j][1],options:options(s.tries[j],i+j),hint:s.tries[j][4],pic:questionPic(s.tries[j][0])}}:{}),...(j===s.teach.length-1&&(i%3===2||i===sections.length-1)?{check:{prompt:s.check[0],answer:s.check[1],options:options(s.check,i),hint:s.check[4],pic:s.checkPic||questionPic(s.check[0])}}:{})})));
 steps.push({skill:sections.at(-1).skill,summary:true,say:"Start with the social benchmark and count each relevant cost and benefit once. Distinguish marginal from total values, private payments from real resource costs, and market power from externalities or information problems. Identify rivalry and exclusion instead of classifying a good by its owner. Trace tax or subsidy wedges, fixed versus marginal costs, and participation as well as output. Policy effects depend on structure and implementation. Keep income, wealth, poverty and inequality separate; compare definitions and evidence before making a causal or fairness claim.",pic:board('Connect the ideas',['Identify the process and its context','Find the evidence that distinguishes it','Check alternatives and limits'])});
 export default {...{"id":"finance-h-ap-micro-market-failure-and-the-role-of-government","subject":"finance","level":5,"grade":9,"standard":"AP Microeconomics Course and Exam Description, effective Fall 2026, Unit 6, topics 6.1–6.5","title":"Market Failure and the Role of Government","goal":"Compare private and social incentives, identify spillovers and goods, evaluate policies under explicit market assumptions, and interpret income and wealth inequality.","points":20,"progression":{"requires":["finance-h-ap-micro-factor-markets"],"operations":3,"demand":"Compare feasible social gains, solve policy wedges and interpret graphical and distributional evidence."}},skills:Object.fromEntries(sections.map(s=>[s.skill,s.name])),outline:sections.map(s=>[s.code,s.name,[s.skill]]),steps,
 items(put){let i=0;for(const s of sections)for(const [j,r] of s.questions.entries()){const a=options(r,i++),prompt=r[0]+' '+a.map((v,k)=>'ABC'[k]+': '+v).join('; ')+'. Answer A, B or C.';put(s.skill,prompt,'ABC'[a.indexOf(r[1])],s.qpics?.[j]||questionPic(r[0]),r[4],[r[1]]);}}

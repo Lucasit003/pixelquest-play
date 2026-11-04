@@ -1,5 +1,16 @@
 /* Original course unit. Review record: docs/review/lessons/high-completion/ap-hug-u7-accuracy.json.
    Deterministic choices preserve prompt-derived identities. */
+/* improve20-r19d-nov3 #2 (round 19, reviewed Try-its, batch 2): 4 Try-its added as sections[].tries (teach index -> [prompt, key,
+   wrong, wrong, hint]); each sits on the step whose text it checks and uses only that step's facts or a derivation from its stated rule.
+   Reviewed 3 Nov 2026: every key and both wrong options checked against the source named per item, or recomputed by hand. Existing steps,
+   Try-its and question ids are unchanged; new ids come from the new prompts. Numbers in the new items are fictional exercise values.
+   step 5 (7.2, teach 1): "A fictional mill turns 10 tonnes of ore into 2 tonnes of metal. By the step's rule, where does it tend to locate, other things equal?" Key: Close to the mine. Source: AP HuG CED topic 7.2 (Economic Sectors and Patterns); the step's own rule applied to a new case.
+   step 10 (7.3, teach 2): "A fictional town has 50,000 residents and records 30 infant deaths among 2,000 live births. What is its infant mortality rate?" Key: 15 per 1,000. Source: UN ESCWA SD glossary, infant mortality rate (unescwa.org/sd-glossary/infant-mortality-rate); Destatis glossary; derivation.
+   step 17 (7.5, teach 1): "A fictional country hosts high-tech design offices and also low-wage assembly plants making goods for export. Which world-systems position describes it?" Key: Semiperiphery. Source: AP HuG CED topic 7.5 (Theories of Development); the step's definition applied to a new case.
+   step 25 (7.7, teach 2): "A fictional factory uses just-in-time delivery with very small buffers. A storm delays a supplier's truck. What is the likely effect?" Key: The assembly line may stall for lack of parts. Source: AP HuG CED topic 7.7 (Changes as a Result of the World Economy); cause and effect from the step's text.
+   Limits: a CED citation names the College Board course topic whose scope the item sits in; the CED PDFs and the IPCC glossary were not
+   re-opened in this pass (standard definitions). Web sources opened or searched: EPA, EIA, NASA, Te Ara, UN ESCWA. The step's own text
+   was not re-reviewed. Options are 3 (the lesson's existing Try-it format); the hint is the feedback line after a miss. */
 const sections=[
  {
   "code": "7.1",
@@ -512,7 +523,16 @@ const sections=[
     ]
    },
    null
-  ]
+  ],
+  "tries": {
+   "1": [
+    "A fictional mill turns 10 tonnes of ore into 2 tonnes of metal. By the step's rule, where does it tend to locate, other things equal?",
+    "Close to the mine",
+    "Close to the buyers of the metal",
+    "Halfway between, since weight does not affect cost",
+    "More weight goes in than comes out, so moving the light metal is cheaper than moving the heavy ore. This is a tendency, not a law."
+   ]
+  }
  },
  {
   "code": "7.3",
@@ -1173,7 +1193,16 @@ const sections=[
     ],
     "circles": []
    }
-  ]
+  ],
+  "tries": {
+   "2": [
+    "A fictional town has 50,000 residents and records 30 infant deaths among 2,000 live births. What is its infant mortality rate?",
+    "15 per 1,000",
+    "0.6 per 1,000",
+    "150 per 1,000",
+    "Divide by live births, not residents: 30 ÷ 2,000 × 1,000 = 15."
+   ]
+  }
  },
  {
   "code": "7.4",
@@ -1835,7 +1864,16 @@ const sections=[
     ],
     "circles": []
    }
-  ]
+  ],
+  "tries": {
+   "1": [
+    "A fictional country hosts high-tech design offices and also low-wage assembly plants making goods for export. Which world-systems position describes it?",
+    "Semiperiphery",
+    "Core",
+    "Periphery",
+    "It mixes core-like and peripheral-like activities, which is what the semiperiphery describes."
+   ]
+  }
  },
  {
   "code": "7.6",
@@ -3777,7 +3815,16 @@ const sections=[
     ],
     "circles": []
    }
-  ]
+  ],
+  "tries": {
+   "2": [
+    "A fictional factory uses just-in-time delivery with very small buffers. A storm delays a supplier's truck. What is the likely effect?",
+    "The assembly line may stall for lack of parts",
+    "Its storage costs rise sharply",
+    "Nothing, because just-in-time keeps large stocks",
+    "Just-in-time holds little stock ahead of use, so a late delivery can stop production when buffers are small."
+   ]
+  }
  },
  {
   "code": "7.8",
@@ -4092,7 +4139,7 @@ const sections=[
 const board=(title,lines)=>({t:'board',title,lines,box:true});
 const questionPic=prompt=>{const lines=[];let line='';for(const word of prompt.split(' ')){if((line+' '+word).trim().length>34){lines.push(line);line=word;}else line+=(line?' ':'')+word;}if(line)lines.push(line);return board('Read the evidence',lines);};
 const options=(r,i)=>{const a=r.slice(2,4);a.splice(i%3,0,r[1]);return a;};
-const steps=sections.flatMap((s,i)=>s.teach.map((say,j)=>({skill:s.skill,say,...(s.eqs?.[j]?{eq:s.eqs[j]}:{}),pic:s.pics?.[j]||board(s.code+' · '+(s.boardTitle||s.name),s.boards[j]),...(j===s.teach.length-1&&(i%3===2||i===sections.length-1)?{check:{prompt:s.check[0],answer:s.check[1],options:options(s.check,i),hint:s.check[4],pic:s.checkPic||questionPic(s.check[0])}}:{})})));
+const steps=sections.flatMap((s,i)=>s.teach.map((say,j)=>({skill:s.skill,say,...(s.eqs?.[j]?{eq:s.eqs[j]}:{}),pic:s.pics?.[j]||board(s.code+' · '+(s.boardTitle||s.name),s.boards[j]),/* improve20-r19d-nov3 #1 */...(s.tries?.[j]?{check:{prompt:s.tries[j][0],answer:s.tries[j][1],options:options(s.tries[j],i+j),hint:s.tries[j][4],pic:questionPic(s.tries[j][0])}}:{}),...(j===s.teach.length-1&&(i%3===2||i===sections.length-1)?{check:{prompt:s.check[0],answer:s.check[1],options:options(s.check,i),hint:s.check[4],pic:s.checkPic||questionPic(s.check[0])}}:{})})));
 steps.push({skill:sections.at(-1).skill,summary:true,say:"Connect development to the activities, institutions and networks behind each indicator. Classify economic sectors by their work, compare total location costs, and distinguish territorial production from resident income and personal well-being. Check denominators, price conventions and inequality before comparing averages. Treat development theories as limited explanations rather than fixed destinies. Distinguish comparative from absolute advantage, outsourcing from offshoring, and OPEC from general trade organizations. Evaluate jobs, productivity, income control and environmental burdens across places and groups. Test sustainability with total as well as per-unit impacts and credible outcome evidence; neither a rising average nor a promising policy label proves that everyone benefits.",pic:board('Connect the ideas',['Identify the process and its context','Find the evidence that distinguishes it','Check alternatives and limits'])});
 export default {...{"id":"geography-h-ap-hug-industrial-and-economic-development","subject":"geography","level":5,"grade":9,"standard":"AP Human Geography, Unit 7","title":"Industrial and Economic Development","goal":"Explain industrial locations, development indicators and theories, trade networks and sustainability using spatial evidence, explicit assumptions and distributional comparisons.","points":20,"progression":{"requires":["geography-h-ap-hug-cities-and-urban-land-use"],"operations":3,"demand":"Compare development models and production networks, calculate location costs and indicators, interpret tradeoffs and evaluate social and environmental outcomes."}},skills:Object.fromEntries(sections.map(s=>[s.skill,s.name])),outline:sections.map(s=>[s.code,s.name,[s.skill]]),steps,
 items(put){let i=0;for(const s of sections)for(const [j,r] of s.questions.entries()){const a=options(r,i++),prompt=r[0]+' '+a.map((v,k)=>'ABC'[k]+': '+v).join('; ')+'. Answer A, B or C.';put(s.skill,prompt,'ABC'[a.indexOf(r[1])],s.qpics?.[j]||questionPic(r[0]),r[4],[r[1]]);}}

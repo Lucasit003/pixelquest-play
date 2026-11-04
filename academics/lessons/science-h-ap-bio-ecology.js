@@ -1,5 +1,14 @@
 /* Original course unit. Review record: docs/review/lessons/high-completion/ap-bio-u8-accuracy.json.
    Deterministic choices preserve prompt-derived identities. */
+/* improve20-r19d-nov3 #2 (round 19, reviewed Try-its, batch 2): 2 Try-its added as sections[].tries (teach index -> [prompt, key,
+   wrong, wrong, hint]); each sits on the step whose text it checks and uses only that step's facts or a derivation from its stated rule.
+   Reviewed 3 Nov 2026: every key and both wrong options checked against the source named per item, or recomputed by hand. Existing steps,
+   Try-its and question ids are unchanged; new ids come from the new prompts. Numbers in the new items are fictional exercise values.
+   step 5 (8.2, teach 1): "Gross primary production is 700 and producer respiration is 300, in the same units. What is net primary production?" Key: 400. Source: AP Biology CED topic 8.2 (Energy Flow Through Ecosystems); derivation from the step's equation.
+   step 14 (8.5, teach 1): "A tick feeds on a deer's blood for days. The deer is weakened but survives. Which interaction is this?" Key: Parasitism. Source: CED topic 8.5 (Community Ecology); the step's definitions applied to a new case.
+   Limits: a CED citation names the College Board course topic whose scope the item sits in; the CED PDFs and the IPCC glossary were not
+   re-opened in this pass (standard definitions). Web sources opened or searched: EPA, EIA, NASA, Te Ara, UN ESCWA. The step's own text
+   was not re-reviewed. Options are 3 (the lesson's existing Try-it format); the hint is the feedback line after a miss. */
 const sections=[
  {
   "code": "8.1",
@@ -993,7 +1002,16 @@ const sections=[
      ]
     ]
    }
-  ]
+  ],
+  "tries": {
+   "1": [
+    "Gross primary production is 700 and producer respiration is 300, in the same units. What is net primary production?",
+    "400",
+    "1000",
+    "2.33",
+    "NPP = GPP − producer respiration = 700 − 300 = 400."
+   ]
+  }
  },
  {
   "code": "8.3",
@@ -8596,6 +8614,15 @@ const sections=[
      }
     ]
    }
+  },
+  "tries": {
+   "1": [
+    "A tick feeds on a deer's blood for days. The deer is weakened but survives. Which interaction is this?",
+    "Parasitism",
+    "Mutualism",
+    "Commensalism",
+    "The tick gains and the deer is harmed without being killed outright: parasitism."
+   ]
   }
  },
  {
@@ -9837,7 +9864,7 @@ const sections=[
 const board=(title,lines)=>({t:'board',title,lines,box:true});
 const questionPic=prompt=>{const lines=[];let line='';for(const word of prompt.split(' ')){if((line+' '+word).trim().length>34){lines.push(line);line=word;}else line+=(line?' ':'')+word;}if(line)lines.push(line);return board('Read the evidence',lines);};
 const options=(r,i)=>{const a=r.slice(2,4);a.splice(i%3,0,r[1]);return a;};
-const steps=sections.flatMap((s,i)=>s.teach.map((say,j)=>({skill:s.skill,say,...(s.eqs?.[j]?{eq:s.eqs[j]}:{}),pic:s.pics?.[j]||board(s.code+' · '+(s.boardTitle||s.name),s.boards[j]),...(j===s.teach.length-1&&(i%3===2||i===sections.length-1)?{check:{prompt:s.check[0],answer:s.check[1],options:options(s.check,i),hint:s.check[4],pic:s.checkPic||questionPic(s.check[0])}}:{})})));
+const steps=sections.flatMap((s,i)=>s.teach.map((say,j)=>({skill:s.skill,say,...(s.eqs?.[j]?{eq:s.eqs[j]}:{}),pic:s.pics?.[j]||board(s.code+' · '+(s.boardTitle||s.name),s.boards[j]),/* improve20-r19d-nov3 #1 */...(s.tries?.[j]?{check:{prompt:s.tries[j][0],answer:s.tries[j][1],options:options(s.tries[j],i+j),hint:s.tries[j][4],pic:questionPic(s.tries[j][0])}}:{}),...(j===s.teach.length-1&&(i%3===2||i===sections.length-1)?{check:{prompt:s.check[0],answer:s.check[1],options:options(s.check,i),hint:s.check[4],pic:s.checkPic||questionPic(s.check[0])}}:{})})));
 steps.push({skill:sections.at(-1).skill,summary:true,say:"Identify the level of ecological organization and the measured response before making a claim. Track energy through production and respiration while conserving atoms through water, carbon, nitrogen and phosphorus cycles. Use demographic accounting with correct rate units; distinguish exponential assumptions from density-dependent limits and total growth from per-capita growth. Compare species richness, evenness and the stated diversity-index formula, then trace direct and indirect community effects. Distinguish resistance from recovery and use the actual ecological context for keystone and diversity claims. Evaluate disturbances through physiology, selection and ecosystem processes without treating mutation as directed by need. Support conclusions with independent replication, controls, identified uncertainty and an appropriately interpreted statistical test.",pic:board('Connect the ideas',['Identify the process and its context','Find the evidence that distinguishes it','Check alternatives and limits'])});
 export default {...{"id":"science-h-ap-bio-ecology","subject":"science","level":5,"grade":9,"standard":"AP Biology, Unit 8","title":"Ecology","goal":"Explain responses, energy and matter transfer, population growth, community interactions, diversity and ecological disruption using controlled observations and quantitative evidence.","points":20,"progression":{"requires":["science-h-ap-bio-natural-selection","science-h-ap-bio-cellular-energetics"],"operations":3,"demand":"Track energy and nutrient inventories, compare growth models and diversity, and interpret controlled ecological experiments with identified uncertainty."}},skills:Object.fromEntries(sections.map(s=>[s.skill,s.name])),outline:sections.map(s=>[s.code,s.name,[s.skill]]),steps,
 items(put){let i=0;for(const s of sections)for(const [j,r] of s.questions.entries()){const a=options(r,i++),prompt=r[0]+' '+a.map((v,k)=>'ABC'[k]+': '+v).join('; ')+'. Answer A, B or C.';put(s.skill,prompt,'ABC'[a.indexOf(r[1])],s.qpics?.[j]||questionPic(r[0]),r[4],[r[1]]);}}

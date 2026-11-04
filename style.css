@@ -3687,6 +3687,13 @@ dialog[data-view=help] #modal-content{display:flex;flex-direction:column;overflo
 .ui-banner.newday small{display:inline-flex;align-items:center;gap:8px}
 .ui-banner.newday small .newday-pic{width:32px;height:32px;object-fit:contain;image-rendering:pixelated}
 .ui-banner.newday small img.newday-pic.prize-backdrop{object-fit:cover}
+/* improve20-r18f-nov3 #3: on a phone the "New day!" card is compact (it is placed clear of the hero and the controls by main.js dayCardPlace,
+   and at 667x375 the full-size card had no clear spot): a tighter frame, the title at .7 and the line at .82 of the text size (13 px at 100%,
+   over the 10 px floor; the Text size setting still scales both) */
+.m-mode .ui-banner.newday{padding:6px 12px 6px;min-width:0;max-width:min(400px,44vw)}
+.m-mode .ui-banner.newday strong{font-size:calc(var(--fs-2)*.7);letter-spacing:2px}
+.m-mode .ui-banner.newday small{font-size:calc(var(--fs)*.82);line-height:1.25;gap:6px}
+.m-mode .ui-banner.newday small .newday-pic{width:24px;height:24px}
 #hero-title{display:block;margin:-1px 16px 1px 0;font-size:12px;line-height:1.1;color:#f3d48a;letter-spacing:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 0 #0d0806}
 #hero-title[hidden]{display:none}
 /* improve20-r9c-nov1 #4: the title read as a thread at 11px on phones; it scales with the phone HUD's own name (13px, bold like it) and the 3px it

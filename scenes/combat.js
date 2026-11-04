@@ -29,7 +29,7 @@ import {levelById,levelDone,recordLevel,levelScore,levelReward,levelXPReward,are
 import {hallBossHp,hallHit} from '../game/hall.js';
 import {HALL_PIERCE,PATTERN_FLOOR,hallEdge} from './hall-patterns.js';
 import {TIER_KEYS,tierKey,tierOf,tierLevel,tierScale,applyBossTier,tierBossTrim,rallyPoints,rallyTimeout,vampHeal,checkEnrage,splitParts,MODS,killGold,adviceLevel,killXP,winXP,bossAtkTrim} from '../game/tiers.js';
-import {STAGE,BEATS,REBIRTH,levelGeometry,camTopFor,bossLiftFor,waveGroups,waveSide,stageKey} from '../game/stage.js';
+import {STAGE,BEATS,REBIRTH,levelGeometry,camTopFor,bossLiftFor,BOSS_ROOM,waveGroups,waveSide,stageKey} from '../game/stage.js';
 import {baseDef,makeEnemy,entryEnemy} from '../game/roster.js';
 import {shadowDef} from '../game/shadow.js';
 import {returningBoss,returnLine} from '../game/draft.js';
@@ -55,7 +55,7 @@ import {biomeMap} from '../gfx/biomes/index.js';
 import {petProc,petTick} from './pet-fx.js';
 import {partyStart,updateParty,partyFocus,partyHurt,oldTarget,hurtOn} from './party-ai.js';
 import {runCarry,runStart,runTick,runInteract,runSecret,runKill,runLayer,runFinish,runStats,runScore} from './run-fx.js';
-/* v2:enemies */ import {runEnemy,drawEnemy,enemyLayer,tickIdleEnemyFx,enemyTop,holdPose,setDarkFloor} from './enemy-ai.js';
+/* v2:enemies */ import {runEnemy,drawEnemy,enemyLayer,tickIdleEnemyFx,enemyTop,holdPose,setDarkFloor,bodyHalf} from './enemy-ai.js';
 import {stanceBlock,propHit,linkShield,panOf} from './boss-moves.js';
 import {guardHit} from './boss-guard.js';
 import {laneStride,runAnimRate} from './lane-stride.js';
@@ -84,6 +84,20 @@ const bossHalf=e=>reachR(e)+6;
    left of the boss bar (top right) */
 export const TALL_EDGE=150;
 export const tallBoss=e=>{if(!e?.boss)return false;const m=e.sprite?spriteMeta(e.sprite):null;return (m?.height||0)*Math.max(1,e.scale||1)>(STAGE.camH||270)*.55;};
+/* improve20-r18f-nov3 #1 (R18B left open: at 844x390 the 2x Sleeper, 240 px, filled the 195-row phone view, its head under the boss bar and
+   its feet below the screen): on a short view (SHORT_VIEW_ROWS world rows or fewer, i.e. a phone about 420 px tall at 2x) a boss drawn at a
+   whole 2x or more steps down to the largest WHOLE scale whose height is at most FIT_SHARE of the view (the Sleeper: native 1x, 120 px).
+   Whole scales only: 1.5x and 1.6x were compared at 844x390 and their art pixels drew 2 and 4 screen px wide by turns (the canvas is 422x195
+   shown at 2x) and still ran under the boss bar and the action arc. e.scale itself drops, so the body, reach and inset (bodyR, reachR),
+   the hit band (enemy-ai inRange) and the cinematic all follow what is drawn; enemy-ai brain scales only the moves that come from his body
+   (fitFrom). Desktop (270 rows) and tablets keep their scale. */
+export const SHORT_VIEW_ROWS=210,FIT_SHARE=.7;
+/* improve20-r18f-nov3 #2: a duo's boss bar is two bars tall on a phone (60 px at 2x against 31): the lift's room under it, world rows */
+export const DUO_ROOM=38;
+/* improve20-r18f-nov3 #2: a phone walk-on stops INTRO_GAP px left of the controls' band, and at least INTRO_NEAR px clear of the hero's body */
+export const INTRO_GAP=6,INTRO_NEAR=40,DUO_MIN=60;
+export const fitScale=(e,camH=STAGE.camH||270)=>{const s=Math.max(1,Math.floor((e?.scale||1)+1e-6));if(!e?.boss||s<2||!(camH<=SHORT_VIEW_ROWS))return s;const h=(e.sprite?spriteMeta(e.sprite):null)?.height||0;let k=s;while(k>1&&h*k>camH*FIT_SHARE)k--;return k;};
+export const fitBoss=e=>{const k=fitScale(e);if(e&&k<Math.floor((e.scale||1)+1e-6)){e.fitFrom=e.scale;e.scale=k;}return e;};
 const reachR=e=>{const b=bodyR(e);if(!e.boss&&!e.elite)return b;const m=e.sprite?spriteMeta(e.sprite):null;return Math.max(b,(m?.width?m.width/2:(m?.shadow?.[0]||0)*1.17)*Math.max(1,e.scale||1));};
 export const CLOSER_TOAST_GAP=8,LUNGE_REACH=1.5;
 /* improve20-a-oct31 #7: a taunt line waits until the quote before it has had its 2.5 s (2 s on a phone) and a short beat */
@@ -288,7 +302,7 @@ export class World{
   /* two bosses at once each bring a little under three quarters of their health, so the fight is longer but not double */
   if(l.duo){e.hp=e.maxHp=Math.round(e.maxHp*.72);}
   /* Heroic and Legendary: the boss's own attacks on a faster pattern, an earlier phase change on Legendary (game/tiers.js) */
-  applyBossTier(e,this.tierKey);riftBossFx(this,e);pilotBoss(this,e);return kind?this.enter(e,kind,0,true):e;}
+  applyBossTier(e,this.tierKey);riftBossFx(this,e);pilotBoss(this,e);/* improve20-r18f-nov3 #1 */fitBoss(e);return kind?this.enter(e,kind,0,true):e;}
  /* The boss arena locks, the boss walks on under its name card, and only then does the fight start. */
  bossIntro(){const a=this.layout.boss;this.lockTo(a);this.enemies=this.enemies.filter(e=>e.hp>0);const e=this.spawnBoss(a.x1+30);const mk=this.layout.bossMark;if(mk&&mk.x>a.x0+60&&mk.x<a.x1-40)e.y=mk.y;e.introFrom=e.x;e.introTo=mk&&mk.x>a.x0+60&&mk.x<a.x1-40?mk.x:this.clearSpot(a.x1-Math.max(110,Math.round(bodyR(e)*2.4+48)),e.y,a);/* improve20-r18b-nov3 #3 */if(tallBoss(e))e.introTo=Math.min(e.introTo,a.x1-TALL_EDGE-Math.round(reachR(e)));e.facing=-1;this.boss=e;this.partner=null;
   /* A duo stage (owner, 8 Oct, after Ornstein & Smough: "stages that have 2 similar bosses that fight against u"): the second boss
@@ -338,7 +352,7 @@ export class World{
  follow(dt){const L=this.layout;if(!L)return;const W=/* v2:ui-mobile */STAGE.camW;this.camTop=camTopFor(L,this.player.y);
   /* improve20-s-nov1 #20 (audit5 b24): a phone camera in a boss fight lifts so the boss's head clears the boss bar (game/stage.js bossLiftFor), eased in
      and out so it never steps; desktop (padB null) is unchanged */
-  {const bo=STAGE.padB!=null&&['boss','bossintro','rebirth'].includes(this.flow)?(this.enemies||[]).find(e=>e.boss&&e.hp>0&&!e.decoy):null,want=bo?bossLiftFor({camTop:this.camTop,bossTop:enemyTop(bo),heroFeet:this.player.y}):0;
+  {/* improve20-r18f-nov3 #2 (phone sweep, 844x390: in the e6 duo the second boss bar ends 60 px down, not 31, and Mother Ruk's staff and Gorrak's helm ran under it): the lift reads the tallest live boss, and a duo's two bars ask for DUO_ROOM */const bos=STAGE.padB!=null&&['boss','bossintro','rebirth'].includes(this.flow)?(this.enemies||[]).filter(e=>e.boss&&e.hp>0&&!e.decoy):[],bo=bos.length?bos.reduce((a,e)=>enemyTop(e)<enemyTop(a)?e:a):null,want=bo?bossLiftFor({camTop:this.camTop,bossTop:enemyTop(bo),heroFeet:this.player.y,room:this.level?.duo&&bos.length>1?DUO_ROOM:BOSS_ROOM}):0;
    this.bossLift=(this.bossLift||0)+(want-(this.bossLift||0))*Math.min(1,dt*4);if(this.bossLift<.5&&!want)this.bossLift=0;this.camTop=Math.max(0,Math.round(this.camTop-this.bossLift));}const lo=this.lock?this.lock.x0:0,hi=this.lock?Math.max(this.lock.x0,this.lock.x1-W):Math.max(0,L.width-W);let target=clamp(this.player.x-W*(this.lock?.5:.4),lo,hi);if(!this.lock)target=Math.max(target,this.camFloor);
   /* improve20-r16b-nov3 #3 (audit12 a10): in a locked fight the camera keeps every live boss's whole body in view with the hero when the two fit
      in one screen (the view moves the least from hero-centred to do it); the phone rules below still win */
@@ -351,6 +365,11 @@ export class World{
   const J=STAGE.padL||0,bo=J&&this.lock?(this.enemies||[]).find(e=>e.boss&&e.hp>0&&!e.decoy):null;if(bo){pl=0;pr=STAGE.padR||0;const cap=W*.35;for(const [n,b] of STAGE.hudTL||[])pl=Math.max(pl,Math.min(cap,n)*k(b));for(const [n,b] of STAGE.hudTR||[])pr=Math.max(pr,Math.min(cap,n)*k(b));pl=Math.max(pl,head+46>(STAGE.padLTop||0)?J:0);}else if(J){const TL=STAGE.hudTL||[],m=Math.min(J,Math.max(0,...TL.map(e=>e[0]))),Y=Math.min(STAGE.padLTop||0,...TL.filter(e=>e[0]>=m).map(e=>e[1]+48));pl=Math.max(pl,J*Math.max(0,Math.min(1,(head+46-Y+12)/12)));}}
   if(pl||pr){const x=this.player.x;/* oct25-phone2: in a locked fight the camera centres the hero and the live foes (boss included) in the band the controls leave free, so a foe at the arena's right edge is not stood behind the ability column. When they do not all fit, the hero keeps a margin inside the band and the view shows as many foes as it can. The hero rules below still win. */if(this.lock){let a=x,b=x;for(const e of this.enemies||[])if(e.hp>0&&!e.decoy&&!e.helper){a=Math.min(a,e.x);b=Math.max(b,e.x);}if(a<b){const M=Math.min(40,(W-pr-pl)/4);target=clamp((a+b)/2-(pl+(W-pr-pl)/2),x-(W-pr-M),x-(pl+M));}}/* improve20-p-oct31 #6: while a CLEAR column is up, the camera keeps it in the floor the controls leave free (minions walking had eased it
     off the screen's edge mid-warning); the hero rules below still win */if(this.lock){const J=Math.max(0,(STAGE.padL||0)-20),R=Math.max(0,pr-20);for(const r of [...(this.enemies||[]).filter(e=>e.hp>0&&['tele','act'].includes(e.brain?.mode)).map(e=>e.brain.safeLane),...(this.tierFx?.current?.islands||[this.tierFx?.current?.safe])])if(r&&r.x1-r.x0<W/3)target=clamp(target,r.x1-(W-R),r.x0-J);}if(x-target>W-pr)target=x-(W-pr);if(x-target<pl)target=x-pl;target=clamp(target,Math.min(lo,(this.lock?lo:this.camFloor)-pl),hi+pr);}
+  /* improve20-r18f-nov3 #2 (phone sweep, 667x375: the view is 333 rows wide, so a boss walking on to its usual spot near the arena's far edge
+     stopped under the action arc, 13-42% of its body behind the buttons, for e2, e3, e5, e6, e7, ex2, mx1, v3, v4 and others): on a phone the
+     walk-on ends inside the band the controls leave free (the camera's target, less the right pad; the drawn body), never nearer the hero than
+     INTRO_NEAR px past his body (a duo's second boss moves by the same amount); the walk is re-based so it never jumps. Desktop (padB null) is unchanged. */
+  if(this.flow==='bossintro'&&STAGE.padB!=null&&this.lock){const R=Math.max(pr,STAGE.padR||0),k=Math.min(1,this.flowT/(BEATS.bossIntro*.6)),q=1-(1-k)*(1-k);if(q<.9){let shift=0;const P=this.partner,gap=P&&P.hp>0&&P.introTo!=null&&this.boss?.introTo!=null?Math.max(0,this.boss.introTo-P.introTo):0;for(const e of [this.boss,this.partner])if(e&&e.hp>0&&e.introTo!=null){/* the drawn body (bodyHalf), as the player sees it against the buttons; a duo's lead stops at least DUO_MIN px past that line (their spacing, squeezed only on a narrow view), so the two never stand on each other */const h=bodyHalf(e),near=Math.round(this.player.x+24+INTRO_NEAR+h);let to=e===this.boss?Math.round(Math.max(target+W-R-INTRO_GAP-h,near+Math.min(gap,DUO_MIN))):Math.max(near,Math.round(e.introTo-shift));/* a duo's second boss moves with the first, keeping their spacing, in its own row */if(e.introTo>to){if(e===this.boss)shift=e.introTo-to;e.introFrom=(e.x-to*q)/(1-q);e.introTo=to;}}}}
   this.camX+=(target-this.camX)*Math.min(1,dt*5);if(Math.abs(target-this.camX)<.5)this.camX=target;if(!this.lock)this.camFloor=Math.max(this.camFloor,this.camX);}
  /* Ends the run: writes save.levels, banks gold and loot, and hands the result to main.js. A win pays the
     run's gold plus the level reward (a quarter on replays); a fall banks every coin earned so far, and

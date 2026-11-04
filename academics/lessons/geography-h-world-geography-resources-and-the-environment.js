@@ -1,5 +1,16 @@
 /* Original course unit. Review record: docs/review/lessons/high-completion/world-geography-u7-accuracy.json.
    Deterministic choices preserve prompt-derived identities. */
+/* improve20-r19d-nov3 #2 (round 19, reviewed Try-its, batch 2): 4 Try-its added as sections[].tries (teach index -> [prompt, key,
+   wrong, wrong, hint]); each sits on the step whose text it checks and uses only that step's facts or a derivation from its stated rule.
+   Reviewed 3 Nov 2026: every key and both wrong options checked against the source named per item, or recomputed by hand. Existing steps,
+   Try-its and question ids are unchanged; new ids come from the new prompts. Numbers in the new items are fictional exercise values.
+   step 5 (NGS 7, teach 1): "A fictional reservoir starts with 200 units, receives 50, releases 30 and loses 10 to evaporation. How much does it hold at the end?" Key: 210 units. Source: derivation from the step's storage equation.
+   step 9 (NGS 14, teach 1): "A paper mill empties wastewater into a river through a single outfall, while rain carries fertilizer off many farms upstream. Which is the point source?" Key: The paper mill's outfall. Source: EPA, Basic information about nonpoint source pollution (Clean Water Act section 502(14): any pipe, ditch or channel); the step's rule applied to a new case.
+   step 15 (NGS 15, teach 3): "A coastal town builds a higher sea wall and moves its clinic to higher ground because storm surges are expected to worsen. What kind of climate response is this?" Key: Adaptation. Source: IPCC AR6 glossary definitions of mitigation and adaptation; the step's definitions applied to a new case.
+   step 18 (NGS 16, teach 2): "A 5 MW generator could deliver 120 MWh in a day at full output. It actually delivers 30 MWh. What is its capacity factor for that day?" Key: 25%. Source: EIA glossary, capacity factor; derivation.
+   Limits: a CED citation names the College Board course topic whose scope the item sits in; the CED PDFs and the IPCC glossary were not
+   re-opened in this pass (standard definitions). Web sources opened or searched: EPA, EIA, NASA, Te Ara, UN ESCWA. The step's own text
+   was not re-reviewed. Options are 3 (the lesson's existing Try-it format); the hint is the feedback line after a miss. */
 const sections=[
  {
   "code": "NGS 1",
@@ -1179,7 +1190,16 @@ const sections=[
     "circles": []
    },
    null
-  ]
+  ],
+  "tries": {
+   "1": [
+    "A fictional reservoir starts with 200 units, receives 50, releases 30 and loses 10 to evaporation. How much does it hold at the end?",
+    "210 units",
+    "290 units",
+    "170 units",
+    "Add the inflow and subtract each outflow: 200 + 50 − 30 − 10 = 210."
+   ]
+  }
  },
  {
   "code": "NGS 14",
@@ -6028,6 +6048,15 @@ const sections=[
     ],
     "circles": []
    }
+  },
+  "tries": {
+   "1": [
+    "A paper mill empties wastewater into a river through a single outfall, while rain carries fertilizer off many farms upstream. Which is the point source?",
+    "The paper mill's outfall",
+    "The runoff from the many farms",
+    "Neither, since both reach the same river",
+    "A single, identifiable outlet such as a pipe is a point source; diffuse runoff from many fields is nonpoint."
+   ]
   }
  },
  {
@@ -7030,7 +7059,16 @@ const sections=[
     ],
     "circles": []
    }
-  ]
+  ],
+  "tries": {
+   "3": [
+    "A coastal town builds a higher sea wall and moves its clinic to higher ground because storm surges are expected to worsen. What kind of climate response is this?",
+    "Adaptation",
+    "Mitigation, because it cuts emissions",
+    "Ozone-layer repair",
+    "These steps adjust to expected impacts; they do not reduce greenhouse-gas emissions, so they are adaptation."
+   ]
+  }
  },
  {
   "code": "NGS 16",
@@ -7392,7 +7430,16 @@ const sections=[
     "circles": []
    },
    null
-  ]
+  ],
+  "tries": {
+   "2": [
+    "A 5 MW generator could deliver 120 MWh in a day at full output. It actually delivers 30 MWh. What is its capacity factor for that day?",
+    "25%",
+    "400%",
+    "6%",
+    "Capacity factor = actual energy ÷ (capacity × time) = 30 ÷ 120 = 25%. It is not the same as conversion efficiency."
+   ]
+  }
  },
  {
   "code": "NGS 18",
@@ -7919,7 +7966,7 @@ const sections=[
 const board=(title,lines)=>({t:'board',title,lines,box:true});
 const questionPic=prompt=>{const lines=[];let line='';for(const word of prompt.split(' ')){if((line+' '+word).trim().length>34){lines.push(line);line=word;}else line+=(line?' ':'')+word;}if(line)lines.push(line);return board('Read the evidence',lines);};
 const options=(r,i)=>{const a=r.slice(2,4);a.splice(i%3,0,r[1]);return a;};
-const steps=sections.flatMap((s,i)=>s.teach.map((say,j)=>({skill:s.skill,say,...(s.eqs?.[j]?{eq:s.eqs[j]}:{}),pic:s.pics?.[j]||board(s.code+' · '+(s.boardTitle||s.name),s.boards[j]),...(j===s.teach.length-1&&(i%3===2||i===sections.length-1)?{check:{prompt:s.check[0],answer:s.check[1],options:options(s.check,i),hint:s.check[4],pic:s.checkPic||questionPic(s.check[0])}}:{})})));
+const steps=sections.flatMap((s,i)=>s.teach.map((say,j)=>({skill:s.skill,say,...(s.eqs?.[j]?{eq:s.eqs[j]}:{}),pic:s.pics?.[j]||board(s.code+' · '+(s.boardTitle||s.name),s.boards[j]),/* improve20-r19d-nov3 #1 */...(s.tries?.[j]?{check:{prompt:s.tries[j][0],answer:s.tries[j][1],options:options(s.tries[j],i+j),hint:s.tries[j][4],pic:questionPic(s.tries[j][0])}}:{}),...(j===s.teach.length-1&&(i%3===2||i===sections.length-1)?{check:{prompt:s.check[0],answer:s.check[1],options:options(s.check,i),hint:s.check[4],pic:s.checkPic||questionPic(s.check[0])}}:{})})));
 steps.push({skill:sections.at(-1).skill,summary:true,say:"Connect resource location and access with water, land, climate and energy systems. State boundaries and time periods before comparing stocks, flows, totals and rates. Distinguish renewable potential from sustainable use, capacity from generation, and intensity from total impact. Use maps and original evidence to examine who benefits, who bears costs and what changes beyond the immediate study area. Compare alternatives against stated criteria, separate observed patterns from causal claims, and revise conclusions when better evidence warrants it.",pic:board('Connect the ideas',['Identify the process and its context','Find the evidence that distinguishes it','Check alternatives and limits'])});
 export default {...{"id":"geography-h-world-geography-resources-and-the-environment","subject":"geography","level":5,"grade":9,"standard":"Geography for Life: National Geography Standards (2nd ed., 2012), thematic applications of standards 1, 7, 14, 15, 16 and 18","title":"Resources and the Environment","goal":"Evaluate resource use and environmental decisions using spatial evidence, physical processes, clear accounting and explicit policy comparisons.","points":20,"progression":{"requires":["geography-h-world-geography-asia-and-oceania","geography-h-world-geography-climate-and-weather"],"operations":3,"demand":"Apply spatial reasoning, resource accounts, climate-risk models and policy comparisons with explicit assumptions."}},skills:Object.fromEntries(sections.map(s=>[s.skill,s.name])),outline:sections.map(s=>[s.code,s.name,[s.skill]]),steps,
 items(put){let i=0;for(const s of sections)for(const [j,r] of s.questions.entries()){const a=options(r,i++),prompt=r[0]+' '+a.map((v,k)=>'ABC'[k]+': '+v).join('; ')+'. Answer A, B or C.';put(s.skill,prompt,'ABC'[a.indexOf(r[1])],s.qpics?.[j]||questionPic(r[0]),r[4],[r[1]]);}}
