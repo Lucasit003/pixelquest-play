@@ -78,3 +78,9 @@ export function firstHighTopic(save,subject){const g=hsGrade(save);if(g==null)re
 export function startTopic(save,subject){const g=hsGrade(save);if(g==null)return null;const ids=new Set(TOPICS.map(t=>t.id)),ok=t=>t&&!mastered(save,t)&&topicOpen(save,t);
  const c=course(firstCourse(subject,g)),u=c?builtUnits(c,ids).map(u=>TOPICS.find(t=>t.id===u.topic)).find(ok):null;
  return u||orderHigh(save,TOPICS.filter(t=>t.subject===subject&&rungOf(t)===9)).find(ok)||null;}
+/* hstaster-nov3: the first unmastered built unit of the course a grade starts in (firstCourse, the course's own unit order), opened or not: the
+   Library-first starter lesson is picked before the placement opens the rung (starter-lesson.js starterTopic), and it now names the same
+   lesson as "Start" (startTopic). firstHighTopic took the catalog's topic order, so a Grade 10 learner woke the first power on Math 1's
+   "Quadratic functions" and a Grade 12 learner on Calculus "Differentiation" while "Start" opened Math 2 and "Limits and continuity". */
+export function firstCourseTopic(save,subject){const g=hsGrade(save);if(g==null)return null;const ids=new Set(TOPICS.map(t=>t.id)),c=course(firstCourse(subject,g));
+ return c?builtUnits(c,ids).map(u=>TOPICS.find(t=>t.id===u.topic)).find(t=>t&&!mastered(save,t))||null:null;}

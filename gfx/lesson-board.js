@@ -19,11 +19,12 @@ export const fitTitle=(c,s,y=34,max=600,color=INK)=>{s=String(s);const w=z=>{c.f
    gives), only as far as it stays inside the card; never smaller than before. */
 export const HELP_PX=14,HELP_INK=INK;
 export const helpBoost=(css,phone=1,w=0,x=0)=>{if(!(css>0))return 1;let b=Math.min(1.6,Math.max(1,HELP_PX/(16*css*phone)));if(w>0&&x+w*b>628)b=Math.max(1,(628-x)/w);return b;};
-const helpLabel=(c,s,x,y)=>{c.font='14px sans-serif';const phone=c.pqUnit>0&&16*c.pqUnit<12?Math.min(1.6,12/(16*c.pqUnit)):1,b=helpBoost(c.pqCss,phone,c.measureText(String(s)).width,x);
+const phoneOf=c=>c.pqUnit>0&&16*c.pqUnit<12?Math.min(1.6,12/(16*c.pqUnit)):1;
+const helpLabel=(c,s,x,y)=>{c.font='14px sans-serif';const phone=phoneOf(c),b=helpBoost(c.pqCss,phone,c.measureText(String(s)).width,x);
  if(b===1){text(c,s,x,y,14,{color:HELP_INK});return;}c.save();c.translate(x,y);c.scale(b,b);text(c,s,0,0,14,{color:HELP_INK});c.restore();};
 export const board=(c,{title,lines=[],why=[],box=false},p)=>{
  if(title)fitTitle(c,title,34);
- const T=title?62:40,B=248,n=Math.max(1,lines.length),gap=Math.min(36,(B-T)/n),top=T+((B-T)-gap*n)/2+gap/2;
+ const T=title?62:40,B=248,n=Math.max(1,lines.length);let gap=Math.min(36,(B-T)/n),top=T+((B-T)-gap*n)/2+gap/2;
  /* Round 10 (17 Oct): the size is chosen by width as well as by line gap. A big line that ran past the card used to be shrunk
     and slid inside by the text layer while its box kept the old place, so text crossed the card edge; now the whole board
     drops to the small size first, and the box is measured from the same font as its text. */
@@ -31,7 +32,13 @@ export const board=(c,{title,lines=[],why=[],box=false},p)=>{
  const fits=z=>{c.font=`bold ${z}px sans-serif`;const wb=Math.max(...lines.map(l=>c.measureText(l).width));c.font=`${z}px sans-serif`;const w=Math.max(wb,...lines.map(l=>c.measureText(l).width));const ok=w+(why.some(Boolean)?62:24)<=616;if(!ok||!lines.every(l=>l.includes(' = ')))return ok;
   /* an equals-aligned board hangs each line on x = 320 (250 with reasons), so each side of the sign must fit too */
   const cx=why.some(Boolean)?250:320;return lines.every(l=>{const a=c.measureText(l.slice(0,l.indexOf(' = ')+1)).width;return cx-a>=12&&cx-a+c.measureText(l).width<=628;});};
+ /* hstaster-nov3 (audit12 #12, shot 16): a reason was placed after its line and, past the card edge (628), squeezed by the text layer to about 6 px
+    over its neighbour. The reasons' own width (at their grown size) is now reserved beside the lines: the lines keep their size (a smaller
+    bitmap size reads far smaller on screen), and when the reasons do not fit beside them they go under their lines (stacked), so every reason keeps its full size and none overprints another. */
+ c.font='14px sans-serif';const whyW=why.some(Boolean)?Math.max(...why.filter(Boolean).map(w=>c.measureText(String(w)).width))*helpBoost(c.pqCss,phoneOf(c)):0;
+ const roomy=z=>{if(!whyW||lines.every(l=>l.includes(' = ')))return true;c.font=`bold ${z}px sans-serif`;const w=Math.max(...lines.map(l=>c.measureText(l).width));return 70+w+28+whyW<=628;};
  if(size>15&&!fits(size))size=15;
+ const stacked=!roomy(size);if(stacked){gap=Math.min(50,(B-T)/n);top=T+((B-T)-gap*n)/2+gap/2;}
  /* the equals signs line up when every line has one, the way a solution is written on a board */
  c.font=`${size}px sans-serif`;
  /* a line may start with '= ' to continue the one above it */
@@ -41,11 +48,12 @@ export const board=(c,{title,lines=[],why=[],box=false},p)=>{
   hasWhy=why.some(Boolean),bare=eq&&!lines[0].includes(' = '),
   /* a bare first line starts the block; the '= ' lines under it are indented a little, as on a board */
   x0=hasWhy?60:320-widest/2,col=bare?x0+28:eq?(hasWhy?250:320):(hasWhy?70:320-widest/2);
- lines.forEach((l,i)=>{const show=clamp(p*1.05*n-i);if(show<=0)return;c.globalAlpha=Math.min(1,show*1.6);const y=top+i*gap,last=i===n-1&&box;
+ lines.forEach((l,i)=>{const show=clamp(p*1.05*n-i);if(show<=0)return;c.globalAlpha=Math.min(1,show*1.6);const y=top+i*gap-(stacked&&why[i]?gap*0.22:0),last=i===n-1&&box;
   c.font=`${last?'bold ':''}${size}px sans-serif`;const x=bare?(i===0?x0:col):eq?col-left(l):col;
   text(c,l,x,y,size,{bold:last,color:last?ACCENT:INK});
   if(last){const w=c.measureText(l).width;c.strokeStyle=ACCENT;c.lineWidth=2;c.strokeRect(x-8,y-gap*0.42,w+16,gap*0.84);}
-  if(why[i])helpLabel(c,why[i],Math.max(x+c.measureText(l).width+28,bare?x0+widest+24:eq?430:col+widest+28),y);
+  if(why[i]&&stacked)helpLabel(c,why[i],x+14,y+gap*0.46);
+  else if(why[i])helpLabel(c,why[i],Math.max(x+c.measureText(l).width+28,bare?x0+widest+24:eq?430:col+widest+28),y);
   c.globalAlpha=1;});
  /* a soft rule under the title, like the line at the top of a board */
  if(title){c.strokeStyle='rgba(106,90,70,0.35)';c.lineWidth=1;c.beginPath();c.moveTo(150,50);c.lineTo(490,50);c.stroke();}
