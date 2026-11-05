@@ -11,7 +11,7 @@
    When: the topic has a Quick start, is a High School topic, its Quick start was not seen, and the lesson was never begun (no cursor, no
    furthest step, no Try-it tried, not done, not mastered). An older save that already started Part 1 keeps going where it was. On a
    Library-first save whose starter subject this is, the Quick start replaces the 4-step starter cut and wakes the first power. Pure. */
-import {stageOf,mastered} from './lessons.js';
+import {stageOf,mastered,TOPICS} from './lessons.js';
 
 /* one per subject's first High School lesson, de-duplicated across grades 9-12 (tests/hstaster-nov3.test.js checks every grade and subject) */
 export const TASTER_IDS=Object.freeze(['math-h-math-1-expressions-equations-and-units','math-h-math-2-radicals-and-complex-numbers','math-h-ap-precalc-polynomial-and-rational-functions','math-h-ap-calc-ab-limits-and-continuity',
@@ -33,6 +33,12 @@ export const tasterDue=(save,t)=>!!t&&hasTaster(t.id)&&stageOf(t)==='high'&&!tas
    never the save). True when t is another topic whose Quick start would play now (tasterDue with a save; without one, any other topic with a taster),
    so it is skipped: the lesson opens on Part 1 and a lead goes to the played one's subject instead */
 export const tasterHold=(played,t,save=null)=>!!played&&!!t&&t.id!==played&&(save?tasterDue(save,t):hasTaster(t.id));
+/* improve20-r22b-nov4 #2 (R21B follow-up: after a held Quick start the HUD's "Next power", NEXT GOAL and "Find your level in English" still led to
+   English): the same session-only id, kept here too (never the save) so the shared next-power pick (game/power-gate.js powerRank) and the placement
+   nudge (study-unlock.js) point where the Library's lead points. heldSubject(save,sub): true while sub's lead would be another Quick start held this
+   session and the played topic is not yet mastered (main.js heldTopic's rule) */
+let tasterPlayed=null;export const setTasterRun=id=>{tasterPlayed=id||null;};export const tasterRunId=()=>tasterPlayed;
+export function heldSubject(save,sub,played=tasterPlayed){if(!played||!sub)return false;const h=TOPICS.find(t=>t.id===played);if(!h||h.subject===sub||mastered(save,h))return false;return TOPICS.some(t=>t.subject===sub&&tasterHold(played,t,save));}
 export function markTaster(save,id){const hub=(save.hub??={seen:[]}),seen=Array.isArray(hub.seen)?hub.seen:(hub.seen=[]);if(!seen.includes(tasterKey(id)))seen.push(tasterKey(id));}
 
 let mod=null,task=null;

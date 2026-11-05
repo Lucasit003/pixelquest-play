@@ -1252,11 +1252,12 @@ export function drawHub(c, state, t, kit) {
   /* the Library: every teacher's subject floats over their head, so it is obvious who teaches what (owner, packet #17) */
   /* improve20-r21c-nov4 #8 (audit15 minor: on a phone the MATH and CODING plates sat under the potion and Attack buttons): a plate level with the
      thumb arc (phoneArc, the touch buttons' box in view pixels) stays left of it */
+  const ghost = S.key === 'library' ? phoneGhost(c, VIEW_W) : null;/* improve20-r22b-nov4 #5 */
   if (S.key === 'library') for (const q of S.points) if (q.type === 'interact' && q.props?.subject) {
     const who = S.points.filter(o => o.type === 'npc-spot').sort((a, b) => Math.hypot(a.x - q.x, a.y - q.y) - Math.hypot(b.x - q.x, b.y - q.y))[0];
     /* improve20-r13b-nov2 #5 (audit10 a18): at the room's top-left the ENGLISH plate sat under the hero plate; a plate that would run under the
        HUD (the same top bands as the doorway names above: hero plate on the left, objective on the right) drops below the teacher's feet */
-    if (who && Math.hypot(who.x - q.x, who.y - q.y) < 120) { const sx = who.x - ox, band = sx < 170 ? 82 : sx > 280 ? 46 : 14, up = who.y - 58; const py = up - 10 < oy + band ? who.y + 12 : up, low = arc && py + 12 - oy > arc.top; if (low && who.x - ox > arc.left - 8) continue; /* improve20-r21c-nov4 #8: a teacher standing under the arc shows the plate once the camera brings him out */ subjectPlate(c, SUBJECT_NAME[q.props.subject] ?? q.props.subject, who.x, py, 16, [ox, low ? ox + arc.left - 4 : ox + VIEW_W]); }
+    if (who && Math.hypot(who.x - q.x, who.y - q.y) < 120) { const sx = who.x - ox, band = sx < 170 ? 82 : sx > 280 ? 46 : 14, up = who.y - 58; const py = up - 10 < oy + band ? who.y + 12 : up, low = arc && py + 12 - oy > arc.top; if (low && who.x - ox > arc.left - 8) continue; /* improve20-r21c-nov4 #8: a teacher standing under the arc shows the plate once the camera brings him out */ /* improve20-r22b-nov4 #5 (R21C: the SCIENCE plate sat over the joystick ghost): the same on the left, a plate level with the ghost keeps right of it, and a teacher under the ghost shows it once the camera brings him out */ const gh = ghost && py + 12 - oy > ghost.top; if (gh && who.x - ox < ghost.right - 8) continue; subjectPlate(c, SUBJECT_NAME[q.props.subject] ?? q.props.subject, who.x, py, 16, [gh ? ox + ghost.right + 4 : ox, low ? ox + arc.left - 4 : ox + VIEW_W]); }
   }
   c.restore();
   if (H.fade) { c.fillStyle = `rgba(10,8,8,${Math.min(1, H.fade.t < 1 ? H.fade.t : 2 - H.fade.t)})`; c.fillRect(0, 0, VIEW_W, VIEW_H); }
@@ -1293,6 +1294,16 @@ export function phoneArc(c, viewW) {
   const box = c.canvas.getBoundingClientRect?.(); if (!box?.width) return null; const k = box.width / viewW;
   let l = Infinity, top = Infinity; for (const el of d.querySelectorAll('#touch button,#hud-potion')) { const r = el.getBoundingClientRect(); if (!r.width || !r.height || getComputedStyle(el).visibility === 'hidden' || getComputedStyle(el).display === 'none' || r.left < box.left + box.width / 2 || r.top < box.top + box.height * .25) continue; l = Math.min(l, r.left); top = Math.min(top, r.top); }
   return arcBox = Number.isFinite(l) ? {left: Math.round((l - box.left) / k), top: Math.round((top - box.top) / k)} : null;
+}
+/* improve20-r22b-nov4 #5: on a phone, the right edge and top of the joystick ghost (ui/mobile.js #joy-ghost, bottom-left) in view pixels; null on a
+   desktop or while it is hidden. Read at most every 250 ms. */
+let ghostAt = -1e9, ghostBox = null;
+export function phoneGhost(c, viewW) {
+  const d = c?.canvas?.ownerDocument; if (!d?.documentElement?.classList?.contains('m-mode')) return null;
+  const now = globalThis.performance?.now?.() ?? 0; if (now - ghostAt < 250) return ghostBox; ghostAt = now; ghostBox = null;
+  const box = c.canvas.getBoundingClientRect?.(), el = d.querySelector('#joy-ghost'); if (!box?.width || !el) return null; const k = box.width / viewW, r = el.getBoundingClientRect();
+  if (!r.width || !r.height || getComputedStyle(el).display === 'none' || getComputedStyle(el).visibility === 'hidden') return null;
+  return ghostBox = {right: Math.round((r.right - box.left) / k), top: Math.round((r.top - box.top) / k)};
 }
 function subjectPlate(c, text, x, y, size = 16, bounds = null) {
   c.save(); c.font = `${size}px "Pixel Operator", monospace`; c.textAlign = 'left'; c.textBaseline = 'middle';

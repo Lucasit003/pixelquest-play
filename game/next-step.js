@@ -185,7 +185,9 @@ export function firstUpgrade(save){if((save?.gold|0)<FIRST_UPGRADE_GOLD||!save?.
 /* improve20-r15b-nov3 #2 (kidsim3 k4: after the second mastery the HUD goal became "Visit the Weaponsmith", Theo, both runs): while a level
    (a map pad) or a topic step (the Library) is next, the first upgrade never takes the goal; it stays the win card's "next:" chip (main.js
    nextBuyName). It still leads a goal that is neither (a quest step, the end goals). */
-const upgradeFirst=(save,n)=>{const k=n?.target?.kind,u=n&&!n.powerGate&&k!=='pad'&&k!=='library'&&firstUpgrade(save);return u?{id:'first-upgrade',text:u.craft?`Visit the Weaponsmith: craft your first upgrade, the ${u.name} (${u.cost} gold and your materials).`:`Visit the Weaponsmith: your first upgrade, the ${u.name} (${u.cost} gold).`,target:{kind:'smith'},item:u.id,craft:!!u.craft,then:n}:n;};
+/* improve20-r22b-nov4 #3 (R22W: with 300+ gold and no gear bought, "Visit the Weaponsmith" beat Wil's hand-in steps): an accepted quest's step (one under way)
+   is never covered either; the nudge waits until no accepted quest step is next */
+const upgradeFirst=(save,n)=>{const k=n?.target?.kind,u=n&&!n.powerGate&&k!=='pad'&&k!=='library'&&!(n.quest&&questStateOf(save,n.quest)==='active')&&firstUpgrade(save);return u?{id:'first-upgrade',text:u.craft?`Visit the Weaponsmith: craft your first upgrade, the ${u.name} (${u.cost} gold and your materials).`:`Visit the Weaponsmith: your first upgrade, the ${u.name} (${u.cost} gold).`,target:{kind:'smith'},item:u.id,craft:!!u.craft,then:n}:n;};
 /* libraryfirst-nov1 (owner, 1 Nov: "start by bringing the character to the Library ... and have them learn an ability first"): a new game on the
    Library-first opening (academics/starter-lesson.js) is pointed at the Library until its starter power is awake; the south gate is shut till
    then. Then the prologue names the power to try, and after the prologue the first lesson step names the NEXT power and the topic that wakes

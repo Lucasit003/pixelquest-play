@@ -724,6 +724,8 @@ dialog[data-view=library] #modal-content{background:none!important}
 .unlock .ui-fx{top:120px}
 .level-result .ui-fx{top:90px}
 #stage:has(#ui-dialogue.show) :is(#hotbar,#next-unlock,#xp-track,#prompt,#boss-hud,.map-panel,.hud-right){visibility:hidden}
+/* improve20-r22b-nov4 #1: a held tip card (fast travel, the Library nudge) waits out a talk too; main.js petMoment takes the New pet card down and shows it after */
+#stage:has(#ui-dialogue.show) #travel-tip{visibility:hidden}
 /* class select: the painted portrait beside the class's own sprite, animating */
 .detail-sprite{width:144px;height:128px;margin-left:-8px;image-rendering:pixelated;pointer-events:none}
 .hero-detail .fantasy{color:var(--gold-2);font-weight:700;margin:6px 0 2px}

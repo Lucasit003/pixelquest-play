@@ -9,6 +9,7 @@ import {xpLevel,unlocked} from './math.js';
 import {ABILITIES} from './abilities.js';
 import {TOPICS,mastered,topicOpen,openGrade} from '../academics/lessons.js';
 import {lessonsToUnlock,topicStage,topicInSchoolMode,nextLesson} from '../academics/study-unlock.js';
+import {heldSubject,tasterRunId} from '../academics/hs-taster.js';/* improve20-r22b-nov4 #2 */
 const sname=id=>SUBJECTS[id]?.name||id;
 /* what the ladder still asks for this ability: {topics, subject (its name), subjectId, lvl, lvlOk, reachable} */
 export function powerWants(save,a){if(!a)return null;const r=unlocked(save,a)?{lessons:0,reachable:true,topics:[]}:lessonsToUnlock(save,a),lvl=xpLevel(a);
@@ -54,14 +55,14 @@ export function winLead(save){const g=waitingGate(save);if(g?.a){const st=powerS
 const RANK=new Map(),STAGE_FIRST={middle:6,high:9};
 export function workingSubject(save){let best=null,at=-1;for(const t of TOPICS){const r=save?.lessons?.[t.id];if(!r||mastered(save,t))continue;if(!(r.done||r.at>0||r.reached>0||r.practice>0))continue;const w=+r.at||0;if(w>at){at=w;best=t.subject;}}return best;}
 export function powerRank(save,{hero=save?.hero,gate=false}={}){const sv=hero===save?.hero?save:{...save,hero},lv=save?.level||1;
- const key=JSON.stringify([hero,lv,gate,save?.lessons,save?.mastery,save?.placement,save?.kept,save?.schoolMode,save?.schoolGrade,save?.ladder]);if(RANK.has(key))return RANK.get(key);
- const ws=workingSubject(sv),mine=x=>x.subjectId===ws?0:1;
+ const key=JSON.stringify([hero,lv,gate,save?.lessons,save?.mastery,save?.placement,save?.kept,save?.schoolMode,save?.schoolGrade,save?.ladder,/* improve20-r22b-nov4 #2 */tasterRunId(),save?.hub?.seen]);if(RANK.has(key))return RANK.get(key);
+ const ws=workingSubject(sv),mine=x=>x.subjectId===ws?0:1,/* improve20-r22b-nov4 #2: a subject whose lead is a Quick start held this session comes after the others (the Library leads to the played one's subject) */held=x=>heldSubject(sv,x.a.subject)?1:0;
  const out=(ABILITIES[hero]||[]).filter(a=>a.gate>0&&!unlocked(sv,a)).map(a=>{let w=powerWants(sv,a),place=null;
   /* a Middle or High School learner cannot open the lower grades of a subject they have not placed in: that road is counted from the stage's
      first grade (as placementNudge does), and `place` names the subject whose Find-your-level check opens it */
   const first=STAGE_FIRST[sv.schoolMode];if(first&&w.topics>0&&!powerStep(sv,a)?.topic&&openGrade(sv,a.subject)<first){const w2=powerWants({...sv,placement:{...(sv.placement||{}),[a.subject]:first}},a);if(w2.reachable){w={...w2,lvlOk:w.lvlOk};place=a.subject;}}
   return {a,...w,place,short:Math.max(0,w.lvl-lv)};})
-  .sort((x,y)=>(y.reachable-x.reachable)||x.topics-y.topics||(gate?mine(x)-mine(y):0)||x.short-y.short||x.lvl-y.lvl||mine(x)-mine(y)||x.a.gate-y.a.gate);
+  .sort((x,y)=>(y.reachable-x.reachable)||held(x)-held(y)||x.topics-y.topics||(gate?mine(x)-mine(y):0)||x.short-y.short||x.lvl-y.lvl||mine(x)-mine(y)||x.a.gate-y.a.gate);
  if(RANK.size>40)RANK.clear();RANK.set(key,out);return out;}
 export function nextPower(save,{hero=save?.hero}={}){if(!save)return null;const sv=hero===save.hero?save:{...save,hero},g=gateAt(sv),x=powerRank(sv,{hero,gate:!!g})[0];return x?{...x,gate:g?.level||null}:null;}
 /* the helper's words, for every card: "Hammer of Light: 2 more History topics (hero level 3)"; never a "(then N more topics)" tail */

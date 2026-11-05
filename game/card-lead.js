@@ -85,6 +85,10 @@ function winCardLead0(save,{learn=null,heroic=null,chFirst=null,chName='',prolog
     Legendary, Rift, quest, Showpiece or star-chase step (never before a new adventure, a learning step or a chapter's first stop); the step
     they displaced stays as the line under it. Red: "Place N runes" (the rune screen; leaving it goes on to the map). */
  {const later=heroic?.lead||!!step&&(step.nudge||step.quest||!!step.target?.tier||/^(tier-|stars-|showpiece-|task-|rift-|replay)/.test(String(step.id||'')));const g=later&&!chFirst?runeWin(save):null;if(g)return {text:runesText(g),primary:{kind:'runes',label:`Place ${g.n} ${g.n===1?'rune':'runes'}`},also:heroic?.lead?'':`Then: ${step.text}`,runes:g,legendary:legendLead(save,id,legend)};}
+ /* improve20-r22b-nov4 #4 (R22W: after m4, with Wil's chain on "Meet Wil at the Barracks", the card said "Try it on Heroic"): the HUD's order
+    (next-step.js nextStep): learning first (above), then an accepted quest's step, then Heroic or the next level. The quest step leads with its
+    one red (its pad, or Return to Oakhaven for a town step); Heroic stays a plain button beside it */
+ if(heroic?.lead&&step?.quest&&questState(save,step.quest)==='active'){const l=step.target?.kind==='pad'&&levelById(step.target.id);return {text:step.text,primary:l?{kind:'pad',id:l.id,label:`Go to ${l.name}`}:{kind:'keep'},also:'',heroic2:true,quest:step.quest};}
  if(heroic?.lead)return {text:heroic.card||heroic.text,primary:{kind:'heroic',label:'Try Heroic'},also:''};
  if(chFirst)return {text:`Next adventure: ${chFirst.name}, the first stop in ${String(chName).replace(/^The /,'the ')}.`,primary:{kind:'map'},also:'',legendary:legendLead(save,id,legend)};
  if(step?.target?.kind==='library')return {text:step.text,primary:{kind:'library',label:'Go to the Library',subject:step.target.subject||leadSubject(save)||null},also:''};

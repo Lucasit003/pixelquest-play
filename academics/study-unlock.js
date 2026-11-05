@@ -19,6 +19,7 @@ import {middleLadder,highLadder} from '../game/math.js';
 import {placementGrades} from './placement.js';
 import {orderHigh} from './course-grades.js';
 import {nextPower,powerLine} from '../game/power-gate.js';
+import {heldSubject} from './hs-taster.js';/* improve20-r22b-nov4 #2 */
 
 const FADE=250/4.5;
 const EPS=1e-8;
@@ -191,7 +192,7 @@ function nextLessonRaw(save,{hero=save.hero,subject=null}={}){
 const STAGE_FIRST={elementary:2,middle:6,high:9};
 export function placementNudge(save,{hero=save.hero}={}){
  const mode=STAGE_FIRST[save.schoolMode]?save.schoolMode:'elementary',first=STAGE_FIRST[mode];
- const subjects=Object.keys(SUBJECTS).filter(subject=>openGrade(save,subject)<first&&placementGrades(subject,mode).length&&!TOPICS.some(t=>t.subject===subject&&topicInSchoolMode(save,t)&&topicOpen(save,t)&&!mastered(save,t))&&(ABILITIES[hero]||[]).some(a=>a.subject===subject&&!unlocked(save,a)));
+ const subjects=Object.keys(SUBJECTS).filter(subject=>openGrade(save,subject)<first&&placementGrades(subject,mode).length&&!TOPICS.some(t=>t.subject===subject&&topicInSchoolMode(save,t)&&topicOpen(save,t)&&!mastered(save,t))&&(ABILITIES[hero]||[]).some(a=>a.subject===subject&&!unlocked(save,a))&&/* improve20-r22b-nov4 #2: never a subject held behind this session's Quick start */!heldSubject(save,subject));
  if(!subjects.length)return null;
  const cur=nextLesson(save,{hero}),best=cur?.ability?cur.lessons:Infinity;let out=null;
  for(const subject of subjects){
