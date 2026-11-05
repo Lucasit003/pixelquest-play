@@ -3895,6 +3895,22 @@ html.cine-on #arena-chip{visibility:hidden}
 .rift-tower-empty{margin:6px 0;font-size:16px;color:var(--ink-2)}
 .rift-tower-note{text-align:center;margin:6px 0 0;font-size:16px}
 .m-mode .rift-tower-top{width:32px;height:40px}.m-mode .rift-week{padding:2px 6px}.m-mode .rift-week-bars{width:44px}
+/* improve25-r25f-nov5 #2: the stacked Rift tower (PixelLab pieces, 2x, pixelated), the week list and the banners beside it */
+.rift-tower-row .rift-tower{flex-direction:row;align-items:flex-end;justify-content:center;gap:18px;max-width:none}
+.rift-stack{display:flex;flex-direction:column-reverse;align-items:center;flex:none;padding-right:56px;padding-left:4px}
+.rift-stack img{image-rendering:pixelated;display:block}
+.rift-stack .rift-base{width:156px;height:60px}
+.rift-block{position:relative;display:block;width:72px;height:40px;margin-bottom:-10px}
+.rift-block>img{width:72px;height:40px}
+.rift-block.ghost>img{opacity:.22;filter:grayscale(1)}
+.rift-mark{position:absolute;left:62px;top:-46px;width:64px!important;height:96px!important;filter:grayscale(1) brightness(.55);opacity:.55}
+.rift-mark.lit{filter:drop-shadow(0 0 6px rgba(170,120,255,.6));opacity:1}
+.rift-stack .rift-tower-top{margin:0 0 -6px}
+.rift-side{display:flex;flex-direction:column;gap:6px;min-width:0;max-width:340px}
+.rift-next{margin:0;font-size:16px;color:#e9dcb6}
+.rift-marks{list-style:none;margin:0;padding:0;font-size:16px;line-height:18px;color:var(--ink-2)}.rift-marks li[data-earned]{color:#cdb6ff}.rift-marks b{font-weight:400;color:#e9dcb6}
+.m-mode .rift-tower-row .rift-tower{gap:10px}.m-mode .rift-stack .rift-tower-top{width:48px;height:60px}
+.deco-earned{display:block;color:#9fe07a}
 dialog[data-view=result] .level-highlights :is(.level-recipe,.level-keepsake){flex-wrap:nowrap}
 dialog[data-view=result] .level-highlights :is(.level-recipe,.level-keepsake) strong{text-align:left;max-width:400px}
 /* improve20-r9c-nov1 (audit8 05/06): the unlock card's swirl (.ui-fx), burst (.edu-unlock-rays) and awaken ring covered the hero preview with an
@@ -4714,3 +4730,6 @@ dialog[data-view=result] #result-extra>.goal-more>span{display:block;text-align:
 :root:not(.m-mode) dialog[data-view=result] #modal-content .level-result>.level-record.note-lifted{display:flex;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center;justify-content:center;gap:8px;flex:none;margin:4px auto 0;padding:4px 12px;max-width:100%;text-transform:none;letter-spacing:.5px;line-height:1.25;animation:none}
 :root:not(.m-mode) dialog[data-view=result] #modal-content .level-result>.level-record.note-lifted>:is(img,svg,.ico,canvas){flex:none;width:28px;height:28px}
 :root:not(.m-mode) dialog[data-view=result] #modal-content .level-result>.level-record.note-lifted>strong{flex:0 1 auto;min-width:0;font-size:17px;text-align:left}
+
+/* improve25-r25f-nov5 #4 */
+.mm-glow{margin:4px 0 0;color:#cdb6ff}

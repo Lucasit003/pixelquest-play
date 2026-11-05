@@ -50,11 +50,17 @@ const T=[
    unscaled. Prices fill the gaps 1,000-1,400, 1,400-2,000 and 2,000-3,000, so the hearth stays the last big goal. Floor pieces, not WALL_IDS. */
  ['show-globe','Explorer\'s globe',1200,'show',39,53,'pixellab/showpieces-r23h/show-globe.png'],
  ['show-hoard','Dragon\'s hoard',1600,'show',47,37,'pixellab/showpieces-r23h/show-hoard.png'],
- ['show-dragon-skull','Dragon skull trophy',2400,'show',69,60,'pixellab/showpieces-r23h/show-dragon-skull.png']];
+ ['show-dragon-skull','Dragon skull trophy',2400,'show',69,60,'pixellab/showpieces-r23h/show-dragon-skull.png'],
+/* improve25-r25f-nov5 #3 (audit16 plan 6): the Hall diary's keepsakes, one per chapter, given free at Home when that chapter's diary pages are all
+   filled (game/hall-diary.js grantDiaryKeepsakes). The interiors pack's own bookcases, margins cropped like the rest; never sold (kind 'keep',
+   price 0: buyFurniture refuses them and the Catalogue leaves them out), one of each. */
+ ['keep-elderwood','Elderwood diary bookcase',0,'keep',44,72,'prop-cabinet_1.png'],
+ ['keep-emberkeep','Emberkeep diary bookcase',0,'keep',39,71,'prop-cabinet_24.png'],
+ ['keep-veilmoor','Veilmoor diary bookcase',0,'keep',35,69,'prop-cabinet_20.png']];
 /* improve20-r7a-nov1 #12 (improve20-x-nov1 report: "Wall pieces stand on the floor like all furniture"): the pieces made to hang (the banner,
    the shield trophy, the weapon rack and the armour plaque, all front views) go on the Home's back wall. Same art, no new pictures. */
 export const WALL_IDS=Object.freeze(['show-banner','show-shields','show-weapons','show-armour']);
-export const FURNITURE=Object.freeze(T.map(([id,name,price,kind,w,h,src])=>Object.freeze({id,name,price,kind,w,h,src,flat:kind==='rug',...(WALL_IDS.includes(id)?{wall:true}:{}),img:`assets/town/furniture/${id}.png`})));
+export const FURNITURE=Object.freeze(T.map(([id,name,price,kind,w,h,src])=>Object.freeze({id,name,price,kind,w,h,src,flat:kind==='rug',...(kind==='keep'?{earned:true}/* improve25-r25f-nov5 #3 */:{}),...(WALL_IDS.includes(id)?{wall:true}:{}),img:`assets/town/furniture/${id}.png`})));
 export const FURN=Object.freeze(Object.fromEntries(FURNITURE.map(f=>[f.id,f])));
 export const MAX_PLACED=40;
 /* the Showpiece shelf, cheapest first; one of each can be owned */
@@ -68,7 +74,7 @@ export const nextShowpiece=s=>SHOWPIECES.find(f=>!((s?.house?.owned?.[f.id]|0)>0
 export const footprint=(f,x,y)=>{const h=Math.max(8,Math.min(24,Math.round(f.h/3)));return {x0:Math.round(x-f.w/2),x1:Math.round(x+f.w/2),y0:Math.round(y-h),y1:Math.round(y)};};
 export const placedCount=(s,id)=>s.house.items.filter(i=>i.id===id).length;
 export const spare=(s,id)=>(s.house.owned[id]||0)-placedCount(s,id);
-export function buyFurniture(s,id){const f=FURN[id];if(!f||(s.gold||0)<f.price||f.kind==='show'&&(s.house.owned[id]|0)>0)return false;s.gold-=f.price;s.house.owned[id]=(s.house.owned[id]||0)+1;return true;}
+export function buyFurniture(s,id){const f=FURN[id];if(!f||f.earned/* improve25-r25f-nov5 #3 */||(s.gold||0)<f.price||f.kind==='show'&&(s.house.owned[id]|0)>0)return false;s.gold-=f.price;s.house.owned[id]=(s.house.owned[id]||0)+1;return true;}
 export function placeFurniture(s,id,x,y,wall=false){if(!FURN[id]||spare(s,id)<1||s.house.items.length>=MAX_PLACED||wall&&!FURN[id].wall)return false;s.house.items.push({id,x:Math.round(x),y:Math.round(y),...(wall?{wall:1}:{})});return true;}
 /* The Home's back wall (room pixels; the plaster face of the room "home" runs y 80-160 between x 96 and 480, under a beam at y 92-102): a hung
    piece's top sits just under the beam (WALL.rail), so a row of pieces lines up. It hangs inside the wall, clear of the room's own wall art
@@ -107,6 +113,6 @@ export function settleWall(items){const hung=items.filter(it=>it.wall&&FURN[it.i
 export function pickUp(s,i){if(i<0||i>=s.house.items.length)return false;s.house.items.splice(i,1);return true;}
 /* a save's house, cleaned: known items only, whole counts, and never more placed than owned (save.js normalize) */
 export function cleanHouse(h){const owned={},items=[];
- for(const [id,n] of Object.entries(h?.owned&&typeof h.owned==='object'?h.owned:{}))if(FURN[id]&&Math.floor(Number(n))>0)owned[id]=FURN[id].kind==='show'?1:Math.floor(Number(n));
+ for(const [id,n] of Object.entries(h?.owned&&typeof h.owned==='object'?h.owned:{}))if(FURN[id]&&Math.floor(Number(n))>0)owned[id]=FURN[id].kind==='show'||FURN[id].earned/* improve25-r25f-nov5 #3 */?1:Math.floor(Number(n));
  for(const it of Array.isArray(h?.items)?h.items:[])if(it&&FURN[it.id]&&Number.isFinite(+it.x)&&Number.isFinite(+it.y)&&items.filter(o=>o.id===it.id).length<(owned[it.id]||0)&&items.length<MAX_PLACED)items.push({id:it.id,x:Math.round(+it.x),y:Math.round(+it.y),...(it.wall&&FURN[it.id].wall?{wall:1}:{})});
  settleWall(items);return {owned,items};}

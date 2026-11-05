@@ -20,6 +20,8 @@ import {shopById} from '../game/shops.js';
 import {levelDone} from '../game/levels.js';
 import {gateShut, GATE_LINE, GATE_WHERE} from '../academics/starter-lesson.js';
 import {drawTrail} from '../gfx/hero-trail.js';
+import {heroGlow} from '../game/hero-glow.js'; /* improve25-r25f-nov5 #4 */
+import {drawHeroGlow} from '../gfx/hero-glow.js';
 import {trailOf} from '../game/prizes.js';
 import {FURN, footprint, placeFurniture, spare, wallSpot, wallFits, WALL} from '../game/furniture.js';
 import {talk, talkAndAdvance, nameOf, holds, stepIdOf, STORY, /* improve20-r22f-nov4 #1 */beatLines, lineText} from '../game/npcs.js';
@@ -791,8 +793,55 @@ function beatDue(trigger, S, p) {
 function fire(b) {
   seenBeats().push(b.id);
   /* improve20-r22f-nov4 #1: a chapter beat's lines are worked out for this save, each naming its speaker */
+  /* improve25-r25f-nov5 #1: a beat with a crowd (a chapter return) gathers its people at the south gate; each line carries that person's own bust */
+  const crowd = b.crowd ? gateCrowd(b.crowd) : null;
+  const bust = l => !crowd || typeof l === 'string' || l.portrait ? l : {...l, portrait: crowd.bust(l.speaker)};
   H.events.push({id: b.id, speaker: b.speaker, lines: beatLines(b, H.save), ...(b.cine ? {cine: true} : {}), ...(b.hold ? {hold: true} : {})});
+  if (crowd) { const ev = H.events[H.events.length - 1]; ev.lines = ev.lines.map(bust); ev.crowd = true; }
 }
+/* improve25-r25f-nov5 #1 (audit16 plan 1): a chapter return is a scene at the gate. The townsfolk named by the beat (game/npcs.js CHAPTER_BEATS
+   crowd) stand in a row a few steps north of the hero, facing him, drawn with their own sprite from where they live (a village figure's baked
+   sprite, which is hidden from its spot meanwhile, or a room's npc-spot sprite); no new art. main.js ends the scene when the talk box closes
+   (hubCrowdEnd) and they are back at their spots. A person with no pack bust gets one cut from their own sprite's head (one face per person). */
+function personArt(name) {
+  const V = scene('village'), D = V.D;
+  const f = V.figures.find(q => q.name === name);
+  const near = (Dx, x, y) => Dx.sprites.findIndex(s => (s[6] & 8) && Math.abs(s[1] + s[3] / 2 - x) < 14 && Math.abs(s[2] + s[4] - y) < 16);
+  if (f) { const i = near(D, f.x, f.y); if (i >= 0) { const e = D.entries[D.sprites[i][0]]; return {page: () => images(V).pages[e[0]], e, hide: i}; } }
+  for (const key of ROOM_KEYS()) {
+    const S = scene(key); const q = S?.points.find(o => o.type === 'npc-spot' && nameOf(o.props?.key, o.name) === name); if (!q) continue;
+    const i = near(S.D, q.x, q.y); if (i < 0) continue; const e = S.D.entries[S.D.sprites[i][0]], file = S.D.pages[e[0]][0]; let im = null;
+    return {page: () => (im ??= load(file)), e, hide: -1};
+  }
+  return null;
+}
+const CROWD_DX = [-44, 0, 44], CROWD_UP = 52;
+function gateCrowd(names) {
+  const V = scene('village'), g = hubGate(), people = [], busts = new Map(), arts = names.map(personArt);
+  names.forEach((name, k) => {
+    const art = arts[k]; if (!art) return;
+    const x = g.x + CROWD_DX[k % CROWD_DX.length] * (names.length === 2 ? .6 : 1);
+    let y = g.y - CROWD_UP; for (let n = 0; n < 6 && footBlocked(V, x, y); n++) y -= 8;
+    people.push({name, x, y, art}); art.page();
+  });
+  H.crowd = {people, hide: new Set(people.map(q => q.art.hide).filter(i => i >= 0))};
+  const bust = name => {
+    if (busts.has(name)) return busts.get(name);
+    const q = people.find(o => o.name === name), im = q?.art.page();
+    if (!q || !ready(im) || typeof document === 'undefined') return null;
+    const e = q.art.e, S0 = 24, bc = document.createElement('canvas'); bc.width = bc.height = S0;
+    const g2 = bc.getContext('2d'); if (!g2) return null; g2.imageSmoothingEnabled = false;
+    const w = Math.min(e[3], S0), sx = e[1] + Math.round((e[3] - w) / 2), top = e[4] > 40 ? Math.round((e[4] - 44) / 2) : 0;
+    g2.drawImage(im, sx, e[2] + top, w, S0, Math.round((S0 - w) / 2), 0, w, S0);
+    let url = null; try { url = bc.toDataURL('image/png'); } catch { url = null; }
+    busts.set(name, url); return url;
+  };
+  return {bust: name => () => bust(name)};
+}
+/** improve25-r25f-nov5 #1: the gate scene is over; everyone is back at their spot */
+export function hubCrowdEnd() { H.crowd = null; }
+/** improve25-r25f-nov5 #1: who stands at the gate now ([{name, x, y}]), for tests and the playtest driver */
+export const hubCrowd = () => (H.crowd?.people ?? []).map(({name, x, y}) => ({name, x, y}));
 /* Owner, 8 Oct: "make conversation with npcs happen when u press a button near them". A story beat spoken by someone
    who stands in Oakhaven waits until the player walks up to them and presses the talk key; while it waits they wear
    the talk marker over their head. Only narration with nobody to talk to (waking up at Home) still plays by itself. */
@@ -1153,6 +1202,8 @@ export function drawHub(c, state, t, kit) {
   for (const it of house) { const f = FURN[it.id], im = f && f.flat && furnImage(f); if (im && ready(im)) c.drawImage(im, Math.round(it.x - f.w / 2), Math.round(it.y - f.h)); }
   /* ownernotes-a-nov1: sunlight through the window (gfx/window-light.js), on the floor and the rugs, under the furniture and the figures */
   if (S.room) drawWindowLight(c, S.key, state.motion !== false);
+  /* improve25-r25f-nov5 #4: the next power's glow at the hero's feet, on the ground with the light (baked ground pieces that sort below the hero would cover it as a figure), under every sprite and figure */
+  { const hg = heroGlow(); if (hg) drawHeroGlow(c, p, hg, undefined, state.motion !== false); }
   /* sprites in view, in baked draw order */
   const seen = new Set(), list = [];
   for (let by = Math.floor((vy0 - 8) / S.B); by <= Math.floor((vy1 + 8) / S.B); by++) for (let bx = Math.floor((vx0 - 8) / S.B); bx <= Math.floor((vx1 + 8) / S.B); bx++)
@@ -1173,6 +1224,8 @@ export function drawHub(c, state, t, kit) {
     const r = BARRACKS.roster, im = (H.roster ??= load(r.img));
     figures.push({y: r.y, draw: () => { if (ready(im)) c.drawImage(im, Math.round(r.x - im.width / 2), Math.round(r.y - im.height + 4)); }});
   }
+  /* improve25-r25f-nov5 #1: the chapter-return crowd at the south gate */
+  if (!S.room && H.crowd) for (const q of H.crowd.people) figures.push({y: q.y, draw: () => drawFigure(c, {pages: [q.art.page()]}, [0, ...q.art.e.slice(1)], q.x, q.y, 1, 1, ms)});
   for (const m of crewHere(S)) { const art = ART[m.id]; loadActor(art.sprite); figures.push({y: m.y, draw: () => { shadow(c, m.x, m.y); drawActor(c, art.sprite, art.clips[m.clip || 'idle'] || art.clips.idle, m.t ?? ms / 1000, m.x, m.y, {facing: m.facing || -1, scale: art.scale}); }}); }
   for (const m of S.walkers) {
     const st = state.motion === false ? walkerAt(m, 0) : walkerTick(m, t, p);
@@ -1196,7 +1249,7 @@ export function drawHub(c, state, t, kit) {
   const ambient = () => { if (fxDone) return; fxDone = true; while (fi < figures.length) figures[fi++].draw(); drawFx(c, S, t, state.motion !== false, vx0, vy0, vx1, vy1); };
   const hidden = restoreOf(S).hidden;
   for (const i of list) {
-    if (hidden.has(i) || lot?.step.has(i)) continue;
+    if (hidden.has(i) || lot?.step.has(i) || !S.room && H.crowd?.hide.has(i)/* improve25-r25f-nov5 #1: that person is at the gate */) continue;
     const swapped = !!lot?.swap.has(i), s = swapped ? Object.assign([D.sprites[i][0], BARRACKS.x, BARRACKS.y, 224, 240, BARRACKS.base, 8, -1], {barracks: true}) : D.sprites[i];
     /* overhead art (a room's vignette, chandeliers, chimney smoke) goes over everyone, and over the flames */
     if (s[5] >= 1e6) ambient();
@@ -1569,6 +1622,7 @@ export function hubArriveAtGate(world) {
   hubPlace(world, 'village', g.x, g.y); H.acts = world.actions; H.save = world.save;
   world.player.direction = world.player.lastDirection = g.facing;
   if (H.save) visitPlace(H.save, townPlace('gate'));
+  H.crowd = null; /* improve25-r25f-nov5 #1 */
   /* home from an adventure: the homecoming beat, once, when its `when` holds (e.g. Grubnak beaten) */
   const back = beatDue('return');
   if (back && !isPerson(back.speaker)) fire(back);

@@ -41,13 +41,15 @@ function box(){
  return el;
 }
 function setPortrait(el,p){
+ /* improve25-r25f-nov5 #1: a bust worked out when its line shows (scenes/town.js gateCrowd); while its picture is still loading the line waits for it a moment (at most about 1.5 s), name plate only meanwhile */
+ if(typeof p==='function'){const f=p,tok=el.dataset.bustTok=String((+el.dataset.bustTok||0)+1);p=f();if(!p){let n=0;const again=()=>{if(el.dataset.bustTok!==tok||++n>12)return;const u=f();if(u)setPortrait(el,u);else later(again,120);};later(again,120);}}else el.dataset.bustTok=String((+el.dataset.bustTok||0)+1);
  const host=el.querySelector('.dlg-portrait');host.innerHTML='';el.classList.toggle('no-portrait',!p);if(!p)return;
  const d=globalThis.document;
- if(CLASSES[p]){const cv=d.createElement('canvas');cv.width=160;cv.height=180;host.appendChild(cv);host.dataset.kind='painted';try{paintPortrait(cv,CLASSES[p]);}catch{}return;}
+ if(typeof p==='string'&&CLASSES[p]){const cv=d.createElement('canvas');cv.width=160;cv.height=180;host.appendChild(cv);host.dataset.kind='painted';try{paintPortrait(cv,CLASSES[p]);}catch{}return;}
  const img=d.createElement('img');img.alt='';img.src=PORTRAITS.includes(p)?new URL(`./portraits/${p}.png`,import.meta.url).href:p;host.dataset.kind='pixel';host.appendChild(img);
 }
 function normal(lines,o){return (Array.isArray(lines)?lines:[lines]).map(l=>typeof l==='string'?{text:l,speaker:o.speaker,portrait:o.portrait}:{speaker:o.speaker,portrait:o.portrait,...l});}
-function run(lines,passive=false,talk=false){
+function run(lines,passive=false,talk=false,scene=false){
  return new Promise(resolve=>{
   const d=globalThis.document;if(!d){resolve();return;}
   const el=box(),text=el.querySelector('.dlg-text'),name=el.querySelector('.dlg-name');
@@ -70,15 +72,17 @@ function run(lines,passive=false,talk=false){
    moved=null;
   };
   const press=()=>{if(shown<full.length)finishLine();else{sfx('ui.click');next();}};
-  const onKey=e=>{const k=e.key;if(k==='e'||k==='E'||k==='Enter'||k===' '){e.preventDefault();e.stopImmediatePropagation();if(!e.repeat)press();}else if(k==='Escape'){e.preventDefault();e.stopImmediatePropagation();finishLine();}else e.stopImmediatePropagation();};
+  /* improve25-r25f-nov5 #1: a scene (a chapter return at the gate) moves on with any key or a tap anywhere, and Escape skips the rest */
+  const onKey=e=>{const k=e.key;if(scene){e.preventDefault();e.stopImmediatePropagation();if(k==='Escape'){close();return;}if(!e.repeat&&!MODS.has(k))press();return;}if(k==='e'||k==='E'||k==='Enter'||k===' '){e.preventDefault();e.stopImmediatePropagation();if(!e.repeat)press();}else if(k==='Escape'){e.preventDefault();e.stopImmediatePropagation();finishLine();}else e.stopImmediatePropagation();};
   /* passive lines take E / Enter / Space (and never pass them on to the game); every other key, movement
      included, stays with the game */
   /* ...unless a door, sign or villager is in reach: then E is the game's, and the ambient line steps aside */
   const onPassiveKey=e=>{const k=e.key;if(talk&&(k==='e'||k==='E'||k==='Enter'||k===' ')){e.preventDefault();e.stopImmediatePropagation();if(!e.repeat)press();return;}/* Escape closes the line first; a second Escape pauses (playtest 14 Oct pass 2) */if(k==='Escape'){e.preventDefault();e.stopImmediatePropagation();close();return;}if(!(k==='e'||k==='E'||k==='Enter'||k===' '))return;if(d.querySelector('#prompt')?.textContent.trim()){close();return;}e.preventDefault();e.stopImmediatePropagation();if(!e.repeat)press();};
   const onPointer=e=>{e.preventDefault();e.stopPropagation();press();};
-  let close=()=>{clearTimeout(timer);clearTimeout(auto);(globalThis.window||globalThis).removeEventListener?.('keydown',onKey,true);(globalThis.window||globalThis).removeEventListener?.('keydown',onPassiveKey,true);el.removeEventListener('pointerdown',onPointer);
+  const onScenePointer=e=>{if(el.contains(e.target))return;e.preventDefault();e.stopPropagation();press();};
+  let close=()=>{clearTimeout(timer);clearTimeout(auto);(globalThis.window||globalThis).removeEventListener?.('keydown',onKey,true);(globalThis.window||globalThis).removeEventListener?.('keydown',onPassiveKey,true);el.removeEventListener('pointerdown',onPointer);if(scene)d.removeEventListener('pointerdown',onScenePointer,true);
    el.classList.remove('show','done');el.hidden=true;open=false;if(talk){talking=null;talkClosedAt=clock();}d.querySelector('#toast.held')?.classList.remove('held');if(!passive)d.documentElement.classList.remove('dlg-blocking');if(world&&prevPaused!==undefined)world.paused=prevPaused;resolve();};
-  if(talk)talking=press;(globalThis.window||globalThis).addEventListener?.('keydown',passive?onPassiveKey:onKey,true);el.addEventListener('pointerdown',onPointer);
+  if(talk)talking=press;(globalThis.window||globalThis).addEventListener?.('keydown',passive?onPassiveKey:onKey,true);el.addEventListener('pointerdown',onPointer);if(scene)d.addEventListener('pointerdown',onScenePointer,true);
   if(passive){let live=true;const watch=()=>{if(!live)return;/* gone into a level, or the world map opened (main.js hides #hud for it): the chatter ends */const mapUp=globalThis.document?.querySelector('#hud')?.style.visibility==='hidden';if(mapUp||world?.level||(world?.zone&&world.zone!=='town')){live=false;close();return;}
    /* walking away closes a line the player has seen in full (never a clock: standing still, it waits) */
    const p=world?.player;if(p&&shown>=full.length){if(!moved)moved={x:p.x,y:p.y};else if(Math.hypot(p.x-moved.x,p.y-moved.y)>40){live=false;close();return;}}
@@ -87,4 +91,5 @@ function run(lines,passive=false,talk=false){
  });
 }
 /* Queues behind any box already open, so two callers never talk over each other. */
-export function say(lines,opts={}){const ls=normal(lines,opts);queue=queue.then(()=>run(ls,!!opts.passive,!!opts.talk));return queue;}
+const MODS=new Set(['Shift','Control','Alt','Meta','CapsLock','Tab']);/* improve25-r25f-nov5 #1: keys that never move a scene on */
+export function say(lines,opts={}){const ls=normal(lines,opts);queue=queue.then(()=>run(ls,!!opts.passive,!!opts.talk,!!opts.scene));return queue;}

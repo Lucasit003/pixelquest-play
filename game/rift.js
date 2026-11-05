@@ -71,6 +71,10 @@ export function cleanTower(v){if(!v||typeof v!=='object'||Array.isArray(v))retur
 /* the tower's floors grouped by week, oldest first: [{week (null for early floors), n}], and the total */
 export function riftTower(s){const r=s?.rift,t=cleanTower(r?.tower),early=t?t.early|0:Math.max(0,r?.story|0),weeks=Object.keys(t||{}).filter(k=>k!=='early').sort();
  const rows=[...(early?[{week:null,n:early}]:[]),...weeks.map(w=>({week:w,n:t[w]}))];return {rows,floors:rows.reduce((a,x)=>a+x.n,0)};}
+/* improve25-r25f-nov5 #2 (audit16 plan 4): the tower's markers. Reaching a marker's floor earns its title (game/titles.js), once, never lost:
+   floors only ever grow. No cap and no week limit. */
+export const TOWER_MARKS=Object.freeze([Object.freeze({at:4,id:'rift-climber',name:'Rift Climber'}),Object.freeze({at:8,id:'rift-warden',name:'Rift Warden'}),Object.freeze({at:12,id:'rift-master',name:'Rift Master'})]);
+export const nextTowerMark=s=>{const f=riftTower(s).floors;return TOWER_MARKS.find(m=>m.at>f)||null;};
 /* '2026-W45' -> 'Week 45, 2026' */
 export const weekLabel=k=>{const m=/^(\d{4})-W(\d{2})$/.exec(String(k||''));return m?`Week ${+m[2]}, ${m[1]}`:'Before the tower';};
 /* Rolls the save onto this week (mutates s.rift; returns this week's pick or null). A week played moves to `last`; a week not played

@@ -36,3 +36,13 @@ const chName=ch=>(CHAPTERS.find(c=>c.id===ch)?.name||ch).replace(/^The /,'');
 export function diaryPages(s){return HALL_CHAPTERS.flatMap(ch=>hallBosses(ch).map(id=>{const l=levelById(id),d=baseDef(l?.boss)||{},e=DIARY[id]||{},beat=hallBossBeat(s,id);
  return {id,chapter:ch,name:l?.bossName||d.name||id,sprite:d.sprite||'',beat,how:beat?e.how||'':'',joke:beat?e.joke||'':'',lock:beat?'':`Locked. Beat this boss in the Hall of Echoes: ${chName(ch)}, Rung ${ROMAN[0]} (any rung counts).`};}));}
 export const diaryCount=s=>diaryPages(s).filter(p=>p.beat).length;
+/* improve25-r25f-nov5 #3 (audit16 plan 6): the diary as a collection with a payoff. A chapter's pages are its Hall bosses (hall.js hallBosses);
+   filling every one earns that chapter's keepsake: a pack bookcase given free at Home (game/furniture.js, kind 'keep', never sold) and a title
+   (game/titles.js). Nothing random; pages are never lost (hallBossBeat reads records that never go back), so neither is the keepsake. A save
+   that already has a full chapter gets its bookcase on load (core/save.js normalize) as titles do. */
+export const DIARY_KEEPSAKES=Object.freeze({elderwood:Object.freeze({furn:'keep-elderwood',title:'lore-elderwood',name:'Elderwood Lorekeeper'}),emberkeep:Object.freeze({furn:'keep-emberkeep',title:'lore-emberkeep',name:'Emberkeep Lorekeeper'}),veilmoor:Object.freeze({furn:'keep-veilmoor',title:'lore-veilmoor',name:'Veilmoor Lorekeeper'})});
+export const diaryChapterDone=(s,ch)=>{const xs=hallBosses(ch);return xs.length>0&&xs.every(id=>hallBossBeat(s,id));};
+/* per chapter: {chapter, name, have, total, done, furn, title, titleName} */
+export function diaryChapters(s){return HALL_CHAPTERS.filter(ch=>DIARY_KEEPSAKES[ch]).map(ch=>{const xs=hallBosses(ch),have=xs.filter(id=>hallBossBeat(s,id)).length,k=DIARY_KEEPSAKES[ch];return {chapter:ch,name:chName(ch),have,total:xs.length,done:xs.length>0&&have===xs.length,furn:k.furn,title:k.title,titleName:k.name};});}
+/* gives every earned bookcase not yet owned (s.house.owned[id] = 1); returns the furniture ids added */
+export function grantDiaryKeepsakes(s){if(!s?.house?.owned)return [];const add=[];for(const c of diaryChapters(s))if(c.done&&!((s.house.owned[c.furn]|0)>0)){s.house.owned[c.furn]=1;add.push(c.furn);}return add;}

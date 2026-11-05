@@ -177,16 +177,18 @@ export function wayIn(save, id) {
   if (st) out.push(`${g?.text ? 'It also needs' : 'Its gate needs'} ${st.need} stars, and you have ${st.have}. Replay levels on Heroic or Legendary, or win them with a better grade, for more stars.`);
   return out.join(' ') || `Its card on the world map says what it needs.`;
 }
+/* improve25-r25f-nov5 #1 (audit16 plan 1: "make chapter returns a scene"): the people who matter to the chapter stand at the south gate
+   (scenes/town.js gateCrowd) and each says a short line with their portrait; at most 4 lines (CROWD_LINES). The narrator's opening line
+   is gone: the crowd at the gate is that scene now. Same words and story as before, shortened. */
+export const CROWD_LINES = 4;
 export const CHAPTER_BEATS = Object.freeze({
-  e8: {next: 'm1', say: save => [
-    line('Oakhaven', 'People come running to the south gate. The hero who beat the Thorn King is home!'),
-    line(AL, 'The thorns have pulled back from the Elderwood. Every power you learned helped do that.'),
-    line(HOB, 'Safe roads again! Even my sheep look happier.'),
+  e8: {next: 'm1', crowd: [HOB, BESS, AL], say: save => [
+    line(HOB, 'You beat the Thorn King! Safe roads again. Even my sheep look happier.'),
     line(BESS, 'Travellers say fire creatures guard Emberkeep, a castle built on a cooling volcano.'),
+    line(AL, 'The thorns have pulled back from the Elderwood. Every power you learned helped do that.'),
     line(AL, `Its first stop is the ${levelById('m1').name}. ${wayIn(save, 'm1')}`)]},
-  m7: {next: 'v1', say: save => [
-    line('Oakhaven', 'Bells ring all over Oakhaven. Moltar, the Forge Ogre, is beaten, and Emberkeep is free!'),
-    line(HOB, 'Emberkeep! I would have run the other way. Well done, hero.'),
+  m7: {next: 'v1', crowd: [HOB, BESS, AL], say: save => [
+    line(HOB, 'Moltar the Forge Ogre, beaten! I would have run the other way. Well done, hero.'),
     line(BESS, 'The whole market is talking about you. Agnes even forgot her shopping list. Well, she always does.'),
     line(AL, `One land is left: the Veilmoor, where violet mists bend the rules. Its first stop is the ${levelById('v1').name}.`),
     line(AL, wayIn(save, 'v1'))]},
@@ -194,8 +196,8 @@ export const CHAPTER_BEATS = Object.freeze({
 
 export const STORY = [
   /* improve20-r22f-nov4 #1: first in the list, so a waiting talk-to-Bess beat never stands in front of it (beatDue takes the first due beat) */
-  {id: 'chapter-elderwood', trigger: 'return', speaker: 'Oakhaven', hold: true, when: {done: 'e8', notDone: 'm1'}, say: CHAPTER_BEATS.e8.say},
-  {id: 'chapter-emberkeep', trigger: 'return', speaker: 'Oakhaven', hold: true, when: {done: 'm7', notDone: 'v1'}, say: CHAPTER_BEATS.m7.say},
+  {id: 'chapter-elderwood', trigger: 'return', speaker: 'Oakhaven', hold: true, crowd: CHAPTER_BEATS.e8.crowd, when: {done: 'e8', notDone: 'm1'}, say: CHAPTER_BEATS.e8.say},
+  {id: 'chapter-emberkeep', trigger: 'return', speaker: 'Oakhaven', hold: true, crowd: CHAPTER_BEATS.m7.crowd, when: {done: 'm7', notDone: 'v1'}, say: CHAPTER_BEATS.m7.say},
   /* libraryfirst-nov1: a Library-first game wakes to a note from Aldous instead of shouts at the gate; main.js then takes the hero to
      the Library door (a short scene change), and Aldous's tour starts inside. The older opening keeps its own beat. */
   {id: 'wake-library', trigger: 'new-game', room: 'home', at: 'Sleep', speaker: 'Home', when: {library: true},

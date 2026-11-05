@@ -37,6 +37,8 @@ import {emptyParty,cleanParty} from '../game/party.js';
 import {emptyQuests,cleanQuests} from '../game/quests.js';
 import {cleanTravel} from '../game/fasttravel.js';
 import {cleanTitles,earnTitles,TITLES} from '../game/titles.js';
+import {grantDiaryKeepsakes} from '../game/hall-diary.js';/* improve25-r25f-nov5 #3 */
+import {cleanGlow} from '../game/hero-glow.js';/* improve25-r25f-nov5 #4 */
 import {cleanPrizes,grantWinKeepsakes} from '../game/prizes.js';
 /* improve20-r20j-nov4 #2: ability seals broken and caches paid (additive within v9) */
 import {cleanSeals} from '../game/ability-seals.js';
@@ -235,7 +237,7 @@ const frac=(v,a,b)=>Math.max(a,Math.min(b,Number(v)||0));
     every rule reads a record that never goes back (a won level), so an earned title can never be lost this way */
  /* improve20-r20j-nov4 #2 (game/ability-seals.js): the seals broken and the caches paid; additive within v9, unknown ids drop, an older save starts with none (read by the seal titles below) */
  s.abilitySeals=cleanSeals(value.abilitySeals);
- s.titles=cleanTitles(value.titles).filter(id=>TITLES[id].earned(s));earnTitles(s);
+ s.titles=cleanTitles(value.titles).filter(id=>TITLES[id].earned(s));earnTitles(s);/* improve25-r25f-nov5 #3: a chapter's Hall diary already full has its bookcase at Home (given once, never taken) */grantDiaryKeepsakes(s);/* improve25-r25f-nov5 #4: the next power's glow count (game/hero-glow.js), additive within v9 */{const g=cleanGlow(value.glow);if(g)s.glow=g;else delete s.glow;}
  /* improve20-r7a-nov1 #8 (game/prizes.js): the daily keepsakes (titles, trails, hero-card backdrops) and what is worn; additive within v9, a save
     without it starts empty; a worn title may be an earned one (s.titles) or 'none'. Cosmetic only. s.dayHello: the last day the "New day!" banner
     showed (game/tomorrow.js newDayDue), a date or absent */

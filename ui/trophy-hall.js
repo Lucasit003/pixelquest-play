@@ -11,7 +11,7 @@ import {sealTrophies} from '../game/ability-seals.js';
 import {keepsakeShelf,questLive} from '../game/quests.js';
 import {levelById,CHAPTERS} from '../game/levels.js';
 /* improve20-r22f-nov4 #2: the Rift tower */
-import {riftTower,weekLabel,riftOpen} from '../game/rift.js';
+import {riftTower,weekLabel,riftOpen,/* improve25-r25f-nov5 #2 */TOWER_MARKS} from '../game/rift.js';
 import {loadSprite,spriteImage,spriteMeta,spriteReady,releaseSprite,loadedSprites} from '../gfx/actors/sprites.js';
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const TIER_NAME={normal:'Normal',heroic:'Heroic',legendary:'Legendary'};
@@ -35,9 +35,18 @@ export function keepsakeShelfHTML(s){const xs=keepsakeShelf(s,questLive);if(!xs.
    week with its count. Drawn with the UI skin's slot frame and the world map's rift portal on top; no new art. At most 8 floor bars a week are
    drawn, the label always gives the real count. Nothing here is "this week" or a cap. */
 export const TOWER_BARS=8;
+/* improve25-r25f-nov5 #2 (audit16 plan 4: "the tower is one icon"): the entry draws a stacked tower from PixelLab pieces (ui/skin/rift-tower, DRAFT):
+   the base, one block per Story Rift floor climbed, faint blocks up to the next marker, a banner at floors 4, 8 and 12 (lit once reached; each
+   earns its title, game/titles.js) and the rift portal on top. The week list stays beside it; the label always gives the real count. Up to
+   TOWER_DRAWN blocks are drawn. No cap on floors, no week limit, nothing lost. */
+export const TOWER_DRAWN=30;
 export function riftTowerHTML(s){const t=riftTower(s);if(!t.floors&&!riftOpen(s))return '';
- const rows=[...t.rows].reverse().map(x=>`<li class="rift-week" data-week="${esc(x.week||'early')}"><span class="rift-week-bars" aria-hidden="true">${'<i class="rift-floor"></i>'.repeat(Math.min(TOWER_BARS,x.n))}</span><small><b>${esc(weekLabel(x.week))}</b> · ${x.n} floor${x.n===1?'':'s'}</small></li>`).join('');
- return `<section class="story-row rift-tower-row" aria-label="Rift tower" data-floors="${t.floors}"><h3 class="story-row-head">Rift tower <small>${t.floors} floor${t.floors===1?'':'s'}</small></h3><div class="rift-tower"><img class="rift-tower-top" src="assets/worldmap/rift-portal.png" alt="" width="32" height="40" draggable="false">${t.floors?`<ol class="rift-floors">${rows}</ol>`:'<p class="rift-tower-empty">Win a Story Rift to build the first floor.</p>'}<span class="rift-tower-base" aria-hidden="true"></span></div><p class="subtle rift-tower-note">Every Story Rift win adds a floor, replays too. A skipped week loses nothing.</p></section>`;}
+ const rows=[...t.rows].reverse().map(x=>`<li class="rift-week" data-week="${esc(x.week||'early')}"><small><b>${esc(weekLabel(x.week))}</b> · ${x.n} floor${x.n===1?'':'s'}</small></li>`).join('');
+ const nx=TOWER_MARKS.find(m=>m.at>t.floors),shown=Math.min(TOWER_DRAWN,Math.max(t.floors,nx?nx.at:0)),mark=m=>m?`<img class="rift-mark${m.at<=t.floors?' lit':''}" src="ui/skin/rift-tower/mark.png" alt="" width="32" height="48" draggable="false" data-mark="${m.at}">`:'';
+ const blocks=Array.from({length:shown},(_,i)=>{const f=i+1;return `<span class="rift-block${f>t.floors?' ghost':''}" data-floor="${f}"><img src="ui/skin/rift-tower/floor.png" alt="" width="36" height="20" draggable="false">${mark(TOWER_MARKS.find(m=>m.at===f))}</span>`;}).join('');
+ const marks=`<ul class="rift-marks">${TOWER_MARKS.map(m=>`<li data-mark-title="${esc(m.id)}"${m.at<=t.floors?' data-earned':''}>${m.at<=t.floors?'✓ ':''}<b>${esc(m.name)}</b> at ${m.at} floors</li>`).join('')}</ul>`;
+ const next=nx?`<p class="rift-next" data-next-mark="${nx.at}">${nx.at-t.floors} more floor${nx.at-t.floors===1?'':'s'} to the ${esc(nx.name)} banner.</p>`:'<p class="rift-next" data-next-mark="done">Every banner is up. The tower still grows with each Story Rift win.</p>';
+ return `<section class="story-row rift-tower-row" aria-label="Rift tower" data-floors="${t.floors}"><h3 class="story-row-head">Rift tower <small>${t.floors} floor${t.floors===1?'':'s'}</small></h3><div class="rift-tower"><div class="rift-stack" aria-hidden="true"><img class="rift-base" src="ui/skin/rift-tower/base.png" alt="" width="78" height="30" draggable="false">${blocks}<img class="rift-tower-top" src="assets/worldmap/rift-portal.png" alt="" width="32" height="40" draggable="false"></div><div class="rift-side">${t.floors?`<ol class="rift-floors">${rows}</ol>`:'<p class="rift-tower-empty">Win a Story Rift to build the first floor.</p>'}${next}${marks}</div></div><p class="subtle rift-tower-note">Every Story Rift win adds a floor, replays too. A skipped week loses nothing.</p></section>`;}
 export function trophyHallHTML(s,{freshSeals=[]}={}){const list=trophies(s),n=trophyCount(s);
  return `${chapterSealsHTML(s,freshSeals)}${storyRowHTML(s)}${/* improve20-r22f-nov4 #2 */riftTowerHTML(s)}${/* improve20-r20n-nov4 #1b */keepsakeShelfHTML(s)}${runeSealRowHTML(s)}<p class="subtle trophy-count">${n} of ${TROPHY_TOTAL} bosses beaten. Win on Heroic for a silver frame, on Legendary for gold.</p><div class="trophy-grid" role="list">${list.map(t=>`<div class="trophy ${t.won?'trophy-won trophy-'+t.metal:'trophy-dark'}" role="listitem" data-trophy="${esc(t.id)}"><canvas class="trophy-art" data-trophy-sprite="${esc(t.sprite)}" data-metal="${t.metal||''}" width="${PLAQUE_W*PQ_RES}" height="${PLAQUE_H*PQ_RES}" aria-hidden="true"></canvas>${t.won?`<h3>${esc(t.name)}</h3><p class="trophy-meta">${t.grade?`<img src="ui/skin/run/${gradeFile(t.grade)}.png" alt="" width="20" height="20"> Best grade ${esc(t.grade)} · `:''}${TIER_NAME[t.tier]} clear</p><p class="trophy-line">“${esc(t.line)}”</p>`:`<h3>?</h3><p class="trophy-meta">${esc(t.level)}</p><p class="trophy-line subtle">Beat this boss to hang its plaque.</p>`}</div>`).join('')}</div>`;}
 
