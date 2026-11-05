@@ -91,9 +91,15 @@ export function codeParts(text){
 const H=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function promptHTML(text){
  const r=codeParts(text);if(!r)return H(text);
- return `${H(r.head)}<span class="q-code">${r.lines.map(l=>`<code>${H(l)}</code>`).join('')}</span>${r.ask?`<span class="q-code-ask">${H(r.ask)}</span>`:''}`;
+ return `${H(r.head)}<span class="q-code">${r.lines.map(l=>/* improve24-r24l-nov5 #3: leading spaces become --ind and a spacer, so a wrapped line hangs under its own indent (ui/library.css .q-code) */(ind=>`<code${ind?` style="--ind:${ind}"`:''}>${ind?'<i class="q-ind" aria-hidden="true"></i>':''}${H(String(l).slice(ind))}</code>`)(String(l).match(/^ */)[0].length)).join('')}</span>${r.ask?`<span class="q-code-ask">${H(r.ask)}</span>`:''}`;
 }
 /* a question as shown above its choices: the stem when the buttons carry the options, code lines as a block, every character escaped */
 /* improve20-r21a-nov4 #7 (audit15 #19): a shown multiplication reads "4 × 8", not "4 x 8" (display only: the stored prompt, its id and its narration are unchanged) */
 export const timesSign=t=>String(t??'').replace(/(\d)\s?x\s?(?=\d)/g,'$1 × ');
-export const questionHTML=q=>promptHTML(timesSign(shownPrompt(q)));
+/* improve24-r24l-nov5 #6 (audit16 minor: finance-3-3fqvz0 says "Type A or B." over two tap tiles): an item shown as tiles never tells the kid to type.
+   Display only, at render time: a sentence that starts "Type", "Write" or "Enter" says "Answer" before an option (A-F, yes/no, true/false, the letter,
+   DNE) and "Give" before anything else ("Give just the number."), words that still fit if the kid switches to typing. The stored prompt, its id
+   and the read-aloud text are untouched. */
+export const tapPrompt=text=>String(text??'').replace(/(^|[.?!:]["”’)]*\s+)(?:Type|Write|Enter)\s+(?=(?:(?:[A-F]|yes|no|true|false)(?:,|\s+or\b|\s*[.?!]|$)|the letter\b|DNE\b))/g,'$1Answer ').replace(/(^|[.?!:]["”’)]*\s+)(?:Type|Write|Enter)\s+(?!(?:of|in|I{1,3}|IV)\b)(?![A-Z]\s)/g,'$1Give ');
+/* tiles: the item shows as tap tiles (choice buttons by default; callers with their own tiles pass true) */
+export const questionHTML=(q,tiles=!!choicesOf(q))=>promptHTML(timesSign(tiles?tapPrompt(shownPrompt(q)):shownPrompt(q)));

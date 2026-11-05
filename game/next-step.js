@@ -208,12 +208,23 @@ export function questLeadStep(save){const m=/^quest-(.+)-(\d+)$/.exec(typeof sav
  return {id:save.questLead,text,target:stepTarget(m[1],st),quest:m[1],questLead:true};}
 /* the lead goes when the kid picks another goal: a level other than the step's, or a lesson (level null) */
 export function dropQuestLead(save,level=null){const q=questLeadStep(save);if(!save?.questLead)return false;if(q&&level&&q.target?.kind==='pad'&&q.target.id===level)return false;save.questLead=null;return true;}
+/* improve24-r24l-nov5 #2 (audit16 #7): why Sam's Grade 4 path never fought. A kid who presses Continue on the wake card (not "Try it in a fight")
+   leaves the prologue unplayed, and while it is unplayed baseStep's first answer is the 'prologue' step; the quiz card's fight lead only took the
+   'goblin-camp' step, so every red stayed study. The Grade 2 desktop path had played the prologue (core/save.js normalize also marks it done on
+   the next load once a lesson is done, so the gap showed only in one sitting). This is that lead for every path: Goblin Camp while no map level
+   is won and it can start now (its gate open, the first power awake); otherwise null. The order of leads only: nothing unlocks here. */
+export const firstFightStep=save=>{const e1=levelById('e1');if(!e1||gateShut(save)||!levelOpen(save,'e1')||LEVELS.some(l=>l.kind==='level'&&!l.hidden&&levelDone(save,l.id)))return null;return {id:'goblin-camp',text:`Next adventure: ${e1.name}.`,target:{kind:'pad',id:'e1'},first:true};};
 const learningStep=n=>n?.target?.kind==='library'||!!n?.powerGate;
-export function nextStep(save,opts={}){const n=baseStep(save,opts),q=questLeadStep(save);if(!q||n?.quest===q.quest&&n?.id===q.id)return n;return learningStep(n)?{...n,questThen:q}:q;}
+/* improve24-r24m-nov5 #5 (audit16 #9, shots 12 and 20: Hob's purse in hand, the HUD led with "Charge Ground Slam (2/10)" and the arrow to Hob
+   was gone): while a quest step can be handed in (an accepted quest's current step is a talk or visit in town, a carried item's hand-in
+   among them; quests.js nextQuestStep rank 'handin'), that step is the HUD lead and its target is the quest giver. Only a waiting first-topic
+   test (testWaiting) outranks it. The learning step comes back as soon as the hand-in is done. */
+export function handInLead(save){if(!save?.started||gateShut(save))return null;let h=null;try{h=nextQuestStep(save,goalQuest(save));}catch{h=null;}if(h?.rank!=='handin'||testWaiting(save))return null;const q=questLeadStep(save);return q?.id===h.id?q:{...questStep(h),handIn:true};}
+export function nextStep(save,opts={}){const n=baseStep(save,opts),q=questLeadStep(save);{const h=handInLead(save);/* improve24-r24m-nov5 #5 */if(h)return n?.quest===h.quest&&n?.id===h.id?n:h;}if(!q||n?.quest===q.quest&&n?.id===q.id)return n;return learningStep(n)?{...n,questThen:q}:q;}
 function baseStep(save,{room}={}){goalSave=save;
  if(gateShut(save))return awakenStep(save,room);
  /* newplayer-oct27: after a lost first fight the HUD no longer reads as if the child had never been to the gate; it offers the Library too, as the defeat card does */
- if(!levelDone(save,'prologue')){const lib=libraryOpening(save)&&awakened(save),n=starterName(save);return {id:'prologue',text:save?.levels?.prologue?.plays>0?(lib?`Goblins still hold the south gate. Try again, and use ${n}!`:'Goblins still hold the south gate. Try again, or awaken an ability at the Library first.'):lib?`Goblins at the south gate! Go and try ${n} on them.`:'Goblins at the south gate! Go and see.',target:{kind:'gate'}};}
+ if(!levelDone(save,'prologue')&&/* improve24-r24l-nov5 #2: a kid who won Goblin Camp first is past the gate */!levelDone(save,'e1')){const lib=libraryOpening(save)&&awakened(save),n=starterName(save);return {id:'prologue',text:save?.levels?.prologue?.plays>0?(lib?`Goblins still hold the south gate. Try again, and use ${n}!`:'Goblins still hold the south gate. Try again, or awaken an ability at the Library first.'):lib?`Goblins at the south gate! Go and try ${n} on them.`:'Goblins at the south gate! Go and see.',target:{kind:'gate'}};}
  /* 25 Oct (first-hour playtest): after a defeat with an empty bag the goal points at the Alchemist first, when the hero can afford a
     potion. It clears as soon as one is bought, or once that level is won (levels[id].resolve counts defeats since the last win).
     oct26-midgame: it names the Apothecary, the shop's name on its door, the map and fast travel. */

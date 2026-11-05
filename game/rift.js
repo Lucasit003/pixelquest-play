@@ -103,6 +103,10 @@ export function riftFinish(s,{won,level,tier='normal',grade=null,time,date=new D
  return {won:true,paid:first,gold,shardsWon:won_,tier:tierKey(tier),story:!!story&&tierKey(tier)==='normal',floors:riftTower(s).floors,shards:r.shards,newBest,first,prevTime,best:r.best,week:r.week,title:riftTier(r.shards)>tierBefore?riftTitle(s):null};}
 /* improve20-r22p-nov4 #2: the win card's tower words for a riftFinish result: a Story win names the tower's floors, anything else says nothing */
 export const riftFloorText=x=>x?.won&&x.story&&x.floors>0?` Rift tower: ${x.floors} floor${x.floors===1?'':'s'}.`:'';
+/* improve24-r24m-nov5 #6: the same floor in kid words, for the first note on the win card: "Rift tower: 1st floor climbed" (the floor just climbed is
+   the tower's total). An ordinal from 1 up; anything but a Story win with floors says nothing */
+export const ordinal=n=>{const k=Math.max(0,n|0),t=k%100;return `${k}${t>=11&&t<=13?'th':['th','st','nd','rd'][k%10]||'th'}`;};
+export const riftFloorKid=x=>x?.won&&x.story&&(x.floors|0)>0?`Rift tower: ${ordinal(x.floors)} floor climbed`:'';
 /* The run's sanitised modifier set (World.startLevel): only this week's level, on the tier the pick names (opts.tier, Normal when
    absent: improve20-r9f-nov1 #3), with two known modifiers. */
 export function riftRun(opts,id,k){if(!opts||opts.level!==id||tierKey(k)!==k||(opts.tier||'normal')!==k)return null;const mods=(Array.isArray(opts.mods)?opts.mods:[]).filter(m=>RIFT_MODS[m]).slice(0,2);return mods.length?{week:weekKey(opts.week),level:id,mods,...(k==='normal'?{}:{tier:k}),...(k==='normal'&&opts.story?{story:true}:{})/* improve20-r20e-nov4 #1: the Story Rift's scaling, Normal tier only */}:null;}

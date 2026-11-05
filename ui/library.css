@@ -876,6 +876,8 @@ html :is(.answers,.choice-answers,.lesson-answers):not(.tile-answers) button[dat
 .q-code{display:block;margin:6px 0 4px;padding:5px 10px 5px 6px;background:rgba(10,6,20,.45);border-left:3px solid #d9c48f;border-radius:3px;text-align:left;counter-reset:qline;font:400 1em/1.3 var(--ui);letter-spacing:0;text-transform:none}
 .q-code>code{display:block;white-space:pre-wrap;font:inherit;color:#f3e6c4;background:none;counter-increment:qline}
 .q-code>code::before{content:counter(qline);display:inline-block;min-width:1.4em;margin-right:.7em;text-align:right;color:#a99772}
+/* improve24-r24l-nov5 #3: a hanging indent after the line number (2.1em): the indent is a spacer of --ind half-ems, and a wrapped part continues 1.5em past it */
+.q-code>code{padding-left:calc(3.6em + var(--ind,0)*.5em);text-indent:calc(-3.6em - var(--ind,0)*.5em)}.q-code>code>.q-ind{display:inline-block;width:calc(var(--ind,0)*.5em)}
 .q-code-ask{display:block}
 /* improve20-m-nov1 (audit3 #1, item 6): long Middle and High School questions. ui/quiz-fit.js marks a card that would scroll inside
    itself or spill over its answers: .q-dense (a smaller guide, the picture at the top of its column), .q-fit with --q-fs (the question's

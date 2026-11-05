@@ -13,8 +13,8 @@ import {riftOpen,riftPick} from './rift.js';
 import {questLive,questState,currentStep} from './quests.js';
 import {adviceLevel,TIERS} from './tiers.js';
 import {SUBJECTS} from './data.js';
-import {gateInfo,powerWants,powerStep,leadSubject} from './power-gate.js';
-import {nextStep,resultGoal,retryStep,riftUnplayed,STEP_WORDS} from './next-step.js';
+import {gateInfo,powerWants,powerStep,leadSubject} from './power-gate.js';/* improve24-r24m-nov5 #7 */import {nextPower as nextPowerOf} from './power-gate.js';import {TOPICS,mastered} from '../academics/lessons.js';
+import {nextStep,resultGoal,retryStep,riftUnplayed,STEP_WORDS} from './next-step.js';/* improve24-r24m-nov5 #5 */import {handInLead} from './next-step.js';
 import {gradeRank} from './grade.js';
 import {nextPowerLine} from '../academics/starter-lesson.js';
 import {runeDefeatLead} from './runes.js';
@@ -76,8 +76,14 @@ export function prologueText(save,text){const np=nextPowerLine(save),sub=np?.a&&
    can break now on a level already won (not this one, whose card says so itself), under NEXT GOAL; the red button stays the card's own */
 export function winCardLead(save,o={}){const c=winCardLead0(save,o);if(c&&!c.also&&!o.prologue&&!o.finale&&c.primary?.kind!=='runes'/* a rune-led card keeps its own two lines (R20D #5) */){const b=sealBackLine(save,o.id);if(b)c.also=b;}return c;}
 function winCardLead0(save,{learn=null,heroic=null,chFirst=null,chName='',prologue=false,finale=false,id=null,legend=null}={}){const step=nextStep(save);
- if(prologue)return {text:prologueText(save,step.text),primary:{kind:'keep'},also:''};
+ /* improve24-r24m-nov5 #4 (audit16 #8, shot 07: "NEXT GOAL: Next adventure: Goblin Camp" over a red "Go to the Library"): the prologue's red comes
+    from the same step as its line, at every size: a pad goal is "Go to <pad>" (kind 'pad'), anything else keeps the card's own Library red */
+ if(prologue){const l=step?.target?.kind==='pad'&&levelById(step.target.id);return {text:prologueText(save,step.text),primary:l?{kind:'pad',id:l.id,label:`Go to ${l.name}`}:{kind:'keep'},also:''};}
  if(finale)return {text:step.text,primary:{kind:'keep'},also:''};
+ /* improve24-r24m-nov5 #5 (audit16 #9, shot 12: "Found: Hob's coin purse! Take it back..." over a red "Place 12 runes" and 5 buttons): while a quest
+    step can be handed in (next-step.js handInLead: only a waiting first-topic test outranks it) that step is the line and its red is Return to
+    Oakhaven (kind 'keep': the card's own Return); runes worth placing ride as one plain line under it, and Heroic stays a plain button */
+ {const h=handInLead(save);if(h){const g=runeWin(save);return {text:h.text,primary:{kind:'keep'},also:g?runesText(g):'',quest:h.quest,handIn:true,heroic2:!!heroic?.lead};}}
  if(learn?.why==='gate'){const gl=gateLead(save,learn.gate,{place:chFirst&&chFirst.id===learn.gate&&chName?chName:null});if(gl)return {text:`${gl.text}.`,primary:{kind:'learn',label:learn.label,subject:learn.subject||gl.subject},also:whileLearn(save)?.text||'',gate:learn.gate};}
  if(learn?.a){const st=powerStep(save,learn.a),how=st?.topic&&STEP_WORDS[st.stage]?STEP_WORDS[st.stage](st.topic,st):'';return {text:how?`Wake ${learn.a.name}: ${how} at the Library.`:`Wake ${learn.a.name} at the Library.`,primary:{kind:'learn',label:learn.label,subject:learn.subject},also:''};}
  if(holdUp(save,step,id)){const l=levelById(step.target.id),pad=chFirst||l;return {text:chFirst?`Next adventure: ${chFirst.name}, the first stop in ${String(chName).replace(/^The /,'the ')}.`:l?`Try your new skills at ${l.name}.`:step.text,primary:pad?{kind:'pad',id:pad.id,label:`Go to ${pad.name}`}/* improve20-r18a-nov3 #4 (audit13 #7): the goal names a pad, so the red button goes there (the map, focused on it), not to town */:{kind:'map'},also:'',hold:true,heroic2:!!heroic?.lead};}
@@ -117,13 +123,22 @@ export const refillRetryLabel=o=>`Refill ${o.n|0} ${(o.n|0)===1?'potion':'potion
 const again=(id,{rift=false,hall=null}={})=>hall?`try ${hall.name||'the rung'} again`:rift?"try this week's Rift again":`try ${levelById(id)?.name||'it'} again`;
 function runesOut(save,id,runes,o={}){return {head:RUNES_HEAD,text:`Place your runes, then ${again(id,o)}.`,primary:{kind:'runes',label:runeRetryLabel(runes?.n|0)},also:'',library:null};}
 /* improve24-r24k-nov5 #1 */export const TEST_LEAD_AFTER=2,TEST_LEAD_LABEL='Try the test again',TEST_HEAD='Take a break from this fight';
-export function defeatCardLead(save,{id,tier='normal',rift=false,boss=false,runes=null,story=false,power=null,refill=false,losses=RUNE_LEAD_AFTER,gate=null,tip=null,refillLead=null,hall=null,test=null}={}){const out=defeatCore(save,{id,tier,rift,boss,runes,story,power,refill,losses,refillLead,hall,test});
+/* improve24-r24m-nov5 #7 (queued from R24K, Mia's run): while no topic is mastered, the 2nd defeat in a row in any level (not the prologue, the Rift
+   or the Hall) leads to the first topic's next step, from the same helper the Library and the win card use (power-gate.js powerStep for the
+   next power): its lesson, quiz or practice, in kid words ("Practise Counting coins (4 of 10), then come back"). A waiting first-topic test
+   keeps R24K's "Try the test again" (it comes first); Retry stays a plain button with its Story help and first-defeat potion. -> {topic,
+   stage, words, practice, needed} or null */
+export const STUDY_WORDS={lesson:t=>`Start ${t.title}`,quiz:t=>`Take the quiz on ${t.title}`,practice:(t,g)=>`Practise ${t.title} (${g.practice|0} of ${g.needed|0})`,test:t=>`Take the test on ${t.title}`};
+export function firstTopicStep(save){if(!save||TOPICS.some(t=>mastered(save,t)))return null;let p=null;try{p=nextPowerOf(save);}catch{p=null;}const st=p?.a?powerStep(save,p.a):null;if(!st?.topic||!STUDY_WORDS[st.stage])return null;return {topic:st.topic,stage:st.stage,practice:st.practice,needed:st.needed,words:STUDY_WORDS[st.stage](st.topic,st)};}
+export const studyLabel=f=>`${f.words}, then come back`;
+export function defeatCardLead(save,{id,tier='normal',rift=false,boss=false,runes=null,story=false,power=null,refill=false,losses=RUNE_LEAD_AFTER,gate=null,tip=null,refillLead=null,hall=null,test=null,first=null}={}){const out=defeatCore(save,{id,tier,rift,boss,runes,story,power,refill,losses,refillLead,hall,test,first});
  out.head??=(out.primary.kind==='library'&&tip?.kind==='power'?tip.head:out.primary.kind==='retry'&&tip&&tip.kind!=='power'?tip.head:REST_HEAD);
  const l=levelById(id),gl=!rift&&l?.optional&&gate?.why==='gate'&&gate.a?levelById(gate.gate):null;if(gl&&gl.id!==id)out.gateLine=sideGateText(gate.a,gl);return out;}
-function defeatCore(save,{id,tier,rift,boss,runes,story,power,refill,losses,refillLead=null,hall=null,test=null}){const retry=hall?{text:`${again(id,{hall}).replace(/^t/,'T')}.`}:retryStep(save,{id,tier,rift,boss}),retryText=retry?.text||'',mo={rift,hall};
+function defeatCore(save,{id,tier,rift,boss,runes,story,power,refill,losses,refillLead=null,hall=null,test=null,first=null}){const retry=hall?{text:`${again(id,{hall}).replace(/^t/,'T')}.`}:retryStep(save,{id,tier,rift,boss}),retryText=retry?.text||'',mo={rift,hall};
  /* improve24-r24k-nov5 #1 (kidsim7 #1: Mia lost Orc Warcamp's boss 4 times in a row with her first test waiting, and every red was Retry): while the first-topic
     test waits (test: game/next-step.js testWaiting), the 2nd defeat in a row in a level leads back to it; Retry stays a plain button, and its Story help and potion still apply */
  if(test?.id&&!rift&&!hall&&(losses|0)>=TEST_LEAD_AFTER)return {head:TEST_HEAD,text:`Try the mastery test on “${test.title}” again, then come back to ${levelById(id)?.name||'this fight'}.`,primary:{kind:'test',label:TEST_LEAD_LABEL,topic:test.id,subject:test.subject},also:'',runes2:!!runes};
+ /* improve24-r24m-nov5 #7 */if(first?.topic&&!rift&&!hall&&id!=='prologue'&&(losses|0)>=TEST_LEAD_AFTER)return {head:TEST_HEAD,text:`${first.words} at the Library, then come back to ${levelById(id)?.name||'this fight'}.`,primary:{kind:'study',label:studyLabel(first),topic:first.topic.id,subject:first.topic.subject,stage:first.stage},also:'',runes2:!!runes};
  if(story&&!rift&&!hall){const lib=power?.a?{label:`Library · ${powerSize(save,power.a)}`,subject:powerStep(save,power.a)?.subject||power.a.subject}:null;if(runes&&(losses|0)>=RUNE_LEAD_AFTER)return runesOut(save,id,runes);return {head:STORY_HEAD,text:retryText,primary:{kind:'retry'},also:'',library:lib};}
  if(runes&&(losses|0)>=RUNE_LEAD_AFTER)return runesOut(save,id,runes,mo);
  /* improve20-r20d-nov4 #1: out of potions with the gold for some: the refill leads, and its one tap also retries */if(refillLead?.n>0)return {head:REFILL_HEAD,text:`Refill your potions (${refillLead.cost|0} gold), then ${again(id,mo)}.`,primary:{kind:'refill',label:refillRetryLabel(refillLead)},also:'',runes2:!!runes};
