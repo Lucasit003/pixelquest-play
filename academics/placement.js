@@ -92,22 +92,27 @@ export function beginPlacement(save,subject,random=Math.random,{stage='elementar
     (PLACEMENT_PASS right, or too many wrong to pass); a pass goes on to Grade 4, a fail to Grade 2, and then the check ends. At most 8
     questions, about 6 on average, and in simulation as accurate as the 12-question check (docs: the R20G report). Scoring is unchanged:
     a passed block opens the grade above it, and the placement only ever rises. */
- if(!STAGE_GRADES[stage]&&ADAPTIVE_FIRST&&gs.includes(ADAPTIVE_FIRST)){const blocks={};gs.forEach((g,k)=>blocks[g]=items.slice(k*PLACEMENT_PER_GRADE,(k+1)*PLACEMENT_PER_GRADE));
-  return {subject,stage,grades:gs,items:[...blocks[ADAPTIVE_FIRST]],blocks,at:ADAPTIVE_FIRST,path:[ADAPTIVE_FIRST],adaptive:true,i:0,right:{},xp:0,closed:false};}
+ /* improve20-r22a-nov4 #6 (R20O finding 1: 12 typed Middle questions, 4.5-6 minutes, again for each subject): the Middle School check is adaptive
+    too (MIDDLE_ADAPTIVE_FIRST): Grade 7 first; a pass goes on to Grade 8, a fail ends it (Grade 6, the stage's floor, opens whatever the score,
+    so its block could open nothing: adaptiveStep skips it). 4-8 questions. Scoring is finishPlacement's, unchanged: only ever raises, never masters. */
+ const first=!STAGE_GRADES[stage]?ADAPTIVE_FIRST:stage==='middle'?MIDDLE_ADAPTIVE_FIRST:0;
+ if(first&&gs.includes(first)){const blocks={};gs.forEach((g,k)=>blocks[g]=items.slice(k*PLACEMENT_PER_GRADE,(k+1)*PLACEMENT_PER_GRADE));
+  return {subject,stage,grades:gs,items:[...blocks[first]],blocks,at:first,path:[first],adaptive:true,i:0,right:{},xp:0,closed:false};}
  return {subject,stage,grades:gs,items,i:0,right:{},xp:0,closed:false};
 }
-export const ADAPTIVE_FIRST=3,PLACEMENT_MAX=2*PLACEMENT_PER_GRADE,PLACEMENT_ABOUT=6;
+export const ADAPTIVE_FIRST=3,PLACEMENT_MAX=2*PLACEMENT_PER_GRADE,PLACEMENT_ABOUT=6,/* improve20-r22a-nov4 #6 */MIDDLE_ADAPTIVE_FIRST=7;
 /* the block of the adaptive check now being asked: decided when it has PLACEMENT_PASS right or more than PER-PASS wrong */
 function adaptiveStep(run){const g=run.at,asked=run.items.slice(0,run.i).filter(q=>rungOf(topic(q.topic))===g),r=asked.filter(q=>run.right[q.id]).length,w=asked.length-r;
  if(r<PLACEMENT_PASS&&w<=PLACEMENT_PER_GRADE-PLACEMENT_PASS)return;
  run.items.splice(run.i);/* in place, so a caller walking run.items sees the next block */const next=r>=PLACEMENT_PASS?g+1:g-1;
- if(run.path.length<2&&run.blocks[next]){run.at=next;run.path.push(next);run.items.push(...run.blocks[next]);}else run.done=true;}
+ /* improve20-r22a-nov4 #6: a Middle or High block at the stage's floor opens nothing the floor does not, so it is not asked */if(run.path.length<2&&run.blocks[next]&&!(STAGE_GRADES[run.stage]&&next<=run.grades[0])){run.at=next;run.path.push(next);run.items.push(...run.blocks[next]);}else run.done=true;}
 /* improve20-r20g-nov4 #1 (kidsim5 #3): a second Elementary subject can start at the grade the child's first check gave, with one tap
    (main.js: "Start at Grade N", startAt only ever raises). The grade is the lowest placement above Grade 2 among the child's other
    Elementary subjects, so one strong subject never starts another too high; the check stays on offer beside it. Null when there is
    none, or it would not open anything new in this subject. */
-export function secondStart(save,subject){if(save?.schoolMode&&save.schoolMode!=='elementary')return null;const gs=grades(subject),p=save?.placement||{};
- const other=Object.entries(p).filter(([k,v])=>k!==subject&&Number.isInteger(v)&&v>2&&v<=5).map(([,v])=>v);if(!other.length)return null;
+/* improve20-r22a-nov4 #6: a Middle School learner too, from the other subjects' Middle placements above the stage's floor (Grade 7 or 8) */
+export function secondStart(save,subject){const mid=save?.schoolMode==='middle';if(save?.schoolMode&&save.schoolMode!=='elementary'&&!mid)return null;const gs=grades(subject),p=save?.placement||{},[lo,hi]=mid?[6,8]:[2,5];
+ const other=Object.entries(p).filter(([k,v])=>k!==subject&&Number.isInteger(v)&&v>lo&&v<=hi).map(([,v])=>v);if(!other.length)return null;
  const g=Math.min(...other);return gs.includes(g)&&g>placementGrade(save,subject)?g:null;}
 export function answerPlacement(save,run,id,input){
  if(!run||run.closed||run.items[run.i]?.id!==id||!String(input).trim())return null;

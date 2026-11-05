@@ -12,7 +12,7 @@ import {pickCheck,gradeAnswer,checkBuff,NO_BUFF,CHECK_SIZE} from '../academics/k
 import {SUBJECTS} from '../game/data.js';
 import {drawPic,describe,crispCtx} from '../gfx/lesson-art.js';
 import {readButtonHTML} from './edu-study.js';
-import {choiceFormHTML,wireChoices,focusAnswers} from './answer-choices.js';import {questionHTML} from '../academics/choice-text.js';
+import {choiceFormHTML,wireChoices,focusAnswers} from './answer-choices.js';import {questionHTML,timesSign} from '../academics/choice-text.js';
 
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 /* The same rule as the quiz: a question's picture never carries count/solve labels, and a hint-only
@@ -41,7 +41,7 @@ export function mountKnowledgeCheck(el,save,{boss='the boss',count=CHECK_SIZE,su
   const advance=()=>{if(st.results.length<=st.i)st.results.push(false);st.i++;if(st.i>=items.length)finish();else render();};
   form.onsubmit=e=>{e.preventDefault();if(locked){advance();return;}if(!input.value.trim()){fb.textContent='Type an answer, or skip this question.';return;}
    const ok=gradeAnswer(q,input.value);locked=true;st.answered++;if(ok)st.right++;st.results.push(ok);input.readOnly=true;
-   fb.textContent=ok?'Right! Your boost grows.':`Not this time. The answer is ${q.answer}.${q.explanation?' '+q.explanation:''}`;fb.className=`edu-kc-feedback ${ok?'right':'miss'}`;
+   fb.textContent=ok?'Right! Your boost grows.':`Not this time. The answer is ${q.answer}.${q.explanation?' '+/* improve20-r22a-nov4 #7 */timesSign(q.explanation):''}`;fb.className=`edu-kc-feedback ${ok?'right':'miss'}`;
    next.textContent=st.i+1>=items.length?'See your boost':'Next question';form.querySelector('[type=submit]').textContent='Next';next.focus?.({preventScroll:true});};
   wireChoices(form,q);next.onclick=advance;el.querySelector('[data-edu-skip]').onclick=()=>{while(st.results.length<items.length)st.results.push(false);finish();};
   focusFirst();

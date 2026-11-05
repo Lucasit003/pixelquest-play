@@ -6,6 +6,7 @@
    cents ("$3.20", "$63.00") when the answer has cents or the question writes its own amounts with cents; whole-dollar questions keep whole
    dollars ("$8"), as their prompts do. Display only: the stored answer, grading ("3.2", "3.20" and "$3.20" all pass, game/math.js), ids,
    prompts and retirement are untouched. Pure. */
+import {timesSign} from './choice-text.js';
 const ASK=s=>{const p=String(s||'').trim(),m=p.match(/[^.?!]*\?[^?]*$/);return (m?m[0]:p.split(/(?<=[.!?])\s+/).at(-1)||p).trim();};
 const NOT_MONEY=/\bpercent|%|\brate\b|\bratio\b|\bhow many (?!dollars\b|more dollars\b)|\bhow long\b|\bhow much (?:time|longer|faster|further|farther|bigger|larger|taller|heavier|water|space|memory|energy)\b|\bin (?:billions|millions|thousands)\b|\bper cent\b|\bCPI\b|\bindex\b|\belasticity\b|\bprice level\b|\bmultiplier\b/i;
 export function isMoneyItem(q){
@@ -27,5 +28,7 @@ export const shownOption=(v,q)=>isMoneyItem(q)&&/^-?\d+(?:\.\d+)?$/.test(String(
 /* The explanation's closing amount, when it is the answer written bare at the very end ("4 / 2 = 2 dollars.", "... = 2.4 dollars.",
    "P = 32."), reads as money too ("4 / 2 = $2.", "= $2.40.", "P = $32."). Nothing else in the explanation changes, and an explanation whose
    last words are not the answer is shown as written. */
-export function shownExplanation(q){const e=String(q?.explanation??'');if(!e||!isMoneyItem(q))return e;const a=String(q.answer).trim(),n=Number(a);
+/* improve20-r22a-nov4 #7: a shown explanation writes multiplication as "5 × 18" (timesSign, as the question does); display only */
+export const shownExplanation=q=>timesSign(moneyExplanation(q));
+function moneyExplanation(q){const e=String(q?.explanation??'');if(!e||!isMoneyItem(q))return e;const a=String(q.answer).trim(),n=Number(a);
  const re=new RegExp(`(?<![\\d.$,\\w])(${a.replace(/[.\-]/g,'\\$&')}|${Number.isInteger(n)?n:n.toFixed(2)})(?: dollars?)?(\\s*[.)]?\\s*)$`);return e.replace(re,(m,x,tail)=>moneyText(n,q)+tail);}

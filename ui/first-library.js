@@ -10,7 +10,7 @@
      starts it;
    - lockedText: a shut grade, course or lesson says what opens it, in the child's own stage. Read-only: no save, no gate. */
 import {nextLesson,placementNudge} from '../academics/study-unlock.js';
-import {placementGrades,PLACEMENT_PER_GRADE,startGrade,PLACEMENT_ABOUT} from '../academics/placement.js';
+import {placementGrades,PLACEMENT_PER_GRADE,startGrade,PLACEMENT_ABOUT,/* improve20-r22a-nov4 #6 */secondStart,MIDDLE_ADAPTIVE_FIRST} from '../academics/placement.js';
 import {placementGrade,gradeOpen,grades,topicOpen,TOPICS} from '../academics/lessons.js';
 import {coursesFor,builtUnits,HIGH_COURSE_LEVEL} from '../academics/courses.js';
 import {awakenOffer,starterSubject} from '../academics/starter-lesson.js';
@@ -20,7 +20,7 @@ const STAGE_OF=g=>g>=9?'high':g>=6?'middle':'elementary';
 export function firstShelf(save,fallback='math'){return (awakenOffer(save)&&starterSubject(save))||nextLesson(save)?.topic.subject||placementNudge(save)?.subject||fallback;}
 export function firstCheck(save,subject,name=subject){
  const stage=save?.schoolMode;if(stage!=='middle'&&stage!=='high')return null;
- const gs=placementGrades(subject,stage);if(!gs.length)return null;const n=gs.length*PLACEMENT_PER_GRADE;
+ const gs=placementGrades(subject,stage);if(!gs.length)return null;const n=/* improve20-r22a-nov4 #6: the Middle check is adaptive (placement.js), about PLACEMENT_ABOUT questions */stage==='middle'&&gs.includes(MIDDLE_ADAPTIVE_FIRST)?PLACEMENT_ABOUT:gs.length*PLACEMENT_PER_GRADE;
  const text=stage==='high'?`A short ${name} check (about ${n} quick questions) opens your High School ${name} courses, whatever your score.`:`A short ${name} check (about ${n} quick questions) opens your first lessons: Grade ${gs[0]} for everyone, and higher grades if you know them.`;
  return {stage,grades:gs,questions:n,text,note:`Your ${name} ${stage==='high'?'courses':'lessons'} open with the ${STAGE_NAME[stage]} check.`,button:`Start the ${name} check`};
 }
@@ -29,6 +29,10 @@ export function firstCheck(save,subject,name=subject){
    choice, true to finishPlacement (it can open higher grades, never lower ones). Read-only. */
 export function firstStart(save,subject,name=subject){const fc=firstCheck(save,subject,name);if(!fc)return null;const g=startGrade(save,subject);if(g==null)return null;
  const high=fc.stage==='high';
+ /* improve20-r22a-nov4 #6 (R20O finding 1): a second Middle School subject offers "Start at Grade N" from the first subject's check (placement.js
+    secondStart), a choice the child can refuse: the check stays beside it. startAt only ever raises; nothing is mastered */
+ const sg=fc.stage==='middle'?secondStart(save,subject):null;
+ if(sg)return {...fc,grade:sg,second:true,text:`Your first check placed you at Grade ${sg}. Start ${name} there too, or take a short check (about ${fc.questions} quick questions) if you are not sure.`,button:`Start at Grade ${sg}`,checkButton:`Not sure? Take the ${name} check`};
  return {...fc,grade:g,text:high?`Start your High School ${name} courses with a lesson now. Or take a short check (about ${fc.questions} quick questions) that can open later courses.`:`Start with a Grade ${g} ${name} lesson now. Know it already? A short check (about ${fc.questions} quick questions) can open higher grades.`,
   button:high?'Start a High School lesson now':`Start a Grade ${g} lesson now`,checkButton:`Take the ${name} check instead`};}
 /* What opens a shut grade g of a subject. A stage's check names itself only while it can still open the grade: the child has not yet been

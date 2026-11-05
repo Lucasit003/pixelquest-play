@@ -16,7 +16,7 @@
 
    No timers: playback advances only on media and utterance events. Nothing here touches a save
    except through the toggle callback main.js passes in. */
-import {hash} from '../academics/bank.js';
+import {hash} from '../academics/bank.js';import {timesSign} from '../academics/choice-text.js';
 import {getVolume,voiceDuck} from '../core/audio.js';
 
 export const VOICE='af_heart';
@@ -62,7 +62,7 @@ export function feedbackLines(c,{right=false,tries=1,nth=0}={}){
  return (tries===1?[LOOK_AGAIN,c.hint]:[answerLine(c),c.hint]).filter(Boolean);
 }
 const escFb=x=>String(x).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[ch]);
-export const feedbackHTML=lines=>`<span class="edu-fb-text">${lines.filter(Boolean).map(l=>`<span class="edu-fb-say">${escFb(l)}</span>`).join(' ')}</span>`;
+export const feedbackHTML=lines=>`<span class="edu-fb-text">${lines.filter(Boolean).map(l=>`<span class="edu-fb-say">${escFb(/* improve20-r22a-nov4 #7: shown as "5 × 18"; the spoken line is unchanged */timesSign(l))}</span>`).join(' ')}</span>`;
 /* Some Try-it prompts already begin "Try it:"; never say it twice. */
 const tryLine=c=>/^try it\b/i.test(c.prompt)?c.prompt:`Try it. ${c.prompt}`;
 export function stepLines(step,retired=false){

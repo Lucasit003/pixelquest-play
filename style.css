@@ -4490,6 +4490,29 @@ html .edu-voice .edu-speak.speaking{border-image-source:url(ui/skin/pl-button-pr
    block, whose test reads everything after it as touch-only */
 html:not(.m-mode) dialog[data-view=result] #modal-content .level-result:not([data-story2])>.modal-actions:has(>button:nth-of-type(5)){flex-wrap:wrap;row-gap:6px}
 html:not(.m-mode) dialog[data-view=result] #modal-content .level-result:not([data-story2])>.modal-actions:has(>button:nth-of-type(5))>button{flex:0 0 auto}
+/* improve20-r22a-nov4 (round 22 lane R22A: learning screens fit the screen). Placed before the tablets-nov2 block (its test reads everything after it as touch-only tablet rules). */
+/* improve20-r22a-nov4 #1: a box capped above a desktop text-card step's Try-it (main.js textPicTryFit) scrolls in itself and fades its last line while more is below */
+dialog[data-view=lesson] .try-cap{overscroll-behavior:contain}
+dialog[data-view=lesson] .try-cap.cap-more{-webkit-mask-image:linear-gradient(#000 calc(100% - 26px),transparent);mask-image:linear-gradient(#000 calc(100% - 26px),transparent)}
+/* improve20-r22a-nov4 #3: a question too tall for a computer's card before it is answered (ui/quiz-fit.js .q-pin.q-desk) keeps its answer row and
+   Check on screen; the question scrolls in its own box above them and fades its last line while more is below */
+html:not(.m-mode) dialog#modal:is([data-view=placement],[data-view=lesson-quiz]) .question.q-pin.q-desk:has(#quiz-feedback:empty){display:flex!important;flex-direction:column;min-height:0!important;max-height:100%!important;overflow:hidden!important}
+html:not(.m-mode) dialog#modal:is([data-view=placement],[data-view=lesson-quiz]) .question.q-pin.q-desk:has(#quiz-feedback:empty)>.question-reading{flex:1 1 0!important;min-height:0!important;max-height:none!important;overflow-y:auto!important;overscroll-behavior:contain}
+html:not(.m-mode) dialog#modal:is([data-view=placement],[data-view=lesson-quiz]) .question.q-pin.q-desk:has(#quiz-feedback:empty)>:is(#quiz-form,.modal-actions){flex:none!important}
+html:not(.m-mode) dialog#modal:is([data-view=placement],[data-view=lesson-quiz]) .question.q-pin.q-desk.q-more:has(#quiz-feedback:empty)>.question-reading{-webkit-mask-image:linear-gradient(#000 calc(100% - 26px),transparent);mask-image:linear-gradient(#000 calc(100% - 26px),transparent)}
+/* improve20-r22a-nov4 #2 (R20O finding 2, Kai at 844x390: a tap on Check landed on the Proportional relationships table card, which opened the zoom;
+   320 s): a pinned question box (ui/quiz-fit.js .q-pin) scrolls its text card with it, but Chrome still hit-tested the part of the card scrolled out of
+   the box, over Check and Stop. The box clips itself (clip-path), so a tap below it reaches the button drawn there */
+html dialog#modal:is([data-view=placement],[data-view=lesson-quiz]) .question.q-pin>.question-reading{clip-path:inset(0)}
+/* improve20-r22a-nov4 #2: a pinned phone question with many long choices (Choosing a site, 6 lettered sites) gave its question row 0 px: the question
+   keeps at least 42% of the card (or 140 px) and the choices scroll in their own box beside Stop */
+html.m-mode #modal#modal#modal#modal#modal:is([data-view=lesson-quiz],[data-view=placement]) .question.qf.qf.qf.q-pin:has(#quiz-feedback:empty){grid-template-rows:minmax(min(42%,140px),1fr) fit-content(58%)}
+html.m-mode #modal#modal#modal#modal#modal:is([data-view=lesson-quiz],[data-view=placement]) .question.qf.qf.qf.q-pin:has(#quiz-feedback:empty)>#quiz-form{min-height:0;overflow-y:auto;overscroll-behavior:contain}
+/* improve20-r22a-nov4 #4: a wrong answer's notes are read in full on a computer; the answered question above scrolls in its own box (quiz-fit.js q-fbgrow) */
+html:not(.m-mode) dialog#modal#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question.question.q-fbgrow{display:flex!important;flex-direction:column;overflow:hidden!important;min-height:0!important}html:not(.m-mode) dialog#modal#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question.question.q-fbgrow>#quiz-feedback#quiz-feedback{max-height:none!important;overflow:visible!important;flex:none!important}html:not(.m-mode) dialog#modal#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question.question.q-fbgrow>.question-reading.question-reading{flex:1 1 0!important;min-height:60px!important;max-height:none!important;overflow-y:auto!important;overscroll-behavior:contain}html:not(.m-mode) dialog#modal#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question.question.q-fbgrow>:is(#quiz-form,.modal-actions){flex:none!important}
+/* improve20-r22a-nov4 #3: a computer's dense placement card was laid out for a card with no guide ("tag", "say", "read pic"), so the guide and its "Stop
+   whenever you like" fell into extra rows below the question, under the guide's picture (R20O's odd guide layout); the guide now has its own column */
+@media(min-height:501px){html:not(.m-mode) #modal#modal#modal[data-view=placement] .question.qf.q-dense>.question-reading{grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"guide top top" "guide say say" "guide read pic";grid-template-rows:auto auto auto}html:not(.m-mode) #modal#modal#modal[data-view=placement] .question.qf.q-dense>.question-reading>.qf-top{grid-area:top}html:not(.m-mode) #modal#modal#modal[data-view=placement] .question.qf.q-dense>.question-reading>.qf-guide{grid-area:guide;align-self:start}}
 /* tablets-nov2 (round 9 item 12): the tablet sweep (1024x768, 1180x820, 1280x800, 1366x1024, 1180x740 touch). A tablet is a touch screen at
    least 600 css px on its short side (ui/mobile.js tabletSize); phones in landscape are 430 px tall at most, so (min-height:600px) never
    reaches them, and every rule here sits under html.m-mode, so desktops are untouched. */

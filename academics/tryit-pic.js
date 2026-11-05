@@ -9,7 +9,7 @@
    problem; otherwise the Try-it's own unsolved picture, or a neutral version of the step's (the blank and the marking taken
    away), or none. A picture is only ever solved when it is the Try-it's own or the same problem. Pure.
    tests/improve20-q-oct31.test.js walks every Try-it in the bank. */
-import {heldBack,sameProblem,picText,shows} from './giveaway.js';
+import {heldBack,sameProblem,picText,shows} from './giveaway.js';import {echoCard} from './placement.js';
 const first=p=>Array.isArray(p)?p[0]:p;
 export const solved=(p,v=true)=>p==null?null:Array.isArray(p)?p.map(x=>({...x,solve:v})):{...p,solve:v};
 /* a picture that asks its own question: a '?' blank (a null in a sequence or a timeline, a hidden name) that is not solved */
@@ -19,7 +19,12 @@ export const clean=(p,c)=>{const t=picText(p),f=shows(c.answer,c.prompt);return 
 /* the step's picture without its blank and its marking (a plain world map instead of one with '?' on Europe) */
 export const plain=p=>Array.isArray(p)?p.map(plain):p&&typeof p==='object'?Object.fromEntries(Object.entries(p).filter(([k])=>k!=='blank'&&k!=='mark'&&k!=='solve')):p;
 /* -> {ask, miss, after, held, other}: other = the step's picture is a puzzle on another problem; held = heldBack(step) */
-export function tryItPics(st,{retired=false}={}){const c=st?.check;if(!c)return {ask:st?.pic??null,miss:null,after:null,held:null,other:false};
+/* improve20-r22a-nov4 #7 (R21A's 43 lesson echo cards): a Try-it's own picture made only of word cards that repeat its prompt (placement.js echoCard:
+   "apple" beside "How many beats are in 'apple'?") is dropped, so a miss keeps the step's picture instead of the prompt again. Kept when dropping
+   it would change what shows while the Try-it is unanswered (it stands in for a held-back worked example), or a miss would then solve another picture. */
+export const echoOwn=c=>!!c?.pic&&[].concat(c.pic).every(p=>echoCard(c,p));
+export function tryItPics(st,o={}){const r=tryItPics0(st,o);if(!echoOwn(st?.check))return r;const d=tryItPics0({...st,check:{...st.check,pic:undefined}},o);return JSON.stringify(d.ask)===JSON.stringify(r.ask)&&d.miss==null?d:r;}
+function tryItPics0(st,{retired=false}={}){const c=st?.check;if(!c)return {ask:st?.pic??null,miss:null,after:null,held:null,other:false};
  const own=c.pic||null,same=sameProblem(st),other=puzzle(st.pic)&&!same,mine=own&&solved(own,false),flat=plain(st.pic);
  const swap=!other?null:mine&&clean(mine,c)?mine:!puzzle(flat)&&clean(flat,c)?flat:null,done=other?(own?solved(own):swap):null;
  if(retired)return {ask:other?done:st.pic,miss:null,after:null,held:null,other};

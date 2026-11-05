@@ -19,7 +19,7 @@ export function fitQuestion(doc=globalThis.document){
  if(!q||!r||!mc||busy)return null;busy=true;
  try{
   const win=doc.defaultView,phone=doc.documentElement.classList.contains('m-mode')||win.innerHeight<=500,form=q.querySelector(':scope>#quiz-form');
-  q.classList.remove('q-room','q-dense','q-stack','q-flow','q-pin','q-more');r.classList.remove('q-fit');r.style.removeProperty('--q-fs');
+  q.classList.remove('q-room','q-dense','q-stack','q-flow','q-pin','q-more','q-desk','q-fbgrow');r.classList.remove('q-fit');r.style.removeProperty('--q-fs');
   /* too tall: the reading scrolls inside itself, the dialog clips or scrolls, or a part of the question lies over an answer or a button */
   const box=e=>e.getBoundingClientRect(),hit=(a,b)=>a.left<b.right-4&&b.left<a.right-4&&a.top<b.bottom-4&&b.top<a.bottom-4,scrolls=e=>/auto|scroll/.test(win.getComputedStyle(e).overflowY);
   const over=()=>{if(scrolls(r)&&r.scrollHeight>r.clientHeight+1)return true;if(mc.scrollHeight>mc.clientHeight+1)return true;
@@ -38,11 +38,21 @@ export function fitQuestion(doc=globalThis.document){
    /* improve20-r9d-nov1 #3 (audit8 a5): in phone mode the dialog no longer scrolls (the answer row went below the sheet): the answer row and
       the row under it are pinned (style.css) and the question scrolls inside its own box above them, at its fitted type (.q-pin) */
    if(over()&&doc.documentElement.classList.contains('m-mode')){q.classList.add('q-pin');step='pin';const more=()=>q.classList.toggle('q-more',r.scrollTop+r.clientHeight<r.scrollHeight-2);r.onscroll=more;more();}
+   /* improve20-r22a-nov4 #3 (R20O finding 3, Ezra: the History placement's corroboration table put the answer box at y=713 on a 720 px screen):
+      on a computer too, a question still too tall before it is answered pins its answer row and Check (q-pin, q-desk) and the question scrolls in
+      its own box above them, with the fade while more is below; once answered the card flows as before, so the explanation can push the row down */
+   else if(over()&&!phone&&!q.querySelector('#quiz-feedback')?.textContent.trim()){q.classList.add('q-pin','q-desk');step='pin-desk';const more=()=>q.classList.toggle('q-more',r.scrollTop+r.clientHeight<r.scrollHeight-2);r.onscroll=more;more();if(pinCut(q)){q.classList.remove('q-pin','q-desk','q-more');r.onscroll=null;q.classList.add('q-flow');step='flow';}}
    else if(over()){q.classList.add('q-flow');step='flow';if(phone){r.classList.remove('q-fit');r.style.removeProperty('--q-fs');}}
   }
+  /* improve20-r22a-nov4 #4 (R20O finding 6, shot 02: a wrong answer's explanation sat below the notes' 150px box, under the action row): on a
+     computer, notes taller than their box take the room they need and the answered question above them scrolls in its own box instead;
+     kept only while the whole of the notes and the action row stay in the window, else the notes keep their own scroll */
+  const fb=q.querySelector(':scope>#quiz-feedback');if(!phone&&fb?.textContent.trim()&&fb.scrollHeight>fb.clientHeight+1){q.classList.add('q-fbgrow');const h=win.innerHeight,b=box(fb);if(fb.scrollHeight>fb.clientHeight+1||b.bottom>h+1||[...q.querySelectorAll(':scope>.modal-actions button')].filter(shown).some(e=>box(e).bottom>h+1))q.classList.remove('q-fbgrow');else step+='+fb';}
   q.dataset.fit=String(step);watch(q,mc,doc);return step;
  }finally{busy=false;}
 }
+/* improve20-r22a-nov4 #3: a desktop pin is kept only when every answer control and the action row are in the window */
+const pinCut=q=>{const h=q.ownerDocument.defaultView.innerHeight;return [...q.querySelectorAll(':scope>#quiz-form :is(button,input),:scope>.modal-actions button')].filter(shown).some(e=>{const b=e.getBoundingClientRect();return b.bottom>h+1||b.top<0;});};
 /* the answer's notes change the card's layout; a new size of window changes the room */
 function watch(q,mc,doc){
  const win=doc.defaultView,fb=q.querySelector('#quiz-feedback');
