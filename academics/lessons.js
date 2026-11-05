@@ -232,7 +232,7 @@ export function pickSkillItems(save,t,skill,n=SKILL_PRACTICE,random=Math.random)
 }
 /* the skill that practice goes to after a failed test: one with no right answer in the sitting first, then the most missed; only a skill
    with unretired items left. -> skill key or null */
-export function testPracticeSkill(save,t,items,right,r){const wrong=k=>(items||[]).filter(x=>x.skill===k&&right?.[x.id]===false).length,un=new Set(r?.uncovered||[]);
+export function testPracticeSkill(save,t,items,right,r){/* improve24-r24k-nov5 #2: at 8 of 8 summed with a skill still uncovered, practice goes to that skill */{const g=testSumGap(save,t);if(g)return g;}const wrong=k=>(items||[]).filter(x=>x.skill===k&&right?.[x.id]===false).length,un=new Set(r?.uncovered||[]);
     const ks=[...new Set(r?.missed||[])].sort((a,b)=>(un.has(b)-un.has(a))||(wrong(b)-wrong(a)));return ks.find(k=>(POOL[t.id]||[]).some(id=>ITEMS[id].skill===k&&(save.answers[id]||0)<2))??null;}
 /* A mastery sitting covers every skill with unretired work. Large units need more than ten
    questions; exhausted skills already have two correct answers on every item and stay retired.
@@ -240,8 +240,10 @@ export function testPracticeSkill(save,t,items,right,r){const wrong=k=>(items||[
 const liveTestSkills=(save,t)=>Object.keys(t.skills).filter(k=>POOL[t.id].some(id=>ITEMS[id].skill===k&&(save.answers[id]||0)<2));
 /* improve23-r23t-nov4 #3: `avoid` is pickItems's preference only (the first topic's test prefers questions that tap); the size, coverage and ids are unchanged */
 export function beginMasteryTest(save,t,random=Math.random,avoid=null){
-    const requiredSkills=liveTestSkills(save,t);
-    return {items:pickItems(save,t,Math.max(TEST_SIZE,requiredSkills.length),random,avoid),requiredSkills,ready:testReady(save,t).ready};
+    const requiredSkills=liveTestSkills(save,t),items=pickItems(save,t,Math.max(TEST_SIZE,requiredSkills.length),random,avoid);
+    /* improve24-r24k-nov5 #2: the summed test's uncovered skill comes first (same items and size; only the order, or a last item swapped in when none was drawn) */
+    {const g=testSumGap(save,t);if(g&&items.length){const i=items.findIndex(x=>x.skill===g);if(i>0)items.unshift(...items.splice(i,1));else if(i<0){const x=pickSkillItems(save,t,g,1,random)[0];if(x){items.pop();items.unshift(x);}}}}
+    return {items,requiredSkills,ready:testReady(save,t).ready};
 }
 /* A course's exam review (docs/design/COURSES.md): up to n unretired questions dealt round-robin across the given mastered
    units, each unit's pool shuffled first, so every unit is asked about; a retired question never comes back. */
@@ -355,10 +357,14 @@ export function finishTest(save,t,sitting){
     if(first){settleFirst(save,t);r.pts=topicPoints(t);keepOpen(save,t);}
     /* improve20-m-nov1 (audit3 #6): the skills with no right answer in this sitting, so a 9 of 10 that misses one skill can name it */
     const uncovered=skills.filter(skill=>!sitting.items.some(item=>item.skill===skill && sitting.right[item.id]));
-    return {graded:true,passed,first,xp:first?XP.mastered:0,score,total,missed,uncovered,...(tr?{sum:{have:Math.min(TEST_SUM_NEED,tr.length),need:TEST_SUM_NEED,covered:sumCovered},bySum:bySum&&passed}:{})};
+    return {graded:true,passed,first,xp:first?XP.mastered:0,score,total,missed,uncovered,...(tr?{sum:{have:Math.min(TEST_SUM_NEED,tr.length),need:TEST_SUM_NEED,covered:sumCovered,/* improve24-r24k-nov5 #2 */gap:passed?null:testSumGap(save,t)},bySum:bySum&&passed}:{})};
 }
 /* improve23-r23t-nov4 #1: the first topic's summed test; testSumHave = {have, need} while that rule applies (for the card's line), else null */
 export const TEST_SUM_NEED=Math.ceil(PASS*TEST_SIZE-1e-9);
 export const testSumOn=(save,t)=>!!t&&firstTopic(save,t)&&!mastered(save,t);
 export const testSumHave=(save,t)=>testSumOn(save,t)?{have:Math.min(TEST_SUM_NEED,(Array.isArray(save.lessons?.[t.id]?.testright)?save.lessons[t.id].testright:[]).filter(id=>POOL[t.id]?.includes(id)).length),need:TEST_SUM_NEED}:null;
+/* improve24-r24k-nov5 #2 (kidsim7 #2: Ivy at 8 of 8 with one skill uncovered, and nothing named it): once the first topic's summed count is full, the
+   first live skill with no right answer in `testright`, else null. The every-skill rule is unchanged; this only names the skill and points practice and the next sitting at it */
+export function testSumGap(save,t){if(!testSumOn(save,t))return null;const pool=new Set(POOL[t.id]||[]),tr=(Array.isArray(save.lessons?.[t.id]?.testright)?save.lessons[t.id].testright:[]).filter(id=>pool.has(id));if(tr.length<TEST_SUM_NEED)return null;
+ return liveTestSkills(save,t).find(k=>!tr.some(id=>ITEMS[id]?.skill===k))||null;}
 function testSumAdd(save,t,right){const r=rec(save,t),pool=new Set(POOL[t.id]||[]),have=new Set((Array.isArray(r.testright)?r.testright:[]).filter(id=>pool.has(id)));for(const [id,ok] of Object.entries(right||{}))if(ok===true&&pool.has(id))have.add(id);if(have.size)r.testright=[...have].slice(0,TEST_SIZE*2);return [...have];}

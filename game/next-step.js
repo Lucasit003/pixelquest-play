@@ -15,7 +15,7 @@ import {LEVELS,CHAPTERS,levelById,levelDone,levelOpen,levelFogged,tierOpen,tierD
 import {ABILITIES} from './abilities.js';
 import {SUBJECTS} from './data.js';
 import {unlocked,abilityMastery,xpLevel} from './math.js';
-import {TOPICS,testReady,mastered,topicOpen,PASS,QUIZ_SIZE} from '../academics/lessons.js';
+import {TOPICS,testReady,mastered,topicOpen,PASS,QUIZ_SIZE} from '../academics/lessons.js';/* improve24-r24k-nov5 #1 */import {testSumOn} from '../academics/lessons.js';
 import {topicInSchoolMode} from '../academics/study-unlock.js';
 import {TIER_KEYS,TIERS} from './tiers.js';
 import {nextTask} from './skills.js';
@@ -265,7 +265,12 @@ function endGoal(save){
  /* oct24-endgame: the last word points at the last level, not back to the first */const last=LEVELS.find(l=>gameFinale(l.id))||levelById('e1');
  return {id:'replay',text:`Every adventure goal is complete! Replay ${last.name} on Legendary with a different loadout whenever you like.`,target:{kind:'pad',id:last.id,tier:'legendary'}};}
 /* improve23-r23t-nov4 #2 (kidsim6 #1): the level a failed first-topic test leads to (the adventure goal's level, else Goblin Camp while it is unwon), or null */
-export function testBreakStep(save){const n=adventure(save);if(n?.target?.kind==='pad'&&levelById(n.target.id))return n;const e1=levelById('e1');return e1&&!levelDone(save,'e1')?pad(e1):null;}
+/* improve24-r24k-nov5 #1 (kidsim7 #1: Mia's red after a 3/10 test sent her to Orc Warcamp, a boss she lost 4 times): the break is a level the kid
+   has already won, the furthest won one on the road (Slime Bog after Goblin Camp and Slime Bog); only a kid who has won nothing yet gets the next level */
+export const wonBreakLevel=save=>[...LEVELS].reverse().find(l=>tiered(l)&&l.id!=='prologue'&&levelDone(save,l.id)&&levelOpen(save,l.id)&&!levelFogged(l))||null;
+export function testBreakStep(save){/* improve24-r24k-nov5 #1 */const w=wonBreakLevel(save);if(w)return {id:'level-'+w.id,text:`Next adventure: ${w.name}.`,target:{kind:'pad',id:w.id},won:true};const n=adventure(save);if(n?.target?.kind==='pad'&&levelById(n.target.id))return n;const e1=levelById('e1');return e1&&!levelDone(save,'e1')?pad(e1):null;}
+/* improve24-r24k-nov5 #1: the first-topic mastery test that is waiting (the save's first topic, test-ready and not yet mastered; testSumOn), or null */
+export const testWaiting=save=>TOPICS.find(t=>testSumOn(save,t)&&testReady(save,t).ready)||null;
 export const nextStepLevel=save=>{const n=nextStep(save),t=(n.then||n).target;return t.kind==='pad'?levelById(t.id):null;};
 /* improve20-r9f-nov1 #5 (audit8: after losing v3 or v7 the defeat card's NEXT GOAL read "Next adventure: The Deep Below"): after a loss the
    main next step is the level just lost, by name, on its tier (the Rift says so), unless the defeat flow has something that ranks higher:

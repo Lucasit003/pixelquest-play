@@ -106,7 +106,7 @@ export const COIN_CENTS=Object.freeze({q:25,d:10,n:5,p:1}),COIN_NAME=Object.free
 export function coinOptions(q){
  const pic=[].concat(q?.pic||[]).find(p=>p&&p.t==='coins'&&Array.isArray(p.coins));if(!pic||!/\bwhich coin\b/i.test(String(q.prompt||''))||!/^\d+$/.test(String(q.answer??'').trim()))return null;
  const kinds=[...new Set(pic.coins)].filter(k=>COIN_CENTS[k]);if(kinds.length<2)return null;
- const out=kinds.map(k=>({value:String(COIN_CENTS[k]),label:`${COIN_NAME[k]} (${COIN_CENTS[k]}¢)`}));if(out.filter(o=>accepts(o.value,q)).length!==1)return null;
+ const out=kinds.map(k=>({value:String(COIN_CENTS[k]),label:/* improve24-r24k-nov5 #4 (kidsim7 #6): the prompt asks for a value in cents, so the tiles are the values ("25¢") */`${COIN_CENTS[k]}¢`}));if(out.filter(o=>accepts(o.value,q)).length!==1)return null;
  return out.sort((a,b)=>+b.value-+a.value);}
 /* improve20-r21a-nov4 #6 (audit15 #15, shot 16: a Grade 4 check typed "1/2" for "Which is bigger: 1/6 or 1/2 of the same sandwich?" and "10/11"
    for "9/11 + 1/11"):

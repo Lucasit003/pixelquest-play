@@ -22,9 +22,15 @@ const group=s=>s.replace(/\B(?=(\d{3})+(?!\d))/g,',');
 export function moneyText(v,q){const n=Number(v);if(!Number.isFinite(n))return String(v);const neg=n<0,x=Math.abs(n),two=!Number.isInteger(Math.round(x*1e6)/1e6)||cents(q);
  const s=two?x.toFixed(2):String(Math.round(x));const [i,f]=s.split('.');return `${neg?'-':''}$${group(i)}${f?'.'+f:''}`;}
 /* the answer as a child should see it: money for a money item, else exactly as stored */
-export const shownAnswer=q=>isMoneyItem(q)?moneyText(q.answer,q):String(q?.answer??'');
+/* improve24-r24k-nov5 #4 (kidsim7 #6: "Give its value in cents" said "The answer is 25"): a question whose asking sentence wants cents ("in cents",
+   "how many cents") with a whole-number answer shows its answer as "25 cents" ("1 cent") and its number tiles as "25¢". Display only: grading
+   ("25", "25¢" and "25 cents" all pass, game/math.js), ids and prompts are untouched */
+export const isCentsItem=q=>!!q&&typeof q==='object'&&/^\d+$/.test(String(q.answer??'').trim())&&/\b(?:in cents|how many cents)\b/i.test(ASK(q.prompt))&&!isMoneyItem(q);
+export const centsText=v=>`${v} ${+v===1?'cent':'cents'}`;
+export const shownAnswer=q=>isMoneyItem(q)?moneyText(q.answer,q):/* improve24-r24k-nov5 #4 */isCentsItem(q)?centsText(String(q.answer).trim()):String(q?.answer??'');
 /* a number option of a money item (a Try-it's or a choice's), shown as money; any other option is unchanged */
-export const shownOption=(v,q)=>isMoneyItem(q)&&/^-?\d+(?:\.\d+)?$/.test(String(v).trim())?moneyText(v,q):String(v);
+/* improve24-r24k-nov5 #4: cents:false (a lesson's Try-it, whose narrated feedback says "The answer is 60.") keeps its buttons bare */
+export const shownOption=(v,q,{cents=true}={})=>isMoneyItem(q)&&/^-?\d+(?:\.\d+)?$/.test(String(v).trim())?moneyText(v,q):/* improve24-r24k-nov5 #4 */cents&&isCentsItem(q)&&/^\d+$/.test(String(v).trim())?`${String(v).trim()}¢`:String(v);
 /* The explanation's closing amount, when it is the answer written bare at the very end ("4 / 2 = 2 dollars.", "... = 2.4 dollars.",
    "P = 32."), reads as money too ("4 / 2 = $2.", "= $2.40.", "P = $32."). Nothing else in the explanation changes, and an explanation whose
    last words are not the answer is shown as written. */

@@ -135,7 +135,8 @@ export function testRuleText(need,total,skills){
 }
 /* improve23-r23t-nov4 #1: the first topic's summed test rule, and its count on the card ("6 of 8 right so far, they all count"), said plainly */
 export function testSumRuleText({have=0,need=8}={},skills=1){return `To pass: ${need} different questions right, counted across tries${skills>1?', with a right answer in every skill':''}.${have>0?` ${have} of ${need} right so far.`:''}`;}
-export function testSumHTML({have=0,need=8,covered=true}={}){const k=Math.max(0,need-have);return `<p class="test-sum" data-test-sum>${esc(have)} of ${esc(need)} right so far, they all count. ${k?`${k===1?'One more right answer':`${esc(k)} more right answers`} on a later try ${k===1?'passes':'pass'} the test.`:covered?'':'Get one right in every skill to pass.'}</p>`;}
+/* improve24-r24k-nov5 #2: gapName, the uncovered skill's kid name at a full count: "8 of 8 right so far. Get one ‘counting on’ question right to pass." */
+export function testSumHTML({have=0,need=8,covered=true,gapName=''}={}){const k=Math.max(0,need-have);if(!k&&!covered&&gapName)return `<p class="test-sum" data-test-sum data-test-gap-skill>${esc(have)} of ${esc(need)} right so far. Get one ‘${esc(gapName)}’ question right to pass.</p>`;return `<p class="test-sum" data-test-sum>${esc(have)} of ${esc(need)} right so far, they all count. ${k?`${k===1?'One more right answer':`${esc(k)} more right answers`} on a later try ${k===1?'passes':'pass'} the test.`:covered?'':'Get one right in every skill to pass.'}</p>`;}
 /* a test that did not pass: what it got, what was missing (the score, or a skill with no right answer yet, named) and that retakes are free */
 export function testMissHTML(t,r,need){
  const name=k=>`<b>${esc(t.skills?.[k]||k)}</b>`,gap=(r.uncovered||[]).map(name),list=gap.length>1?`${gap.slice(0,-1).join(', ')} and ${gap.at(-1)}`:gap[0];
