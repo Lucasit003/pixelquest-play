@@ -199,7 +199,10 @@ export function awakenStep(save,room){const n=starterName(save);return {id:'awak
    (additive within v9, core/save.js) to that quest's next step id; while that step is current the goal leads with it ("Quest: find Hob’s coin
    purse on Bandit Road."), once. It goes when the step is done, or when the kid picks another goal (main.js: another level, or a lesson).
    A learning step (a Library goal: a waiting wake, a quiz, practice, a test) is never covered: the quest is its `questThen`, the HUD's "Then:" line. */
-export function markQuestLead(save,moved){for(const m of moved||[]){if(!m||m.done||!questLive(m.questId))continue;const st=questCurrent(save,m.questId);if(st?.index===1)save.questLead=`quest-${m.questId}-1`;}return save?.questLead||null;}
+/* improve20-r22p-nov4 #3 (R22P, Wil's second chapter played through: after the m2 win the HUD said only "Charge Sundering Blow", with the iron in
+   hand and nothing pointing at Brannoc): every step a quest moves on to leads the same way, not only the first, so each hand-in, the m4 return
+   and "Meet Wil" are the HUD's "Then:" line under a learning goal (or the goal itself otherwise). main.js also calls this on a level end. */
+export function markQuestLead(save,moved){for(const m of moved||[]){if(!m||m.done||!questLive(m.questId))continue;const st=questCurrent(save,m.questId);if(st?.index>=1)save.questLead=`quest-${m.questId}-${st.index}`;}return save?.questLead||null;}
 export function questLeadStep(save){const m=/^quest-(.+)-(\d+)$/.exec(typeof save?.questLead==='string'?save.questLead:'');if(!m||!questLive(m[1])||questStateOf(save,m[1])!=='active')return null;const st=questCurrent(save,m[1]);if(!st||st.index!==+m[2]||st.kind==='clear'&&!levelOpen(save,st.level))return null;
  const l=st.kind==='clear'&&levelById(st.level),text=l&&st.item&&QUEST_ITEMS[st.item]?`Quest: find ${QUEST_ITEMS[st.item].name} on ${l.name}.`:`Quest: ${st.text[0].toLowerCase()+st.text.slice(1)}`;
  return {id:save.questLead,text,target:stepTarget(m[1],st),quest:m[1],questLead:true};}

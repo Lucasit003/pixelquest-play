@@ -170,7 +170,8 @@ const AL = 'Archivist Aldous', HOB = 'Farmer Hob', BESS = 'Bess';
 const line = (speaker, text) => ({speaker, text, ...(speaker === AL ? {portrait: 'archivist'} : {})});
 export function wayIn(save, id) {
   const l = levelById(id); if (!l) return '';
-  if (levelOpen(save, id)) return `Its gate is open. Find ${l.name} on the world map when you are ready!`;
+  /* improve20-r22p-nov4 #4 (the e8 beat read for real: "Its first stop is the Ashen Gate. Its gate is open." named a gate's gate): the way is open */
+  if (levelOpen(save, id)) return `The way is open. Find ${l.name} on the world map when you are ready!`;
   const g = gateInfo(save, id), st = starsShort(save, id), out = [];
   if (g?.text) out.push(`Its gate is still shut. ${g.text.replace(/^Needs /, 'It needs ')}`);
   if (st) out.push(`${g?.text ? 'It also needs' : 'Its gate needs'} ${st.need} stars, and you have ${st.have}. Replay levels on Heroic or Legendary, or win them with a better grade, for more stars.`);

@@ -55,13 +55,14 @@ export function wireBestiary(root,save,stillOpen){const wrap=root.querySelector(
  const key=e=>{if(!root.isConnected||!stillOpen()){document.removeEventListener('keydown',key,true);return;}if(e.key==='Escape'&&!wrap.hidden){e.preventDefault();e.stopImmediatePropagation();close();}};
  document.addEventListener('keydown',key,true);return {open,close};}
 export const BESTIARY_CSS=`dialog[data-view=journal] .hall-diary{margin:0 0 10px;padding:4px 8px;border:2px solid #e3b85a;border-radius:6px;background:rgba(10,12,30,.45)}
-dialog[data-view=journal] .hall-diary>summary{cursor:pointer;list-style-position:inside}dialog[data-view=journal] .hall-diary>summary h4{display:inline;margin:0;font-size:16px;color:var(--gold,#e3b85a);letter-spacing:1px;text-transform:uppercase}dialog[data-view=journal] .hall-diary>summary h4 small{color:#cfc3a8;font-size:13px;letter-spacing:0;text-transform:none}
+dialog[data-view=journal] .hall-diary>summary{cursor:pointer;list-style-position:inside}dialog[data-view=journal] .hall-diary>summary h4{display:inline;margin:0;font-size:16px;color:var(--gold,#e3b85a);letter-spacing:1px;text-transform:uppercase}dialog[data-view=journal] .hall-diary>summary h4 small{color:#cfc3a8;font-size:14px;letter-spacing:0;text-transform:none}
 dialog[data-view=journal] .hall-diary-lead{margin:4px 0 6px}
 dialog[data-view=journal] .hall-diary-pages{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px}
 dialog[data-view=journal] .diary-page{display:flex;gap:8px;align-items:center;padding:6px;border:1px solid #c1914966;border-radius:4px;background:#2a2d48}
 dialog[data-view=journal] .diary-page.diary-locked{background:#1c1d30;border-color:#c1914933}
 dialog[data-view=journal] .diary-art{image-rendering:pixelated;flex:none}
-dialog[data-view=journal] .diary-text{min-width:0}dialog[data-view=journal] .diary-text h5{margin:0 0 2px;font-size:15px;color:#ffe08a}dialog[data-view=journal] .diary-text p{margin:0 0 2px;font-size:13px;line-height:16px}
+/* improve20-r22p-nov4 #1 (shot d3: at 1280x720 the 13 px Pixel Operator lost every l, "E.derwood", "before it .anded"): 14 px, as most small text in style.css */
+dialog[data-view=journal] .diary-text{min-width:0}dialog[data-view=journal] .diary-text h5{margin:0 0 2px;font-size:15px;color:#ffe08a}dialog[data-view=journal] .diary-text p{margin:0 0 2px;font-size:14px;line-height:17px}
 dialog[data-view=journal] .diary-joke{color:#cfc3a8;font-style:italic}dialog[data-view=journal] .diary-lock{color:#a9a3b8}
 .m-mode dialog[data-view=journal] .hall-diary-pages{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
 dialog[data-view=journal] .bestiary-count{margin:0 0 4px}

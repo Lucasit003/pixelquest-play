@@ -153,6 +153,8 @@ export function padCompanionHTML(save, level, scroll = '') {
 }
 
 /** The victory (or defeat) card's companion and quest lines. party: settleRun's result; found: quests onLevelEnd's. */
+/* improve20-r22p-nov4 #3: a win that moved a quest (an item found, a step done) leads the card's body with that line (main.js levelEnd) */
+export const questFirst = found => Array.isArray(found) && found.some(f => f && (f.item || f.advanced));
 export function resultCompanionHTML(save, party, found, scroll = '') {
   let out = '';
   for (const f of found || []) {
