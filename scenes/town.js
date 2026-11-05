@@ -23,7 +23,8 @@ import {drawTrail} from '../gfx/hero-trail.js';
 import {heroGlow} from '../game/hero-glow.js'; /* improve25-r25f-nov5 #4 */
 import {drawHeroGlow} from '../gfx/hero-glow.js';
 import {trailOf} from '../game/prizes.js';
-import {FURN, footprint, placeFurniture, spare, wallSpot, wallFits, WALL} from '../game/furniture.js';
+import {FURN, footprint, placeFurniture, spare, wallSpot, wallFits, WALL, /* improve25-r25q-nov5 #2 */furnNoun, plaqueMetal} from '../game/furniture.js';
+import {homePlaque} from '../ui/trophy-hall.js';
 import {talk, talkAndAdvance, nameOf, holds, stepIdOf, STORY, /* improve20-r22f-nov4 #1 */beatLines, lineText} from '../game/npcs.js';
 import {COMPANIONS, ART, joined} from '../game/party.js';
 import {questLive, currentStep, questState, QUEST_IDS, QUESTS} from '../game/quests.js';
@@ -287,7 +288,8 @@ function houseBlock(S) {
   return out;
 }
 const furnImages = new Map();
-const furnImage = f => { if (!furnImages.has(f.id)) furnImages.set(f.id, typeof Image === 'undefined' ? null : Object.assign(new Image(), {src: new URL('../' + f.img, import.meta.url).href})); return furnImages.get(f.id); };
+/* improve25-r25q-nov5 #2: a boss plaque is painted, not loaded: the Trophy Hall's frame for the best tier won round the boss (ui/trophy-hall.js homePlaque), null until ready */
+const furnImage = f => { if (f.plaque) return homePlaque(f.sprite, plaqueMetal(H.save, f.id) || 'plain', f.w, f.h); if (!furnImages.has(f.id)) furnImages.set(f.id, typeof Image === 'undefined' ? null : Object.assign(new Image(), {src: new URL('../' + f.img, import.meta.url).href})); return furnImages.get(f.id); };
 /* where the item being placed would go: just in front of the hero, snapped to the 8 px floor grid */
 /* improve20-r7a-nov1 #12: the room's own art on the back wall (window, shelves, hearth, headboard; the thin beam strips along its top are what the pieces hang from) */
 const wallArt = S => (S.wallArt ??= S.D.sprites.filter(a => a[5] < 1e5 && a[2] < 160 && !(a[4] <= 12 && a[2] < 100)).map(a => ({x0: a[1], x1: a[1] + a[3], y0: a[2], y1: a[2] + a[4]})));
@@ -345,7 +347,7 @@ export function hubConfirmPlacing() {
   /* improve20-r9c-nov1 #2: a full row of slots makes room: the hung pieces slide along to the slots wallSpot packed them into (undone if it still fails) */
   const items = H.save?.house?.items ?? [], was = (at?.moves ?? []).map(([i]) => [i, items[i].x]);
   for (const [i, nx] of at?.moves ?? []) items[i].x = nx;
-  if (!at || !placingOk(S, f, at.x, at.y)) { for (const [i, x] of was) items[i].x = x; return {ok: false, reason: `The ${f.name.toLowerCase()} does not fit there. Try another spot.`}; }
+  if (!at || !placingOk(S, f, at.x, at.y)) { for (const [i, x] of was) items[i].x = x; return {ok: false, reason: `The ${furnNoun(f)/* improve25-r25q-nov5 #2 */} does not fit there. Try another spot.`}; }
   if (!placeFurniture(H.save, f.id, at.x, at.y, !!at.wall)) { H.placing = null; return {ok: false, reason: 'You have none of those left to place.'}; }
   H.placing = null;
   return {ok: true, name: f.name};
@@ -878,7 +880,7 @@ export function promptPerson(S, q) {
 }
 /** The interact prompt for the HUD: {text} or null. */
 export function hubPrompt() {
-  if (H.placing && FURN[H.placing]) { const hang = !!placingSpot()?.wall; return {text: `${hang ? 'Hang' : 'Place'} the ${FURN[H.placing].name.toLowerCase()}${hang ? ' on the wall' : ''} (Escape puts it away)`}; }
+  if (H.placing && FURN[H.placing]) { const hang = !!placingSpot()?.wall; return {text: `${hang ? 'Hang' : 'Place'} the ${furnNoun(FURN[H.placing])/* improve25-r25q-nov5 #2 */}${hang ? ' on the wall' : ''} (Escape puts it away)`}; }
   if (!H.near) return null;
   /* where the prompt sits (round 3: on the door, not at the hero's feet): just above the marker icon
      drawn over the door frame, as fractions of the 480x270 view */
@@ -1236,9 +1238,9 @@ export function drawHub(c, state, t, kit) {
   /* birds and butterflies (gfx/motion.js): ground ones sort with the figures, birds in the air go over everything */
   const air = [];
   if (!S.room) { stepCritters('village', p, t, state.motion !== false); for (const k of critterDraws(c, 'village', t, state.motion !== false, [vx0, vy0, vx1, vy1])) (k.air ? air : figures).push(k); }
-  for (const it of house) { const f = FURN[it.id], im = f && !f.flat && furnImage(f); if (im) figures.push({y: it.y, draw: () => { if (ready(im)) c.drawImage(im, Math.round(it.x - f.w / 2), Math.round(it.y - f.h)); }}); }
+  for (const it of house) { const f = FURN[it.id], im = f && !f.flat && furnImage(f); if (im) figures.push({y: it.y, draw: () => { if (ready(im)) c.drawImage(im, Math.round(it.x - f.w / 2), Math.round(it.y - f.h), f.w, f.h)/* improve25-r25q-nov5 #2: drawn at its room size (a plaque's canvas is 2x) */; }}); }
   if (H.placing && S.key === 'home') { const f = FURN[H.placing], at = placingSpot(), im = f && furnImage(f);
-    if (at && im) { const ok = placingOk(S, f, at.x, at.y); const draw = () => { if (!ready(im)) return; c.save(); c.globalAlpha = ok ? .75 : .3; c.drawImage(im, Math.round(at.x - f.w / 2), Math.round(at.y - f.h)); c.restore(); };
+    if (at && im) { const ok = placingOk(S, f, at.x, at.y); const draw = () => { if (!ready(im)) return; c.save(); c.globalAlpha = ok ? .75 : .3; c.drawImage(im, Math.round(at.x - f.w / 2), Math.round(at.y - f.h), f.w, f.h); c.restore(); };
       if (f.flat) draw(); else figures.push({y: at.y, draw}); } }
   /* improve20-r9c-nov1 #7: at night the window's glass turns moonlit blue-grey with the beams (gfx/window-light.js), drawn just over the window sprite */
   if (S.room) for (const g of windowGlass(S.key, state.motion !== false)) figures.push({y: g.sort + .01, draw: () => g.draw(c)});

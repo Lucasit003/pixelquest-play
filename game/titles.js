@@ -15,6 +15,8 @@ export const TITLES={
  'thorn-hero':{name:'Hero of the Thorn Kingdom',how:'Free the Thorn Kingdom: win the last Veilmoor level.',earned:s=>LEVELS.some(l=>gameFinale(l.id)&&levelDone(s,l.id))},
  /* improve20-r22w-nov4 #1: Wil's second chapter (game/quests.js 'wils-shield', reward.title); read from the save's done quest, which never goes back */
  'shield-friend':{name:'Wil’s Shield-Friend',how:'Finish The Farm-Gate Shield, Wil’s second quest.',earned:s=>!!s?.quests?.q?.['wils-shield']?.done},
+ /* improve25-r25q-nov5 #1: Wil's third chapter (game/quests.js 'wils-mirror', reward.title), read from the done quest the same way */
+ 'true-friend':{name:'Wil’s True Friend',how:'Finish The Still Pond, Wil’s third quest.',earned:s=>!!s?.quests?.q?.['wils-mirror']?.done},
  /* improve25-r25f-nov5 #2: a Rift tower marker reached (4, 8, 12 Story Rift floors) */
  ...Object.fromEntries(TOWER_MARKS.map(m=>[m.id,{name:m.name,how:`Climb ${m.at} floors of the Rift tower: win Story Rifts.`,earned:s=>riftTower(s).floors>=m.at}])),
  /* improve25-r25f-nov5 #3: every Hall diary page of a chapter filled */

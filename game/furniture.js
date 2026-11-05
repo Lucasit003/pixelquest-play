@@ -4,6 +4,8 @@
    with learning (CLAUDE.md invariants). The pictures are the interiors pack's own props, the ones the rooms are built
    from, with only their transparent margins cropped (dist/assets/town/furniture). Rugs lie flat under everyone and never
    block; everything else blocks the strip it stands on. */
+/* improve25-r25q-nov5 #2 */
+import {TROPHY_LEVELS,trophyOf} from './trophies.js';import {levelDone} from './levels.js';import {ENEMY_TYPES} from './enemies.js';
 /* [id, name, price in gold, kind, width, height, source picture in art/tiled/interiors/images] */
 const T=[
  ['plant-tree-green','Potted tree',60,'plant',27,48,'prop-plants_1.png'],
@@ -60,8 +62,26 @@ const T=[
 /* improve20-r7a-nov1 #12 (improve20-x-nov1 report: "Wall pieces stand on the floor like all furniture"): the pieces made to hang (the banner,
    the shield trophy, the weapon rack and the armour plaque, all front views) go on the Home's back wall. Same art, no new pictures. */
 export const WALL_IDS=Object.freeze(['show-banner','show-shields','show-weapons','show-armour']);
-export const FURNITURE=Object.freeze(T.map(([id,name,price,kind,w,h,src])=>Object.freeze({id,name,price,kind,w,h,src,flat:kind==='rug',...(kind==='keep'?{earned:true}/* improve25-r25f-nov5 #3 */:{}),...(WALL_IDS.includes(id)?{wall:true}:{}),img:`assets/town/furniture/${id}.png`})));
+/* improve25-r25q-nov5 #2 (audit16 #18, plan 8: gold bought almost nothing mid-game): boss plaques, a gold sink tied to deeds. One per Trophy Hall boss
+   (game/trophies.js TROPHY_LEVELS), sold only once that boss is beaten (buyFurniture), one of each, and hung on the Home's back wall like the wall
+   pieces (on the floor once the wall is full). No picture file: scenes/town.js paints the Trophy Hall's own frame (ui/trophy-hall.js) round the
+   boss's own idle frame, and the frame follows the best tier won by itself (plaqueMetal: plain Normal, silver Heroic, gold Legendary). Prices by
+   chapter (PLAQUE_PRICE): a typical kid after v7 holds about 2,000-2,600 gold, which buys a few plaques, never the 17,700 of the whole wall.
+   Cosmetic only: no stat, ability or learning reads them. */
+export const PLAQUE_PRICE=Object.freeze({elderwood:300,emberkeep:600,veilmoor:1200});
+export const PLAQUE_W=36,PLAQUE_H=40;
+const bossOf=l=>l.bossName||ENEMY_TYPES[l.boss]?.name||l.name;
+const PLAQUES=TROPHY_LEVELS.map(l=>Object.freeze({id:`plaque-${l.id}`,name:`${bossOf(l).split(',')[0].replace(/^The /,'')} plaque`,price:PLAQUE_PRICE[l.chapter]||300,kind:'plaque',w:PLAQUE_W,h:PLAQUE_H,src:null,flat:false,wall:true,plaque:true,level:l.id,chapter:l.chapter,boss:bossOf(l),sprite:ENEMY_TYPES[l.boss].sprite,img:null}));
+export const FURNITURE=Object.freeze([...T.map(([id,name,price,kind,w,h,src])=>Object.freeze({id,name,price,kind,w,h,src,flat:kind==='rug',...(kind==='keep'?{earned:true}/* improve25-r25f-nov5 #3 */:{}),...(WALL_IDS.includes(id)?{wall:true}:{}),img:`assets/town/furniture/${id}.png`})),...PLAQUES/* improve25-r25q-nov5 #2 */]);
 export const FURN=Object.freeze(Object.fromEntries(FURNITURE.map(f=>[f.id,f])));
+/* improve25-r25q-nov5 #2: the plaques, in Trophy Hall order; open once the boss is beaten; the frame is the best tier won */
+export const PLAQUES_ALL=Object.freeze(FURNITURE.filter(f=>f.plaque));
+export const isPlaque=id=>!!FURN[id]?.plaque;
+/* a piece in a sentence ("Pick up the wooden bench"); a plaque keeps its boss's capitals ("the Bog King plaque") */
+export const furnNoun=f=>f?.plaque?f.name:String(f?.name||'').toLowerCase();
+export const plaqueOpen=(s,id)=>isPlaque(id)&&levelDone(s,FURN[id].level);
+export const plaqueMetal=(s,id)=>{if(!plaqueOpen(s,id))return null;const t=trophyOf(s,LEVEL_OF[FURN[id].level]).tier;return t==='legendary'?'gold':t==='heroic'?'silver':'plain';};
+const LEVEL_OF=Object.fromEntries(TROPHY_LEVELS.map(l=>[l.id,l]));
 export const MAX_PLACED=40;
 /* the Showpiece shelf, cheapest first; one of each can be owned */
 export const SHOWPIECES=Object.freeze(FURNITURE.filter(f=>f.kind==='show').sort((a,b)=>a.price-b.price));
@@ -74,7 +94,7 @@ export const nextShowpiece=s=>SHOWPIECES.find(f=>!((s?.house?.owned?.[f.id]|0)>0
 export const footprint=(f,x,y)=>{const h=Math.max(8,Math.min(24,Math.round(f.h/3)));return {x0:Math.round(x-f.w/2),x1:Math.round(x+f.w/2),y0:Math.round(y-h),y1:Math.round(y)};};
 export const placedCount=(s,id)=>s.house.items.filter(i=>i.id===id).length;
 export const spare=(s,id)=>(s.house.owned[id]||0)-placedCount(s,id);
-export function buyFurniture(s,id){const f=FURN[id];if(!f||f.earned/* improve25-r25f-nov5 #3 */||(s.gold||0)<f.price||f.kind==='show'&&(s.house.owned[id]|0)>0)return false;s.gold-=f.price;s.house.owned[id]=(s.house.owned[id]||0)+1;return true;}
+export function buyFurniture(s,id){const f=FURN[id];if(!f||f.earned/* improve25-r25f-nov5 #3 */||(s.gold||0)<f.price||(f.kind==='show'||f.plaque/* improve25-r25q-nov5 #2: one of each */)&&(s.house.owned[id]|0)>0||f.plaque&&!plaqueOpen(s,id)/* improve25-r25q-nov5 #2: beat the boss first */)return false;s.gold-=f.price;s.house.owned[id]=(s.house.owned[id]||0)+1;return true;}
 export function placeFurniture(s,id,x,y,wall=false){if(!FURN[id]||spare(s,id)<1||s.house.items.length>=MAX_PLACED||wall&&!FURN[id].wall)return false;s.house.items.push({id,x:Math.round(x),y:Math.round(y),...(wall?{wall:1}:{})});return true;}
 /* The Home's back wall (room pixels; the plaster face of the room "home" runs y 80-160 between x 96 and 480, under a beam at y 92-102): a hung
    piece's top sits just under the beam (WALL.rail), so a row of pieces lines up. It hangs inside the wall, clear of the room's own wall art
@@ -113,6 +133,6 @@ export function settleWall(items){const hung=items.filter(it=>it.wall&&FURN[it.i
 export function pickUp(s,i){if(i<0||i>=s.house.items.length)return false;s.house.items.splice(i,1);return true;}
 /* a save's house, cleaned: known items only, whole counts, and never more placed than owned (save.js normalize) */
 export function cleanHouse(h){const owned={},items=[];
- for(const [id,n] of Object.entries(h?.owned&&typeof h.owned==='object'?h.owned:{}))if(FURN[id]&&Math.floor(Number(n))>0)owned[id]=FURN[id].kind==='show'||FURN[id].earned/* improve25-r25f-nov5 #3 */?1:Math.floor(Number(n));
+ for(const [id,n] of Object.entries(h?.owned&&typeof h.owned==='object'?h.owned:{}))if(FURN[id]&&Math.floor(Number(n))>0)owned[id]=FURN[id].kind==='show'||FURN[id].earned/* improve25-r25f-nov5 #3 */||FURN[id].plaque/* improve25-r25q-nov5 #2 */?1:Math.floor(Number(n));
  for(const it of Array.isArray(h?.items)?h.items:[])if(it&&FURN[it.id]&&Number.isFinite(+it.x)&&Number.isFinite(+it.y)&&items.filter(o=>o.id===it.id).length<(owned[it.id]||0)&&items.length<MAX_PLACED)items.push({id:it.id,x:Math.round(+it.x),y:Math.round(+it.y),...(it.wall&&FURN[it.id].wall?{wall:1}:{})});
  settleWall(items);return {owned,items};}

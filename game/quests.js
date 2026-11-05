@@ -26,9 +26,13 @@ export const QUEST_ITEMS = {
      keepsake is the existing bounty shield icon (ui/skin/packicons3/shield.png, PixelLab). No new art. */
   'ember-iron': {name: 'a lump of ember iron', icon: 'gear/mat-forge-slag', img: 'ui/skin/gear/mat-forge-slag.png', story: 'Glowing iron from the Cinder Forge, for Wil’s new shield.'},
   'wil-shield': {name: 'Wil’s farm-gate shield', icon: 'packicons3/shield', img: 'ui/skin/packicons3/shield.png', keepsake: true, story: 'Hob made it from the old farm gate. Wil carried it all the way to Emberkeep.'},
+  /* improve25-r25q-nov5 #1: Wil's third chapter. The flask is the existing blue bottle reward icon (ui/skin/rewards/bottle-blue.png); the keepsake
+     is the existing shard material icon (ui/skin/gear/mat-elite-shard.png). No new art. */
+  'shrine-water': {name: 'a flask of still pond water', icon: 'rewards/bottle-blue', img: 'ui/skin/rewards/bottle-blue.png', story: 'From the still pond at the Drowned Shrine. Still water shows only what is true.'},
+  'wil-mirror': {name: 'Wil’s mirror shard', icon: 'gear/mat-elite-shard', img: 'ui/skin/gear/mat-elite-shard.png', keepsake: true, story: 'A piece of Mirror Woods glass. It shows Wil with his shield up and his friends behind him.'},
 };
 
-/* every chain as data (§2.2); `opens.done` lists levels that must all be cleared */
+/* every chain as data (§2.2); `opens.done` lists levels that must all be cleared (and `opens.quests`, chains done first) */
 export const QUESTS = {
   'hobs-purse': {companion: 'wil', chapter: 'elderwood', order: 1, title: 'The Farmer’s Savings',
     giver: {key: 'farmer_hob', room: 'farmhouse', name: 'Farmer Hob'}, opens: {done: ['e3']},
@@ -107,6 +111,20 @@ export const QUESTS = {
       {kind: 'visit', building: 'barracks', who: 'wil', text: 'Meet Wil at the Barracks.'}],
     reward: {keepsake: 'wil-shield', title: 'shield-friend', barks: ['This shield won’t crack!', 'Like guarding the hens, only hotter.', 'Shield-friends, you and me!'],
       say: ['You came! Brannoc says my new shield is the toughest he’s ever made.', 'I want you to keep my old one. Dad made it from our farm gate. Will you hang it in your Trophy Hall?', 'Shield-friends, you and me. That’s what Dad calls it.']}},
+  /* improve25-r25q-nov5 #1 (audit16 plan 5): Wil's third chapter, in the Veilmoor, the same shape as 'wils-shield': no companion; a keepsake, a title
+     ('true-friend') and new barks. It opens after the Mirror Woods (v3, on the main road) once The Farm-Gate Shield is done (opens.quests), so the
+     story follows on. Every clear is at tier null; existing levels (v1, v3) and existing people (Hob, Aldous, Wil) only. */
+  'wils-mirror': {companion: 'wil', chapter: 'veilmoor', order: 9, title: 'The Still Pond',
+    giver: {key: 'farmer_hob', room: 'farmhouse', name: 'Farmer Hob'}, opens: {done: ['v3'], quests: ['wils-shield']},
+    blurb: 'The Mirror Woods showed Wil a scared little farm boy.',
+    steps: [
+      {kind: 'talk', who: 'farmer_hob', text: 'Talk to Farmer Hob at his farm.'},
+      {kind: 'clear', level: 'v1', tier: null, item: 'shrine-water', text: 'Fill a flask at the Drowned Shrine’s still pond.', bark: 'Still water shows what’s true, Dad says. Let’s win, then I’ll look.'},
+      {kind: 'talk', who: 'archivist_aldous', room: 'library', take: 'shrine-water', text: 'Bring the pond water to Archivist Aldous.'},
+      {kind: 'clear', level: 'v3', tier: null, text: 'Win the Mirror Woods again, with Wil beside you.', bark: 'Hey, mirrors! Farm boy AND guard. Both!'},
+      {kind: 'visit', building: 'barracks', who: 'wil', text: 'Meet Wil at the Barracks.'}],
+    reward: {keepsake: 'wil-mirror', title: 'true-friend', barks: ['Farm boy and guard. Both!', 'Mirrors don’t scare me now.', 'Shield up, friends behind me!'],
+      say: ['You came! I looked in Aldous’s bowl, and then in every mirror in the woods.', 'They still show a farm boy. But now his shield is up, and his friends are right behind him.', 'Here, a piece of mirror glass from the woods. It only shows the truth now. Will you hang it in your Trophy Hall?']}},
 };
 export const QUEST_IDS = Object.keys(QUESTS).sort((a, b) => QUESTS[a].order - QUESTS[b].order);
 /* A chain is live in the game once its companion has approved combat art (party.js hireable): today only Wil's. The rules below
@@ -134,7 +152,8 @@ export function cleanQuests(v) {
 }
 const qOf = save => (save.quests = cleanQuests(save.quests));
 const levelWon = (save, id) => !!save?.levels?.[id]?.done;
-export const opensHold = (opens, save) => (opens?.done || []).every(id => levelWon(save, id));
+/* improve25-r25q-nov5 #1: `opens.quests` lists chains that must be done first (a later chapter follows the one before it) */
+export const opensHold = (opens, save) => (opens?.done || []).every(id => levelWon(save, id)) && (opens?.quests || []).every(id => !!save?.quests?.q?.[id]?.done);
 
 /** 'locked' | 'open' | 'active' | 'done' */
 export function questState(save, id) {

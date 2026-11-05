@@ -14,7 +14,8 @@ import {FARM_NAME} from '../game/fasttravel.js';
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
 const num = n => Number.isInteger(n) ? String(n) : n.toFixed(2).replace(/0$/, '');
 const live = () => QUEST_IDS.filter(questLive);
-const opensText = id => { const need = (QUESTS[id].opens?.done || []).map(l => levelById(l)?.name || l); return need.length ? `Opens after ${need.join(' and ')}.` : 'Open now.'; };
+/* improve25-r25q-nov5 #1: a chain that follows another names it too ("Opens after The Farm-Gate Shield and Mirror Woods.") */
+const opensText = id => { const need = [...(QUESTS[id].opens?.quests || []).map(q => QUESTS[q]?.title || q), ...(QUESTS[id].opens?.done || []).map(l => levelById(l)?.name || l)]; return need.length ? `Opens after ${need.join(' and ')}.` : 'Open now.'; };
 /* where a step happens, in a child's words */
 const WHERE = {ex1: 'Bandit Road, off the forest path past the Orc Warcamp'};
 function stepWhere(id, st) {
@@ -25,7 +26,7 @@ function stepWhere(id, st) {
   const room = st.who === QUESTS[id].giver.key ? QUESTS[id].giver.room : st.room;
   return ROOM_WHERE[room] || (st.who === QUESTS[id].giver.key ? QUESTS[id].giver.name : '');
 }
-const ROOM_WHERE = {farmhouse: `${FARM_NAME}, west of the windmill`, barracks: 'The Barracks, by the south gate', weaponsmith: 'Brannoc’s weaponsmith, on the market square'};
+const ROOM_WHERE = {farmhouse: `${FARM_NAME}, west of the windmill`, barracks: 'The Barracks, by the south gate', weaponsmith: 'Brannoc’s weaponsmith, on the market square', /* improve25-r25q-nov5 #1 */library: 'The Library, beside the town square'};
 /* improve20-r22w-nov4 #3: what a chain that brings no one pays, in words ("the title “Wil’s Shield-Friend”, new lines for Wil") */
 const titleOf = id => TITLES[QUESTS[id]?.reward?.title]?.name || '';
 const extras = id => { const R = QUESTS[id].reward, c = COMPANIONS[QUESTS[id].companion]; return [titleOf(id) && `the title “${titleOf(id)}”`, R.barks?.length && `new things for ${c.short} to say`].filter(Boolean); };

@@ -65,26 +65,29 @@ function goldMap(g){const {width:W,height:H}=g.canvas,im=g.getImageData(0,0,W,H)
  for(let i=0;i<d.length;i+=4)if(d[i+3]>8){const l=L(i);if(l<lo)lo=l;if(l>hi)hi=l;}
  for(let i=0;i<d.length;i+=4)if(d[i+3]>8){const c=goldShade((L(i)-lo)/((hi-lo)||1));d[i]=c[0];d[i+1]=c[1];d[i+2]=c[2];}
  g.putImageData(im,0,0);}
-export function plaqueFrame(card,metal){const key=metal||'dark';if(frames[key])return frames[key];const cv=mk(PLAQUE_W,PLAQUE_H),g=cv.getContext('2d');g.imageSmoothingEnabled=false;nine(g,card,0,0,PLAQUE_W,PLAQUE_H,[10,8,8,8],2);
- const base=mk(PLAQUE_W,PLAQUE_H);base.getContext('2d').drawImage(cv,0,0);
- if(metal==='gold')goldMap(g);else if(metal){g.globalCompositeOperation='color';g.fillStyle=METAL_TINT[metal];g.fillRect(0,0,PLAQUE_W,PLAQUE_H);g.globalCompositeOperation=metal==='bronze'?'multiply':'screen';g.globalAlpha=metal==='bronze'?.25:metal==='gold'?.38:.22;g.fillRect(0,0,PLAQUE_W,PLAQUE_H);g.globalAlpha=1;}
+/* improve25-r25q-nov5 #2: the same frame at another size for the Home's boss plaques (W x H, 9-slice scale k; the window insets scale with k), and
+   'plain' (the card's own colours, untinted) for a Normal win there. The hall's own call is unchanged: plaqueFrame(card, metal). */
+export function plaqueFrame(card,metal,W=PLAQUE_W,H=PLAQUE_H,k=2){const key=`${metal||'dark'}:${W}x${H}:${k}`;if(frames[key])return frames[key];const cv=mk(W,H),g=cv.getContext('2d');g.imageSmoothingEnabled=false;nine(g,card,0,0,W,H,[10,8,8,8],k);
+ const base=mk(W,H);base.getContext('2d').drawImage(cv,0,0);const PLAQUE_W=W,PLAQUE_H=H,u=k/2;
+ if(metal==='plain'){}else if(metal==='gold')goldMap(g);else if(metal){g.globalCompositeOperation='color';g.fillStyle=METAL_TINT[metal];g.fillRect(0,0,PLAQUE_W,PLAQUE_H);g.globalCompositeOperation=metal==='bronze'?'multiply':'screen';g.globalAlpha=metal==='bronze'?.25:metal==='gold'?.38:.22;g.fillRect(0,0,PLAQUE_W,PLAQUE_H);g.globalAlpha=1;}
  else{g.globalCompositeOperation='multiply';g.fillStyle='#5a5f6a';g.fillRect(0,0,PLAQUE_W,PLAQUE_H);}
  g.globalCompositeOperation='destination-in';g.drawImage(base,0,0);g.globalCompositeOperation='source-over';
  /* the window behind the boss: a dark wall so every sprite reads */
- const gr=g.createLinearGradient(0,22,0,PLAQUE_H-14);gr.addColorStop(0,metal?'#1d2333':'#14161c');gr.addColorStop(1,metal?'#2c3346':'#1b1e26');g.fillStyle=gr;g.fillRect(14,22,PLAQUE_W-28,PLAQUE_H-36);
+ const gr=g.createLinearGradient(0,22*u,0,PLAQUE_H-14*u);gr.addColorStop(0,metal?'#1d2333':'#14161c');gr.addColorStop(1,metal?'#2c3346':'#1b1e26');g.fillStyle=gr;g.fillRect(14*u,22*u,PLAQUE_W-28*u,PLAQUE_H-36*u);
  return frames[key]=cv;}
 /* the opaque box of a boss's first idle frame, found once per atlas */
 const boxes={};
 function idleBox(id){if(boxes[id])return boxes[id];const im=spriteImage(id),m=spriteMeta(id);if(!im||!m)return null;const st=m.states.idle||Object.values(m.states)[0],[w,h]=m.cell,cv=mk(w,h),g=cv.getContext('2d',{willReadFrequently:true});g.drawImage(im,0,st.row*h,w,h,0,0,w,h);
  const d=g.getImageData(0,0,w,h).data;let x0=w,y0=h,x1=-1,y1=-1;for(let y=0;y<h;y++)for(let x=0;x<w;x++)if(d[(y*w+x)*4+3]>24){if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y;}
  return boxes[id]=x1<0?{cv,x:0,y:0,w,h}:{cv,x:x0,y:y0,w:x1-x0+1,h:y1-y0+1};}
-export function paintPlaque(cv,card,id,metal){const g=cv.getContext('2d');g.setTransform?.(1,0,0,1,0,0);g.imageSmoothingEnabled=false;g.clearRect(0,0,cv.width,cv.height);const r=cv.width/PLAQUE_W||1;g.setTransform?.(r,0,0,r,0,0);g.imageSmoothingEnabled=false;g.drawImage(plaqueFrame(card,metal),0,0);
- const b=spriteReady(id)?idleBox(id):null;if(!b){if(!metal)mark(g);return false;}
- const BW=PLAQUE_W-36,BH=PLAQUE_H-40,k=Math.min(BW/b.w,BH/b.h,3),q=v=>Math.round(v*r)/r,dw=q(b.w*k),dh=q(b.h*k),dx=q((PLAQUE_W-dw)/2),dy=q(PLAQUE_H-16-dh);
+/* improve25-r25q-nov5 #2: dims {W,H,k} paint the Home's smaller plaque (scenes/town.js homePlaque); left out, the hall's plaque as before */
+export function paintPlaque(cv,card,id,metal,{W=PLAQUE_W,H=PLAQUE_H,k:fk=2}={}){const PLAQUE_W=W,PLAQUE_H=H,u=fk/2;const g=cv.getContext('2d');g.setTransform?.(1,0,0,1,0,0);g.imageSmoothingEnabled=false;g.clearRect(0,0,cv.width,cv.height);const r=cv.width/PLAQUE_W||1;g.setTransform?.(r,0,0,r,0,0);g.imageSmoothingEnabled=false;g.drawImage(plaqueFrame(card,metal,W,H,fk),0,0);
+ const b=spriteReady(id)?idleBox(id):null;if(!b){if(!metal)mark(g,W,H,u);return false;}
+ const BW=PLAQUE_W-36*u,BH=PLAQUE_H-40*u,k=Math.min(BW/b.w,BH/b.h,3*u),q=v=>Math.round(v*r)/r,dw=q(b.w*k),dh=q(b.h*k),dx=q((PLAQUE_W-dw)/2),dy=q(PLAQUE_H-16*u-dh);
  if(metal){g.drawImage(b.cv,b.x,b.y,b.w,b.h,dx,dy,dw,dh);return true;}
  /* unbeaten: the boss's own shape, filled dark, with a "?" */
- const sc=mk(Math.round(dw*r),Math.round(dh*r)),sg=sc.getContext('2d');sg.imageSmoothingEnabled=false;sg.drawImage(b.cv,b.x,b.y,b.w,b.h,0,0,sc.width,sc.height);sg.globalCompositeOperation='source-in';sg.fillStyle='#07080b';sg.fillRect(0,0,sc.width,sc.height);g.globalAlpha=.9;g.drawImage(sc,dx,dy,dw,dh);g.globalAlpha=1;mark(g);return true;}
-function mark(g){g.font='bold 40px "Pixel Operator", monospace';g.textAlign='center';g.textBaseline='middle';g.fillStyle='#000';g.fillText('?',PLAQUE_W/2+2,PLAQUE_H/2+8);g.fillStyle='#e9dcb6';g.fillText('?',PLAQUE_W/2,PLAQUE_H/2+6);}
+ const sc=mk(Math.round(dw*r),Math.round(dh*r)),sg=sc.getContext('2d');sg.imageSmoothingEnabled=false;sg.drawImage(b.cv,b.x,b.y,b.w,b.h,0,0,sc.width,sc.height);sg.globalCompositeOperation='source-in';sg.fillStyle='#07080b';sg.fillRect(0,0,sc.width,sc.height);g.globalAlpha=.9;g.drawImage(sc,dx,dy,dw,dh);g.globalAlpha=1;mark(g,W,H,u);return true;}
+function mark(g,W=PLAQUE_W,H=PLAQUE_H,u=1){g.font=`bold ${40*u}px "Pixel Operator", monospace`;g.textAlign='center';g.textBaseline='middle';g.fillStyle='#000';g.fillText('?',W/2+2*u,H/2+8*u);g.fillStyle='#e9dcb6';g.fillText('?',W/2,H/2+6*u);}
 /* browser: load the card once, then each plaque's atlas when it scrolls into view; repaint until ready; release on close */
 export function wireTrophyHall(root){const cvs=[...root.querySelectorAll('[data-trophy-sprite]')];if(!cvs.length)return;const before=new Set(loadedSprites()),mine=new Set();
  const card=new Image();card.src=new URL('./skin/pl-card-plain.png',import.meta.url).href;
@@ -93,3 +96,10 @@ export function wireTrophyHall(root){const cvs=[...root.querySelectorAll('[data-
  if(typeof IntersectionObserver==='function'){const io=new IntersectionObserver(es=>{for(const e of es)if(e.isIntersecting){see(e.target);io.unobserve(e.target);}},{root:null,rootMargin:'120px'});cvs.forEach(cv=>io.observe(cv));}else cvs.forEach(see);
  const tick=()=>{if(!cvs[0].isConnected){for(const id of mine)releaseSprite(id,true);return;}paint();if(cvs.some(cv=>!cv.dataset.done))later(tick,120);else{const wait=()=>{if(!cvs[0].isConnected){for(const id of mine)releaseSprite(id,true);return;}later(wait,500);};wait();}};
  card.onload=paint;tick();}
+/* improve25-r25q-nov5 #2: a boss plaque hung at Home (game/furniture.js PLAQUES_ALL; scenes/town.js draws it at w x h room pixels). One canvas per
+   boss and frame, painted at 2x (the room is drawn at about 2x) once the card and the boss atlas are in; until then it is null and nothing draws.
+   The boss atlas stays loaded while its plaque is in the Home (a handful at most). Browser only: in Node there is no canvas, so null. */
+const homeCards={card:null},homePlaques=new Map();
+export function homePlaque(sprite,metal,w=36,h=40){if(typeof document==='undefined'||typeof Image==='undefined')return null;if(!homeCards.card){homeCards.card=new Image();homeCards.card.src=new URL('./skin/pl-card-plain.png',import.meta.url).href;}
+ const card=homeCards.card,key=`${sprite}|${metal}`;let e=homePlaques.get(key);if(e?.done)return e.cv;if(!e){e={cv:mk(w*2,h*2),done:false};homePlaques.set(key,e);loadSprite(sprite);}
+ if(!card.complete||!card.naturalWidth)return null;if(paintPlaque(e.cv,card,sprite,metal,{W:w*2,H:h*2,k:1})){e.done=true;return e.cv;}return null;}

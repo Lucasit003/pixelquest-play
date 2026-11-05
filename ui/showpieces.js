@@ -2,6 +2,10 @@
    for (game/furniture.js SHOWPIECES), one of each; owning them all hangs an entry in the Trophy Hall. HTML only: main.js shows it and
    wires the Buy buttons (data-buy-furn, the catalogue's own). Nothing here reads or writes a stat, an ability or learning. */
 import {SHOWPIECES,showpiecesOwned,allShowpieces,nextShowpiece} from '../game/furniture.js';
+/* improve25-r25q-nov5 #2 */
+import {PLAQUES_ALL,plaqueOpen,plaqueMetal} from '../game/furniture.js';
+import {PLAQUE_W as HALL_W,PLAQUE_H as HALL_H,PQ_RES} from './trophy-hall.js';
+import {CHAPTERS} from '../game/levels.js';
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const own=(s,f)=>(s?.house?.owned?.[f.id]|0)>0;
 /** The shelf. card(f, bodyHTML) is decorate()'s own card (picture and name). */
@@ -21,6 +25,15 @@ export const goldGoalTitle=s=>{const g=showpieceGoal(s);return g?`Showpiece goal
 /** The Trophy Hall entry: shown once one Showpiece is owned, gold-framed when all are. */
 export function showpieceTrophyHTML(s){const n=SHOWPIECES.length,k=showpiecesOwned(s);if(!k)return '';const all=allShowpieces(s);
  return `<div class="trophy-showpieces${all?' is-complete':''}" data-showpieces="${k}"><div class="trophy-show-row">${SHOWPIECES.map(f=>`<img src="${f.img}" alt="" width="${f.w}" height="${f.h}" class="${own(s,f)?'':'is-dark'}" draggable="false">`).join('')}</div><p>${all?`<strong>Grand Collector.</strong> Every Showpiece is in your Home: all ${n} of them.`:`<strong>Showpiece collection: ${k} of ${n}.</strong> Own all ${n} to complete it.`}</p></div>`;}
+/* improve25-r25q-nov5 #2 (audit16 #18): Home -> Decorate -> Boss plaques. One card per Trophy Hall boss: its plaque painted by the hall's own
+   wireTrophyHall (the canvas carries data-trophy-sprite and data-metal: plain, silver or gold from the best tier won, '' for the dark "?" of a boss not
+   beaten). A beaten boss has its price and Buy; one not beaten says "Beat <boss> to hang this" and has no button. HTML only; main.js wires Buy
+   (data-buy-furn) and paints the canvases. Gold only, earned in play; nothing here reads or writes a stat, an ability or learning. */
+const METAL_WORD={plain:'Normal win: plain frame',silver:'Heroic win: silver frame',gold:'Legendary win: gold frame'};
+export const plaquePicHTML=(s,f)=>`<span class="deco-pic deco-plaque-pic"><canvas class="deco-plaque-cv" data-trophy-sprite="${esc(f.sprite)}" data-metal="${esc(plaqueMetal(s,f.id)||'')}" width="${HALL_W*PQ_RES}" height="${HALL_H*PQ_RES}" aria-hidden="true"></canvas></span>`;
+export function plaqueShelfHTML(s){const gold=Math.max(0,s?.gold|0),won=PLAQUES_ALL.filter(f=>plaqueOpen(s,f.id)),mine=PLAQUES_ALL.filter(f=>own(s,f)).length;
+ const card=f=>{const open=plaqueOpen(s,f.id),m=plaqueMetal(s,f.id);return `<div class="card deco-card deco-plaque${open?'':' deco-plaque-lock'}" data-plaque="${esc(f.id)}" data-metal="${esc(m||'')}">${plaquePicHTML(s,f)}<h3>${esc(open?f.boss:'?')}</h3>${!open?`<p class="subtle deco-plaque-need">Beat ${esc(f.boss)} to hang this</p>`:own(s,f)?`<p class="deco-owned">Yours ✓ Hang it from Your furniture.</p><small class="subtle">${esc(METAL_WORD[m])}</small>`:`<small class="subtle">${esc(METAL_WORD[m])}</small><button data-buy-furn="${esc(f.id)}" ${gold<f.price?'disabled':''}>Buy ◆ ${f.price}</button>`}</div>`;};
+ return `<p class="deco-show-head"><strong>${mine} of ${PLAQUES_ALL.length} boss plaques.</strong> Hang a plaque for every boss you have beaten. Its frame shows your best win and changes by itself: plain for Normal, silver for Heroic, gold for Legendary. Just for show.</p>${CHAPTERS.map(c=>{const xs=PLAQUES_ALL.filter(f=>f.chapter===c.id);return xs.length?`<h3 class="deco-plaque-ch">${esc(c.name)} <small>${xs.filter(f=>plaqueOpen(s,f.id)).length} of ${xs.length} beaten · ◆ ${xs[0].price} each</small></h3><div class="grid deco-grid deco-plaque-grid">${xs.map(card).join('')}</div>`:'';}).join('')}`;}
 export const SHOWPIECE_CSS=`.deco-show-head{margin:4px 0 8px}
 .deco-show-grid .deco-pic{min-height:150px}
 .deco-show{border-color:#c9a24a}
@@ -39,6 +52,13 @@ export const SHOWPIECE_CSS=`.deco-show-head{margin:4px 0 8px}
 .m-mode .deco-show .deco-save{margin:0}
 .m-mode .deco-show .deco-save.can small{display:none}
 .m-mode .deco-show h3{margin:0}
+.deco-plaque-pic{min-height:0}
+.deco-plaque-cv{width:88px;height:98px;image-rendering:pixelated}
+.deco-plaque-ch{margin:10px 0 4px}
+.deco-plaque-ch small{font-weight:normal;opacity:.8}
+.deco-plaque-need{margin:2px 0}
+.m-mode .deco-plaque-cv{width:55px;height:61px}
+.m-mode .deco-plaque h3{margin:0;font-size:14px}
 .trophy-showpieces{margin:0 0 12px;padding:10px 12px;border:2px solid #817b89;border-radius:6px;background:rgba(10,12,30,.45)}
 .trophy-showpieces.is-complete{border-color:#ffc928;box-shadow:0 0 0 1px rgba(255,201,40,.35) inset}
 .trophy-show-row{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px}

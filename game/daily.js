@@ -88,12 +88,12 @@ const decorOf=f=>f&&{key:f.id,kind:'decor',id:f.id,name:f.name,img:f.img};
 /* the day's prize for this save: {key, kind, name, img?|color?}, or null once everything is owned */
 /* a Home piece day picks among every unowned piece (Showpieces excepted) by the date, so a royal bed or a treasure chest can come, not only the
    cheapest stool (prizeFor, kept for older callers) */
-export const decorPrizeFor=(s,day)=>{const free=FURNITURE.filter(f=>f.kind!=='show'&&!((s?.house?.owned?.[f.id]|0)>0));return free.length?free[hash('decor:'+day)%free.length]:null;};
+export const decorPrizeFor=(s,day)=>{const free=FURNITURE.filter(f=>f.kind!=='show'&&!f.plaque&&!f.earned/* improve25-r25q-nov5 #2: a boss plaque or a Hall diary bookcase is earned, never a daily prize */&&!((s?.house?.owned?.[f.id]|0)>0));return free.length?free[hash('decor:'+day)%free.length]:null;};
 export function dailyPrize(s,day){for(const k of prizeKindFor(day)){if(k==='decor'){const f=decorPrizeFor(s,day);if(f)return decorOf(f);continue;}
   const free=PRIZES.filter(p=>p.kind===k&&!p.earned&&!owns(s,p.key))/* improve20-r8a-nov1: big-win keepsakes are never a daily prize */;if(free.length)return free[hash('prize:'+k+':'+day)%free.length];}return null;}
-const prizeByKey=key=>PRIZE[key]||decorOf(FURN[key]&&FURN[key].kind!=='show'?FURN[key]:null)||null;
+const prizeByKey=key=>PRIZE[key]||decorOf(FURN[key]&&FURN[key].kind!=='show'&&!FURN[key].plaque/* improve25-r25q-nov5 #2 */?FURN[key]:null)||null;
 /* the day's prize piece for this save: the cheapest unowned non-Showpiece, ties settled by the date; null once every piece is owned */
-export function prizeFor(s,day){const free=FURNITURE.filter(f=>f.kind!=='show'&&!((s?.house?.owned?.[f.id]|0)>0));if(!free.length)return null;const low=Math.min(...free.map(f=>f.price)),pick=free.filter(f=>f.price===low);return pick[hash('prize:'+day)%pick.length];}
+export function prizeFor(s,day){const free=FURNITURE.filter(f=>f.kind!=='show'&&!f.plaque&&!f.earned/* improve25-r25q-nov5 #2: a boss plaque or a Hall diary bookcase is earned, never a daily prize */&&!((s?.house?.owned?.[f.id]|0)>0));if(!free.length)return null;const low=Math.min(...free.map(f=>f.price)),pick=free.filter(f=>f.price===low);return pick[hash('prize:'+day)%pick.length];}
 /* s.daily.prize: the piece today's prize goal paid (a FURN id), so the done goal still names it; additive, cleaned by cleanDaily, gone on a new day */
 const prizeOf=(s,g,d)=>g.kind===PRIZE_KIND?dailyPrize(s,d.day):null;
 export const prizeText=p=>p.kind==='title'?`Title: ${p.name}`:p.kind&&p.kind!=='decor'?p.name:`${p.name} for your Home`;

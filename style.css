@@ -3492,7 +3492,9 @@ html.in-town #objective .goal-then{flex:1 1 100%;margin:2px 0 2px 40px;font-size
 .quest-keepsake-pic{flex:none;width:40px;height:40px;background:center/48px 48px no-repeat;image-rendering:pixelated}
 .story-pic.keepsake-pic{background-size:48px 48px}
 /* improve20-r22w-nov4 #3: Wil's shield is a 32 px icon: drawn at its own 32 px on the shelf and in the Journal, so its pixels stay whole */
-.story-tile[data-keepsake=wil-shield] .keepsake-pic{background-size:32px 32px}.quest-keepsake[data-keepsake=wil-shield] .quest-keepsake-pic{background-size:32px 32px}
+.story-tile[data-keepsake=wil-shield] .keepsake-pic{background-size:32px 32px}
+/* improve25-r25q-nov5 #1: Wil's mirror shard is a 32 px icon too */
+.story-tile[data-keepsake=wil-mirror] .keepsake-pic{background-size:32px 32px}.quest-keepsake[data-keepsake=wil-mirror] .quest-keepsake-pic{background-size:32px 32px}.quest-keepsake[data-keepsake=wil-shield] .quest-keepsake-pic{background-size:32px 32px}
 /* #5 (R20L E: "Buy and wear · 400" wrapped its coin to a second line): the price never splits from its coin */
 .gear-price{white-space:nowrap;display:inline-block}
 /* improve20-v-nov1 #18: Text size 125/150% reached panels, dialogue and toasts, but not the quiz question, the HUD, the goal plate or
@@ -4583,6 +4585,68 @@ html.m-mode #modal#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.q
 html.m-mode #modal#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.q-pin:has(.qf-rule-short) .qf-rule-short{flex:1 1 100%;margin:0;line-height:18px}
 html.m-mode #modal#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.q-pin .qf-top>.qf-sum-line{flex:1 1 100%;margin:0;line-height:18px}
 html.m-mode #modal#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.q-pin>.question-reading>h3{padding-top:7px;padding-bottom:7px}
+}
+/* improve25-r25p-nov5 #1 (placed before the tablets-nov2 block, which must stay last) (R23R's 667 residuals: quiz 8, practice 32, test 23 of 64): once a
+   question is answered on a short phone (400 px tall or less: 667x375, 740x360, 844x390) its picture has done its job. The worked picture in the
+   feedback is a 120 px thumbnail beside the answer line (main.js fbThumb: tap to zoom), and the practice dummy and guide portrait shrink, so the answer
+   line and the whole explanation get the width and the height. Before Check nothing changes (R24L's first paint and 11 px label floor). */
+@media(max-height:400px){
+/* the sitting's sheet is the full phone height, as every other phone panel (dialog:is([data-view=placement],[data-view=lesson-quiz]) kept it at 92dvh: 30 px lost under it) */
+html.m-mode dialog#modal#modal:is([data-view=placement],[data-view=lesson-quiz]){height:100dvh}
+#modal#modal#modal#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question.qf.qf:has(#quiz-feedback:not(:empty))>.question-reading>.qf-guide .pd-canvas{width:68px!important;height:40px!important}
+#modal#modal#modal#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question.qf.qf:has(#quiz-feedback:not(:empty))>.question-reading>.qf-guide .pd-hud{display:none}
+#modal#modal#modal#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question.qf.qf #quiz-feedback .feedback.feedback.feedback:has(>#lesson-pic)>#lesson-pic{width:120px!important;height:auto!important;max-width:120px!important;margin:2px 0!important;cursor:zoom-in}
+#modal#modal#modal#modal#modal:is([data-view=placement],[data-view=lesson-quiz]).fb-zoomed .question.qf.qf #quiz-feedback .feedback.feedback.feedback:has(>#lesson-pic)>#lesson-pic{position:fixed!important;inset:0!important;margin:auto!important;z-index:31!important;width:min(calc(100vw - 16px),calc((100dvh - 16px)*640/280))!important;max-width:none!important;height:auto!important;cursor:zoom-out}
+/* a worked text card in the feedback (the picture drawn as a card) steps under the explanation: R15A's text-column rule had put it in column 1 rows 1-9,
+   over the answer line and the explanation */
+html dialog#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question.question #quiz-feedback .feedback.feedback.feedback:has(>#lesson-pic)>.pic-text.pic-text{grid-column:1/-1;grid-row:auto;width:auto;max-width:100%;max-height:none;margin:4px 0}
+/* the question card itself tightens once answered (as R24L's pinned first paint does before it) */
+#modal#modal#modal#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question.qf.qf:has(#quiz-feedback:not(:empty))>.question-reading>h3{padding-top:4px;padding-bottom:4px;line-height:1.3}
+/* the question's Read to me becomes a 44 px icon under the guide (its words stay its label), so the question starts on the top row */
+html.m-mode #modal#modal#modal#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question.qf.qf.qf:has(#quiz-feedback:not(:empty))>.question-reading{grid-template-columns:auto minmax(0,1fr) auto!important;grid-template-areas:"guide top pic" "guide say pic" "read say pic"!important;grid-template-rows:auto auto 1fr!important}
+html.m-mode #modal#modal#modal#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question.qf.qf.qf:has(#quiz-feedback:not(:empty))>.question-reading>.edu-read{grid-area:read!important;width:44px!important;min-width:44px!important;padding:0!important;font-size:0!important;justify-self:center;align-self:start;position:static!important}
+/* after a wrong pick the answer line names the right answer, so the picked-answer bar steps aside */
+html.m-mode #modal#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-feedback .am-wrong)>#quiz-form.choice-form{display:none}
+#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .fb-zoom-back{display:none}
+#modal#modal#modal#modal#modal:is([data-view=placement],[data-view=lesson-quiz]).fb-zoomed .fb-zoom-back{display:block;position:fixed;inset:0;z-index:30;width:auto;height:auto;margin:0;padding:0;border:0;border-radius:0;background:rgba(14,12,26,.96);cursor:zoom-out}
+#modal#modal#modal#modal#modal:is([data-view=placement],[data-view=lesson-quiz]).fb-zoomed .question.qf>.question-reading,#modal#modal#modal#modal#modal:is([data-view=placement],[data-view=lesson-quiz]).fb-zoomed #quiz-feedback{clip-path:none}
+}
+/* improve25-r25p-nov5 #2 (R23R shot 08: the history-timelines placement prompt cut at "...the telephone was" with no scroll cue): on a short phone a
+   pinned placement question with no picture (ui/quiz-fit.js q-pin) puts its prompt on the top row: the guide portrait steps aside, Read to me is a
+   44 px icon beside the progress dots, and "Stop whenever you like" sits under them, so the whole prompt shows at 844x390, 740x360 and 667x375.
+   Only before an answer (#quiz-feedback:empty); the answered card is untouched. */
+@media(max-height:400px){
+html.m-mode #modal#modal#modal#modal#modal[data-view=placement] .question.qf.qf.q-pin:has(#quiz-feedback:empty)>.question-reading:not(:has(>:is(#quiz-pic,.question-text-card))){grid-template-columns:minmax(0,1fr) auto 44px!important;grid-template-areas:"say dots read" "say stop stop"!important;grid-template-rows:auto auto!important;align-items:start;align-content:start}
+html.m-mode #modal#modal#modal#modal#modal[data-view=placement] .question.qf.qf.q-pin:has(#quiz-feedback:empty)>.question-reading:not(:has(>:is(#quiz-pic,.question-text-card)))>.qf-guide{display:none!important}
+html.m-mode #modal#modal#modal#modal#modal[data-view=placement] .question.qf.qf.q-pin:has(#quiz-feedback:empty)>.question-reading:not(:has(>:is(#quiz-pic,.question-text-card)))>.qf-top{display:contents!important}
+html.m-mode #modal#modal#modal#modal#modal[data-view=placement] .question.qf.qf.q-pin:has(#quiz-feedback:empty)>.question-reading:not(:has(>:is(#quiz-pic,.question-text-card)))>.qf-top>.tag{grid-area:dots;align-self:center;justify-self:end}
+html.m-mode #modal#modal#modal#modal#modal[data-view=placement] .question.qf.qf.q-pin:has(#quiz-feedback:empty)>.question-reading:not(:has(>:is(#quiz-pic,.question-text-card)))>.qf-top>.placement-stop-btn{grid-area:stop;margin:0;justify-self:stretch}
+html.m-mode #modal#modal#modal#modal#modal[data-view=placement] .question.qf.qf.q-pin:has(#quiz-feedback:empty)>.question-reading:not(:has(>:is(#quiz-pic,.question-text-card)))>.edu-read{grid-area:read!important;width:44px!important;min-width:44px!important;padding:0!important;font-size:0!important;justify-self:end;align-self:start;position:static!important;margin:0}
+html.m-mode #modal#modal#modal#modal#modal[data-view=placement] .question.qf.qf.q-pin:has(#quiz-feedback:empty)>.question-reading:not(:has(>:is(#quiz-pic,.question-text-card)))>h3{grid-area:say!important;align-self:start;padding:6px 10px}
+}
+/* improve25-r25p-nov5 #2 (with a picture: R25P's sweep found 145 of 280 long Elementary placement prompts cut at 667x375): the same top row, the
+   picture a 30% column beside the prompt (its magnifier still opens it full screen) and the Stop button's words on two lines */
+@media(max-height:400px){
+html.m-mode #modal#modal#modal#modal#modal[data-view=placement] .question.qf.qf.q-pin:has(#quiz-feedback:empty)>.question-reading:has(>:is(#quiz-pic,.question-text-card)){grid-template-columns:minmax(0,1fr) minmax(0,30%) auto 44px!important;grid-template-areas:"say pic dots read" "say pic stop stop"!important;grid-template-rows:auto auto!important;align-items:start;align-content:start}
+html.m-mode #modal#modal#modal#modal#modal[data-view=placement] .question.qf.qf.q-pin:has(#quiz-feedback:empty)>.question-reading:has(>:is(#quiz-pic,.question-text-card))>.qf-guide{display:none!important}
+html.m-mode #modal#modal#modal#modal#modal[data-view=placement] .question.qf.qf.q-pin:has(#quiz-feedback:empty)>.question-reading:has(>:is(#quiz-pic,.question-text-card))>.qf-top{display:contents!important}
+html.m-mode #modal#modal#modal#modal#modal[data-view=placement] .question.qf.qf.q-pin:has(#quiz-feedback:empty)>.question-reading:has(>:is(#quiz-pic,.question-text-card))>.qf-top>.tag{grid-area:dots;align-self:center;justify-self:end}
+html.m-mode #modal#modal#modal#modal#modal[data-view=placement] .question.qf.qf.q-pin:has(#quiz-feedback:empty)>.question-reading:has(>:is(#quiz-pic,.question-text-card))>.qf-top>.placement-stop-btn{grid-area:stop;margin:0;justify-self:stretch;width:112px;white-space:normal;font-size:14px;line-height:1.1;padding:2px 6px;min-height:44px}
+html.m-mode #modal#modal#modal#modal#modal[data-view=placement] .question.qf.qf.q-pin:has(#quiz-feedback:empty)>.question-reading:has(>:is(#quiz-pic,.question-text-card))>.edu-read{grid-area:read!important;width:44px!important;min-width:44px!important;padding:0!important;font-size:0!important;justify-self:end;align-self:start;position:static!important;margin:0}
+html.m-mode #modal#modal#modal#modal#modal[data-view=placement] .question.qf.qf.q-pin:has(#quiz-feedback:empty)>.question-reading:has(>:is(#quiz-pic,.question-text-card))>h3{grid-area:say!important;align-self:start;padding:6px 10px}
+html.m-mode #modal#modal#modal#modal#modal[data-view=placement] .question.qf.qf.q-pin:has(#quiz-feedback:empty)>.question-reading:has(>:is(#quiz-pic,.question-text-card))>:is(#quiz-pic,.question-text-card){grid-area:pic!important;align-self:start;width:100%!important;max-width:100%!important;height:auto!important;max-height:140px;justify-self:stretch}
+html.m-mode #modal#modal#modal#modal#modal[data-view=placement] .question.qf.qf.q-pin:has(#quiz-feedback:empty)>.question-reading:has(>:is(#quiz-pic,.question-text-card))>.quiz-zoom{grid-area:pic!important;align-self:start;justify-self:end}
+}
+/* improve25-r25p-nov5 #5 (placed before the tablets-nov2 block): on a computer the practice and quiz summary is two columns, the next-ability card
+   beside the score, the buttons, the progress row and the seal line, so all of them are in view at 1280x720; Details (main.js sumFold) holds the
+   lower-value lines. R25F's line on the mastery summary is untouched (a test summary keeps one column). */
+@media(min-width:1000px){
+html:not(.m-mode) dialog[data-view=lesson-summary] #modal-content>.result:is([data-kind=practice],[data-kind=quiz]):has(>.am-goal){display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:24px;row-gap:0;grid-auto-flow:row dense;align-items:start;align-content:start;justify-items:center}
+html:not(.m-mode) dialog[data-view=lesson-summary] #modal-content>.result:is([data-kind=practice],[data-kind=quiz]):has(>.am-goal)>*{grid-column:1;margin-top:5px;margin-bottom:5px}
+html:not(.m-mode) dialog[data-view=lesson-summary] #modal-content>.result:is([data-kind=practice],[data-kind=quiz]):has(>.am-goal)>.am-goal{grid-column:2;grid-row:1/span 12;align-self:center;max-width:none;width:100%;margin:0}
+html:not(.m-mode) dialog[data-view=lesson-summary] #modal-content>.result:is([data-kind=practice],[data-kind=quiz]):has(>.am-goal)>.modal-actions:last-child{flex-wrap:wrap;justify-content:center}
+html:not(.m-mode) dialog[data-view=lesson-summary] #modal-content>.result>.sum-more{order:5;font-size:16px;text-align:center}
+html:not(.m-mode) dialog[data-view=lesson-summary] #modal-content>.result>.sum-more>summary{cursor:pointer;opacity:.8}
 }
 /* tablets-nov2 (round 9 item 12): the tablet sweep (1024x768, 1180x820, 1280x800, 1366x1024, 1180x740 touch). A tablet is a touch screen at
    least 600 css px on its short side (ui/mobile.js tabletSize); phones in landscape are 430 px tall at most, so (min-height:600px) never

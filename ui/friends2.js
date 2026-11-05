@@ -15,6 +15,8 @@ import {PETS} from '../game/data.js';
 import {nextQuestStep,questLive,QUESTS} from '../game/quests.js';
 import {COMPANIONS} from '../game/party.js';
 import {hireStep} from '../game/next-step.js';
+/* improve25-r25p-nov5 #4 */import {handInLead} from '../game/next-step.js';
+import {STORY,holds} from '../game/npcs.js';
 import {FURNITURE,spare} from '../game/furniture.js';
 import {drawSprite,loadSprite,spriteMeta,spriteReady} from '../gfx/actors/sprites.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -67,7 +69,14 @@ export function bondStepLine(s,won){if(!won||!s?.pet)return '';const p=petOf(s.p
 
 /* ---- #8 Town calls back without stealing the red ------------------------------------------------------------------------------------ */
 /* at most one reason, the most useful: a quest step in town, a hire, gear better than what is worn, then a Home prize to place */
+/* improve25-r25p-nov5 #4 (R24M lead review): when a carried or talk step leads (next-step.js handInLead), the line under Return to Oakhaven names that
+   step in kid words ("Bring Hob his purse"), not "Wil has a job"; on a chapter clear (its homecoming beat at the gate still due) it says "Oakhaven has news",
+   so the red and NEXT GOAL (the next chapter's level) read as two steps */
+export const STEP_KID={'Bring the purse back to Farmer Hob.':'Bring Hob his purse','Bring the ember iron to Brannoc the smith.':'Bring Brannoc the ember iron','Bring the cog back to Miller Pell.':'Bring Pell his cog','Hand the lantern to Quartermaster Ilsa.':'Bring Ilsa the lantern',/* R25Q lead */'Bring the pond water to Archivist Aldous.':'Bring Aldous the pond water'};
+export const stepKid=t=>{let k=String(t||'').trim().replace(/^Quest:\s*/,'');k=k.charAt(0).toUpperCase()+k.slice(1);if(!/[.!]$/.test(k))k+='.';return STEP_KID[k]||k.replace(/[.!]+$/,'');};
+export const chapterNewsDue=s=>{try{const seen=s?.hub?.seen||[];return STORY.some(b=>b.trigger==='return'&&/^chapter-/.test(b.id)&&!seen.includes(b.id)&&holds(b.when,s));}catch{return false;}};
 export function townReason(s,except=[]){try{
+ /* improve25-r25p-nov5 #4 */{let h=null;try{h=handInLead(s);}catch{h=null;}if(h?.text)return stepKid(h.text);if(chapterNewsDue(s))return 'Oakhaven has news';}
  const q=nextQuestStep(s,questLive);if(q&&q.rank!=='clear'){const c=COMPANIONS[QUESTS[q.quest]?.companion];if(c)return `${c.short} has a job`;}
  const h=hireStep(s);if(h){const id=Object.keys(s.party?.crew||{}).find(k=>COMPANIONS[k]);if(id)return `hire ${COMPANIONS[id].short}`;}
  const g=Object.keys(s?.gear?.owned||{}).find(id=>ITEM[id]&&!except.includes(id)&&betterPickup(s,id));if(g)return `wear your ${ITEM[g].name}`;
