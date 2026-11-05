@@ -56,6 +56,16 @@ const EFFECT=a=>a.heal>0?'healing':a.kind==='totem'?(a.damage>0?'wolf power':'gu
 const NOUN=a=>({projectile:'bolt',chain:'chain',aoe:'blast',melee:'strike',heal:'glow',buff:'aura',totem:'totem',mark:'mark',aura:'circle'})[a.kind]||'cast';
 export function runeLine(a,rank){if(!a||!(rank>=1&&rank<=RUNE_MAX))return '';const pct=Math.round(RUNE_STEP*100),look=rank===1?`rune-blue ${NOUN(a)}`:rank===2?`bigger, brighter ${NOUN(a)}`:`an extra rune ring, ${Math.round(RUNE_CDR*100)}% faster cooldown`;
  return `${a.name} ${RUNE_NUMERALS[rank]}: +${pct}% ${EFFECT(a)}, ${look}`;}
+/* improve23-r23r-nov5 #1 (friends1: both kids pressed "Place for me" and Jay "didn't really get it"): what the runes in one ability do, in kid
+   words, from the real numbers (runeMul: RUNE_STEP a rank on the main effect; rank III also RUNE_CDR off the cooldown). The total for the rank,
+   never a guess: "hits 10% harder", "heals 5% more", "lasts 15% longer, ready 10% sooner". The same EFFECT split as runeLine. */
+const KIDV=a=>a.heal>0?['heals','more']:a.kind==='totem'?(a.damage>0?['wolf hits','harder']:['guardian is','stronger']):a.shield>0?(a.attackBuff>1?['shield and boost are','stronger']:['shield is','stronger']):a.attackBuff>1?['boost is','stronger']:runeDurationOnly(a)?['lasts','longer']:['hits','harder'];
+export function runeKid(a,rank){if(!a||!(rank>=1&&rank<=RUNE_MAX))return '';const [v,w]=KIDV(a);return `${v} ${Math.round((runeMul(rank)-1)*100)}% ${w}${runeCd(rank)<1?`, ready ${Math.round((1-runeCd(rank))*100)}% sooner`:''}`;}
+export const runeKidLine=(a,rank)=>a&&rank>0?`${a.name}: ${runeKid(a,rank)}`:'';
+export const RUNE_SUB=`Each rune makes one ability ${Math.round(RUNE_STEP*100)}% stronger: it hits harder, heals more or lasts longer. Up to ${RUNE_MAX} in each ability.`;
+/* the one line after runes are placed (Place for me, or a tap on a slot): each ability that took one, with what it does now */
+export function runePlacedLine(s,ids){const seen=[...new Set((ids||[]).filter(id=>BY_ID[id]))];if(!seen.length)return '';const n=(ids||[]).filter(id=>BY_ID[id]).length;
+ return `${n} ${n===1?'rune':'runes'} placed. ${seen.map(id=>`${BY_ID[id].name} now ${runeKid(BY_ID[id],runeRank(s,id))}`).join('. ')}.`;}
 /* improve20-r8a-nov1 #5 (audit7 d20): runes piled up behind "6 runes are ready: place them at Home → Abilities" (13 on the ending save). "Place
    for me" puts each free rune, one at a time, on the ability it helps most: an equipped ability (the loadout) before one in the bag, the lowest
    rank first (so ranks rise evenly), then the most damage, healing or shield per second of cooldown, then ladder order. Only owned abilities

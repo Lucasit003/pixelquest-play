@@ -2981,6 +2981,17 @@ button.rune-slot.open:hover,button.rune-slot.open:focus-visible{background:#1d55
 @keyframes rune-pulse{50%{box-shadow:0 0 8px #7ff0ffaa}}
 html[data-motion=reduced] button.rune-slot.open{animation:none}
 .rune-preview{display:block;font-size:16px;line-height:1.25;color:#9cc6d0}
+/* improve23-r23r-nov5 #1: what the placed runes do now, and the one line after Place for me (rune blue, never red) */
+.rune-now{display:block;font-size:16px;line-height:1.25;color:#7ff0ff;margin:0 0 2px}
+dialog[data-view=rune-retry] .rune-said{margin:0 0 8px;text-align:center;color:#bff6ff;font-size:16px;line-height:1.3}
+/* improve23-r23r-nov5 #3 (R23Q sweep: 2 history-timelines placement items at 844x390): the tap form's own scroll box ended 1 px above the bottom of
+   "Type it instead", so the link sat just outside it; on a short phone the link row loses its 2 px top margin and fits */
+@media(max-height:500px){html.m-mode #modal#modal .tile-form .tile-alt{margin:0}}
+/* improve23-r23r-nov5 #2: after Check on a short phone the answered choice (no longer a button to press) is a slimmer bar, so the feedback box under it
+   has room for the answer line and the explanation together (with main.js feedbackInView) */
+@media(max-height:500px){html.m-mode #modal#modal[data-view=lesson-quiz] .question:has(#quiz-feedback:not(:empty)) #quiz-form.choice-form [data-answer]:disabled{min-height:30px!important;padding-top:0!important;padding-bottom:0!important}}
+/* and "Try it again" sits on the answer line's own row, with "Nothing is lost." under it, instead of a row of its own (44 px saved) */
+@media(max-height:500px){html.m-mode #quiz-feedback .am-wrong:has(>.am-retry)>.am-retry{order:1}html.m-mode #quiz-feedback .am-wrong:has(>.am-retry)>:is(.am-note,.am-level){order:2}}
 .m-mode .rune-slot{width:44px;height:40px}.m-mode button.rune-slot.open{min-height:40px;width:44px;max-width:44px}
 .road-rune{display:block;grid-column:1/-1;margin:0 0 4px;padding:3px 8px;border-left:4px solid #3fb8cc;background:#0f2a3355;color:#7ff0ff;font-weight:700;line-height:1.25}
 .edu .road-rune,.result .road-rune,.lesson .road-rune{color:#1f6676;background:#7ff0ff22}

@@ -61,6 +61,16 @@ export function tileFormHTML(q,tiles,{form='quiz-form',input='quiz-answer',check
  return `<form id="${form}" class="choice-form tile-form" data-choice-form data-tiles><input type="hidden" id="${input}" value=""><div class="answers choice-answers tile-answers"${letterAttr(letterKeys(tiles.map(x=>x.label)))} role="group" aria-label="Answer tiles">${tiles.map((x,i,a)=>`<button type="button" data-answer="${esc(x.value)}"><span class="tag" aria-hidden="true">${keyTag(i,letterKeys(a.map(y=>y.label)))}</span><span class="choice-text">${esc(x.label)}</span></button>`).join('')}</div><p class="subtle choice-keys">Tap an answer, or press ${keysLine(tiles.length,letterKeys(tiles.map(x=>x.label)))}.</p><p class="tile-alt"><button type="button" class="tile-type" data-type-instead>Type it instead</button></p><button type="submit" id="${check}" hidden>Check</button></form>`;
 }
 
+/* improve23-r23r-nov5 #4 (kidsim6 #12: Ivy, 7, a non-reader, spent over 5 minutes in practice at 35% right): "Read to me" on a question read
+   only its prompt, so a kid who cannot read heard the question but never the answers to pick from. The reading now goes on with each answer
+   as the form shows it, left to right ("The answers are: 5. 6. 7. 8."; no key letters, which a phone does not show and which would read "1: 5"), for choice buttons, tap tiles and order pieces alike. A typing
+   box adds nothing. The same Read-to-me button and the same voice: nothing new is recorded. */
+export function choicesReadText(form){const bs=[...(form?.querySelectorAll?.('[data-answer],[data-piece]')||[])];if(!bs.length)return '';
+ const one=b=>{const t=String(b.querySelector('.choice-text')?.textContent??b.textContent??'').replace(/\s+/g,' ').trim();return t?`${t.replace(/[.!?:;,]+$/,'')}.`:'';};
+ const ls=bs.map(one).filter(Boolean);return ls.length?[form.matches?.('[data-order-form]')?'Put these in order:':'The answers are:',...ls].join(' '):'';}
+export function readWithChoices(root){const b=root?.querySelector?.('.question-reading>.edu-read[data-edu-read]'),f=root?.querySelector?.('#quiz-form');if(!b)return '';if(b.dataset.prompt==null)b.dataset.prompt=b.dataset.eduRead;
+ const p=String(b.dataset.prompt).trim(),c=choicesReadText(f);b.dataset.eduRead=c?`${p}${/[.!?]$/.test(p)?'':'.'} ${c}`:p;return b.dataset.eduRead;}
+
 /* improve20-r9d-nov1 #2 (audit8 a3): an empty Check popped Chrome's raw grey "Please fill out this field" bubble (the answer boxes were
    `required`). The boxes are not required now; an empty answer is stopped here, before the screen's own submit handler, and a game-styled
    line says what to do: "Type your answer first" under a typing box, "Pick one" on a tap form. It goes as soon as the child types or taps.
@@ -87,3 +97,9 @@ export function wireOrder(form){
  form.addEventListener('submit',()=>Promise.resolve().then(()=>{if(input.disabled){for(const b of pieces)b.disabled=true;undo.disabled=true;}}));
  draw();return true;
 }
+
+/* improve23-r23r-nov5 #2 (main.js feedbackInView): where the box that scrolls a phone's answer feedback should sit. box {top, h: visible height,
+   st: scrollTop}; blk {top, bottom: the answer line and the explanation, say: the answer line's words}, screen px -> the new scrollTop. Nothing
+   moves when the block already shows; when it does not fit, the explanation comes up as far as the answer line's first words. */
+export function feedbackScroll(box,blk){const M=4,rel=y=>y-box.top+box.st,top=rel(blk.top),bot=rel(blk.bottom),say=rel(blk.say??blk.top);if(top>=box.st&&bot<=box.st+box.h)return box.st;
+ let st=top-M;if(bot-st>box.h)st=Math.min(bot-box.h+M,Math.max(top-M,say-M));return Math.max(0,Math.round(st));}
