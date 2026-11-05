@@ -433,6 +433,8 @@ dialog[data-view=placement] .placement-dots .pd-label{position:absolute;width:1p
 #modal-content>.result:has(>.am-goal)>.modal-actions:last-child{order:4;margin:8px 0}
 #modal-content>.result:has(>.am-goal)>.edu-progress{order:5;justify-content:center}
 #modal-content>.result:has(>.am-goal)>.am-goal{order:6}
+/* improve23-r23q-nov4 #2 (lead, 5 Nov): the summaries' seal line (main.js sealShortHTML) sits right above "Your next ability", after the step chips, so it stays above the fold at 1280x720 */
+#modal-content>.result:has(>.am-goal)>.seal-short{order:5}
 #modal-content>.result:has(>.am-goal)>p{margin:4px 0}
 @media(max-height:800px){.am-seal{width:64px;height:64px;background-size:64px 64px;margin-bottom:0}#modal-content>.result:has(>.am-goal)>.unlock.mastered{margin:4px auto;padding-top:6px;padding-bottom:6px}#modal-content>.result:has(>.am-goal) .am-score{margin:0}}
 /* Course page: table text on the 16 px grid, progress as a small bar, mastered units in gold */

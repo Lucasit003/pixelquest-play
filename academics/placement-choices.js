@@ -64,7 +64,7 @@ export function closedOptions(q){
    Order: the quiz's own word tiles, the prompt's named options, a closed set, then a young player's tiles (never for a number). */
 export function placementTiles(q,t,save){
  if(!q||choicesOf(q))return null;
- return wordChoicesFor(t,q)||/* improve20-r21a-nov4 #6 */compareOptions(q)||(t&&t.grade<6?fractionTiles(q):null)||/* improve20-r20g-nov4 #1 */(t&&t.grade<6?coinOptions(q):null)||namedOptions(q)||closedOptions(q)||/* improve20-r20g-nov4 #1 */listOptions(q,t)||(!numeric(q)&&youngFor(save,t)?tileChoices(q):null);}
+ return wordChoicesFor(t,q)||/* improve20-r21a-nov4 #6 */compareOptions(q)||(t&&t.grade<6?fractionTiles(q):null)||/* improve20-r20g-nov4 #1 */(t&&t.grade<6?coinOptions(q):null)||/* improve23-r23q-nov4 #8 */(t&&t.grade<6?gridOptions(q):null)||namedOptions(q)||closedOptions(q)||/* improve20-r20g-nov4 #1 */listOptions(q,t)||(!numeric(q)&&youngFor(save,t)?tileChoices(q):null);}
 /* improve20-r20g-nov4 #1 (audit14 #6, shot 07): a Grade 4 child still typed 8 of 12 Elementary placement answers, among them a step copied
    from the plan beside the question ("rinse them") and a whole sorted list ("57, 70, 7, 83"). Two more ways to tap, Elementary topics only:
      - listOptions: the answer is one entry of the item's own list, the plan or list it shows (a program picture's lines), the stages or
@@ -123,3 +123,12 @@ export function fractionTiles(q){
  const a=String(q?.answer??'').trim(),m=/(\d+)\/(\d+)\s*([+\-−])\s*(\d+)\/(\d+)/.exec(String(q?.prompt||''));const f=/^(\d+)\/(\d+)$/.exec(a);if(!m||!f)return null;
  const [x,b,op,y,d]=[+m[1],+m[2],m[3],+m[4],+m[5]],n=+f[1],den=+f[2],top=op==='+'?x+y:x-y;
  const opts=[a,top>0?`${top}/${b+d}`:null,`${n+1}/${den}`,n>1?`${n-1}/${den}`:`${n+2}/${den}`].filter(Boolean);return settle(q,opts);}
+/* improve23-r23q-nov4 #8 (kidsim6 #14, Theo long at 1044-1051 s: the Geography check still asked him to type "D5" and "A2"): a grid reference
+   on a grid map (the gridmap picture, cols x rows, 5x5 when it does not say) is one square of a closed set, so it is tapped. The other tiles
+   are the answer's neighbours one square east, west, north or south inside the grid (a one-square slip in a count or a direction); each is
+   another square, so never right, and settle() still keeps the set only when exactly one tile is accepted. Elementary topics only. */
+export function gridOptions(q){
+ const a=String(q?.answer??'').trim(),m=/^([A-Z])(\d{1,2})$/.exec(a),g=[].concat(q?.pic||[]).find(p=>p&&p.t==='gridmap');if(!m||!g)return null;
+ const cols=g.cols||5,rows=g.rows||5,c=m[1].charCodeAt(0)-65,r=+m[2]-1;if(c>=cols||r>=rows)return null;
+ const near=[[1,0],[-1,0],[0,-1],[0,1]].map(([dc,dr])=>[c+dc,r+dr]).filter(([x,y])=>x>=0&&y>=0&&x<cols&&y<rows).map(([x,y])=>String.fromCharCode(65+x)+(y+1)).sort((x,y)=>h(q.id+'@'+x)-h(q.id+'@'+y)).slice(0,CHOICE_MAX-1);
+ return settle(q,[a,...near]);}

@@ -3113,10 +3113,15 @@ html.m-mode .pet-moment{top:10%}
  html.m-mode dialog[data-home] .home-tabs{flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;gap:4px;margin:0 0 4px;scrollbar-width:none}
  html.m-mode dialog[data-home] .home-tabs::-webkit-scrollbar{display:none}
  html.m-mode dialog[data-home] .home-tabs button{flex:none;min-height:34px;padding:2px 10px;font-size:14px}
+ /* improve23-r23q-nov4 #4 (R23F f6): the tab row scrolls, so it clipped the "New friends!" badge above the Pets tab; the row makes room for it while it shows */
+ html.m-mode dialog[data-home] .home-tabs:has(.pointer-badge){padding-top:10px}
+ html.m-mode dialog[data-home] .home-tabs .pointer-badge{top:-10px}
  html.m-mode dialog[data-view=home] .notes{margin:0 0 4px;padding:0 10px;font-size:16px;line-height:1.3}
  html.m-mode dialog[data-view=home] .rune-bar{margin:0 0 4px;padding:0 10px;font-size:16px;line-height:1.3;min-height:0}
  html.m-mode dialog[data-view=home] .home-abilities{padding-top:0}
 }
+/* improve23-r23q-nov4 #4 (R23F: at 667x375 Trophies ran off the right edge of the Home tab row): a narrow phone tightens the tabs so all eight fit */
+@media(max-width:700px){html.m-mode dialog[data-home] .home-tabs{gap:3px}html.m-mode dialog[data-home] .home-tabs button{padding:2px 4px}}
 
 /* round2 R1 (31 Oct): on a phone the setup column scrolls and Begin stays pinned at its foot, so picking
    Elementary (which adds the grade row) can never push the button off the screen */
@@ -3406,6 +3411,8 @@ dialog[data-view=finale] .finale-next .finale-goal{flex-wrap:nowrap;align-items:
 dialog[data-view=finale] .finale-next .finale-goal>small{flex:none}
 dialog[data-view=finale] .finale-next .finale-goal>strong,dialog[data-view=finale] .finale-next .finale-goal>span{flex:1 1 auto;min-width:0}
 dialog[data-view=finale] .finale-next{padding-top:2px;padding-bottom:4px}
+/* improve23-r23q-nov4 #5 (R23F follow-up): at 16 px the "More: N more" button grew to 29 px and sat on the plate's bottom edge at 1280x720; it keeps its 16 px text on a 24 px line */
+dialog[data-view=finale] .finale-more-btn{min-height:24px;padding:0 10px;line-height:20px}
 @media(min-width:701px) and (max-height:760px){html:not(.m-mode) .finale-scene{height:150px}html:not(.m-mode) .finale-hero{width:160px;height:160px}}
 /* improve20-r17b-nov3 (round 17 lane B: play pull). Placed before the picframe-nov2, improve20-v-nov1 #18 and tablets-nov2 blocks (their tests read everything after them) */
 /* #2: on a first loss in a row the rune button is a secondary in the button row, after Retry */
@@ -4504,6 +4511,10 @@ html:not(.m-mode) dialog#modal:is([data-view=placement],[data-view=lesson-quiz])
    320 s): a pinned question box (ui/quiz-fit.js .q-pin) scrolls its text card with it, but Chrome still hit-tested the part of the card scrolled out of
    the box, over Check and Stop. The box clips itself (clip-path), so a tap below it reaches the button drawn there */
 html dialog#modal:is([data-view=placement],[data-view=lesson-quiz]) .question.q-pin>.question-reading{clip-path:inset(0)}
+/* improve23-r23q-nov4 #10 (friends1 shot 11, Rosa at 844x390): that clip also cut the phone's big picture (a full-screen layer, position:fixed) down to the
+   question box, so the zoomed picture filled the card above the answer row, and its full-screen tap-to-close layer was clipped with it. While the
+   picture is zoomed the box is not clipped; main.js zoomShut closes the zoom on typing, focus, Check and feedback */
+html.m-mode dialog#modal.pic-zoomed:is([data-view=placement],[data-view=lesson-quiz]) .question.q-pin>.question-reading{clip-path:none}
 /* improve20-r22a-nov4 #2: a pinned phone question with many long choices (Choosing a site, 6 lettered sites) gave its question row 0 px: the question
    keeps at least 42% of the card (or 140 px) and the choices scroll in their own box beside Stop */
 html.m-mode #modal#modal#modal#modal#modal:is([data-view=lesson-quiz],[data-view=placement]) .question.qf.qf.qf.q-pin:has(#quiz-feedback:empty){grid-template-rows:minmax(min(42%,140px),1fr) fit-content(58%)}
@@ -4513,6 +4524,11 @@ html:not(.m-mode) dialog#modal#modal#modal:is([data-view=placement],[data-view=l
 /* improve20-r22a-nov4 #3: a computer's dense placement card was laid out for a card with no guide ("tag", "say", "read pic"), so the guide and its "Stop
    whenever you like" fell into extra rows below the question, under the guide's picture (R20O's odd guide layout); the guide now has its own column */
 @media(min-height:501px){html:not(.m-mode) #modal#modal#modal[data-view=placement] .question.qf.q-dense>.question-reading{grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"guide top top" "guide say say" "guide read pic";grid-template-rows:auto auto auto}html:not(.m-mode) #modal#modal#modal[data-view=placement] .question.qf.q-dense>.question-reading>.qf-top{grid-area:top}html:not(.m-mode) #modal#modal#modal[data-view=placement] .question.qf.q-dense>.question-reading>.qf-guide{grid-area:guide;align-self:start}}
+/* improve23-r23q-nov4 #6 (R22A follow-up): a pinned computer placement card (quiz-fit.js q-pin q-desk) with the guide column gave the text card's
+   column whatever the table card left (its auto column took the table's full width), so the reading card was ~160 px wide, ran ~1000 px tall, and
+   the table, centred in that tall row, sat under the pinned answer row (a taller table, centred in its rows, also rose over "Stop whenever you like"). The reading and the table now share the room and both start at the top,
+   under the guide's picture, which stays at the top of its column clear of the pinned row */
+@media(min-height:501px){html:not(.m-mode) #modal#modal#modal[data-view=placement] .question.qf.q-dense.q-pin.q-desk>.question-reading{grid-template-columns:auto minmax(0,1fr) minmax(0,1.4fr);align-items:start}html:not(.m-mode) #modal#modal#modal[data-view=placement] .question.qf.q-dense.q-pin.q-desk>.question-reading>.question-text-card{justify-self:stretch;width:auto;max-width:100%;min-width:0}html:not(.m-mode) #modal#modal#modal[data-view=placement] .question.qf.q-dense.q-pin.q-desk>.question-reading>:is(#quiz-pic,.question-text-card){align-self:start}}
 /* tablets-nov2 (round 9 item 12): the tablet sweep (1024x768, 1180x820, 1280x800, 1366x1024, 1180x740 touch). A tablet is a touch screen at
    least 600 css px on its short side (ui/mobile.js tabletSize); phones in landscape are 430 px tall at most, so (min-height:600px) never
    reaches them, and every rule here sits under html.m-mode, so desktops are untouched. */
