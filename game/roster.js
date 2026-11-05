@@ -3,7 +3,7 @@
 // stand-in (levels.js STAND_INS, for keys still to come) -> the legacy procedural roster in game/data.js.
 // The legacy rows exist so every level is playable before enemies.js lands; delete them when it has.
 import {ENEMIES,BOSS} from './data.js';
-import {STAND_INS} from './levels.js';
+import {STAND_INS,CHAMPION} from './levels.js';
 import {applyMod} from './tiers.js';
 /* enemies.js may not exist yet on this branch, so it is loaded softly: a missing module leaves {} here. */
 let TYPES={},AS_MINI={};
@@ -71,4 +71,6 @@ export function makeEnemy(key,{tier=1,elite=false,name,boss}={}){const d=baseDef
 /* oct24-ember-finale (E5): an earlier boss fought as a level's mini-boss (a wave elite or Run Draft mini, not an echo) takes its
    chapter mini's health, attack and defence (enemies.js BOSS_AS_MINI) */
 const asMini=(e,entry,tier)=>{const m=entry.elite&&!entry.echo&&AS_MINI[entry.type];if(!m)return e;const x=makeEnemy(m,{tier,elite:true});return Object.assign(e,{hp:x.hp,atk:x.atk,def:x.def});};
-export const entryEnemy=(entry,tier)=>typeof entry==='string'?makeEnemy(entry,{tier}):Object.assign(applyMod(asMini(makeEnemy(entry.type,{tier,elite:!!entry.elite}),entry,tier),entry.mod),{mini:!!entry.mini,echo:!!entry.echo});
+/* improve24-r24n-nov5 #2: an arena champion (game/levels.js arenaChampion) is that elite made bigger and tougher, under its own name */
+const asChampion=(e,entry)=>{if(!entry.champion)return e;const short=String(baseDef(entry.type).name||e.name).replace(/^The /,'').split(',')[0];return Object.assign(e,{hp:Math.round(e.hp*CHAMPION.hp),atk:Math.round(e.atk*CHAMPION.atk),scale:(baseDef(entry.type).scale||1)*CHAMPION.scale,champion:true,name:'Arena Champion '+short});};
+export const entryEnemy=(entry,tier)=>typeof entry==='string'?makeEnemy(entry,{tier}):Object.assign(applyMod(asChampion(asMini(makeEnemy(entry.type,{tier,elite:!!entry.elite}),entry,tier),entry),entry.mod),{mini:!!entry.mini,echo:!!entry.echo});

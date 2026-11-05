@@ -4,7 +4,7 @@
 // and M resume it, and main.js asks before any other pad or Home ends the run.
 // main.js also forwards key(k) (lower-cased KeyboardEvent.key; returns true when the map used it) and tap(x,y)
 // (canvas pixels, 480x270). Layout: game/worldmap-layout.js. Drawing: gfx/worldmap-art.js.
-import {LEVELS,CHAPTERS,levelById,levelOpen,levelDone,tiered,tierOpen,tierDone,starsOf,totalStars,maxStars,starsShort,tierCrests,chapterBorder,powerShort,starGateMet} from '../game/levels.js';
+import {LEVELS,CHAPTERS,levelById,levelOpen,levelDone,tiered,tierOpen,tierDone,starsOf,totalStars,maxStars,starsShort,tierCrests,chapterBorder,powerShort,starGateMet,/* improve24-r24n-nov5 #2 */arenaPadLine} from '../game/levels.js';
 import {gateInfo as gateInfo0,waitingGate} from '../game/power-gate.js';
 /* improve20-r12a-nov2: the card never breaks the map; a partial save (tools, tests) gets no power block rather than an error */
 const gateInfo=(save,id)=>{try{return gateInfo0(save,id);}catch{return null;}};
@@ -230,7 +230,7 @@ function info(){const id=S.walk?.to||S.at,n=nodeAt(id),st=stateOf(id);if(!n)retu
  if(n.kind==='gate')return{title:n.name.replace(/^To (the )?/,''),subtitle:st==='soon'?'Coming soon':st==='locked'?'The road is closed':'Travel',blurb:st==='soon'?'Mist hides the road beyond the wood. This land opens in a later update.':st==='locked'?(gateStars(id)||'Clear this land\'s last level to open the road.'):''};
  if(n.kind==='home')return{title:'Oakhaven',subtitle:'Your home town',blurb:'Rest, train at the Library and gear up.'};
  if(n.kind==='shop')return{title:l.name,subtitle:st==='locked'?'Locked':'Potions and gear',blurb:st==='locked'?lockLine(l):'Weapons, armour and potions for the road.'};
- if(n.kind==='arena')return{title:l.name,subtitle:st==='locked'?'Locked':'Endless waves',blurb:st==='locked'?lockLine(l):'Endless waves. How long can you last?'};
+ if(n.kind==='arena')return{title:l.name,subtitle:st==='locked'?'Locked':'Endless waves',blurb:st==='locked'?lockLine(l):/* improve24-r24n-nov5 #2: the best wave and the bank */arenaPadLine(S.save?.levels?.[l.id]?.best?.score|0)};
  /* v2:levels -- the map plate is narrow: a long boss name keeps its first part ("Grubnak, Goblin Chief" -> "Grubnak"); levels.js `plate` overrides */
  const full=l.bossName||S.ctx.bossName?.(l.boss)||BOSS_NAMES[l.boss]||(l.boss?titleCase(l.boss):''),boss=l.plate||shortName(full);
  /* polish2-oct29 (readiness #12): every card read only "Clear Goblin Camp."; it now says what is inside (the level's own blurb and its

@@ -1212,6 +1212,12 @@ dialog[data-view=pause] #modal-content{padding:6px 10px 10px;overflow:auto}
  .pause-menu{gap:6px}
  .pause-menu .subtle{display:none}
  .pause-hero canvas{width:96px;height:108px}}
+/* improve24-r24n-nov5 #1 (audit16 #3, shot 13: at 1280x720 the pause panel scrolled 713/603 px and Leave level sat under the frame): the menu
+   goes two to a row at every size (Resume across the top, Leave level beside Credits), so every button is in view without scrolling */
+dialog[data-view=pause] .pause-menu,html.m-mode dialog[data-view=pause] .pause-menu{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;align-content:start}
+dialog[data-view=pause] .pause-menu>:is(h2,#resume,.subtle){grid-column:1/-1}
+dialog[data-view=pause] .pause-menu .pause-more,html.m-mode dialog[data-view=pause] .pause-menu .pause-more{display:contents}
+dialog[data-view=pause] .pause-menu :is(.pause-more>button,#abandon){margin:0;width:100%;min-width:0;padding-left:6px;padding-right:6px;line-height:1.1}
 /* hero select turntable (review round 2, B6): drag the stage or use the arrows to spin the hero */
 .er-stage{touch-action:pan-y;cursor:grab}
 /* ---------- inventory, review round 2 (B7): a paper doll beside the bag (Stardew, Diablo); rarity is a coloured border on
@@ -2546,7 +2552,8 @@ html:not(.map-open) .worldmap-info.wm-compact,.m-portrait .worldmap-info.wm-comp
 .menu-buttons #settings-btn{width:56px}
 /* ready2fix-oct30 #10: the key as a keycap in a plain sans font (the pixel font draws O and 0 alike); a look-alike letter also names its panel */
 .menu-buttons kbd{display:inline-flex!important;align-items:center;gap:3px;white-space:nowrap}
-.menu-buttons kbd .kb-cap{font:700 13px/14px Arial,Helvetica,sans-serif;color:#fff1c8}
+/* improve24-r24n-nov5 #8 (audit16 minor: the HUD keycaps were 13 px): 16 px, the text floor, still the sans keycap face */
+.menu-buttons kbd .kb-cap{font:700 16px/16px Arial,Helvetica,sans-serif;color:#fff1c8}
 .menu-buttons kbd .kb-name{color:#e8d9b0}
 .menu-buttons kbd .kb-name+.kb-cap{padding:0 3px;border:1px solid #a99159;border-radius:2px;background:#1b2236}
 html:not(.m-mode) .menu-buttons #settings-btn:has(.kb-name){width:92px}
@@ -3179,7 +3186,7 @@ html.m-mode .rift-best,html.m-mode .rift-last,html.m-mode .rift-reward,html.m-mo
 html.m-mode .rift-mods li{flex-direction:column;align-items:flex-start;gap:2px}
 /* improve20-p-oct31 #1: a press on an empty or locked ability slot: a small hint by that slot (ui/slot-hint.js), the caret on the slot,
    never the centre toast over the hero; the slot gives a short shake (none under reduced motion, which also skips the fade) */
-#slot-hint{position:absolute;left:0;top:0;z-index:8;display:flex;flex-direction:column;align-items:center;gap:1px;max-width:min(360px,74%);padding:4px 16px 6px;font:700 calc(13px * var(--hz,1))/1.2 var(--ui);color:var(--ink);text-align:center;text-shadow:0 2px 0 #0d0806;pointer-events:none;border-style:solid;border-width:calc(4*var(--u));border-color:transparent;border-image:url(ui/skin/pl-plate.png) 8 8 8 8 fill/calc(10*var(--u)) calc(10*var(--u)) round;image-rendering:pixelated;opacity:0;transform:translateY(4px);transition:opacity .15s,transform .15s}
+#slot-hint{position:absolute;left:0;top:0;z-index:8;display:flex;flex-direction:column;align-items:center;gap:1px;max-width:min(360px,74%);padding:4px 16px 6px;font:700 calc(16px * var(--hz,1))/1.15 var(--ui);/* improve24-r24n-nov5 #8: the 16 px floor (was 13 px) */color:var(--ink);text-align:center;text-shadow:0 2px 0 #0d0806;pointer-events:none;border-style:solid;border-width:calc(4*var(--u));border-color:transparent;border-image:url(ui/skin/pl-plate.png) 8 8 8 8 fill/calc(10*var(--u)) calc(10*var(--u)) round;image-rendering:pixelated;opacity:0;transform:translateY(4px);transition:opacity .15s,transform .15s}
 #slot-hint.show{opacity:1;transform:none}
 #slot-hint[hidden]{display:none}
 #slot-hint b{color:var(--gold);font-size:inherit;letter-spacing:.5px}
@@ -3870,7 +3877,12 @@ html.cine-on #arena-chip{visibility:hidden}
 .story-pic{width:56px;height:56px;border-radius:50%;border:3px solid #c07a3a;background:#111 center bottom/cover no-repeat;image-rendering:pixelated}
 .story-pic.story-icon{background-size:contain;background-position:center;background-color:#1d2333}
 .story-tile.story-dark{opacity:.6;border-color:#706255}.story-tile.story-dark .story-pic{filter:grayscale(1) brightness(.45);border-color:#706255}
-.m-mode .story-tile{width:118px;padding:4px}.m-mode .story-pic{width:40px;height:40px}
+.m-mode .story-tile{width:118px;padding:4px}
+/* improve24-r24n-nov5 #3: a rune seal the kid can break now is lit (gold edge and glow) with a Go button; a broken one keeps the bronze tile */
+.story-tile.seal-ready{border-color:var(--gold,#e7c77e);box-shadow:0 0 0 1px #0d0806,0 0 10px rgba(255,214,120,.45);background:rgba(48,36,14,.7)}
+.story-tile.seal-ready small{color:var(--ink)}
+.story-tile .seal-go{margin-top:4px;min-height:32px;min-width:72px;padding:0 12px;font-size:16px}
+.m-mode .story-pic{width:40px;height:40px}
 /* improve20-r22f-nov4 #2: the Rift tower in the Trophy Hall (ui/trophy-hall.js riftTowerHTML): the skin's slot frame as floors, the rift portal on top */
 .rift-tower{display:flex;flex-direction:column;align-items:center;margin:0 auto;max-width:340px}
 .rift-tower-top{image-rendering:pixelated;width:48px;height:60px;margin-bottom:-4px;filter:drop-shadow(0 0 6px rgba(170,120,255,.55))}

@@ -13,6 +13,9 @@ const the=n=>String(n).replace(/^The /,'the ');
 /* a soft glow in the chapter's own colour behind the card (an effect; the seal carries the chapter's art) */
 const GLOW={elderwood:'rgba(120,200,110,.30)',emberkeep:'rgba(255,120,50,.30)',veilmoor:'rgba(170,120,255,.30)'};
 export const CHAPTER_IDS=CHAPTERS.map(c=>c.id);
+/* improve24-r24n-nov5 #8 (audit16 minor): Heroic was announced on e1's first win; the news now waits for the first chapter's clear and is one line on its card. firstChapterDone: the first chapter's finale is won */
+export const HEROIC_OPEN_LINE='Heroic is open on every level you’ve won.';
+export const firstChapterDone=s=>{const fin=LEVELS.find(l=>l.chapter===CHAPTERS[0].id&&chapterClear(l.id));return !!(fin&&s?.levels?.[fin.id]?.done);};
 /* the chapter cards a save has seen: a clean list of known chapter ids */
 export const cleanChapterCards=v=>Array.isArray(v)?[...new Set(v.filter(x=>typeof x==='string'&&CHAPTER_IDS.includes(x)))]:[];
 /* r: the level result ({won, id, tier, stats:{first}}); the card is due on a chapter's first Normal clear, once per save */
@@ -32,6 +35,7 @@ export function chapterCardHTML(cc,levelId,owned=[],lead={}){const art=sealArt(l
   `<p class="cc-line cc-seal-line">Its chapter seal hangs in your Trophy Hall at Home.</p>`+
   (ks.length?`<p class="cc-line cc-keepsake" data-keepsake="${esc(ks.map(p=>p.key).join(' '))}"><img src="ui/skin/rewards/chest.png" width="32" height="32" alt="" draggable="false"><span>New keepsake: <strong>${ks.map(p=>esc(p.name)).join(' and ')}</strong>. Wear ${ks.length>1?'them':'it'} from your Hero card.</span></p>`:'')+
   (lead?.gate?`<p class="cc-line cc-next cc-gated" data-cc-next="${esc(cc.next.id)}" data-cc-gate><small>NEXT</small><span><strong>${esc(lead.gate)}.</strong> Learn ${lead.n===1?'it':'them'} at the Library.</span></p>`+(lead.also?`<p class="cc-line cc-while" data-cc-while>${esc(lead.also)}</p>`:''):`<p class="cc-line cc-next" data-cc-next="${esc(cc.next.id)}"><small>NEXT</small><span>The road to ${esc(the(cc.next.name))} is open${stop?`. First stop: <strong>${esc(stop.name)}</strong>`:''}.</span></p>`)+
+  /* improve24-r24n-nov5 #8 */(cc.chapter.id===CHAPTERS[0].id?`<p class="cc-line cc-heroic" data-cc-heroic>${HEROIC_OPEN_LINE}</p>`:'')+
   `<div class="modal-actions cc-actions"><button type="button" id="cc-continue" class="primary">Continue</button></div></div></div>`;}
 /* the Champion card's line for the last chapter (main.js finaleCard): its keepsakes and its seal, so the Veilmoor's clear is named there */
 export function finaleKeepsakeHTML(levelId,owned=[]){const ks=winKeepsakes(levelId).filter(p=>owned.includes(p.key));const ch=CHAPTERS.find(c=>c.id===LEVELS.find(l=>l.id===levelId)?.chapter);

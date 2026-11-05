@@ -52,8 +52,15 @@ export function sealPadLine(s,levelId){const z=sealsIn(levelId)[0];if(!z)return 
 export function nextSeal(s){const n=wokenCount(s),xs=SEALS.filter(z=>!sealBroken(s,z.id)&&z.awake===n+1);if(!xs.length)return null;const z=xs.find(z=>levelOpen(s,z.level)||levelDone(s,z.level))||null;return z?{z,name:lvName(z.level)}:null;}
 /* the Library's line: "Wake Volley to open the 3-seal in Bramble Hollow." (a = the shared next power, game/power-gate.js nextPower) */
 export function sealNextLine(s,a){const x=nextSeal(s);if(!x||!a)return '';return /* improve20-r21b-nov4 #6: no "2-seal" jargon */`Wake ${a.name} to open a seal in ${x.name} that ${x.z.awake} woken abilities can break.`;}
-/* the Trophy Hall row: one tile per seal -> [{id, name, text, won, chapter}] */
-export function sealTrophies(s){return SEALS.map(z=>{const ch=CHAPTERS.find(c=>c.id===z.chapter)?.name?.replace(/^The /,'')||z.chapter,won=sealLooted(s,z.id);return {id:z.id,name:/* lead (4 Nov, R21B follow-up): "Elderwood: 2-seal" was jargon. improve23-r23q-nov4 #1: three tiles a chapter all read "<Chapter> rune seal", so each tile is named by its level and the chapter moves into the line */`${lvName(z.level)} seal`,text:won?`${ch}. Opened.`:sealBroken(s,z.id)?`${ch}. Broken; its cache waits.`:`${ch}. Needs ${z.awake} woken abilities.`,won,chapter:z.chapter};});}
+/* the Trophy Hall row: one tile per seal -> [{id, name, text, won, chapter, state, go}] */
+/* improve24-r24n-nov5 #3 (audit16 #10, shot 16: a kid with 4 woken abilities saw "Needs 2 woken abilities" on all 9 grey tiles): each tile says where it
+   stands. state: 'opened' (broken, its cache paid: shown with the cache), 'broken' (its cache waits), 'ready' (the woken abilities can break it now, on
+   a level the kid can play: lit, "Ready: cast 2 abilities in Slime Bog", and go = that level for the hall's Go button), 'reach' (enough abilities,
+   level not reached yet) or 'short' ("Needs N woken abilities (you have M)"). Reading it changes nothing. */
+export function sealTrophies(s){const n=wokenCount(s);return SEALS.map(z=>{const ch=CHAPTERS.find(c=>c.id===z.chapter)?.name?.replace(/^The /,'')||z.chapter,won=sealLooted(s,z.id),lv=lvName(z.level),
+ state=won?'opened':sealBroken(s,z.id)?'broken':n<z.awake?'short':levelOpen(s,z.level)||levelDone(s,z.level)?'ready':'reach';
+ const text={opened:`${ch}. Broken: its cache gave ${rewardText(z)}.`,broken:`${ch}. Broken; its cache waits (${rewardText(z)}).`,ready:`Ready: cast ${z.cast} abilities in ${lv}`,reach:`${ch}. Ready once you reach ${lv}.`,short:`${ch}. Needs ${z.awake} woken abilities (you have ${n}).`}[state];
+ return {id:z.id,name:/* lead (4 Nov, R21B follow-up): "Elderwood: 2-seal" was jargon. improve23-r23q-nov4 #1: three tiles a chapter all read "<Chapter> rune seal", so each tile is named by its level and the chapter moves into the line */`${lv} seal`,text,won,chapter:z.chapter,state,go:state==='ready'?z.level:null};});}
 /* every seal sits on a real level of its chapter (tests) */
 export const sealLevelsOk=()=>SEALS.every(z=>{const l=LEVELS.find(x=>x.id===z.level);return !!l&&l.chapter===z.chapter&&l.kind==='level';});
 /* improve20-r21b-nov4 #2 (audit15 #6): a seal the woken abilities can break now, unbroken, on a level the hero can play (chapter order), or null.
@@ -83,3 +90,8 @@ export function sealShortLine(s,z,p,o={}){if(!z||sealBroken(s,z.id))return '';co
    play or has played, else the first such seal in a chapter the kid has reached; or null */
 export function sealShortFor(s){const n=wokenCount(s),xs=SEALS.filter(z=>!sealBroken(s,z.id)&&z.awake===n+1);if(!xs.length)return null;
  const here=xs.find(z=>levelOpen(s,z.level)||levelDone(s,z.level));if(here)return here;const chs=new Set(LEVELS.filter(l=>l.kind==='level'&&(levelOpen(s,l.id)||levelDone(s,l.id))).map(l=>l.chapter));return xs.find(z=>chs.has(z.chapter))||null;}
+/* improve24-r24n-nov5 #4 (audit16 #11, shot 15: v5 needs 5 woken abilities and v6 needs 6, a typical finisher ends with 4, and no wake said a seal had
+   opened): the seals a wake makes breakable that were not before (unbroken, `awake` above the count before the wake and within the count after it),
+   in SEALS order, and the wake card's one plain line ("A rune seal in Veilmoor Choir can now be broken", "and N more" when several), or ''. */
+export const sealsNewlyOpen=(s,before,after=wokenCount(s))=>SEALS.filter(z=>!sealBroken(s,z.id)&&z.awake>(before|0)&&z.awake<=(after|0));
+export function wakeSealLine(s,before,after=wokenCount(s)){const xs=sealsNewlyOpen(s,before,after);if(!xs.length)return '';return `A rune seal in ${lvName(xs[0].level)} can now be broken${xs.length>1?` and ${xs.length-1} more`:''}.`;}

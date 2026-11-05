@@ -39,7 +39,7 @@ export function sealTouch(w,pressed){const z=w.aseal,p=w.player;if(!z||!p||!w.le
  if(!z.broken||z.looted)return null;if(Math.hypot(p.x-z.chest.x,(p.y-z.chest.y)*1.2)>(pressed?POCKET.chestR+10:POCKET.chestR))return null;
  const got=lootSeal(w.save,z.id);z.looted=true;if(!got)return null;z.got=got;earnTitles(w.save);
  /* improve20-r21b-nov4 #4 (audit15 #16, shot 12: the cache toast sat over the hero standing in the pocket): the cache's words float on the road by the pocket (cacheY), not in a screen toast over the hero; the win card names it again */
- w.text?.(`Seal cache: +${got.gold} gold, +${got.essence} Essence`,z.chest.x,cacheY(z),'#f3d98a',false,{life:CACHE_LIFE});if(got.title)w.text?.(`New title: ${got.title}!`,z.chest.x,cacheY(z)+24,'#fff1a8',false,{life:CACHE_LIFE});sfx('coin');w.events.sealLoot?.(z.def,got);w.events.persist?.();return got;}
+ w.text?.(`Seal cache: +${got.gold} gold, +${got.essence} Essence`,z.chest.x,cacheY(z),'#f3d98a',false,{life:CACHE_LIFE});/* improve24-r24n-nov5 #6: GO and the way chevrons wait while these words are up (gfx/stage-view.js cacheWordsUp) */z.cacheUntil=(w.time||0)+CACHE_LIFE;if(got.title)w.text?.(`New title: ${got.title}!`,z.chest.x,cacheY(z)+24,'#fff1a8',false,{life:CACHE_LIFE});sfx('coin');w.events.sealLoot?.(z.def,got);w.events.persist?.();return got;}
 /* is the hero beside something the seal offers (main.js's interact verb and the phone's interact button can read it) */
 export const nearSealChest=w=>{const z=w.aseal,p=w.player;return !!z&&z.broken&&!z.looted&&!!p&&Math.hypot(p.x-z.chest.x,(p.y-z.chest.y)*1.2)<POCKET.chestR+10;};
 
@@ -49,7 +49,7 @@ const DOME_H=46;
 /* improve20-r21b-nov4 #4: the cache line's height. The pocket sits at the far verge, so a hero standing in it is near the top of the view, where
    world/stage labels are kept clear of the HUD (gfx/world.js clearLabel) and pile onto the hero; the words go on the open road just under the
    pocket (as the seal's own words do, WORDS_BELOW), clear of the hero, and stay up as long as the old toast did */
-export const CACHE_LIFE=2.6;export const cacheY=z=>Math.round(z.chest.y+6+WORDS_BELOW+30);
+export const CACHE_LIFE=2.6;/* improve24-r24n-nov5 #6 (audit16 #17, shot 03: the GO chevrons ran through "gold, +2"): true while the cache's words float */export const cacheWordsUp=w=>!!w?.aseal&&(w.aseal.cacheUntil||0)>(w.time||0);export const cacheY=z=>Math.round(z.chest.y+6+WORDS_BELOW+30);
 /* improve20-r21b-nov4 #4: what the seal did on this run, for the win card (game/ability-seals.js sealRunLine), or null */
 export function sealRunNote(w){const z=w?.aseal;if(!z||!z.def)return null;return {id:z.id,level:z.def.level,broke:!!z.brokeNow,got:z.got||null,passed:!!z.passed,broken:!!z.broken,openable:wokenCount(w.save)>=z.def.awake};}
 /* improve20-r20m-nov4 #2 (R20J: the words sat over the far verge, under the level toasts and the WAVE CLEARED banner): they are drawn on the road just under

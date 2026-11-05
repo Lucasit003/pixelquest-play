@@ -31,12 +31,16 @@ export function openProfiles({manage=false,fresh=null}={}){
  manageOn=!!manage;const d=openSheet('learners',sheetHeader('Who is playing?','LEARNERS')+html(manageOn,{fresh}));
  const msg=t=>{const m=d.querySelector('#learner-msg');if(m)m.textContent=t;};
  d.querySelector('.learner-new')?.addEventListener('submit',e=>{e.preventDefault();const inp=d.querySelector('#learner-name'),n=inp.value;/* improve20-r20f-nov4 #6: an empty name no longer makes "Player 2"; the sheet asks for one where it is typed */if(!String(n||'').trim()){inp.value='';inp.setAttribute('aria-invalid','true');inp.addEventListener('input',()=>inp.removeAttribute('aria-invalid'),{once:true});inp.focus?.();msg(EMPTY_NAME);return;}const p=addProfile(n);openProfiles({manage:manageOn,fresh:p.id});globalThis.document.querySelector('#learner-msg').textContent=`${p.name} added. Press Play to start.`;});
- d.querySelectorAll('.learner-row button').forEach(b=>b.addEventListener('click',()=>{
-  const id=b.closest('.learner-row').dataset.id,act=b.dataset.act;
+ /* improve24-r24n-nov5 #7 (audit16 #19: after the PIN the playing learner's name field was open, and the first tap on another learner's Remove only
+    closed it): Rename opens only from a press that began on it (a pointer down on the button, or the keyboard), never from a click carried over from
+    the gate, and closing the field renames the row in place, so a tap on another row's button that closes it still lands */
+ d.querySelectorAll('.learner-row [data-act="rename"]').forEach(b=>b.addEventListener('pointerdown',()=>{b.dataset.armed='1';}));
+ d.querySelectorAll('.learner-row button').forEach(b=>b.addEventListener('click',e=>{
+  const id=b.closest('.learner-row').dataset.id,act=b.dataset.act;if(act==='rename'&&e&&e.detail>0&&b.dataset.armed!=='1')return;delete b.dataset.armed;
   if(act==='play'){msg('Saving and switching…');switchProfile(id,{persist:persistRef});}
   else if(act==='rename'){const row=b.closest('.learner-row'),cur=row.querySelector('strong').textContent;
    row.querySelector('strong').outerHTML=`<input class="learner-rename" maxlength="20" value="${esc(cur)}" aria-label="New name">`;const inp=row.querySelector('.learner-rename');inp.focus();inp.select();
-   const done=()=>{renameProfile(id,inp.value);openProfiles({manage:true});};inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();done();}});inp.addEventListener('blur',done);}
+   let shut=false;const done=()=>{if(shut)return;shut=true;renameProfile(id,inp.value);const nm=readProfiles().list.find(p=>p.id===id)?.name||cur;/* improve24-r24n-nov5 #7: in place, no rebuild */if(inp.isConnected){inp.insertAdjacentHTML('afterend',`<strong>${esc(nm)}</strong>`);inp.remove();}row.querySelectorAll('[data-act="rename"]').forEach(x=>x.setAttribute('aria-label',`Rename ${nm}`));row.querySelectorAll('[data-act="remove"]').forEach(x=>x.setAttribute('aria-label',`Remove ${nm}`));};inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();done();row.querySelector('[data-act="rename"]')?.focus?.({preventScroll:true});}});inp.addEventListener('blur',done);}
   else if(act==='remove')openRemove(d,id);
  }));
  /* improve20-r13b-nov2 #3: Manage (Rename, Remove) opens behind the gate. improve20-r14c-nov3 #1: always, not only once a PIN is set (the gate itself asks for a PIN to be chosen first) */d.querySelector('[data-act="manage"]')?.addEventListener('click',()=>{const flip=()=>{const nd=openProfiles({manage:!manageOn});nd.querySelector('[data-act="manage"]')?.focus?.({preventScroll:true});};if(!manageOn)openParentGate({why:'Managing learners is for grown-ups.',onPass:flip});else flip();});

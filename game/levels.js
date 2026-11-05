@@ -235,9 +235,33 @@ export function arenaWave(level,n){const ch=chapterOf(level),pool=ch.pool,count=
  const step=((7+n)%pool.length)||3;for(let i=0;i<count;i++)out.push(pool[(n*3+i*step)%pool.length]);
  const mini=()=>({type:ch.elites[Math.floor(n/5)%ch.elites.length],elite:true});
  if(n%5===4){if(n<ARENA_STEEP||n%10===9){out[0]=mini();if(n>=ARENA_STEEP)out[1]={type:out[1],elite:true};}else out[0]={type:out[0],elite:true};}
+ /* improve24-r24n-nov5 #2: every 10th wave (10, 20, 30...) its chapter mini leads as a named Arena Champion (bigger and tougher, existing sprites
+    only; the chapter's own foes as before), and every other 5th wave keeps its elite */
+ if(n%10===9)out[0]=arenaChampion(level,n);
  const half=Math.ceil(out.length/2);return {groups:[out.slice(0,half),out.slice(half)],side:n%2?'both':'right'};}
+/* improve24-r24n-nov5 #2 (audit16 #4, shot 19: at wave 12 a non-dodging level-15 bot stood at 300/300 against 55-health foes, and leaving paid
+   nothing). The ramp: foes' health and damage grow with every wave on top of the tier (World.startWave sets tierMul from arenaRamp), so a hero
+   who stands and trades falls in the teens and one who dodges goes further (tools/balance-sim.mjs --arena, tuned on typical-after-v7).
+   Deterministic, so a best wave means the same thing every time. */
+/* the heal between arena waves (combat.js waveCleared): the usual 18% through wave ARENA_STEEP, then ARENA_LATE_HEAL */
+export const ARENA_LATE_HEAL=.08;
+export const arenaHeal=waves=>(waves|0)<=ARENA_STEEP?.18:ARENA_LATE_HEAL;
+export const ARENA_RAMP=Object.freeze({hp:.4,atk:.7,steepHp:.25,steepAtk:.1,from:4});
+export const arenaRamp=n=>{n=Math.max(0,n|0);const k=Math.max(0,n-ARENA_RAMP.from+1);return {hp:1+ARENA_RAMP.hp*n+ARENA_RAMP.steepHp*k*k/2,atk:1+ARENA_RAMP.atk*n+ARENA_RAMP.steepAtk*k*k/2};};
+/* the champion: the chapter mini that wave-10 slot already draws (CHAPTERS elites), flagged so roster.js asChampion names and grows it */
+export const CHAMPION=Object.freeze({hp:1.6,atk:1,scale:1});
+export function arenaChampion(level,n){const ch=chapterOf(level);return {type:ch.elites[Math.floor(n/5)%ch.elites.length],elite:true,champion:true};}
+/* The bank (improve24-r24n-nov5 #2): after every ARENA_BANK waves (5, 10, 15...) the gold the run has earned so far is banked into the save
+   (World.bankArena): leaving keeps it, and a fall keeps every coin as it always has. It is gold already earned, never a roll; gold unlocks nothing. */
+export const ARENA_BANK=5;
+export const arenaBankDue=waves=>(waves|0)>0&&(waves|0)%ARENA_BANK===0;
+/* the Leave-level words for an arena run: bank = World.arenaBank ({gold, wave}) or null */
+export const arenaLeaveText=bank=>bank?.gold>0?`You keep ${bank.gold} gold (banked at wave ${bank.wave}). Your learning and XP are safe.`:`Gold is banked every ${ARENA_BANK} waves, and nothing is banked yet. Your learning and XP are safe.`;
+/* the arena's pad line: the best wave, and the bank */
+export const arenaPadLine=best=>(best|0)>0?`Endless waves. Your best: wave ${best|0}. Gold is banked every ${ARENA_BANK} waves.`:`Endless waves. How long can you last? Gold is banked every ${ARENA_BANK} waves.`;
 /* the arena's HUD chip (main.js arenaChip): the wave being fought and the record, which the run in progress can beat (waves survived) */
-export const arenaChipText=(wave,best)=>`Wave ${(wave|0)+1} · best ${Math.max(best|0,wave|0)}`;
+/* improve24-r24n-nov5 #2: and the gold banked so far, once there is some */
+export const arenaChipText=(wave,best,banked=0)=>`Wave ${(wave|0)+1} · best ${Math.max(best|0,wave|0)}${(banked|0)>0?` · ${banked|0} gold banked`:''}`;
 export const arenaTier=(level,n)=>(level.chapter==='emberkeep'?9:level.chapter==='veilmoor'?16:1)+(n<ARENA_STEEP?Math.floor(n/3):Math.floor((ARENA_STEEP-1)/3)+Math.floor((n-ARENA_STEEP+2)/2));
 /* Writes save.levels[id] for a finished run and says what changed. A win marks it done; a loss only counts
    the play. best.time is the fastest win, best.score the highest score (an arena's is waves survived, and its

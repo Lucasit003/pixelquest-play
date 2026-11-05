@@ -17,7 +17,10 @@ export function pilotBoss(w,e){if(!w.level?.encounter)return guardBoss(w,normalB
 /* After the phase animation, a single marked call introduces the Chief's new rule. */
 export function pilotTick(e,w){guardTick(e,w);normalTick(w,e);if(w?.level?.encounter?.veilmoor)veilTick(e,w);if(w?.level?.encounter?.emberkeep)emberTick(e,w);if(w?.level?.encounter?.elderwood)woodTick(e,w);if(e.pilotGuard&&w&&!(e.pilotTurn>w.time)){e.pilotFacing=e.facing;e.pilotTurn=w.time+.7;}if(e.pilotCall&&!e.pilotCalled&&e.brain?.phase===2&&['move','recover'].includes(e.brain.mode)){e.pilotCalled=true;e.brain.force=e.pilotCall;}}
 /* Roots and the drill are supporting hazards, not a second boss hit: keep the full warning and cadence. */
-export const pilotHitCap=(w,from)=>w.level?.encounter&&['e6','m4'].includes(w.level.id)&&from?.arenaHazard?w.player.maxHp*.15:!w.level?.encounter?(w.tierKey==='normal'&&['e7','e8'].includes(w.level?.id)&&(from?.by?.boss||from?.boss)?w.player.maxHp*.25:pacedNormal(w)?w.player.maxHp*((from?.by?.boss||from?.boss)? .20 : .15):Infinity):w.player.maxHp*(from?.by?.boss||from?.boss?(w.tierKey==='legendary'?.33:.28):(w.tierKey==='legendary'?.25:.20));
+/* improve24-r24n-nov5 #2: in the arena, whose foes grow every wave (game/levels.js arenaRamp), no one hit takes more than ARENA_HIT_CAP of
+   max health (a champion's big move at wave 20 took 309 of 309), so a fall comes from the pressure of the waves, never a one-shot */
+export const ARENA_HIT_CAP=.3;
+export const pilotHitCap=(w,from)=>w.arena&&from?w.player.maxHp*ARENA_HIT_CAP:w.level?.encounter&&['e6','m4'].includes(w.level.id)&&from?.arenaHazard?w.player.maxHp*.15:!w.level?.encounter?(w.tierKey==='normal'&&['e7','e8'].includes(w.level?.id)&&(from?.by?.boss||from?.boss)?w.player.maxHp*.25:pacedNormal(w)?w.player.maxHp*((from?.by?.boss||from?.boss)? .20 : .15):Infinity):w.player.maxHp*(from?.by?.boss||from?.boss?(w.tierKey==='legendary'?.33:.28):(w.tierKey==='legendary'?.25:.20));
 
 /* Only spawned pilot actors receive guard/poise. No roster or ability edits. Heavy and learned hits open a three-second
    window; ordinary shields can also be flanked. Boss armour must be cracked, then the entire kit can punish it. */

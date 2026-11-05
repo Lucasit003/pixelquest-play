@@ -37,7 +37,7 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
    level names); ids stay #unlock-next so existing flows keep working. Styling: .edu-unlock in library.css. */
 /* awakening:true is the first-lesson awakening of a class's starter (academics/awakening.js): the copy says the
    training awakened it, never that mastery earned it, and an Archivist line (quote) can follow. */
-export function unlockBannerHTML(a,{heroName='',subjectName=a.subject,subjectColor='#e7c77e',level=1,description='',why='',awakening=false,quote='',slot=-1,icon='',tryIt=null,preview=false}={}){
+export function unlockBannerHTML(a,{heroName='',subjectName=a.subject,subjectColor='#e7c77e',level=1,description='',why='',awakening=false,quote='',slot=-1,icon='',tryIt=null,preview=false,seal=''}={}){
  return `<div class="unlock edu-unlock${awakening?' edu-awakening':''}" role="status" aria-live="assertive" style="--accent:${esc(subjectColor)}">
 <div class="edu-unlock-rays" aria-hidden="true"></div>${awakening?'<div class="edu-awaken-ring" aria-hidden="true"></div>':''}
 <span class="eyebrow edu-unlock-eyebrow">KNOWLEDGE BECOMES POWER</span>
@@ -45,7 +45,7 @@ ${/* the ability's own icon when the caller has one (polish, 19 Oct); the generi
 <span class="tag edu-unlock-ribbon">${awakening?'ABILITY AWAKENED':'ABILITY UNLOCKED'}</span>
 <h2 class="edu-unlock-name">${esc(a.name)}</h2>
 <p class="subtle edu-unlock-meta">${esc(heroName)} · ${esc(a.branch||'')} · ${awakening?'Your first ability':`<span class="edu-unlock-subject">${esc(subjectName)} knowledge</span> · Hero level ${esc(level)}`}</p>
-${why?`<p class="edu-unlock-why">${esc(why)}</p>`:''}${quote?`<p class="edu-unlock-quote">${esc(quote)}</p>`:''}<p class="edu-unlock-desc">${esc(description)}</p>
+${why?`<p class="edu-unlock-why">${esc(why)}</p>`:''}${/* improve24-r24n-nov5 #4: the seal this wake opens, one plain line (no button, never the red) */seal?`<p class="subtle edu-unlock-seal">${esc(seal)}</p>`:''}${quote?`<p class="edu-unlock-quote">${esc(quote)}</p>`:''}<p class="edu-unlock-desc">${esc(description)}</p>
 <p class="subtle edu-unlock-slot">${/* the keyboard half hides on phones (.m-mode .edu-unlock-keys in library.css; first-hour playtest 24 Oct) */awakening?'Use ability button 1<span class="edu-unlock-keys">, or press 1 on your keyboard</span>.':slot>=0?`Use ability button ${slot+1}<span class="edu-unlock-keys">, or press ${slot+1} on your keyboard</span>.`:'Your ability bar is full. Choose your abilities at Home or from the pause menu.'}</p>
 ${/* oct25-tryit P9: one button out of the Library into a short, safe fight with the new ability on the bar (game/try-it.js). tryIt: {label, where} from main.js; Continue is always there, so nothing is forced */tryIt?.where?`<p class="subtle edu-unlock-where">${esc(tryIt.where)}</p>`:''}${/* improve20-r7c-nov1 #5 (audit6 #25): when offered, "Try it in a fight" is the primary button (most kids pressed the primary Continue beside it); Continue stays, as a plain button */''}<div class="edu-unlock-actions">${tryIt?`<button type="button" id="unlock-try" class="primary edu-unlock-try" data-try-it="${esc(a.id)}">${esc(tryIt.label||'Try it in a fight')}</button>`:''}<button id="unlock-next" class="${tryIt?'':'primary '}edu-unlock-next">Continue</button> <button type="button" class="edu-read" data-edu-read="${esc(unlockReadText(a,why,awakening))}" aria-label="Read this to me">Read to me</button></div></div>`;
 }

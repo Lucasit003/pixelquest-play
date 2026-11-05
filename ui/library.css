@@ -768,6 +768,8 @@ html[data-motion=reduced] .lesson-check.nudge{animation:none}
 @keyframes edu-arm{from{opacity:.5;filter:saturate(.4)}}
 .edu-unlock .edu-unlock-actions>button{margin:0!important;vertical-align:middle;min-width:0}
 .edu-unlock .edu-unlock-where{margin:4px 0 0}
+/* improve24-r24n-nov5 #4: the seal a wake opens, one plain line in the seal gold */
+.edu-unlock .edu-unlock-seal{margin:4px 0 0;color:#f3d98a}
 /* oct25-tryit P11 (learning-loop playtest): at 844x390 and 740x360 the Library's "Start lesson" and "Find your level" needed a scroll on
    the first visit. On phones the ability card is compacted into a narrower column (smaller icon, no badge count; the
    buttons' height depends only on the lesson card, so its width is what matters), the lesson card drops its subject/grade line (the subject is in the chooser)
