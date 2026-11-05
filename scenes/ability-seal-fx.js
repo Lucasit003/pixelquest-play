@@ -4,7 +4,8 @@
    depth-sorted actors. The pocket is an ellipse on the far verge: while the seal holds, layout.blocked() says so, so neither hero nor foe
    walks in; the road below it stays open (the band is 128 units deep, the pocket 26). All drawing is code: a rune dome, one pip per
    ability still needed, a crack burst; the cache is the existing reward chest (ui/skin/rewards/chest.png). No Hall, Rift or arena run. */
-import {sealsIn,sealBroken,sealLooted,breakSeal,lootSeal,sealNeedText,wokenCount,rewardText} from '../game/ability-seals.js';
+import {sealsIn,sealBroken,sealLooted,breakSeal,lootSeal,sealNeedText,wokenCount,rewardText,SEAL_TITLES,sealChapterDone} from '../game/ability-seals.js';
+/* friends2-nov5 #2 */import {STAGE} from '../game/stage.js';import {banner} from '../ui/juice.js';
 import {unlocked} from '../game/math.js';
 import {asleep} from '../academics/awakening.js';
 import {drawPixelText} from '../ui/canvas-ui.js';
@@ -30,11 +31,11 @@ export function sealCast(w,a,pose){const z=w.aseal,p=w.player;if(!z||z.broken||!
  w.effect?.('nova',z.x,z.cy+z.ry*.5,{element:a.element||'arcane',radius:28,life:.5,max:.5});z.pulse=.5;
  const n=wokenCount(w.save),need=z.def.cast,was=z.hits.has(a.id);z.hits.add(a.id);
  if(n<z.def.awake){w.text?.(sealNeedText(w.save,z.def),z.x,z.cy-26,'#ffd27a',true);sfx('blocked');return true;}
- if(z.hits.size>=need){z.broken=true;z.burst=1;z.brokeNow=true/* improve20-r21b-nov4 #4 */;breakSeal(w.save,z.id);w.effect?.('nova',z.x,z.cy+z.ry*.5,{element:'holy',radius:56,life:.9,max:.9});w.quake?.('aoe');w.text?.('SEAL BROKEN!',z.x,z.cy-30,'#fff1a8',true);w.text?.('Walk in for the cache',z.x,z.cy+30,'#f3d98a');sfx('unlock');w.events.persist?.();return true;}
+ if(z.hits.size>=need){z.broken=true;z.burst=1;z.brokeNow=true/* improve20-r21b-nov4 #4 */;breakSeal(w.save,z.id);/* friends2-nov5 #2: the save's first broken seal is a moment: a bigger burst and a short banner naming the cache and keepsake inside (never pauses; it goes by itself) */if(firstBreak(w.save,z)){z.burst=1.6;w.effect?.('nova',z.x,z.cy+z.ry*.5,{element:'holy',radius:96,life:1.2,max:1.2});w.effect?.('killpop',z.x,z.cy,{element:'holy',n:14,life:.8,max:.8});const kt=!sealChapterDone(w.save,z.def.chapter)&&SEAL_TITLES[z.def.chapter]?.[1];try{banner('FIRST RUNE SEAL BROKEN!',`Inside: ${rewardText(z.def)}${kt?` and the title ${kt}`:''}`,'levelup',2400);}catch{}sfx('levelup');}w.effect?.('nova',z.x,z.cy+z.ry*.5,{element:'holy',radius:56,life:.9,max:.9});w.quake?.('aoe');w.text?.('SEAL BROKEN!',z.x,z.cy-30,'#fff1a8',true);w.text?.('Walk in for the cache',z.x,z.cy+30,'#f3d98a');sfx('unlock');w.events.persist?.();return true;}
  w.text?.(was?'A different ability!':`${z.hits.size} of ${need}`,z.x,z.cy-26,was?'#ffd27a':'#e9f6ff',true);sfx(was?'blocked':'ward');return true;}
 /* each move: the seal's words once a run as the hero comes near, and the cache when the hero steps in (or presses interact beside it) */
 export function sealTouch(w,pressed){const z=w.aseal,p=w.player;if(!z||!p||!w.level||w.ended)return null;/* improve20-r21b-nov4 #4: the hero walked on past the closed pocket *//* improve23-r23s-nov4 #4 (kidsim6 #10: a boss retry starts past the pocket and was counted as a walk-by): only a hero who came within POCKET.see on this run has passed it */if(!z.broken&&sealDist(w,z)<POCKET.see)z.near=true;if(!z.broken&&z.near&&p.x>z.x+POCKET.reach)z.passed=true;
- /* the barrier's own words are drawn over it (sealLayer); a toast would sit on top of the pocket, so the approach line is a floating text */if(!z.broken&&!z.said&&sealDist(w,z)<POCKET.see){z.said=true;w.text?.(`Inside: ${rewardText(z.def)}`,z.x,z.cy-4,'#f3d98a');}
+ /* the barrier's own words are drawn over it (sealLayer); a toast would sit on top of the pocket, so the approach line is a floating text *//* friends2-nov5 #2: a seal the woken abilities can break hums (the existing ward sound) as the hero comes near, once per approach */if(callsNow(w,z)){const d=sealDist(w,z);if(d<CALL.hum&&!z.hummed){z.hummed=true;sfx('ward');w.text?.('Your abilities can break this seal!',z.x,z.cy-40,'#fff1a8',true);}else if(d>CALL.hum+80)z.hummed=false;}if(!z.broken&&!z.said&&sealDist(w,z)<POCKET.see){z.said=true;w.text?.(`Inside: ${rewardText(z.def)}`,z.x,z.cy-4,'#f3d98a');}
  if(!z.broken||z.looted)return null;if(Math.hypot(p.x-z.chest.x,(p.y-z.chest.y)*1.2)>(pressed?POCKET.chestR+10:POCKET.chestR))return null;
  const got=lootSeal(w.save,z.id);z.looted=true;if(!got)return null;z.got=got;earnTitles(w.save);
  /* improve20-r21b-nov4 #4 (audit15 #16, shot 12: the cache toast sat over the hero standing in the pocket): the cache's words float on the road by the pocket (cacheY), not in a screen toast over the hero; the win card names it again */
@@ -61,6 +62,7 @@ export function sealLayer(w,c,t,dt=1/60){const z=w.aseal;if(!z)return [];const s
  const cx=Math.round(z.x),by=Math.round(z.chest.y+6),rx=z.rx-6;
  out.push({y:z.chest.y-1,draw:()=>{const im=img(CHEST_ART);if(!im)return;c.save();if(z.looted)c.globalAlpha=.5;c.drawImage(im,Math.round(z.chest.x-im.width/2),Math.round(z.chest.y-im.height+6));c.restore();}});
  out.push({y:z.chest.y,draw:()=>{c.save();
+  if(!z.broken&&callsNow(w,z)){/* friends2-nov5 #2: the calling seal's gold halo, pulsing (steady with Reduce motion) */const g=still?.75:.6+.25*Math.sin(t*4),gr=still?0:3*Math.sin(t*4);c.strokeStyle='#ffd96b';c.globalAlpha=g*.35;c.lineWidth=7;c.beginPath();c.ellipse(cx,by-DOME_H/2,rx+12+gr,DOME_H*.75+8+gr,0,0,Math.PI*2);c.stroke();c.globalAlpha=g;c.lineWidth=2;c.stroke();c.lineWidth=1;c.globalAlpha=1;}
   if(!z.broken){const a=still?.8:.7+.2*Math.sin(t*2.6)+z.pulse;
    /* the dome: a soft fill, a bright rim, a ring on the ground */
    c.globalAlpha=Math.min(.5,.28+z.pulse*.4);c.fillStyle=z.tint;c.beginPath();c.ellipse(cx,by,rx,DOME_H,0,Math.PI,0);c.ellipse(cx,by,rx,7,0,0,Math.PI);c.fill();
@@ -75,6 +77,7 @@ export function sealLayer(w,c,t,dt=1/60){const z=w.aseal;if(!z)return [];const s
    if(z.burst>0){const r=(1-z.burst)*rx*2;c.globalAlpha=z.burst;c.strokeStyle='#fff1a8';c.lineWidth=2;c.beginPath();c.ellipse(cx,by-DOME_H/2,r,r*.7,0,0,Math.PI*2);c.stroke();for(let i=0;i<14;i++){const ang=i/14*Math.PI*2+.3;c.fillStyle=i%2?'#fff1a8':z.tint;c.fillRect(Math.round(cx+Math.cos(ang)*r),Math.round(by-DOME_H/2+Math.sin(ang)*r*.7),3,3);}}}
   c.restore();}});
  /* improve20-r20m-nov4 #2: the words are drawn last (over the hero walking past on the road), not in the pocket's depth slot */
+ /* friends2-nov5 #2: while a seal the hero can break is off screen and no foe is in view, a small gold pointer at the view's edge shows the way */out.push({y:1e9+1,draw:()=>{const pt=sealPointer(w);if(!pt)return;c.save();const x=pt.x,y=pt.y,d=pt.dir,b=still?0:Math.sin(t*5)*2;c.fillStyle='#18122a';c.globalAlpha=.85;c.fillRect(Math.round(x-(d>0?52:-4)),y-8,48,16);c.globalAlpha=1;c.fillStyle='#ffd96b';c.beginPath();c.moveTo(x+d*(8+b),y);c.lineTo(x-d*(2-b),y-7);c.lineTo(x-d*(2-b),y+7);c.closePath();c.fill();drawPixelText(c,'SEAL',Math.round(x-d*28),y-4,{align:'center',color:'#ffd96b',outline:'#18122a'});c.restore();}});
  out.push({y:1e9,draw:()=>{if(!sealWordsDue(w,z))return;const nw=wokenCount(w.save),short=nw<z.def.awake;c.save();c.globalAlpha=1;drawPixelText(c,short?`NEEDS ${z.def.awake} ABILITIES: YOU HAVE ${nw}`:`CAST ${z.def.cast} DIFFERENT ABILITIES`,cx,by+WORDS_BELOW,{align:'center',color:short?'#ffd27a':'#eaffef',outline:'#18122a'});c.restore();}});
  return out;}
 /* improve23-r23s-nov4 #3 (kidsim6 #9, shots 02/08: GO was drawn over the seal's right pillar and dome at 1280x720): the seal's box in view units
@@ -82,3 +85,12 @@ export function sealLayer(w,c,t,dt=1/60){const z=w.aseal;if(!z)return [];const s
 export function sealViewRect(w,vw=480){const z=w?.aseal;if(!z)return null;const ox=w.camX||0,oy=w.camTop||0,by=z.chest.y+6;
  const r={left:z.x-z.rx-12-ox,right:z.x+z.rx+12-ox,top:by-DOME_H-14-oy,bottom:by+WORDS_BELOW+8-oy};return r.right<0||r.left>vw?null:r;}
 
+/* friends2-nov5 #2 (friends1 List A #2: Jay played Slime Bog twice holding Cleave and nothing pointed at the seal): a seal calls only when the
+   hero's woken abilities can break it (a short hero keeps R23S's plain lines; no nagging). CALL.hum: how near it hums. */
+export const CALL={hum:250,edge:14,phoneEdge:100/* a phone keeps its right-hand buttons and the GO arrow clear */};
+export const callsNow=(w,z)=>!!z&&!z.broken&&!!w?.save&&wokenCount(w.save)>=z.def.awake&&!w.ended;
+const firstBreak=(s,z)=>(s?.abilitySeals?.broken||[]).length===1&&s.abilitySeals.broken[0]===z.id;
+/* the pointer, in world units at the camera's edge, or null: the seal calls, is off view, and no foe alive is in view */
+export function sealPointer(w){const z=w?.aseal,p=w?.player;if(!callsNow(w,z)||!p)return null;const ox=w.camX||0,vw=STAGE.camW||480,oy=w.camTop||0,vh=STAGE.camH||270;
+ if(sealViewRect(w,vw))return null;if(w.enemies?.some(e=>e.hp>0&&e.x>ox-20&&e.x<ox+vw+20))return null;if(w.flow==='boss'||w.flow==='bossintro')return null;
+ const dir=z.x>ox+vw/2?1:-1,phone=typeof document!=='undefined'&&!!document.documentElement?.classList?.contains('m-mode'),edge=phone?CALL.phoneEdge:CALL.edge;return {dir,x:dir>0?ox+vw-edge:ox+edge,y:Math.round(oy+vh*.3)};}

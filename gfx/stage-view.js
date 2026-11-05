@@ -17,6 +17,7 @@ import {clearLabelAt} from '../scenes/tier-fx.js';
 import {firstFlashAlpha,FIRST_BANNER} from '../scenes/rune-fx.js';
 import {GUARD} from '../scenes/boss-guard.js';
 import {hallTellUp} from '../scenes/hall-patterns.js';
+/* friends2-nov5 #2 */import {callsNow} from '../scenes/ability-seal-fx.js';
 /* improve23-r23s-nov4 #3 */import {sealViewRect} from '../scenes/ability-seal-fx.js';
 const R=Math.round;
 /* ---- the swap point ------------------------------------------------------------------------------------- */
@@ -161,9 +162,9 @@ function overviewOf(map,dir){if(!map?.overview||typeof Image==='undefined')retur
 export function drawStageMap(canvas,w){const c=canvas.getContext('2d'),W=canvas.width,H=canvas.height;c.clearRect(0,0,W,H);c.imageSmoothingEnabled=false;
  const L=w.layout;if(!L)return;const ov=overviewOf(L.map,'../assets/biomes/levels/');
  if(ov){const k=Math.min(W/ov.width,H/ov.height),ox=R((W-ov.width*k)/2),oy=R((H-ov.height*k)/2),s=k*(L.map.overviewScale||1/8);c.drawImage(ov,ox,oy,R(ov.width*k),R(ov.height*k));
-  c.strokeStyle='#f1e4c0aa';c.strokeRect(ox+R(w.camX*s)+.5,oy+R((w.camTop||0)*s)+.5,R(STAGE.camW*s),R(STAGE.camH*s));/* v2:ui-mobile */c.fillStyle='#f1e4c0';c.fillRect(ox+R(w.player.x*s)-1,oy+R(w.player.y*s)-1,3,3);return;}
+  c.strokeStyle='#f1e4c0aa';c.strokeRect(ox+R(w.camX*s)+.5,oy+R((w.camTop||0)*s)+.5,R(STAGE.camW*s),R(STAGE.camH*s));/* v2:ui-mobile */c.fillStyle='#f1e4c0';c.fillRect(ox+R(w.player.x*s)-1,oy+R(w.player.y*s)-1,3,3);/* friends2-nov5 #2: a seal the hero can break is marked in gold */{const z=w.aseal;if(z&&!z.broken&&w.save&&callsNow(w,z)){c.fillStyle='#ffd96b';const mx=ox+R(z.x*s),my=oy+R(z.cy*s);c.fillRect(mx-2,my-2,5,5);c.fillStyle='#18122a';c.fillRect(mx,my,1,1);}}return;}
  /* no overview yet: the run as markers -- arenas, the boss, you */
  const pad=12,y=R(H/2),sx=x=>pad+R(x/L.width*(W-pad*2));c.fillStyle='#3b2516';c.fillRect(pad,y-1,W-pad*2,3);c.fillStyle=GOLD;c.fillRect(pad,y,R(sx(w.player.x)-pad),1);
  (L.arenas||[]).forEach((a,i)=>{c.fillStyle=i<w.wave?GOLD:'#6b4528';c.fillRect(sx((a.x0+a.x1)/2)-3,y-3,7,7);});
  if(L.boss){c.fillStyle='#8a3a2a';c.fillRect(sx((L.boss.x0+L.boss.x1)/2)-5,y-5,11,11);}
- c.fillStyle=PARCH;c.fillRect(sx(w.player.x)-1,y-1,3,3);}
+ /* friends2-nov5 #2 */{const z=w.aseal;if(z&&callsNow(w,z)){c.fillStyle='#ffd96b';c.fillRect(sx(z.x)-3,y-6,7,5);}}c.fillStyle=PARCH;c.fillRect(sx(w.player.x)-1,y-1,3,3);}

@@ -11,6 +11,7 @@
    never stops the others or the game. No timers: the banner's motion is CSS, and it stays until the
    player presses Continue. */
 import {unlockReadText} from './edu-narration.js';
+/* friends2-nov5 #6 */import {shatterHTML} from './friends2.js';
 const listeners=new Set();
 export const onAbilityUnlocked=fn=>{if(typeof fn!=='function')throw new Error('onAbilityUnlocked needs a function');listeners.add(fn);return ()=>listeners.delete(fn);};
 export function emitAbilityUnlocked(ability,info={}){
@@ -40,7 +41,7 @@ export function unlockBannerHTML(a,{heroName='',subjectName=a.subject,subjectCol
  return `<div class="unlock edu-unlock${awakening?' edu-awakening':''}" role="status" aria-live="assertive" style="--accent:${esc(subjectColor)}">
 <div class="edu-unlock-rays" aria-hidden="true"></div>${awakening?'<div class="edu-awaken-ring" aria-hidden="true"></div>':''}
 <span class="eyebrow edu-unlock-eyebrow">KNOWLEDGE BECOMES POWER</span>
-${/* the ability's own icon when the caller has one (polish, 19 Oct); the generic rune otherwise. `icon` is trusted markup from ui/icons.js */icon?`<div class="rune edu-unlock-rune edu-unlock-icon" aria-hidden="true">${icon}</div>`:'<div class="rune edu-unlock-rune" aria-hidden="true">✧</div>'}${/* improve20-c-oct31: a looping preview of the ability, played by the hero's own animation for it at 2x (main.js paints it; the icon steps aside once it draws) */preview?`<canvas class="edu-unlock-preview" data-preview="${esc(a.id)}" width="204" height="164" role="img" aria-label="${esc(a.name)}, played by your hero"></canvas>`:''}
+${/* the ability's own icon when the caller has one (polish, 19 Oct); the generic rune otherwise. `icon` is trusted markup from ui/icons.js */icon?`<div class="rune edu-unlock-rune edu-unlock-icon" aria-hidden="true">${icon}${/* friends2-nov5 #6: the cracked shell breaks off on the wake (over the preview when one plays) */preview?'':shatterHTML()}</div>`:'<div class="rune edu-unlock-rune" aria-hidden="true">✧</div>'}${/* improve20-c-oct31: a looping preview of the ability, played by the hero's own animation for it at 2x (main.js paints it; the icon steps aside once it draws) */preview?`<canvas class="edu-unlock-preview" data-preview="${esc(a.id)}" width="204" height="164" role="img" aria-label="${esc(a.name)}, played by your hero"></canvas>${icon?shatterHTML(icon):''}`:''}
 <span class="tag edu-unlock-ribbon">${awakening?'ABILITY AWAKENED':'ABILITY UNLOCKED'}</span>
 <h2 class="edu-unlock-name">${esc(a.name)}</h2>
 <p class="subtle edu-unlock-meta">${esc(heroName)} · ${esc(a.branch||'')} · ${awakening?'Your first ability':`<span class="edu-unlock-subject">${esc(subjectName)} knowledge</span> · Hero level ${esc(level)}`}</p>

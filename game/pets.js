@@ -24,7 +24,7 @@ export const emptyPets=()=>({all:false,got:[],seen:[]});
 const KEYS=new Set(PETS.map(p=>p.key));
 /* old=true when the save had no s.pets at all (written before this build): it keeps every pet */
 export function cleanPets(v,old=false){const p=emptyPets();if(old||!v||typeof v!=='object'||Array.isArray(v)){p.all=!!old;return p;}
- p.all=v.all===true;for(const k of ['got','seen'])if(Array.isArray(v[k]))p[k]=[...new Set(v[k].filter(x=>KEYS.has(x)&&x!==FREE_PET))];return p;}
+ p.all=v.all===true;for(const k of ['got','seen'])if(Array.isArray(v[k]))p[k]=[...new Set(v[k].filter(x=>KEYS.has(x)&&x!==FREE_PET))];/* friends2-nov5 #7: met = pets whose first-level card has shown (the Ink Cat too); additive, kept only when present */if(Array.isArray(v.met))p.met=[...new Set(v.met.filter(x=>KEYS.has(x)))];return p;}
 const P=s=>s.pets||(s.pets=emptyPets());
 export const petOwned=(s,key)=>KEYS.has(key)&&(key===FREE_PET||s?.pets?.all===true||(s?.pets?.got||[]).includes(key)||!!PET_SOURCES[key]?.met(s||{}));
 export const ownedPets=s=>PETS.filter(p=>petOwned(s,p.key)).map(p=>p.key);
