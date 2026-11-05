@@ -33,7 +33,7 @@ export function sealCast(w,a,pose){const z=w.aseal,p=w.player;if(!z||z.broken||!
  if(z.hits.size>=need){z.broken=true;z.burst=1;z.brokeNow=true/* improve20-r21b-nov4 #4 */;breakSeal(w.save,z.id);w.effect?.('nova',z.x,z.cy+z.ry*.5,{element:'holy',radius:56,life:.9,max:.9});w.quake?.('aoe');w.text?.('SEAL BROKEN!',z.x,z.cy-30,'#fff1a8',true);w.text?.('Walk in for the cache',z.x,z.cy+30,'#f3d98a');sfx('unlock');w.events.persist?.();return true;}
  w.text?.(was?'A different ability!':`${z.hits.size} of ${need}`,z.x,z.cy-26,was?'#ffd27a':'#e9f6ff',true);sfx(was?'blocked':'ward');return true;}
 /* each move: the seal's words once a run as the hero comes near, and the cache when the hero steps in (or presses interact beside it) */
-export function sealTouch(w,pressed){const z=w.aseal,p=w.player;if(!z||!p||!w.level||w.ended)return null;/* improve20-r21b-nov4 #4: the hero walked on past the closed pocket */if(!z.broken&&p.x>z.x+POCKET.reach)z.passed=true;
+export function sealTouch(w,pressed){const z=w.aseal,p=w.player;if(!z||!p||!w.level||w.ended)return null;/* improve20-r21b-nov4 #4: the hero walked on past the closed pocket *//* improve23-r23s-nov4 #4 (kidsim6 #10: a boss retry starts past the pocket and was counted as a walk-by): only a hero who came within POCKET.see on this run has passed it */if(!z.broken&&sealDist(w,z)<POCKET.see)z.near=true;if(!z.broken&&z.near&&p.x>z.x+POCKET.reach)z.passed=true;
  /* the barrier's own words are drawn over it (sealLayer); a toast would sit on top of the pocket, so the approach line is a floating text */if(!z.broken&&!z.said&&sealDist(w,z)<POCKET.see){z.said=true;w.text?.(`Inside: ${rewardText(z.def)}`,z.x,z.cy-4,'#f3d98a');}
  if(!z.broken||z.looted)return null;if(Math.hypot(p.x-z.chest.x,(p.y-z.chest.y)*1.2)>(pressed?POCKET.chestR+10:POCKET.chestR))return null;
  const got=lootSeal(w.save,z.id);z.looted=true;if(!got)return null;z.got=got;earnTitles(w.save);
@@ -77,3 +77,8 @@ export function sealLayer(w,c,t,dt=1/60){const z=w.aseal;if(!z)return [];const s
  /* improve20-r20m-nov4 #2: the words are drawn last (over the hero walking past on the road), not in the pocket's depth slot */
  out.push({y:1e9,draw:()=>{if(!sealWordsDue(w,z))return;const nw=wokenCount(w.save),short=nw<z.def.awake;c.save();c.globalAlpha=1;drawPixelText(c,short?`NEEDS ${z.def.awake} ABILITIES: YOU HAVE ${nw}`:`CAST ${z.def.cast} DIFFERENT ABILITIES`,cx,by+WORDS_BELOW,{align:'center',color:short?'#ffd27a':'#eaffef',outline:'#18122a'});c.restore();}});
  return out;}
+/* improve23-r23s-nov4 #3 (kidsim6 #9, shots 02/08: GO was drawn over the seal's right pillar and dome at 1280x720): the seal's box in view units
+   (pillars, dome, pips, its words under it, and the chest), for gfx/stage-view.js to keep the GO arrow and the lane chevrons off it; null when off view */
+export function sealViewRect(w,vw=480){const z=w?.aseal;if(!z)return null;const ox=w.camX||0,oy=w.camTop||0,by=z.chest.y+6;
+ const r={left:z.x-z.rx-12-ox,right:z.x+z.rx+12-ox,top:by-DOME_H-14-oy,bottom:by+WORDS_BELOW+8-oy};return r.right<0||r.left>vw?null:r;}
+

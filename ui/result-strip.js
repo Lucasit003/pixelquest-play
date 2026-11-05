@@ -75,7 +75,7 @@ dialog[data-view=result] .you-got-ico{position:relative;display:inline-grid;plac
 dialog[data-view=result] .you-got-ico>.ico{filter:drop-shadow(0 0 2px var(--rar)) drop-shadow(0 0 5px var(--rar))}
 dialog[data-view=result] .you-got-text{display:flex;flex-direction:column;align-items:flex-start;line-height:1.05}
 dialog[data-view=result] .level-result .you-got-item strong{font-size:calc(var(--fs) * 1.35);color:#ffe9a8}
-dialog[data-view=result] .you-got-item small{font-size:calc(var(--fs) * .85);color:#e9dcc0}
+dialog[data-view=result] .you-got-item small{font-size:calc(var(--fs) * 1);color:#e9dcc0}
 .m-mode dialog[data-view=result] .you-got-item{padding:2px 6px 2px 4px;gap:4px}
 .m-mode dialog[data-view=result] .you-got-item img{width:24px;height:24px}
 .m-mode dialog[data-view=result] .you-got-compact .you-got-item small{display:none}
@@ -88,6 +88,6 @@ dialog[data-view=result] .you-got-item small{font-size:calc(var(--fs) * .85);col
 .m-mode dialog[data-view=result] .you-got-compact .you-got-row{flex-wrap:wrap;max-width:100%}
 .m-mode dialog[data-view=result] .you-got-found{width:100%;box-sizing:border-box;align-self:stretch}
 @media(max-height:420px){.m-mode dialog[data-view=result] .you-got-compact .you-got-label{display:none}.m-mode dialog[data-view=result] .you-got-compact .you-got-item{padding-top:1px;padding-bottom:1px}}
-dialog[data-view=result] .you-got-found{display:block;margin:0;max-width:100%;text-align:center;font-size:14px;line-height:1.2;color:#e9dcc0;white-space:normal;overflow-wrap:anywhere;text-wrap:balance}
+dialog[data-view=result] .you-got-found{display:block;margin:0;max-width:100%;text-align:center;font-size:16px;line-height:1.2;color:#e9dcc0;white-space:normal;overflow-wrap:anywhere;text-wrap:balance}
 @media(max-height:500px) and (min-width:600px){.m-mode dialog[data-view=result] .level-result>.you-got{grid-column:2;grid-row:1;align-self:start;margin:2px 0 4px}
  .m-mode dialog[data-view=result] .level-result>.level-result-body{grid-row:2 / 8;max-height:calc(100dvh - 228px)}}`;

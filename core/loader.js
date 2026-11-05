@@ -38,7 +38,7 @@ const CSS=`#pq-loading{position:fixed;inset:0;z-index:2147483000;display:grid;pl
 #pq-loading .pq-load-sub i{display:block;width:56px;height:14px;background:url(${new URL('ui/skin/divider.png',BASE).href}) right/auto 100% no-repeat;image-rendering:pixelated}
 #pq-loading .pq-load-sub i:last-child{transform:scaleX(-1)}
 #pq-loading .progress{width:100%;margin:4px 0 8px}#pq-loading .progress i{width:0;transition:width .2s steps(4)}
-#pq-loading small{color:#c2b08c;min-height:1.4em}
+#pq-loading small{color:#c2b08c;min-height:1.4em}#pq-loading small.pq-tap{color:#f1e6cc;animation:pq-tap .5s steps(3)}@keyframes pq-tap{0%{transform:scale(1.12)}100%{transform:none}}
 #pq-loading{background:#0b0806 url(${new URL('ui/skin/keyart.webp',BASE).href}) center/cover no-repeat;image-rendering:pixelated}
 #pq-loading::after{content:'';position:absolute;inset:0;background:linear-gradient(#0b080640,transparent 30%,transparent 62%,#0b0806d0);pointer-events:none}
 #pq-loading .pq-load-panel{position:absolute;inset:0;z-index:1;width:auto;justify-content:space-between;padding:max(6vh,16px) 16px max(5vh,14px);border:0;border-image:none}
@@ -140,20 +140,25 @@ export function prepareScene(name,{hero='warrior',pet,started=false}={}){if(!LIV
    props now (9 Oct, gfx/world.js TOTEM_SPRITE). */
 /* A scene whose art is still loading holds the world behind the loading panel: a level until its stage and atlases
    are in (enemies would otherwise fight unseen), the village until its ground is in. */
-async function hold(items,title,still,raised=false){if(!raised&&await groupReady(items))return;const w=C.world;if(!raised)raise();const was=w.paused;w.paused=true;
- screen();el.classList.add('pq-over');el.querySelector('[data-load-title]').textContent=title;paint(0,'Getting the stage ready…',true);
+/* improve23-r23t-nov4 #5 (kidsim6 #3: Sam's 26 taps on a panel that said only "Getting the stage ready…" for 61 s): the panel names what it loads
+   ("Loading Slime Bog…"), and a tap on it says it was caught and waits (the panel already covers the screen, so nothing under it is pressed) */
+export const loadNote=name=>name?`Loading ${name}…`:'Getting the stage ready…';
+export const tapNote=name=>`${loadNote(name)} Your tap waits until it is ready.`;
+function tapWait(e,name){if(!e)return;e.dataset.loadName=name||'';if(e.dataset.tapWired)return;e.dataset.tapWired='1';const on=ev=>{if(!e.classList.contains('pq-over')||e.classList.contains('pq-out'))return;ev.preventDefault?.();ev.stopPropagation?.();const n=e.querySelector('[data-load-note]');if(n){n.textContent=tapNote(e.dataset.loadName);n.classList.remove('pq-tap');void n.offsetWidth;n.classList.add('pq-tap');}};e.addEventListener('pointerdown',on,true);e.addEventListener('click',on,true);}
+async function hold(items,title,still,raised=false,name=''){if(!raised&&await groupReady(items))return;const w=C.world;if(!raised)raise();const was=w.paused;w.paused=true;
+ screen();el.classList.add('pq-over');el.querySelector('[data-load-title]').textContent=title;paint(0,loadNote(name),true);tapWait(el,name);
  await loadGroup(items,{cap:60000,onTick:p=>paint(Math.min(99,p))});paint(100);hide();lower();
  const modal=document.querySelector('#modal');if(still()&&!was&&!modal?.open)w.paused=false;}
-async function gate(id){const g=await groups(),l=g.levelInfo(id);return hold(g.group('level:'+id,{hero:C.hero()}),(l?.name||'The road').toUpperCase(),()=>C.world.level?.id===id);}
+async function gate(id){const g=await groups(),l=g.levelInfo(id);return hold(g.group('level:'+id,{hero:C.hero()}),(l?.name||'The road').toUpperCase(),()=>C.world.level?.id===id,false,l?.name||'');}
 let hubMod=null;
 /* townchunk-oct28: an arrival in the village (scenes/town.js hubArrival: spawn, home from a level, a room's door, fast travel) is
    held only until its view is in (core/asset-groups.js hubat); a walk beyond it is never held: the town draws the overview over a
    chunk still on its way and streams the rest. arrived() runs inside the arrival itself, so the panel is up before the next frame. */
 const arrivalItems=a=>G&&a?G.group('hubat:'+Math.round(a.x)+','+Math.round(a.y)):null;
 async function gateHub(){hubMod??=await import('../scenes/town.js');if(hubMod.hubState?.().room!=='village'||S.gated)return;
- const g=await groups(),a=hubMod.hubArrival?.();return hold(a?g.group('hubat:'+Math.round(a.x)+','+Math.round(a.y)):g.group('hub',{started:true}),'OAKHAVEN',()=>!C.world.level);}
+ const g=await groups(),a=hubMod.hubArrival?.();return hold(a?g.group('hubat:'+Math.round(a.x)+','+Math.round(a.y)):g.group('hub',{started:true}),'OAKHAVEN',()=>!C.world.level,false,'Oakhaven');}
 function arrived(a){if(!C||S.gated||document.querySelector('#modal[open][data-view=welcome]')||C.world.level)return;const items=arrivalItems(a);
- if(!items||!Lc){gateHub();return;}if(items.every(i=>settled(i,Lc)))return;raise();hold(items,'OAKHAVEN',()=>!C.world.level,true);}
+ if(!items||!Lc){gateHub();return;}if(items.every(i=>settled(i,Lc)))return;raise();hold(items,'OAKHAVEN',()=>!C.world.level,true,'Oakhaven');}
 
 /* lightload-oct27: a loading screen that holds a scene drops any music still downloading (core/audio.js holdMusic: the
    art behind the panel gets the whole link) and lets the wanted track start again once the last panel is down. */

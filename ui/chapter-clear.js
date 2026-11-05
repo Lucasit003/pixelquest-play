@@ -54,7 +54,7 @@ dialog[data-view=chapter-clear] .cc-title{margin:0;font-size:clamp(28px,6vw,48px
 .cc-while{font-size:16px;color:#cfc6b3}
 .cc-actions{margin-top:6px;justify-content:center}
 .cc-actions button{min-width:200px}
-@media (max-height:480px){.cc-inner{gap:4px}.cc-eyebrow{font-size:16px}.cc-eyebrow img{width:24px;height:24px}dialog[data-view=chapter-clear] .cc-title{font-size:30px}.cc-seal{width:auto;flex-direction:row;padding:4px 10px;gap:10px}.cc-seal .seal-pic{width:72px;height:72px}.chapter-seal.cc-seal.seal-won small{top:30px;left:42px}.cc-line{font-size:15px}.cc-line img{width:24px;height:24px}.cc-actions{margin-top:2px}.cc-actions button{min-height:40px}}
+@media (max-height:480px){.cc-inner{gap:4px}.cc-eyebrow{font-size:16px}.cc-eyebrow img{width:24px;height:24px}dialog[data-view=chapter-clear] .cc-title{font-size:30px}.cc-seal{width:auto;flex-direction:row;padding:4px 10px;gap:10px}.cc-seal .seal-pic{width:72px;height:72px}.chapter-seal.cc-seal.seal-won small{top:30px;left:42px}.cc-line{font-size:16px}.cc-line img{width:24px;height:24px}.cc-actions{margin-top:2px}.cc-actions button{min-height:40px}}
 .finale-keepsake{display:flex;align-items:center;justify-content:center;gap:8px;margin:2px 0;text-align:left}
 .finale-keepsake img{image-rendering:pixelated;flex:none}`;
 /* injects the card's styles once (the card owns its look; main.js keeps only the hook) */

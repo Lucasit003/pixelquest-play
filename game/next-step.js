@@ -264,6 +264,8 @@ function endGoal(save){
  const t=nextTask(save);if(t)return {id:'task-'+t.id,text:`Adventurer task: ${t.text}`,target:t.group==='Learning'?{kind:'library'}:t.pad&&levelOpen(save,t.pad)?{kind:'pad',id:t.pad}:{kind:'guild'}};
  /* oct24-endgame: the last word points at the last level, not back to the first */const last=LEVELS.find(l=>gameFinale(l.id))||levelById('e1');
  return {id:'replay',text:`Every adventure goal is complete! Replay ${last.name} on Legendary with a different loadout whenever you like.`,target:{kind:'pad',id:last.id,tier:'legendary'}};}
+/* improve23-r23t-nov4 #2 (kidsim6 #1): the level a failed first-topic test leads to (the adventure goal's level, else Goblin Camp while it is unwon), or null */
+export function testBreakStep(save){const n=adventure(save);if(n?.target?.kind==='pad'&&levelById(n.target.id))return n;const e1=levelById('e1');return e1&&!levelDone(save,'e1')?pad(e1):null;}
 export const nextStepLevel=save=>{const n=nextStep(save),t=(n.then||n).target;return t.kind==='pad'?levelById(t.id):null;};
 /* improve20-r9f-nov1 #5 (audit8: after losing v3 or v7 the defeat card's NEXT GOAL read "Next adventure: The Deep Below"): after a loss the
    main next step is the level just lost, by name, on its tier (the Rift says so), unless the defeat flow has something that ranks higher:

@@ -13,8 +13,17 @@ import {ESSENCE} from './chests.js';
    level map; the pocket sits on the far verge), gold, essence, chapter}. Placed on open floor between two fights (clear of every arena's lock, so no fight ever meets the pocket) and 70+ units from every secret and spot. */
 export const SEALS=Object.freeze([
  Object.freeze({id:'bog-seal',level:'e2',cast:2,awake:2,x:920,gold:60,essence:2,chapter:'elderwood'}),
+ /* improve23-r23s-nov4 #2 (the rollout, ABILITY_SEALS.md's table; slots from R20J's scan: outside every arena lock, 70+ from secrets, open verge, road open): e3 (2) and e7 (3, the lure toward m1's gate) */
+ Object.freeze({id:'warcamp-seal',level:'e3',cast:2,awake:2,x:900,gold:60,essence:2,chapter:'elderwood'}),
+ Object.freeze({id:'watch-seal',level:'e7',cast:3,awake:3,x:1715,gold:60,essence:2,chapter:'elderwood'}),
  Object.freeze({id:'bridge-seal',level:'m3',cast:3,awake:3,x:2255,gold:120,essence:3,chapter:'emberkeep'}),
- Object.freeze({id:'starfall-seal',level:'v4',cast:4,awake:4,x:2240,gold:180,essence:4,chapter:'veilmoor'})]);
+ /* improve23-r23s-nov4 #2: m4 and m7 need 4 */
+ Object.freeze({id:'barracks-seal',level:'m4',cast:4,awake:4,x:2080,gold:120,essence:3,chapter:'emberkeep'}),
+ Object.freeze({id:'throne-seal',level:'m7',cast:4,awake:4,x:2965,gold:120,essence:3,chapter:'emberkeep'}),
+ Object.freeze({id:'starfall-seal',level:'v4',cast:4,awake:4,x:2240,gold:180,essence:4,chapter:'veilmoor'}),
+ /* improve23-r23s-nov4 #2: the hotbar holds four, so v5 and v6 keep cast 4 and raise awake to 5 and 6 */
+ Object.freeze({id:'choir-seal',level:'v5',cast:4,awake:5,x:2080,gold:180,essence:4,chapter:'veilmoor'}),
+ Object.freeze({id:'veilgate-seal',level:'v6',cast:4,awake:6,x:1500,gold:180,essence:4,chapter:'veilmoor'})]);
 export const SEAL=Object.freeze(Object.fromEntries(SEALS.map(z=>[z.id,z])));
 /* the keepsake each chapter's first opened cache gives: an earned title (game/titles.js reads sealChapterDone) */
 export const SEAL_TITLES=Object.freeze({elderwood:['rune-breaker','Rune Breaker'],emberkeep:['ember-seal-breaker','Ember Seal Breaker'],veilmoor:['veil-unsealer','Veil Unsealer']});
@@ -59,3 +68,18 @@ export function sealRunLine(note){if(!note)return '';const z=SEAL[note.id];if(!z
  if(note.passed&&note.openable&&!note.broken)return `You passed a rune seal you can break. Next time, cast ${z.cast} different abilities into it (${rewardText(z)}).`;return '';}
 /* the lead back to a seal walked past: a won level's seal the hero can break now (not the level just played, whose card says it); '' when none */
 export function sealBackLine(s,exceptId=null){const z=SEALS.find(z=>z.level!==exceptId&&!sealBroken(s,z.id)&&sealOpenable(s,z)&&levelDone(s,z.level));return z?`A rune seal you can break waits in ${lvName(z.level)}.`:'';}
+/* improve23-r23s-nov4 #1 (kidsim6 #2: a kid short of a seal walked past it; its words were up 2-11 s and no card named it): one plain line where
+   a short kid already reads (the level's win and defeat cards, the quiz and practice summaries beside "Your next ability"). z = the seal;
+   p = the next power's wants (game/power-gate.js nextPower: {topics, subject, lvl, lvlOk, reachable}); o.topic = the topic this card is about
+   when it is that power's step (then "finish this topic"), o.stepTitle = the step's topic title otherwise; o.here = the card's own level.
+   '' when the kid is not short, the seal is broken, or there is no next power. The count is the seal's own, as on the map card. */
+const ORD=n=>n+(n%100>=11&&n%100<=13?'th':['th','st','nd','rd'][n%10]||'th');
+export function sealShortLine(s,z,p,o={}){if(!z||sealBroken(s,z.id))return '';const n=wokenCount(s);if(n>=z.awake||!p?.a)return '';
+ const t=p.topics|0,lv=p.lvlOk?'':`reach hero level ${p.lvl}`,more=(k,sub)=>`master ${k} more ${sub} topic${k===1?'':'s'}`;
+ const learn=!p.reachable?`keep training ${p.subject}`:t<=0?'':o.topic?(t===1?'finish this topic':`finish this topic and ${more(t-1,p.subject)}`):t===1&&o.stepTitle?`finish "${o.stepTitle}"`:more(t,p.subject);
+ const step=[learn,lv].filter(Boolean).join(' and ');if(!step)return '';
+ return `A rune seal ${o.here?'here':`in ${lvName(z.level)}`} needs ${z.awake} abilities${z.awake>n+1?`, you have ${n}`:''}: ${step} to wake your ${ORD(n+1)}.`;}
+/* the seal a short kid is told about on a lesson card: unbroken, its count one more than now (the next wake opens it), in a level the kid can
+   play or has played, else the first such seal in a chapter the kid has reached; or null */
+export function sealShortFor(s){const n=wokenCount(s),xs=SEALS.filter(z=>!sealBroken(s,z.id)&&z.awake===n+1);if(!xs.length)return null;
+ const here=xs.find(z=>levelOpen(s,z.level)||levelDone(s,z.level));if(here)return here;const chs=new Set(LEVELS.filter(l=>l.kind==='level'&&(levelOpen(s,l.id)||levelDone(s,l.id))).map(l=>l.chapter));return xs.find(z=>chs.has(z.chapter))||null;}

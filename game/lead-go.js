@@ -11,3 +11,5 @@ export const headLine=name=>`${name}: walk out of the south gate and pick it on 
 export const leadLabel=(save,id,label,shut=false)=>leadStarts(save,id,shut)?label:headLabel(levelById(id)?.name||id);
 /* improve20-r21b-nov4 #6 (audit15 minor): "then practise 3/10" read as "3 of 10"; the topic's own count (testReady(...).needed), never a literal */
 export const breakText=(name,g)=>{const left=Math.max(0,(g?.needed|0)-(g?.practice|0));return `Fight ${name}, then ${left} more practice answer${left===1?'':'s'} (${g?.practice|0} of ${g?.needed|0} done)`;};
+/* improve23-r23t-nov4 #2 (kidsim6 #1): a failed first-topic test's red, the quiz's split: "Fight Goblin Camp, then try the test again" */
+export const testBreakText=name=>`Fight ${name}, then try the test again`;

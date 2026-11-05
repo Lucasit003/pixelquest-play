@@ -70,7 +70,7 @@ export function runSecret(w,s){if(!w.level||w.found.has(s.id))return null;w.foun
  const r=S.levels[w.level.id]??={done:false,best:{time:null,score:0},plays:0};let loot;
  if(!w.paid.has(s.id)||!w.draft){w.paid.add(s.id);(r.secrets??=[]).push(s.id);const [kind,amt]=String(s.loot).split(':'),n=Math.max(1,Math.floor(+amt||(kind==='gold'?25:1)));
   if(kind==='potion'){/* ownerbal-oct29: a potion that does not fit the bag is sold on the spot (game/potions.js addPotions) */const pb=addPotions(S,n);loot=pb.added?{kind,n:pb.added,label:`${pb.added} health potion${pb.added>1?'s':''}`}:{kind:'bagfull',n:pb.gold,label:`${pb.gold} gold (potion bag full)`};}else{loot={kind:'gold',n,label:`${n} gold`};S.gold+=n;}}
- else{const n=w.tierKey==='normal'?1:2;w.run.cacheEssence=(w.run.cacheEssence|0)+n;loot={kind:'essence',n,label:`${n} Essence on victory`};}
+ else{const n=w.tierKey==='normal'?1:2;w.run.cacheEssence=(w.run.cacheEssence|0)+n;loot={kind:'essence',n,label:`${n} Essence if you win`/* improve23-r23t-nov4 #8 (kidsim6 #19): "DEFEATED … on victory" read as a win */};}
  if(w.draft){loot.count=[...w.found].filter(id=>w.draft.active.includes(id)).length;loot.of=w.draft.active.length;}
  w.run?.secrets.push({id:s.id,...loot});return loot;}
 /* ---- kills: elites count for Bonus; the Mimic pays its spot ---- */

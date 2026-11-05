@@ -11,7 +11,7 @@
 .acct-msg:empty{display:none}
 .acct-msg.is-error{color:#ffc2b0}
 .acct-who{margin:0;line-height:1.35}
-.acct-privacy{font-size:calc(var(--fs,18px)*.85);opacity:.9}
+.acct-privacy{font-size:calc(var(--fs,18px)*1);opacity:.9}
 .acct-soon{padding:10px 12px;border:1px solid #b89b5966;background:#161c2a80}
 .acct-soon p{margin:4px 0 0}
 .acct-del-open{justify-self:start}

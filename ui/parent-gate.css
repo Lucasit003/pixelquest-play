@@ -4,7 +4,7 @@
 #parent-gate .pgate-body{display:grid;gap:10px;padding:6px 14px 14px;overflow-y:auto;min-height:0}
 #parent-gate .pgate-ask{display:grid;gap:6px;min-width:0}
 #parent-gate h2{margin:0;font:700 calc(var(--fs,18px)*1.3)/1.1 var(--ui);color:var(--gold,#e8c060)}
-#parent-gate .eyebrow{font-size:14px;letter-spacing:.12em;color:var(--ink-2,#d9cba3)}
+#parent-gate .eyebrow{font-size:16px;letter-spacing:.12em;color:var(--ink-2,#d9cba3)}
 #parent-gate p{margin:0;line-height:1.3}
 #parent-gate .pgate-why,#parent-gate .pgate-how{font-size:var(--fs,18px)}
 #parent-gate .pgate-q{font:700 26px/1.2 var(--ui);color:#fff2d0;padding:6px 10px;background:#161c2a99;border:1px solid #b89b5966;overflow-wrap:anywhere}
@@ -45,10 +45,10 @@ html.m-mode #parent-gate{width:min(760px,96vw);height:fit-content;max-height:96d
 @media (max-height:560px){#parent-gate .pgate-hold-body{grid-template-columns:1fr}}
 #parent-gate input.pgate-entry[type=password]{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;font-size:30px}
 /* improve20-r14c-nov3 #1: the PIN step's device-lock note and the forgot-PIN wait notice (shown on the PIN screen while a reset runs) */
-#parent-gate .pgate-note{font-size:15px;line-height:1.3;color:var(--ink-2,#d9cba3)}
+#parent-gate .pgate-note{font-size:16px;line-height:1.3;color:var(--ink-2,#d9cba3)}
 #parent-gate .pgate-reset{font-size:16px;line-height:1.3;padding:6px 10px;background:#4a2a1acc;border:1px solid #e8a060aa;color:#ffe2c0}
 #parent-gate .pgate-forgot-ask{gap:10px}
-@media (max-height:560px){#parent-gate .pgate-note{font-size:14px}#parent-gate .pgate-reset{font-size:15px;padding:4px 8px}#parent-gate .pgate-forgot-ask{grid-template-columns:1fr}}
+@media (max-height:560px){#parent-gate .pgate-note{font-size:16px}#parent-gate .pgate-reset{font-size:16px;padding:4px 8px}#parent-gate .pgate-forgot-ask{grid-template-columns:1fr}}
 /* improve20-r16b-nov3 #2 (audit12 a4: the keypad jumped from y 54 to 96 between the sum and "Enter the same 4 digits again", so a parent who
    types by position hit the wrong keys): ONE dialog box for every step. The dialog has a fixed height and is centred, the words scroll inside
    their own column when they run long, and the pad sits at a fixed place (under the words on tall screens, pinned to the foot; beside them,

@@ -53,7 +53,7 @@ export const BARRACKS_CSS = `.grid.barracks-grid{grid-template-columns:repeat(au
 :where(.comp-facts){margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:3px}
 .comp-card .comp-wage{color:#e3b85a;margin:2px 0 0}
 .comp-hero .comp-chapter{margin:0;color:#e9dcc0}.comp-chapter small{display:block;opacity:.85}.comp-chapter[data-quest-state=active] strong,.comp-chapter[data-quest-state=open] strong{color:#ffe9a8}
-.comp-card .comp-away{opacity:.85;font-size:.92em}
+.comp-card .comp-away{opacity:.85;font-size:1em}
 .barracks-grid .comp-hero{grid-column:1/-1;gap:10px}
 .comp-hero .comp-top{gap:18px;align-items:center}
 .comp-hero .comp-big{width:192px;height:192px;background:radial-gradient(ellipse at 50% 80%,#e3b85a33,transparent 62%)}

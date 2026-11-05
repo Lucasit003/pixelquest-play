@@ -29,6 +29,7 @@ export function placeHallLabel(v,canvas){const doc=globalThis.document;if(!doc?.
  const [l,t]=spots.find(([l,t])=>!avoid.some(a=>meets(box(l,t),a)))||spots[0];hallEl.style.left=Math.round(l)+'px';hallEl.style.top=Math.round(t)+'px';return hallEl;}
 export function clearMapPanel(){riftEl?.remove();riftEl=null;hallEl?.remove();hallEl=null;el?.remove();el=null;pool.clear();contentKey=layoutKey=expanded='';sizes=[];compactSizes=[];}
 export function updateMapPanel(v,canvas){if(!globalThis.document?.body||!canvas?.getBoundingClientRect||!v.board){if(riftEl)riftEl.hidden=true;if(hallEl)hallEl.hidden=true;return false;}
+ /* improve23-r23s-nov4 #5 (kidsim6 #20: the card stayed in the page under modals and its seal line was read out there): while a modal covers the map, the card and its labels are hidden; the next frame after it closes shows them again */if(globalThis.document.getElementById('modal')?.open){if(el)el.hidden=true;if(riftEl)riftEl.hidden=true;if(hallEl)hallEl.hidden=true;return false;}
  const b=canvas.getBoundingClientRect(),scale=b.width/480;if(!scale)return false;placeRiftLabel(v,canvas);placeHallLabel(v,canvas);
  if(!el){el=make('aside','worldmap-info');el.id='worldmap-info';el.setAttribute('aria-label','Selected stop');
   /* a compact card opens to the full card on a tap, and closes again on the next */

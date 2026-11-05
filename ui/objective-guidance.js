@@ -70,7 +70,7 @@ const CSS=`
 .objective-guide .ico{transform-origin:center;filter:drop-shadow(1px 2px 0 #130d09)}
 .objective-guide.edge{width:52px;height:52px;box-sizing:border-box;justify-content:center;background:#17203b;border:3px solid #e8be62;box-shadow:2px 2px 0 #100d15;image-rendering:pixelated}
 .objective-guide.edge .ico{width:34px;height:34px}
-.objective-guide.edge .objective-guide-label{position:absolute;left:50%;top:calc(100% + 4px);transform:translateX(-50%);padding:1px 8px;font-size:14px}
+.objective-guide.edge .objective-guide-label{position:absolute;left:50%;top:calc(100% + 4px);transform:translateX(-50%);padding:1px 8px;font-size:16px}
 .objective-guide.edge.label-above .objective-guide-label{top:auto;bottom:calc(100% + 4px)}
 .objective-guide-label{max-width:none;white-space:nowrap;box-sizing:border-box;padding:3px 10px;color:#fff1c8;font:700 16px/1.05 var(--ui, sans-serif);text-shadow:1px 1px 0 #120c08;border:4px solid transparent;border-image:url("${new URL('./skin/pl-plate.png',import.meta.url)}") 8 8 8 8 fill/9px round}
 @keyframes objective-guide-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}

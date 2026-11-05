@@ -116,9 +116,9 @@ export function masteryCloser(save,t,road=learningRoad(save)){
 /* improve20-r16a-nov3 #3: awake = the names of abilities this mastery woke; the card repeats "<Ability> is awake!" under the banner */
 /* improve20-r20n-nov4 #3 (R20L C: "+6.67 Middle School Math"): the score line says a whole thing a kid understands, "+1 Math topic mastered";
    the fractional points and the stage are no longer shown (the params stay for callers) */
-export function masteryMomentHTML(save,t,{score=0,total=0,points='',stage='',subjectName='',rune='',awake=[]}={}){
+export function masteryMomentHTML(save,t,{score=0,total=0,points='',stage='',subjectName='',rune='',awake=[],sum=null/* improve23-r23t-nov4 #1: {have} when the summed rule passed it */}={}){
  const closer=masteryCloser(save,t);
- return `<div class="mastery-moment" data-mastery-moment><span class="mm-seal"><span class="am-seal" aria-hidden="true"></span></span><h2 class="mm-banner">Topic mastered!</h2><h3 class="mm-title">“${esc(t.title)}”</h3>${awake.length?`<p class="mm-awake" data-mm-awake>${awake.map(n=>`<b>${esc(n)}</b>`).join(' and ')} ${awake.length>1?'are':'is'} awake!</p>`:''}<p class="mm-score">${esc(score)} of ${esc(total)} right · +1 ${esc(subjectName)} topic mastered</p>${closer?`<p class="mm-closer" data-mm-closer>${closer}</p>`:''}${rune}</div>`;
+ return `<div class="mastery-moment" data-mastery-moment><span class="mm-seal"><span class="am-seal" aria-hidden="true"></span></span><h2 class="mm-banner">Topic mastered!</h2><h3 class="mm-title">“${esc(t.title)}”</h3>${awake.length?`<p class="mm-awake" data-mm-awake>${awake.map(n=>`<b>${esc(n)}</b>`).join(' and ')} ${awake.length>1?'are':'is'} awake!</p>`:''}<p class="mm-score">${sum?`${esc(sum.have)} different questions right across tries`:`${esc(score)} of ${esc(total)} right`} · +1 ${esc(subjectName)} topic mastered</p>${closer?`<p class="mm-closer" data-mm-closer>${closer}</p>`:''}${rune}</div>`;
 }
 /* improve20-m-nov1 (audit3 #18, IMPROVE20 round 3 item 13): the placement result was small text. It is now a short moment with existing
    art: the Library's open book stamping in over the victory sunburst, the starting grade (or "High School") on the victory banner, what the
@@ -133,6 +133,9 @@ export function placementMomentHTML({banner='',floor=false,lead='',opens='',scor
 export function testRuleText(need,total,skills){
  return `To pass: ${need} of ${total} right${skills>1?`, with at least one right in every skill (${skills} skills)`:''}.`;
 }
+/* improve23-r23t-nov4 #1: the first topic's summed test rule, and its count on the card ("6 of 8 right so far, they all count"), said plainly */
+export function testSumRuleText({have=0,need=8}={},skills=1){return `To pass: ${need} different questions right, counted across tries${skills>1?', with a right answer in every skill':''}.${have>0?` ${have} of ${need} right so far.`:''}`;}
+export function testSumHTML({have=0,need=8,covered=true}={}){const k=Math.max(0,need-have);return `<p class="test-sum" data-test-sum>${esc(have)} of ${esc(need)} right so far, they all count. ${k?`${k===1?'One more right answer':`${esc(k)} more right answers`} on a later try ${k===1?'passes':'pass'} the test.`:covered?'':'Get one right in every skill to pass.'}</p>`;}
 /* a test that did not pass: what it got, what was missing (the score, or a skill with no right answer yet, named) and that retakes are free */
 export function testMissHTML(t,r,need){
  const name=k=>`<b>${esc(t.skills?.[k]||k)}</b>`,gap=(r.uncovered||[]).map(name),list=gap.length>1?`${gap.slice(0,-1).join(', ')} and ${gap.at(-1)}`:gap[0];

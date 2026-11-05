@@ -166,7 +166,7 @@ export function stageBanner(c,b){
   /* GO sits at the right edge of the view, whatever its width (the runtime's x assumes 480); oct25-exploit: on phones it also keeps
      off the Map/Journal/Menu buttons (at 740x360 it was drawn under them) */
   /* ...and steps aside from HUD it would cover (the phone potion and action buttons sit on that edge) */
-  const x0=W-(480-R(b.x)),y0=Y(b.y),gw=BW('GO')*2+26,box=placeStageBanner({W,H,width:gw,height:30,top:y0-18,cx:x0-22-BW('GO')*2+gw/2,obstacles:stageBannerObstacles(c.canvas,W,H,true)});
+  const x0=W-(480-R(b.x)),y0=Y(b.y),gw=BW('GO')*2+26,box=placeStageBanner({W,H,width:gw,height:30,top:y0-18,cx:x0-22-BW('GO')*2+gw/2,obstacles:[...stageBannerObstacles(c.canvas,W,H,true),/* improve23-r23s-nov4 #3: a seal's pocket (gfx/stage-view.js sealViewRect) */...(b.avoid||[])]});
   const x=x0+R(box.left-(x0-22-BW('GO')*2)),y=y0+R(box.top-(y0-18));ok=text(c,'GO',x-22,y,{scale:2,bold:true,color:GOLD,align:'right'})&&drawSkin(c,'tip-right',x-18,y-15,{scale:2});
  }else if(b.kind==='boss'){
   /* small views (phones) get a compact card high in the frame, clear of the touch pads */

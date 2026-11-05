@@ -122,7 +122,7 @@ export function drawDamageText(c,f,alpha){
  /* The baked bitmap font (ui/font, Pixel Operator): 12 px numbers are the regular cut, 16 px crits
     the bold cut, popping to 2x for their first frames. The font file is the fallback. */
  if(drawPixelText(c,String(f.text),x,y,{scale:pop?2:1,color:f.color||'#f4ead2',outline:'#1a0f0b',bold:crit,align:'center'})!==false){c.restore();return;}
- c.font=`${crit?700:600} ${pop?size*2:size}px ${FONT}`;c.textAlign='center';c.textBaseline='alphabetic';
+ c.font=`${crit?700:600} ${pop?size*2:Math.max(16,size)}px ${FONT}`;/* improve23-r23f-nov4 #2: the font-file fallback never draws Pixel Operator under 16 px (12 px drops strokes) */c.textAlign='center';c.textBaseline='alphabetic';
  const text=String(f.text);
  c.fillStyle='#1a0f0b';
  for(const [dx,dy] of [[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[1,-1],[-1,1],[1,1]])c.fillText(text,x+dx,y+dy);

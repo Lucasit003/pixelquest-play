@@ -44,7 +44,13 @@ const T=[
  ['show-feast','Round feast table',1000,'show',53,47,'prop-big_round_table_0.png'],
  ['show-bookcase','Grand bookcase',1400,'show',75,71,'prop-cabinet_27.png'],
  ['show-alchemy','Alchemist\'s cabinet',2000,'show',85,77,'prop-cabinet_2.png'],
- ['show-hearth','Great stone hearth',3000,'show',89,108,'prop-fireplace_1.png']];
+ ['show-hearth','Great stone hearth',3000,'show',89,108,'prop-fireplace_1.png'],
+/* improve23-r23h-nov4 #1 (R22F: too few things to buy after m7; owner, 14 Oct: every new visual is made with PixelLab): three floor Showpieces
+   made with PixelLab (create_image_pixflux), not pack art, so their source is art/pixellab/<path> (a 'pixellab/' prefix); margins cropped,
+   unscaled. Prices fill the gaps 1,000-1,400, 1,400-2,000 and 2,000-3,000, so the hearth stays the last big goal. Floor pieces, not WALL_IDS. */
+ ['show-globe','Explorer\'s globe',1200,'show',39,53,'pixellab/showpieces-r23h/show-globe.png'],
+ ['show-hoard','Dragon\'s hoard',1600,'show',47,37,'pixellab/showpieces-r23h/show-hoard.png'],
+ ['show-dragon-skull','Dragon skull trophy',2400,'show',69,60,'pixellab/showpieces-r23h/show-dragon-skull.png']];
 /* improve20-r7a-nov1 #12 (improve20-x-nov1 report: "Wall pieces stand on the floor like all furniture"): the pieces made to hang (the banner,
    the shield trophy, the weapon rack and the armour plaque, all front views) go on the Home's back wall. Same art, no new pictures. */
 export const WALL_IDS=Object.freeze(['show-banner','show-shields','show-weapons','show-armour']);

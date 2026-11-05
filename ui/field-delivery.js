@@ -32,7 +32,7 @@ export const FIELD_DELIVERY_CSS=`.field-delivered .field-delivered-title{justify
 .fd-guard .topic-art .ta-spark{display:none}
 .fd-mirror .topic-art canvas{transform:scaleX(-1)}
 .fd-guard figcaption{display:flex;flex-direction:column;align-items:center;text-align:center;gap:2px}
-.fd-guard figcaption strong{color:#e3b85a;font-size:14px}
+.fd-guard figcaption strong{color:#e3b85a;font-size:16px}
 .fd-guard q{position:relative;background:#f3e6c8;color:#3a2412;padding:6px 10px;border-radius:6px;font-size:16px;line-height:1.2;quotes:none}
 .fd-guard q::before{content:'';position:absolute;left:50%;top:-6px;margin-left:-6px;border:6px solid transparent;border-top:0;border-bottom-color:#f3e6c8}
 .fd-got{display:flex;flex-direction:column;align-items:center;gap:4px;margin:6px 0}
@@ -45,5 +45,5 @@ export const FIELD_DELIVERY_CSS=`.field-delivered .field-delivered-title{justify
 .fd-chip small{color:#e9dcc0}
 .fd-did{margin:4px 0;text-align:left}
 .fd-did summary{cursor:pointer;text-align:center}
-.fd-did summary small{display:inline;color:#e3b85a;letter-spacing:1px;text-transform:uppercase;font-size:13px}
-@media(max-height:420px){.fd-guard .topic-art,.fd-guard .topic-art .ta-body,.fd-guard .topic-art canvas{width:64px;height:64px}.fd-guards{gap:16px;margin:2px 0}.fd-guard q{font-size:14px;padding:4px 8px}}`;
+.fd-did summary small{display:inline;color:#e3b85a;letter-spacing:1px;text-transform:uppercase;font-size:16px}
+@media(max-height:420px){.fd-guard .topic-art,.fd-guard .topic-art .ta-body,.fd-guard .topic-art canvas{width:64px;height:64px}.fd-guards{gap:16px;margin:2px 0}.fd-guard q{font-size:16px;padding:4px 8px}}`;

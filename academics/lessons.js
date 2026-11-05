@@ -238,9 +238,10 @@ export function testPracticeSkill(save,t,items,right,r){const wrong=k=>(items||[
    questions; exhausted skills already have two correct answers on every item and stay retired.
    Snapshot both coverage and readiness before any answers in this sitting are credited. */
 const liveTestSkills=(save,t)=>Object.keys(t.skills).filter(k=>POOL[t.id].some(id=>ITEMS[id].skill===k&&(save.answers[id]||0)<2));
-export function beginMasteryTest(save,t,random=Math.random){
+/* improve23-r23t-nov4 #3: `avoid` is pickItems's preference only (the first topic's test prefers questions that tap); the size, coverage and ids are unchanged */
+export function beginMasteryTest(save,t,random=Math.random,avoid=null){
     const requiredSkills=liveTestSkills(save,t);
-    return {items:pickItems(save,t,Math.max(TEST_SIZE,requiredSkills.length),random),requiredSkills,ready:testReady(save,t).ready};
+    return {items:pickItems(save,t,Math.max(TEST_SIZE,requiredSkills.length),random,avoid),requiredSkills,ready:testReady(save,t).ready};
 }
 /* A course's exam review (docs/design/COURSES.md): up to n unretired questions dealt round-robin across the given mastered
    units, each unit's pool shuffled first, so every unit is asked about; a retired question never comes back. */
@@ -337,7 +338,15 @@ export function finishTest(save,t,sitting){
     // Readiness is settled when the sitting starts (sitting.ready), never after its own ten
     // answers have been counted: otherwise a test started at practice 15/25 could complete the
     // practice count during the sitting and master the topic from the locked state.
-    const passed=score>=Math.ceil(PASS*total-1e-9) && covered && (typeof sitting.ready==='boolean'?sitting.ready:testReady(save,t).ready);
+    const isReady=typeof sitting.ready==='boolean'?sitting.ready:testReady(save,t).ready;
+    /* improve23-r23t-nov4 #1 (kidsim6 #1, lead decision 4 Nov under the owner's delegation; docs/reference/SPEC_DECISIONS.md): on the save's FIRST topic
+       (testSumOn: firstTopic and not mastered, the topic practiceNeeded gives 10) the test also passes once TEST_SUM_NEED different test questions have been
+       answered right across ready sittings, with a right answer in every skill among them (`testright` on the lesson record, distinct pool ids; additive,
+       kept by normalize(); save stays v9). The pass is still decided here, when a sitting ends; a sitting begun before testReady counts nothing. */
+    const sumOn=testSumOn(save,t)&&isReady,tr=sumOn?testSumAdd(save,t,sitting.right):null;
+    const sumCovered=!!tr&&skills.every(skill=>tr.some(id=>ITEMS[id]?.skill===skill)||!sitting.items.some(item=>item.skill===skill)&&!liveTestSkills(save,t).includes(skill));
+    const bySum=!!tr&&tr.length>=TEST_SUM_NEED&&sumCovered&&!(score>=Math.ceil(PASS*total-1e-9)&&covered);
+    const passed=(score>=Math.ceil(PASS*total-1e-9) && covered || bySum) && isReady;
     const missed=[...skills].filter(skill=>!sitting.items.some(item=>item.skill===skill)||sitting.items.some(item=>item.skill===skill && !sitting.right[item.id]));
     const r=rec(save,t);
     r.test=Math.max(r.test||0,Math.min(99,score));
@@ -346,5 +355,10 @@ export function finishTest(save,t,sitting){
     if(first){settleFirst(save,t);r.pts=topicPoints(t);keepOpen(save,t);}
     /* improve20-m-nov1 (audit3 #6): the skills with no right answer in this sitting, so a 9 of 10 that misses one skill can name it */
     const uncovered=skills.filter(skill=>!sitting.items.some(item=>item.skill===skill && sitting.right[item.id]));
-    return {graded:true,passed,first,xp:first?XP.mastered:0,score,total,missed,uncovered};
+    return {graded:true,passed,first,xp:first?XP.mastered:0,score,total,missed,uncovered,...(tr?{sum:{have:Math.min(TEST_SUM_NEED,tr.length),need:TEST_SUM_NEED,covered:sumCovered},bySum:bySum&&passed}:{})};
 }
+/* improve23-r23t-nov4 #1: the first topic's summed test; testSumHave = {have, need} while that rule applies (for the card's line), else null */
+export const TEST_SUM_NEED=Math.ceil(PASS*TEST_SIZE-1e-9);
+export const testSumOn=(save,t)=>!!t&&firstTopic(save,t)&&!mastered(save,t);
+export const testSumHave=(save,t)=>testSumOn(save,t)?{have:Math.min(TEST_SUM_NEED,(Array.isArray(save.lessons?.[t.id]?.testright)?save.lessons[t.id].testright:[]).filter(id=>POOL[t.id]?.includes(id)).length),need:TEST_SUM_NEED}:null;
+function testSumAdd(save,t,right){const r=rec(save,t),pool=new Set(POOL[t.id]||[]),have=new Set((Array.isArray(r.testright)?r.testright:[]).filter(id=>pool.has(id)));for(const [id,ok] of Object.entries(right||{}))if(ok===true&&pool.has(id))have.add(id);if(have.size)r.testright=[...have].slice(0,TEST_SIZE*2);return [...have];}

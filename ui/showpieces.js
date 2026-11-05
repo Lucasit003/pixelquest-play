@@ -55,7 +55,7 @@ export const SHOWPIECE_CSS=`.deco-show-head{margin:4px 0 8px}
 .m-mode .smith-goal{margin:0 0 4px;padding:3px 8px;gap:8px}
 .m-mode .smith-goal img{max-height:28px}
 .m-mode .smith-goal small{display:none}
-#gold-goal{display:inline-flex;align-items:center;gap:3px;font-size:.8em;color:#e9dcb6}
+#gold-goal{display:inline-flex;align-items:center;gap:3px;font-size:1em;color:#e9dcb6}
 #gold-goal[hidden]{display:none}
 #gold-goal img{image-rendering:pixelated;height:18px;width:auto}
 #gold-goal.ready .gold-goal-n{color:#9fe0a0}`;

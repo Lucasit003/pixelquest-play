@@ -55,27 +55,27 @@ export function wireBestiary(root,save,stillOpen){const wrap=root.querySelector(
  const key=e=>{if(!root.isConnected||!stillOpen()){document.removeEventListener('keydown',key,true);return;}if(e.key==='Escape'&&!wrap.hidden){e.preventDefault();e.stopImmediatePropagation();close();}};
  document.addEventListener('keydown',key,true);return {open,close};}
 export const BESTIARY_CSS=`dialog[data-view=journal] .hall-diary{margin:0 0 10px;padding:4px 8px;border:2px solid #e3b85a;border-radius:6px;background:rgba(10,12,30,.45)}
-dialog[data-view=journal] .hall-diary>summary{cursor:pointer;list-style-position:inside}dialog[data-view=journal] .hall-diary>summary h4{display:inline;margin:0;font-size:16px;color:var(--gold,#e3b85a);letter-spacing:1px;text-transform:uppercase}dialog[data-view=journal] .hall-diary>summary h4 small{color:#cfc3a8;font-size:14px;letter-spacing:0;text-transform:none}
+dialog[data-view=journal] .hall-diary>summary{cursor:pointer;list-style-position:inside}dialog[data-view=journal] .hall-diary>summary h4{display:inline;margin:0;font-size:16px;color:var(--gold,#e3b85a);letter-spacing:1px;text-transform:uppercase}dialog[data-view=journal] .hall-diary>summary h4 small{color:#cfc3a8;font-size:16px;letter-spacing:0;text-transform:none}
 dialog[data-view=journal] .hall-diary-lead{margin:4px 0 6px}
 dialog[data-view=journal] .hall-diary-pages{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px}
 dialog[data-view=journal] .diary-page{display:flex;gap:8px;align-items:center;padding:6px;border:1px solid #c1914966;border-radius:4px;background:#2a2d48}
 dialog[data-view=journal] .diary-page.diary-locked{background:#1c1d30;border-color:#c1914933}
 dialog[data-view=journal] .diary-art{image-rendering:pixelated;flex:none}
 /* improve20-r22p-nov4 #1 (shot d3: at 1280x720 the 13 px Pixel Operator lost every l, "E.derwood", "before it .anded"): 14 px, as most small text in style.css */
-dialog[data-view=journal] .diary-text{min-width:0}dialog[data-view=journal] .diary-text h5{margin:0 0 2px;font-size:15px;color:#ffe08a}dialog[data-view=journal] .diary-text p{margin:0 0 2px;font-size:14px;line-height:17px}
+dialog[data-view=journal] .diary-text{min-width:0}dialog[data-view=journal] .diary-text h5{margin:0 0 2px;font-size:16px;color:#ffe08a}dialog[data-view=journal] .diary-text p{margin:0 0 2px;font-size:16px;line-height:17px}
 dialog[data-view=journal] .diary-joke{color:#cfc3a8;font-style:italic}dialog[data-view=journal] .diary-lock{color:#a9a3b8}
 .m-mode dialog[data-view=journal] .hall-diary-pages{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
 dialog[data-view=journal] .bestiary-count{margin:0 0 4px}
-dialog[data-view=journal] .bestiary-chapter{margin:0 0 8px}dialog[data-view=journal] .bestiary-chapter>h4{margin:6px 0 4px;font-size:16px;color:var(--gold,#e3b85a);letter-spacing:1px;text-transform:uppercase}dialog[data-view=journal] .bestiary-chapter>h4 small{color:#cfc3a8;font-size:13px;letter-spacing:0;text-transform:none}
+dialog[data-view=journal] .bestiary-chapter{margin:0 0 8px}dialog[data-view=journal] .bestiary-chapter>h4{margin:6px 0 4px;font-size:16px;color:var(--gold,#e3b85a);letter-spacing:1px;text-transform:uppercase}dialog[data-view=journal] .bestiary-chapter>h4 small{color:#cfc3a8;font-size:16px;letter-spacing:0;text-transform:none}
 dialog[data-view=journal] .bestiary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--tile,124px),1fr));gap:4px}
 dialog[data-view=journal] .bestiary-tile{position:relative;display:grid;place-items:center;min-height:0;height:calc(var(--tile,124px) + 2px);padding:0;margin:0;overflow:hidden;border:1px solid #c1914966;border-radius:4px;background:#2a2d48;box-shadow:none;cursor:pointer;transform:none}
 dialog[data-view=journal] .bestiary-tile[data-state=unknown]{background:#1c1d30;border-color:#c1914933}dialog[data-view=journal] .bestiary-tile[data-boss=true]{border-color:#e3b85a}
 dialog[data-view=journal] .bestiary-tile:hover,dialog[data-view=journal] .bestiary-tile:focus-visible,dialog[data-view=journal] .bestiary-tile.on{outline:2px solid #ffe08a;outline-offset:1px;background:#353a5e}
 dialog[data-view=journal] .bestiary-tile-art{image-rendering:pixelated;pointer-events:none}
-dialog[data-view=journal] .bestiary-boss-tag{position:absolute;top:2px;left:3px;font-size:10px;letter-spacing:1px;color:#ffe08a;text-shadow:0 1px 0 #000;pointer-events:none}
+dialog[data-view=journal] .bestiary-boss-tag{position:absolute;top:2px;left:3px;font-size:16px;letter-spacing:1px;color:#ffe08a;text-shadow:0 1px 0 #000;pointer-events:none}
 dialog[data-view=journal] .bestiary-detail-wrap{position:fixed;inset:0;z-index:30;display:grid;place-items:center;background:#0008;padding:16px}dialog[data-view=journal] .bestiary-detail-wrap[hidden]{display:none}
 dialog[data-view=journal] .bestiary-detail{position:relative;display:flex;gap:16px;align-items:center;width:min(620px,100%);max-height:calc(100dvh - 32px);overflow:auto;padding:18px 20px;box-sizing:border-box}
 dialog[data-view=journal] .bestiary-detail-art{flex:none;width:160px;height:128px;image-rendering:pixelated}
-dialog[data-view=journal] .bestiary-detail-text{min-width:0;text-align:left;padding-right:28px}dialog[data-view=journal] .bestiary-detail-text .tag{font-size:14px;color:var(--gold,#e3b85a)}dialog[data-view=journal] .bestiary-detail-text h3{font-size:22px;margin:4px 0}dialog[data-view=journal] .bestiary-detail-text p{line-height:1.4;margin:6px 0 10px}
+dialog[data-view=journal] .bestiary-detail-text{min-width:0;text-align:left;padding-right:28px}dialog[data-view=journal] .bestiary-detail-text .tag{font-size:16px;color:var(--gold,#e3b85a)}dialog[data-view=journal] .bestiary-detail-text h3{font-size:22px;margin:4px 0}dialog[data-view=journal] .bestiary-detail-text p{line-height:1.4;margin:6px 0 10px}
 dialog[data-view=journal] .bestiary-detail>.bestiary-detail-close{position:absolute;top:6px;right:6px;left:auto;width:36px!important;min-width:36px;height:36px;min-height:36px!important;padding:0!important;margin:0;font-size:16px;line-height:1}
-@media (max-height:440px),(max-width:560px){dialog[data-view=journal] .bestiary-detail{padding:12px 14px;gap:10px}dialog[data-view=journal] .bestiary-detail-art{width:120px;height:96px}dialog[data-view=journal] .bestiary-detail-text h3{font-size:18px}dialog[data-view=journal] .bestiary-detail-text p{font-size:15px;margin:4px 0 6px}}`;
+@media (max-height:440px),(max-width:560px){dialog[data-view=journal] .bestiary-detail{padding:12px 14px;gap:10px}dialog[data-view=journal] .bestiary-detail-art{width:120px;height:96px}dialog[data-view=journal] .bestiary-detail-text h3{font-size:18px}dialog[data-view=journal] .bestiary-detail-text p{font-size:16px;margin:4px 0 6px}}`;

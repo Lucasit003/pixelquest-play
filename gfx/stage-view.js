@@ -17,6 +17,7 @@ import {clearLabelAt} from '../scenes/tier-fx.js';
 import {firstFlashAlpha,FIRST_BANNER} from '../scenes/rune-fx.js';
 import {GUARD} from '../scenes/boss-guard.js';
 import {hallTellUp} from '../scenes/hall-patterns.js';
+/* improve23-r23s-nov4 #3 */import {sealViewRect} from '../scenes/ability-seal-fx.js';
 const R=Math.round;
 /* ---- the swap point ------------------------------------------------------------------------------------- */
 let UI=null;
@@ -89,9 +90,10 @@ export function stageBanners(w){if(!w?.level)return [];const f=w.flow,k=w.flowT|
  /* improve20-r10b-nov2 #14 (kid sims nov2: Mia, Theo and Zoe stood in empty lanes between waves; the next wave waits for the hero to walk
     to its trigger, with no timer): after EMPTY_LANE_CUE s with no foe up, GO stops blinking and three code-drawn chevrons pulse just
     ahead of the hero, pointing the way on (a 'go' banner, so toasts never wait for it) */
+ /* improve23-r23s-nov4 #3 */const sr=sealViewRect(w,STAGE.camW||480);
  const lull=f==='go'?k-BEATS.clear:f==='walk'&&!step?k:-1,lane=lull>=EMPTY_LANE_CUE&&!!pl&&!w.enemies?.some?.(e=>e.hp>0&&!e.ally)&&!!w.nextArena?.();
- if(((f==='go'&&k>=BEATS.clear)||(f==='walk'&&k>1.2&&!step))&&(Math.floor(k*2.5)%2===0||!w.motion||lane))out.push({kind:'go',title:'GO →',x:452+(w.motion?R(Math.sin(k*6)*3):0),y:134,alpha:1});
- if(lane)out.push({kind:'go',way:true,title:'→',x:Math.max(8,Math.min(STAGE.camW-72,R(pl.x-(w.camX||0)+26))),y:R(pl.y-(w.camTop||0)-30-(pl.z||0)),phase:w.motion===false?null:k,alpha:1});
+ if(((f==='go'&&k>=BEATS.clear)||(f==='walk'&&k>1.2&&!step))&&(Math.floor(k*2.5)%2===0||!w.motion||lane))out.push({kind:'go',title:'GO →',x:452+(w.motion?R(Math.sin(k*6)*3):0),y:134,alpha:1,/* improve23-r23s-nov4 #3: the arrow's lane keeps clear of a seal's pocket */...(sr?{avoid:[sr]}:{})});
+ if(lane)out.push((b=>/* improve23-r23s-nov4 #3: the chevrons (3 x 22 units wide) step below a seal they would cross */sr&&b.x<sr.right&&b.x+66>sr.left&&b.y-8<sr.bottom&&b.y+8>sr.top?{...b,y:R(sr.bottom+10)}:b)({kind:'go',way:true,title:'→',x:Math.max(8,Math.min(STAGE.camW-72,R(pl.x-(w.camX||0)+26))),y:R(pl.y-(w.camTop||0)-30-(pl.z||0)),phase:w.motion===false?null:k,alpha:1}));
  if(f==='bossintro'){const e=w.boss||w.enemies.find(x=>x.boss);if(e)out.push({kind:'boss',title:(w.level.bossName||e.name).toUpperCase(),sub:w.level.name.toUpperCase(),line:e.intro||'',
   slide:Math.min(1,Math.max(0,(k-.25)/.35)),open:Math.min(1,k/.3),alpha:1,enemy:e.key,hero:heroCardBox(w)});}
  /* a second life: the risen form's own name card, its title as the subtitle and its line under it */

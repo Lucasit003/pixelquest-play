@@ -425,10 +425,10 @@ dialog[data-view=welcome] #modal-content{padding:0;overflow:hidden;height:100%}
 .title-menu button small{font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink-2)}
 .title-menu button:focus-visible{outline-offset:2px}
 /* improve20-r12c-nov2 #1: the returning player's recap under the hero's name on Continue (game/recap.js); one or two short lines, smaller */
-.title-menu button small.title-recap{display:flex;flex-direction:column;align-items:center;font-size:14px;line-height:1.3;margin-top:4px;padding:0 6px;color:var(--ink-1,#f3e6c8)}
+.title-menu button small.title-recap{display:flex;flex-direction:column;align-items:center;font-size:16px;line-height:1.3;margin-top:4px;padding:0 6px;color:var(--ink-1,#f3e6c8)}
 .title-menu button small.title-recap span{display:block;white-space:normal;text-wrap:balance}
 /* a short phone: the Next line only (the town greeting carries both) */
-@media(max-height:420px){.title-menu button small.title-recap{font-size:13px;margin-top:1px}.title-menu button small.title-recap .recap-last{display:none}}
+@media(max-height:420px){.title-menu button small.title-recap{font-size:16px;margin-top:1px}.title-menu button small.title-recap .recap-last{display:none}}
 .title-foot{position:absolute;bottom:16px;margin:0;color:var(--faint);letter-spacing:2px;text-transform:uppercase}
 .select-pane{justify-content:flex-start;overflow:auto;padding:24px 32px}
 .select-head{display:flex;align-items:center;gap:16px;width:min(1180px,100%);margin-bottom:10px}
@@ -749,7 +749,7 @@ dialog[data-view=library] #modal-content{background:none!important}
 #signature{margin-top:2px;line-height:1.1}
 /* playtest oct14: a bare "0 / 120" or "0 / 2" meant nothing; keep the mechanic's name, small, before its value */
 #signature{justify-content:flex-start}
-#signature span{font-size:.78em;letter-spacing:.5px}
+#signature span{font-size:1em;letter-spacing:.5px}
 #signature:empty{display:none}
 .hud-sub{display:flex;align-items:center;gap:6px;margin:2px 0 0 4px;pointer-events:auto}
 .wallet{position:static;margin:0 6px 0 0}
@@ -1226,13 +1226,13 @@ dialog[data-view=pause] #modal-content{padding:6px 10px 10px;overflow:auto}
 .inv-slot{display:grid;justify-items:center;gap:3px;width:72px;border:0}
 .inv-slot .inv-ico{width:54px;height:54px;display:grid;place-items:center;background:#171622;border:3px solid var(--rar);box-shadow:inset 0 0 0 2px #0009,0 2px 0 #0007}
 .inv-slot .inv-ico:empty::before{content:'';width:22px;height:22px;border:2px dashed #ffffff22}
-.inv-slot small{font:700 calc(var(--fs) * .85)/1 var(--ui);color:var(--ink-2);letter-spacing:.5px}
+.inv-slot small{font:700 calc(var(--fs) * 1)/1 var(--ui);color:var(--ink-2);letter-spacing:.5px}
 .inv-slot.picked .inv-ico,.inv-cell.picked{outline:2px solid var(--gold,#e7c77e);outline-offset:2px}
 .inv-slot:hover .inv-ico,.inv-cell:not(.missing):hover{filter:brightness(1.2)}
 .inv :is(.gear-ico,.inv-petcv,.ico){image-rendering:pixelated}
 .inv-stats{grid-column:1/-1;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;width:100%;margin:6px 0 0}
 .inv-stats div{text-align:center;padding:4px 0;background:#0003}
-.inv-stats dt{font-size:calc(var(--fs) * .8);color:var(--ink-2)}
+.inv-stats dt{font-size:calc(var(--fs) * 1);color:var(--ink-2)}
 .inv-stats dd{margin:0;font:700 var(--fs-2,16px)/1.1 var(--ui);color:var(--ink)}
 .inv-side{display:flex;flex-direction:column;gap:10px;min-width:0}
 .inv-detail{display:grid;grid-template-columns:72px 1fr;gap:12px;align-items:start;min-height:150px;padding:12px;border:calc(4*var(--u)) solid transparent;border-image:url(ui/skin/pl-card-plain.png) 12 fill/calc(12*var(--u)) stretch}
@@ -1240,8 +1240,8 @@ dialog[data-view=pause] #modal-content{padding:6px 10px 10px;overflow:auto}
 .inv-detail p{margin:4px 0}
 .inv-detail button{margin-top:6px}
 .inv-big{width:72px;height:72px;display:grid;place-items:center;background:#171622;border:3px solid var(--rar,#4a4858);box-shadow:inset 0 0 0 2px #0009}
-.inv-tag{display:block;font:700 calc(var(--fs) * .85)/1.2 var(--ui);letter-spacing:1px;text-transform:uppercase}
-.inv-count{display:flex;gap:4px 10px;flex-wrap:wrap;align-items:baseline;margin:0;font-size:calc(var(--fs) * .9)}
+.inv-tag{display:block;font:700 calc(var(--fs) * 1)/1.2 var(--ui);letter-spacing:1px;text-transform:uppercase}
+.inv-count{display:flex;gap:4px 10px;flex-wrap:wrap;align-items:baseline;margin:0;font-size:calc(var(--fs) * 1)}
 .inv-count span{color:var(--ink-2)}
 .inv-bag{display:grid;grid-template-columns:repeat(auto-fill,minmax(46px,1fr));gap:6px}
 .inv-cell{position:relative;aspect-ratio:1;display:grid;place-items:center;background:#171622!important;border:2px solid var(--rar)!important;box-shadow:inset 0 0 0 2px #0008}
@@ -1260,11 +1260,11 @@ dialog[data-view=pause] #modal-content{padding:6px 10px 10px;overflow:auto}
 .title-screen[data-step=title] .title-bg{visibility:hidden}
 .title-screen[data-step=title]::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 34% 46% at 50% 56%,#0b080666,transparent 70%),linear-gradient(transparent 62%,#0b080699);pointer-events:none}
 /* High School by course (docs/design/COURSES.md step 2) */
-.course-row .course-ap{font-size:calc(var(--fs) * .75);vertical-align:middle;margin-left:4px}
+.course-row .course-ap{font-size:calc(var(--fs) * 1);vertical-align:middle;margin-left:4px}
 /* improve20-r8c-nov1 #1: the stated grade's first High School course */
-.course-row .course-start{font-size:calc(var(--fs) * .75);vertical-align:middle;margin-left:4px;background:#2f6b3a;color:#f3f0d8;border-color:#5fae6a}
+.course-row .course-start{font-size:calc(var(--fs) * 1);vertical-align:middle;margin-left:4px;background:#2f6b3a;color:#f3f0d8;border-color:#5fae6a}
 .course-soon{margin:4px 0 8px;line-height:1.4}
-.ap-note{font-size:calc(var(--fs) * .8);margin:6px 0 0;opacity:.8}
+.ap-note{font-size:calc(var(--fs) * 1);margin:6px 0 0;opacity:.8}
 .hs-start{margin:10px 0;padding:8px 12px;border-left:3px solid var(--gold,#e7c77e);background:rgba(231,199,126,.08)}.hs-start .lesson-actions{margin-top:6px;display:flex;flex-wrap:wrap;gap:6px}
 /* Decorate the Home (game/furniture.js) */
 .deco-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
@@ -1278,7 +1278,7 @@ dialog[data-view=pause] #modal-content{padding:6px 10px 10px;overflow:auto}
 .course-review{margin:4px 0 6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 /* the course page (docs/design/COURSE_QUALITY.md) */
 .course-page h3{margin:14px 0 6px}
-.course-table{width:100%;border-collapse:collapse;font-size:calc(var(--fs) * .9)}
+.course-table{width:100%;border-collapse:collapse;font-size:calc(var(--fs) * 1)}
 .course-table th,.course-table td{text-align:left;padding:5px 8px;border-bottom:1px solid #4a321f88;vertical-align:middle}
 .course-table th{font-weight:700;opacity:.85}
 .course-table button{padding:2px 10px}
@@ -1371,11 +1371,11 @@ dialog[data-view=library] .grade-ladder[hidden]{display:none!important}
 @media(max-height:700px){
  dialog[data-view=unlock] .edu-unlock{margin:0 auto;padding:8px 16px;max-width:760px}
  dialog[data-view=unlock] .edu-unlock .edu-unlock-rune{float:left;width:48px;height:48px;background-size:auto 48px;background-position:-96px 0;margin:0 8px 0 0}
- dialog[data-view=unlock] .edu-unlock .edu-unlock-eyebrow{font-size:12px;letter-spacing:2px}
- dialog[data-view=unlock] .edu-unlock .edu-unlock-ribbon{margin:4px 0;font-size:12px}
+ dialog[data-view=unlock] .edu-unlock .edu-unlock-eyebrow{font-size:16px;letter-spacing:2px}
+ dialog[data-view=unlock] .edu-unlock .edu-unlock-ribbon{margin:4px 0;font-size:16px}
  dialog[data-view=unlock] .edu-unlock .edu-unlock-name{font-size:28px;margin:4px 0;color:#24180f}
  dialog[data-view=unlock] .edu-unlock .edu-unlock-meta,dialog[data-view=unlock] .edu-unlock .edu-unlock-why,dialog[data-view=unlock] .edu-unlock .edu-unlock-slot{margin:6px 0}
- dialog[data-view=unlock] .edu-unlock .edu-unlock-quote{margin:6px auto;max-width:65ch;font-size:14px}
+ dialog[data-view=unlock] .edu-unlock .edu-unlock-quote{margin:6px auto;max-width:65ch;font-size:16px}
  dialog[data-view=unlock] .edu-unlock .edu-unlock-desc{max-width:65ch;margin:6px auto}
  dialog[data-view=unlock] .edu-unlock :is(.edu-unlock-next,.edu-unlock-next~.edu-read){margin-top:4px}
  dialog[data-view=unlock] .edu-unlock-rays{display:none}
@@ -1421,7 +1421,7 @@ dialog[data-view=community] .modal-head .eyebrow{display:none}
  dialog[data-view=community] .modal-head h2{font-size:24px;margin:2px 0 10px}
  dialog[data-view=community] .modal-head p{display:none}
  .community-board>section:nth-child(2)>h3{display:none}
- #suggestion-help{font-size:14px;line-height:1.2;margin:0 0 10px}
+ #suggestion-help{font-size:16px;line-height:1.2;margin:0 0 10px}
  #suggestion-category legend{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
  #suggestion-form{gap:6px}#suggestion-text{min-height:76px;height:76px;padding:6px 8px}
  .board-categories span{min-height:40px}
@@ -1455,7 +1455,7 @@ dialog[data-view=community] .modal-head .eyebrow{display:none}
 .pixel-select{position:relative;width:100%;z-index:2}
 .settings-grid .pixel-select{flex:0 1 52%;min-width:0;max-width:52%;width:auto}
 .pixel-select-button{position:relative;width:100%;text-align:left;padding:8px 38px 8px 12px;line-height:1.2}
-.pixel-select-button::after{content:'▼';position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--gold);font-size:12px;text-shadow:0 2px #0d0806}
+.pixel-select-button::after{content:'▼';position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--gold);font-size:16px;text-shadow:0 2px #0d0806}
 .pixel-select[data-open=true]{z-index:30}
 .pixel-select-menu{position:absolute;z-index:31;left:0;right:0;top:calc(100% + 4px);max-height:min(240px,36dvh);overflow:auto;padding:5px;border:calc(5*var(--u)) solid transparent;border-image:url(ui/skin/pl-plate.png) 8 8 8 8 fill/calc(12*var(--u)) round;background:var(--wood-1);box-shadow:0 6px 0 #0d0806;scrollbar-width:thin;scrollbar-color:var(--gold-deep) var(--wood-1)}
 .pixel-select-menu[hidden]{display:none}
@@ -1476,7 +1476,7 @@ html:not(.m-mode) #hud .bar.mp{margin-right:84px}
 /* Keep the village destination map and its complete key on screen together. */
 .pq-village-map{width:min(100%,max(240px,calc((100svh - 320px)*4/3)));max-width:480px}
 dialog[data-view=village-map] .modal-head{padding:4px 0 8px;margin-bottom:8px}
-dialog[data-view=village-map] .modal-head p{font-size:14px;line-height:1.25}
+dialog[data-view=village-map] .modal-head p{font-size:16px;line-height:1.25}
 dialog[data-view=village-map] .pq-map-layout{gap:14px;padding:2px}
 dialog[data-view=village-map] .pq-map-key li{padding:1px 0;line-height:1.25}
 dialog[data-view=village-map] .pq-map-key p{margin:6px 0 0}
@@ -1496,13 +1496,13 @@ dialog[data-view=village-map] .pq-map-key p{margin:6px 0 0}
 .select-pane .pixel-select-menu{top:auto;bottom:calc(100% + 4px);max-height:none;padding:3px}
 .select-pane .pixel-select-option{min-height:30px;padding:5px 8px;font-size:16px}
 .select-pane .er-stats #begin{min-height:34px;padding:5px 8px;font-size:16px}
-@media(max-height:740px){.select-pane .er-bust{display:none}.select-pane .er-note{display:none}.select-pane .er-stats{border-width:8px}.select-pane .er-rows{display:flex;flex-direction:row;gap:12px}.select-pane .er-row{display:flex;gap:4px;font-size:14px}.select-pane .er-row i,.select-pane .er-level{display:none}.select-pane .er-title h3{font-size:22px}.select-pane .first-power{font-size:14px}.select-pane .er-list{padding-top:4px}.select-pane .select-head h2{font-size:26px;margin:0}}
-@media(max-height:530px){.select-pane .eyebrow,.select-pane .er-title .tag{display:none}.select-pane .er-stats .fantasy{font-size:14px}.select-pane .hero-select.er .er-list .hero-card{padding:5px 8px}.select-pane .er-stage .er-hero.detail-sprite{width:220px;height:220px}}
+@media(max-height:740px){.select-pane .er-bust{display:none}.select-pane .er-note{display:none}.select-pane .er-stats{border-width:8px}.select-pane .er-rows{display:flex;flex-direction:row;gap:12px}.select-pane .er-row{display:flex;gap:4px;font-size:16px}.select-pane .er-row i,.select-pane .er-level{display:none}.select-pane .er-title h3{font-size:22px}.select-pane .first-power{font-size:16px}.select-pane .er-list{padding-top:4px}.select-pane .select-head h2{font-size:26px;margin:0}}
+@media(max-height:530px){.select-pane .eyebrow,.select-pane .er-title .tag{display:none}.select-pane .er-stats .fantasy{font-size:16px}.select-pane .hero-select.er .er-list .hero-card{padding:5px 8px}.select-pane .er-stage .er-hero.detail-sprite{width:220px;height:220px}}
 
 .select-pane #hero-nickname{background:#14172a;color:var(--ink);border:2px solid var(--gold-deep);box-shadow:inset 0 2px #080b15;font-family:var(--ui);border-radius:0}
 .select-pane #hero-nickname::placeholder{color:#a99d84}
 .select-pane .er-stats{padding:24px 26px 22px}
-@media(min-width:760px){dialog[data-view=smith] .grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}dialog[data-view=smith] .card{padding:8px}dialog[data-view=smith] .card h3{font-size:18px;margin:4px 0}dialog[data-view=smith] .card p{font-size:14px;line-height:1.1;margin:4px 0}dialog[data-view=smith] .card button{font-size:14px;min-height:30px;padding:3px 6px}dialog[data-view=smith] .smith-ico img{width:32px;height:32px}dialog[data-view=smith] .tag{font-size:12px}}
+@media(min-width:760px){dialog[data-view=smith] .grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}dialog[data-view=smith] .card{padding:8px}dialog[data-view=smith] .card h3{font-size:18px;margin:4px 0}dialog[data-view=smith] .card p{font-size:16px;line-height:1.1;margin:4px 0}dialog[data-view=smith] .card button{font-size:16px;min-height:30px;padding:3px 6px}dialog[data-view=smith] .smith-ico img{width:32px;height:32px}dialog[data-view=smith] .tag{font-size:16px}}
 
 /* Large selection showcase, independent of the smaller in-world actor scale. */
 .select-pane .er-stage .er-hero.detail-sprite{width:min(100%,440px,72svh);height:auto;aspect-ratio:1;max-height:100%;object-fit:contain}
@@ -1541,9 +1541,9 @@ dialog[data-view=village-map] .pq-map-key p{margin:6px 0 0}
 /* Armory selection and a separate, reversible setup step. */
 .title-screen[data-step=setup] .title-pane{opacity:0;pointer-events:none;visibility:hidden}
 .title-screen[data-step=setup] .select-pane{padding:clamp(8px,2vh,20px) clamp(12px,2vw,28px);overflow:hidden;background:#141e2c}
-.select-progress{display:block;color:#c6ab73;font-size:13px;letter-spacing:2px;margin-top:3px}
+.select-progress{display:block;color:#c6ab73;font-size:16px;letter-spacing:2px;margin-top:3px}
 .select-pane .class-role{color:#edd091;font-size:20px;margin:0}
-.select-pane .class-traits{color:#adbfc9;font-size:15px;line-height:1.5;margin:4px 0 10px}
+.select-pane .class-traits{color:#adbfc9;font-size:16px;line-height:1.5;margin:4px 0 10px}
 .select-pane .er-stats .tag,.select-pane .first-power,.select-pane .er-note{display:none}
 .select-pane .hero-pick-actions{display:grid;gap:10px;margin-top:14px}
 .select-pane .hero-setup{display:none}
@@ -1562,7 +1562,7 @@ dialog[data-view=village-map] .pq-map-key p{margin:6px 0 0}
 .select-pane .armory-banner{position:absolute;top:9%;width:54px;height:112px;background:url(ui/skin/armory/banner.png) center/contain no-repeat;image-rendering:pixelated;filter:brightness(.8);z-index:-1}
 .select-pane .armory-banner.left{left:9%}.select-pane .armory-banner.right{right:9%}
 .select-pane .armory-sword{position:absolute;top:20%;left:50%;width:24px;height:100px;transform:translateX(-50%);background:url(ui/skin/armory/sword.png) center/contain no-repeat;image-rendering:pixelated;opacity:.65;z-index:-1}
-@media(max-height:560px){.select-pane .select-head{padding-bottom:6px;margin-bottom:8px}.select-pane .class-traits{font-size:14px;margin:2px 0}.select-pane .hero-pick-actions{margin-top:6px;gap:6px}.select-pane .hero-setup{gap:6px}.select-pane .er-stats{padding:14px}.select-pane .er-title h3{font-size:25px}}
+@media(max-height:560px){.select-pane .select-head{padding-bottom:6px;margin-bottom:8px}.select-pane .class-traits{font-size:16px;margin:2px 0}.select-pane .hero-pick-actions{margin-top:6px;gap:6px}.select-pane .hero-setup{gap:6px}.select-pane .er-stats{padding:14px}.select-pane .er-title h3{font-size:25px}}
 
 .title-screen[data-step=setup] .select-pane .hero-select.er .er-list{display:none}
 .select-pane .er-stage{background:radial-gradient(ellipse at 20% 10%,#e3a85322,transparent 55%),linear-gradient(180deg,transparent 66%,#0c142366 67%),repeating-linear-gradient(0deg,#38424c 0 39px,#1e2934 40px 43px)}
@@ -1572,7 +1572,7 @@ dialog[data-view=village-map] .pq-map-key p{margin:6px 0 0}
 .select-pane .hero-setup .pixel-select-option[aria-selected=true],.select-pane .hero-setup .pixel-select-option:hover{border-color:#c8aa68;background:#394454}
 
 .select-pane .hero-profile-summary{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;padding:10px 0;border-top:1px solid #a88b5455}
-.select-pane .hero-profile-summary span{font-size:11px;letter-spacing:1px;color:#bda773}
+.select-pane .hero-profile-summary span{font-size:16px;letter-spacing:1px;color:#bda773}
 .select-pane .hero-profile-summary strong{font-size:17px;color:#f2dfb3;overflow-wrap:anywhere}
 .select-pane .hero-profile-summary span:nth-of-type(2){grid-column:2;grid-row:1}
 .select-pane .hero-profile-summary strong:last-child{grid-column:2;grid-row:2}
@@ -1588,10 +1588,10 @@ dialog[data-view=village-map] .pq-map-key p{margin:6px 0 0}
 .field-mission summary,.answer-review summary{cursor:pointer;color:#e4c37c}
 .field-mission p,.answer-review p{font-size:17px;line-height:1.3}.answer-review form{display:flex;gap:10px;align-items:end}.answer-review label{display:grid;gap:6px}.answer-review input{min-width:0;width:180px}
 .supply-groups{display:flex;gap:14px;margin:12px 0}.supply-groups span{display:block;max-width:130px;padding:8px;color:#e6be67;border:1px solid #917b52;background:#25334b;letter-spacing:3px}
-@media(max-height:600px){dialog[data-view=field-mission] .modal-head{padding:0;margin-bottom:8px}dialog[data-view=field-mission] .modal-head h2{font-size:25px}.field-mission h3{font-size:19px;line-height:1.15}.field-mission p{font-size:15px;margin:6px 0}.field-mission details{margin:6px 0;padding:6px}.supply-groups{margin:6px 0}.field-mission .modal-actions{margin:6px 0}.field-mission button{min-height:30px;padding:5px 10px;font-size:16px}.adventure-plan>div{padding:10px}.adventure-plan h3{font-size:19px}.adventure-plan p{font-size:15px}}
+@media(max-height:600px){dialog[data-view=field-mission] .modal-head{padding:0;margin-bottom:8px}dialog[data-view=field-mission] .modal-head h2{font-size:25px}.field-mission h3{font-size:19px;line-height:1.15}.field-mission p{font-size:16px;margin:6px 0}.field-mission details{margin:6px 0;padding:6px}.supply-groups{margin:6px 0}.field-mission .modal-actions{margin:6px 0}.field-mission button{min-height:30px;padding:5px 10px;font-size:16px}.adventure-plan>div{padding:10px}.adventure-plan h3{font-size:19px}.adventure-plan p{font-size:16px}}
 @media(max-width:700px){.adventure-plan{grid-template-columns:1fr}.field-mission form,.answer-review form{flex-wrap:wrap}.field-mission h3{font-size:18px}}
 .field-mission [hidden]{display:none!important}.field-mission h3{text-transform:none;letter-spacing:0;font-weight:400}.field-mission .modal-actions{display:flex;flex-wrap:wrap;gap:8px}.field-mission #field-answer{background:#111c30;color:#fff0cb;border:1px solid #baa063;padding:7px;font:inherit}
-@media(max-height:600px){dialog[data-view=field-mission] .modal-head>.eyebrow{display:none}.field-mission .subtle{font-size:13px}.field-mission .edu-read{min-height:26px}.field-mission form{margin:6px 0}}
+@media(max-height:600px){dialog[data-view=field-mission] .modal-head>.eyebrow{display:none}.field-mission .subtle{font-size:16px}.field-mission .edu-read{min-height:26px}.field-mission form{margin:6px 0}}
 
 /* Journal visual review: stable navigation, readable entries and quieter table rules. */
 dialog[data-view=journal]{height:min(760px,92dvh)}
@@ -1606,19 +1606,19 @@ dialog[data-view=journal] .journal-row:nth-child(even){background:#ffffff06}
 dialog[data-view=journal] .journal-row:first-child{position:sticky;top:0;z-index:1;background:#20213c;min-height:34px;color:var(--gold)}
 dialog[data-view=journal] .journal-row> :not(:first-child){text-align:center}
 dialog[data-view=journal] .journal-subject{color:var(--ink);border-left:3px solid var(--subject-color);padding-left:9px}
-dialog[data-view=journal] .journal-row small{font-size:14px;margin-top:3px;color:var(--muted)}
+dialog[data-view=journal] .journal-row small{font-size:16px;margin-top:3px;color:var(--muted)}
 dialog[data-view=journal] .ability-card{padding:14px 12px;border-image-repeat:stretch}
 dialog[data-view=journal] .ability-card.locked{filter:none}
 dialog[data-view=journal] .ability-card h3{font-size:20px;margin:8px 0}
 dialog[data-view=journal] .ability-card .gate{color:var(--ink-2);font-weight:400;line-height:1.35}
 dialog[data-view=journal] .ability-card:not(.locked) .gate{color:#acd69b}
 dialog[data-view=journal] .ability-card p{line-height:1.35}
-.gate-bar-label{display:block;font-size:14px;color:var(--muted);margin-top:8px;line-height:1.1}
+.gate-bar-label{display:block;font-size:16px;color:var(--muted);margin-top:8px;line-height:1.1}
 .ability-card .gate-bar-label+.progress{margin:4px 0 0}
 dialog[data-view=journal] .bestiary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:stretch}
-@media(max-width:740px){dialog[data-view=journal] .bestiary,dialog[data-view=journal] #journal-body>.grid{grid-template-columns:repeat(2,minmax(0,1fr))}dialog[data-view=journal] .tabs button{flex:1;padding:6px;font-size:14px}dialog[data-view=journal] .journal-row{min-width:630px}}
+@media(max-width:740px){dialog[data-view=journal] .bestiary,dialog[data-view=journal] #journal-body>.grid{grid-template-columns:repeat(2,minmax(0,1fr))}dialog[data-view=journal] .tabs button{flex:1;padding:6px;font-size:16px}dialog[data-view=journal] .journal-row{min-width:630px}}
 @media(max-width:450px){dialog[data-view=journal] .bestiary,dialog[data-view=journal] #journal-body>.grid{grid-template-columns:1fr}}
-@media(max-height:600px){dialog[data-view=journal] .modal-head p{display:none}dialog[data-view=journal] .modal-head h2{font-size:24px}dialog[data-view=journal] .tabs button{min-height:32px;padding:4px 8px}dialog[data-view=journal] .notes{font-size:14px;margin:2px 0 6px}dialog[data-view=journal] .journal-row{min-height:40px;padding:4px 8px}}
+@media(max-height:600px){dialog[data-view=journal] .modal-head p{display:none}dialog[data-view=journal] .modal-head h2{font-size:24px}dialog[data-view=journal] .tabs button{min-height:32px;padding:4px 8px}dialog[data-view=journal] .notes{font-size:16px;margin:2px 0 6px}dialog[data-view=journal] .journal-row{min-height:40px;padding:4px 8px}}
 
 /* Home review: keep navigation visible while the ability collection scrolls. */
 dialog[data-home]{height:min(780px,92dvh)}
@@ -1693,7 +1693,7 @@ dialog[data-view=library] .library-content .grade-row.shut,
 dialog[data-view=library] .library-content .grade-row.shut h4,
 dialog[data-view=library] .library-content .grade-row.shut>.grade-focus,
 dialog[data-view=library] .library-content .lesson-card.shut{opacity:1}
-dialog[data-view=library] .course-row.shut>summary .course-opens{margin-left:10px;color:var(--gold-2);font-size:14px;letter-spacing:0;font-weight:700}
+dialog[data-view=library] .course-row.shut>summary .course-opens{margin-left:10px;color:var(--gold-2);font-size:16px;letter-spacing:0;font-weight:700}
 dialog[data-view=library] .library-content .stage-head{margin:12px 0 8px;padding-top:20px;background-size:82px 14px;font-size:16px;letter-spacing:1px}
 dialog[data-view=library] .hs-start .pixel-select{margin:6px 0}
 dialog[data-view=library] .hs-start .pixel-select-button{font-size:16px;min-height:36px}
@@ -1708,7 +1708,7 @@ dialog:is([data-view=placement],[data-view=lesson-quiz]) .modal-head p{font-size
 dialog:is([data-view=placement],[data-view=lesson-quiz]) .question{display:flex;flex-direction:column;flex:1;min-height:0;width:100%;max-width:none;margin:0;padding:0 8px}
 dialog:is([data-view=placement],[data-view=lesson-quiz]) .question-reading{flex:1;min-height:60px;overflow:auto;padding:4px 10px 8px;scrollbar-gutter:stable;scrollbar-color:var(--gold-deep) #1b2034}
 dialog:is([data-view=placement],[data-view=lesson-quiz]) .question-reading h3{font-size:20px;line-height:1.3;margin:8px 0 12px}
-dialog:is([data-view=placement],[data-view=lesson-quiz]) .question-reading .tag{font-size:14px}
+dialog:is([data-view=placement],[data-view=lesson-quiz]) .question-reading .tag{font-size:16px}
 dialog:is([data-view=placement],[data-view=lesson-quiz]) #quiz-pic{width:min(100%,640px);height:auto;margin:8px auto}
 dialog:is([data-view=placement],[data-view=lesson-quiz]) #quiz-form{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;flex:none;margin:8px 0 0}
 dialog:is([data-view=placement],[data-view=lesson-quiz]) #quiz-form input{min-height:44px;font-size:20px;padding:6px 12px}
@@ -1735,7 +1735,7 @@ dialog[data-view=training] .modal-head p{font-size:16px;line-height:1.2}
 dialog[data-view=training] .question{display:flex;flex-direction:column;flex:1;min-height:0;width:100%;max-width:none;margin:0;padding:0 8px}
 dialog[data-view=training] .training-reading{flex:1;min-height:60px;overflow:auto;padding:4px 10px 8px;scrollbar-gutter:stable;scrollbar-color:var(--gold-deep) #1b2034}
 dialog[data-view=training] .training-reading h3{font-size:20px;line-height:1.3;margin:8px 0 12px}
-dialog[data-view=training] .training-reading .tag{font-size:14px}
+dialog[data-view=training] .training-reading .tag{font-size:16px}
 dialog[data-view=training] .training-reading .subtle{font-size:16px}
 dialog[data-view=training] .training-reading .progress{height:12px;margin:8px 0}
 dialog[data-view=training] #answer-form{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;flex:none;margin:8px 0 0;max-height:40%;overflow:auto}
@@ -1749,7 +1749,7 @@ dialog[data-view=training] #feedback .feedback{margin:6px 0;padding:8px 12px}
 dialog[data-view=training] #feedback p{margin:4px 0}
 dialog[data-view=training] .question>.modal-actions{flex:none;display:flex;justify-content:space-between;margin:6px 0 0;gap:8px}
 dialog[data-view=training] .question>.modal-actions button{min-height:36px;margin:0;padding:4px 16px;font-size:16px}
-@media(max-height:600px){dialog[data-view=training] .modal-head h2{font-size:20px}dialog[data-view=training] .modal-head p{font-size:14px;margin:2px 0}dialog[data-view=training] #feedback{max-height:90px}dialog[data-view=training] .training-reading h3{font-size:18px}}
+@media(max-height:600px){dialog[data-view=training] .modal-head h2{font-size:20px}dialog[data-view=training] .modal-head p{font-size:16px;margin:2px 0}dialog[data-view=training] #feedback{max-height:90px}dialog[data-view=training] .training-reading h3{font-size:18px}}
 @media(max-width:520px){dialog[data-view=training] .answers{grid-template-columns:1fr}}
 
 dialog[data-view=lesson-quiz] #quiz-form>.modal-actions{margin:0}
@@ -1762,7 +1762,7 @@ dialog[data-view=training] .question:has(#feedback:not(:empty)) .training-readin
 dialog:is([data-view=placement],[data-view=lesson-quiz]) #quiz-feedback:not(:empty),
 dialog[data-view=training] #feedback:not(:empty){flex:0 0 auto;min-height:0;max-height:60%;scrollbar-gutter:stable;scrollbar-color:var(--gold-deep) #1b2034;padding-right:6px}
 dialog:is([data-view=placement],[data-view=lesson-quiz]) #quiz-feedback #lesson-pic{width:min(100%,520px);height:auto;margin:8px auto}
-@media(max-height:600px){dialog[data-view=lesson-quiz] .modal-head p{display:block;font-size:14px;line-height:1.2;margin:2px 0}}
+@media(max-height:600px){dialog[data-view=lesson-quiz] .modal-head p{display:block;font-size:16px;line-height:1.2;margin:2px 0}}
 
 /* Settings keep the title and close control outside the scrolling options. */
 dialog[data-view=settings]{height:min(820px,92dvh)}
@@ -1806,8 +1806,8 @@ dialog[data-view=alchemist] .potion-price b{color:#f3d98a}
 dialog[data-view=result] .level-starrule{flex-wrap:nowrap;align-items:center;letter-spacing:.5px}
 dialog[data-view=result] .level-starrule strong{min-width:0}
 dialog[data-view=result] .level-starrule img{flex:none;width:24px;height:24px}
-@media(max-height:600px){dialog[data-view=alchemist] .potion-bag{margin-bottom:6px;padding:4px 8px;font-size:14px}dialog[data-view=alchemist] .potion-bag img,dialog[data-view=alchemist] .potion-bag svg{width:24px;height:24px}}
-@media(max-height:600px){dialog[data-view=alchemist] .modal-head{margin-bottom:8px;padding-bottom:8px}dialog[data-view=alchemist] .modal-head h2{font-size:24px}dialog[data-view=alchemist] .potion-shop .card{padding:8px}dialog[data-view=alchemist] .potion-shop .card p{margin:4px 0;font-size:14px}dialog[data-view=alchemist] .potion-shop .card button{min-height:34px;padding:3px 8px}}
+@media(max-height:600px){dialog[data-view=alchemist] .potion-bag{margin-bottom:6px;padding:4px 8px;font-size:16px}dialog[data-view=alchemist] .potion-bag img,dialog[data-view=alchemist] .potion-bag svg{width:24px;height:24px}}
+@media(max-height:600px){dialog[data-view=alchemist] .modal-head{margin-bottom:8px;padding-bottom:8px}dialog[data-view=alchemist] .modal-head h2{font-size:24px}dialog[data-view=alchemist] .potion-shop .card{padding:8px}dialog[data-view=alchemist] .potion-shop .card p{margin:4px 0;font-size:16px}dialog[data-view=alchemist] .potion-shop .card button{min-height:34px;padding:3px 8px}}
 @media(max-width:520px){dialog[data-view=alchemist] .potion-shop{grid-template-columns:1fr}}
 dialog[data-view=alchemist] .modal-head{padding-left:14px}
 
@@ -1992,21 +1992,21 @@ html:not(.m-mode) dialog[data-view=result] :is(.level-reward strong,.level-stat 
 .gear-doll .inv-necklace{grid-column:3;grid-row:1}.gear-doll .inv-ring{grid-column:3;grid-row:2}.gear-doll .inv-pet{grid-column:3;grid-row:3}
 .gear-doll .inv-stats{grid-template-columns:repeat(5,1fr)}
 .gear-score dd{color:var(--gold,#e7c77e)}
-.gear-stars{display:inline-block;color:#ffd35a;font:700 12px/1 var(--ui);letter-spacing:-1px;text-shadow:0 1px 0 #000}
-.inv-cell .gear-stars{position:absolute;left:2px;bottom:1px;font-size:10px}
+.gear-stars{display:inline-block;color:#ffd35a;font:700 16px/1 var(--ui);letter-spacing:-1px;text-shadow:0 1px 0 #000}
+.inv-cell .gear-stars{position:absolute;left:2px;bottom:1px;font-size:16px}
 .inv-cell.new::before{content:'';position:absolute;left:3px;top:3px;width:7px;height:7px;border-radius:50%;background:#7fd36b;box-shadow:0 0 0 2px #0d0806}
 .gear-lines{list-style:none;margin:4px 0;padding:0;display:grid;gap:2px}
-.gear-lines li{font:700 calc(var(--fs) * .95)/1.2 var(--ui)}
+.gear-lines li{font:700 calc(var(--fs) * 1)/1.2 var(--ui)}
 .gear-lines small{font-weight:400;color:var(--ink-2)}
 .gear-compare .up{color:#8fe07a}.gear-compare .down{color:#ff8f7a}.gear-compare .same{color:var(--ink-2)}
-.gear-effect{color:#e7d8a8;font-size:calc(var(--fs) * .92)}
-.gear-from{font-size:calc(var(--fs) * .85)}
-.gear-finish{display:inline-block;margin-left:6px;font:700 calc(var(--fs) * .8)/1.2 var(--ui);color:#9fd0ff;text-transform:uppercase;letter-spacing:1px}
-.inv-detail kbd{font:700 11px/1 var(--ui);padding:1px 4px;border:1px solid #fff5;border-radius:3px;margin-left:4px}
+.gear-effect{color:#e7d8a8;font-size:calc(var(--fs) * 1)}
+.gear-from{font-size:calc(var(--fs) * 1)}
+.gear-finish{display:inline-block;margin-left:6px;font:700 calc(var(--fs) * 1)/1.2 var(--ui);color:#9fd0ff;text-transform:uppercase;letter-spacing:1px}
+.inv-detail kbd{font:700 16px/1 var(--ui);padding:1px 4px;border:1px solid #fff5;border-radius:3px;margin-left:4px}
 .gear-sets,.gear-mats{padding:8px 10px;background:#0003}
-.gear-sets h4,.gear-mats h4{margin:0 0 4px;font:700 calc(var(--fs) * .9)/1.2 var(--ui);letter-spacing:1px;text-transform:uppercase;color:var(--ink-2)}
+.gear-sets h4,.gear-mats h4{margin:0 0 4px;font:700 calc(var(--fs) * 1)/1.2 var(--ui);letter-spacing:1px;text-transform:uppercase;color:var(--ink-2)}
 .gear-set ul{list-style:none;margin:2px 0 6px;padding:0}
-.gear-set li{color:var(--ink-2);font-size:calc(var(--fs) * .9)}
+.gear-set li{color:var(--ink-2);font-size:calc(var(--fs) * 1)}
 .gear-set li.on{color:#8fe07a}
 .gear-set small{display:block;color:var(--ink-2)}
 .gear-mats{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center}
@@ -2019,7 +2019,7 @@ html:not(.m-mode) dialog[data-view=result] :is(.level-reward strong,.level-stat 
 .gear-cost{display:inline-flex;flex-wrap:wrap;gap:4px 10px;align-items:center}
 .gear-cost .cost-mat{display:inline-flex;align-items:center;gap:3px}
 .gear-cost .short{color:#ff9b85}
-.gear-cost .short::after{content:' ✗';font-size:.8em}
+.gear-cost .short::after{content:' ✗';font-size:1em}
 .smith-tabs{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 /* ready2fix-oct30 #11: a plain-words line under each smith tab, and what the comparison words mean */
 .smith-tabs button{display:inline-flex;flex-direction:column;align-items:center;line-height:1.1}
@@ -2044,7 +2044,7 @@ dialog[data-view=smith] .gear-words{margin:2px 0 8px;font-size:16px}
 .smith-locked{margin:8px 0 2px}
 .smith-locked>summary{cursor:pointer;min-height:40px;display:flex;align-items:center;gap:8px;color:var(--ink-2,#cfc6b3);list-style:none}
 .smith-locked>summary::-webkit-details-marker{display:none}
-.smith-locked>summary::before{content:'🔒';font-size:14px}
+.smith-locked>summary::before{content:'🔒';font-size:16px}
 .smith-locked[open]>summary{margin-bottom:6px}
 .smith-no-better .gear-card{opacity:.88}
 .smith-all-worn{margin:4px 0 8px}
@@ -2066,7 +2066,7 @@ dialog[data-view=result] .level-gear .gear-loot{border-bottom:2px solid var(--ra
 .m-mode dialog[data-view=smith] .card{padding:6px;font-size:14px}
 .m-mode dialog[data-view=smith] .smith-tabs button{min-height:40px;padding:4px 10px}
 @media (max-width:760px){.gear-doll .inv-stats{grid-template-columns:repeat(3,1fr)}}
-.gear-pity{margin:2px 0;font-size:calc(var(--fs) * .85);color:#cfc3a0}
+.gear-pity{margin:2px 0;font-size:calc(var(--fs) * 1);color:#cfc3a0}
 .gear-pity small{color:var(--ink-2)}
 /* Gear browser check (14 Oct): Pixel Operator only draws a clean "+" at its own size; at 85-95% the plus loses its
    upright and "+15 Health" read as "-15". Every gear line that carries a sign or number sits at the full text size. */
@@ -2188,10 +2188,10 @@ html.map-open .bottomline{display:none!important}
 html:not(.map-open) .worldmap-info,.m-portrait .worldmap-info{display:none}
 
 /* Keyboard guidance stays inside the game frame, including short laptop windows. */
-#keyboard-actions{position:absolute;left:26px;bottom:26px;z-index:3;display:flex;gap:10px;padding:7px 10px;background:#17203bed;border:2px solid #d6ac59;color:#fff1c8;font:14px/1.2 var(--ui,sans-serif);pointer-events:none}#keyboard-actions span{white-space:nowrap}#keyboard-actions kbd{font-size:12px}#controls-tutorial{position:absolute;z-index:4;left:50%;top:110px;transform:translateX(-50%);width:min(390px,65%);box-sizing:border-box;padding:10px 14px;background:#17203bf5;border:2px solid #d6ac59;box-shadow:3px 3px #100d15;color:#fff1c8;font:16px/1.25 var(--ui,sans-serif)}#controls-tutorial p{margin:5px 0 8px}#controls-tutorial button{font-size:14px;padding:4px 10px}#controls-tutorial[hidden]{display:none}.controls-table{width:100%;border-collapse:collapse;font-size:16px}.controls-table th{text-align:left;color:#efd080}.controls-table td,.controls-table th{padding:5px 12px;border-bottom:1px solid #5d5360}.m-mode #keyboard-actions,.m-mode kbd{display:none!important}@media(max-height:560px){#controls-tutorial{top:85px;padding:7px 12px;font-size:14px}#keyboard-actions{left:18px;bottom:22px;font-size:12px;gap:7px}.controls-table td,.controls-table th{padding:3px 10px}}
-#keyboard-actions{left:50%;transform:translateX(-50%);bottom:4px;padding:3px 8px;gap:12px;font-size:14px;line-height:18px}#keyboard-actions kbd,.menu-buttons kbd{display:inline-block;min-width:0;width:auto;height:auto;background:#28334b!important;border:1px solid #a99159!important;border-image:none!important;box-shadow:none;padding:1px 4px;color:#fff1c8;font:12px/14px var(--ui,sans-serif);text-indent:0}.menu-buttons button{position:relative}.menu-buttons kbd{position:absolute;bottom:-8px;right:-4px}.controls-table{font-family:var(--ui,sans-serif)}@media(max-height:560px){#keyboard-actions{left:50%;bottom:3px;font-size:12px;gap:9px;padding:2px 6px}}
+#keyboard-actions{position:absolute;left:26px;bottom:26px;z-index:3;display:flex;gap:10px;padding:7px 10px;background:#17203bed;border:2px solid #d6ac59;color:#fff1c8;font:16px/1.2 var(--ui,sans-serif);pointer-events:none}#keyboard-actions span{white-space:nowrap}#keyboard-actions kbd{font-size:16px}#controls-tutorial{position:absolute;z-index:4;left:50%;top:110px;transform:translateX(-50%);width:min(390px,65%);box-sizing:border-box;padding:10px 14px;background:#17203bf5;border:2px solid #d6ac59;box-shadow:3px 3px #100d15;color:#fff1c8;font:16px/1.25 var(--ui,sans-serif)}#controls-tutorial p{margin:5px 0 8px}#controls-tutorial button{font-size:16px;padding:4px 10px}#controls-tutorial[hidden]{display:none}.controls-table{width:100%;border-collapse:collapse;font-size:16px}.controls-table th{text-align:left;color:#efd080}.controls-table td,.controls-table th{padding:5px 12px;border-bottom:1px solid #5d5360}.m-mode #keyboard-actions,.m-mode kbd{display:none!important}@media(max-height:560px){#controls-tutorial{top:85px;padding:7px 12px;font-size:16px}#keyboard-actions{left:18px;bottom:22px;font-size:16px;gap:7px}.controls-table td,.controls-table th{padding:3px 10px}}
+#keyboard-actions{left:50%;transform:translateX(-50%);bottom:4px;padding:3px 8px;gap:12px;font-size:16px;line-height:18px}#keyboard-actions kbd,.menu-buttons kbd{display:inline-block;min-width:0;width:auto;height:auto;background:#28334b!important;border:1px solid #a99159!important;border-image:none!important;box-shadow:none;padding:1px 4px;color:#fff1c8;font:16px/14px var(--ui,sans-serif);text-indent:0}.menu-buttons button{position:relative}.menu-buttons kbd{position:absolute;bottom:-8px;right:-4px}.controls-table{font-family:var(--ui,sans-serif)}@media(max-height:560px){#keyboard-actions{left:50%;bottom:3px;font-size:16px;gap:9px;padding:2px 6px}}
 #keyboard-actions{font-size:16px}#keyboard-actions kbd,.menu-buttons kbd{min-height:0;font:16px/16px var(--ui,sans-serif);vertical-align:middle}#keyboard-actions span{display:flex;align-items:center;gap:4px}@media(max-height:560px){#controls-tutorial{top:165px}#keyboard-actions{font-size:16px;gap:8px}#keyboard-actions kbd{font-size:16px}}
-dialog[data-view=controls] .controls-table td,dialog[data-view=controls] .controls-table th{font-size:16px;line-height:18px;padding:2px 10px}dialog[data-view=controls] .modal-head{margin-bottom:8px}dialog[data-view=controls] .modal-actions{margin-top:8px}@media(max-height:560px){dialog[data-view=controls] .eyebrow{display:none}dialog[data-view=controls] .modal-head{padding:0 0 6px;margin-bottom:4px}dialog[data-view=controls] .modal-head h2{font-size:24px;margin:0}dialog[data-view=controls] .modal-head p{margin:2px 0;font-size:14px;line-height:16px}dialog[data-view=controls] .controls-table td,dialog[data-view=controls] .controls-table th{padding:0 8px;line-height:18px}dialog[data-view=controls] .modal-actions{margin-top:4px}dialog[data-view=controls] #controls-back{padding:4px 16px;min-height:28px;font-size:16px}}
+dialog[data-view=controls] .controls-table td,dialog[data-view=controls] .controls-table th{font-size:16px;line-height:18px;padding:2px 10px}dialog[data-view=controls] .modal-head{margin-bottom:8px}dialog[data-view=controls] .modal-actions{margin-top:8px}@media(max-height:560px){dialog[data-view=controls] .eyebrow{display:none}dialog[data-view=controls] .modal-head{padding:0 0 6px;margin-bottom:4px}dialog[data-view=controls] .modal-head h2{font-size:24px;margin:0}dialog[data-view=controls] .modal-head p{margin:2px 0;font-size:16px;line-height:16px}dialog[data-view=controls] .controls-table td,dialog[data-view=controls] .controls-table th{padding:0 8px;line-height:18px}dialog[data-view=controls] .modal-actions{margin-top:4px}dialog[data-view=controls] #controls-back{padding:4px 16px;min-height:28px;font-size:16px}}
 @media(max-height:560px){dialog[data-view=controls] .modal-head p{display:none}dialog[data-view=controls] .controls-table td,dialog[data-view=controls] .controls-table th{line-height:17px}}
 #keyboard-actions[hidden]{display:none!important}
 
@@ -2200,14 +2200,14 @@ dialog[data-view=controls] .controls-table td,dialog[data-view=controls] .contro
 .m-mode #toast.armour-hint{top:24%;max-width:90%}
 
 /* First steps: one controls strip, with room below dialogue. */
-html:not(.m-mode) #ui-dialogue{bottom:72px}#keyboard-actions{max-width:calc(100% - 52px);box-sizing:border-box;flex-wrap:wrap;gap:4px 10px}#controls-tutorial{left:auto;right:26px;top:125px;transform:none;width:min(350px,45%)}@media(max-height:560px){#controls-tutorial{top:175px;font-size:14px;padding:6px 10px}html:not(.m-mode) #ui-dialogue{bottom:82px}#keyboard-actions{font-size:14px}}
+html:not(.m-mode) #ui-dialogue{bottom:72px}#keyboard-actions{max-width:calc(100% - 52px);box-sizing:border-box;flex-wrap:wrap;gap:4px 10px}#controls-tutorial{left:auto;right:26px;top:125px;transform:none;width:min(350px,45%)}@media(max-height:560px){#controls-tutorial{top:175px;font-size:16px;padding:6px 10px}html:not(.m-mode) #ui-dialogue{bottom:82px}#keyboard-actions{font-size:16px}}
 #keyboard-actions{width:max-content;right:auto}
 
-#hud-potion[data-free]:not([data-free=""])::before{content:attr(data-free);position:absolute;bottom:100%;right:0;white-space:nowrap;font:14px/18px var(--ui);color:#fff1c8;background:#17203bf5;padding:1px 5px;border:1px solid #d6ac59}
+#hud-potion[data-free]:not([data-free=""])::before{content:attr(data-free);position:absolute;bottom:100%;right:0;white-space:nowrap;font:16px/18px var(--ui);color:#fff1c8;background:#17203bf5;padding:1px 5px;border:1px solid #d6ac59}
 
 /* 17 Oct: rewards first; shop stock and materials share normal document flow. */
 dialog[data-view=smith] #modal-content{display:block;overflow:auto}dialog[data-view=smith] .smith-stock{overflow:visible;padding:4px 0 12px}dialog[data-view=smith] .gear-mats{position:static;clear:both;margin:12px 0}.smith-preview{display:flex;align-items:center;gap:16px;min-height:96px}.smith-preview canvas{flex:none;image-rendering:pixelated}.smith-preview p{margin:3px 0}.gear-intro{font-size:16px;line-height:1.25;color:var(--gold-2);margin:6px 0}.gear-locked{border:1px solid #817b89;padding:8px;background:#151624;color:#c7c0cd!important}.gear-card:has(.gear-locked){filter:saturate(.4)}
-dialog[data-view=result] #result-extra[hidden]{display:none}dialog[data-view=result] .level-grade{opacity:1;transform:none}dialog[data-view=result] .level-grade .run-grade strong{font-size:18px}dialog[data-view=result] .result-time{font-size:24px;margin:0}dialog[data-view=result] .result-goal{display:flex;flex-direction:column;gap:4px;margin:10px 0;font-size:22px}.result-goal small{color:var(--gold-2);font-size:14px}dialog[data-view=result] .level-rewards strong{font-size:26px}dialog[data-view=result] .level-result>.modal-actions{position:static;background:none;padding:8px;margin:0}dialog[data-view=result] .level-line{font-size:16px;margin:4px 0}dialog[data-view=result] .level-result h2{font-size:26px;margin:4px 0}dialog[data-view=result] .level-result-body{margin:6px 0}dialog[data-view=result] #result-details{font-size:16px;min-height:32px;padding:3px 16px}dialog[data-view=result] #result-extra{text-align:left;margin-top:12px}
+dialog[data-view=result] #result-extra[hidden]{display:none}dialog[data-view=result] .level-grade{opacity:1;transform:none}dialog[data-view=result] .level-grade .run-grade strong{font-size:18px}dialog[data-view=result] .result-time{font-size:24px;margin:0}dialog[data-view=result] .result-goal{display:flex;flex-direction:column;gap:4px;margin:10px 0;font-size:22px}.result-goal small{color:var(--gold-2);font-size:16px}dialog[data-view=result] .level-rewards strong{font-size:26px}dialog[data-view=result] .level-result>.modal-actions{position:static;background:none;padding:8px;margin:0}dialog[data-view=result] .level-line{font-size:16px;margin:4px 0}dialog[data-view=result] .level-result h2{font-size:26px;margin:4px 0}dialog[data-view=result] .level-result-body{margin:6px 0}dialog[data-view=result] #result-details{font-size:16px;min-height:32px;padding:3px 16px}dialog[data-view=result] #result-extra{text-align:left;margin-top:12px}
 @media(max-height:600px){html:not(.m-mode) dialog[data-view=result] .level-result[data-outcome=won] .victory-title{height:46px;background-size:256px 64px;background-position:center -8px;font-size:24px}dialog[data-view=result] .level-result h2{font-size:22px}dialog[data-view=result] .level-stars{margin:0}dialog[data-view=result] .level-star{width:28px;height:28px}dialog[data-view=result] .result-goal{font-size:20px;margin:6px 0}dialog[data-view=result] .level-hero{width:96px;height:64px}}
 @media(max-height:600px){dialog[data-view=result] .level-result::before{display:none}dialog[data-view=result] .level-line{display:none}dialog[data-view=result] .level-result-body{margin:2px 0}dialog[data-view=result] .result-goal{margin:4px 0}dialog[data-view=result] .level-result>.modal-actions{padding:4px}dialog[data-view=result] .level-result>.modal-actions button{min-height:32px;padding:3px 14px}}
 .system-help>.gear-intro{display:block}.run-foot>.system-help{display:block}.run-foot>.system-help>.run-delve,.run-foot>.system-help>.run-tasks{margin:4px 0}.run-foot>.system-help .run-icon{vertical-align:middle}
@@ -2276,7 +2276,7 @@ dialog[data-view=result] .level-grade{display:flex;align-items:center;gap:8px}
 dialog[data-view=result] .level-loot-item.loot-quiet{opacity:.5}
 dialog[data-view=result] .level-loot-item.loot-quiet img,dialog[data-view=result] .level-loot-item.loot-quiet svg{filter:grayscale(.6)}
 dialog[data-view=result] .retry-note{position:relative;margin:-2px 0 4px;font-size:16px;color:#bfb38f;text-align:center}
-dialog[data-view=result] .level-grade>small{font-size:14px;letter-spacing:2px;color:var(--gold-2)}
+dialog[data-view=result] .level-grade>small{font-size:16px;letter-spacing:2px;color:var(--gold-2)}
 dialog[data-view=result] .level-grade .run-grade-icon{width:36px;height:36px}
 dialog[data-view=result] .level-grade .run-grade strong{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
 dialog[data-view=result] .level-highlights{display:flex;flex-direction:column;align-items:center;align-self:center;gap:2px;margin:6px 0 2px;padding:6px 16px;border:1px solid #e3b85a55;background:#0000002e}
@@ -2290,15 +2290,15 @@ dialog[data-view=result] .level-highlights .level-levelup small{color:#9fd36b;fo
 dialog[data-view=result] .level-highlights .level-quest-pointer{font-size:16px;max-width:52ch;text-align:left}
 dialog[data-view=result] .level-highlights .level-quest-pointer>span{color:#f1e6cc}
 dialog:is([data-view=result],[data-view=finale]) .level-adventure{display:flex;flex-direction:column;align-items:center;gap:2px;margin:6px 0 2px;padding:6px 14px;border-top:1px solid #e3b85a55;width:100%;text-align:center}
-dialog:is([data-view=result],[data-view=finale]) .level-adventure .adv-eyebrow{color:#e3b85a;letter-spacing:2px;font-size:14px}
+dialog:is([data-view=result],[data-view=finale]) .level-adventure .adv-eyebrow{color:#e3b85a;letter-spacing:2px;font-size:16px}
 dialog:is([data-view=result],[data-view=finale]) .level-adventure .adv-hero{font-size:18px}
 dialog:is([data-view=result],[data-view=finale]) .level-adventure .adv-stats{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 16px;font-size:16px;color:#f1e6cc}
 dialog:is([data-view=result],[data-view=finale]) .level-adventure .adv-title{margin:2px 0 0;display:flex;align-items:center;gap:8px;font-size:17px;color:#f1e6cc}
 dialog:is([data-view=result],[data-view=finale]) .level-adventure .adv-title>img{width:24px;height:24px}
-dialog:is([data-view=result],[data-view=finale]) .level-adventure .adv-title-note{color:#cdbb98;font-size:14px}
+dialog:is([data-view=result],[data-view=finale]) .level-adventure .adv-title-note{color:#cdbb98;font-size:16px}
 .pause-hero .pause-title{color:var(--gold,#e7c77e);font-weight:700;letter-spacing:.5px}
 dialog[data-view=result] .level-highlights .level-levelup strong{font-size:24px}
-dialog[data-view=result] .level-highlights .level-finale-note{font-size:15px}
+dialog[data-view=result] .level-highlights .level-finale-note{font-size:16px}
 /* oct24-progress (playtest r3 D4): the chapter-clear line keeps its star beside the words */
 dialog[data-view=result] .level-highlights .level-chapter-clear{flex-wrap:nowrap}
 dialog[data-view=result] .level-highlights .level-chapter-clear strong{text-align:left;max-width:400px}
@@ -2306,7 +2306,7 @@ dialog[data-view=result] .level-highlights .level-chapter-clear strong{text-alig
 dialog[data-view=result] #modal-content .level-result>.modal-actions{position:sticky;bottom:0;z-index:3;display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin:8px -8px 0;padding:8px;background:#1a1d3c;box-shadow:0 40px 0 #1a1d3c;border-top:1px solid #e3b85a44}
 dialog[data-view=result] .level-result>.modal-actions #result-details{order:-1}
 /* latechap-oct27: the game's last card has four buttons (Roll the credits); on desktop they wrapped to two rows and the sticky row hid the NEXT GOAL line, so four buttons sit on one row a little tighter */
-html:not(.m-mode) dialog[data-view=result] #modal-content .level-result>.modal-actions:has(>button:nth-of-type(4)){flex-wrap:nowrap;gap:6px}html:not(.m-mode) dialog[data-view=result] .level-result>.modal-actions:has(>button:nth-of-type(4))>button{padding-left:12px;padding-right:12px;font-size:14px;white-space:nowrap}
+html:not(.m-mode) dialog[data-view=result] #modal-content .level-result>.modal-actions:has(>button:nth-of-type(4)){flex-wrap:nowrap;gap:6px}html:not(.m-mode) dialog[data-view=result] .level-result>.modal-actions:has(>button:nth-of-type(4))>button{padding-left:12px;padding-right:12px;font-size:16px;white-space:nowrap}
 /* latechap-oct27: the same on a phone: the wrapped fourth button pushed the sticky row up over NEXT GOAL on the finale card */
 .m-mode dialog[data-view=result] #modal-content .level-result>.modal-actions:has(>button:nth-of-type(4)){flex-wrap:nowrap;gap:6px}.m-mode dialog[data-view=result] .level-result>.modal-actions:has(>button:nth-of-type(4))>button{padding-left:10px;padding-right:10px;white-space:nowrap}
 dialog[data-view=result] .level-result .level-loot{justify-content:center}
@@ -2501,7 +2501,7 @@ html.cine-on :is(#hud,#hotbar,#xp-track,#objective,#next-unlock,#prompt,#ability
 #hotbar .potion-legend{display:none}
 html:not(.m-mode) #hotbar .potion-slot.free-on .potion-legend{display:block;position:absolute;left:calc(100% + 12px);top:50%;transform:translateY(-50%);font:700 var(--fs)/1.15 var(--ui);color:#fff1c8;text-align:left;white-space:nowrap;pointer-events:none;text-shadow:0 2px 0 #0d0806,2px 0 0 #0d0806,-2px 0 0 #0d0806,0 -2px 0 #0d0806}
 /* oct24-polish3: the legend floated as bare outlined text beside the slot; it now sits in the hotbar's own slot frame, a small label */
-html:not(.m-mode) #hotbar .potion-slot.free-on .potion-legend{left:calc(100% + 6px);padding:3px 8px 4px;border-style:solid;border-width:calc(3*var(--u));border-image:url(ui/skin/pl-slot.png) 5 5 5 5 fill/calc(6.0*var(--u)) calc(6.0*var(--u)) stretch;font-size:calc(var(--fs) - 2px);line-height:1.2;text-shadow:0 2px 0 #0d0806}
+html:not(.m-mode) #hotbar .potion-slot.free-on .potion-legend{left:calc(100% + 6px);padding:3px 8px 4px;border-style:solid;border-width:calc(3*var(--u));border-image:url(ui/skin/pl-slot.png) 5 5 5 5 fill/calc(6.0*var(--u)) calc(6.0*var(--u)) stretch;font-size:calc(var(--fs) - 0px);line-height:1.2;text-shadow:0 2px 0 #0d0806}
 /* oct24-polish2: at 1000x600 the e8 result (with its "Chapter clear!" line) pushed NEXT GOAL under the buttons; the time and
    the goal go compact from 620 px tall, as they already did from 560 */
 @media(max-height:620px){dialog[data-view=result] .result-time{font-size:20px;line-height:1}dialog[data-view=result] .result-goal{margin:2px 0}dialog[data-view=result] .level-result-body{margin:0}dialog[data-view=result] .level-result h2{margin:0}dialog[data-view=result] .level-tier{line-height:1.1}}
@@ -2520,7 +2520,7 @@ dialog[data-view=result] .result-library .ico{flex:none}
 /* ...and when a result still runs long (XP note, level up, stars, new tier, rewards), NEXT GOAL stays in view just above the sticky buttons instead of scrolling under them (pillar 2: always a next goal) */
 html:not(.m-mode) dialog[data-view=result] #modal-content .level-result>.result-goal{position:sticky;bottom:78px;z-index:2;margin-top:0;padding-top:8px;padding-bottom:4px;border-top:1px solid #e3b85a44;background:#1a1d3c}html:not(.m-mode) dialog[data-view=result] #modal-content .level-result>.result-goal::after{content:'';position:absolute;left:0;right:0;top:100%;height:78px;background:#1a1d3c;pointer-events:none}
 .m-mode dialog[data-view=result] .result-library{grid-column:1 / -1}
-.pq-map-key .map-next-ability{display:inline-flex;align-items:center;gap:4px;margin-left:6px;color:#cfe3ff;font-size:.9em;vertical-align:middle}
+.pq-map-key .map-next-ability{display:inline-flex;align-items:center;gap:4px;margin-left:6px;color:#cfe3ff;font-size:1em;vertical-align:middle}
 .pq-map-mark .map-ability-badge{position:absolute;left:100%;top:50%;transform:translate(4px,-50%);display:block;line-height:0;filter:drop-shadow(0 2px 0 #0d0806)}
 /* oct24-endgame (playtest ch3 minor): the potion's hover line ("+1 free potion at the start of every level") and a slot's name
    opened 4-10 px above the slot, which is where the XP bar sits, so they drew across it; both now open above the XP bar
@@ -2587,10 +2587,10 @@ dialog[data-view=tiers] .tier-more[open]>summary{margin-bottom:4px}
 .field-done-list{list-style:none;margin:0;padding:0;display:grid;gap:4px}
 .field-done-list li{display:grid;grid-template-columns:auto 1fr;gap:0 8px;font-size:16px;line-height:1.25}
 .field-done-list li::before{content:'✓';grid-row:span 2;color:#9fd36b;font-weight:700}
-.field-done-list span{color:#d7c5a5;font-size:15px}
+.field-done-list span{color:#d7c5a5;font-size:16px}
 .field-delivered .result-goal{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:center;gap:0 8px;margin:10px 0 4px;padding-top:6px;border-top:1px solid #e3b85a44;font-size:18px}
 .field-delivered .result-goal small{color:#e3b85a}
-@media(max-width:700px),(max-height:420px){.field-done-list{gap:0}.field-done-list li{grid-template-columns:auto auto 1fr;align-items:baseline}.field-done-list li::before{grid-row:auto}.field-done-list span{font-size:15px}.field-delivered-title{font-size:20px!important;margin:0!important}.field-delivered .result-goal{margin:6px 0 2px;padding-top:4px}}
+@media(max-width:700px),(max-height:420px){.field-done-list{gap:0}.field-done-list li{grid-template-columns:auto auto 1fr;align-items:baseline}.field-done-list li::before{grid-row:auto}.field-done-list span{font-size:16px}.field-delivered-title{font-size:20px!important;margin:0!important}.field-delivered .result-goal{margin:6px 0 2px;padding-top:4px}}
 /* oct25 phone tiers (docs/playtest/oct25-phone-tiers): with a tall reward column (a Legendary first clear, the finale) the
    left column's rows stretched and pushed the stars, grade and time under the sticky NEXT GOAL bar at 844x390. The spare
    height now goes below the time, so the rating stays at the top of the left column. */
@@ -2641,12 +2641,12 @@ dialog:is([data-view=placement],[data-view=lesson-quiz]) .question:has(#quiz-fee
 @media(max-height:380px){.m-mode dialog:is([data-view=placement],[data-view=lesson-quiz]) .question:has(#quiz-form.choice-form){overflow-y:auto;overscroll-behavior:contain}.m-mode dialog:is([data-view=placement],[data-view=lesson-quiz]) #quiz-form.choice-form .choice-answers{gap:4px}}
 /* ---- fast travel (25 Oct, ui/fasttravel-ui.js): thumb-sized place buttons (44 CSS px), the world map's button, the dip's caption ---- */
 .pq-map-key .travel-open{margin:0 0 12px;width:100%;min-height:44px}
-.travel-open kbd{margin-left:6px;font-size:.85em;opacity:.85}
+.travel-open kbd{margin-left:6px;font-size:1em;opacity:.85}
 .travel-picker{display:flex;flex-direction:column;gap:12px;padding:2px 2px 6px}
 .travel-lead{margin:0;color:var(--muted)}
-.travel-free{display:inline-block;padding:1px 8px;margin-right:4px;background:#2f5a35;color:#d8f5c8;border:1px solid #6fae6a;font-weight:700;text-transform:uppercase;font-size:.85em;letter-spacing:.04em}
+.travel-free{display:inline-block;padding:1px 8px;margin-right:4px;background:#2f5a35;color:#d8f5c8;border:1px solid #6fae6a;font-weight:700;text-transform:uppercase;font-size:1em;letter-spacing:.04em}
 /* improve20-d-nov1: a group's locked places fold into one line; the names open on a tap */
-.travel-more{margin:6px 0 0;color:var(--muted)}.travel-more summary{cursor:pointer;min-height:32px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.travel-more summary b{color:#cdbb92;font-weight:700}.travel-more summary b::before{content:"";display:inline-block;width:16px;height:16px;margin-right:6px;vertical-align:-3px;background:url(ui/skin/pl-icons/tier-lock.png) center/16px 16px no-repeat;image-rendering:pixelated}.travel-more summary small{font-size:.8em}.travel-more p{margin:4px 0 0 22px;font-size:.85em}
+.travel-more{margin:6px 0 0;color:var(--muted)}.travel-more summary{cursor:pointer;min-height:32px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.travel-more summary b{color:#cdbb92;font-weight:700}.travel-more summary b::before{content:"";display:inline-block;width:16px;height:16px;margin-right:6px;vertical-align:-3px;background:url(ui/skin/pl-icons/tier-lock.png) center/16px 16px no-repeat;image-rendering:pixelated}.travel-more summary small{font-size:1em}.travel-more p{margin:4px 0 0 22px;font-size:1em}
 #scene-fade .travel-caption{display:none}
 #scene-fade.travel .travel-caption{display:flex;position:absolute;inset:0;align-items:center;justify-content:center;color:#f6e7bf;font:700 calc(var(--fs,16px)*1.4)/1 var(--ui);letter-spacing:.06em;text-shadow:0 2px 0 #000}
 #scene-fade.travel .travel-caption::before{content:"Fast travel · ";color:var(--gold);margin-right:.3em}
@@ -2675,7 +2675,7 @@ html:not(.m-mode) #toast.travel-hint{top:auto;bottom:calc(6px + 13*var(--u) + 11
 /* oct25-quizpolish (1): in a short desktop window (844x390, not phone mode) before an answer, the third choice and Stop sat below
    the fold. The title shares one line with the topic (as phone mode has it), the choices are slimmer and the keyboard hint goes,
    so every choice and Stop show (the prompt-first rule below keeps the question's words in view). */
-@media(max-height:500px){html:not(.m-mode) dialog:is([data-view=placement],[data-view=lesson-quiz]) .modal-head{margin-bottom:4px;padding-top:0;padding-bottom:6px}html:not(.m-mode) dialog:is([data-view=placement],[data-view=lesson-quiz]) .modal-head>div{display:flex;align-items:baseline;flex-wrap:wrap;column-gap:14px}html:not(.m-mode) dialog:is([data-view=placement],[data-view=lesson-quiz]) #modal-content .modal-head h2{font-size:22px;line-height:1.1;margin:0}html:not(.m-mode) dialog:is([data-view=placement],[data-view=lesson-quiz]) #modal-content .modal-head p{display:block;margin:2px 0 0;font-size:14px;line-height:1.3}html:not(.m-mode) dialog:is([data-view=placement],[data-view=lesson-quiz]) .question.question:has(#quiz-feedback:empty)>#quiz-form.choice-form{margin-top:4px}html:not(.m-mode) dialog:is([data-view=placement],[data-view=lesson-quiz]) .question.question:has(#quiz-feedback:empty)>#quiz-form.choice-form .choice-answers{gap:4px}html:not(.m-mode) dialog:is([data-view=placement],[data-view=lesson-quiz]) .question.question:has(#quiz-feedback:empty)>#quiz-form.choice-form [data-answer]{min-height:34px;padding-top:2px;padding-bottom:2px}html:not(.m-mode) dialog:is([data-view=placement],[data-view=lesson-quiz]) .question.question:has(#quiz-feedback:empty)>#quiz-form.choice-form .choice-keys{display:none}}
+@media(max-height:500px){html:not(.m-mode) dialog:is([data-view=placement],[data-view=lesson-quiz]) .modal-head{margin-bottom:4px;padding-top:0;padding-bottom:6px}html:not(.m-mode) dialog:is([data-view=placement],[data-view=lesson-quiz]) .modal-head>div{display:flex;align-items:baseline;flex-wrap:wrap;column-gap:14px}html:not(.m-mode) dialog:is([data-view=placement],[data-view=lesson-quiz]) #modal-content .modal-head h2{font-size:22px;line-height:1.1;margin:0}html:not(.m-mode) dialog:is([data-view=placement],[data-view=lesson-quiz]) #modal-content .modal-head p{display:block;margin:2px 0 0;font-size:16px;line-height:1.3}html:not(.m-mode) dialog:is([data-view=placement],[data-view=lesson-quiz]) .question.question:has(#quiz-feedback:empty)>#quiz-form.choice-form{margin-top:4px}html:not(.m-mode) dialog:is([data-view=placement],[data-view=lesson-quiz]) .question.question:has(#quiz-feedback:empty)>#quiz-form.choice-form .choice-answers{gap:4px}html:not(.m-mode) dialog:is([data-view=placement],[data-view=lesson-quiz]) .question.question:has(#quiz-feedback:empty)>#quiz-form.choice-form [data-answer]{min-height:34px;padding-top:2px;padding-bottom:2px}html:not(.m-mode) dialog:is([data-view=placement],[data-view=lesson-quiz]) .question.question:has(#quiz-feedback:empty)>#quiz-form.choice-form .choice-keys{display:none}}
 /* oct25-quizpolish (1): the same short desktop window after a typed answer: the card ran under Stop/Next and the whole question
    area scrolled. Once answered, the spent answer row goes (as in phone mode; the card's first line gives the answer), the card's Read to me moves up beside its first line and the
    card takes the rest of the height, scrolling inside itself only if it must (the "Check your understanding" retry sits last). */
@@ -2685,7 +2685,7 @@ html:not(.m-mode) #toast.travel-hint{top:auto;bottom:calc(6px + 13*var(--u) + 11
    The prompt comes first and always shows: the picture becomes a small thumbnail beside it (whole, never a sliver; after a typed
    answer it shows the worked picture), the progress row goes, Read to me sits at the right, and when the choices cannot all fit
    it is the choices that scroll, never the words. A choice question's answered state keeps the earlier rules (box hidden). */
-@media(max-height:500px){dialog:is([data-view=placement],[data-view=lesson-quiz]) .question.question:is(:has(#quiz-form.choice-form):has(#quiz-feedback:empty),:has(#quiz-form:not(.choice-form)))>.question-reading{display:grid;grid-template-columns:auto minmax(0,1fr) auto;column-gap:12px;align-items:center;flex:none;min-height:0;max-height:none;overflow:visible;padding:2px 6px 4px}dialog:is([data-view=placement],[data-view=lesson-quiz]) .question.question:is(:has(#quiz-form.choice-form):has(#quiz-feedback:empty),:has(#quiz-form:not(.choice-form)))>.question-reading>:is(.tag,.am-pips){display:none}dialog:is([data-view=placement],[data-view=lesson-quiz]) .question.question:is(:has(#quiz-form.choice-form):has(#quiz-feedback:empty),:has(#quiz-form:not(.choice-form)))>.question-reading>:is(#quiz-pic,.question-text-card){grid-column:1;grid-row:1;margin:0}dialog:is([data-view=placement],[data-view=lesson-quiz]) .question.question:is(:has(#quiz-form.choice-form):has(#quiz-feedback:empty),:has(#quiz-form:not(.choice-form)))>.question-reading>#quiz-pic{width:auto;height:64px;max-width:none}dialog:is([data-view=placement],[data-view=lesson-quiz]) .question.question:is(:has(#quiz-form.choice-form):has(#quiz-feedback:empty),:has(#quiz-form:not(.choice-form)))>.question-reading>.question-text-card{max-width:180px;max-height:64px;overflow:hidden;font-size:13px;padding:4px 8px}dialog:is([data-view=placement],[data-view=lesson-quiz]) .question.question:is(:has(#quiz-form.choice-form):has(#quiz-feedback:empty),:has(#quiz-form:not(.choice-form)))>.question-reading>h3{grid-column:2;grid-row:1;margin:0;line-height:1.35}dialog:is([data-view=placement],[data-view=lesson-quiz]) .question.question:is(:has(#quiz-form.choice-form):has(#quiz-feedback:empty),:has(#quiz-form:not(.choice-form)))>.question-reading>.edu-read{grid-column:3;grid-row:1;position:static;margin:0;align-self:center}dialog:is([data-view=placement],[data-view=lesson-quiz]) .question.question:has(#quiz-feedback:empty)>#quiz-form.choice-form{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain}.m-mode dialog:is([data-view=placement],[data-view=lesson-quiz]) .question.question:has(#quiz-form.choice-form):has(#quiz-feedback:empty){overflow:hidden}}
+@media(max-height:500px){dialog:is([data-view=placement],[data-view=lesson-quiz]) .question.question:is(:has(#quiz-form.choice-form):has(#quiz-feedback:empty),:has(#quiz-form:not(.choice-form)))>.question-reading{display:grid;grid-template-columns:auto minmax(0,1fr) auto;column-gap:12px;align-items:center;flex:none;min-height:0;max-height:none;overflow:visible;padding:2px 6px 4px}dialog:is([data-view=placement],[data-view=lesson-quiz]) .question.question:is(:has(#quiz-form.choice-form):has(#quiz-feedback:empty),:has(#quiz-form:not(.choice-form)))>.question-reading>:is(.tag,.am-pips){display:none}dialog:is([data-view=placement],[data-view=lesson-quiz]) .question.question:is(:has(#quiz-form.choice-form):has(#quiz-feedback:empty),:has(#quiz-form:not(.choice-form)))>.question-reading>:is(#quiz-pic,.question-text-card){grid-column:1;grid-row:1;margin:0}dialog:is([data-view=placement],[data-view=lesson-quiz]) .question.question:is(:has(#quiz-form.choice-form):has(#quiz-feedback:empty),:has(#quiz-form:not(.choice-form)))>.question-reading>#quiz-pic{width:auto;height:64px;max-width:none}dialog:is([data-view=placement],[data-view=lesson-quiz]) .question.question:is(:has(#quiz-form.choice-form):has(#quiz-feedback:empty),:has(#quiz-form:not(.choice-form)))>.question-reading>.question-text-card{max-width:180px;max-height:64px;overflow:hidden;font-size:16px;padding:4px 8px}dialog:is([data-view=placement],[data-view=lesson-quiz]) .question.question:is(:has(#quiz-form.choice-form):has(#quiz-feedback:empty),:has(#quiz-form:not(.choice-form)))>.question-reading>h3{grid-column:2;grid-row:1;margin:0;line-height:1.35}dialog:is([data-view=placement],[data-view=lesson-quiz]) .question.question:is(:has(#quiz-form.choice-form):has(#quiz-feedback:empty),:has(#quiz-form:not(.choice-form)))>.question-reading>.edu-read{grid-column:3;grid-row:1;position:static;margin:0;align-self:center}dialog:is([data-view=placement],[data-view=lesson-quiz]) .question.question:has(#quiz-feedback:empty)>#quiz-form.choice-form{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain}.m-mode dialog:is([data-view=placement],[data-view=lesson-quiz]) .question.question:has(#quiz-form.choice-form):has(#quiz-feedback:empty){overflow:hidden}}
 /* 26 Oct (placement playtest): on a short screen a long prompt (High School items list their three choices in the prompt) took the whole
    height and squeezed the choice buttons to 0 px, so the child could not answer. The prompt now scrolls and the choices keep room for two rows. */
 @media(max-height:500px){dialog:is([data-view=placement],[data-view=lesson-quiz]) .question.question.question:has(#quiz-form.choice-form):has(#quiz-feedback:empty)>.question-reading{flex:0 1 auto;min-height:48px;overflow-y:auto;overscroll-behavior:contain}dialog:is([data-view=placement],[data-view=lesson-quiz]) .question.question.question:has(#quiz-feedback:empty)>#quiz-form.choice-form{min-height:88px}}
@@ -2723,16 +2723,16 @@ html.m-mode.in-town #next-unlock.peek .road .road-pip{margin:2px 0 2px;padding-t
 .herocard-panel{width:100%;display:flex;flex-direction:column;align-items:center;gap:10px}
 .herocard-panel canvas{display:block;flex:none;width:min(100%,900px,calc((100vh - 400px)*1.9));max-width:none;max-height:none;height:auto;aspect-ratio:1200/630;image-rendering:auto;filter:drop-shadow(0 8px 18px #000a)}
 .herocard-actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
-.herocard-note{margin:0;font-size:15px;color:var(--muted,#c9b99a);text-align:center}
+.herocard-note{margin:0;font-size:16px;color:var(--muted,#c9b99a);text-align:center}
 .daily-goals{margin-top:12px;padding:12px 16px;border:1px solid #b99b6077;background:#152034}
 .daily-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.daily-goals p{font-size:15px;margin:6px 0 8px}
+.daily-goals p{font-size:16px;margin:6px 0 8px}
 .daily-goals ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
 .daily-goal{display:grid;grid-template-columns:92px 1fr auto auto;gap:12px;align-items:center;padding:6px 10px;background:#0f1828;border:1px solid #b99b6044}
-.daily-kind{font-size:13px;letter-spacing:1px;text-transform:uppercase;color:var(--gold-deep,#b99b60)}
+.daily-kind{font-size:16px;letter-spacing:1px;text-transform:uppercase;color:var(--gold-deep,#b99b60)}
 .daily-text{font-size:17px}
-.daily-prog{font-size:15px;color:#c9b99a;min-width:56px;text-align:right}
-.daily-reward{font-size:15px;color:var(--gold,#f3d27a);min-width:84px;text-align:right}
+.daily-prog{font-size:16px;color:#c9b99a;min-width:56px;text-align:right}
+.daily-reward{font-size:16px;color:var(--gold,#f3d27a);min-width:84px;text-align:right}
 .daily-goal.done{opacity:.8}.daily-goal.done .daily-prog{color:var(--ok,#7fd18b)}.daily-goal.done .daily-text{text-decoration:line-through;text-decoration-color:#c9b99a88}
 html.m-mode .herocard-panel{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 14px;align-items:center}html.m-mode .herocard-panel canvas{grid-row:span 2;width:min(64vw,calc((100vh - 175px)*1.9))}html.m-mode .herocard-actions{flex-direction:column;align-items:stretch;gap:8px}html.m-mode .herocard-note{font-size:13px;text-align:left}
 html.m-mode .daily-goals{margin-top:8px;padding:6px 10px;scroll-margin-top:2px}html.m-mode .daily-head button{min-height:30px;padding:2px 12px;font-size:14px}html.m-mode .daily-goals p{margin:3px 0 5px;font-size:13px;line-height:1.25}html.m-mode .daily-goals ul{gap:4px}html.m-mode .daily-goal{grid-template-columns:1fr auto auto;gap:8px;padding:2px 10px;min-height:0}html.m-mode .daily-text{font-size:15px}html.m-mode .daily-kind{display:none}
@@ -2755,7 +2755,7 @@ html.m-mode .daily-goals{margin-top:8px;padding:6px 10px;scroll-margin-top:2px}h
 @keyframes qf-burst{to{background-position:-448px 0}}
 #modal#modal[data-view=lesson-quiz] .question.qf .qf-guide{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}
 #modal#modal[data-view=lesson-quiz] .question.qf .qf-guide .edu-guide{width:120px;height:120px}
-#modal#modal[data-view=lesson-quiz] .question.qf .qf-name{font:700 11px/1.2 var(--edu-body);letter-spacing:1px;text-transform:uppercase;color:var(--gold-2,#f0d48a);text-align:center}
+#modal#modal[data-view=lesson-quiz] .question.qf .qf-name{font:700 16px/1.2 var(--edu-body);letter-spacing:1px;text-transform:uppercase;color:var(--gold-2,#f0d48a);text-align:center}
 #modal#modal[data-view=lesson-quiz] .question.qf>.question-reading>h3{position:relative;margin:0;padding:12px 18px;border-style:solid;border-width:calc(4*var(--edu-u));border-color:var(--edu-edge);border-image:url(ui/skin/parchment.png) 10 fill/calc(10*var(--edu-u)) round;background:none;color:var(--edu-ink);font-size:22px;line-height:1.35;image-rendering:pixelated}
 #modal#modal[data-view=lesson-quiz] .question.qf .qf-cheer{margin:4px 0 0;font-weight:700;color:#2f5a25}
 @media (prefers-reduced-motion:reduce){#modal#modal[data-view=lesson-quiz] .question.qf .am-pips i.lit,#modal#modal[data-view=lesson-quiz] .question.qf .qf-guide .edu-guide.cheer{animation:none}#modal#modal[data-view=lesson-quiz] .question.qf .qf-pop{display:none}}
@@ -2777,7 +2777,7 @@ html.m-mode .daily-goals{margin-top:8px;padding:6px 10px;scroll-margin-top:2px}h
 #modal#modal[data-view=lesson-quiz] .question.qf #quiz-feedback .feedback.feedback:has(>#lesson-pic)>.am{padding-right:184px}
 /* a short screen (844x390 phone mode and short desktop windows): one compact band. The guide at 56px beside the stars and the
    plate, Read to me top right, the picture a thumbnail beside the plate; the answer row and the card keep the rest */
-@media(max-height:500px){#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf>.question-reading{display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"guide top read" "guide say pic";grid-template-rows:auto auto;column-gap:10px;row-gap:4px;align-items:center;flex:none;min-height:0;max-height:none;overflow:visible;padding:0 6px 4px}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf>.question-reading>.qf-top{display:flex;grid-area:top!important;gap:4px 10px}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf>.question-reading>.qf-top .tag{display:inline;font-size:13px}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf .am-pips i{width:16px;height:16px;background-size:16px 16px}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf>.question-reading>.qf-guide{grid-area:guide!important;align-self:start}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf .qf-guide .edu-guide{width:56px;height:56px}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf .qf-name{display:none}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf>.question-reading>h3{grid-area:say!important;align-self:stretch;margin:0;font-size:17px;line-height:1.3;padding:6px 12px}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf>.question-reading>.edu-read{grid-area:read!important;position:static;align-self:center;justify-self:end;margin:0}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf>.question-reading>:is(#quiz-pic,.question-text-card){grid-area:pic!important;position:static;width:auto;height:64px;max-width:200px;margin:0;align-self:center;justify-self:end}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf>.question-reading>.question-text-card{height:auto;max-height:64px}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf>.question-reading>.quiz-zoom{grid-area:pic!important;position:static;align-self:start;justify-self:end}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf .qf-pop{width:48px;height:48px;margin:-24px 0 0 -24px;background-size:336px 48px}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf .qf-cheer{margin:2px 0 0}}
+@media(max-height:500px){#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf>.question-reading{display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"guide top read" "guide say pic";grid-template-rows:auto auto;column-gap:10px;row-gap:4px;align-items:center;flex:none;min-height:0;max-height:none;overflow:visible;padding:0 6px 4px}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf>.question-reading>.qf-top{display:flex;grid-area:top!important;gap:4px 10px}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf>.question-reading>.qf-top .tag{display:inline;font-size:16px}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf .am-pips i{width:16px;height:16px;background-size:16px 16px}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf>.question-reading>.qf-guide{grid-area:guide!important;align-self:start}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf .qf-guide .edu-guide{width:56px;height:56px}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf .qf-name{display:none}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf>.question-reading>h3{grid-area:say!important;align-self:stretch;margin:0;font-size:17px;line-height:1.3;padding:6px 12px}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf>.question-reading>.edu-read{grid-area:read!important;position:static;align-self:center;justify-self:end;margin:0}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf>.question-reading>:is(#quiz-pic,.question-text-card){grid-area:pic!important;position:static;width:auto;height:64px;max-width:200px;margin:0;align-self:center;justify-self:end}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf>.question-reading>.question-text-card{height:auto;max-height:64px}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf>.question-reading>.quiz-zoom{grid-area:pic!important;position:static;align-self:start;justify-self:end}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf .qf-pop{width:48px;height:48px;margin:-24px 0 0 -24px;background-size:336px 48px}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf .qf-cheer{margin:2px 0 0}}
 @keyframes qf-burst-s{to{background-position:-336px 0}}
 @media(max-height:500px){#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf .qf-pop{animation-name:qf-burst-s}}
 @media(max-height:500px){#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf>.question-reading:not(:has(>:is(#quiz-pic,.question-text-card))){grid-template-areas:"guide top read" "guide say say"}html.m-mode #modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-feedback:empty) .qf-guide .edu-guide{width:80px;height:80px}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-feedback:empty)>.question-reading>h3{font-size:19px;padding:10px 14px}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-feedback:empty)>.question-reading>#quiz-pic{height:92px;max-width:230px}}
@@ -2785,17 +2785,17 @@ html.m-mode .daily-goals{margin-top:8px;padding:6px 10px;scroll-margin-top:2px}h
    guide and Read to me stay as one slim row, so the star still lights; the words and the picture step aside as before */
 @media(max-height:500px){#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-form.choice-form):has(#quiz-feedback:not(:empty))>.question-reading{display:grid;grid-template-areas:"guide top read";grid-template-columns:auto minmax(0,1fr) auto}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-form.choice-form):has(#quiz-feedback:not(:empty))>.question-reading>:is(h3,#quiz-pic,.question-text-card,.quiz-zoom){display:none}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-form.choice-form):has(#quiz-feedback:not(:empty)) .qf-guide .edu-guide{width:40px;height:40px}}
 /* answered with a typed answer on a short screen, the card takes the room: the band slims to the 40px guide and a one-line plate */
-@media(max-height:500px){#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-feedback:not(:empty)) .qf-guide .edu-guide{width:40px;height:40px}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-feedback:not(:empty))>.question-reading>h3{font-size:15px;line-height:1.25;padding:4px 10px}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-feedback:not(:empty))>.question-reading>#quiz-pic{height:48px}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-feedback:not(:empty))>.question-reading{row-gap:2px;padding-bottom:2px}html:not(.m-mode) #modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf>.question-reading>h3{font-size:15px;padding:4px 10px}html:not(.m-mode) #modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf>.question-reading>#quiz-pic{height:48px}html:not(.m-mode) #modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf .qf-guide .edu-guide{width:40px;height:40px}html:not(.m-mode) #modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-feedback:not(:empty)) .qf-guide{display:none}html:not(.m-mode) #modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-feedback:not(:empty))>.question-reading{grid-template-columns:minmax(0,1fr) auto auto auto;grid-template-areas:"say top pic read"}html:not(.m-mode) #modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-feedback:not(:empty))>.question-reading>#quiz-pic{height:40px}html:not(.m-mode) #modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-feedback:not(:empty))>.question-reading>.qf-top .tag{display:none}}
+@media(max-height:500px){#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-feedback:not(:empty)) .qf-guide .edu-guide{width:40px;height:40px}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-feedback:not(:empty))>.question-reading>h3{font-size:16px;line-height:1.25;padding:4px 10px}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-feedback:not(:empty))>.question-reading>#quiz-pic{height:48px}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-feedback:not(:empty))>.question-reading{row-gap:2px;padding-bottom:2px}html:not(.m-mode) #modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf>.question-reading>h3{font-size:16px;padding:4px 10px}html:not(.m-mode) #modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf>.question-reading>#quiz-pic{height:48px}html:not(.m-mode) #modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf .qf-guide .edu-guide{width:40px;height:40px}html:not(.m-mode) #modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-feedback:not(:empty)) .qf-guide{display:none}html:not(.m-mode) #modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-feedback:not(:empty))>.question-reading{grid-template-columns:minmax(0,1fr) auto auto auto;grid-template-areas:"say top pic read"}html:not(.m-mode) #modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-feedback:not(:empty))>.question-reading>#quiz-pic{height:40px}html:not(.m-mode) #modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-feedback:not(:empty))>.question-reading>.qf-top .tag{display:none}}
 /* polish2-oct29 (readiness #10): the victory card's own cheer under the level name, and one tag beside the time (first clear, new
    best time, all three stars, or the best time to beat on a replay; ui/victory-lines.js) */
 dialog[data-view=result] .victory-cheer{margin:0 auto 2px;font:700 var(--fs)/1.2 var(--ui);letter-spacing:.5px;color:#ffe9a8;text-shadow:0 2px 0 #1e0603}
 dialog[data-view=result] .result-time{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
-dialog[data-view=result] .victory-tag{display:inline-block;padding:2px 8px 3px;font:700 calc(var(--fs) - 2px)/1.2 var(--ui);letter-spacing:1px;text-transform:uppercase;color:#cfe3ff;background:#142036;border:2px solid #4b5f86;box-shadow:0 2px 0 #0b1220}
+dialog[data-view=result] .victory-tag{display:inline-block;padding:2px 8px 3px;font:700 calc(var(--fs) - 0px)/1.2 var(--ui);letter-spacing:1px;text-transform:uppercase;color:#cfe3ff;background:#142036;border:2px solid #4b5f86;box-shadow:0 2px 0 #0b1220}
 dialog[data-view=result] .victory-tag:is([data-tag=first],[data-tag=record],[data-tag=stars]){color:#2a1206;background:#f0c860;border-color:#7a4d00;box-shadow:0 2px 0 #3d2400}
 dialog[data-view=result] .victory-tag:is([data-tag=first],[data-tag=record],[data-tag=stars]){animation:vt-pop .4s steps(5) .5s both}
 /* improve20-r7b-nov1 #1 (audit6 #16): the badge's text is never under 12 px, and its pop grows from full size (am-pop starts at scale 0,
    so the first frames showed the words at about 6 px) */
-dialog[data-view=result] .victory-tag{font-size:max(12px,calc(var(--fs) - 2px))}
+dialog[data-view=result] .victory-tag{font-size:max(16px,calc(var(--fs) - 0px))}
 @keyframes vt-pop{0%{transform:scale(1)}50%{transform:scale(1.18)}100%{transform:scale(1)}}
 @media (prefers-reduced-motion:reduce){dialog[data-view=result] .victory-tag{animation:none!important}}
 :root[data-motion=reduced] dialog[data-view=result] .victory-tag{animation:none!important}
@@ -2945,18 +2945,18 @@ html.m-mode dialog[data-view=alchemist] .potion-shop .card h3{font-size:20px}}
 
 /* kidfix-a-oct31: the one-time Pets pointer at Home */
 .tabs button.pointer-pulse{animation:pq-slot-pulse 1s steps(4) infinite;outline:2px solid #e8c47a;outline-offset:2px;position:relative}
-.tabs button .pointer-badge{position:absolute;top:-14px;right:-6px;padding:1px 5px;font-size:11px;line-height:14px;background:#e8566e;color:#fff;border-radius:3px;white-space:nowrap;pointer-events:none}
+.tabs button .pointer-badge{position:absolute;top:-14px;right:-6px;padding:1px 5px;font-size:16px;line-height:14px;background:#e8566e;color:#fff;border-radius:3px;white-space:nowrap;pointer-events:none}
 
 /* kidfix-a-oct31: the optional "What grade are you in?" row under the school stage (Elementary only) */
 .school-grade{display:flex;flex-direction:column;gap:4px;margin:6px 0 2px}.school-grade[hidden]{display:none}
-.school-grade-q{font-size:14px;color:var(--ink)}.school-grade-q small{color:var(--muted)}
-.school-grade-opts{display:flex;flex-wrap:wrap;gap:4px}.school-grade-opts button{padding:3px 8px;font-size:13px;min-height:28px}
+.school-grade-q{font-size:16px;color:var(--ink)}.school-grade-q small{color:var(--muted)}
+.school-grade-opts{display:flex;flex-wrap:wrap;gap:4px}.school-grade-opts button{padding:3px 8px;font-size:16px;min-height:28px}
 .school-grade-opts button.picked{outline:2px solid #e8c47a;outline-offset:1px;color:#ffe9a8}
 /* improve20-z-nov1 #3 (audit6 #5): three big school-stage buttons in the grade row's style (the dropdown hid Elementary on a phone) */
 .school-stage{display:flex;gap:6px;margin:2px 0 4px}
-.school-grade-opts{flex-wrap:nowrap}.select-pane .hero-setup .school-grade-opts button{flex:1 1 auto;min-width:0;padding:3px 2px;white-space:nowrap;font-size:14px}
+.school-grade-opts{flex-wrap:nowrap}.select-pane .hero-setup .school-grade-opts button{flex:1 1 auto;min-width:0;padding:3px 2px;white-space:nowrap;font-size:16px}
 .select-pane .hero-setup .school-stage button,.school-stage button{flex:1 1 0;min-width:0;min-height:48px;padding:4px 6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;line-height:1.1;white-space:nowrap}
-.school-stage button b{font-size:15px}.school-stage button small{font-size:12px;color:var(--muted)}
+.school-stage button b{font-size:16px}.school-stage button small{font-size:16px;color:var(--muted)}
 .school-stage button.picked{outline:2px solid #e8c47a;outline-offset:1px;color:#ffe9a8}.school-stage button.picked small{color:#f3dca0}
 
 /* kidfix-a-oct31: the first-open placement offer for a child who gave a grade above 2 */
@@ -2974,13 +2974,13 @@ dialog[data-view=home] .rune-bar span:not(.rune-gem){color:#9cc6d0}
 .rune-gem{display:inline-block;width:12px;height:12px;background:#7ff0ff;transform:rotate(45deg);box-shadow:0 0 6px #7ff0ffaa}
 dialog[data-view=home] .rune-reset{margin-left:auto;min-height:32px;padding:2px 12px;font-size:16px}
 .rune-slots{display:flex;gap:6px;margin:8px 0 2px}
-.rune-slot{display:inline-grid;place-items:center;width:34px;height:30px;padding:0;border:2px solid #3f6a74;background:#0d1d22;color:#7ff0ff;font:700 14px/1 var(--ui);box-sizing:border-box;border-image:none}
+.rune-slot{display:inline-grid;place-items:center;width:34px;height:30px;padding:0;border:2px solid #3f6a74;background:#0d1d22;color:#7ff0ff;font:700 16px/1 var(--ui);box-sizing:border-box;border-image:none}
 .rune-slot.on{border-color:#7ff0ff;background:#1d5563;box-shadow:inset 0 0 6px #7ff0ff88}
 button.rune-slot.open{flex:none;width:34px;min-width:0;max-width:34px;cursor:pointer;border-style:dashed;border-color:#7ff0ff;color:#ffffff;min-height:30px;font-size:18px;animation:rune-pulse 1.4s ease-in-out infinite}
 button.rune-slot.open:hover,button.rune-slot.open:focus-visible{background:#1d5563}
 @keyframes rune-pulse{50%{box-shadow:0 0 8px #7ff0ffaa}}
 html[data-motion=reduced] button.rune-slot.open{animation:none}
-.rune-preview{display:block;font-size:14px;line-height:1.25;color:#9cc6d0}
+.rune-preview{display:block;font-size:16px;line-height:1.25;color:#9cc6d0}
 .m-mode .rune-slot{width:44px;height:40px}.m-mode button.rune-slot.open{min-height:40px;width:44px;max-width:44px}
 .road-rune{display:block;grid-column:1/-1;margin:0 0 4px;padding:3px 8px;border-left:4px solid #3fb8cc;background:#0f2a3355;color:#7ff0ff;font-weight:700;line-height:1.25}
 .edu .road-rune,.result .road-rune,.lesson .road-rune{color:#1f6676;background:#7ff0ff22}
@@ -3025,8 +3025,8 @@ html[data-motion=reduced] button.rune-slot.open{animation:none}
 .pd-bar{position:relative;flex:1;height:12px;border:2px solid #2a1a10;background:#4a2a20;border-radius:3px;overflow:hidden}
 .pd-bar i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(#f2c45a,#c9862e);transition:width .35s ease-out}
 .pd-bar.extra i{background:linear-gradient(#a8d36a,#5f9a3a)}
-.pd-label{white-space:nowrap;font:700 11px/1.2 var(--edu-body);letter-spacing:1px;text-transform:uppercase;color:var(--gold-2,#f0d48a)}
-@media(max-height:500px){#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf .pd-canvas{width:132px;height:75px;border-width:2px}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf .pd-bar{height:8px}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf .pd-label{font-size:9px}
+.pd-label{white-space:nowrap;font:700 16px/1.2 var(--edu-body);letter-spacing:1px;text-transform:uppercase;color:var(--gold-2,#f0d48a)}
+@media(max-height:500px){#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf .pd-canvas{width:132px;height:75px;border-width:2px}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf .pd-bar{height:8px}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf .pd-label{font-size:16px}
  #modal#modal#modal#modal[data-view=lesson-quiz] .question.qf>.question-reading>h3.has-topic-art{padding-right:30px!important}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf .topic-art,#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf .topic-art .ta-body,#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf .topic-art canvas,#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf .topic-art img{width:48px;height:48px}#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf .topic-art{top:-24px;right:-12px}
  #modal#modal .tile-form .tile-answers button{min-width:80px;min-height:44px;font-size:18px}}
 @media (prefers-reduced-motion:reduce){.topic-art .ta-body,.topic-art .ta-spark i{animation:none!important}.pd-bar i{transition:none}}
@@ -3035,7 +3035,7 @@ html[data-motion=reduced] button.rune-slot.open{animation:none}
 #modal#modal[data-view=lesson-quiz] .question.qf>.question-reading:has(>:is(#quiz-pic,.question-text-card)) .pd-canvas{width:176px;height:100px}
 #modal#modal .tile-form .tile-alt{margin:4px 0 0;text-align:center}
 dialog[data-view=lesson-quiz] .question:has(#quiz-feedback:not(:empty)) .tile-alt{display:none}
-@media(max-height:500px){#modal#modal .tile-form .tile-alt{margin:2px 0 0}#modal#modal .tile-form .tile-type{font-size:15px}
+@media(max-height:500px){#modal#modal .tile-form .tile-alt{margin:2px 0 0}#modal#modal .tile-form .tile-type{font-size:16px}
  #modal[data-view=lesson-cheer] .cheer-stage{height:84px;margin:6px auto 0}#modal[data-view=lesson-cheer] .cheer-stage .topic-art,#modal[data-view=lesson-cheer] .cheer-stage .ta-body,#modal[data-view=lesson-cheer] .cheer-stage canvas,#modal[data-view=lesson-cheer] .cheer-stage img{width:80px;height:80px}#modal[data-view=lesson-cheer] .test-cheer .am-score{margin:4px 0}}
 /* once answered (the card's compact state), the scene steps down like the guide does, so the question keeps more width */
 #modal#modal[data-view=lesson-quiz] .question.qf:has(#quiz-feedback:not(:empty)) .pd-canvas{width:132px;height:75px}
@@ -3048,14 +3048,14 @@ dialog[data-view=lesson-quiz] .question:has(#quiz-feedback:not(:empty)) .tile-al
 /* ---------- improve20-c-oct31: earned pets, the Trophy Hall, the hero show card, the unlock preview, Skip ahead ---------- */
 .pet-card.pet-locked .pet-portrait{filter:grayscale(.85) brightness(.55)}
 .pet-card.pet-locked h3,.pet-card.pet-locked>p{color:var(--muted)}
-.pet-card .pet-source{clear:both;margin:6px 0 8px;padding:6px 8px;background:rgba(0,0,0,.28);color:var(--gold);font-size:var(--fs-s,14px)}
+.pet-card .pet-source{clear:both;margin:6px 0 8px;padding:6px 8px;background:rgba(0,0,0,.28);color:var(--gold);font-size:var(--fs-s,16px)}
 .pet-card .pet-source strong{color:var(--ink)}
 .pet-moment{position:absolute;left:50%;top:18%;z-index:40;transform:translateX(-50%);display:flex;align-items:center;gap:10px;padding:10px 18px 10px 10px;border:calc(4*var(--u)) solid transparent;border-image:url(ui/skin/pl-plate.png) 12 fill/calc(12*var(--u)) stretch;image-rendering:pixelated;pointer-events:none;animation:pet-moment-in .35s cubic-bezier(.2,1.4,.4,1) both;transition:opacity .5s}
 .pet-moment.out{opacity:0}
 .pet-moment canvas{width:96px;height:72px;image-rendering:pixelated}
 .pet-moment-text{display:flex;flex-direction:column;gap:2px;max-width:320px}
 .pet-moment-text strong{color:var(--gold);font-size:22px;letter-spacing:1px}
-.pet-moment-text span{color:var(--ink);font-size:15px}
+.pet-moment-text span{color:var(--ink);font-size:16px}
 @keyframes pet-moment-in{from{opacity:0;transform:translate(-50%,-12px) scale(.9)}to{opacity:1;transform:translate(-50%,0) scale(1)}}
 :root[data-motion=reduced] .pet-moment{animation:none}
 @media (prefers-reduced-motion:reduce){.pet-moment{animation:none}}
@@ -3064,15 +3064,15 @@ dialog[data-view=lesson-quiz] .question:has(#quiz-feedback:not(:empty)) .tile-al
 .trophy{display:flex;flex-direction:column;align-items:center;text-align:center;padding:4px 2px 8px}
 .trophy-art{width:176px;height:196px;image-rendering:pixelated}
 .trophy h3{margin:6px 0 2px;font-size:16px;line-height:1.2}
-.trophy-meta{display:flex;align-items:center;justify-content:center;gap:4px;margin:0;color:var(--ink-2);font-size:14px}
+.trophy-meta{display:flex;align-items:center;justify-content:center;gap:4px;margin:0;color:var(--ink-2);font-size:16px}
 .trophy-meta img{image-rendering:pixelated}
-.trophy-line{margin:4px 0 0;color:var(--muted);font-size:13px;font-style:italic;line-height:1.3}
+.trophy-line{margin:4px 0 0;color:var(--muted);font-size:16px;font-style:italic;line-height:1.3}
 .trophy-silver h3{color:#e3e8f0}.trophy-gold h3{color:var(--gold)}.trophy-bronze h3{color:#e2a46a}
 .trophy-dark h3{color:var(--faint)}
-.trophy .trophy-line.subtle{font-size:13px;font-style:normal}
+.trophy .trophy-line.subtle{font-size:16px;font-style:normal}
 .hero-show{display:flex;flex-direction:column;align-items:center;gap:10px;padding:8px 0}
 .hshow-card{width:min(760px,100%);padding:22px 28px;border:calc(12*var(--u)) solid transparent;border-image:url(ui/skin/pl-frame.png) 19 fill/calc(24*var(--u)) round;image-rendering:pixelated;background:linear-gradient(180deg,#1a2338,#26304a);background-clip:padding-box}
-.hshow-title{text-align:center;color:var(--gold-deep);font-size:13px;letter-spacing:3px;font-weight:700}
+.hshow-title{text-align:center;color:var(--gold-deep);font-size:16px;letter-spacing:3px;font-weight:700}
 .hshow-body{display:flex;align-items:center;gap:22px;margin-top:8px}
 .hshow-figure{position:relative;flex:none;width:200px;height:200px;display:flex;align-items:flex-end;justify-content:center;background:radial-gradient(ellipse 60% 14% at 50% 94%,rgba(0,0,0,.45),transparent 70%)}
 .hshow-figure #hshow-hero{width:180px;height:196px;image-rendering:pixelated}
@@ -3080,13 +3080,13 @@ dialog[data-view=lesson-quiz] .question:has(#quiz-feedback:not(:empty)) .tile-al
 .hshow-info{flex:1;min-width:0}
 .hshow-name{margin:0;font-size:34px;color:var(--ink);overflow-wrap:anywhere}
 .hshow-class{margin:2px 0;color:var(--accent,var(--gold));font-size:18px;font-weight:700}
-.hshow-honour{margin:0;color:var(--gold);font-size:13px;letter-spacing:2px;text-transform:uppercase}
-.hshow-pet{margin:2px 0 0;color:var(--ink-2);font-size:14px}
+.hshow-honour{margin:0;color:var(--gold);font-size:16px;letter-spacing:2px;text-transform:uppercase}
+.hshow-pet{margin:2px 0 0;color:var(--ink-2);font-size:16px}
 .hshow-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px;margin-top:12px}
 .hshow-stat{display:flex;flex-direction:column;align-items:center;padding:8px 4px;border:calc(3*var(--u)) solid transparent;border-image:url(ui/skin/pl-slot.png) 5 fill/calc(6*var(--u)) stretch;image-rendering:pixelated}
 .hshow-stat img{width:32px;height:32px;image-rendering:pixelated}
 .hshow-stat strong{font-size:22px;color:var(--ink)}
-.hshow-stat span{font-size:14px;color:var(--muted)}
+.hshow-stat span{font-size:16px;color:var(--muted)}
 .hshow-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center}
 .edu-unlock .edu-unlock-preview{display:block;width:204px;height:164px;margin:0 auto 4px;image-rendering:pixelated}
 .edu-unlock.has-preview .edu-unlock-rune{display:none}
@@ -3151,7 +3151,7 @@ dialog[data-view=rift] #modal-content .modal-actions{position:sticky;bottom:0;z-
 .rift-ghost{opacity:.7;font-size:var(--fs)}
 #rift-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;justify-content:flex-end;pointer-events:none}
 #rift-tags[hidden]{display:none}
-#rift-tags .rift-tag{font-size:12px;padding:0 6px;opacity:.92}
+#rift-tags .rift-tag{font-size:16px;padding:0 6px;opacity:.92}
 #rift-tags .rift-tag-name{background:#b77cff;color:#1d0f2e}
 /* phone: the top-right corner holds Map/Journal/Menu, so the run's Rift tags sit under the gold on the left */
 html.m-mode #rift-tags{position:fixed;left:calc(16px + env(safe-area-inset-left,0px));top:106px;margin:0;justify-content:flex-start;max-width:46vw}
@@ -3251,13 +3251,13 @@ dialog[data-view=result] .level-stars[data-burst]::before{opacity:.62}
 .tree-step{flex:none;min-width:1.1em;color:var(--gold)}
 .tree-name{font-size:18px;color:var(--ink)}
 .tree-locked .tree-name{color:var(--ink-2)}
-.tree-state{margin-left:auto;flex:none;font-style:normal;font-size:13px;letter-spacing:1px;text-transform:uppercase}
+.tree-state{margin-left:auto;flex:none;font-style:normal;font-size:16px;letter-spacing:1px;text-transform:uppercase}
 .tree-lit .tree-state{color:#acd69b}.tree-next .tree-state{color:#cfe3ff}.tree-locked .tree-state{color:var(--faint)}
-.tree-gates{display:flex;flex-wrap:wrap;gap:2px 12px;font-size:14px;color:var(--ink-2)}
+.tree-gates{display:flex;flex-wrap:wrap;gap:2px 12px;font-size:16px;color:var(--ink-2)}
 .tree-sub{padding-left:6px;border-left:3px solid var(--accent);color:var(--accent)}
 .tree-gate.met{color:#acd69b}
-.tree-goal{font-size:14px;color:var(--muted)}
-.tree-next .tree-goal{font-size:15px;font-weight:700;color:#ffe9a8}
+.tree-goal{font-size:16px;color:var(--muted)}
+.tree-next .tree-goal{font-size:16px;font-weight:700;color:#ffe9a8}
 html.m-mode .tree-rung{grid-template-columns:44px minmax(0,1fr);gap:6px;min-height:46px}
 html.m-mode .tree-rung::before,html.m-mode .tree-rung::after{left:21px}
 html.m-mode .tree-node{width:38px;height:38px}
@@ -3267,7 +3267,7 @@ html.m-mode .tree-lead{display:none}
    fitMapLabels picks each name's side. The next goal's building glows and its name reads "Next: ...". ---------- */
 .pq-village-map .pq-map-mark{width:30px;height:30px;font-size:0;background:url(ui/skin/pl-slot.png) center/100% 100%;z-index:1}
 .pq-village-map .pq-map-mark>.ico{filter:drop-shadow(0 1px 0 #0d0806)}
-.pq-map-name{position:absolute;left:50%;top:100%;transform:translate(-50%,1px);padding:0 4px;white-space:nowrap;font:700 13px/16px var(--ui);letter-spacing:0;color:var(--ink);background:#171b2de6;border:1px solid #e8c47a59;border-radius:2px;pointer-events:none;text-shadow:none}
+.pq-map-name{position:absolute;left:50%;top:100%;transform:translate(-50%,1px);padding:0 4px;white-space:nowrap;font:700 16px/16px var(--ui);letter-spacing:0;color:var(--ink);background:#171b2de6;border:1px solid #e8c47a59;border-radius:2px;pointer-events:none;text-shadow:none}
 .pq-map-mark.pq-name-above .pq-map-name{top:auto;bottom:100%;transform:translate(-50%,-1px)}
 .pq-map-mark.pq-name-right .pq-map-name{left:100%;top:50%;transform:translate(2px,-50%)}
 .pq-map-mark.pq-name-left .pq-map-name{left:auto;right:100%;top:50%;transform:translate(-2px,-50%)}
@@ -3347,7 +3347,7 @@ dialog[data-view=unlock] .edu-unlock.edu-awakening .edu-awaken-ring,dialog[data-
  html:not(.m-mode) dialog[data-view=result] .level-result>.result-time{margin-left:14px}
 }
 html:not(.m-mode) dialog[data-view=result] .level-result-detail>.level-highlights{order:-1}
-dialog[data-view=result] .level-record.level-companion .comp-wage-note{flex-basis:100%;text-transform:none;letter-spacing:0;font-size:14px;line-height:1.2}
+dialog[data-view=result] .level-record.level-companion .comp-wage-note{flex-basis:100%;text-transform:none;letter-spacing:0;font-size:16px;line-height:1.2}
 dialog[data-view=result] .level-result.result-tight .level-line{display:none}
 html:not(.m-mode) dialog[data-view=result] .level-result.result-tight[data-outcome=won] .victory-title{height:46px;background-size:256px 64px;background-position:center -8px;font-size:24px}
 html dialog[data-view=result] #modal-content .level-result.goal-flow>.result-goal{position:static}
@@ -3363,7 +3363,7 @@ html dialog[data-view=result] #modal-content .level-result.goal-flow>.result-goa
 #hud[data-res] .bar.mp small{color:var(--res,#b9d6ee)}
 /* improve20-j-nov1 #3: the halfway checkpoint of a lesson longer than 12 steps: a short marker over the step, a gap and a notch on the dots */
 .lesson-checkpoint{flex:none;display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;margin:0;padding:6px 10px;border:2px solid var(--gold-deep,#b8862b);border-radius:4px;background:#2a3050;color:#f1e6cc;font-size:16px;line-height:1.3}
-.lesson-checkpoint strong{color:var(--gold-2,#f0d48a)}.lesson-checkpoint button{margin-left:auto;min-height:34px;padding:2px 12px;font-size:14px}
+.lesson-checkpoint strong{color:var(--gold-2,#f0d48a)}.lesson-checkpoint button{margin-left:auto;min-height:34px;padding:2px 12px;font-size:16px}
 .lesson-footer .lesson-dots i.half{margin-left:6px;box-shadow:-5px 0 0 -3px var(--gold-2,#f0d48a)}
 html.m-mode .lesson-checkpoint{font-size:14px;padding:3px 8px;margin:0 0 4px}html.m-mode .lesson-checkpoint button{min-height:30px}
 /* improve20-d-nov1: the packed result card (main.js fitResult, desktop only), so the busiest first clear (m1: three chests, two found items,
@@ -3371,7 +3371,7 @@ html.m-mode .lesson-checkpoint{font-size:14px;padding:3px 8px;margin:0 0 4px}htm
 html:not(.m-mode) dialog[data-view=result] .level-result.result-packed>.result-chests{flex-wrap:nowrap;gap:6px;margin:2px 0}
 html:not(.m-mode) dialog[data-view=result] .level-result.result-packed .result-chest{max-width:none!important;flex:0 1 auto;min-width:0;padding:1px 6px 1px 2px;gap:4px}
 html:not(.m-mode) dialog[data-view=result] .level-result.result-packed .result-chest-img{width:32px;height:32px;margin:0}
-html:not(.m-mode) dialog[data-view=result] .level-result.result-packed .result-chest-text>small,html:not(.m-mode) dialog[data-view=result] .level-result.result-packed .result-chest-items{font-size:14px}
+html:not(.m-mode) dialog[data-view=result] .level-result.result-packed .result-chest-text>small,html:not(.m-mode) dialog[data-view=result] .level-result.result-packed .result-chest-items{font-size:16px}
 html:not(.m-mode) dialog[data-view=result] .level-result.result-packed .result-chest::before{width:44px;height:44px;margin-top:-22px}
 html:not(.m-mode) dialog[data-view=result] .level-result.result-packed .you-got{gap:2px;margin:0}
 html:not(.m-mode) dialog[data-view=result] .level-result.result-packed .you-got-row{gap:4px 8px}
@@ -3385,13 +3385,13 @@ html:not(.m-mode) dialog[data-view=result] .level-result.result-packed .level-re
 html:not(.m-mode) dialog[data-view=result] .level-result.result-packed .level-record.level-companion .comp-wage-note{flex-basis:auto;white-space:nowrap}
 html:not(.m-mode) dialog[data-view=result] .level-result.result-packed>.result-goal{font-size:17px;line-height:1.25;padding-top:4px}
 html:not(.m-mode) dialog[data-view=result] .level-result.result-packed .level-highlights .level-levelup small{white-space:nowrap}
-html:not(.m-mode) dialog[data-view=result] .level-result.result-packed>.result-goal .result-library{font-size:15px;line-height:1.2}
+html:not(.m-mode) dialog[data-view=result] .level-result.result-packed>.result-goal .result-library{font-size:16px;line-height:1.2}
 
 /* improve20-r18a-nov3 (round 18 lane A: cards and leads). Placed before the picframe-nov2, improve20-v-nov1 #18 and tablets-nov2 blocks (their tests read everything after them) */
 /* improve20-r18a-nov3 #8: the Champion card's What's next: the next power, one play goal, then More */
 .finale-goal.finale-play span{color:#f1e6cc}
 .finale-goal.finale-play{margin-top:0}
-.finale-more-btn{margin-left:auto;min-height:26px;padding:1px 10px;font-size:13px}
+.finale-more-btn{margin-left:auto;min-height:26px;padding:1px 10px;font-size:16px}
 .finale-more{margin:2px 0 0}
 /* improve20-r18a-nov3 #1: the rune lead sits in the defeat card's one row (last, red); the rune screen's actions sit under its rune bar */
 dialog[data-view=result] #modal-content .level-result>.modal-actions>.defeat-runes[data-row]{display:contents}
@@ -3400,7 +3400,7 @@ dialog[data-view=result] #modal-content .level-result>.modal-actions>.defeat-run
 dialog[data-view=rune-retry] .rune-retry-actions{justify-content:center;margin:4px 0 8px}
 dialog[data-view=result] #modal-content .level-result>.modal-actions:has(>.defeat-runes[data-row][data-defeat-runes])>button,dialog[data-view=result] #modal-content .level-result>.modal-actions>.defeat-runes[data-row]>button{white-space:nowrap;flex:none;padding-left:10px;padding-right:10px}
 dialog[data-view=result] #modal-content .defeat-runes[data-row] .rr-lines{display:flex;flex-direction:column;align-items:center;gap:1px}
-dialog[data-view=result] #modal-content .defeat-runes[data-row] .story-help-line{font-size:12px;display:inline-flex;align-items:center;gap:4px}
+dialog[data-view=result] #modal-content .defeat-runes[data-row] .story-help-line{font-size:16px;display:inline-flex;align-items:center;gap:4px}
 dialog[data-view=rune-retry] .rune-bar{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px}
 dialog[data-view=finale] .finale-next .finale-goal{flex-wrap:nowrap;align-items:baseline}
 dialog[data-view=finale] .finale-next .finale-goal>small{flex:none}
@@ -3411,13 +3411,13 @@ dialog[data-view=finale] .finale-next{padding-top:2px;padding-bottom:4px}
 /* #2: on a first loss in a row the rune button is a secondary in the button row, after Retry */
 dialog[data-view=result] #modal-content .level-result>.modal-actions:has(>.defeat-runes[data-lead=secondary]){flex-wrap:wrap!important;row-gap:4px}
 dialog[data-view=result] #modal-content .level-result>.modal-actions>.defeat-runes[data-lead=secondary]{order:5;flex:1 0 100%;display:flex;justify-content:center;margin:0}
-dialog[data-view=result] #modal-content .defeat-runes[data-lead=secondary] button{white-space:nowrap;padding-left:10px;padding-right:10px;font-size:14px}
+dialog[data-view=result] #modal-content .defeat-runes[data-lead=secondary] button{white-space:nowrap;padding-left:10px;padding-right:10px;font-size:16px}
 /* #4: the Story help line is the Retry button's own second line */
 dialog[data-view=result] #modal-content .level-result>.modal-actions>#retry[data-story]{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
-dialog[data-view=result] #modal-content #retry[data-story] .story-help-line{display:flex;align-items:center;gap:4px;font-size:12px;line-height:1.2;color:#ffe9a8;white-space:nowrap}
+dialog[data-view=result] #modal-content #retry[data-story] .story-help-line{display:flex;align-items:center;gap:4px;font-size:16px;line-height:1.2;color:#ffe9a8;white-space:nowrap}
 dialog[data-view=result] #modal-content #retry[data-story] .story-help-line img{width:16px;height:16px;image-rendering:pixelated}
 /* #5: the held in-fight ability tip, a small chip above the hotbar (under the boss bar on a phone) */
-#ability-chip{position:absolute;transform:translateX(-50%);z-index:7;max-width:min(60%,520px);box-sizing:border-box;padding:3px 12px;font:700 15px/1.25 var(--ui);color:#ffe9a8;background:#1c0e0ae6;border:2px solid #e8c47a;border-radius:4px;box-shadow:0 2px 0 #0008;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none;animation:travel-tip-in .25s ease-out}
+#ability-chip{position:absolute;transform:translateX(-50%);z-index:7;max-width:min(60%,520px);box-sizing:border-box;padding:3px 12px;font:700 16px/1.25 var(--ui);color:#ffe9a8;background:#1c0e0ae6;border:2px solid #e8c47a;border-radius:4px;box-shadow:0 2px 0 #0008;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none;animation:travel-tip-in .25s ease-out}
 #ability-chip.guard-tip{border-color:#7fc8ff}
 html.m-mode #ability-chip{font-size:13px;padding:2px 10px;max-width:46%}
 /* #7: the tutorial's "Go to the Library" pulses until the Library is entered; the held 90 s card's button */
@@ -3430,7 +3430,7 @@ html.m-mode #travel-tip.lib-nudge>span{flex:1 1 220px;min-width:220px}
 @media (prefers-reduced-motion:reduce){#controls-tutorial button.tut-library{animation:none;outline:3px solid #ffd36a;outline-offset:2px}}
 /* #8: the open Home tab reads as "you're here": a marker under it, and a tap on it says so */
 dialog[data-home] .home-tabs button.active{position:relative;cursor:default;box-shadow:inset 0 -3px 0 #ffd36a}
-dialog[data-home] .home-tabs button.tab-here::after{content:attr(data-here);position:absolute;left:50%;top:calc(100% + 2px);transform:translateX(-50%);padding:1px 6px;font-size:12px;line-height:16px;white-space:nowrap;color:#1c0e0a;background:#ffd36a;border-radius:3px;pointer-events:none;z-index:3;animation:travel-tip-in .2s ease-out}
+dialog[data-home] .home-tabs button.tab-here::after{content:attr(data-here);position:absolute;left:50%;top:calc(100% + 2px);transform:translateX(-50%);padding:1px 6px;font-size:16px;line-height:16px;white-space:nowrap;color:#1c0e0a;background:#ffd36a;border-radius:3px;pointer-events:none;z-index:3;animation:travel-tip-in .2s ease-out}
 dialog[data-home] .home-tabs button.tab-here{animation:tab-here-pulse .5s steps(3) 2}
 @keyframes tab-here-pulse{50%{filter:brightness(1.35)}}
 html.m-mode dialog[data-home] .home-tabs button.tab-here::after,dialog[data-home] .home-tabs:is([style*=overflow]) button.tab-here::after{display:none}
@@ -3440,7 +3440,7 @@ dialog[data-view=result] #modal-content .level-result>.modal-actions:has(>.defea
 dialog[data-view=result] #modal-content .level-result>.modal-actions>#retry[data-story]{flex-shrink:0;white-space:nowrap}
 /* improve20-r20g-nov4 (round 20 lane R20G: placement and content). Placed before the improve20-v-nov1 #18, picframe-nov2 and tablets-nov2 blocks.
    #1 (kidsim5 #22): the placement check's Stop is a clear button beside the progress dots from question 1 (it was grey text bottom-left). */
-#modal#modal[data-view=placement] .qf-top .placement-stop-btn{margin-left:auto;min-height:34px;padding:4px 14px;font-size:15px;line-height:1.1;white-space:nowrap}
+#modal#modal[data-view=placement] .qf-top .placement-stop-btn{margin-left:auto;min-height:34px;padding:4px 14px;font-size:16px;line-height:1.1;white-space:nowrap}
 /* #1 (audit14 #6): tap-to-order. The numbers placed so far sit on the answer line as chips; a placed tile dims; Check waits for all of them */
 #modal#modal .order-form .order-built{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px 6px;min-height:44px;margin:4px 0 8px;padding:6px 10px;border:2px dashed rgba(240,212,138,.55);border-radius:6px;font-size:22px}
 #modal#modal .order-form .order-built .order-hint{font-size:16px;opacity:.85}
@@ -3529,10 +3529,10 @@ dialog[data-view=result] .level-result.result-tight>.rating-key{display:none}
 .jm-text{flex:1;min-width:0;display:grid;gap:4px}
 .jm-top{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .jm-top strong{color:var(--ink);font-size:18px}
-.jm-stage{color:var(--muted);font-size:14px}
+.jm-stage{color:var(--muted);font-size:16px}
 .jm-count{color:var(--gold);font-size:16px}.jm-count b{font-size:20px}
 .jm-bar{margin:0}
-.jm-goal{font-size:14px;color:var(--ink);line-height:1.25}.jm-goal.jm-quiet{color:var(--muted)}
+.jm-goal{font-size:16px;color:var(--ink);line-height:1.25}.jm-goal.jm-quiet{color:var(--muted)}
 .jm-details{margin-top:14px}.jm-details>summary{cursor:pointer;min-height:40px;display:flex;align-items:center;font-weight:700;color:var(--gold)}
 dialog[data-view=journal] .jm-grid .journal-row{grid-template-columns:minmax(195px,1.6fr) repeat(calc(var(--jm-cols,4) + 1),minmax(66px,1fr))}
 .m-mode .jm-rows{grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px}
@@ -3581,7 +3581,7 @@ html.m-mode .rift-card{row-gap:3px}
 /* improve20-y-nov1 #7: the first hire's "joins you!" banner never sits over the roster board's prompt (main.js hireBeat) */
 html.hire-beat #prompt{visibility:hidden}
 /* improve20-f-nov1 #10 (audit5 #2): the town's "Today 1/3" chip under the objective (opens the Journal's daily goals) */
-#today-chip{position:absolute;transform:translateX(-50%);pointer-events:auto;margin:0;min-height:28px;padding:2px 10px;font-size:13px;letter-spacing:.5px;white-space:nowrap}
+#today-chip{position:absolute;transform:translateX(-50%);pointer-events:auto;margin:0;min-height:28px;padding:2px 10px;font-size:16px;letter-spacing:.5px;white-space:nowrap}
 #today-chip[hidden]{display:none}
 #today-chip.done{color:#cfe9a8}
 html.m-mode #today-chip{min-height:24px;font-size:12px;padding:1px 8px}
@@ -3591,16 +3591,16 @@ html.cine-on #today-chip{visibility:hidden}
 .title-today h3{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin:0 0 4px;font-size:var(--fs);letter-spacing:1px;text-transform:uppercase;color:#f3d48a}
 .title-today h3 small{font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink-2)}
 .title-today ul{list-style:none;margin:0;padding:0;display:grid;gap:2px}
-.title-today li{display:grid;grid-template-columns:14px 1fr auto;gap:6px;align-items:center;font-size:15px;line-height:1.35}
+.title-today li{display:grid;grid-template-columns:14px 1fr auto;gap:6px;align-items:center;font-size:16px;line-height:1.35}
 .title-today li b{color:var(--ink-2);text-align:center}
 .title-today li.done{color:var(--ink-2)}
 .title-today li.done b{color:#9fd36a}
 .title-today li em{font-style:normal;color:#f3d48a;display:flex;align-items:center;gap:4px;white-space:nowrap}
 .title-today .daily-prize,.daily-goal .daily-prize{width:24px;height:24px;object-fit:contain;image-rendering:pixelated;vertical-align:middle;margin-right:4px}
-.title-today .today-bye{margin:6px 0 0;font-size:15px;color:#cfe9a8}
+.title-today .today-bye{margin:6px 0 0;font-size:16px;color:#cfe9a8}
 .title-tomorrow{margin-top:6px;padding-top:6px;border-top:1px solid #6b4a2a}
-.title-tomorrow strong{display:block;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#f3d48a;margin-bottom:2px}
-.title-tomorrow li{display:block;font-size:14px;line-height:1.35;color:var(--ink-2)}
+.title-tomorrow strong{display:block;font-size:16px;letter-spacing:1px;text-transform:uppercase;color:#f3d48a;margin-bottom:2px}
+.title-tomorrow li{display:block;font-size:16px;line-height:1.35;color:var(--ink-2)}
 .title-tomorrow li::before{content:'› ';color:#f3d48a}
 .title-today .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 .m-mode .title-today{right:calc(8px + env(safe-area-inset-right,0px));bottom:8px;padding:5px 8px;width:min(262px,31vw)}
@@ -3654,7 +3654,7 @@ dialog[data-view=settings] .settings-tabs button{min-height:44px;padding:6px 14p
 .help-step{flex:1 1 0;min-width:0;display:grid;justify-items:center;align-content:start;gap:4px;padding:10px 6px;text-align:center;border:2px solid #b89b5966;border-radius:4px;background:#0e1424aa}
 .help-step .help-ico{display:grid;place-items:center;width:48px;height:48px}
 .help-step .help-ico>*{transform:scale(1.4);image-rendering:pixelated}
-.help-step b{color:#ffe9a8;font-size:17px}.help-step small{font-size:14px;line-height:1.3;color:var(--ink)}
+.help-step b{color:#ffe9a8;font-size:17px}.help-step small{font-size:16px;line-height:1.3;color:var(--ink)}
 .help-arrow{align-self:center;color:var(--gold);font-size:22px;flex:none}
 .help-play dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 18px;margin:0}
 .help-play dl>div{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid #b89b5933;padding:4px 0}
@@ -3666,8 +3666,8 @@ dialog[data-view=help] #modal-content{display:flex;flex-direction:column;overflo
    28 px icons, the HUD chip's prize picture and the "New day!" banner's picture */
 .trail-swatch{display:inline-block;vertical-align:middle;border-radius:50%;background:radial-gradient(circle at 70% 50%,var(--c2) 0 18%,transparent 19%),radial-gradient(circle at 42% 52%,var(--c1) 0 16%,transparent 17%),radial-gradient(circle at 18% 54%,color-mix(in srgb,var(--c1) 55%,transparent) 0 11%,transparent 12%),linear-gradient(90deg,transparent 0,color-mix(in srgb,var(--c1) 35%,transparent) 30%,var(--c1) 80%,transparent 100%) center/100% 26% no-repeat;flex:none}
 .prize-backdrop{object-fit:cover;object-position:50% 40%;border:1px solid #6b4a2a}
-.title-tomorrow strong{font-size:14px}
-.title-tomorrow li{display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:center;font-size:15px;line-height:1.3;color:var(--ink);margin-top:4px}
+.title-tomorrow strong{font-size:16px}
+.title-tomorrow li{display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:center;font-size:16px;line-height:1.3;color:var(--ink);margin-top:4px}
 .title-tomorrow li::before{content:none}
 .title-tomorrow .tm-ico{display:grid;place-items:center;width:28px;height:28px}
 .tm-pic{width:28px;height:28px;object-fit:contain;image-rendering:pixelated}
@@ -3686,15 +3686,15 @@ dialog[data-view=help] #modal-content{display:flex;flex-direction:column;overflo
 .m-mode .ui-banner.newday strong{font-size:calc(var(--fs-2)*.7);letter-spacing:2px}
 .m-mode .ui-banner.newday small{font-size:calc(var(--fs)*.82);line-height:1.25;gap:6px}
 .m-mode .ui-banner.newday small .newday-pic{width:24px;height:24px}
-#hero-title{display:block;margin:-1px 16px 1px 0;font-size:12px;line-height:1.1;color:#f3d48a;letter-spacing:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 0 #0d0806}
+#hero-title{display:block;margin:-1px 16px 1px 0;font-size:16px;line-height:1.1;color:#f3d48a;letter-spacing:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 0 #0d0806}
 #hero-title[hidden]{display:none}
 /* improve20-r9c-nov1 #4: the title read as a thread at 11px on phones; it scales with the phone HUD's own name (13px, bold like it) and the 3px it
    gains comes out of the name row's spare line height, so the HUD frame keeps its size (tools/sim/improve20-r9c-nov1-scenes.mjs hudTitle measures it) */
 .m-mode #hero-title{font-size:13px;line-height:13px;font-weight:700;letter-spacing:.3px;text-align:right;margin:-3px 8px 0 0}
 .keepsakes{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin:0 0 8px}
-.keepsakes label{display:flex;align-items:center;gap:8px;font-size:15px}
+.keepsakes label{display:flex;align-items:center;gap:8px;font-size:16px}
 .keepsakes .pixel-select{min-width:180px}
-.keepsakes p{flex:1 1 100%;margin:0;font-size:14px}
+.keepsakes p{flex:1 1 100%;margin:0;font-size:16px}
 .title-today{width:min(400px,36vw)}
 /* lead (4 Nov 2026, owner screenshot at about 1000 px wide: Today's goals covered the right half of Choose hero, Settings and Credits). On a
    desktop the panel lives in the space right of the 300 px menu column and never crosses it. When that space is narrow, each prize goes
@@ -3759,7 +3759,7 @@ dialog[data-view=travel] .travel-picker.travel-atlas{display:grid;grid-template-
 dialog[data-view=travel] .travel-tab{display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto auto;column-gap:10px;row-gap:1px;align-items:center;text-align:left;min-height:52px;padding:6px 12px 7px 8px}
 .travel-tab .travel-thumb{grid-row:1/3;width:56px;height:32px;background:center/cover no-repeat;image-rendering:pixelated;border:2px solid #171b2d;box-shadow:0 0 0 1px #e8c47a66}
 .travel-tab b{font-weight:700;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.travel-tab small{display:flex;align-items:center;gap:4px;font-size:.78em;font-weight:400;color:#cdbb92;white-space:nowrap}
+.travel-tab small{display:flex;align-items:center;gap:4px;font-size:1em;font-weight:400;color:#cdbb92;white-space:nowrap}
 dialog[data-view=travel] .travel-tab.is-on{border-image-source:url(ui/skin/pl-button-hover.png);color:#fff6dc}
 .travel-tab.is-on .travel-thumb{box-shadow:0 0 0 2px var(--gold)}
 .travel-tab.is-on small{color:var(--gold)}
@@ -3810,36 +3810,36 @@ dialog[data-view=result] .level-highlights>p.level-record.level-echo,.level-reco
 .ability-slot.echo-slot{box-shadow:0 0 0 2px #a77bff,0 0 10px #a77bffaa}
 /* improve20-r13c-nov2 #3: on desktop the Echo's fifth button stands a little apart from the earned four */
 html:not(.m-mode) #hotbar .echo-extra{margin-left:10px}
-.ability-slot.echo-slot::before{content:'ECHO';position:absolute;top:-9px;left:50%;transform:translateX(-50%);padding:0 4px;font-size:10px;line-height:12px;background:#4a2f8a;color:#f0e6ff;border-radius:2px;z-index:2;pointer-events:none}
+.ability-slot.echo-slot::before{content:'ECHO';position:absolute;top:-9px;left:50%;transform:translateX(-50%);padding:0 4px;font-size:16px;line-height:12px;background:#4a2f8a;color:#f0e6ff;border-radius:2px;z-index:2;pointer-events:none}
 
 /* improve20-r8b-nov1 #3 (audit7 d16): the arena's wave and record, kept on screen in arenas (outside the level HUD diet) */
-#arena-chip{position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:4;padding:2px 12px;font:700 15px/1.2 var(--ui);color:var(--gold);letter-spacing:.5px;white-space:nowrap;pointer-events:none;text-shadow:0 2px 0 #0d0806}
+#arena-chip{position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:4;padding:2px 12px;font:700 16px/1.2 var(--ui);color:var(--gold);letter-spacing:.5px;white-space:nowrap;pointer-events:none;text-shadow:0 2px 0 #0d0806}
 #arena-chip[hidden]{display:none}
 html.m-mode #arena-chip{top:6px;font-size:13px;padding:1px 8px}
 html.cine-on #arena-chip{visibility:hidden}
 /* improve20-r8a-nov1: the rune nag's own chip above the next-ability card (town only, main.js runeNag), the smith's trade line, the result card's
    grade line and recipe chip, the world-map card's grade line */
-#rune-nag{position:absolute;left:calc(8px + 13*var(--u));bottom:220px;z-index:3;display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;max-width:300px;padding:6px 10px;background:rgba(12,14,30,.88);border:2px solid #7ff0ff88;border-radius:4px;font:700 15px/18px var(--ui);color:var(--ink);zoom:var(--hz,1)}
+#rune-nag{position:absolute;left:calc(8px + 13*var(--u));bottom:220px;z-index:3;display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;max-width:300px;padding:6px 10px;background:rgba(12,14,30,.88);border:2px solid #7ff0ff88;border-radius:4px;font:700 16px/18px var(--ui);color:var(--ink);zoom:var(--hz,1)}
 #rune-nag[hidden],html:not(.in-town) #rune-nag,html.m-mode #rune-nag,html.cine-on #rune-nag,#stage:has(#ui-dialogue.show) #rune-nag{display:none}
 #rune-nag .rune-nag-gem{width:10px;height:10px;background:#7ff0ff;transform:rotate(45deg);box-shadow:0 0 6px #7ff0ffaa;flex:none}
 #rune-nag .rune-nag-text{flex:1 1 160px}
-#rune-nag button{min-height:28px;padding:2px 10px;font-size:15px}
-.gear-trade{margin:-2px 0 4px;font:700 15px/18px var(--ui);color:#e8c47a}
+#rune-nag button{min-height:28px;padding:2px 10px;font-size:16px}
+.gear-trade{margin:-2px 0 4px;font:700 16px/18px var(--ui);color:#e8c47a}
 .grade-next{margin:2px auto 0;font:700 16px/20px var(--ui);color:#ffe9a8;text-align:center}
 .level-recipe strong{color:#ffd28a}
-.worldmap-info .wm-grade{font:700 15px/18px var(--ui);margin:0 0 4px;color:#ffe9a8}
+.worldmap-info .wm-grade{font:700 16px/18px var(--ui);margin:0 0 4px;color:#ffe9a8}
 .worldmap-info.wm-compact .wm-grade{display:none}
 /* improve20-r20j-nov4 #3: the rune-seal line on the level card */
-.worldmap-info .wm-seal{font:700 14px/17px var(--ui);margin:0 0 4px;color:#d9c8ff}
+.worldmap-info .wm-seal{font:700 16px/17px var(--ui);margin:0 0 4px;color:#d9c8ff}
 /* improve20-r22w-nov4 #3: a quest step on this pad, in the quest gold */
-.worldmap-info .wm-quest{font:700 14px/17px var(--ui);margin:0 0 4px;color:#ffe9a8}
-.seal-hint{margin:4px 0 6px;padding:4px 8px;border-left:3px solid #a984ff;background:rgba(40,28,70,.55);color:#efe6ff;font:700 15px/19px var(--ui)}
+.worldmap-info .wm-quest{font:700 16px/17px var(--ui);margin:0 0 4px;color:#ffe9a8}
+.seal-hint{margin:4px 0 6px;padding:4px 8px;border-left:3px solid #a984ff;background:rgba(40,28,70,.55);color:#efe6ff;font:700 16px/19px var(--ui)}
 .run-best-next{display:block;color:#ffe9a8}
 .chapter-seals{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin:4px 0 12px}
 .chapter-seal{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;width:132px;padding:8px 6px;border:2px solid #c19149;border-radius:6px;background:rgba(10,12,30,.55);text-align:center}
 .chapter-seal .seal-pic{width:96px;height:96px;border-radius:50%;border:3px solid #e8c47a;background:#111 center bottom/cover no-repeat;image-rendering:pixelated;box-shadow:0 0 0 3px #5a3d1c,0 4px 10px #000a}
 .chapter-seal.seal-dark{opacity:.55;border-color:#706255}.chapter-seal.seal-dark .seal-pic{border-color:#706255;background:#1a1712}
-.chapter-seal small{font:700 14px/16px var(--ui);letter-spacing:.12em;color:#ffd28a}
+.chapter-seal small{font:700 16px/16px var(--ui);letter-spacing:.12em;color:#ffd28a}
 .chapter-seal.seal-won small{position:absolute;top:44px;left:50%;transform:translateX(-50%) rotate(-12deg);padding:2px 8px;border:2px solid #ff6b4a;color:#ffdccf;background:#7a1d10cc;border-radius:3px}
 .chapter-seal.seal-stamp small{animation:seal-stamp .55s cubic-bezier(.2,1.6,.4,1) .35s both}
 @keyframes seal-stamp{from{transform:translateX(-50%) rotate(-12deg) scale(2.6);opacity:0}to{transform:translateX(-50%) rotate(-12deg) scale(1);opacity:1}}
@@ -3848,7 +3848,7 @@ html.cine-on #arena-chip{visibility:hidden}
 .story-row{margin:0 0 12px}.story-row-head{margin:0 0 6px;text-align:center;font-size:16px;color:#e9c08a}.story-row-head small{color:var(--ink-2);font-weight:400}
 .story-tiles{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
 .story-tile{display:flex;flex-direction:column;align-items:center;gap:2px;width:132px;padding:6px;border:2px solid #c07a3a;border-radius:6px;background:rgba(10,12,30,.55);text-align:center}
-.story-tile strong{font-size:14px;line-height:16px}.story-tile small{font-size:12px;line-height:14px;color:var(--ink-2)}
+.story-tile strong{font-size:16px;line-height:16px}.story-tile small{font-size:16px;line-height:14px;color:var(--ink-2)}
 .story-pic{width:56px;height:56px;border-radius:50%;border:3px solid #c07a3a;background:#111 center bottom/cover no-repeat;image-rendering:pixelated}
 .story-pic.story-icon{background-size:contain;background-position:center;background-color:#1d2333}
 .story-tile.story-dark{opacity:.6;border-color:#706255}.story-tile.story-dark .story-pic{filter:grayscale(1) brightness(.45);border-color:#706255}
@@ -3860,10 +3860,10 @@ html.cine-on #arena-chip{visibility:hidden}
 .rift-week{display:flex;align-items:center;gap:8px;padding:3px 8px;border-image:url(ui/skin/pl-slot.png) 5 fill/8px stretch;background:transparent}
 .rift-week-bars{display:flex;flex-direction:column-reverse;gap:2px;flex:none;width:64px}
 .rift-floor{display:block;height:6px;border-radius:1px;background:linear-gradient(90deg,#6a4fb0,#b58cff 50%,#6a4fb0);box-shadow:0 1px 0 #000}
-.rift-week small{font-size:13px;line-height:15px;color:var(--ink-2)}.rift-week small b{color:#e9dcb6;font-weight:400}
+.rift-week small{font-size:16px;line-height:15px;color:var(--ink-2)}.rift-week small b{color:#e9dcb6;font-weight:400}
 .rift-tower-base{display:block;width:calc(100% + 16px);height:10px;margin-top:2px;border-image:url(ui/skin/pl-slot.png) 5 fill/6px stretch}
-.rift-tower-empty{margin:6px 0;font-size:14px;color:var(--ink-2)}
-.rift-tower-note{text-align:center;margin:6px 0 0;font-size:13px}
+.rift-tower-empty{margin:6px 0;font-size:16px;color:var(--ink-2)}
+.rift-tower-note{text-align:center;margin:6px 0 0;font-size:16px}
 .m-mode .rift-tower-top{width:32px;height:40px}.m-mode .rift-week{padding:2px 6px}.m-mode .rift-week-bars{width:44px}
 dialog[data-view=result] .level-highlights :is(.level-recipe,.level-keepsake){flex-wrap:nowrap}
 dialog[data-view=result] .level-highlights :is(.level-recipe,.level-keepsake) strong{text-align:left;max-width:400px}
@@ -3876,16 +3876,16 @@ dialog[data-view=unlock] .edu-unlock.edu-unlock>:is(.ui-fx,.edu-unlock-rays){mix
 /* ios-landscape-nov1: phones never scroll the page under the fixed stage (iPhone Safari kept a scroll offset after turning the phone), and the
    one-time iPhone "Add to Home Screen" tip (ui/mobile.js iosTip) */
 html.m-mode,html.m-mode body{overflow:hidden;overscroll-behavior:none}
-#ios-tip{position:fixed;left:50%;top:max(8px,env(safe-area-inset-top));z-index:60;display:flex;align-items:center;gap:10px;width:max-content;max-width:min(560px,calc(100vw - 32px));padding:6px 6px 6px 12px;background:rgba(12,14,30,.94);border:2px solid #e7c77e;border-radius:4px;color:#fff3d6;font:400 14px/18px var(--ui);transform:translate(-50%,-6px);opacity:0;transition:opacity .25s,transform .25s}
+#ios-tip{position:fixed;left:50%;top:max(8px,env(safe-area-inset-top));z-index:60;display:flex;align-items:center;gap:10px;width:max-content;max-width:min(560px,calc(100vw - 32px));padding:6px 6px 6px 12px;background:rgba(12,14,30,.94);border:2px solid #e7c77e;border-radius:4px;color:#fff3d6;font:400 16px/18px var(--ui);transform:translate(-50%,-6px);opacity:0;transition:opacity .25s,transform .25s}
 #ios-tip.show{opacity:1;transform:translate(-50%,0)}
 #ios-tip b{font-weight:700;color:#ffe9a8}
-#ios-tip button{flex:none;min-width:56px;min-height:36px;padding:2px 12px;font:700 15px var(--ui)}
+#ios-tip button{flex:none;min-width:56px;min-height:36px;padding:2px 12px;font:700 16px var(--ui)}
 /* fullscreen-view-nov1 (owner: "a full screen button"): the title's Full screen button (phones only), and the iPhone home-screen how-to it,
    Settings > Display > Screen and the Pause menu open (ui/fullscreen.js HOME_HOWTO) */
 .title-fs{display:none}
 .m-mode .title-pane .title-fs{display:inline-flex;position:absolute;right:max(8px,env(safe-area-inset-right));top:max(8px,env(safe-area-inset-top));z-index:3;min-height:36px;padding:4px 12px;font:700 14px var(--ui);background:rgba(12,14,30,.82);border:2px solid #e7c77e88;border-radius:4px;color:var(--ink)}
 .m-mode .title-pane .title-fs+.fs-howto{position:absolute;right:max(8px,env(safe-area-inset-right));top:calc(max(8px,env(safe-area-inset-top)) + 44px);z-index:3;max-width:min(300px,calc(100vw - 32px))}
-.fs-howto{grid-column:1/-1;margin:6px 0;padding:8px 10px;background:rgba(12,14,30,.92);border:2px solid #e7c77e;border-radius:4px;color:#fff3d6;font:400 14px/18px var(--ui);text-align:left;text-transform:none;letter-spacing:0}
+.fs-howto{grid-column:1/-1;margin:6px 0;padding:8px 10px;background:rgba(12,14,30,.92);border:2px solid #e7c77e;border-radius:4px;color:#fff3d6;font:400 16px/18px var(--ui);text-align:left;text-transform:none;letter-spacing:0}
 .fs-howto b{font-weight:700;color:#ffe9a8}
 
 /* improve20-r9d-nov1 #1 (audit8 a2): on a phone the Getting started card is a one-line strip along the top edge, between the hero panel and the
@@ -3980,7 +3980,7 @@ html:not(.m-mode) dialog[data-view=result] #modal-content .level-result:has(>.re
 dialog[data-view=result] :is(.result-mid,.level-result-body).more-below{-webkit-mask-image:linear-gradient(#000 calc(100% - 28px),transparent);mask-image:linear-gradient(#000 calc(100% - 28px),transparent)}
 /* the folded highlights: "More: 2 more notes" opens the tier, recipe and star-rule lines in place */
 dialog[data-view=result] .level-highlights>.level-more{width:100%;margin:2px 0 0}
-dialog[data-view=result] .level-highlights>.level-more>summary{cursor:pointer;list-style:none;width:max-content;max-width:100%;margin:0 auto;padding:2px 12px;border:1px solid #e3b85a88;border-radius:10px;background:#2a2f5c;font:700 15px/20px var(--ui);color:#f1e6cc}
+dialog[data-view=result] .level-highlights>.level-more>summary{cursor:pointer;list-style:none;width:max-content;max-width:100%;margin:0 auto;padding:2px 12px;border:1px solid #e3b85a88;border-radius:10px;background:#2a2f5c;font:700 16px/20px var(--ui);color:#f1e6cc}
 dialog[data-view=result] .level-highlights>.level-more>summary::-webkit-details-marker{display:none}
 dialog[data-view=result] .level-highlights>.level-more>summary::after{content:' ▾'}
 dialog[data-view=result] .level-highlights>.level-more[open]>summary::after{content:' ▴'}
@@ -4035,7 +4035,7 @@ html.m-mode .herocard-stats{flex:0 0 200px;min-width:0;padding:4px 8px;gap:3px;l
 .hall-rung[data-state=keepsake] small,.hall-rung[data-state=cleared] small{color:#bfe8a0}
 .hall-icon{image-rendering:pixelated;flex:none}
 /* improve20-r20h-nov4 #5 (R20E lead review: the tile read "I · Standard Open"): the rung's state is a small pill of its own */
-.hall-rung small.hall-state{align-self:flex-start;margin-top:2px;padding:0 6px;border:1px solid #f2c25a80;border-radius:9px;background:#0000004d;font-size:.86em;line-height:1.3;opacity:1}
+.hall-rung small.hall-state{align-self:flex-start;margin-top:2px;padding:0 6px;border:1px solid #f2c25a80;border-radius:9px;background:#0000004d;font-size:1em;line-height:1.3;opacity:1}
 html.m-mode .hall-rung small.hall-state{margin-top:0;align-self:center}
 .hall-detail p{margin:4px 0}
 .hall-reward{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
@@ -4129,7 +4129,7 @@ html.m-mode:has(#scene-fade.on.travel) #controls-tutorial{visibility:hidden}
 #modal#modal[data-view=placement] .question.qf .qf-pop{position:absolute;left:50%;top:50%;width:64px;height:64px;margin:-32px 0 0 -32px;background:url(ui/skin/fx-burst.png) 0 0/448px 64px no-repeat;image-rendering:pixelated;pointer-events:none;z-index:3;animation:qf-burst .7s steps(7) 1 forwards}
 #modal#modal[data-view=placement] .question.qf .qf-guide{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}
 #modal#modal[data-view=placement] .question.qf .qf-guide .edu-guide{width:120px;height:120px}
-#modal#modal[data-view=placement] .question.qf .qf-name{font:700 11px/1.2 var(--edu-body);letter-spacing:1px;text-transform:uppercase;color:var(--gold-2,#f0d48a);text-align:center}
+#modal#modal[data-view=placement] .question.qf .qf-name{font:700 16px/1.2 var(--edu-body);letter-spacing:1px;text-transform:uppercase;color:var(--gold-2,#f0d48a);text-align:center}
 #modal#modal[data-view=placement] .question.qf>.question-reading>h3{position:relative;margin:0;padding:12px 18px;border-style:solid;border-width:calc(4*var(--edu-u));border-color:var(--edu-edge);border-image:url(ui/skin/parchment.png) 10 fill/calc(10*var(--edu-u)) round;background:none;color:var(--edu-ink);font-size:22px;line-height:1.35;image-rendering:pixelated}
 #modal#modal[data-view=placement] .question.qf .qf-cheer{margin:4px 0 0;font-weight:700;color:#2f5a25}
 @media (prefers-reduced-motion:reduce){#modal#modal[data-view=placement] .question.qf .am-pips i.lit,#modal#modal[data-view=placement] .question.qf .qf-guide .edu-guide.cheer{animation:none}}
@@ -4159,7 +4159,7 @@ html.m-mode:has(#scene-fade.on.travel) #controls-tutorial{visibility:hidden}
 #modal#modal[data-view=placement] .question.qf #quiz-feedback .feedback.feedback:has(>#lesson-pic)>.am{padding-right:184px}
 @media(max-height:500px){#modal#modal#modal#modal[data-view=placement] .question.qf.qf>.question-reading{display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"guide top read" "guide say pic";grid-template-rows:auto auto;column-gap:10px;row-gap:4px;align-items:center;flex:none;min-height:0;max-height:none;overflow:visible;padding:0 6px 4px}}
 @media(max-height:500px){#modal#modal#modal#modal[data-view=placement] .question.qf.qf>.question-reading>.qf-top{display:flex;grid-area:top!important;gap:4px 10px}}
-@media(max-height:500px){#modal#modal#modal#modal[data-view=placement] .question.qf.qf>.question-reading>.qf-top .tag{display:inline;font-size:13px}}
+@media(max-height:500px){#modal#modal#modal#modal[data-view=placement] .question.qf.qf>.question-reading>.qf-top .tag{display:inline;font-size:16px}}
 @media(max-height:500px){#modal#modal#modal#modal[data-view=placement] .question.qf.qf .am-pips i{width:16px;height:16px;background-size:16px 16px}}
 @media(max-height:500px){#modal#modal#modal#modal[data-view=placement] .question.qf.qf>.question-reading>.qf-guide{grid-area:guide!important;align-self:start}}
 @media(max-height:500px){#modal#modal#modal#modal[data-view=placement] .question.qf.qf .qf-guide .edu-guide{width:56px;height:56px}}
@@ -4180,10 +4180,10 @@ html.m-mode:has(#scene-fade.on.travel) #controls-tutorial{visibility:hidden}
 @media(max-height:500px){#modal#modal#modal#modal[data-view=placement] .question.qf.qf:has(#quiz-form.choice-form):has(#quiz-feedback:not(:empty))>.question-reading>:is(h3,#quiz-pic,.question-text-card,.quiz-zoom){display:none}}
 @media(max-height:500px){#modal#modal#modal#modal[data-view=placement] .question.qf.qf:has(#quiz-form.choice-form):has(#quiz-feedback:not(:empty)) .qf-guide .edu-guide{width:40px;height:40px}}
 @media(max-height:500px){#modal#modal#modal#modal[data-view=placement] .question.qf.qf:has(#quiz-feedback:not(:empty)) .qf-guide .edu-guide{width:40px;height:40px}}
-@media(max-height:500px){#modal#modal#modal#modal[data-view=placement] .question.qf.qf:has(#quiz-feedback:not(:empty))>.question-reading>h3{font-size:15px;line-height:1.25;padding:4px 10px}}
+@media(max-height:500px){#modal#modal#modal#modal[data-view=placement] .question.qf.qf:has(#quiz-feedback:not(:empty))>.question-reading>h3{font-size:16px;line-height:1.25;padding:4px 10px}}
 @media(max-height:500px){#modal#modal#modal#modal[data-view=placement] .question.qf.qf:has(#quiz-feedback:not(:empty))>.question-reading>#quiz-pic{height:48px}}
 @media(max-height:500px){#modal#modal#modal#modal[data-view=placement] .question.qf.qf:has(#quiz-feedback:not(:empty))>.question-reading{row-gap:2px;padding-bottom:2px}}
-@media(max-height:500px){html:not(.m-mode) #modal#modal#modal#modal[data-view=placement] .question.qf.qf>.question-reading>h3{font-size:15px;padding:4px 10px}}
+@media(max-height:500px){html:not(.m-mode) #modal#modal#modal#modal[data-view=placement] .question.qf.qf>.question-reading>h3{font-size:16px;padding:4px 10px}}
 @media(max-height:500px){html:not(.m-mode) #modal#modal#modal#modal[data-view=placement] .question.qf.qf>.question-reading>#quiz-pic{height:48px}}
 @media(max-height:500px){html:not(.m-mode) #modal#modal#modal#modal[data-view=placement] .question.qf.qf .qf-guide .edu-guide{width:40px;height:40px}}
 @media(max-height:500px){html:not(.m-mode) #modal#modal#modal#modal[data-view=placement] .question.qf.qf:has(#quiz-feedback:not(:empty)) .qf-guide{display:none}}
@@ -4200,7 +4200,7 @@ html.m-mode:has(#scene-fade.on.travel) #controls-tutorial{visibility:hidden}
 #modal#modal[data-view=placement] .question.qf .pd-canvas{display:block;width:264px;height:150px;image-rendering:pixelated;border:3px solid #6a4a2a;border-radius:4px;background:#3d6a2e;box-sizing:content-box}
 @media(max-height:500px){#modal#modal#modal#modal[data-view=placement] .question.qf .pd-canvas{width:132px;height:75px;border-width:2px}}
 @media(max-height:500px){#modal#modal#modal#modal[data-view=placement] .question.qf .pd-bar{height:8px}}
-@media(max-height:500px){#modal#modal#modal#modal[data-view=placement] .question.qf .pd-label{font-size:9px}}
+@media(max-height:500px){#modal#modal#modal#modal[data-view=placement] .question.qf .pd-label{font-size:16px}}
 @media(max-height:500px){#modal#modal#modal#modal[data-view=placement] .question.qf>.question-reading>h3.has-topic-art{padding-right:30px!important}}
 @media(max-height:500px){#modal#modal#modal#modal[data-view=placement] .question.qf .topic-art,#modal#modal#modal#modal[data-view=placement] .question.qf .topic-art .ta-body,#modal#modal#modal#modal[data-view=placement] .question.qf .topic-art canvas,#modal#modal#modal#modal[data-view=placement] .question.qf .topic-art img{width:48px;height:48px}}
 @media(max-height:500px){#modal#modal#modal#modal[data-view=placement] .question.qf .topic-art{top:-24px;right:-12px}}
@@ -4247,25 +4247,25 @@ html:has(#prompt:not(:empty)) #toast.hello{visibility:hidden}
 /* #3 (audit9 a14): an answered choice question on a short screen hid its words (the stars, the guide and Read to me stayed as one slim row),
    so after a wrong answer the question and its numbers were gone. Its plate comes back as a one-line summary under the stars, beside the
    guide; a tap shows it whole (main.js submitSitting). The picture still steps aside. */
-@media(max-height:500px){#modal#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-form.choice-form):has(#quiz-feedback:not(:empty))>.question-reading{grid-template-areas:"guide top read" "guide say read";grid-template-rows:auto auto;row-gap:2px}#modal#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-form.choice-form):has(#quiz-feedback:not(:empty))>.question-reading>h3{display:block;grid-area:say!important;min-width:0;margin:0;padding:2px 36px 2px 8px;font-size:14px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}#modal#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-form.choice-form):has(#quiz-feedback:not(:empty))>.question-reading>h3.qf-open{white-space:normal}}
+@media(max-height:500px){#modal#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-form.choice-form):has(#quiz-feedback:not(:empty))>.question-reading{grid-template-areas:"guide top read" "guide say read";grid-template-rows:auto auto;row-gap:2px}#modal#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-form.choice-form):has(#quiz-feedback:not(:empty))>.question-reading>h3{display:block;grid-area:say!important;min-width:0;margin:0;padding:2px 36px 2px 8px;font-size:16px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}#modal#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-form.choice-form):has(#quiz-feedback:not(:empty))>.question-reading>h3.qf-open{white-space:normal}}
 /* ...and at 852x283 (the owner's iPhone with Safari's bars) the card itself had no room left (a 4 px sliver): there the picked-answer chip
    steps aside once the card says the answer, and the card gets its room */
 @media(max-height:300px){#modal#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-form.choice-form):has(#quiz-feedback:not(:empty))>#quiz-form{display:none}#modal#modal#modal#modal#modal[data-view=lesson-quiz] .question.qf.qf:has(#quiz-form.choice-form):has(#quiz-feedback:not(:empty))>#quiz-feedback .feedback{flex:none;min-height:44px}}
 /* #5 (R11C leftover): at 844x390 only the title of the Champion card's "Wake your next power" block showed above the sticky buttons. On a
    short screen the key-art band is slimmer and the block compact, so the power and the topics it needs read without scrolling. */
-@media(max-height:500px){dialog[data-view=finale] .finale .finale-scene{height:104px;background-position:center 34%;align-self:start}dialog[data-view=finale] .finale:has(>.wake-next){grid-template-rows:auto auto 1fr auto auto;align-items:start}dialog[data-view=finale] .finale .finale-hero{width:96px;height:96px}dialog[data-view=finale] .finale>.wake-next{margin:2px 0 0;padding:3px 8px 4px}dialog[data-view=finale] .finale>.wake-next .wake-eyebrow{font-size:13px;letter-spacing:2px;line-height:1.2}dialog[data-view=finale] .finale>.wake-next .wake-body{gap:8px}dialog[data-view=finale] .finale>.wake-next .wake-icon{width:44px;height:44px}dialog[data-view=finale] .finale>.wake-next .wake-icon :is(img,canvas,svg){max-width:36px;max-height:36px}dialog[data-view=finale] .finale>.wake-next .wake-text strong{font-size:17px;line-height:1.15}dialog[data-view=finale] .finale>.wake-next :is(.wake-need,.wake-level){font-size:14px;line-height:1.2}}
+@media(max-height:500px){dialog[data-view=finale] .finale .finale-scene{height:104px;background-position:center 34%;align-self:start}dialog[data-view=finale] .finale:has(>.wake-next){grid-template-rows:auto auto 1fr auto auto;align-items:start}dialog[data-view=finale] .finale .finale-hero{width:96px;height:96px}dialog[data-view=finale] .finale>.wake-next{margin:2px 0 0;padding:3px 8px 4px}dialog[data-view=finale] .finale>.wake-next .wake-eyebrow{font-size:16px;letter-spacing:2px;line-height:1.2}dialog[data-view=finale] .finale>.wake-next .wake-body{gap:8px}dialog[data-view=finale] .finale>.wake-next .wake-icon{width:44px;height:44px}dialog[data-view=finale] .finale>.wake-next .wake-icon :is(img,canvas,svg){max-width:36px;max-height:36px}dialog[data-view=finale] .finale>.wake-next .wake-text strong{font-size:17px;line-height:1.15}dialog[data-view=finale] .finale>.wake-next :is(.wake-need,.wake-level){font-size:16px;line-height:1.2}}
 /* #5 (R10D leftover): "Not reached yet" was clipped on a shut region tab (844x390: 117 px of words in a 103 px cell). It wraps instead. */
 dialog[data-view=travel] .travel-tab.travel-tab-shut small{white-space:normal;line-height:1.1;min-width:0}
 /* #5 (audit9, also seen): on the creator's look step the "More below" chip sat in the scrolling box over the skin swatches (740x360: two of
    them). On a phone it moves into the Next bar, between Reset and Next, where nothing lies under it (ui/creator.js still sets .more-below). */
 html.m-mode .title-screen[data-step="look"] .hero-look.more-below::after{content:none}
-html.m-mode .title-screen[data-step="look"]:has(.hero-look.more-below) .hero-look-actions::before{content:'More below ▾';order:1;flex:none;align-self:center;padding:2px 10px 3px;font:700 14px/18px var(--ui);letter-spacing:.5px;color:var(--gold-2,#f0d48a);text-shadow:0 2px 0 #0d0806;pointer-events:none;background:#2a2f5c;border:1px solid #e3b85a88;border-radius:10px;box-shadow:0 2px 0 #0d0806;animation:cr-more-nudge 1.4s ease-in-out infinite}
+html.m-mode .title-screen[data-step="look"]:has(.hero-look.more-below) .hero-look-actions::before{content:'More below ▾';order:1;flex:none;align-self:center;padding:2px 10px 3px;font:700 16px/18px var(--ui);letter-spacing:.5px;color:var(--gold-2,#f0d48a);text-shadow:0 2px 0 #0d0806;pointer-events:none;background:#2a2f5c;border:1px solid #e3b85a88;border-radius:10px;box-shadow:0 2px 0 #0d0806;animation:cr-more-nudge 1.4s ease-in-out infinite}
 html.m-mode .title-screen[data-step="look"] .hero-look-actions>:not(.cr-actions){order:2}
 html[data-motion="reduced"].m-mode .title-screen[data-step="look"] .hero-look-actions::before{animation:none}
 /* improve20-r11d-nov2 #2 (audit9 a10): the practice counter ("Dummy 5/10") read about 6 px in the dummy scene's 11 px uppercase body font. It
    stays HTML (ui/practice-dummy.js dummyBarHTML) at 14 px in the game font, 12 px on short screens, never smaller */
-#modal#modal#modal#modal#modal .pd-label{font:700 14px/1.15 var(--ui);letter-spacing:.5px;text-transform:none}
-@media(max-height:500px){#modal#modal#modal#modal#modal .question.qf .pd-label,html.m-mode #modal#modal#modal#modal#modal .pd-label{font-size:12px}#modal#modal#modal#modal#modal .question.qf .pd-hud{gap:6px}}
+#modal#modal#modal#modal#modal .pd-label{font:700 16px/1.15 var(--ui);letter-spacing:.5px;text-transform:none}
+@media(max-height:500px){#modal#modal#modal#modal#modal .question.qf .pd-label,html.m-mode #modal#modal#modal#modal#modal .pd-label{font-size:16px}#modal#modal#modal#modal#modal .question.qf .pd-hud{gap:6px}}
 /* improve20-r11d-nov2 #2: on short screens the question's picture is 108 px tall (was 92), so a 640-unit picture is drawn at 0.38 CSS px per
    unit or more and a 16-unit label reaches 12 CSS px within the fitted picture’s 2.15x label growth (gfx/lesson-art.js pqBoostMax) */
 @media(max-height:500px){#modal#modal#modal#modal:is([data-view=lesson-quiz],[data-view=placement]) .question.qf.qf:has(#quiz-feedback:empty)>.question-reading>#quiz-pic{height:108px;max-width:250px}}
@@ -4429,13 +4429,13 @@ dialog[data-view=lesson-summary] .result[data-kind=test] .modal-actions:has(>[da
 dialog#modal:is([data-view=smith],[data-view=alchemist]){padding-bottom:32px}
 html.m-mode dialog#modal:is([data-view=smith],[data-view=alchemist]){padding-bottom:26px}
 dialog:is([data-view=smith],[data-view=alchemist]) .more-below::after{content:none}
-dialog#modal:is([data-view=smith],[data-view=alchemist]):has(#modal-content.more-below)::after{content:'More below ▾';position:absolute;left:0;right:0;bottom:5px;height:22px;line-height:22px;text-align:center;font-size:15px;letter-spacing:1px;color:var(--gold-2,#f0d48a);pointer-events:none;z-index:2}
+dialog#modal:is([data-view=smith],[data-view=alchemist]):has(#modal-content.more-below)::after{content:'More below ▾';position:absolute;left:0;right:0;bottom:5px;height:22px;line-height:22px;text-align:center;font-size:16px;letter-spacing:1px;color:var(--gold-2,#f0d48a);pointer-events:none;z-index:2}
 html.m-mode dialog#modal:is([data-view=smith],[data-view=alchemist]):has(#modal-content.more-below)::after{bottom:3px;height:20px;line-height:20px;font-size:14px}
 /* #4 (audit12 a13, shot 02: at 1280x720 "Return to Oakhaven" and "Details: 4 chests" wrapped onto two lines): on a desktop result card every
    button label stays on one line; the row tightens its padding and type a step and may use the panel's full width (not R16A's second-loss
    Story row, which keeps its own two-line Library button) */
 html:not(.m-mode) dialog[data-view=result] #modal-content .level-result:not([data-story2])>.modal-actions{flex-wrap:nowrap;gap:6px;margin-left:-24px;margin-right:-24px;justify-content:center}
-html:not(.m-mode) dialog[data-view=result] #modal-content .level-result:not([data-story2])>.modal-actions>button{white-space:nowrap;flex:0 1 auto;min-width:0;padding-left:10px;padding-right:10px;font-size:14px}
+html:not(.m-mode) dialog[data-view=result] #modal-content .level-result:not([data-story2])>.modal-actions>button{white-space:nowrap;flex:0 1 auto;min-width:0;padding-left:10px;padding-right:10px;font-size:16px}
 /* #5 (R16A's note: on the 844x390 defeat card with the next-power block, NEXT GOAL was squeezed into the stretchy row 8 at 9 px tall): on a
    landscape phone the power block takes the top of the right column, and NEXT GOAL, the details and the buttons get rows of their own under
    everything, so the goal line keeps its full size (18 px type, never under the 12 px floor) */
@@ -4585,7 +4585,7 @@ details.bestiary-unmet[open]>summary h4::before{content:'▾ '}
 dialog[data-view=sleep-confirm] .modal-actions{justify-content:center}
 /* improve20-r10d-nov2 #5: fast travel's upcoming places, greyed-out chips with a lock, under "Visit each once to unlock it" */
 .travel-soon{list-style:none;margin:4px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:4px}
-.travel-soon li{display:inline-flex;align-items:center;gap:4px;min-width:0;max-width:100%;padding:2px 6px;border:1px solid #3a3352;background:#151322;color:#9a94ad;font-size:13px;line-height:1.2}
+.travel-soon li{display:inline-flex;align-items:center;gap:4px;min-width:0;max-width:100%;padding:2px 6px;border:1px solid #3a3352;background:#151322;color:#9a94ad;font-size:16px;line-height:1.2}
 .travel-soon li b{font-weight:400;color:#a9a3bd;filter:grayscale(1)}
 .travel-soon .travel-lock{flex:none;opacity:.7;filter:grayscale(1)}
 .m-mode dialog[data-view=travel] .travel-soon{gap:3px}.m-mode dialog[data-view=travel] .travel-soon li{padding:1px 5px}
@@ -4603,7 +4603,7 @@ dialog[data-view=result] #modal-content .level-result[data-outcome=lost]>.modal-
 .worldmap-info.wm-compact .wm-power{display:none}
 /* improve20-r14a-nov3 #6 (audit11 b20): one short line per hero; the longer lines wait behind "More" */
 .select-pane .hero-more{margin:2px 0 8px}
-.select-pane .hero-more>summary{display:inline-block;cursor:pointer;list-style:none;font-size:14px;line-height:1.2;color:#e7c77e;padding:4px 12px;border:1px solid rgba(231,199,126,.55);border-radius:4px}
+.select-pane .hero-more>summary{display:inline-block;cursor:pointer;list-style:none;font-size:16px;line-height:1.2;color:#e7c77e;padding:4px 12px;border:1px solid rgba(231,199,126,.55);border-radius:4px}
 .select-pane .hero-more>summary::-webkit-details-marker{display:none}
 .select-pane .hero-more[open]>summary{margin-bottom:4px}
 .select-pane .hero-more .hero-more-kid{margin:2px 0;color:#d8e3ea}
@@ -4629,14 +4629,14 @@ dialog[data-view=result] .result-gate-line .ico{flex:none}
 /* improve20-r16a-nov3 #5 (audit12 finding 7): the second loss on Story keeps 4 buttons in ONE row (Details, Retry with its potions, the Library
    with its honest size, Return); the Library button carries its size on a second line */
 dialog[data-view=result] #modal-content .level-result[data-story2]>.modal-actions{flex-wrap:nowrap!important;gap:6px}
-dialog[data-view=result] #modal-content .level-result[data-story2]>.modal-actions>button{flex:0 1 auto;min-width:0;padding-left:10px;padding-right:10px;font-size:14px;white-space:normal}
+dialog[data-view=result] #modal-content .level-result[data-story2]>.modal-actions>button{flex:0 1 auto;min-width:0;padding-left:10px;padding-right:10px;font-size:16px;white-space:normal}
 dialog[data-view=result] #modal-content .level-result[data-story2]>.modal-actions>button.primary{flex-shrink:0;white-space:nowrap}
-dialog[data-view=result] #modal-content .level-result>.modal-actions>#defeat-library small{display:block;font-size:12px;line-height:1.2;opacity:.85}
+dialog[data-view=result] #modal-content .level-result>.modal-actions>#defeat-library small{display:block;font-size:16px;line-height:1.2;opacity:.85}
 
 /* improve20-r20d-nov4 #1 (audit14 #3): every loss card keeps Details and at most 3 buttons in ONE row, the red last (main.js lossRow); the rest
    sit behind Details in their own row */
 dialog[data-view=result] #modal-content .level-result>.modal-actions[data-loss-row]{flex-wrap:nowrap!important;gap:6px}
-dialog[data-view=result] #modal-content .level-result>.modal-actions[data-loss-row]>button{flex:0 1 auto;min-width:0;padding-left:10px;padding-right:10px;font-size:14px;white-space:nowrap;order:0}
+dialog[data-view=result] #modal-content .level-result>.modal-actions[data-loss-row]>button{flex:0 1 auto;min-width:0;padding-left:10px;padding-right:10px;font-size:16px;white-space:nowrap;order:0}
 dialog[data-view=result] #modal-content #result-extra>.loss-more{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:8px 0 0;padding:0;border:0;position:static}
 /* improve20-r20d-nov4 #3 (audit14 #8): a victory chest shows when it opens (its shake, then the pop), never as a greyed tile with no words */
 dialog[data-view=result] .result-chest:not(.open):not(.shake){visibility:hidden}

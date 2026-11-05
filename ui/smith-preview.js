@@ -32,7 +32,7 @@ dialog[data-view=smith] .smith-head .smith-fig canvas{width:${DOLL.w/2}px;height
 dialog[data-view=smith] .smith-head .smith-fig figcaption{width:88px;font-size:16px;line-height:1;height:2em}
 dialog[data-view=smith] .smith-tab-help{margin:2px 0}}
 .gear-card-top{display:flex;flex-direction:column;align-items:stretch;gap:4px;margin:2px 0 4px}
-.gear-cap-top{margin:0;font-size:14px;line-height:1.15;color:#ffd58a;border:1px solid rgba(227,184,90,.5);border-radius:3px;padding:2px 6px;background:rgba(40,30,10,.5)}
+.gear-cap-top{margin:0;font-size:16px;line-height:1.15;color:#ffd58a;border:1px solid rgba(227,184,90,.5);border-radius:3px;padding:2px 6px;background:rgba(40,30,10,.5)}
 .smith-show-line{margin:2px 0 8px;color:#ffe08a}
 dialog[data-view=smith] .smith-head .smith-preview.is-idle .smith-fig:first-child figcaption{visibility:hidden}
 .m-mode dialog[data-view=smith] .gear-card{display:flex;flex-direction:column}
@@ -46,7 +46,7 @@ dialog[data-view=smith] .smith-head .smith-preview.is-idle .smith-fig:first-chil
 export const SMITH_DOLL_CSS=`.smith-doll{display:flex;gap:10px;flex:none}
 .smith-fig{margin:0;display:flex;flex-direction:column;align-items:center;gap:2px}
 .smith-fig canvas{width:${DOLL.w}px;height:${DOLL.h}px;image-rendering:pixelated;background:radial-gradient(ellipse at 50% 88%,rgba(255,226,150,.18),transparent 60%)}
-.smith-fig figcaption{font-size:14px;color:#e9dcc0;width:150px;text-align:center;line-height:1.15;height:2.3em;overflow:hidden}
+.smith-fig figcaption{font-size:16px;color:#e9dcc0;width:150px;text-align:center;line-height:1.15;height:2.3em;overflow:hidden}
 /* hidden until a piece is hovered, but keeping its place so the cards below never jump */
 .smith-after[hidden]{display:flex;visibility:hidden}
 .smith-after figcaption{color:#ffe08a}
