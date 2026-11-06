@@ -30,7 +30,9 @@ export function showpieceTrophyHTML(s){const n=SHOWPIECES.length,k=showpiecesOwn
    beaten). A beaten boss has its price and Buy; one not beaten says "Beat <boss> to hang this" and has no button. HTML only; main.js wires Buy
    (data-buy-furn) and paints the canvases. Gold only, earned in play; nothing here reads or writes a stat, an ability or learning. */
 const METAL_WORD={plain:'Normal win: plain frame',silver:'Heroic win: silver frame',gold:'Legendary win: gold frame'};
-export const plaquePicHTML=(s,f)=>`<span class="deco-pic deco-plaque-pic"><canvas class="deco-plaque-cv" data-trophy-sprite="${esc(f.sprite)}" data-metal="${esc(plaqueMetal(s,f.id)||'')}" width="${HALL_W*PQ_RES}" height="${HALL_H*PQ_RES}" aria-hidden="true"></canvas></span>`;
+/* improve25-r25r-nov5 #2: the Home look (data-rim: a steel ramp and a light rim on silver, a rim on gold; ui/trophy-hall.js) and a tier tag on the picture */
+const TIER_TAG={silver:'Heroic',gold:'Legendary'};
+export const plaquePicHTML=(s,f)=>`<span class="deco-pic deco-plaque-pic">${TIER_TAG[plaqueMetal(s,f.id)]?`<span class="deco-tier deco-tier-${plaqueMetal(s,f.id)}">${TIER_TAG[plaqueMetal(s,f.id)]}</span>`:''}<canvas class="deco-plaque-cv" data-rim="1" data-trophy-sprite="${esc(f.sprite)}" data-metal="${esc(plaqueMetal(s,f.id)||'')}" width="${HALL_W*PQ_RES}" height="${HALL_H*PQ_RES}" aria-hidden="true"></canvas></span>`;
 export function plaqueShelfHTML(s){const gold=Math.max(0,s?.gold|0),won=PLAQUES_ALL.filter(f=>plaqueOpen(s,f.id)),mine=PLAQUES_ALL.filter(f=>own(s,f)).length;
  const card=f=>{const open=plaqueOpen(s,f.id),m=plaqueMetal(s,f.id);return `<div class="card deco-card deco-plaque${open?'':' deco-plaque-lock'}" data-plaque="${esc(f.id)}" data-metal="${esc(m||'')}">${plaquePicHTML(s,f)}<h3>${esc(open?f.boss:'?')}</h3>${!open?`<p class="subtle deco-plaque-need">Beat ${esc(f.boss)} to hang this</p>`:own(s,f)?`<p class="deco-owned">Yours ✓ Hang it from Your furniture.</p><small class="subtle">${esc(METAL_WORD[m])}</small>`:`<small class="subtle">${esc(METAL_WORD[m])}</small><button data-buy-furn="${esc(f.id)}" ${gold<f.price?'disabled':''}>Buy ◆ ${f.price}</button>`}</div>`;};
  return `<p class="deco-show-head"><strong>${mine} of ${PLAQUES_ALL.length} boss plaques.</strong> Hang a plaque for every boss you have beaten. Its frame shows your best win and changes by itself: plain for Normal, silver for Heroic, gold for Legendary. Just for show.</p>${CHAPTERS.map(c=>{const xs=PLAQUES_ALL.filter(f=>f.chapter===c.id);return xs.length?`<h3 class="deco-plaque-ch">${esc(c.name)} <small>${xs.filter(f=>plaqueOpen(s,f.id)).length} of ${xs.length} beaten · ◆ ${xs[0].price} each</small></h3><div class="grid deco-grid deco-plaque-grid">${xs.map(card).join('')}</div>`:'';}).join('')}`;}
@@ -58,6 +60,12 @@ export const SHOWPIECE_CSS=`.deco-show-head{margin:4px 0 8px}
 .deco-plaque-ch small{font-weight:normal;opacity:.8}
 .deco-plaque-need{margin:2px 0}
 .m-mode .deco-plaque-cv{width:55px;height:61px}
+/* improve25-r25r-nov5 #2: the tier tag over a silver or gold plaque's top edge (16 px desktop, 14 px phone: the Pixel Operator floors) */
+.deco-plaque-pic{position:relative;display:inline-block}
+.deco-tier{position:absolute;left:50%;top:-6px;transform:translateX(-50%);z-index:1;padding:0 6px;border-radius:3px;font-size:16px;line-height:18px;white-space:nowrap;font-weight:bold;pointer-events:none}
+.deco-tier-silver{background:#e9eef7;color:#1d2433;border:1px solid #ffffff;box-shadow:0 0 0 1px #4a5366}
+.deco-tier-gold{background:#f7cf4a;color:#3a2600;border:1px solid #fff3b0;box-shadow:0 0 0 1px #6e4a06}
+.m-mode .deco-tier{font-size:14px;line-height:16px;padding:0 4px;top:-4px}
 .m-mode .deco-plaque h3{margin:0;font-size:14px}
 .trophy-showpieces{margin:0 0 12px;padding:10px 12px;border:2px solid #817b89;border-radius:6px;background:rgba(10,12,30,.45)}
 .trophy-showpieces.is-complete{border-color:#ffc928;box-shadow:0 0 0 1px rgba(255,201,40,.35) inset}

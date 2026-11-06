@@ -121,7 +121,7 @@ export const QUESTS = {
       {kind: 'talk', who: 'farmer_hob', text: 'Talk to Farmer Hob at his farm.'},
       {kind: 'clear', level: 'v1', tier: null, item: 'shrine-water', text: 'Fill a flask at the Drowned Shrine’s still pond.', bark: 'Still water shows what’s true, Dad says. Let’s win, then I’ll look.'},
       {kind: 'talk', who: 'archivist_aldous', room: 'library', take: 'shrine-water', text: 'Bring the pond water to Archivist Aldous.'},
-      {kind: 'clear', level: 'v3', tier: null, text: 'Win the Mirror Woods again, with Wil beside you.', bark: 'Hey, mirrors! Farm boy AND guard. Both!'},
+      {kind: 'clear', level: 'v3', tier: null, text: 'Win the Mirror Woods again, for Wil.' /* improve25-r25r-nov5 #4: the win counts with or without Wil in the party, so the step no longer promises him beside you */, bark: 'Hey, mirrors! Farm boy AND guard. Both!'},
       {kind: 'visit', building: 'barracks', who: 'wil', text: 'Meet Wil at the Barracks.'}],
     reward: {keepsake: 'wil-mirror', title: 'true-friend', barks: ['Farm boy and guard. Both!', 'Mirrors don’t scare me now.', 'Shield up, friends behind me!'],
       say: ['You came! I looked in Aldous’s bowl, and then in every mirror in the woods.', 'They still show a farm boy. But now his shield is up, and his friends are right behind him.', 'Here, a piece of mirror glass from the woods. It only shows the truth now. Will you hang it in your Trophy Hall?']}},

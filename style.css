@@ -3581,6 +3581,9 @@ html.m-mode .rift-portal-art{width:36px;height:45px}
 /* improve20-k-nov1 #5: the goal plate steps back while a villager stands under it in a room (main.js npcUnder) */
 #objective{transition:opacity .2s}
 #objective.npc-under{opacity:.28}
+/* improve25-r25r-nov5 #1: a top panel over a hung piece on the Home's back wall steps out of sight on a phone or tablet (main.js wallUnder) */
+.m-mode .wall-under{opacity:0!important;pointer-events:none!important;transition:opacity .2s}
+.m-mode .wall-under *{pointer-events:none!important}
 html.m-mode .rift-vignette{width:112px;height:66px}
 html.m-mode .rift-portal-art{width:30px;height:38px}
 html.m-mode .rift-mods li{flex-direction:row;align-items:center;gap:6px}
@@ -4637,6 +4640,22 @@ html.m-mode #modal#modal#modal#modal#modal[data-view=placement] .question.qf.qf.
 html.m-mode #modal#modal#modal#modal#modal[data-view=placement] .question.qf.qf.q-pin:has(#quiz-feedback:empty)>.question-reading:has(>:is(#quiz-pic,.question-text-card))>:is(#quiz-pic,.question-text-card){grid-area:pic!important;align-self:start;width:100%!important;max-width:100%!important;height:auto!important;max-height:140px;justify-self:stretch}
 html.m-mode #modal#modal#modal#modal#modal[data-view=placement] .question.qf.qf.q-pin:has(#quiz-feedback:empty)>.question-reading:has(>:is(#quiz-pic,.question-text-card))>.quiz-zoom{grid-area:pic!important;align-self:start;justify-self:end}
 }
+/* improve25-r25r-nov5 #3a (R25P's full psweep, run in R25R: 11 of 640 answered sittings still had the explanation's last line under the action row at
+   667x375 and 740x360): once answered on a short phone, the question's Read to me moves from under the guide to the card's right edge, so the card is
+   as tall as its prompt (34 px back), and the explanation runs the full width under the 120 px thumbnail, which keeps to the answer line's row. */
+@media(max-height:400px){
+html.m-mode #modal#modal#modal#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question.qf.qf.qf.qf:has(#quiz-feedback:not(:empty))>.question-reading{grid-template-columns:auto minmax(0,1fr) auto!important;grid-template-areas:"guide top read" "guide say read"!important;grid-template-rows:auto 1fr!important}
+html.m-mode #modal#modal#modal#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question.qf.qf #quiz-feedback .feedback.feedback.feedback:has(>#lesson-pic:not(.as-text))>#lesson-pic{grid-row:1!important}
+html.m-mode #modal#modal#modal#modal#modal:is([data-view=placement],[data-view=lesson-quiz]) .question.qf.qf #quiz-feedback .feedback.feedback.feedback:has(>#lesson-pic:not(.as-text))>p{grid-column:1/-1!important}
+}
+/* improve25-r25r-nov5 #3b (R25P's prompt sweep at 740, 844 and Middle, run in R25R: with a picture, the prompt sat in a column beside the picture
+   and the progress dots, Stop and Read to me, and 49 of 216 long Middle prompts at 667x375 ran under their box): the dots, Stop and Read to me go
+   under the picture, so the prompt has two thirds of the width; the picture keeps its magnifier and its shape, at most 110 px tall there. */
+@media(max-height:400px){
+html.m-mode #modal#modal#modal#modal#modal[data-view=placement] .question.qf.qf.qf.q-pin:has(#quiz-feedback:empty)>.question-reading:has(>:is(#quiz-pic,.question-text-card)){grid-template-columns:minmax(0,1fr) 40px 112px 44px!important;grid-template-areas:"say pic pic pic" "say dots stop read"!important;grid-template-rows:minmax(0,1fr) auto!important}
+html.m-mode #modal#modal#modal#modal#modal[data-view=placement] .question.qf.qf.qf.q-pin:has(#quiz-feedback:empty)>.question-reading:has(>:is(#quiz-pic,.question-text-card))>.question-text-card{max-height:min(110px,100%)!important;min-height:min(60px,100%);overflow:auto}
+html.m-mode #modal#modal#modal#modal#modal[data-view=placement] .question.qf.qf.qf.q-pin:has(#quiz-feedback:empty)>.question-reading:has(>:is(#quiz-pic,.question-text-card))>#quiz-pic{width:auto!important;max-width:100%!important;height:100%!important;max-height:110px;min-height:0;justify-self:center}
+}
 /* improve25-r25p-nov5 #5 (placed before the tablets-nov2 block): on a computer the practice and quiz summary is two columns, the next-ability card
    beside the score, the buttons, the progress row and the seal line, so all of them are in view at 1280x720; Details (main.js sumFold) holds the
    lower-value lines. R25F's line on the mastery summary is untouched (a test summary keeps one column). */
@@ -4648,6 +4667,25 @@ html:not(.m-mode) dialog[data-view=lesson-summary] #modal-content>.result:is([da
 html:not(.m-mode) dialog[data-view=lesson-summary] #modal-content>.result>.sum-more{order:5;font-size:16px;text-align:center}
 html:not(.m-mode) dialog[data-view=lesson-summary] #modal-content>.result>.sum-more>summary{cursor:pointer;opacity:.8}
 }
+/* improve25-r25s-nov5 #2 (placed before the tablets-nov2 block, which must stay last): a phone result card that still runs past its sheet after ui/result-phone.js phoneRow's other steps drops its height cap,
+   so the button row's own sticky bottom (above) keeps Details and the red in view on first paint; the card scrolls under it */
+@media(max-height:500px) and (min-width:600px){
+ .m-mode dialog[data-view=result] #modal-content>.level-result.r25s-row-pin{max-height:none;margin-bottom:0}
+ .m-mode dialog[data-view=result] #modal-content .level-result.r25s-row-pin>.modal-actions{position:sticky;bottom:0;z-index:3;background:#1a1d3c}
+ .m-mode dialog[data-view=result] #result-extra .goal-more>.r25s-lv-meaning{margin:2px 0}
+}
+/* improve25-r25s-nov5 #3: main.js sumFit's two columns for any Library summary that runs past the sheet on a computer: the next-ability card on the
+   right, everything else on the left, the buttons in one row under both (repeated class: it outranks R25P's practice and quiz grid) */
+@media(min-width:1000px){
+html:not(.m-mode) dialog[data-view=lesson-summary] #modal-content>.r25s-sum2.r25s-sum2.r25s-sum2.r25s-sum2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:24px;row-gap:0;align-items:start;align-content:start;justify-items:center;grid-auto-flow:row}
+html:not(.m-mode) dialog[data-view=lesson-summary] #modal-content>.r25s-sum2.r25s-sum2.r25s-sum2.r25s-sum2>*{grid-column:1;margin-top:4px;margin-bottom:4px;max-width:100%}
+html:not(.m-mode) dialog[data-view=lesson-summary] #modal-content>.r25s-sum2.r25s-sum2.r25s-sum2.r25s-sum2>.edu-burst{display:none}
+html:not(.m-mode) dialog[data-view=lesson-summary] #modal-content>.r25s-sum2.r25s-sum2.r25s-sum2.r25s-sum2>.am-goal{grid-column:2;grid-row:1/span 12;align-self:center;width:100%;max-width:none;margin:0}
+html:not(.m-mode) dialog[data-view=lesson-summary] #modal-content>.r25s-sum2.r25s-sum2.r25s-sum2.r25s-sum2>.r25s-sum-side{grid-column:2;grid-row:1/span 12;align-self:center;display:flex;flex-direction:column;align-items:stretch;gap:10px;width:100%;margin:0}
+html:not(.m-mode) dialog[data-view=lesson-summary] #modal-content>.r25s-sum2.r25s-sum2.r25s-sum2.r25s-sum2>.r25s-sum-side>:is(.am-goal,.seal-hint){width:100%;max-width:none;margin:0;box-sizing:border-box}
+html:not(.m-mode) dialog[data-view=lesson-summary] #modal-content>.r25s-sum2.r25s-sum2.r25s-sum2.r25s-sum2>:is(.modal-actions,.actions){grid-column:1/-1;grid-row:13;display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:8px}
+}
+/* end improve25-r25s-nov5 #3 */
 /* tablets-nov2 (round 9 item 12): the tablet sweep (1024x768, 1180x820, 1280x800, 1366x1024, 1180x740 touch). A tablet is a touch screen at
    least 600 css px on its short side (ui/mobile.js tabletSize); phones in landscape are 430 px tall at most, so (min-height:600px) never
    reaches them, and every rule here sits under html.m-mode, so desktops are untouched. */

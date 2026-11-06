@@ -67,11 +67,23 @@ function goldMap(g){const {width:W,height:H}=g.canvas,im=g.getImageData(0,0,W,H)
  g.putImageData(im,0,0);}
 /* improve25-r25q-nov5 #2: the same frame at another size for the Home's boss plaques (W x H, 9-slice scale k; the window insets scale with k), and
    'plain' (the card's own colours, untinted) for a Normal win there. The hall's own call is unchanged: plaqueFrame(card, metal). */
-export function plaqueFrame(card,metal,W=PLAQUE_W,H=PLAQUE_H,k=2){const key=`${metal||'dark'}:${W}x${H}:${k}`;if(frames[key])return frames[key];const cv=mk(W,H),g=cv.getContext('2d');g.imageSmoothingEnabled=false;nine(g,card,0,0,W,H,[10,8,8,8],k);
+/* improve25-r25r-nov5 #2 (R25Q lead: plain and silver read alike at Home): `rim` (the Home's Decorate cards and wall plaques only; the hall's
+   own call leaves it off) maps silver over a bright steel ramp, as gold is mapped, and runs a light rim round a silver or gold frame's edge, with a
+   dark line inside it. Plain stays the card's own wood, with no rim. Code only: the same card art. */
+export const SILVER_STOPS=[[0,[52,58,72]],[.35,[136,146,166]],[.68,[208,216,230]],[1,[252,253,255]]];
+const RIM={silver:[[250,252,255],[62,70,86]],gold:[[255,246,190],[120,70,10]]};
+function rampMap(g,stops){const {width:W,height:H}=g.canvas,im=g.getImageData(0,0,W,H),d=im.data;let lo=1,hi=0;const L=i=>(.299*d[i]+.587*d[i+1]+.114*d[i+2])/255;for(let i=0;i<d.length;i+=4)if(d[i+3]>8){const l=L(i);if(l<lo)lo=l;if(l>hi)hi=l;}
+ const at=t=>{t=Math.max(0,Math.min(1,t));let i=1;while(i<stops.length-1&&t>stops[i][0])i++;const [a,ca]=stops[i-1],[b,cb]=stops[i],f=(t-a)/(b-a||1);return ca.map((v,k)=>Math.round(v+(cb[k]-v)*f));};
+ for(let i=0;i<d.length;i+=4)if(d[i+3]>8){const c=at((L(i)-lo)/((hi-lo)||1));d[i]=c[0];d[i+1]=c[1];d[i+2]=c[2];}g.putImageData(im,0,0);}
+export function rimEdge(g,metal,t){const pair=RIM[metal];if(!pair)return 0;const {width:W,height:H}=g.canvas,im=g.getImageData(0,0,W,H),d=im.data,op=(x,y)=>x>=0&&y>=0&&x<W&&y<H&&d[(y*W+x)*4+3]>8;let n=0;const near=(x,y,r)=>{for(let dy=-r;dy<=r;dy++)for(let dx=-r;dx<=r;dx++)if(!op(x+dx,y+dy))return true;return false;};const out=new Uint8Array(W*H);
+ for(let y=0;y<H;y++)for(let x=0;x<W;x++)if(op(x,y))out[y*W+x]=near(x,y,t)?1:near(x,y,t+Math.max(1,t>>1))?2:0;
+ for(let i=0;i<W*H;i++)if(out[i]){const c=pair[out[i]-1];d[i*4]=c[0];d[i*4+1]=c[1];d[i*4+2]=c[2];if(out[i]===1)n++;}g.putImageData(im,0,0);return n;}
+export function plaqueFrame(card,metal,W=PLAQUE_W,H=PLAQUE_H,k=2,rim=false){const key=`${metal||'dark'}:${W}x${H}:${k}${rim?':rim':''}`;if(frames[key])return frames[key];const cv=mk(W,H),g=cv.getContext('2d');g.imageSmoothingEnabled=false;nine(g,card,0,0,W,H,[10,8,8,8],k);
  const base=mk(W,H);base.getContext('2d').drawImage(cv,0,0);const PLAQUE_W=W,PLAQUE_H=H,u=k/2;
- if(metal==='plain'){}else if(metal==='gold')goldMap(g);else if(metal){g.globalCompositeOperation='color';g.fillStyle=METAL_TINT[metal];g.fillRect(0,0,PLAQUE_W,PLAQUE_H);g.globalCompositeOperation=metal==='bronze'?'multiply':'screen';g.globalAlpha=metal==='bronze'?.25:metal==='gold'?.38:.22;g.fillRect(0,0,PLAQUE_W,PLAQUE_H);g.globalAlpha=1;}
+ if(metal==='plain'){}else if(metal==='gold')goldMap(g);else if(rim&&metal==='silver')rampMap(g,SILVER_STOPS);else if(metal){g.globalCompositeOperation='color';g.fillStyle=METAL_TINT[metal];g.fillRect(0,0,PLAQUE_W,PLAQUE_H);g.globalCompositeOperation=metal==='bronze'?'multiply':'screen';g.globalAlpha=metal==='bronze'?.25:metal==='gold'?.38:.22;g.fillRect(0,0,PLAQUE_W,PLAQUE_H);g.globalAlpha=1;}
  else{g.globalCompositeOperation='multiply';g.fillStyle='#5a5f6a';g.fillRect(0,0,PLAQUE_W,PLAQUE_H);}
  g.globalCompositeOperation='destination-in';g.drawImage(base,0,0);g.globalCompositeOperation='source-over';
+ if(rim)rimEdge(g,metal,Math.max(2,Math.round(2*k)))/* improve25-r25r-nov5 #2 */;
  /* the window behind the boss: a dark wall so every sprite reads */
  const gr=g.createLinearGradient(0,22*u,0,PLAQUE_H-14*u);gr.addColorStop(0,metal?'#1d2333':'#14161c');gr.addColorStop(1,metal?'#2c3346':'#1b1e26');g.fillStyle=gr;g.fillRect(14*u,22*u,PLAQUE_W-28*u,PLAQUE_H-36*u);
  return frames[key]=cv;}
@@ -81,7 +93,7 @@ function idleBox(id){if(boxes[id])return boxes[id];const im=spriteImage(id),m=sp
  const d=g.getImageData(0,0,w,h).data;let x0=w,y0=h,x1=-1,y1=-1;for(let y=0;y<h;y++)for(let x=0;x<w;x++)if(d[(y*w+x)*4+3]>24){if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y;}
  return boxes[id]=x1<0?{cv,x:0,y:0,w,h}:{cv,x:x0,y:y0,w:x1-x0+1,h:y1-y0+1};}
 /* improve25-r25q-nov5 #2: dims {W,H,k} paint the Home's smaller plaque (scenes/town.js homePlaque); left out, the hall's plaque as before */
-export function paintPlaque(cv,card,id,metal,{W=PLAQUE_W,H=PLAQUE_H,k:fk=2}={}){const PLAQUE_W=W,PLAQUE_H=H,u=fk/2;const g=cv.getContext('2d');g.setTransform?.(1,0,0,1,0,0);g.imageSmoothingEnabled=false;g.clearRect(0,0,cv.width,cv.height);const r=cv.width/PLAQUE_W||1;g.setTransform?.(r,0,0,r,0,0);g.imageSmoothingEnabled=false;g.drawImage(plaqueFrame(card,metal,W,H,fk),0,0);
+export function paintPlaque(cv,card,id,metal,{W=PLAQUE_W,H=PLAQUE_H,k:fk=2,rim=false/* improve25-r25r-nov5 #2 */}={}){const PLAQUE_W=W,PLAQUE_H=H,u=fk/2;const g=cv.getContext('2d');g.setTransform?.(1,0,0,1,0,0);g.imageSmoothingEnabled=false;g.clearRect(0,0,cv.width,cv.height);const r=cv.width/PLAQUE_W||1;g.setTransform?.(r,0,0,r,0,0);g.imageSmoothingEnabled=false;g.drawImage(plaqueFrame(card,metal,W,H,fk,rim),0,0);
  const b=spriteReady(id)?idleBox(id):null;if(!b){if(!metal)mark(g,W,H,u);return false;}
  const BW=PLAQUE_W-36*u,BH=PLAQUE_H-40*u,k=Math.min(BW/b.w,BH/b.h,3*u),q=v=>Math.round(v*r)/r,dw=q(b.w*k),dh=q(b.h*k),dx=q((PLAQUE_W-dw)/2),dy=q(PLAQUE_H-16*u-dh);
  if(metal){g.drawImage(b.cv,b.x,b.y,b.w,b.h,dx,dy,dw,dh);return true;}
@@ -91,7 +103,7 @@ function mark(g,W=PLAQUE_W,H=PLAQUE_H,u=1){g.font=`bold ${40*u}px "Pixel Operato
 /* browser: load the card once, then each plaque's atlas when it scrolls into view; repaint until ready; release on close */
 export function wireTrophyHall(root){const cvs=[...root.querySelectorAll('[data-trophy-sprite]')];if(!cvs.length)return;const before=new Set(loadedSprites()),mine=new Set();
  const card=new Image();card.src=new URL('./skin/pl-card-plain.png',import.meta.url).href;
- const want=new Set(),paint=()=>{if(!card.complete||!card.naturalWidth)return;for(const cv of cvs)if(!cv.dataset.done){const id=cv.dataset.trophySprite;if(want.has(cv)&&paintPlaque(cv,card,id,cv.dataset.metal||null))cv.dataset.done='1';else if(!cv.dataset.base){paintPlaque(cv,card,id,cv.dataset.metal||null);cv.dataset.base='1';}}};
+ const want=new Set(),paint=()=>{if(!card.complete||!card.naturalWidth)return;for(const cv of cvs)if(!cv.dataset.done){const id=cv.dataset.trophySprite;const o={rim:!!cv.dataset.rim}/* improve25-r25r-nov5 #2 */;if(want.has(cv)&&paintPlaque(cv,card,id,cv.dataset.metal||null,o))cv.dataset.done='1';else if(!cv.dataset.base){paintPlaque(cv,card,id,cv.dataset.metal||null,o);cv.dataset.base='1';}}};
  const see=cv=>{if(want.has(cv))return;want.add(cv);const id=cv.dataset.trophySprite;if(!before.has(id))mine.add(id);loadSprite(id);};
  if(typeof IntersectionObserver==='function'){const io=new IntersectionObserver(es=>{for(const e of es)if(e.isIntersecting){see(e.target);io.unobserve(e.target);}},{root:null,rootMargin:'120px'});cvs.forEach(cv=>io.observe(cv));}else cvs.forEach(see);
  const tick=()=>{if(!cvs[0].isConnected){for(const id of mine)releaseSprite(id,true);return;}paint();if(cvs.some(cv=>!cv.dataset.done))later(tick,120);else{const wait=()=>{if(!cvs[0].isConnected){for(const id of mine)releaseSprite(id,true);return;}later(wait,500);};wait();}};
@@ -102,4 +114,4 @@ export function wireTrophyHall(root){const cvs=[...root.querySelectorAll('[data-
 const homeCards={card:null},homePlaques=new Map();
 export function homePlaque(sprite,metal,w=36,h=40){if(typeof document==='undefined'||typeof Image==='undefined')return null;if(!homeCards.card){homeCards.card=new Image();homeCards.card.src=new URL('./skin/pl-card-plain.png',import.meta.url).href;}
  const card=homeCards.card,key=`${sprite}|${metal}`;let e=homePlaques.get(key);if(e?.done)return e.cv;if(!e){e={cv:mk(w*2,h*2),done:false};homePlaques.set(key,e);loadSprite(sprite);}
- if(!card.complete||!card.naturalWidth)return null;if(paintPlaque(e.cv,card,sprite,metal,{W:w*2,H:h*2,k:1})){e.done=true;return e.cv;}return null;}
+ if(!card.complete||!card.naturalWidth)return null;if(paintPlaque(e.cv,card,sprite,metal,{W:w*2,H:h*2,k:1,rim:true/* improve25-r25r-nov5 #2 */})){e.done=true;return e.cv;}return null;}

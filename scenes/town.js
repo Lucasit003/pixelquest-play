@@ -865,6 +865,11 @@ export function personBeat(name) {
 export function hubHeads() { const S = current(), v = H.view; if (!S?.room || !v || H.fade) return []; return [...S.figures, ...crewHere(S)].map(f => ({l: (f.x - 14 - v.ox) / VIEW_W, r: (f.x + 14 - v.ox) / VIEW_W, t: (f.y - 60 - v.oy) / VIEW_H, b: (f.y - v.oy) / VIEW_H})); }
 /* improve20-r13c-nov2 #5 (audit10 a14): where the hero is drawn in this room, as fractions of the view ({l, r, t, b}, the body x +-16 and
    60 px tall), so main.js keeps a toast off him (the "Runes placed" line sat over him at the smith); null outside a room or in a fade */
+/* improve25-r25r-nov5 #1 (R25Q lead: on a phone the HUD hid the Home's back wall): every piece hung on the Home's back wall, as fractions of the
+   view ({id, l, r, t, b}, the box it is drawn in), so main.js can tuck the HUD panels a hung piece is under; [] outside the Home or in a fade */
+export function hubWallBoxes() { const S = current(), v = H.view; if (S?.key !== 'home' || !v || H.fade) return []; return (H.save?.house?.items ?? []).filter(it => it.wall && FURN[it.id]).map(it => { const f = FURN[it.id]; return {id: it.id, l: (it.x - f.w / 2 - v.ox) / VIEW_W, r: (it.x + f.w / 2 - v.ox) / VIEW_W, t: (it.y - f.h - v.oy) / VIEW_H, b: (it.y - v.oy) / VIEW_H}; }); }
+/* improve25-r25r-nov5 #1: the view's world offset as the last frame drew it (shots and tests measure the Home wall against the HUD) */
+export const hubViewOffset = () => H.view ? {...H.view} : null;
 export function hubHeroBox() { const S = current(), v = H.view, p = H.player; if (!S?.room || !v || !p || H.fade) return null; return {l: (p.x - 16 - v.ox) / VIEW_W, r: (p.x + 16 - v.ox) / VIEW_W, t: (p.y - 62 - v.oy) / VIEW_H, b: (p.y + 4 - v.oy) / VIEW_H}; }
 /* improve20-r9e-nov1 #2: the person (a keeper, a villager, a hired companion) whose drawn body, x +-16 and 60 px tall, the station's default
    bubble (about 80 x 24 px, its foot 70 px over the station) would cover, if any: {x, y, top}, top being where the bubble's foot goes,

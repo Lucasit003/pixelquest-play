@@ -98,8 +98,8 @@ export const VILLAGERS = {
   /* --- in the rooms --- */
   archivist_aldous: {name: 'Archivist Aldous', lines: [
     /* improve25-r25q-nov5 #1: Wil's third chapter, 'wils-mirror' (heard before the step moves on, as above) */
-    {when: {quest: {id: 'wils-mirror', step: 2}}, say: ['Water from the still pond at the Drowned Shrine? Let us pour it into my reading bowl.', 'There. Look. The water shows Wil with his shield up, standing in front of his friends. That is the truth of him.', 'The Mirror Woods only show what you worry about, not what is true. Go back with him, and let him see past them.']},
-    {when: {quest: {id: 'wils-mirror', step: 3}}, say: ['Back to the Mirror Woods with Wil. Mirrors show worries. Friends show the truth.']},
+    {when: {quest: {id: 'wils-mirror', step: 2}}, say: ['Water from the still pond at the Drowned Shrine? Let us pour it into my reading bowl.', 'There. Look. The water shows Wil with his shield up, standing in front of his friends. That is the truth of him.', 'The Mirror Woods only show what you worry about, not what is true. Win them again for him, and help him see past them.']} /* improve25-r25r-nov5 #4 */,
+    {when: {quest: {id: 'wils-mirror', step: 3}}, say: ['Back to the Mirror Woods, for Wil. Mirrors show worries. Friends show the truth.']} /* improve25-r25r-nov5 #4 */,
     {when: {step: 'awaken'}, say: ['Your first power is waiting! Open the glowing card and start the short lesson.']},
     {when: {step: 'prologue', library: true}, say: ['Your power is awake! Goblins are at the south gate. Go and try it on them.']},
     {when: {step: 'first-lesson', library: true}, say: ['Well fought at the gate! Your next power’s lesson is on the Next lesson card.']},
