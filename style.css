@@ -4728,6 +4728,19 @@ html:not(.m-mode) dialog[data-view=result] #modal-content .level-result.result-p
 html:not(.m-mode) dialog[data-view=lesson-summary] #modal-content>.r25s-sum2.r26c-sum-row.r26c-sum-row.r26c-sum-row.r26c-sum-row>:is(.modal-actions,.actions){flex-wrap:nowrap}
 html:not(.m-mode) dialog[data-view=lesson-summary] #modal-content>.r25s-sum2.r26c-sum-row>:is(.modal-actions,.actions)>button{flex:1 1 0;min-width:0;white-space:normal;line-height:1.15}
 
+/* improve26-r26e-nov6 #2 (placed before the tablets-nov2 block, which must stay last): the 0-floor Rift tower is a foundation only, a dashed
+   outline where the first floor will go (code-drawn, no new art) */
+.rift-foundation{display:block;width:72px;height:30px;margin-bottom:-8px;border:2px dashed rgba(233,220,182,.55);border-bottom:0;border-radius:3px 3px 0 0;background:repeating-linear-gradient(45deg,rgba(233,220,182,.08) 0 6px,transparent 6px 12px)}
+/* improve26-r26e-nov6 #3: the HUD's quest line and #5 the gold line sit under NEXT STEP in the goal-then row style (improve20-r20n-nov4), the quest
+   line in the quest gold, the gold line quieter; the quest reward card (ui/quest-reward.js) in the Hall's card style */
+html.in-town #objective .goal-quest{color:#f3d98a}
+html.in-town #objective .goal-gold{color:var(--ink-2);opacity:.92}
+.quest-reward-keep{display:flex;align-items:center;gap:10px;margin:2px 0}.quest-reward-keep img{image-rendering:pixelated;width:48px;height:48px;flex:none}.quest-reward-keep span{display:flex;flex-direction:column;gap:2px}.quest-reward-keep small{font-size:16px;line-height:1.2;color:var(--ink-2,#cfc3a8)}
+.quest-reward .hall-note{margin:2px 0;font-size:16px}
+/* improve26-r26e-nov6 #4: the Hall's between-boss card shows the next boss's plaque; the clear card's gain lines */
+.hall-next-pic{display:block;align-self:center;width:132px;height:147px;image-rendering:pixelated}
+html.m-mode .hall-next-pic{width:88px;height:98px}
+.hall-gain{margin:0;color:#e9dcb6;font-size:16px}
 /* tablets-nov2 (round 9 item 12): the tablet sweep (1024x768, 1180x820, 1280x800, 1366x1024, 1180x740 touch). A tablet is a touch screen at
    least 600 css px on its short side (ui/mobile.js tabletSize); phones in landscape are 430 px tall at most, so (min-height:600px) never
    reaches them, and every rule here sits under html.m-mode, so desktops are untouched. */

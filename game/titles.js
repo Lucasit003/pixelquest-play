@@ -18,7 +18,7 @@ export const TITLES={
  /* improve25-r25q-nov5 #1: Wil's third chapter (game/quests.js 'wils-mirror', reward.title), read from the done quest the same way */
  'true-friend':{name:'Wil’s True Friend',how:'Finish The Still Pond, Wil’s third quest.',earned:s=>!!s?.quests?.q?.['wils-mirror']?.done},
  /* improve25-r25f-nov5 #2: a Rift tower marker reached (4, 8, 12 Story Rift floors) */
- ...Object.fromEntries(TOWER_MARKS.map(m=>[m.id,{name:m.name,how:`Climb ${m.at} floors of the Rift tower: win Story Rifts.`,earned:s=>riftTower(s).floors>=m.at}])),
+ ...Object.fromEntries(TOWER_MARKS.map(m=>[m.id,{name:m.name,how:`Climb ${m.at} floors of the Rift tower: win the Rift of the Week.`/* improve26-r26e-nov6 #2 */,earned:s=>riftTower(s).floors>=m.at}])),
  /* improve25-r25f-nov5 #3: every Hall diary page of a chapter filled */
  ...Object.fromEntries(Object.entries(DIARY_KEEPSAKES).map(([ch,k])=>[k.title,{name:k.name,how:`Fill every ${ch[0].toUpperCase()+ch.slice(1)} page of the Hall boss diary.`,earned:s=>diaryChapterDone(s,ch)}])),
  ...Object.fromEntries(Object.entries(SEAL_TITLES).map(([ch,[id,name]])=>[id,{name,how:`Open a rune seal's cache in the ${ch[0].toUpperCase()+ch.slice(1)}.`,earned:s=>sealChapterDone(s,ch)}])),

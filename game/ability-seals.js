@@ -21,9 +21,11 @@ export const SEALS=Object.freeze([
  Object.freeze({id:'barracks-seal',level:'m4',cast:4,awake:4,x:2080,gold:120,essence:3,chapter:'emberkeep'}),
  Object.freeze({id:'throne-seal',level:'m7',cast:4,awake:4,x:2965,gold:120,essence:3,chapter:'emberkeep'}),
  Object.freeze({id:'starfall-seal',level:'v4',cast:4,awake:4,x:2240,gold:180,essence:4,chapter:'veilmoor'}),
- /* improve23-r23s-nov4 #2: the hotbar holds four, so v5 and v6 keep cast 4 and raise awake to 5 and 6 */
- Object.freeze({id:'choir-seal',level:'v5',cast:4,awake:5,x:2080,gold:180,essence:4,chapter:'veilmoor'}),
- Object.freeze({id:'veilgate-seal',level:'v6',cast:4,awake:6,x:1500,gold:180,essence:4,chapter:'veilmoor'})]);
+ /* improve23-r23s-nov4 #2: the hotbar holds four, so v5 and v6 keep cast 4 and raise awake to 5 and 6.
+    improve26-r26e-nov6 #1 (audit17 #8: every typical save reaches v7 with 4 woken abilities, so two of nine seals stayed padlocks): v5 needs 4
+    woken abilities and v6 needs 5; cast stays 4 (the hotbar holds four). The wake card (wakeSealLine) names v6 when the 5th wakes. */
+ Object.freeze({id:'choir-seal',level:'v5',cast:4,awake:4,x:2080,gold:180,essence:4,chapter:'veilmoor'}),
+ Object.freeze({id:'veilgate-seal',level:'v6',cast:4,awake:5,x:1500,gold:180,essence:4,chapter:'veilmoor'})]);
 export const SEAL=Object.freeze(Object.fromEntries(SEALS.map(z=>[z.id,z])));
 /* the keepsake each chapter's first opened cache gives: an earned title (game/titles.js reads sealChapterDone) */
 export const SEAL_TITLES=Object.freeze({elderwood:['rune-breaker','Rune Breaker'],emberkeep:['ember-seal-breaker','Ember Seal Breaker'],veilmoor:['veil-unsealer','Veil Unsealer']});

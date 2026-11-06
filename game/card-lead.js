@@ -18,7 +18,7 @@ import {nextStep,resultGoal,retryStep,riftUnplayed,STEP_WORDS} from './next-step
 import {gradeRank} from './grade.js';
 import {nextPowerLine} from '../academics/starter-lesson.js';
 import {runeDefeatLead} from './runes.js';
-/* improve20-r21b-nov4 #4 */import {sealBackLine} from './ability-seals.js';
+/* improve20-r21b-nov4 #4 */import {sealBackLine} from './ability-seals.js';/* improve26-r26e-nov6 #5 */import {goldLeadText} from '../ui/gold-lead.js';
 const sname=id=>SUBJECTS[id]?.name||id;
 const topicsWord=n=>`topic${n===1?'':'s'}`;
 /* the honest size of a power: "Frost Nova: 3 Science topics" (and the hero level when it is still ahead) */
@@ -74,7 +74,9 @@ export function legendLead(save,id,legend,{learn=false,hold=false}={}){if(!legen
 export function prologueText(save,text){const np=nextPowerLine(save),sub=np?.a&&SUBJECTS[np.a.subject]?.name;if(!sub||typeof text!=='string')return text;const head=`Next power: ${np.a.name}.`;return text.startsWith(head)?`Next power: ${np.a.name}, learned in ${sub}.${text.slice(head.length)}`:text;}
 /* improve20-r21b-nov4 #4 (audit15 #16: a seal walked past had nothing pointing back to it): a win card with no "While" line names a seal the hero
    can break now on a level already won (not this one, whose card says so itself), under NEXT GOAL; the red button stays the card's own */
-export function winCardLead(save,o={}){const c=winCardLead0(save,o);if(c&&!c.also&&!o.prologue&&!o.finale&&c.primary?.kind!=='runes'/* a rune-led card keeps its own two lines (R20D #5) */){const b=sealBackLine(save,o.id);if(b)c.also=b;}return c;}
+/* improve26-r26e-nov6 #5 (kidsim9 #3): with that line still empty and o.gold (main.js: not yet shown this town visit), the quiet gold lead
+   (ui/gold-lead.js: "You have 2,512 gold: the Kingsbane is at the Smith."); c.goldLead marks it. The red button stays the card's own. */
+export function winCardLead(save,o={}){const c=winCardLead0(save,o);if(c&&!c.also&&!o.prologue&&!o.finale&&c.primary?.kind!=='runes'/* a rune-led card keeps its own two lines (R20D #5) */){const b=sealBackLine(save,o.id);if(b)c.also=b;else if(o.gold){const g=goldLeadText(save);if(g){c.also=g;c.goldLead=true;o.onGold?.();}}}return c;}
 function winCardLead0(save,{learn=null,heroic=null,chFirst=null,chName='',prologue=false,finale=false,id=null,legend=null}={}){const step=nextStep(save);
  /* improve24-r24m-nov5 #4 (audit16 #8, shot 07: "NEXT GOAL: Next adventure: Goblin Camp" over a red "Go to the Library"): the prologue's red comes
     from the same step as its line, at every size: a pad goal is "Go to <pad>" (kind 'pad'), anything else keeps the card's own Library red */

@@ -30,7 +30,7 @@ import {FURN, footprint, placeFurniture, spare, wallSpot, wallFits, WALL, /* imp
 import {homePlaque} from '../ui/trophy-hall.js';
 import {talk, talkAndAdvance, nameOf, holds, stepIdOf, STORY, /* improve20-r22f-nov4 #1 */beatLines, lineText} from '../game/npcs.js';
 import {COMPANIONS, ART, joined} from '../game/party.js';
-import {questLive, currentStep, questState, QUEST_IDS, QUESTS} from '../game/quests.js';
+import {questLive, currentStep, questState, QUEST_IDS, QUESTS} from '../game/quests.js';/* improve26-r26e-nov6 #3 */import {questWaitsOn} from '../game/quest-line.js';
 import {loadSprite as loadActor, drawSprite as drawActor} from '../gfx/actors/sprites.js';
 import {swayTable, drawSwayed, stepCritters, critterDraws, leafDraws} from '../gfx/motion.js';
 import {TOWN_SPOTS, townPlace, visitPlace, FARM_NAME} from '../game/fasttravel.js';
@@ -142,6 +142,11 @@ function stepOutNow() { const o = H.stepOut; if (!o) return []; const k = (H.tim
   const f = Math.min(1, k), x = o.from.x + (o.to.x - o.from.x) * f, y = o.from.y + (o.to.y - o.from.y) * f;
   return [{id: o.id, key: o.id, name: COMPANIONS[o.id].short, x, y, clip: f < 1 ? 'walk' : H.time - o.t0 >= STEP_OUT.hold ? 'idle' : 'cheer', t: f < 1 ? H.time - o.t0 : H.time - o.t0 - STEP_OUT.walk, facing: f < 1 ? Math.sign(o.to.x - o.from.x) || 1 : Math.sign((H.player?.x ?? x) - x) || 1, beat: true}]; }
 const crewHere = S => S.key === 'barracks' ? [...barracksCrew(H.save), ...stepOutNow()] : S.key === 'village' ? villageCrew(H.save) : [];
+/* improve26-r26e-nov6 #3: a room where a live quest chapter waits on someone standing there (game/quest-line.js questWaitsOn) */
+function roomWaits(room) { if (!room || !H.save) return false; let S2 = null; try { S2 = scene(room); } catch { S2 = null; } return !!S2?.points?.some(q => q.type === 'npc-spot' && questWaitsOn(H.save, q.props?.key)); }
+/* improve26-r26e-nov6 #3: the quest "!" (code-drawn: a gold badge with a dark rim and a dark bar and dot), centred on x, its top at y */
+function questBang(c, x, y) { x = Math.round(x); y = Math.round(y); c.save(); c.fillStyle = '#2a1a08'; c.fillRect(x - 8, y - 1, 16, 26); c.fillRect(x - 9, y, 18, 24); c.fillStyle = '#ffd34a'; c.fillRect(x - 7, y, 14, 24); c.fillRect(x - 8, y + 1, 16, 22); c.fillStyle = '#fff3b0'; c.fillRect(x - 6, y + 1, 12, 2);
+  c.fillStyle = '#3a2408'; c.fillRect(x - 2, y + 4, 4, 11); c.fillRect(x - 2, y + 17, 4, 4); c.restore(); }
 /* someone a live quest is waiting on: an open quest's giver, or a talk step whose item is in hand */
 function questNews(save, key) {
   if (!save || !key) return false;
@@ -580,10 +585,17 @@ function nearest(S, p) {
   /* improve20-r10d-nov2 #3 (kid sims nov2: "Pet Ink Cat" competed for E right after a door): it also waits PET_DOOR_WAIT seconds after every
      arrival through a door (placeAt), however soon the hero walks and stops; any target in reach still takes the prompt first (best). */
   const pet = !best && !close && H.walked && (H.still ?? 0) > PET_STILL && (H.time ?? 0) - (H.doorAt ?? -1e9) >= PET_DOOR_WAIT && PETS.find(x => x.key === H.save?.pet);
+  /* improve26-r26e-nov6 #3 (audit17 #11, shot 123: a step off Captain Garrick's desk, E said "Pet Ink Cat"): inside a person's own talk radius
+     (NPC_TALK px for a room's people, NPC_TALK_FIG for figures and walkers) the press talks to them, never pets; the pet waits for open floor */
+  if (pet) { let tn = null; for (const q of S.points) { if (q.type !== 'npc-spot' || !S.room) continue; const r = Math.hypot(p.x - q.x, p.y - q.y); if (r < NPC_TALK && (!tn || r < tn.d)) { const o = optionFor(S, q); if (o) tn = {d: r, q, o}; } }
+    for (const f of people) { const r = Math.hypot(p.x - f.x, (p.y - f.y) * 1.4); if (r < NPC_TALK_FIG && (!tn || r < tn.d)) tn = {d: r, q: {x: f.x, y: f.y, sx: f.x, sy: f.y + 8, mark: [f.x, f.y - 50]}, o: {label: `Talk to ${f.name}`, talk: {key: f.key, name: f.name}}}; }
+    if (tn) return {...tn, d: 98}; }
   if (pet) { const px = p.x - 22 * p.facing, py = p.y + 9; best = {d: 99, q: {x: px, y: py, sx: px, sy: py, mark: [px, py - 30], pet: true}, o: {label: `Pet ${pet.name}`, run: () => { petThePet(pet); p.petting = true; H.petted = (H.petted | 0) + 1; }}}; }
   return best;
 }
 export const PET_STILL = 1.5, PET_CLEAR = 45, PET_DOOR_WAIT = 3, STUDY_CLEAR = 110, STUDY_PREFER = 8;
+/* improve26-r26e-nov6 #3: a person's own talk radius, inside which E talks rather than pets */
+export const NPC_TALK = 130, NPC_TALK_FIG = 70;
 
 function fadeTo(mid) { if (!H.fade) H.fade = {t: 0, mid, done: false}; }
 function enter(room, door) {
@@ -1305,8 +1317,14 @@ export function drawHub(c, state, t, kit) {
     const bob = state.motion === false ? 0 : Math.floor(t * 2.5) % 2, news = [...S.figures.map(f => [f.name, f.x, f.y]), ...S.points.filter(q => q.type === 'npc-spot').map(q => [nameOf(q.props?.key, q.name), q.x, q.y])];
     for (const q of S.points) if (q.type === 'npc-spot' && questNews(H.save, q.props?.key)) news.push([q.props.key, q.x, q.y, true]);
     for (const m of crewHere(S)) if (questNews(H.save, m.key) || m.id && H.save && QUEST_IDS.some(q => QUESTS[q].companion === m.id && questLive(q) && currentStep(H.save, q)?.kind === 'visit' && currentStep(H.save, q).who === m.id)) news.push([m.key, m.x, m.y - 4, true]);
-    for (const [who, x, y, quest] of news) if ((quest || personBeat(who)) && !(H.near && Math.abs(H.near.q.x - x) < 2 && Math.abs(H.near.q.y - y) < 2) && ready(iconImage))
+    /* improve26-r26e-nov6 #3 (audit17 #11, shot 123: the quest giver wore the same talk bubble as any gossip): a person a quest chapter waits on
+       wears a code-drawn gold "!" (questBang) instead; the talk bubble stays for news */
+    const bangAt = new Set();
+    for (const [who, x, y, quest] of news) if (quest && !(H.near && Math.abs(H.near.q.x - x) < 2 && Math.abs(H.near.q.y - y) < 2)) { bangAt.add(`${Math.round(x)},${Math.round(y)}`); questBang(c, x, y - 56 - bob); }
+    for (const [who, x, y, quest] of news) if ((quest || personBeat(who)) && !bangAt.has(`${Math.round(x)},${Math.round(y)}`) && !(H.near && Math.abs(H.near.q.x - x) < 2 && Math.abs(H.near.q.y - y) < 2) && ready(iconImage))
       c.drawImage(iconImage, MARK.talk * 32, 0, 32, 32, Math.round(x) - 16, Math.round(y) - 66 - bob, 32, 32);
+    /* improve26-r26e-nov6 #3: in the village, the door of a room where a quest chapter waits on someone wears the "!" too */
+    if (!S.room && H.save) for (const q of S.points) if (q.type === 'entrance' && roomWaits(roomFor(q))) questBang(c, q.x, Math.min(q.y, q.sy ?? q.y) - 62 - bob);
   }
   /* Identify the nearest useful doorway; the interaction marker takes over when E is available. */
   if (!S.room && !H.fade && !H.near) {
