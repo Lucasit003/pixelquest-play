@@ -4717,6 +4717,17 @@ html.m-mode dialog[data-view=lesson-summary] #modal-content>.result.r26a-sum-ph>
 #modal-content .edu-unlock p.edu-unlock-seal{display:block;width:fit-content;max-width:min(100%,65ch);margin:6px auto;padding:4px 10px;border-left:3px solid #a984ff;background:#2a1c48;color:#efe6ff;font:700 16px/1.25 var(--ui);text-align:left;box-sizing:border-box}
 html.m-mode #modal-content .edu-unlock p.edu-unlock-seal{margin:4px auto;padding:3px 8px;font-size:14px;line-height:1.2}
 
+/* improve26-r26c-nov6 (placed before the tablets-nov2 block, which must stay last). #1 (audit17 #4): the hoisted YOU GOT, chest row and level-up
+   ribbon of a busy win card (ui/result-phone.js momentFit) stand outside the scrolling middle, at their own height */
+html:not(.m-mode) dialog[data-view=result] #modal-content>.level-result.r26c-hoist>:is(.you-got,.result-chests,.f2-lv-ribbon,.f2-boss-talk,.level-quote){flex:none;margin-left:auto;margin-right:auto}
+/* #4 (audit17 #18, shot 125b: five chests on a packed m2 replay squeezed Iron Chest to 68 px over Gold Chest, and Star Chest was cut): a packed
+   card's chest row wraps to a second line, each chest at its own width, instead of shrinking them */
+html:not(.m-mode) dialog[data-view=result] #modal-content .level-result.result-packed .result-chests{flex-wrap:wrap;row-gap:4px}
+html:not(.m-mode) dialog[data-view=result] #modal-content .level-result.result-packed .result-chest{flex:none;min-width:auto}
+/* #4 (shot 118): a two-column summary still over its sheet (ui/summary-fit.js sumRow) keeps its buttons on one row; a long label wraps inside its button */
+html:not(.m-mode) dialog[data-view=lesson-summary] #modal-content>.r25s-sum2.r26c-sum-row.r26c-sum-row.r26c-sum-row.r26c-sum-row>:is(.modal-actions,.actions){flex-wrap:nowrap}
+html:not(.m-mode) dialog[data-view=lesson-summary] #modal-content>.r25s-sum2.r26c-sum-row>:is(.modal-actions,.actions)>button{flex:1 1 0;min-width:0;white-space:normal;line-height:1.15}
+
 /* tablets-nov2 (round 9 item 12): the tablet sweep (1024x768, 1180x820, 1280x800, 1366x1024, 1180x740 touch). A tablet is a touch screen at
    least 600 css px on its short side (ui/mobile.js tabletSize); phones in landscape are 430 px tall at most, so (min-height:600px) never
    reaches them, and every rule here sits under html.m-mode, so desktops are untouched. */

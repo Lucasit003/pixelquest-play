@@ -8,7 +8,7 @@ import {sfx} from '../core/audio.js';
 import {nextPower} from '../game/power-gate.js';
 import {powerStep} from '../game/power-gate.js';
 import {ITEM,wornOf,equip as gearEquip} from '../game/gear.js';
-import {betterPickup,equipComparison} from './gear-guidance.js';
+import {betterPickup,equipComparison} from './gear-guidance.js';/* improve26-r26c-nov6 #3 */import {judge} from './gear-guidance.js';
 import {JEWEL,RARITY,STAT_NAMES,wear as wearJewel} from '../game/jewels.js';
 import {WEAR_LINE} from '../game/wear.js';
 import {PETS} from '../game/data.js';
@@ -49,15 +49,29 @@ export function wearOffers(s,drops){const out=[];for(const d of drops||[]){
  if(d.kind==='jewel'){const j=JEWEL[d.id];if(!j||!s?.jewels?.owned?.[d.id])continue;const on=s.jewels.worn?.[j.slot]||null;if(on===d.id)continue;const o=on?JEWEL[on]:null;if(o&&(RARITY[o.rarity]?.power||0)>=(RARITY[j.rarity]?.power||0))continue;
   const k=Object.keys(j.stats)[0];out.push({kind:'jewel',id:d.id,name:j.name,slot:j.slot,label:STAT_NAMES[k]||k,before:pct(o?.stats?.[k]||0),after:pct(j.stats[k])});continue;}
  const it=ITEM[d.id];if(!it||!s?.gear?.owned?.[d.id])continue;let ok=false;try{ok=betterPickup(s,d.id);}catch{ok=false;}if(!ok)continue;const c=equipComparison(s,s.hero,d.id);
- out.push({kind:'gear',id:d.id,name:it.name,slot:it.slot,label:c.label,before:String(c.before),after:String(c.after)});}
+ /* improve26-r26c-nov6 #3 */const r=offerStat(c);if(!r)continue;out.push({kind:'gear',id:d.id,name:it.name,slot:it.slot,...r});}
  return out;}
+/* improve26-r26c-nov6 #3 (audit17 #16, shot 139: "Dreamtide Mantle Defence 33 → 32.8" in green with Wear it; its Health +30 and Strength +4 were not
+   shown). The offer is made on the upgrade judge's own total (gear-guidance.js judge, as betterPickup is), and the line names a stat that RISES:
+   the slot's own (Attack or Defence) when it rises, else the rising stat with the biggest share (Health, Strength or Magic, Speed, Strong hit
+   chance), else the judge's own gain ("Damage +6%"). Never a falling number: a piece the judge does not call better gets no offer (null). c:
+   equipComparison(s,hero,id) -> {label, before, after} or {label, up} */
+const OFFER_NAME={basic:'Attack',def:'Defence',hp:'Health',atk:'Strength',mag:'Magic',speed:'Speed',crit:'Strong hit chance'},JUDGE_NAME={damage:'Damage',toughness:'Toughness',speed:'Speed'};
+const offerNum=(k,v)=>k==='crit'?pct(v):k==='speed'?String(Math.round(v*100)/100):k==='def'||k==='basic'?String(Math.round(v*10)/10):String(Math.round(v));
+export function offerStat(c){if(!c?.beforeStats||!c?.afterStats)return null;let j=null;try{j=judge(c);}catch{j=null;}if(!j?.ok)return null;const B=c.beforeStats,A=c.afterStats,magic=(A.mag||0)>(A.atk||0);
+ const keys=[c.label==='Attack'?'basic':'def','hp',magic?'mag':'atk','speed','crit'],up=k=>offerNum(k,A[k]||0)!==offerNum(k,B[k]||0)&&(A[k]||0)>(B[k]||0);
+ const own=keys[0],rest=keys.slice(1).filter(up).sort((x,y)=>((A[y]||0)/((B[y]||0)||1))-((A[x]||0)/((B[x]||0)||1))),k=up(own)?own:rest[0];
+ if(k)return {label:OFFER_NAME[k],before:offerNum(k,B[k]||0),after:offerNum(k,A[k]||0)};
+ const [jk,jv]=[...j.ups].sort((x,y)=>y[1]-x[1])[0]||[];return jk?{label:JUDGE_NAME[jk]||jk,up:`+${Math.max(1,Math.round(jv*100))}%`}:null;}
+/* the compare in words: "Health 520 → <b>550</b>", or "Damage <b>+6%</b>" */
+export const offerText=o=>o.up?`${esc(o.label)} <b>${esc(o.up)}</b>`:`${esc(o.label)} ${esc(o.before)} → <b>${esc(o.after)}</b>`;
 /* wears it, as Home -> Inventory does; true when it changed */
 export function wearOffer(s,o){if(!o)return false;if(o.kind==='jewel'){if(s.jewels?.worn?.[o.slot]===o.id)return false;return wearJewel(s,o.id);}const r=gearEquip(s,s.hero,o.id);return !!r?.ok;}
 /* friends2-nov5 #5: is this drop on the hero now (a jewel for an empty slot is put on as it drops) */
 export const wornNow=(s,d)=>d?.kind==='jewel'?!!JEWEL[d.id]&&s?.jewels?.worn?.[JEWEL[d.id].slot]===d.id:!!ITEM[d?.id]&&wornOf(s,s.hero)?.[ITEM[d.id].slot]===d.id;
 /* friends2-nov5 #5: the Wear it line inside a YOU GOT tile */
-export const wearInHTML=o=>`<span class="f2-wear-in"><small>${esc(o.label)} ${esc(o.before)} → <b>${esc(o.after)}</b></small><button type="button" class="f2-wear-btn" data-f2-wear-btn="${esc(o.id)}">Wear it</button></span>`;
-export const wearRowHTML=offers=>offers.length?`<div class="f2-wear" data-f2-wear>${offers.map(o=>`<p class="f2-wear-row" data-f2-wear-id="${esc(o.id)}"><span class="f2-wear-text"><strong>${esc(o.name)}</strong> <small>${esc(o.label)} ${esc(o.before)} → <b>${esc(o.after)}</b></small></span><button type="button" class="f2-wear-btn" data-f2-wear-btn="${esc(o.id)}">Wear it</button></p>`).join('')}</div>`:'';
+export const wearInHTML=o=>`<span class="f2-wear-in"><small>${offerText(o)}</small><button type="button" class="f2-wear-btn" data-f2-wear-btn="${esc(o.id)}">Wear it</button></span>`;
+export const wearRowHTML=offers=>offers.length?`<div class="f2-wear" data-f2-wear>${offers.map(o=>`<p class="f2-wear-row" data-f2-wear-id="${esc(o.id)}"><span class="f2-wear-text"><strong>${esc(o.name)}</strong> <small>${offerText(o)}</small></span><button type="button" class="f2-wear-btn" data-f2-wear-btn="${esc(o.id)}">Wear it</button></p>`).join('')}</div>`:'';
 
 /* ---- #7 The pet gets an introduction ---------------------------------------------------------------------------------------------- */
 const petOf=key=>PETS.find(p=>p.key===key)||null;
@@ -114,7 +128,14 @@ export function f2ResultCard(o){const {r,st,card,save:s}=o;if(!card)return;ensur
  {const fd=card.querySelector('.you-got-found');if(fd&&o.drops?.length&&!card.querySelector('[data-f2-wear]')&&o.drops.every(d=>wornNow(s,d))&&fd.innerHTML.includes(WEAR_LINE.replace(/&/g,'&amp;').replace(/>/g,'&gt;'))){fd.innerHTML=fd.innerHTML.replace(WEAR_LINE.replace(/&/g,'&amp;').replace(/>/g,'&gt;'),o.drops.length>1?'You are wearing them now ✓':'You are wearing it now ✓');fd.dataset.f2Worn='1';}}
  /* #7 */{const t=bondStepLine(s,r?.won);const at=card.querySelector('.level-hero-progress')||card.querySelector('.level-result-detail');if(t&&at&&!card.querySelector('[data-f2-bond]'))at.insertAdjacentHTML(at.classList.contains('level-hero-progress')?'afterend':'beforeend',`<p class="f2-bond" data-f2-bond><i class="heart full" aria-hidden="true"></i>${esc(t)}</p>`);}
  /* #8 */townWhy(card,s,(o.offers||[]).map(x=>x.id));}
-function townWhy(card,s,except=[]){const b=card.querySelector('#level-done');if(!b)return;const plain=b.dataset.f2Why!=null||/^Return to Oakhaven$/.test(b.textContent.trim());if(!plain)return;const why=townReason(s,except);
+/* improve26-r26c-nov6 #2 (audit17 #9, shot 150: NEXT GOAL "Next power: Ground Slam..." over a red "Return to Oakhaven / Wil has a job"): when Return
+   to Oakhaven IS the card's red, its second line may only name the step NEXT GOAL already leads with (a hand-in, next-step.js handInLead) or the
+   chapter's homecoming news (R25P #4); the other town reasons (a companion's job, a hire, gear, a Home prize) ride only on a plain Return. main.js
+   calls townRed once the card's buttons are final (the red can move to the Library or a pad after this card is drawn). */
+export function redReason(s){try{let h=null;try{h=handInLead(s);}catch{h=null;}if(h?.text)return stepKid(h.text);if(chapterNewsDue(s))return 'Oakhaven has news';}catch{}return '';}
+const TOWN_EXCEPT=new WeakMap();
+export function townRed(card,s){if(!card)return false;townWhy(card,s,TOWN_EXCEPT.get(card)||[]);return true;}
+function townWhy(card,s,except=[]){TOWN_EXCEPT.set(card,except);const b=card.querySelector('#level-done');if(!b)return;const plain=b.dataset.f2Why!=null||/^Return to Oakhaven$/.test(b.textContent.trim());if(!plain)return;const why=b.classList.contains('primary')?redReason(s):townReason(s,except);
  if(!why){if(b.dataset.f2Why!=null){delete b.dataset.f2Why;b.textContent='Return to Oakhaven';b.removeAttribute('aria-label');}return;}
  b.dataset.f2Why=why;b.innerHTML=`<span>Return to Oakhaven</span><small>${esc(why[0].toUpperCase()+why.slice(1))}</small>`;b.setAttribute('aria-label',`Return to Oakhaven: ${why}`);}
 

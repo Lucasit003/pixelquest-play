@@ -79,7 +79,9 @@ function winCardLead0(save,{learn=null,heroic=null,chFirst=null,chName='',prolog
  /* improve24-r24m-nov5 #4 (audit16 #8, shot 07: "NEXT GOAL: Next adventure: Goblin Camp" over a red "Go to the Library"): the prologue's red comes
     from the same step as its line, at every size: a pad goal is "Go to <pad>" (kind 'pad'), anything else keeps the card's own Library red */
  if(prologue){const l=step?.target?.kind==='pad'&&levelById(step.target.id);return {text:prologueText(save,step.text),primary:l?{kind:'pad',id:l.id,label:`Go to ${l.name}`}:{kind:'keep'},also:''};}
- if(finale)return {text:step.text,primary:{kind:'keep'},also:''};
+ /* improve26-r26c-nov6 #2 (audit17 #9): the finale's red comes from the same step as its line, as the prologue's does (R24M #4): a Library goal leads to
+    the Library, a pad goal is "Go to <pad>"; a town step keeps the card's own Return (whose second line then names only that step, ui/friends2.js redReason) */
+ if(finale){const l=step?.target?.kind==='pad'&&levelById(step.target.id);return {text:step.text,primary:step?.target?.kind==='library'?{kind:'library',label:'Go to the Library',subject:step.target.subject||leadSubject(save)||null}:l?{kind:'pad',id:l.id,label:`Go to ${l.name}`}:{kind:'keep'},also:''};}
  /* improve24-r24m-nov5 #5 (audit16 #9, shot 12: "Found: Hob's coin purse! Take it back..." over a red "Place 12 runes" and 5 buttons): while a quest
     step can be handed in (next-step.js handInLead: only a waiting first-topic test outranks it) that step is the line and its red is Return to
     Oakhaven (kind 'keep': the card's own Return); runes worth placing ride as one plain line under it, and Heroic stays a plain button */

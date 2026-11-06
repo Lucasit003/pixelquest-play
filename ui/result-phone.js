@@ -56,3 +56,34 @@ export function phoneRow(card,ex,out=[]){const mc=card?.closest('#modal-content'
  const hide=e=>{if(!e||!shown(e))return false;e.hidden=true;e.style.display='none';return true;};
  const steps=[['row-lib',()=>toEx(card.querySelector(':scope>.result-goal>.result-library'))],['row-cheer',()=>hide(card.querySelector(':scope>.victory-cheer'))],['row-quote',()=>toEx(card.querySelector(':scope>.f2-boss-talk')||card.querySelector(':scope>.level-quote'))],['row-meaning',()=>toEx(card.querySelector('.f2-lv-ribbon .f2-level-meaning'),'level-record r25s-lv-meaning')],['row-tier',()=>hide(card.querySelector(':scope>.level-tier'))],['row-pin',()=>{card.classList.add('r25s-row-pin');return true;}]];
  for(const [k,f] of steps){if(!over())break;if(f())out.push(k);}return out;}
+/* improve26-r26c-nov6 #1 (audit17 #4, shots 29b, 67, 143, 150: the level-up ribbon and the chest row sat cut under the seal note or inside the scroll
+   box on e2, e3, m2, m3 Heroic, v3-v5 and the Sleeper's Heroic and Legendary). Runs on every result card once its buttons are final (main.js fitCard,
+   after noteFit or phoneRow), at every size. While the ribbon or the chests are under MOMENT_SEEN of their height in view, or a button under MOMENT_BTN (R25S #2: the row in view on first paint):
+   - hoist (desktop): the boss's words, YOU GOT, the chest row and the ribbon leave the scrolling middle and stand above the seal note, outside the scroll body;
+   - then the lower-value lines go behind Details (#result-extra), one at a time: the boss's parting words, the grade tip (never the 3rd star's
+     data-star-goal line, R26A), the cheer line (hidden), on a phone the hero's picture beside the chests (hidden: its 64 px kept the box scrolling, so its fade lay over them), then the seal note (Details then says "Details: rune seal"), and last the other notes in the scroll box;
+   - a hoisted desktop middle that still scrolls drops the hero's picture (decor), so its notes show in the room left; a middle under MOMENT_MID px tall gives its notes to Details too (and goes when only the hero's picture is left), so nothing sits in a sliver of a scroll box.
+   seen(e) is the share of e's height in view, clipped by every scrolling box (less its 28 px fade) and the screen. Sizes never change. */
+export const MOMENT_SEEN=.9,MOMENT_BTN=.99,MOMENT_MID=48;
+export function seenShare(e){if(!e||!e.getClientRects?.().length)return 1;const b=e.getBoundingClientRect();if(!b.height)return 1;let t=b.top,bo=b.bottom,a=e.parentElement;const win=e.ownerDocument?.defaultView||globalThis;
+ while(a&&a!==e.ownerDocument?.documentElement){const cs=win.getComputedStyle?.(a);if(cs&&!/visible/.test(cs.overflowY||'visible')){const q=a.getBoundingClientRect();t=Math.max(t,q.top);bo=Math.min(bo,q.bottom-(a.classList.contains('more-below')?NOTE_MASK:0));}a=a.parentElement;}
+ bo=Math.min(bo,win.innerHeight||bo);t=Math.max(t,0);return Math.max(0,bo-t)/b.height;}
+export const momentParts=card=>{const q=s=>[...card.querySelectorAll(s)].filter(e=>shown(e)&&!e.closest('#result-extra,details:not([open]),[hidden]'));return [...q('.level-levelup.f2-lv-ribbon,.level-levelup:not(.level-ups)').slice(0,1),...q('.result-chests'),...q(':scope>.modal-actions>button')];};
+export function momentFit(card,ex,out=[],{phone=false}={}){if(!card||!ex||card.dataset.outcome!=='won')return out;const parts=()=>momentParts(card),mid=card.querySelector(':scope>.result-mid');
+ /* the per-frame fade cue (main.js resultFrame), brought up to date before each measure */const cue=()=>{for(const el of card.querySelectorAll('.result-mid,.level-result-body'))el.classList.toggle('more-below',el.scrollHeight-el.scrollTop-el.clientHeight>8);};
+ const short=()=>{cue();return parts().some(e=>seenShare(e)<(e.tagName==='BUTTON'?MOMENT_BTN:MOMENT_SEEN));};if(!short())return out;const doc=card.ownerDocument||globalThis.document;
+ const more=()=>{let box=ex.querySelector(':scope>.goal-more');if(!box){box=doc.createElement('div');box.className='goal-more';box.dataset.goalMore='';ex.prepend(box);}return box;};
+ const hint=t=>{const b=card.querySelector('#result-details');if(b&&!b.dataset.more){b.dataset.more=t;b.textContent=`Details: ${t}`;}};
+ if(mid&&!phone){const top=[':scope>.f2-boss-talk',':scope>.level-quote',':scope>.you-got',':scope>.result-chests',':scope>.f2-lv-ribbon'].map(s=>mid.querySelector(s)).filter(Boolean);if(top.length){for(const e of top)mid.before(e);card.classList.add('r26c-hoist');out.push('moment-hoist');}}
+ const notes=()=>{const hl=card.querySelector('.level-highlights:not(#result-extra *)');if(!hl||!hl.children.length)return false;const box=more();if(hl.querySelector('[data-seal-run]'))hint('rune seal');for(const e of [...hl.children]){e.classList.remove('note-lifted');box.append(e);}hl.hidden=true;hl.style.display='none';return true;};
+ const seal=()=>card.querySelector(':scope>.note-lifted')||card.querySelector('[data-seal-run]:not(#result-extra *)');
+ const steps=[['moment-quote',()=>{const e=card.querySelector('.f2-boss-talk:not(#result-extra *)')||card.querySelector('.level-quote:not(#result-extra *)');if(!e)return false;more().append(e);return true;}],
+  ['moment-tip',()=>{const e=card.querySelector(':scope>.grade-next:not([data-star-goal])');if(!e||!shown(e))return false;more().append(e);return true;}],
+  ['moment-cheer',()=>{const e=card.querySelector(':scope>.victory-cheer');if(!e||!shown(e))return false;e.hidden=true;e.style.display='none';return true;}],
+  ['moment-hero',()=>{const e=phone&&card.querySelector('.level-result-body>canvas.level-hero');if(!e||!shown(e))return false;e.hidden=true;e.style.display='none';return true;}],
+  ['moment-seal',()=>{const e=seal();if(!e||e.closest('#result-extra'))return false;e.classList.remove('note-lifted');more().append(e);if(e.matches('[data-seal-run]'))hint('rune seal');return true;}],
+  ['moment-notes',()=>notes()]];
+ for(const [k,f] of steps){if(!short())break;if(f())out.push(k);}
+ if(mid&&!phone&&out.includes('moment-hoist')&&mid.scrollHeight>mid.clientHeight+1){const hc=mid.querySelector('.level-result-body>canvas.level-hero');if(hc&&shown(hc)){hc.hidden=true;hc.style.display='none';out.push('moment-hero');}}
+ if(mid&&!phone&&mid.clientHeight<MOMENT_MID&&mid.scrollHeight>mid.clientHeight+1){if(!out.includes('moment-notes')&&notes())out.push('moment-notes');if(!mid.textContent.trim()){mid.hidden=true;mid.style.display='none';out.push('moment-mid');}}
+ cue();return out;}
