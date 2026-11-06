@@ -102,7 +102,7 @@ const sections=[
     "The independent variable is the condition deliberately varied to test its effect on the measured response."
    ],
    [
-    "In that moisture experiment, which is a dependent variable?",
+    "An experiment assigns each animal a chamber moisture treatment, watches for a fixed time and records which side it chooses. Which is a dependent variable?",
     "The recorded side choice",
     "The assigned moisture treatment",
     "The fixed observation duration",

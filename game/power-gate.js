@@ -8,8 +8,8 @@ import {SUBJECTS} from './data.js';
 import {xpLevel,unlocked} from './math.js';
 import {ABILITIES} from './abilities.js';
 import {TOPICS,mastered,topicOpen,openGrade} from '../academics/lessons.js';
-import {lessonsToUnlock,topicStage,topicInSchoolMode,nextLesson} from '../academics/study-unlock.js';
-import {heldSubject,tasterRunId} from '../academics/hs-taster.js';/* improve20-r22b-nov4 #2 */
+import {lessonsToUnlock,topicStage,topicInSchoolMode,nextLesson,/* improve26-r26b-nov6 #3 */testDue} from '../academics/study-unlock.js';
+import {tasterRunId} from '../academics/hs-taster.js';/* improve20-r22b-nov4 #2 */
 const sname=id=>SUBJECTS[id]?.name||id;
 /* what the ladder still asks for this ability: {topics, subject (its name), subjectId, lvl, lvlOk, reachable} */
 export function powerWants(save,a){if(!a)return null;const r=unlocked(save,a)?{lessons:0,reachable:true,topics:[]}:lessonsToUnlock(save,a),lvl=xpLevel(a);
@@ -30,7 +30,7 @@ export function waitingGate(save){const g=gateAt(save);if(!g)return null;const p
 /* everything a locked pad's card needs: {id, name, a, text, wants, step} or null */
 export function gateInfo(save,id){const g0=powerShort(save,id);if(!g0?.a)return null;const p=nextPower(save),g={...g0,rung:g0.a,a:p?.a||g0.a,have:awakeCount(save)};const w=powerWants(save,g.a);return {id,name:g.level.name,a:g.a,text:powerGateText(g,w),wants:w,step:powerStep(save,g.a)};}
 /* the subject the Library leads with: the waiting gate's power first, else the fastest next ability (study-unlock.js nextLesson) */
-export function leadSubject(save){const g=waitingGate(save);if(g?.a){const st=powerStep(save,g.a);if(st?.topic)return st.subject;/* improve20-r14a-nov3 #2: a road whose first lessons a placement opens leads with that subject, not the nearest open lesson elsewhere */const p=nextPower(save);if(p?.place&&p.a.id===g.a.id)return p.place;}return nextLesson(save)?.topic?.subject||null;}
+export function leadSubject(save){const g=waitingGate(save);if(g?.a){const st=powerStep(save,g.a);if(st?.topic)return st.subject;}/* improve26-r26b-nov6 #3 (audit17 #5): a topic whose mastery test is open leads the Library to its subject */{const td=testDue(save);if(td)return td.subject;}if(g?.a){/* improve20-r14a-nov3 #2: a road whose first lessons a placement opens leads with that subject, not the nearest open lesson elsewhere */const p=nextPower(save);if(p?.place&&p.a.id===g.a.id)return p.place;}return nextLesson(save)?.topic?.subject||null;}
 /* the next power one mastery step away: a started topic of the next locked ability's road whose quiz, practice or test is next, and
    whose mastery would wake that ability (its road is one topic long). -> {a, step} or null */
 export function nearPower(save){const a=nextPower(save)?.a;if(!a)return null;
@@ -56,13 +56,13 @@ const RANK=new Map(),STAGE_FIRST={middle:6,high:9};
 export function workingSubject(save){let best=null,at=-1;for(const t of TOPICS){const r=save?.lessons?.[t.id];if(!r||mastered(save,t))continue;if(!(r.done||r.at>0||r.reached>0||r.practice>0))continue;const w=+r.at||0;if(w>at){at=w;best=t.subject;}}return best;}
 export function powerRank(save,{hero=save?.hero,gate=false}={}){const sv=hero===save?.hero?save:{...save,hero},lv=save?.level||1;
  const key=JSON.stringify([hero,lv,gate,save?.lessons,save?.mastery,save?.placement,save?.kept,save?.schoolMode,save?.schoolGrade,save?.ladder,/* improve20-r22b-nov4 #2 */tasterRunId(),save?.hub?.seen]);if(RANK.has(key))return RANK.get(key);
- const ws=workingSubject(sv),mine=x=>x.subjectId===ws?0:1,/* improve20-r22b-nov4 #2: a subject whose lead is a Quick start held this session comes after the others (the Library leads to the played one's subject) */held=x=>heldSubject(sv,x.a.subject)?1:0;
+ const ws=workingSubject(sv),mine=x=>x.subjectId===ws?0:1;/* improve26-r26b-nov6 #2 (audit17 #2: a Grade 10 Ranger who played Math's Quick start was led to Rain of Arrows, 60 topics, while Quick Shot was 1 Coding topic away): the session's held Quick start (improve20-r22b-nov4 #2) no longer reorders the powers; the nearest one leads, an unplaced subject's included (`place`) */
  const out=(ABILITIES[hero]||[]).filter(a=>a.gate>0&&!unlocked(sv,a)).map(a=>{let w=powerWants(sv,a),place=null;
   /* a Middle or High School learner cannot open the lower grades of a subject they have not placed in: that road is counted from the stage's
      first grade (as placementNudge does), and `place` names the subject whose Find-your-level check opens it */
   const first=STAGE_FIRST[sv.schoolMode];if(first&&w.topics>0&&!powerStep(sv,a)?.topic&&openGrade(sv,a.subject)<first){const w2=powerWants({...sv,placement:{...(sv.placement||{}),[a.subject]:first}},a);if(w2.reachable){w={...w2,lvlOk:w.lvlOk};place=a.subject;}}
   return {a,...w,place,short:Math.max(0,w.lvl-lv)};})
-  .sort((x,y)=>(y.reachable-x.reachable)||held(x)-held(y)||x.topics-y.topics||(gate?mine(x)-mine(y):0)||x.short-y.short||x.lvl-y.lvl||mine(x)-mine(y)||x.a.gate-y.a.gate);
+  .sort((x,y)=>(y.reachable-x.reachable)||x.topics-y.topics||(gate?mine(x)-mine(y):0)||x.short-y.short||x.lvl-y.lvl||mine(x)-mine(y)||x.a.gate-y.a.gate);
  if(RANK.size>40)RANK.clear();RANK.set(key,out);return out;}
 export function nextPower(save,{hero=save?.hero}={}){if(!save)return null;const sv=hero===save.hero?save:{...save,hero},g=gateAt(sv),x=powerRank(sv,{hero,gate:!!g})[0];return x?{...x,gate:g?.level||null}:null;}
 /* the helper's words, for every card: "Hammer of Light: 2 more History topics (hero level 3)"; never a "(then N more topics)" tail */

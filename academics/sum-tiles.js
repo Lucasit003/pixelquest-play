@@ -11,7 +11,7 @@
    Every option set is checked against the answer key (game/math.js accepts: the answer and its alternatives): exactly one option may be
    accepted and there must be 2-4 options, or the question keeps its typing box. A tap fills the same hidden input a typed answer would
    (ui/answer-choices.js tileFormHTML), so grading, retirement and ids are unchanged. Pure: no DOM, no save. Other quizzes do not call it. */
-import {accepts,choicesOf} from '../game/math.js';
+import {accepts,choicesOf,/* improve26-r26b-nov6 #1 */acceptsExact} from '../game/math.js';
 import {wordChoicesFor} from './word-choices.js';
 import {tileChoices} from './tile-choices.js';
 import {namedOptions,closedOptions,coinOptions} from './placement-choices.js';
@@ -24,7 +24,7 @@ const low=v=>String(v??'').trim().toLowerCase();
 /* 2-4 different options, exactly one accepted, the answer kept, in a fixed order from the item's id: [{value,label}] or null */
 function settle(q,opts,max=SUM_TILE_MAX){
  const seen=new Set(),out=[];for(const o of opts){const v=String(o??'').trim();if(!v||v.length>60||seen.has(low(v)))continue;seen.add(low(v));out.push(v);}
- const right=out.filter(v=>accepts(v,q));if(right.length!==1)return null;
+ const right=out.filter(v=>accepts(v,q));if(right.length!==1/* improve26-r26b-nov6 #1: the accepted option is the key itself */||!acceptsExact(right[0],q))return null;
  const wrong=out.filter(v=>v!==right[0]).sort((a,b)=>h(q.id+'#'+a)-h(q.id+'#'+b)).slice(0,max-1);if(wrong.length<1)return null;
  return [right[0],...wrong].sort((a,b)=>h(q.id+'|'+low(a))-h(q.id+'|'+low(b))).map(v=>({value:v,label:v}));}
 const unq=s=>s.trim().replace(/^["“‘']|["”’']$/g,'').trim();

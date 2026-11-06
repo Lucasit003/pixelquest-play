@@ -1106,7 +1106,7 @@ const sections=[
     "The named virtue categories organize one strengths framework. Other useful psychological terms do not thereby become its six categories."
    ],
    [
-    "In that virtue framework, fairness and teamwork most closely relate to which category?",
+    "In Peterson and Seligman's classification of character strengths into six virtues, fairness and teamwork most closely relate to which category?",
     "Justice",
     "Only temperance",
     "Only a panic response",
@@ -1523,7 +1523,7 @@ const sections=[
     "t": "passages",
     "title": "Read and decide",
     "texts": [
-     "In that virtue framework, fairness and teamwork most closely relate to which category?"
+     "In Peterson and Seligman's classification of character strengths into six virtues, fairness and teamwork most closely relate to which category?"
     ],
     "small": false
    },

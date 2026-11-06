@@ -630,7 +630,7 @@ const sections=[
     "The two tax amounts are $300 and $250; their $50 difference is not the new total tax or the difference in rate points."
    ],
    [
-    "In that original flat-tax exercise, a rate changes from 30 percent to 25 percent. How large is the change in percentage points?",
+    "In a fictional flat-tax exercise, a rate changes from 30 percent to 25 percent. How large is the change in percentage points?",
     "A decrease of 5 percentage points",
     "A decrease of 25 percentage points",
     "An increase of 5 percentage points",
@@ -1156,7 +1156,7 @@ const sections=[
     "t": "passages",
     "title": "Read and decide",
     "texts": [
-     "In that original flat-tax exercise, a rate changes from 30 percent to 25 percent. How large is the change in percentage points?"
+     "In a fictional flat-tax exercise, a rate changes from 30 percent to 25 percent. How large is the change in percentage points?"
     ],
     "small": false
    }
@@ -3040,7 +3040,7 @@ const sections=[
     "The net addition is 300 because 300 of the 600 arrivals are offset by departures."
    ],
    [
-    "The original town begins with 10,000 people, gains 200 by natural increase and 300 by net migration. What is the final population?",
+    "A fictional town begins with 10,000 people, gains 200 by natural increase and 300 by net migration. What is the final population?",
     "10,500",
     "10,200",
     "9,500",
@@ -3477,7 +3477,7 @@ const sections=[
     "t": "passages",
     "title": "Read and decide",
     "texts": [
-     "The original town begins with 10,000 people, gains 200 by natural increase and 300 by net migration. What is the final population?"
+     "A fictional town begins with 10,000 people, gains 200 by natural increase and 300 by net migration. What is the final population?"
     ],
     "small": false
    },
@@ -3700,7 +3700,7 @@ const sections=[
     "Four units per activity repeated 100 times reconstruct the total of 400 units in this invented model."
    ],
    [
-    "In that model, emissions per activity fall to 3 but activity rises to 150. What happens to total emissions?",
+    "In a fictional model, 100 activities emit 4 units each. Then emissions per activity fall to 3 but activity rises to 150. What happens to total emissions?",
     "They rise from 400 to 450 units",
     "They necessarily fall to 300 units",
     "They fall to zero because intensity improved",
@@ -4248,7 +4248,7 @@ const sections=[
     "t": "passages",
     "title": "Read and decide",
     "texts": [
-     "In that model, emissions per activity fall to 3 but activity rises to 150. What happens to total emissions?"
+     "In a fictional model, 100 activities emit 4 units each. Then emissions per activity fall to 3 but activity rises to 150. What happens to total emissions?"
     ],
     "small": false
    },

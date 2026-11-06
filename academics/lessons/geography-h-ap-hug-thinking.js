@@ -94,7 +94,7 @@ steps:[
 progression:{requires:['geography-m-coordinates','geography-m-ratio-scale'],operations:2,demand:'Convert map distances through a ratio scale, work out densities and planning numbers, and match a map, a projection, a data source, a scale or a region to its definition.'},
 items(add){
  const seen=new Set(TRY);
- const put=(skill,prompt,answer,pic,explanation,accept)=>{if(seen.has(prompt))return;seen.add(prompt);add(skill,prompt,answer,pic,explanation,accept);};
+ const put=(skill,prompt,answer,pic,explanation,accept,key)=>{if(seen.has(prompt))return;seen.add(prompt);add(skill,prompt,answer,pic,explanation,accept,key);};/* improve26-r26b-nov6 #4: key keeps a pinned id */
  /* scale: map to ground, ground to map, and which scale is larger */
  for(const [sc,cm] of [[50000,6],[25000,8],[200000,3],[1000000,4.5],[24000,10],[250000,2],[100000,7.5],[500000,3.2]]){const km=cm*sc/100000;
   put('scale',`On a map with a scale of 1 : ${n(sc)}, two towns are ${cm} centimeters apart. How many kilometers apart are they?`,Math.round(km*1e6)/1e6,tab('The map',[['scale',`1 : ${n(sc)}`],['distance',`${cm} cm`]]),`${cm} × ${n(sc)} = ${n(cm*sc)} cm, which is ${pct(km)} km.`);}
@@ -114,7 +114,7 @@ items(add){
  for(const [s,k] of [['a count of people in each city','quantitative'],['interviews about how residents feel about their neighborhood','qualitative'],['average rainfall each month','quantitative'],['photos and stories collected from local people','qualitative'],
   ['the percent of land used for farming','quantitative'],['a diary describing life on a farm','qualitative'],['the number of cars crossing a bridge each hour','quantitative'],['notes from watching how people use a park','qualitative'],
   ['census data on household income','quantitative'],['open-ended survey answers about a festival','qualitative'],['the population density of each county','quantitative'],['a recorded conversation with an elder about the town\'s history','qualitative']])
-  put('data',`Is ${s} quantitative or qualitative data?`,k,tab('Data',[['source',s]],['']),k==='quantitative'?'It is measured in numbers: quantitative data.':'It is descriptive, in words or images: qualitative data.');
+  /* improve26-r26b-nov6 #4 (audit17 fact list): a plural source takes "Are" ("Are interviews ... ?"); data is plural here, as AP Human Geography uses it */put('data',`${/^(?:interviews|photos|notes|census data|open-ended)/.test(s)?'Are':'Is'} ${s} quantitative or qualitative data?`,k,tab('Data',[['source',s]],['']),k==='quantitative'?'It is measured in numbers: quantitative data.':'It is descriptive, in words or images: qualitative data.',undefined,/* the id stays the one main pinned ("Is ..."): a grammar fix keeps retirement */`Is ${s} quantitative or qualitative data?`);
  /* regions */
  for(const [d,k] of REG)put('regions',`Which kind of region is ${d}: formal, functional, or perceptual?`,k,tab('A region',[['region',d]],['']),k==='formal'?'It is defined by one shared trait: a formal region.':k==='functional'?'It is organized around a central node: a functional region.':'It exists in people\'s minds with fuzzy edges: a perceptual region.');
  for(const [d,k] of [['data for every country on Earth','global'],['data about one city\'s neighborhoods','local'],['data comparing the states of one country','national'],['data for the countries of South America','regional'],['data for the whole world\'s oceans','global'],['data about one town\'s streets','local'],

@@ -3437,7 +3437,7 @@ const sections=[
     "A support force can balance or supply linear forces while having no turning moment about the point through which it acts. A bearing frictional couple would be separate."
    ],
    [
-    "Why is tension below mg for a downward-accelerating hanging mass in the stated pulley model?",
+    "Why is tension below mg for a downward-accelerating hanging mass in an ideal pulley model?",
     "The difference mg-T provides the positive downward net force",
     "Tension must be zero whenever acceleration is nonzero",
     "The mass's weight becomes zero once it moves",

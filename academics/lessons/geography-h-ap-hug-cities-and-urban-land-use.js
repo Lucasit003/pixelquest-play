@@ -1452,7 +1452,7 @@ const sections=[
     "At d = 2, retail offers 96 and housing 66 rent units, so retail has the higher bid under the specified assumptions."
    ],
    [
-    "In that model, retail offers 120 - 12d and housing offers 72 - 3d. At d = 6 km, who bids more?",
+    "In a fictional bid-rent model, retail offers 120 - 12d and housing offers 72 - 3d rent units at d km from the center. At d = 6 km, who bids more?",
     "Housing",
     "Retail",
     "They tie",
@@ -3165,7 +3165,7 @@ const sections=[
     "Reliable coverage is the served count divided by all households: 6000/8000 = 75%."
    ],
    [
-    "In that 8000-household district, 6000 have the specified reliable water service. How many lack it?",
+    "A fictional district has 8000 households, and 6000 of them have reliable water service. How many lack it?",
     "2000 households",
     "14000 households",
     "6000 households",
@@ -3775,7 +3775,7 @@ const sections=[
     "Multiply each per-person value by its matching population; population growth more than offsets the lower individual rate."
    ],
    [
-    "Using those totals of 600000 and 700000 units, what is the approximate total-emissions increase?",
+    "A fictional city's total emissions rise from 600000 to 700000 units. What is the approximate total-emissions increase?",
     "16.7%",
     "20%",
     "83.3%",

@@ -1,7 +1,7 @@
 /* Boot keeps topic metadata and retirement IDs. Lesson modules and question pools load on demand;
    Node content audits eagerly load the same modules. No save fields or question text change. */
 import {BANK,hash} from './bank.js';
-import {XP,accepts,numberIn} from '../game/math.js';
+import {XP,accepts,numberIn,/* improve26-r26b-nov6 #1 */tileGraded} from '../game/math.js';
 export const LEVEL=3,QUIZ_SIZE=5,TEST_SIZE=10;
 /* Middle School lesson topics (docs/MIDDLE_SCHOOL_SPEC.md) share this engine. Their question ids use
    level 4, a namespace of their own, so they never meet the Middle School training bank (level 0). */
@@ -265,8 +265,9 @@ export function pickPracticeExam(save,units,n,random=Math.random){
     for(let i=0;spare>0&&pools.some((p,j)=>take[j]<p.length);i=(i+1)%pools.length)if(take[i]<pools[i].length){take[i]++;spare--;}
     return shuffle(pools.flatMap((p,i)=>p.slice(0,take[i]).map(id=>ITEMS[id])));
 }
-export function grade(save,item,input,{master=true}={}){
-    if(!exact(input,item))return {ok:false,xp:0,mastered:false};
+export function grade(save,item,input,{master=true,tiles=null}={}){
+    /* improve26-r26b-nov6 #1: a tapped tile is right only when it is the one right tile (game/math.js tileGraded), never by typo distance */
+    const tg=tileGraded(input,item,tiles);if(tg?!tg.ok:!exact(input,item))return {ok:false,xp:0,mastered:false};
     const n=save.answers[item.id]||0;
     if(n>=2)return {ok:true,xp:0,mastered:false};
     save.answers[item.id]=n+1;

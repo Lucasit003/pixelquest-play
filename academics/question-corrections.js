@@ -26117,6 +26117,300 @@ export const QUESTION_REVISIONS=[
   "oldPrompt": "Use these approximate textbook values for KNO₃: 63.9 g dissolve in 100 g of water at 40 °C and 109 g at 60 °C. A solution saturated at 60 °C contains 250.0 g of water. It is cooled to 40 °C with no evaporation. How many grams of KNO₃ crystallize? Round to three significant figures.",
   "newPrompt": "Use these textbook values for KNO₃: 63.9 g dissolve in 100 g of water at 40 °C and 110.1 g at 60 °C. A solution saturated at 60 °C contains 200.0 g of water. It is cooled to 40 °C with no evaporation. How many grams of KNO₃ crystallize? Round to three significant figures.",
   "reason": "r11f-nov2: KNO₃ VALUE: the lesson's solubility curve and this item now share one sourced value. Source: Seidell, Solubilities of Inorganic and Metal Organic Compounds, 3rd ed., vol. 1 (Van Nostrand, 1940), pp. 833-850: 63.9 g at 40 °C and 110.1 g at 60 °C per 100 g water (the 109 g used before had no named source). 200.0 g of water avoids a 115.5 half-way rounding. Answer 113 -> 92.4 (220.2 − 127.8, one decimal place, three figures)."
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "How many electrons does a hydrogen atom normally have around it in a Lewis diagram? A: eight, B: four, C: two. Answer A, B or C.",
+  "newPrompt": "How many electrons does a bonded hydrogen atom have around it in a Lewis diagram? A: eight, B: four, C: two. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 fact list): a lone H atom has 1 valence electron; 2 (a duet) is right only for a bonded H, so the prompt says \"a bonded hydrogen atom\". Source: the general-chemistry Lewis symbol convention (H has one valence electron; in H2 or H-X it shares one pair)."
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "In that Zn/Cu cell, why do bridge cations migrate toward the copper cathode solution? A: Cu2+ consumption leaves excess anionic charge unless cations enter; B: Copper reduction creates extra Cu2+; C: Cations are electrons moving through salt. Answer A, B or C.",
+  "newPrompt": "In a galvanic Zn/Cu cell (zinc anode, copper cathode) joined by a salt bridge, why do bridge cations migrate toward the copper cathode solution? A: Cu2+ consumption leaves excess anionic charge unless cations enter; B: Copper reduction creates extra Cu2+; C: Cations are electrons moving through salt. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context): the prompt opened on context from another question the kid may never have seen (\"that\", \"the original\", \"the stated\"); it now gives the needed facts in one clause. Key unchanged and rechecked by hand."
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "In that moisture experiment, which is a dependent variable? A: The assigned moisture treatment; B: The fixed observation duration; C: The recorded side choice. Answer A, B or C.",
+  "newPrompt": "An experiment assigns each animal a chamber moisture treatment, watches for a fixed time and records which side it chooses. Which is a dependent variable? A: The assigned moisture treatment; B: The fixed observation duration; C: The recorded side choice. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context): the prompt opened on context from another question the kid may never have seen (\"that\", \"the original\", \"the stated\"); it now gives the needed facts in one clause. Key unchanged and rechecked by hand."
+ },
+ {
+  "subject": "geography",
+  "level": 5,
+  "oldPrompt": "In that model, retail offers 120 - 12d and housing offers 72 - 3d. At d = 6 km, who bids more? A: Retail; B: Housing; C: They tie. Answer A, B or C.",
+  "newPrompt": "In a fictional bid-rent model, retail offers 120 - 12d and housing offers 72 - 3d rent units at d km from the center. At d = 6 km, who bids more? A: Retail; B: Housing; C: They tie. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context): the prompt opened on context from another question the kid may never have seen (\"that\", \"the original\", \"the stated\"); it now gives the needed facts in one clause. Key unchanged and rechecked by hand."
+ },
+ {
+  "subject": "geography",
+  "level": 5,
+  "oldPrompt": "In that 8000-household district, 6000 have the specified reliable water service. How many lack it? A: 14000 households; B: 2000 households; C: 6000 households. Answer A, B or C.",
+  "newPrompt": "A fictional district has 8000 households, and 6000 of them have reliable water service. How many lack it? A: 14000 households; B: 2000 households; C: 6000 households. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context): the prompt opened on context from another question the kid may never have seen (\"that\", \"the original\", \"the stated\"); it now gives the needed facts in one clause. Key unchanged and rechecked by hand."
+ },
+ {
+  "subject": "geography",
+  "level": 5,
+  "oldPrompt": "Using those totals of 600000 and 700000 units, what is the approximate total-emissions increase? A: 20%; B: 16.7%; C: 83.3%. Answer A, B or C.",
+  "newPrompt": "A fictional city's total emissions rise from 600000 to 700000 units. What is the approximate total-emissions increase? A: 20%; B: 16.7%; C: 83.3%. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context): the prompt opened on context from another question the kid may never have seen (\"that\", \"the original\", \"the stated\"); it now gives the needed facts in one clause. Key unchanged and rechecked by hand."
+ },
+ {
+  "subject": "geography",
+  "level": 5,
+  "oldPrompt": "In that 80-to-60 revenue change, what is the percentage decline? A: 20%; B: 33.3%; C: 25%. Answer A, B or C.",
+  "newPrompt": "A fictional commodity exporter's revenue falls from 80 to 60. What is the percentage decline? A: 20%; B: 33.3%; C: 25%. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context): the prompt opened on context from another question the kid may never have seen (\"that\", \"the original\", \"the stated\"); it now gives the needed facts in one clause. Key unchanged and rechecked by hand."
+ },
+ {
+  "subject": "geography",
+  "level": 5,
+  "oldPrompt": "For that 600-to-800 change, what is the percentage increase to one decimal place? A: 25.0%; B: 200.0%; C: 33.3%. Answer A, B or C.",
+  "newPrompt": "A fictional town's total energy use rises from 600 to 800. What is the percentage increase to one decimal place? A: 25.0%; B: 200.0%; C: 33.3%. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context): the prompt opened on context from another question the kid may never have seen (\"that\", \"the original\", \"the stated\"); it now gives the needed facts in one clause. Key unchanged and rechecked by hand."
+ },
+ {
+  "subject": "history",
+  "level": 5,
+  "oldPrompt": "In that kind of fictional production audit, what would best strengthen a conclusion about actual food availability? A: Another unverified copy of the same target; B: The assumption that a target must have been reached; C: Independent harvest, storage and distribution records. Answer A, B or C.",
+  "newPrompt": "A fictional audit checks an official claim that a food-production target was met. What would best strengthen a conclusion about actual food availability? A: Another unverified copy of the same target; B: The assumption that a target must have been reached; C: Independent harvest, storage and distribution records. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context): the prompt opened on context from another question the kid may never have seen (\"that\", \"the original\", \"the stated\"); it now gives the needed facts in one clause. Key unchanged and rechecked by hand."
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "In that virtue framework, fairness and teamwork most closely relate to which category? A: Justice; B: Only temperance; C: Only a panic response. Answer A, B or C.",
+  "newPrompt": "In Peterson and Seligman's classification of character strengths into six virtues, fairness and teamwork most closely relate to which category? A: Justice; B: Only temperance; C: Only a panic response. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context): the prompt opened on context from another question the kid may never have seen (\"that\", \"the original\", \"the stated\"); it now gives the needed facts in one clause. Key unchanged and rechecked by hand."
+ },
+ {
+  "subject": "history",
+  "level": 5,
+  "oldPrompt": "In that original model, poverty falls from 20 percent to 15 percent. What is the relative reduction? A: 5 percent; B: 25 percent; C: 75 percent. Answer A, B or C.",
+  "newPrompt": "In a fictional model, poverty falls from 20 percent to 15 percent. What is the relative reduction? A: 5 percent; B: 25 percent; C: 75 percent. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context): the prompt opened on context from another question the kid may never have seen (\"that\", \"the original\", \"the stated\"); it now gives the needed facts in one clause. Key unchanged and rechecked by hand."
+ },
+ {
+  "subject": "history",
+  "level": 5,
+  "oldPrompt": "In that original flat-tax exercise, a rate changes from 30 percent to 25 percent. How large is the change in percentage points? A: A decrease of 25 percentage points; B: A decrease of 5 percentage points; C: An increase of 5 percentage points. Answer A, B or C.",
+  "newPrompt": "In a fictional flat-tax exercise, a rate changes from 30 percent to 25 percent. How large is the change in percentage points? A: A decrease of 25 percentage points; B: A decrease of 5 percentage points; C: An increase of 5 percentage points. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context): the prompt opened on context from another question the kid may never have seen (\"that\", \"the original\", \"the stated\"); it now gives the needed facts in one clause. Key unchanged and rechecked by hand."
+ },
+ {
+  "subject": "history",
+  "level": 5,
+  "oldPrompt": "In that model, emissions per activity fall to 3 but activity rises to 150. What happens to total emissions? A: They necessarily fall to 300 units; B: They rise from 400 to 450 units; C: They fall to zero because intensity improved. Answer A, B or C.",
+  "newPrompt": "In a fictional model, 100 activities emit 4 units each. Then emissions per activity fall to 3 but activity rises to 150. What happens to total emissions? A: They necessarily fall to 300 units; B: They rise from 400 to 450 units; C: They fall to zero because intensity improved. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context): the prompt opened on context from another question the kid may never have seen (\"that\", \"the original\", \"the stated\"); it now gives the needed facts in one clause. Key unchanged and rechecked by hand."
+ },
+ {
+  "subject": "history",
+  "level": 5,
+  "oldPrompt": "Later that household earns 15 units and the same basket costs 5. How many baskets can it buy? A: 3 baskets; B: 5 baskets; C: 75 baskets. Answer A, B or C.",
+  "newPrompt": "A fictional household's wage rises from 12 to 15 units while a fixed basket's price rises from 3 to 5. How many baskets can the new wage buy? A: 3 baskets; B: 5 baskets; C: 75 baskets. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context): the prompt opened on context from another question the kid may never have seen (\"that\", \"the original\", \"the stated\"); it now gives the needed facts in one clause. Key unchanged and rechecked by hand."
+ },
+ {
+  "subject": "history",
+  "level": 5,
+  "oldPrompt": "If that group becomes 250 of the same 1,000 residents, how many percentage points does its share rise? A: 25 percentage points; B: 50 percentage points; C: 5 percentage points. Answer A, B or C.",
+  "newPrompt": "In a fictional town, a group grows from 200 to 250 of the same 1,000 residents. How many percentage points does its share rise? A: 25 percentage points; B: 50 percentage points; C: 5 percentage points. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context): the prompt opened on context from another question the kid may never have seen (\"that\", \"the original\", \"the stated\"); it now gives the needed facts in one clause. Key unchanged and rechecked by hand."
+ },
+ {
+  "subject": "geography",
+  "level": 5,
+  "oldPrompt": "In the same stated UN convention, the Marshall Islands belong to which subregion? A: South Asia; B: Micronesia; C: Eastern Europe. Answer A, B or C.",
+  "newPrompt": "In the UN's M49 standard regions, the Marshall Islands belong to which subregion? A: South Asia; B: Micronesia; C: Eastern Europe. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context): the prompt opened on context from another question the kid may never have seen (\"that\", \"the original\", \"the stated\"); it now gives the needed facts in one clause. Key unchanged and rechecked by hand."
+ },
+ {
+  "subject": "geography",
+  "level": 5,
+  "oldPrompt": "In the stated UN convention, Samoa belongs to which subregion? A: Central Asia; B: Melanesia; C: Polynesia. Answer A, B or C.",
+  "newPrompt": "In the UN's M49 standard regions, Samoa belongs to which subregion? A: Central Asia; B: Melanesia; C: Polynesia. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context): the prompt opened on context from another question the kid may never have seen (\"that\", \"the original\", \"the stated\"); it now gives the needed facts in one clause. Key unchanged and rechecked by hand."
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "For the same reference, how does 90 dB sound intensity compare with 70 dB? A: It is 20 times as great; B: It is 100 times as great; C: It is 90/70 times as great. Answer A, B or C.",
+  "newPrompt": "Measured against the same reference intensity, how does 90 dB sound intensity compare with 70 dB? A: It is 20 times as great; B: It is 100 times as great; C: It is 90/70 times as great. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context): the prompt opened on context from another question the kid may never have seen (\"that\", \"the original\", \"the stated\"); it now gives the needed facts in one clause. Key unchanged and rechecked by hand."
+ },
+ {
+  "subject": "history",
+  "level": 5,
+  "oldPrompt": "In the original city model, the suburban share rises from 20 percent to 25 percent. What is the increase in percentage points? A: 25 percentage points; B: 125 percentage points; C: 5 percentage points. Answer A, B or C.",
+  "newPrompt": "In a fictional city model, the suburban share rises from 20 percent to 25 percent. What is the increase in percentage points? A: 25 percentage points; B: 125 percentage points; C: 5 percentage points. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context): the prompt opened on context from another question the kid may never have seen (\"that\", \"the original\", \"the stated\"); it now gives the needed facts in one clause. Key unchanged and rechecked by hand."
+ },
+ {
+  "subject": "history",
+  "level": 5,
+  "oldPrompt": "The original town begins with 10,000 people, gains 200 by natural increase and 300 by net migration. What is the final population? A: 10,200; B: 10,500; C: 9,500. Answer A, B or C.",
+  "newPrompt": "A fictional town begins with 10,000 people, gains 200 by natural increase and 300 by net migration. What is the final population? A: 10,200; B: 10,500; C: 9,500. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context): the prompt opened on context from another question the kid may never have seen (\"that\", \"the original\", \"the stated\"); it now gives the needed facts in one clause. Key unchanged and rechecked by hand."
+ },
+ {
+  "subject": "history",
+  "level": 5,
+  "oldPrompt": "What happened to purchasing power in the original household’s change from four baskets to three? A: It rose by 25 percent because the wage number rose; B: It fell by 25 percent despite the nominal wage increase; C: It stayed constant because both prices and wages changed. Answer A, B or C.",
+  "newPrompt": "A fictional household's wage rose, but it can now buy three baskets instead of four. What happened to its purchasing power? A: It rose by 25 percent because the wage number rose; B: It fell by 25 percent despite the nominal wage increase; C: It stayed constant because both prices and wages changed. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context): the prompt opened on context from another question the kid may never have seen (\"that\", \"the original\", \"the stated\"); it now gives the needed facts in one clause. Key unchanged and rechecked by hand."
+ },
+ {
+  "subject": "history",
+  "level": 5,
+  "oldPrompt": "What percentage decline is represented by the original town’s change from 200 cases to 120? A: 40 percent; B: 60 percent; C: 80 percent. Answer A, B or C.",
+  "newPrompt": "What percentage decline is a fictional town's change from 200 cases to 120? A: 40 percent; B: 60 percent; C: 80 percent. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context): the prompt opened on context from another question the kid may never have seen (\"that\", \"the original\", \"the stated\"); it now gives the needed facts in one clause. Key unchanged and rechecked by hand."
+ },
+ {
+  "subject": "history",
+  "level": 5,
+  "oldPrompt": "In the original model, 40 A and 60 B organisms are counted initially. What share is A? A: 60 percent; B: 40 percent; C: 25 percent. Answer A, B or C.",
+  "newPrompt": "In a fictional population model, 40 A and 60 B organisms are counted initially. What share is A? A: 60 percent; B: 40 percent; C: 25 percent. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context): the prompt opened on context from another question the kid may never have seen (\"that\", \"the original\", \"the stated\"); it now gives the needed facts in one clause. Key unchanged and rechecked by hand."
+ },
+ {
+  "subject": "history",
+  "level": 5,
+  "oldPrompt": "In the original model, the next generation contains 60 A and 60 B organisms. What share is A? A: 60 percent; B: 40 percent; C: 50 percent. Answer A, B or C.",
+  "newPrompt": "In a fictional population model, the next generation contains 60 A and 60 B organisms. What share is A? A: 60 percent; B: 40 percent; C: 50 percent. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context): the prompt opened on context from another question the kid may never have seen (\"that\", \"the original\", \"the stated\"); it now gives the needed facts in one clause. Key unchanged and rechecked by hand."
+ },
+ {
+  "subject": "history",
+  "level": 5,
+  "oldPrompt": "In the original freight model, the charge falls from 30 to 18 units per ton. What is the saving per ton? A: 48 units; B: 12 units; C: 18 units. Answer A, B or C.",
+  "newPrompt": "In a fictional freight example, the charge falls from 30 to 18 units per ton. What is the saving per ton? A: 48 units; B: 12 units; C: 18 units. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context): the prompt opened on context from another question the kid may never have seen (\"that\", \"the original\", \"the stated\"); it now gives the needed facts in one clause. Key unchanged and rechecked by hand."
+ },
+ {
+  "subject": "history",
+  "level": 5,
+  "oldPrompt": "At the original exercise’s later rate of 18 units per ton, what does shipping 200 tons cost? A: 3,600 units; B: 2,400 units; C: 6,000 units. Answer A, B or C.",
+  "newPrompt": "At a fictional freight rate of 18 units per ton, what does shipping 200 tons cost? A: 3,600 units; B: 2,400 units; C: 6,000 units. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context): the prompt opened on context from another question the kid may never have seen (\"that\", \"the original\", \"the stated\"); it now gives the needed facts in one clause. Key unchanged and rechecked by hand."
+ },
+ {
+  "subject": "history",
+  "level": 5,
+  "oldPrompt": "In the original example, how many goods priced at 2 equal a debt of 100? A: 200 goods; B: 100 goods; C: 50 goods. Answer A, B or C.",
+  "newPrompt": "In a fictional example, how many goods priced at 2 equal a debt of 100? A: 200 goods; B: 100 goods; C: 50 goods. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context): the prompt opened on context from another question the kid may never have seen (\"that\", \"the original\", \"the stated\"); it now gives the needed facts in one clause. Key unchanged and rechecked by hand."
+ },
+ {
+  "subject": "history",
+  "level": 5,
+  "oldPrompt": "In the original exercise, money income rises from 100 to 150. What is the nominal increase? A: 20%; B: 125%; C: 50%. Answer A, B or C.",
+  "newPrompt": "In a fictional exercise, money income rises from 100 to 150. What is the nominal increase? A: 20%; B: 125%; C: 50%. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context): the prompt opened on context from another question the kid may never have seen (\"that\", \"the original\", \"the stated\"); it now gives the needed facts in one clause. Key unchanged and rechecked by hand."
+ },
+ {
+  "subject": "history",
+  "level": 5,
+  "oldPrompt": "In the original shipping example, how many days are saved by moving from 20 to 10 days? A: 30 days; B: 2 days; C: 10 days. Answer A, B or C.",
+  "newPrompt": "In a fictional shipping example, how many days are saved by moving from 20 to 10 days? A: 30 days; B: 2 days; C: 10 days. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context): the prompt opened on context from another question the kid may never have seen (\"that\", \"the original\", \"the stated\"); it now gives the needed facts in one clause. Key unchanged and rechecked by hand."
+ },
+ {
+  "subject": "history",
+  "level": 5,
+  "oldPrompt": "In the original model, 200 of 1,000 residents are aged 65 or above. What is their share? A: 2%; B: 20%; C: 200%. Answer A, B or C.",
+  "newPrompt": "In a fictional town, 200 of 1,000 residents are aged 65 or above. What is their share? A: 2%; B: 20%; C: 200%. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context): the prompt opened on context from another question the kid may never have seen (\"that\", \"the original\", \"the stated\"); it now gives the needed facts in one clause. Key unchanged and rechecked by hand."
+ },
+ {
+  "subject": "finance",
+  "level": 5,
+  "oldPrompt": "In the original smooth model w=10+2L and MRP=70-2L, a uniform wage floor of 40 dollars is imposed. What employment maximizes profit when the firm must pay at least the floor? A: 10; B: 15; C: 5. Answer A, B or C.",
+  "newPrompt": "In a fictional monopsony model with labor supply w=10+2L and MRP=70-2L, a uniform wage floor of 40 dollars is imposed. What employment maximizes profit when the firm must pay at least the floor? A: 10; B: 15; C: 5. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context): the prompt opened on context from another question the kid may never have seen (\"that\", \"the original\", \"the stated\"); it now gives the needed facts in one clause. Key unchanged and rechecked by hand."
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "In the stated proton-exchange-membrane example, what carries electrical current through the external circuit? A: Electrons; B: Whole uranium nuclei; C: Only oxygen molecules moving through a pipe. Answer A, B or C.",
+  "newPrompt": "In a proton-exchange-membrane fuel cell, what carries electrical current through the external circuit? A: Electrons; B: Whole uranium nuclei; C: Only oxygen molecules moving through a pipe. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context): the prompt opened on context from another question the kid may never have seen (\"that\", \"the original\", \"the stated\"); it now gives the needed facts in one clause. Key unchanged and rechecked by hand."
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "Why is tension below mg for a downward-accelerating hanging mass in the stated pulley model? A: Tension must be zero whenever acceleration is nonzero; B: The difference mg-T provides the positive downward net force; C: The mass's weight becomes zero once it moves. Answer A, B or C.",
+  "newPrompt": "Why is tension below mg for a downward-accelerating hanging mass in an ideal pulley model? A: Tension must be zero whenever acceleration is nonzero; B: The difference mg-T provides the positive downward net force; C: The mass's weight becomes zero once it moves. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context): the prompt opened on context from another question the kid may never have seen (\"that\", \"the original\", \"the stated\"); it now gives the needed facts in one clause. Key unchanged and rechecked by hand."
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "In the same cell, a fictional dye at 2.00 × 10⁻⁵ M has absorbance 0.320. A second sample has absorbance 0.800. What is its concentration, in units of 10⁻⁵ M? Round to three significant figures.",
+  "newPrompt": "Measured in one cuvette (the same path length), a fictional dye at 2.00 × 10⁻⁵ M has absorbance 0.320. A second sample in that cuvette has absorbance 0.800. What is its concentration, in units of 10⁻⁵ M? Round to three significant figures.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context): \"In the same cell\" opened on a cell the kid never saw; it now says one cuvette (one path length), as Beer-Lambert comparisons need. Key unchanged (A is proportional to c at fixed path length)."
+ },
+ {
+  "subject": "science",
+  "level": 5,
+  "oldPrompt": "In the same cell, a fictional dye at 3.00 × 10⁻⁵ M has absorbance 0.240. A second sample has absorbance 0.600. What is its concentration, in units of 10⁻⁵ M? Round to three significant figures.",
+  "newPrompt": "Measured in one cuvette (the same path length), a fictional dye at 3.00 × 10⁻⁵ M has absorbance 0.240. A second sample in that cuvette has absorbance 0.600. What is its concentration, in units of 10⁻⁵ M? Round to three significant figures.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context): \"In the same cell\" opened on a cell the kid never saw; it now says one cuvette (one path length), as Beer-Lambert comparisons need. Key unchanged (A is proportional to c at fixed path length)."
+ },
+ {
+  "subject": "history",
+  "level": 5,
+  "oldPrompt": "In the original workshop, productivity rises from 4 to 6 items per hour. What is the percentage increase? A: 50 percent; B: 2 percent; C: 150 percent. Answer A, B or C.",
+  "newPrompt": "In a fictional workshop, productivity rises from 4 to 6 items per hour. What is the percentage increase? A: 50 percent; B: 2 percent; C: 150 percent. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context, found by the round's wider sweep): the prompt opened on \"the original\" or \"the same\" context the kid never saw; it now says the example is fictional and gives the needed facts. Key unchanged and rechecked by hand."
+ },
+ {
+  "subject": "history",
+  "level": 5,
+  "oldPrompt": "In the original labor force of 1,000, 250 are unemployed. What is the unemployment rate? A: 75 percent; B: 250 percent; C: 25 percent. Answer A, B or C.",
+  "newPrompt": "In a fictional labor force of 1,000 people, 250 are unemployed. What is the unemployment rate? A: 75 percent; B: 250 percent; C: 25 percent. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context, found by the round's wider sweep): the prompt opened on \"the original\" or \"the same\" context the kid never saw; it now says the example is fictional and gives the needed facts. Key unchanged and rechecked by hand."
+ },
+ {
+  "subject": "history",
+  "level": 5,
+  "oldPrompt": "In the original budget, revenue is 100 and spending is 60 + 30 + 10. What is the balance? A: 20; B: 0; C: −60. Answer A, B or C.",
+  "newPrompt": "In a fictional budget, revenue is 100 and spending is 60 + 30 + 10. What is the balance? A: 20; B: 0; C: −60. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context, found by the round's wider sweep): the prompt opened on \"the original\" or \"the same\" context the kid never saw; it now says the example is fictional and gives the needed facts. Key unchanged and rechecked by hand."
+ },
+ {
+  "subject": "history",
+  "level": 5,
+  "oldPrompt": "In the original station miniature, what does the move from a train sound to childhood memory emphasize? A: A complete statistical account of all travelers; B: The traveler’s subjective experience across present and remembered time; C: An official timetable that cannot contain personal thought. Answer A, B or C.",
+  "newPrompt": "In a short fictional story, a traveler at a station hears a train and drifts into a childhood memory. What does that move from present sound to memory emphasize? A: A complete statistical account of all travelers; B: The traveler’s subjective experience across present and remembered time; C: An official timetable that cannot contain personal thought. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context, found by the round's wider sweep): the prompt opened on \"the original\" or \"the same\" context the kid never saw; it now says the example is fictional and gives the needed facts. Key unchanged and rechecked by hand."
+ },
+ {
+  "subject": "math",
+  "level": 5,
+  "oldPrompt": "With the same fictional regression data, raising confidence from 90% to 99% does what? A: narrows the slope interval, B: forces the interval center to zero, C: widens the slope interval. Answer A, B or C.",
+  "newPrompt": "For one fictional regression data set, raising the confidence level from 90% to 99% does what to the slope interval? A: narrows the slope interval, B: forces the interval center to zero, C: widens the slope interval. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context, found by the round's wider sweep): the prompt opened on \"the original\" or \"the same\" context the kid never saw; it now says the example is fictional and gives the needed facts. Key unchanged and rechecked by hand."
+ },
+ {
+  "subject": "math",
+  "level": 5,
+  "oldPrompt": "For the same fictional observations, model L has residuals 4, -4, 4 and model E has residuals 1, -1, 1. Which model has the smaller sum of squared residuals? A: model E, B: model L, C: the sums are equal. Answer A, B or C.",
+  "newPrompt": "Fitted to three fictional observations, model L has residuals 4, -4, 4 and model E has residuals 1, -1, 1. Which model has the smaller sum of squared residuals? A: model E, B: model L, C: the sums are equal. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context, found by the round's wider sweep): the prompt opened on \"the original\" or \"the same\" context the kid never saw; it now says the example is fictional and gives the needed facts. Key unchanged and rechecked by hand."
+ },
+ {
+  "subject": "math",
+  "level": 5,
+  "oldPrompt": "On the same fictional data, linear-model residuals form a U shape and exponential-model residuals are small and unpatterned. Which choice is better supported? A: the linear model because any residual pattern is good, B: the exponential model, C: both models are exact. Answer A, B or C.",
+  "newPrompt": "Fitted to one fictional data set, linear-model residuals form a U shape and exponential-model residuals are small and unpatterned. Which choice is better supported? A: the linear model because any residual pattern is good, B: the exponential model, C: both models are exact. Answer A, B or C.",
+  "reason": "improve26-r26b-nov6 #4 (audit17 dangling context, found by the round's wider sweep): the prompt opened on \"the original\" or \"the same\" context the kid never saw; it now says the example is fictional and gives the needed facts. Key unchanged and rechecked by hand."
  }
 ];
 export const ANSWER_ID_RENAMES=new Map(QUESTION_REVISIONS.map(r=>[`${r.subject}-${r.level}-${hash(r.oldPrompt)}`,`${r.subject}-${r.level}-${hash(r.newPrompt)}`]));

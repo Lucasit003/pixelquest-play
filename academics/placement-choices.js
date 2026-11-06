@@ -10,7 +10,7 @@
    option may be accepted, or the item keeps its typing box. Open answers (numbers, opposites, contractions, spellings) stay typed, as in
    the quiz for an older player. A tap fills the same hidden input a typed answer would (ui/answer-choices.js tileFormHTML), so
    answerPlacement grades it exactly as before: PLACEMENT_STREAK, placementGrade and gradeOpen are untouched. Pure: no DOM, no save. */
-import {accepts,choicesOf} from '../game/math.js';
+import {accepts,choicesOf,/* improve26-r26b-nov6 #1 */acceptsExact} from '../game/math.js';
 import {wordChoicesFor} from './word-choices.js';
 import {tileChoices,youngFor} from './tile-choices.js';
 
@@ -27,13 +27,13 @@ const ART=new Set(['a','an','the']);
 /* bareLabels: show each option without a leading a/an/the ("noun", "adjective"); the value graded stays as the option reads */
 function settle(q,opts,bareLabels=false){
  const seen=new Set(),out=[];for(const o of opts){const v=String(o||'').trim();if(!v||v.length>40||seen.has(low(bare(v))))continue;seen.add(low(bare(v)));out.push(v);}
- if(out.length<2||out.length>8||out.filter(v=>accepts(v,q)).length!==1)return null;
+ if(out.length<2||out.length>8||out.filter(v=>accepts(v,q)).length!==1/* improve26-r26b-nov6 #1: the accepted option is the key itself */||!out.some(v=>acceptsExact(v,q)))return null;
  return out.sort((x,y)=>h(q.id+'|'+low(bare(x)))-h(q.id+'|'+low(bare(y)))).map(v=>({value:v,label:bareLabels&&bare(v)?bare(v):v}));}
 const split=s=>s.split(/\s*\/\s*|\s*,\s*(?:or\s+)?|\s+or\s+/).map(x=>x.replace(/^["'“‘]|["'”’]$/g,'').trim()).filter(Boolean);
 /* the options the prompt names */
 export function namedOptions(q){
  const p=String(q?.prompt||'').trim();if(!p)return null;
- const par=/\(([^()]{2,80})\)\s*[.?!]?\s*$/.exec(p)||/\(([^()]{2,80})\)\s*\?\s*$/.exec(p);
+ /* improve26-r26b-nov6 #1: a closing note in brackets stands apart ("(hear or here)"); "4^(1/2)?" or "f'(π/2)?" is maths, never options */const par=/(?:^|\s)\(([^()]{2,80})\)\s*[.?!]?\s*$/.exec(p)||/(?:^|\s)\(([^()]{2,80})\)\s*\?\s*$/.exec(p);
  if(par&&/\sor\s|\//.test(par[1])){const r=settle(q,split(par[1]));if(r)return r;}
  const ch=/\b(?:Choose|Pick)(?: one)?:\s*([^.?!]{2,80})[.?!]?\s*$/i.exec(p);
  if(ch){const r=settle(q,split(ch[1]));if(r)return r;}
@@ -41,9 +41,12 @@ export function namedOptions(q){
  const end=/\?\s*$/.exec(p);if(!end)return null;
  const body=p.slice(0,end.index),cut=Math.max(...['. ','? ','! ',': ','; ','" ','” ',"' ",'’ ',', '].map(k=>{const i=body.lastIndexOf(k);return i<0?-1:i+k.length;}));
  const clause=body.slice(Math.max(0,cut)),at=clause.lastIndexOf(' or ');if(at<0)return null;
- const right=clause.slice(at+4).trim(),words=clause.slice(0,at).trim().split(/\s+/);if(!right||right.split(/\s+/).length>6)return null;
+ let right=clause.slice(at+4).trim();const words=clause.slice(0,at).trim().split(/\s+/);if(!right||right.split(/\s+/).length>6)return null;
+ /* improve26-r26b-nov6 #1 (audit17 #1): "X or Y data?" offers X and Y ("quantitative" / "qualitative"), when one of them is the key */
+ {const rr=bare(right).split(/\s+/),x=low(words.at(-1)).replace(/[^a-z'-]/g,'');if(rr.length===2&&rr[1].length>=3&&!STOP.has(low(rr[1]))&&x&&!STOP.has(x)&&!ART.has(x)&&!accepts(right,q)&&!accepts(bare(right),q)&&(acceptsExact(rr[0],q)||acceptsExact(words.at(-1),q)))right=rr[0];}
  const rw=bare(right).split(/\s+/).length;
  if(accepts(right,q)||accepts(bare(right),q)){const left=[];for(let i=words.length-1;i>=0&&left.length<=rw;i--){const w=words[i],k=low(w).replace(/[^a-z']/g,'');if(/["'“”‘’]/.test(w)||STOP.has(k))break;left.unshift(w);if(ART.has(k))break;}
+  /* improve26-r26b-nov6 #1: only an article may add a word ("a noun"); "Is √(4/9) rational or irrational?" offered "√(4/9) rational" */if(left.length>rw&&!ART.has(low(left[0]).replace(/[^a-z']/g,'')))left.shift();
   return left.length?settle(q,[left.join(' '),right],true):null;}
  /* the answer is X: the shortest ending of the clause the key accepts, widened to Y's length when that still reads as the answer ("the one
     that costs 5 cents" beside "the one that costs 6 cents"); Y loses a trailing comparison ("shorter shadow than a high Sun" -> "shorter") */

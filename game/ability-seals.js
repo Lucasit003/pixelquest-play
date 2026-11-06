@@ -83,7 +83,7 @@ export function sealBackLine(s,exceptId=null){const z=SEALS.find(z=>z.level!==ex
 const ORD=n=>n+(n%100>=11&&n%100<=13?'th':['th','st','nd','rd'][n%10]||'th');
 export function sealShortLine(s,z,p,o={}){if(!z||sealBroken(s,z.id))return '';const n=wokenCount(s);if(n>=z.awake||!p?.a)return '';
  const t=p.topics|0,lv=p.lvlOk?'':`reach hero level ${p.lvl}`,more=(k,sub)=>`master ${k} more ${sub} topic${k===1?'':'s'}`;
- const learn=!p.reachable?`keep training ${p.subject}`:t<=0?'':o.topic?(t===1?'finish this topic':`finish this topic and ${more(t-1,p.subject)}`):t===1&&o.stepTitle?`finish "${o.stepTitle}"`:more(t,p.subject);
+ const learn=!p.reachable?`keep training ${p.subject}`:t<=0?'':o.topic?(t===1?'finish this topic':`finish this topic and ${more(t-1,p.subject)}`):t===1&&o.stepTitle?`finish "${o.stepTitle}"`:/* improve26-r26b-nov6 #2: a power behind a subject not yet placed in says its first step */p.place?`${more(t,p.subject)} (start ${p.subject} at the Library)`:more(t,p.subject);
  const step=[learn,lv].filter(Boolean).join(' and ');if(!step)return '';
  return `A rune seal ${o.here?'here':`in ${lvName(z.level)}`} needs ${z.awake} abilities${z.awake>n+1?`, you have ${n}`:''}: ${step} to wake your ${ORD(n+1)}.`;}
 /* the seal a short kid is told about on a lesson card: unbroken, its count one more than now (the next wake opens it), in a level the kid can

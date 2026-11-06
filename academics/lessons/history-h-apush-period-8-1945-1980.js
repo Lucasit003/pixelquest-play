@@ -1800,7 +1800,7 @@ const sections=[
     "One quarter of 120,000 is 30,000. The relevant denominator is the whole metropolitan population."
    ],
    [
-    "In the original city model, the suburban share rises from 20 percent to 25 percent. What is the increase in percentage points?",
+    "In a fictional city model, the suburban share rises from 20 percent to 25 percent. What is the increase in percentage points?",
     "5 percentage points",
     "25 percentage points",
     "125 percentage points",
@@ -2269,7 +2269,7 @@ const sections=[
     "t": "passages",
     "title": "Read and decide",
     "texts": [
-     "In the original city model, the suburban share rises from 20 percent to 25 percent. What is the increase in percentage points?"
+     "In a fictional city model, the suburban share rises from 20 percent to 25 percent. What is the increase in percentage points?"
     ],
     "small": false
    },
@@ -4603,7 +4603,7 @@ const sections=[
     "Fifteen percent of 1,000 is 150; a rate must use the whole population as its denominator."
    ],
    [
-    "In that original model, poverty falls from 20 percent to 15 percent. What is the relative reduction?",
+    "In a fictional model, poverty falls from 20 percent to 15 percent. What is the relative reduction?",
     "25 percent",
     "5 percent",
     "75 percent",
@@ -5019,7 +5019,7 @@ const sections=[
     "t": "passages",
     "title": "Read and decide",
     "texts": [
-     "In that original model, poverty falls from 20 percent to 15 percent. What is the relative reduction?"
+     "In a fictional model, poverty falls from 20 percent to 15 percent. What is the relative reduction?"
     ],
     "small": false
    },

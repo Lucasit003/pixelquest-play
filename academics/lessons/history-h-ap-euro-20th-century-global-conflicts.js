@@ -3006,7 +3006,7 @@ const sections=[
     "A fixed nominal obligation becomes harder to meet when prices and often incomes fall."
    ],
    [
-    "In the original example, how many goods priced at 2 equal a debt of 100?",
+    "In a fictional example, how many goods priced at 2 equal a debt of 100?",
     "50 goods",
     "200 goods",
     "100 goods",
@@ -3048,7 +3048,7 @@ const sections=[
     "Aggregate improvement can hide substantial regional and sectoral differences."
    ],
    [
-    "In the original labor force of 1,000, 250 are unemployed. What is the unemployment rate?",
+    "In a fictional labor force of 1,000 people, 250 are unemployed. What is the unemployment rate?",
     "25 percent",
     "75 percent",
     "250 percent",
@@ -3536,7 +3536,7 @@ const sections=[
     "t": "passages",
     "title": "Read and decide",
     "texts": [
-     "In the original example, how many goods priced at 2 equal a debt of 100?"
+     "In a fictional example, how many goods priced at 2 equal a debt of 100?"
     ],
     "small": false
    },
@@ -3584,7 +3584,7 @@ const sections=[
     "t": "passages",
     "title": "Read and decide",
     "texts": [
-     "In the original labor force of 1,000, 250 are unemployed. What is the unemployment rate?"
+     "In a fictional labor force of 1,000 people, 250 are unemployed. What is the unemployment rate?"
     ],
     "small": false
    },

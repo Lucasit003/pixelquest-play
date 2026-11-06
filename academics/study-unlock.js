@@ -19,7 +19,6 @@ import {middleLadder,highLadder} from '../game/math.js';
 import {placementGrades} from './placement.js';
 import {orderHigh} from './course-grades.js';
 import {nextPower,powerLine} from '../game/power-gate.js';
-import {heldSubject} from './hs-taster.js';/* improve20-r22b-nov4 #2 */
 
 const FADE=250/4.5;
 const EPS=1e-8;
@@ -163,6 +162,10 @@ export function goalLine(save,a){
    locked ability of the hero in that subject, else the subject's first open, unmastered topic. */
 export const topicInSchoolMode=(save,t)=>!save.schoolMode||(save.schoolMode==='elementary'?rungOf(t)<=5:save.schoolMode==='middle'?rungOf(t)>=6&&rungOf(t)<=8:rungOf(t)>=9);
 export function nextLesson(save,{hero=save.hero,subject=null}={}){
+ /* improve26-r26b-nov6 #3 (audit17 #5, shot 215: after a failed Radicals test and its fight break, NEXT GOAL said "Take the mastery test on Radicals" but the
+    Library's red was "Start lesson: Quadratic functions"): a topic whose mastery test is open (testReady) leads, at a subject station within its subject;
+    one whose test was already sat comes first. Every stage. The Library card's own adventure lead (nextStep's pad) still comes first while a break is due. */
+ {const t=testDue(save,subject);if(t){const a=(ABILITIES[hero]||[]).filter(x=>x.subject===t.subject&&!unlocked(hero===save.hero?save:{...save,hero},x)).sort((x,y)=>x.gate-y.gate).find(x=>lessonsToUnlock(save,x).topics.includes(t.id))||null;return {topic:t,ability:a,lessons:a?lessonsToUnlock(save,a).lessons:0,goal:a?goalLine(save,a):'',test:true};}}
  /* improve20-r13b-nov2 #1 (audit10 a5): without a subject the lesson is the next topic toward the shared next ability (game/power-gate.js
     nextPower). When that road has no topic open in this school stage (a placement opens it), the lesson is the nearest open one and its goal
     names the shared ability instead of a far one ("Rain of Arrows (then 59 more topics)"). */
@@ -171,6 +174,8 @@ export function nextLesson(save,{hero=save.hero,subject=null}={}){
   const o=nextLessonRaw(save,{hero,subject});if(o?.topic){return {...o,ability:null,lessons:0,goal:p.place?'':`Next ability: ${powerLine(p).replace(': ',', ')}.`/* a placement road: the card's Find-your-level line (placementNudge) names it once */,road:o.ability||null};}return o;}}
  /* at a subject station a far ability of that subject (more than 12 topics) is named without its long count; the shared one keeps its goal line */
  const o=nextLessonRaw(save,{hero,subject}),p=o?.ability&&nextPower(save,{hero});if(o?.ability&&p&&p.a.id!==o.ability.id){const l=o.lessons|0;if(l>12)return {...o,goal:`Builds ${SUBJECTS[o.ability.subject]?.name||o.ability.subject} toward ${o.ability.name}`};}return o;}
+/* improve26-r26b-nov6 #3: the open, unmastered topic of this school stage (and subject) whose mastery test is open, a sat one first, or null */
+export function testDue(save,subject=null){let best=null;for(const t of TOPICS){if(subject&&t.subject!==subject||mastered(save,t)||!topicInSchoolMode(save,t)||!topicOpen(save,t))continue;const r=save.lessons?.[t.id];if(!r?.done||!testReady(save,t).ready)continue;const sat=(r.test|0)>0||(Array.isArray(r.testright)&&r.testright.length>0)||(Array.isArray(r.miss)&&r.miss.length>0);if(sat)return t;best??=t;}return best;}
 function nextLessonRaw(save,{hero=save.hero,subject=null}={}){
  const plans=studyPlan(save,{hero,subject,limit:8});
  for(const p of plans){const a=ABILITIES[hero].find(x=>x.id===p.ability.id),l=lessonsToUnlock(save,a);
@@ -192,7 +197,7 @@ function nextLessonRaw(save,{hero=save.hero,subject=null}={}){
 const STAGE_FIRST={elementary:2,middle:6,high:9};
 export function placementNudge(save,{hero=save.hero}={}){
  const mode=STAGE_FIRST[save.schoolMode]?save.schoolMode:'elementary',first=STAGE_FIRST[mode];
- const subjects=Object.keys(SUBJECTS).filter(subject=>openGrade(save,subject)<first&&placementGrades(subject,mode).length&&!TOPICS.some(t=>t.subject===subject&&topicInSchoolMode(save,t)&&topicOpen(save,t)&&!mastered(save,t))&&(ABILITIES[hero]||[]).some(a=>a.subject===subject&&!unlocked(save,a))&&/* improve20-r22b-nov4 #2: never a subject held behind this session's Quick start */!heldSubject(save,subject));
+ const subjects=Object.keys(SUBJECTS).filter(subject=>openGrade(save,subject)<first&&placementGrades(subject,mode).length&&!TOPICS.some(t=>t.subject===subject&&topicInSchoolMode(save,t)&&topicOpen(save,t)&&!mastered(save,t))&&(ABILITIES[hero]||[]).some(a=>a.subject===subject&&!unlocked(save,a)));/* improve26-r26b-nov6 #2: a subject held behind this session's Quick start is offered too (the nearest power leads, audit17 #2); its lesson opens on Part 1 as before */
  if(!subjects.length)return null;
  const cur=nextLesson(save,{hero}),best=cur?.ability?cur.lessons:Infinity;let out=null;
  for(const subject of subjects){

@@ -177,7 +177,7 @@ items(add){/* Round 11 (17 Oct): a pool rounding instruction never asks for more
  fact('lewis',[
   ['What is the first step in drawing a Lewis diagram of SO₄²⁻?','count the valence electrons, adding two for the 2− charge','draw double bonds between every pair of atoms','give every atom eight electrons before counting anything','The electron count fixes how many bonds and lone pairs the diagram can show, and each unit of negative charge adds one electron.'],
   ['Which atoms can accommodate more than eight electrons in a Lewis diagram?','atoms of period 3 or below, such as S, P and Xe','only hydrogen and helium','carbon, nitrogen and oxygen','Period 3 and larger atoms have energetically accessible d subshells in the usual model and form expanded octets; period 2 atoms are limited to eight.'],
-  ['How many electrons does a hydrogen atom normally have around it in a Lewis diagram?','two','eight','four','Hydrogen has only the 1s orbital for bonding, so it holds two electrons in a duet.']]);
+  ['How many electrons does a bonded hydrogen atom have around it in a Lewis diagram?','two','eight','four','Hydrogen has only the 1s orbital for bonding, so it holds two electrons in a duet.']]);
  /* 2.6 formal charge */
  const SELS={central:[m=>0,'on the central atom'],single:[m=>1+m.ord.findIndex((o,i)=>o===1&&m.atoms[i+1][0]!=='H'),'on an oxygen joined to the central atom by a single bond'],double:[m=>1+m.ord.findIndex(o=>o===2),'on the oxygen joined to the central atom by a double bond'],term:[m=>1,'on the terminal atom']};
  [['NH₄⁺','central'],['BF₄⁻','central'],['H₃O⁺','central'],['CO₃²⁻','single'],['CO₃²⁻','double'],['NO₂⁻','central'],['CN⁻','central'],['CO','term']].forEach(([f,sel])=>{const m=mol(f),f2=fcs(f,m),i=SELS[sel][0](m),sym=m.atoms[i][0];

@@ -4348,7 +4348,7 @@ const sections=[
     "The electrochemical reaction supplies electricity and produces water and heat. Pure hydrogen contains no carbon to form combustion CO₂."
    ],
    [
-    "In the stated proton-exchange-membrane example, what carries electrical current through the external circuit?",
+    "In a proton-exchange-membrane fuel cell, what carries electrical current through the external circuit?",
     "Electrons",
     "Whole uranium nuclei",
     "Only oxygen molecules moving through a pipe",
@@ -4784,7 +4784,7 @@ const sections=[
     "t": "passages",
     "title": "Read and decide",
     "texts": [
-     "In the stated proton-exchange-membrane example, what carries electrical current through the external circuit?"
+     "In a proton-exchange-membrane fuel cell, what carries electrical current through the external circuit?"
     ],
     "small": false
    },

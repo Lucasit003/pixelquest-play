@@ -594,7 +594,7 @@ const sections=[
     "An explanation must connect resources, productivity, institutions and choices to measured outcomes."
    ],
    [
-    "In the original exercise, money income rises from 100 to 150. What is the nominal increase?",
+    "In a fictional exercise, money income rises from 100 to 150. What is the nominal increase?",
     "50%",
     "20%",
     "125%",
@@ -1062,7 +1062,7 @@ const sections=[
     "t": "passages",
     "title": "Read and decide",
     "texts": [
-     "In the original exercise, money income rises from 100 to 150. What is the nominal increase?"
+     "In a fictional exercise, money income rises from 100 to 150. What is the nominal increase?"
     ],
     "small": false
    },
@@ -2846,7 +2846,7 @@ const sections=[
     "Reform and retrenchment did not mean the total disappearance of public provision or state finance."
    ],
    [
-    "In the original budget, revenue is 100 and spending is 60 + 30 + 10. What is the balance?",
+    "In a fictional budget, revenue is 100 and spending is 60 + 30 + 10. What is the balance?",
     "0",
     "20",
     "−60",
@@ -3304,7 +3304,7 @@ const sections=[
     "t": "passages",
     "title": "Read and decide",
     "texts": [
-     "In the original budget, revenue is 100 and spending is 60 + 30 + 10. What is the balance?"
+     "In a fictional budget, revenue is 100 and spending is 60 + 30 + 10. What is the balance?"
     ],
     "small": false
    },
@@ -6674,7 +6674,7 @@ const sections=[
     "Cross-border effects can require coordinated responses while leaving disagreements about costs and responsibilities."
    ],
    [
-    "In the original shipping example, how many days are saved by moving from 20 to 10 days?",
+    "In a fictional shipping example, how many days are saved by moving from 20 to 10 days?",
     "10 days",
     "30 days",
     "2 days",
@@ -7223,7 +7223,7 @@ const sections=[
     "t": "passages",
     "title": "Read and decide",
     "texts": [
-     "In the original shipping example, how many days are saved by moving from 20 to 10 days?"
+     "In a fictional shipping example, how many days are saved by moving from 20 to 10 days?"
     ],
     "small": false
    },
@@ -7434,7 +7434,7 @@ const sections=[
     "An unfamiliar sound can result from rigorous compositional organization rather than the absence of structure."
    ],
    [
-    "In the original station miniature, what does the move from a train sound to childhood memory emphasize?",
+    "In a short fictional story, a traveler at a station hears a train and drifts into a childhood memory. What does that move from present sound to memory emphasize?",
     "The traveler’s subjective experience across present and remembered time",
     "A complete statistical account of all travelers",
     "An official timetable that cannot contain personal thought",
@@ -7476,14 +7476,14 @@ const sections=[
     "Temporal order is necessary for many causal claims but does not by itself isolate one mechanism from others."
    ],
    [
-    "In the original model, 200 of 1,000 residents are aged 65 or above. What is their share?",
+    "In a fictional town, 200 of 1,000 residents are aged 65 or above. What is their share?",
     "20%",
     "2%",
     "200%",
     "Two hundred is one fifth of one thousand, so the share is 20 percent."
    ],
    [
-    "If that group becomes 250 of the same 1,000 residents, how many percentage points does its share rise?",
+    "In a fictional town, a group grows from 200 to 250 of the same 1,000 residents. How many percentage points does its share rise?",
     "5 percentage points",
     "25 percentage points",
     "50 percentage points",
@@ -8215,7 +8215,7 @@ const sections=[
     "t": "passages",
     "title": "Read and decide",
     "texts": [
-     "In the original station miniature, what does the move from a train sound to childhood memory emphasize?"
+     "In a short fictional story, a traveler at a station hears a train and drifts into a childhood memory. What does that move from present sound to memory emphasize?"
     ],
     "small": false
    },
@@ -8263,7 +8263,7 @@ const sections=[
     "t": "passages",
     "title": "Read and decide",
     "texts": [
-     "In the original model, 200 of 1,000 residents are aged 65 or above. What is their share?"
+     "In a fictional town, 200 of 1,000 residents are aged 65 or above. What is their share?"
     ],
     "small": false
    },
@@ -8271,7 +8271,7 @@ const sections=[
     "t": "passages",
     "title": "Read and decide",
     "texts": [
-     "If that group becomes 250 of the same 1,000 residents, how many percentage points does its share rise?"
+     "In a fictional town, a group grows from 200 to 250 of the same 1,000 residents. How many percentage points does its share rise?"
     ],
     "small": false
    },

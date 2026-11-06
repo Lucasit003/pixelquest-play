@@ -14,10 +14,10 @@ export function learningRoad(save,subject){
  const waiting=locked.find(a=>abilityMastery(save,a.subject)+1e-8>=a.gate);
  /* improve20-r13b-nov2 #1: without a subject (the HUD card, the Library's next-ability card, the mastery card, pointers) the road is the shared
     next ability (game/power-gate.js nextPower: fewest topics, the gate's cheapest power); a subject station keeps its own subject's next one */
- const rank=powerRank(save),ability=sleeping||(subject?waiting||rank.find(x=>x.a.subject===subject)?.a:null)||nextPower(save)?.a||locked[0];
+ const rank=powerRank(save),np=nextPower(save),ability=sleeping||(subject?waiting||rank.find(x=>x.a.subject===subject)?.a:null)||np?.a||locked[0];
  if(!ability)return null;
  const route=lessonsToUnlock(save,ability),done=TOPICS.filter(t=>t.subject===ability.subject&&mastered(save,t)).length,total=done+route.lessons;
- return {ability,done,total,remaining:route.lessons,reachable:route.reachable,topics:route.topics,sleeping:!!sleeping,knowledge:route.reachable&&route.lessons===0,level:(save.level||1)>=xpLevel(ability),levelNeed:xpLevel(ability),percent:total?Math.round(done/total*100):route.reachable?100:0};
+ return {ability,done,total,remaining:route.lessons,reachable:route.reachable,topics:route.topics,sleeping:!!sleeping,knowledge:route.reachable&&route.lessons===0,level:(save.level||1)>=xpLevel(ability),levelNeed:xpLevel(ability),percent:total?Math.round(done/total*100):route.reachable?100:0,/* improve26-r26b-nov6 #2: the subject whose Find-your-level check opens this road (the shared next power needs a subject not yet placed in), else null */place:!sleeping&&np?.a?.id===ability.id&&np.place||null};
 }
 /* juice-oct27 ("N more to unlock", new-player playtest idea 5): the one concrete step that brings the next ability nearer, for
    the HUD card's pip. Read-only and rule-free: it names what learningRoad() and the topic gate (lessons.js testReady) already

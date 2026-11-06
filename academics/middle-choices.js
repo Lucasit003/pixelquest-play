@@ -14,7 +14,7 @@
    may be accepted and there must be 2-4 options, or the question keeps its typing box. Numbers and open answers stay typed, as they do for an
    older Elementary player. A tap fills the same hidden input a typed answer would (ui/answer-choices.js tileFormHTML), so grading,
    retirement, mastery and ids are unchanged. Pure: no DOM, no save. */
-import {accepts,choicesOf} from '../game/math.js';
+import {accepts,choicesOf,/* improve26-r26b-nov6 #1 */acceptsExact} from '../game/math.js';
 
 export const MIDDLE_TILE_MAX=4;
 const h=s=>{let x=2166136261;for(const c of String(s)){x^=c.charCodeAt(0);x=Math.imul(x,16777619)>>>0;}return x;};
@@ -24,7 +24,7 @@ const numeric=q=>/^[-$]?\d[\d.,/]*%?$/.test(String(q?.answer??'').trim());
 /* 2-4 different options, exactly one accepted: [{value,label}] in a fixed order from the item's id, or null */
 function settle(q,opts,{keep=false,label=v=>v}={}){
  const seen=new Set(),out=[];for(const o of opts){const v=String(o??'').trim();if(!v||v.length>40||seen.has(low(v)))continue;seen.add(low(v));out.push(v);}
- if(out.length<2||out.length>MIDDLE_TILE_MAX||out.filter(v=>accepts(v,q)).length!==1)return null;
+ if(out.length<2||out.length>MIDDLE_TILE_MAX||out.filter(v=>accepts(v,q)).length!==1/* improve26-r26b-nov6 #1: the accepted option is the key itself */||!out.some(v=>acceptsExact(v,q)))return null;
  const list=keep?out:out.sort((x,y)=>h(q.id+'|'+low(x))-h(q.id+'|'+low(y)));return list.map(v=>({value:v,label:label(v)}));}
 /* the question's last sentence (after the last ". " / ": " that ends a sentence before it) */
 const lastAsk=p=>{const s=String(p||'').trim();if(!/\?\s*$/.test(s))return '';/* quoted sentences are the material, not the choices */const b=s.replace(/\?\s*$/,'').replace(/["“][^"“”]*["”]/g,'"…"');const cut=Math.max(b.lastIndexOf('. '),b.lastIndexOf('! '),b.lastIndexOf('? '));return b.slice(cut+1).trim();};

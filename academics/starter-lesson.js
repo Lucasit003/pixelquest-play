@@ -122,8 +122,8 @@ export const restLine=t=>`The rest of “${t.title}” waits on the Library shel
 /* What the next power is and which topic wakes it, for the prologue's victory card and the HUD line after it: {a, topic, lessons, line}
    or null. Reads lessonsToUnlock, as the board does. */
 export function nextPowerLine(save){
- /* improve20-r13b-nov2 #1: the shared pick */const a=nextPower(save)?.a;if(!a)return null;
+ /* improve20-r13b-nov2 #1: the shared pick */const np=nextPower(save),a=np?.a;if(!a)return null;
  const r=lessonsToUnlock(save,a),t=firstInMode(save,r);
- const where=t?`learn “${t.title}” (${sname(t.subject)}) at the Library`:`study ${sname(a.subject)} at the Library`;
+ const where=t?`learn “${t.title}” (${sname(t.subject)}) at the Library`:/* improve26-r26b-nov6 #2: a subject not yet placed in starts at its shelf */np.place?`start ${sname(a.subject)} at the Library`:`study ${sname(a.subject)} at the Library`;
  return {a,topic:t,lessons:r.lessons|0,line:`Next power: ${a.name}. To wake it, ${where}.`};
 }

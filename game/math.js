@@ -184,6 +184,27 @@ export function markers(head,letters){const at=[];let from=0;for(const L of lett
 export function letterTexts(head,letters){const at=markers(head,letters);if(!at)return null;
  const out=at.map(([,e],i)=>{let x=head.slice(e,i+1<at.length?at[i+1][0]:head.length);if(i+1===at.length)x=x.split(/(?<=[.?!])(?<!\b(?:Mr|Mrs|Ms|Dr|St|Mt|Jr|Sr|Prof|Gen|Gov|Capt|Lt|Col|Sgt|vs|etc|approx|No|U\.S|e\.g|i\.e|a\.m|p\.m)\.)\s+(?=[A-Z(])|(?<=(?<!\.)[.?!]["”’])\s+(?=(?:Which|What|Who|Whom|Whose|Why|How|Where|When)\b)|\s+(?=(?:Answer|Type|Choose|Pick|Select)\b)/)[0];return x.replace(/[\s,;|]*(?:\bor)?[\s,;|]*$/,'').replace(/[.?!;:,\s]+$/,'').trim();});
  return out.every(x=>x&&x.length<=160)?out:null;}
+/* improve26-r26b-nov6 #1 (audit17 #1: "irrational" was forgiven as a typo of "rational" and became the "right" tile): a typed answer is never
+   a typo when it is a different word: another word of the prompt ("eagle" for "eaglet", "southern" for "northern"), the key with a negating
+   prefix added or removed ("irrational", "unearned", "position" for "deposition"), or a known opposite swap (in-/de-, quanti-/quali-,
+   north/south, -petal/-fugal, ...). One word may differ, and only a key's own inflection ("slows" for "slow", "teenager" for "a teenager")
+   stays forgiven. Real typos ("ratoinal") are unchanged. Pure. */
+const NEG_PRE=['ir','in','im','il','un','non','non-','de','dis','a'],SWAP_PRE=[['in','de'],['in','ex'],['im','ex'],['e','im'],['quanti','quali'],['north','south'],['east','west'],['endo','exo'],['hyper','hypo'],['pre','post'],['inter','intra'],['over','under'],['up','down'],['max','min'],['ana','cata'],['homo','hetero'],['in','out'],['inc','dec'],['ascend','descend'],['emi','immi']],SWAP_SUF=[['petal','fugal'],['ward','ward']],SWAP_WORD=[['mitosis','meiosis'],['acid','base'],['gain','loss'],['before','after'],['above','below'],['plus','minus'],['more','less'],['higher','lower'],['larger','smaller'],['warmer','cooler'],['same','different'],['true','false'],['yes','no']];
+const unart=v=>v.replace(/^(?:a|an|the) /,'');
+/* the words a word is the opposite of: a negating prefix added or removed, a known prefix/suffix swap, a known pair */
+function opposites(w){const out=new Set();for(const p of NEG_PRE){out.add(p+w);if(w.startsWith(p)&&w.length-p.length>=4)out.add(w.slice(p.length));}
+ for(const [a,b] of SWAP_PRE)for(const [u,v] of [[a,b],[b,a]])if(w.startsWith(u)&&w.length>u.length+1)out.add(v+w.slice(u.length));
+ for(const [a,b] of SWAP_SUF)for(const [u,v] of [[a,b],[b,a]])if(u!==v&&w.endsWith(u)&&w.length>u.length)out.add(w.slice(0,-u.length)+v);
+ for(const [a,b] of SWAP_WORD){if(w===a)out.add(b);if(w===b)out.add(a);}out.delete(w);return out;}
+export function notTypo(value,expected,q={}){const v=unart(String(value).trim().toLowerCase()),k=unart(String(expected).trim().toLowerCase());if(!v||v===k)return false;
+ const vw=v.split(/[ -]+/),kw=k.split(/[ -]+/);
+ if(vw.length===kw.length){const diff=vw.map((w,i)=>[w,kw[i]]).filter(([a,b])=>a!==b);if(diff.length===1&&stem(diff[0][0])===stem(diff[0][1]))return false;}
+ else if(vw.length===1&&kw.some(w=>stem(w)===stem(v)))return !kw.every(w=>stem(w)===stem(v)||w.length>2);
+ /* another word of the prompt, or as near to an opposite of the key as to the key itself ("irational") */
+ const d=editDistance(v,k,3),said=(String(q.prompt||'').toLowerCase().match(/[a-z'-]+/g)||[]),near=o=>o!==k&&editDistance(v,o,3)<=d;
+ for(let i=0;i<kw.length;i++)for(const o of opposites(kw[i]))if(near([...kw.slice(0,i),o,...kw.slice(i+1)].join(' ')))return true;
+ if(vw.length===1&&kw.length===1&&said.includes(v)&&stem(v)!==stem(k))return true;
+ const p=` ${said.join(' ')} `;return vw.length>1&&p.includes(` ${v} `)&&!(` ${k} `).includes(` ${v} `);}
 export function matchAnswer(input,q){if(!answerKey(input))return {ok:false,typo:false};
  if(q.numeric){const number=numberIn(input,q);return {ok:Number.isFinite(number)&&Math.abs(number-Number(q.answer))<=numericTolerance(q.answer)+1e-12,typo:false};}
  if(PLAIN_NUMBER.test(String(q.answer).trim())){const n=numberIn(input,q);if(Number.isFinite(n)&&n===Number(String(q.answer).replace(/,/g,'')))return {ok:true,typo:false};}
@@ -197,6 +218,10 @@ export function matchAnswer(input,q){if(!answerKey(input))return {ok:false,typo:
   if(iv){const said=new Set((String(q.prompt||'').toLowerCase().match(/[a-z']+/g)||[]).map(stem));for(const a of forms){const f=canon(answerKey(a));if(!f||f[0]!==iv[0])continue;if(f[1]===iv[1]||stem(f[1])===stem(iv[1])&&iv[1])return {ok:true,typo:false};
    if(!iv[1]&&/^[a-z]{3,}$/.test(f[1])&&!UNIT_WORD.test(stem(f[1]))&&!/^(?:north|south|east|west|northeast|northwest|southeast|southwest|left|right|up|down|above|below|forward|back|backward|clockwise|counterclockwise)$/.test(f[1])/* not a direction ("55 south") */&&said.has(stem(f[1]))&&/^[a-z]{3,}$/.test(String(a).trim().split(' ').slice(1).join(' ')))return {ok:true,typo:false};}}}
  const others=(choicesOf(q)||[]).flatMap(c=>[c.value,c.text||c.value]).map(key).filter(k=>!forms.some(a=>key(a)===k));
- for(const a of forms){const lim=typoLimit(a,q);if(!lim||/[^a-z' -]/.test(value))continue;const d=editDistance(value,key(a),lim);if(d<=lim&&!others.some(o=>editDistance(value,o,lim)<=Math.max(d,lim)))return {ok:true,typo:true,expected:String(a)};}
+ for(const a of forms){const lim=typoLimit(a,q);if(!lim||/[^a-z' -]/.test(value))continue;const d=editDistance(value,key(a),lim);if(d<=lim&&!others.some(o=>editDistance(value,o,lim)<=Math.max(d,lim))&&/* improve26-r26b-nov6 #1 */!notTypo(value,key(a),q))return {ok:true,typo:true,expected:String(a)};}
  return {ok:false,typo:false};}
 export function accepts(input,q){return matchAnswer(input,q).ok;}
+/* improve26-r26b-nov6 #1: a tile is right only by being the key itself (a leading a/an/the aside), never by typo forgiveness; a tapped tile is
+   graded by identity with that one tile: {ok} when input is one of the tiles and exactly one tile is the key, else null (graded as typed) */
+export function acceptsExact(input,q){const m=matchAnswer(input,q);return m.ok&&(!m.typo||unart(answerKey(input))===unart(answerKey(m.expected)));}
+export function tileGraded(input,q,tiles){if(!Array.isArray(tiles)||!tiles.some(x=>x&&x.value===input))return null;const r=tiles.filter(x=>acceptsExact(x.value,q));return r.length===1?{ok:r[0].value===input}:null;}

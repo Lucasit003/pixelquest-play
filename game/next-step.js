@@ -16,7 +16,7 @@ import {ABILITIES} from './abilities.js';
 import {SUBJECTS} from './data.js';
 import {unlocked,abilityMastery,xpLevel} from './math.js';
 import {TOPICS,testReady,mastered,topicOpen,PASS,QUIZ_SIZE} from '../academics/lessons.js';/* improve24-r24k-nov5 #1 */import {testSumOn} from '../academics/lessons.js';
-import {topicInSchoolMode} from '../academics/study-unlock.js';
+import {topicInSchoolMode,/* improve26-r26b-nov6 #3 */testDue} from '../academics/study-unlock.js';
 import {TIER_KEYS,TIERS} from './tiers.js';
 import {nextTask} from './skills.js';
 import {potionCount,potionKind,POTIONS} from './potions.js';
@@ -253,7 +253,7 @@ function baseStep(save,{room}={}){goalSave=save;
  if(!levelDone(save,'e1')){const lib=libraryOpening(save),t=!lib&&!earned(save)&&firstQuizDue(save);if(t)return {id:'quiz',text:`Take the quiz on “${t.title}” at the Library, then try your new skills.`,target:{kind:'library'}};
   return {id:'goblin-camp',text:lib?`Next adventure: ${levelById('e1')?.name||'Goblin Camp'}.`:`Try your new skills: ${levelById('e1')?.name||'Goblin Camp'}.`,target:{kind:'pad',id:'e1'}};}
  if(!earned(save)&&a){
-  const t=inProgress(save,a.subject);
+  /* improve26-r26b-nov6 #3: a topic whose mastery test is open, in any subject, is finished first (the nearest power may need a subject not yet begun) */const t=inProgress(save,a.subject)||testDue(save);
   if(!t)return {id:'start-lesson',text:`Start ${/^[aeiou]/i.test(subject||'')?'an':'a'} ${subject} lesson at the Library.`/* exploit4-oct27: it read "Start a English lesson" */,target:{kind:'library'}};
   const r=testReady(save,t);
   /* polish-oct29 (#10): once a quiz was sat but not passed the goal says what passing takes (it kept saying "Take the quiz") */

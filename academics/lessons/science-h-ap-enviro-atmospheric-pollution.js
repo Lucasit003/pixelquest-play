@@ -3665,7 +3665,7 @@ const sections=[
     "A ten-decibel difference represents a factor of ten in sound intensity. Decibels express a logarithmic ratio, not a mass."
    ],
    [
-    "For the same reference, how does 90 dB sound intensity compare with 70 dB?",
+    "Measured against the same reference intensity, how does 90 dB sound intensity compare with 70 dB?",
     "It is 100 times as great",
     "It is 20 times as great",
     "It is 90/70 times as great",
@@ -4139,7 +4139,7 @@ const sections=[
     "t": "passages",
     "title": "Read and decide",
     "texts": [
-     "For the same reference, how does 90 dB sound intensity compare with 70 dB?"
+     "Measured against the same reference intensity, how does 90 dB sound intensity compare with 70 dB?"
     ],
     "small": false
    },

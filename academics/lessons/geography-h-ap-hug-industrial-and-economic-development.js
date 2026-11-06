@@ -1677,7 +1677,7 @@ const sections=[
     "Revenue is price times quantity: 3 × 20 = 60, down from 4 × 20 = 80."
    ],
    [
-    "In that 80-to-60 revenue change, what is the percentage decline?",
+    "A fictional commodity exporter's revenue falls from 80 to 60. What is the percentage decline?",
     "25%",
     "20%",
     "33.3%",
@@ -3883,7 +3883,7 @@ const sections=[
     "Total use is intensity times output, so efficiency improves while the larger output raises overall use."
    ],
    [
-    "For that 600-to-800 change, what is the percentage increase to one decimal place?",
+    "A fictional town's total energy use rises from 600 to 800. What is the percentage increase to one decimal place?",
     "33.3%",
     "25.0%",
     "200.0%",

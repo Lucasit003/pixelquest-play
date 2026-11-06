@@ -6818,7 +6818,7 @@ const sections=[
     "Oxidation creates cations on the zinc side, so anion migration helps maintain solution electroneutrality."
    ],
    [
-    "In that Zn/Cu cell, why do bridge cations migrate toward the copper cathode solution?",
+    "In a galvanic Zn/Cu cell (zinc anode, copper cathode) joined by a salt bridge, why do bridge cations migrate toward the copper cathode solution?",
     "Cu2+ consumption leaves excess anionic charge unless cations enter",
     "Copper reduction creates extra Cu2+",
     "Cations are electrons moving through salt",

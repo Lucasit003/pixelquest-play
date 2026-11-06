@@ -2360,14 +2360,14 @@ const sections=[
     "The author’s policy claim needs separate evaluation; scientific vocabulary does not make it a demonstrated biological conclusion."
    ],
    [
-    "In the original model, 40 A and 60 B organisms are counted initially. What share is A?",
+    "In a fictional population model, 40 A and 60 B organisms are counted initially. What share is A?",
     "40 percent",
     "60 percent",
     "25 percent",
     "The total is 100; forty of that total gives forty percent."
    ],
    [
-    "In the original model, the next generation contains 60 A and 60 B organisms. What share is A?",
+    "In a fictional population model, the next generation contains 60 A and 60 B organisms. What share is A?",
     "50 percent",
     "60 percent",
     "40 percent",
@@ -2882,7 +2882,7 @@ const sections=[
     "t": "passages",
     "title": "Read and decide",
     "texts": [
-     "In the original model, 40 A and 60 B organisms are counted initially. What share is A?"
+     "In a fictional population model, 40 A and 60 B organisms are counted initially. What share is A?"
     ],
     "small": false
    },
@@ -2890,7 +2890,7 @@ const sections=[
     "t": "passages",
     "title": "Read and decide",
     "texts": [
-     "In the original model, the next generation contains 60 A and 60 B organisms. What share is A?"
+     "In a fictional population model, the next generation contains 60 A and 60 B organisms. What share is A?"
     ],
     "small": false
    },
@@ -3454,7 +3454,7 @@ const sections=[
     "Infrastructure can have several effects; its design, financing and use reveal its purposes and beneficiaries."
    ],
    [
-    "In the original freight model, the charge falls from 30 to 18 units per ton. What is the saving per ton?",
+    "In a fictional freight example, the charge falls from 30 to 18 units per ton. What is the saving per ton?",
     "12 units",
     "48 units",
     "18 units",
@@ -3468,7 +3468,7 @@ const sections=[
     "The saving of 12 is forty percent of the original 30; eighteen is sixty percent remaining."
    ],
    [
-    "At the original exercise’s later rate of 18 units per ton, what does shipping 200 tons cost?",
+    "At a fictional freight rate of 18 units per ton, what does shipping 200 tons cost?",
     "3,600 units",
     "2,400 units",
     "6,000 units",
@@ -4068,7 +4068,7 @@ const sections=[
     "t": "passages",
     "title": "Read and decide",
     "texts": [
-     "In the original freight model, the charge falls from 30 to 18 units per ton. What is the saving per ton?"
+     "In a fictional freight example, the charge falls from 30 to 18 units per ton. What is the saving per ton?"
     ],
     "small": false
    },
@@ -4084,7 +4084,7 @@ const sections=[
     "t": "passages",
     "title": "Read and decide",
     "texts": [
-     "At the original exercise’s later rate of 18 units per ton, what does shipping 200 tons cost?"
+     "At a fictional freight rate of 18 units per ton, what does shipping 200 tons cost?"
     ],
     "small": false
    },

@@ -1287,7 +1287,7 @@ const sections=[
     "Subtracting 60 from 100 gives 40 units, equal to 40 percent of the claimed 100; the data are fictional."
    ],
    [
-    "In that kind of fictional production audit, what would best strengthen a conclusion about actual food availability?",
+    "A fictional audit checks an official claim that a food-production target was met. What would best strengthen a conclusion about actual food availability?",
     "Independent harvest, storage and distribution records",
     "Another unverified copy of the same target",
     "The assumption that a target must have been reached",

@@ -114,11 +114,11 @@ function adaptiveStep(run){const g=run.at,asked=run.items.slice(0,run.i).filter(
 export function secondStart(save,subject){const mid=save?.schoolMode==='middle';if(save?.schoolMode&&save.schoolMode!=='elementary'&&!mid)return null;const gs=grades(subject),p=save?.placement||{},[lo,hi]=mid?[6,8]:[2,5];
  const other=Object.entries(p).filter(([k,v])=>k!==subject&&Number.isInteger(v)&&v>lo&&v<=hi).map(([,v])=>v);if(!other.length)return null;
  const g=Math.min(...other);return gs.includes(g)&&g>placementGrade(save,subject)?g:null;}
-export function answerPlacement(save,run,id,input){
+export function answerPlacement(save,run,id,input,{tiles=null}={}/* improve26-r26b-nov6 #1 */){
  if(!run||run.closed||run.items[run.i]?.id!==id||!String(input).trim())return null;
  /* Retirement and XP count as usual; mastering a topic by retiring its last question does not,
     because this check opens grades and nothing else. */
- const r=grade(save,run.items[run.i],input,{master:false});run.right[id]=r.ok;run.i++;run.xp+=r.xp;
+ const r=grade(save,run.items[run.i],input,{master:false,tiles});run.right[id]=r.ok;run.i++;run.xp+=r.xp;
  /* improve20-z-nov1 #2: two misses in a row inside one grade's block mark the run to stop (stopPlacement) */
  /* improve20-r20g-nov4 #1: the adaptive Elementary check moves on per block instead (adaptiveStep); its blocks end as soon as they are decided */
  if(run.adaptive){adaptiveStep(run);/* PLACEMENT_STREAK misses in a row still end it kindly (improve20-r10a-nov2 #3); what was answered is scored */if(!r.ok&&run.i>=PLACEMENT_STREAK&&run.items.slice(run.i-PLACEMENT_STREAK,run.i).every(q=>run.right[q.id]===false)){run.stop=true;run.streak=true;run.done=true;}return r;}

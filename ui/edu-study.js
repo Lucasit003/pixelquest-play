@@ -78,7 +78,7 @@ export function nextLessonHTML(save,{hero=save.hero,subject=null}={}){
  const t=n.topic,sub=SUBJECTS[t.subject]||{name:t.subject,color:'#e7c77e'};
  /* The card steps on through the topic (playtest S2-3): lesson, then quiz, then practice, then the test,
     never re-offering a finished lesson. */
- const g=topicStage(save,t),act={lesson:['Next lesson','data-lesson','Start lesson'],quiz:['Next: the quiz','data-quiz','Take the quiz'],practice:['Next: practice','data-practice',practiceLeft(g)],test:['Next: the mastery test','data-test','Mastery test']}[g.stage]||['Next lesson','data-lesson','Start lesson'];
+ const g=topicStage(save,t),act={lesson:['Next lesson','data-lesson','Start lesson'],quiz:['Next: the quiz','data-quiz','Take the quiz'],practice:['Next: practice','data-practice',practiceLeft(g)],test:['Next: the mastery test','data-test',/* improve26-r26b-nov6 #3: the red names its test */n.test?`Mastery test: ${t.title}`:'Mastery test']}[g.stage]||['Next lesson','data-lesson','Start lesson'];
  /* The Library agrees with the town strip (game/next-step.js, playtest S4): when the next step is an adventure,
     the card says so and the study step stays offered, but not insisted on. A subject station keeps its own card. */
  const step=subject?null:nextStep(save),lv=step?.target?.kind==='pad'?levelById(step.target.id):null;

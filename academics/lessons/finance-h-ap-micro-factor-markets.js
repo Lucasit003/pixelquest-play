@@ -3590,7 +3590,7 @@ const sections=[
     "At L=16, both supply wage and MRP equal 26. Using the monopsony MRC instead picks too little labor for this competitive benchmark; the other quantity does not clear it."
    ],
    [
-    "In the original smooth model w=10+2L and MRP=70-2L, a uniform wage floor of 40 dollars is imposed. What employment maximizes profit when the firm must pay at least the floor?",
+    "In a fictional monopsony model with labor supply w=10+2L and MRP=70-2L, a uniform wage floor of 40 dollars is imposed. What employment maximizes profit when the firm must pay at least the floor?",
     "15",
     "10",
     "5",

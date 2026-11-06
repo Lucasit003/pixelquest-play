@@ -1291,7 +1291,7 @@ const sections=[
     "Two hundred hours at four items per hour reconstruct the total; reversing the ratio changes the unit."
    ],
    [
-    "In the original workshop, productivity rises from 4 to 6 items per hour. What is the percentage increase?",
+    "In a fictional workshop, productivity rises from 4 to 6 items per hour. What is the percentage increase?",
     "50 percent",
     "2 percent",
     "150 percent",
@@ -1739,7 +1739,7 @@ const sections=[
     "t": "passages",
     "title": "Read and decide",
     "texts": [
-     "In the original workshop, productivity rises from 4 to 6 items per hour. What is the percentage increase?"
+     "In a fictional workshop, productivity rises from 4 to 6 items per hour. What is the percentage increase?"
     ],
     "small": false
    },
@@ -1921,14 +1921,14 @@ const sections=[
     "Four baskets at three units each reconstruct the twelve-unit wage in this invented example."
    ],
    [
-    "Later that household earns 15 units and the same basket costs 5. How many baskets can it buy?",
+    "A fictional household's wage rises from 12 to 15 units while a fixed basket's price rises from 3 to 5. How many baskets can the new wage buy?",
     "3 baskets",
     "5 baskets",
     "75 baskets",
     "Three baskets cost fifteen units; a larger money wage alone does not imply greater purchasing power."
    ],
    [
-    "What happened to purchasing power in the original household’s change from four baskets to three?",
+    "A fictional household's wage rose, but it can now buy three baskets instead of four. What happened to its purchasing power?",
     "It fell by 25 percent despite the nominal wage increase",
     "It rose by 25 percent because the wage number rose",
     "It stayed constant because both prices and wages changed",
@@ -2662,7 +2662,7 @@ const sections=[
     "t": "passages",
     "title": "Read and decide",
     "texts": [
-     "Later that household earns 15 units and the same basket costs 5. How many baskets can it buy?"
+     "A fictional household's wage rises from 12 to 15 units while a fixed basket's price rises from 3 to 5. How many baskets can the new wage buy?"
     ],
     "small": false
    },
@@ -2670,7 +2670,7 @@ const sections=[
     "t": "passages",
     "title": "Read and decide",
     "texts": [
-     "What happened to purchasing power in the original household’s change from four baskets to three?"
+     "A fictional household's wage rose, but it can now buy three baskets instead of four. What happened to its purchasing power?"
     ],
     "small": false
    }
@@ -4751,7 +4751,7 @@ const sections=[
     "The later 120 plus the reduction of 80 reconstruct the original count of 200 in this invented example."
    ],
    [
-    "What percentage decline is represented by the original town’s change from 200 cases to 120?",
+    "What percentage decline is a fictional town's change from 200 cases to 120?",
     "40 percent",
     "60 percent",
     "80 percent",
@@ -5235,7 +5235,7 @@ const sections=[
     "t": "passages",
     "title": "Read and decide",
     "texts": [
-     "What percentage decline is represented by the original town’s change from 200 cases to 120?"
+     "What percentage decline is a fictional town's change from 200 cases to 120?"
     ],
     "small": false
    },

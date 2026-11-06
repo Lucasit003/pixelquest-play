@@ -3439,14 +3439,14 @@ const sections=[
     "The stated UN classification places Fiji in Melanesia; specifying the convention prevents treating all regional schemes as identical."
    ],
    [
-    "In the same stated UN convention, the Marshall Islands belong to which subregion?",
+    "In the UN's M49 standard regions, the Marshall Islands belong to which subregion?",
     "Micronesia",
     "South Asia",
     "Eastern Europe",
     "The UN statistical scheme groups the Marshall Islands in Micronesia; this is different from a political federation."
    ],
    [
-    "In the stated UN convention, Samoa belongs to which subregion?",
+    "In the UN's M49 standard regions, Samoa belongs to which subregion?",
     "Polynesia",
     "Central Asia",
     "Melanesia",
