@@ -16,7 +16,7 @@ import {ABILITIES} from './abilities.js';
 import {SUBJECTS} from './data.js';
 import {unlocked,abilityMastery,xpLevel} from './math.js';
 import {TOPICS,testReady,mastered,topicOpen,PASS,QUIZ_SIZE} from '../academics/lessons.js';/* improve24-r24k-nov5 #1 */import {testSumOn} from '../academics/lessons.js';
-import {topicInSchoolMode,/* improve26-r26b-nov6 #3 */testDue} from '../academics/study-unlock.js';
+import {topicInSchoolMode,/* improve26-r26b-nov6 #3 */testDue,/* improve26-r26d-nov6 #3 */quizDue} from '../academics/study-unlock.js';
 import {TIER_KEYS,TIERS} from './tiers.js';
 import {nextTask} from './skills.js';
 import {potionCount,potionKind,POTIONS} from './potions.js';
@@ -119,7 +119,7 @@ function firstLibrary(save,room){if(room!=='library')return {id:'first-lesson',t
    that woke it, main.js; game/levels.js recordLevel counts a won level down). Only the suggestion: the Library stays open and a kid who
    goes there gets the normal lesson flow. */
 export const FIGHT_HOLD=2;
-export function chargeStep(save){if(save?.goalTurn!=='learn'||!earned(save)||gameCleared(save))return null;const road=learningRoad(save);
+export function chargeStep(save){if(save?.goalTurn!=='learn'||!earned(save)||gameCleared(save))return null;/* improve26-r26d-nov6 #3: after the quiz card's fight break is won, the retake it promised */{const q=quizDue(save);if(q)return {id:'quiz-retake',text:`Retake the quiz on “${q.title}” at the Library.`,target:{kind:'library'},topic:q.id};}const road=learningRoad(save);
  if(!road||road.sleeping||!road.reachable||road.knowledge||road.remaining<1)return null;const a=road.ability,st=nextUnlockStep(save,road),sub=SUBJECTS[a.subject]?.name||a.subject,t=st?.topic&&TOPICS.find(x=>x.id===st.topic);
  const left=st?.kind==='practice'?st.need-st.have:0,what=st?.kind==='practice'&&t?`practise ${left} more question${left===1?'':'s'} in “${t.title}”`:st?.kind==='quiz'&&t?`pass the quiz on “${t.title}”`:st?.kind==='test'&&t?`take the mastery test on “${t.title}”`:`start ${/^[aeiou]/i.test(sub)?'an':'a'} ${sub} lesson`;
  return {id:'charge',text:`Charge ${a.name} (${road.done}/${road.total}): ${what} at the Library.`,target:{kind:'library'},charge:{ability:a.id,done:road.done,total:road.total}};}

@@ -9,6 +9,7 @@ import {lessonGradeLabel} from './lesson-labels.js';
      mountStudyPanel(el,save,{limit:3,onOpenLibrary:()=>library(),onOpenLesson:id=>startLesson(id)});
    Buttons carry data-edu-lesson="<topic id>" and data-edu-library; mountStudyPanel wires them. */
 import {studyPlan,nextLesson,topicStage,placementNudge} from '../academics/study-unlock.js';
+import {shelfNearer} from '../academics/learning-road.js';/* improve26-r26d-nov6 #1 */
 import {SUBJECTS} from '../game/data.js';
 import {xpFor,xpLevel} from '../game/math.js';
 import {nextStep} from '../game/next-step.js';
@@ -70,7 +71,8 @@ export function nextLessonHTML(save,{hero=save.hero,subject=null}={}){
  const awayHTML=away?`<b class="edu-away-k">${esc(awayK)}</b> ${esc(away)}`:'';
  /* oct25-tryit P1: when a subject the child has not placed in would reach an ability sooner, that one line replaces the
     "Fastest next ability" line (it is nearer by definition) and offers the subject's Find-your-level check. */
- const nudge=placementNudgeHTML(save,{hero});
+ /* improve26-r26d-nov6 #1: when the shelf's top card already leads with a nearer power (learning-road.js shelfNearer), this card does not repeat it */
+ const lead=subject?shelfNearer({...save,hero},subject):null,nudge=lead&&placementNudge(save,{hero})?.ability?.id===lead.ability.id?'':placementNudgeHTML(save,{hero}),awayIn=!(lead&&all?.ability?.id===lead.ability.id);
  /* oct24-r3 playtest: the line is also a button to that shelf, so a child does not start an off-road lesson by default */
  const go=away?` <button type="button" class="edu-next-go" data-away-subject="${esc(all.topic.subject)}">Go to ${esc(SUBJECTS[all.topic.subject]?.name||all.topic.subject)}</button>`:'';
  if(!n&&nudge)return `<p class="edu-next-away edu-place-nudge-row">${nudge}</p>`;
@@ -85,7 +87,7 @@ export function nextLessonHTML(save,{hero=save.hero,subject=null}={}){
  if(lv){act[0]=g.stage==='practice'?`Practice paused: ${lv.name} awaits!`:`${lv.name} awaits!`;}
  const keep=lv?(g.stage==='practice'?'You can keep practising.':'You can keep studying.'):'';
  const say=lv?`${act[0]} ${step.text} ${keep}`:`${act[0]}: ${t.title}. ${n.goal}`;
- return `<section class="edu-next${lv?' edu-next-adventure':''}" style="--accent:${sub.color}" aria-label="${esc(act[0])}" data-stage="${g.stage}" data-next-subject="${esc(t.subject)}"${lv?` data-next-level="${esc(lv.id)}"`:''}>${subjectIcon(t.subject)}<div class="edu-next-text"><span class="edu-next-k">${esc(act[0])}</span>${lv?`<strong>${esc(step.text)}</strong><small>${esc(keep)} <span class="edu-next-title">“${esc(t.title)}”</span> · <span class="edu-nw">${esc(sub.name)}</span> · <span class="edu-nw">${esc(lessonGradeLabel(t))}</span></small>`:`<strong>${esc(t.title)}</strong><small>${esc(sub.name)} · ${esc(lessonGradeLabel(t))}</small>${n.goal?`<span class="edu-next-goal">${esc(n.goal)}</span>`:''}${g.stage==='practice'?`<span class="edu-next-why">${esc(practiceWhy(g.needed))}</span>`:''}`}${nudge?`<span class="edu-next-away edu-place-nudge-row">${placementNudgeHTML(save,{hero,button:false})}</span>`:away?`<span class="edu-next-away" data-away="${esc(all.topic.subject)}">${awayHTML}${go}</span>`:''}</div><div class="edu-next-actions">${/* the primary button does what the headline says (polish, 19 Oct): go to the adventure */lv?`<button type="button" class="primary" data-go-adventure="${esc(lv.id)}">Go to ${esc(lv.name)}</button>`:''}<button type="button"${lv?'':' class="primary"'} ${act[1]}="${esc(t.id)}">${esc(act[2])}</button>${nudge?placementNudgeButton(save,{hero}):''}${readButtonHTML(say)}</div></section>`;
+ return `<section class="edu-next${lv?' edu-next-adventure':''}" style="--accent:${sub.color}" aria-label="${esc(act[0])}" data-stage="${g.stage}" data-next-subject="${esc(t.subject)}"${lv?` data-next-level="${esc(lv.id)}"`:''}>${subjectIcon(t.subject)}<div class="edu-next-text"><span class="edu-next-k">${esc(act[0])}</span>${lv?`<strong>${esc(step.text)}</strong><small>${esc(keep)} <span class="edu-next-title">“${esc(t.title)}”</span> · <span class="edu-nw">${esc(sub.name)}</span> · <span class="edu-nw">${esc(lessonGradeLabel(t))}</span></small>`:`<strong>${esc(t.title)}</strong><small>${esc(sub.name)} · ${esc(lessonGradeLabel(t))}</small>${n.goal?`<span class="edu-next-goal">${esc(n.goal)}</span>`:''}${g.stage==='practice'?`<span class="edu-next-why">${esc(practiceWhy(g.needed))}</span>`:''}`}${nudge?`<span class="edu-next-away edu-place-nudge-row">${placementNudgeHTML(save,{hero,button:false})}</span>`:away&&awayIn?`<span class="edu-next-away" data-away="${esc(all.topic.subject)}">${awayHTML}${go}</span>`:''}</div><div class="edu-next-actions">${/* the primary button does what the headline says (polish, 19 Oct): go to the adventure */lv?`<button type="button" class="primary" data-go-adventure="${esc(lv.id)}">Go to ${esc(lv.name)}</button>`:''}<button type="button"${lv?'':' class="primary"'} ${act[1]}="${esc(t.id)}">${esc(act[2])}</button>${nudge?placementNudgeButton(save,{hero}):''}${readButtonHTML(say)}</div></section>`;
 }
 /* The P1 line: "Nearer: Quick Shot, about 1 Computer Science topic away. [Find your level in Computer Science]", or '' when no
    unplaced subject is nearer (study-unlock.js placementNudge). The button is wired once in main.js (data-find-level). */

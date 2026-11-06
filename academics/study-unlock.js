@@ -175,6 +175,10 @@ export function nextLesson(save,{hero=save.hero,subject=null}={}){
  /* at a subject station a far ability of that subject (more than 12 topics) is named without its long count; the shared one keeps its goal line */
  const o=nextLessonRaw(save,{hero,subject}),p=o?.ability&&nextPower(save,{hero});if(o?.ability&&p&&p.a.id!==o.ability.id){const l=o.lessons|0;if(l>12)return {...o,goal:`Builds ${SUBJECTS[o.ability.subject]?.name||o.ability.subject} toward ${o.ability.name}`};}return o;}
 /* improve26-r26b-nov6 #3: the open, unmastered topic of this school stage (and subject) whose mastery test is open, a sat one first, or null */
+/* improve26-r26d-nov6 #3 (audit17 #7): a topic whose quiz failed QUIZ_BREAK_MISSES sittings in a row (lessons.js recordQuiz qmiss, cleared by a pass) is the
+   one the quiz card's fight break promised to come back to ("Fight X, then retake"): after a won fight the next goal and the Library door name it. Read-only. */
+export const QUIZ_BREAK_MISSES=2;
+export function quizDue(save){for(const t of TOPICS){const r=save?.lessons?.[t.id];if(!r?.done||(r.qmiss|0)<QUIZ_BREAK_MISSES||mastered(save,t)||!topicInSchoolMode(save,t)||!topicOpen(save,t)||testReady(save,t).quiz)continue;return t;}return null;}
 export function testDue(save,subject=null){let best=null;for(const t of TOPICS){if(subject&&t.subject!==subject||mastered(save,t)||!topicInSchoolMode(save,t)||!topicOpen(save,t))continue;const r=save.lessons?.[t.id];if(!r?.done||!testReady(save,t).ready)continue;const sat=(r.test|0)>0||(Array.isArray(r.testright)&&r.testright.length>0)||(Array.isArray(r.miss)&&r.miss.length>0);if(sat)return t;best??=t;}return best;}
 function nextLessonRaw(save,{hero=save.hero,subject=null}={}){
  const plans=studyPlan(save,{hero,subject,limit:8});

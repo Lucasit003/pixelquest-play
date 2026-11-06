@@ -4717,6 +4717,14 @@ html.m-mode dialog[data-view=lesson-summary] #modal-content>.result.r26a-sum-ph>
 #modal-content .edu-unlock p.edu-unlock-seal{display:block;width:fit-content;max-width:min(100%,65ch);margin:6px auto;padding:4px 10px;border-left:3px solid #a984ff;background:#2a1c48;color:#efe6ff;font:700 16px/1.25 var(--ui);text-align:left;box-sizing:border-box}
 html.m-mode #modal-content .edu-unlock p.edu-unlock-seal{margin:4px auto;padding:3px 8px;font-size:14px;line-height:1.2}
 
+/* improve26-r26d-nov6 #3 (placed before the tablets-nov2 block, which must stay last) (audit17 #7, shot 15): a quiz sitting that ends early says why in
+   one line, in the pass box's shape: a quiz that can no longer reach 4 of 5 (warm ink, never red), and the Library's nearer-power step button (#1) */
+#modal#modal[data-view=lesson-quiz] .quiz-moot{border-color:#c9a25a;background:rgba(201,162,90,.14)}#modal#modal[data-view=lesson-quiz] .quiz-moot b{color:#6a4614}
+.am-goal .road-near-go{margin:2px 0 0 4px;padding:4px 10px;vertical-align:middle;font-size:16px}.am-goal .road-far{grid-column:2;font-size:16px;opacity:.85}
+/* improve26-r26d-nov6 #2 (lead's addendum): a phone mastery card still over its sheet (ui/summary-fit.js sumPhone, r26d-sum-span) puts its buttons on one row under both columns; a long label wraps inside its button */
+@media (max-height:599.98px) and (min-width:700px){html.m-mode dialog[data-view=lesson-summary] #modal-content>.result.r26a-sum-ph.r26d-sum-span>:is(.modal-actions,.actions){grid-column:1/-1;grid-row:13;flex-wrap:nowrap;width:100%}
+html.m-mode dialog[data-view=lesson-summary] #modal-content>.result.r26a-sum-ph.r26d-sum-span>:is(.modal-actions,.actions)>button{flex:1 1 0;min-width:0;white-space:normal;line-height:1.15}
+html.m-mode dialog[data-view=lesson-summary] #modal-content>.result.r26a-sum-ph>.r26a-side>.mm-look{width:100%;margin:0;box-sizing:border-box}}
 /* improve26-r26c-nov6 (placed before the tablets-nov2 block, which must stay last). #1 (audit17 #4): the hoisted YOU GOT, chest row and level-up
    ribbon of a busy win card (ui/result-phone.js momentFit) stand outside the scrolling middle, at their own height */
 html:not(.m-mode) dialog[data-view=result] #modal-content>.level-result.r26c-hoist>:is(.you-got,.result-chests,.f2-lv-ribbon,.f2-boss-talk,.level-quote){flex:none;margin-left:auto;margin-right:auto}

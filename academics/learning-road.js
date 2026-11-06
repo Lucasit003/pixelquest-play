@@ -19,6 +19,12 @@ export function learningRoad(save,subject){
  const route=lessonsToUnlock(save,ability),done=TOPICS.filter(t=>t.subject===ability.subject&&mastered(save,t)).length,total=done+route.lessons;
  return {ability,done,total,remaining:route.lessons,reachable:route.reachable,topics:route.topics,sleeping:!!sleeping,knowledge:route.reachable&&route.lessons===0,level:(save.level||1)>=xpLevel(ability),levelNeed:xpLevel(ability),percent:total?Math.round(done/total*100):route.reachable?100:0,/* improve26-r26b-nov6 #2: the subject whose Find-your-level check opens this road (the shared next power needs a subject not yet placed in), else null */place:!sleeping&&np?.a?.id===ability.id&&np.place||null};
 }
+/* improve26-r26d-nov6 #1: a subject shelf's own road (`own`, learningRoad(save,subject)) against the shared next power (`shared`, learningRoad(save)):
+   the shared road when it is another subject's power and strictly nearer in topics (or this shelf's road cannot be finished), else null.
+   shelfNearer(save,subject) is the same for a save. Read-only. */
+export function nearerRoad(own,shared,subject){if(!own||!shared||own.sleeping||shared.sleeping||!shared.reachable||shared.knowledge||!(shared.remaining>0))return null;
+ if(shared.ability.id===own.ability.id||shared.ability.subject===subject)return null;return !own.reachable||shared.remaining<own.remaining?shared:null;}
+export const shelfNearer=(save,subject)=>subject?nearerRoad(learningRoad(save,subject),learningRoad(save),subject):null;
 /* juice-oct27 ("N more to unlock", new-player playtest idea 5): the one concrete step that brings the next ability nearer, for
    the HUD card's pip. Read-only and rule-free: it names what learningRoad() and the topic gate (lessons.js testReady) already
    say, so the pip never promises more than the game checks. A topic already under way speaks first ("Practice 6 more

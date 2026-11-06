@@ -13,3 +13,7 @@ export const leadLabel=(save,id,label,shut=false)=>leadStarts(save,id,shut)?labe
 export const breakText=(name,g)=>{const left=Math.max(0,(g?.needed|0)-(g?.practice|0));return `Fight ${name}, then ${left} more practice answer${left===1?'':'s'} (${g?.practice|0} of ${g?.needed|0} done)`;};
 /* improve23-r23t-nov4 #2 (kidsim6 #1): a failed first-topic test's red, the quiz's split: "Fight Goblin Camp, then try the test again" */
 export const testBreakText=name=>`Fight ${name}, then try the test again`;
+/* improve26-r26d-nov6 #3 (audit17 #7, kidsim9 #5): the second failed quiz sitting in a row on a topic leads with one adventure first, the test break's
+   shape; the retake stays one tap away. QUIZ_BREAK_MISSES: failed sittings in a row (academics/lessons.js recordQuiz qmiss) */
+export {QUIZ_BREAK_MISSES} from '../academics/study-unlock.js';
+export const quizBreakText=name=>`Fight ${name}, then retake`;

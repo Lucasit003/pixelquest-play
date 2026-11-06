@@ -230,7 +230,9 @@ export const STORY = [
   {id: 'plaza-2', trigger: 'near', room: 'village', x: 1478, y: 1150, r: 150, speaker: 'Bess', when: {step: 'first-lesson', notSeen: 'plaza', library: false},
     say: ['You’re the one who chased the goblins off the gate! The Archivist wants to meet you.', 'The Library is the big timber building west of the fountain.']},
   /* a Library-first save meets Aldous in his tour instead (main.js marks this beat seen when the tour opens) */
-  {id: 'library', trigger: 'enter', room: 'library', speaker: 'Archivist Aldous',
+  /* improve26-r26d-nov6 #5 (audit17 minor: Aldous replayed this welcome to an L15 hero whose save had never marked it seen): first visits only, gated
+     the way the guild's first-visit beat is (before Goblin Camp is won) */
+  {id: 'library', trigger: 'enter', room: 'library', speaker: 'Archivist Aldous', when: {notDone: 'e1'},
     say: ['Welcome to the Library! I am Aldous, the Archivist. I look after the books. Every shelf is a subject.', 'Your first lesson waits on the Next lesson card. What you learn here is your power out there.']},
   {id: 'guild', trigger: 'enter', room: 'guild_shop', speaker: 'Quartermaster Ilsa', when: {notDone: 'e1'},
     say: ['Welcome, adventurer! Goblins have taken the camp past the south gate.', 'Read the contract board, then leave by the south gate. The world map opens from there.']},

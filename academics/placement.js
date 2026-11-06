@@ -114,6 +114,12 @@ function adaptiveStep(run){const g=run.at,asked=run.items.slice(0,run.i).filter(
 export function secondStart(save,subject){const mid=save?.schoolMode==='middle';if(save?.schoolMode&&save.schoolMode!=='elementary'&&!mid)return null;const gs=grades(subject),p=save?.placement||{},[lo,hi]=mid?[6,8]:[2,5];
  const other=Object.entries(p).filter(([k,v])=>k!==subject&&Number.isInteger(v)&&v>lo&&v<=hi).map(([,v])=>v);if(!other.length)return null;
  const g=Math.min(...other);return gs.includes(g)&&g>placementGrade(save,subject)?g:null;}
+/* improve26-r26d-nov6 #4 (audit17 #17: "Your first check placed you at Grade 7" when no check was taken; the kid chose Grade 7 at the title, and
+   "Start a Grade 7 lesson now" set the placement with startAt): the words for where secondStart's grade came from. The grade the kid picked is what
+   they chose, check or not; another grade came from a check only when a finished check is recorded for one of those subjects (main.js
+   placementSummary: save.settings.placeChecks, additive in v9); otherwise the line only says where the other lessons start. -> the sentence */
+export function secondWhy(save,subject,g){if(g===save?.schoolGrade)return `You chose Grade ${g}.`;const by=Array.isArray(save?.settings?.placeChecks)?save.settings.placeChecks:[];
+ const from=Object.entries(save?.placement||{}).filter(([k,v])=>k!==subject&&v===g).map(([k])=>k);return from.some(k=>by.includes(k))?`Your first check placed you at Grade ${g}.`:`Your other lessons start at Grade ${g}.`;}
 export function answerPlacement(save,run,id,input,{tiles=null}={}/* improve26-r26b-nov6 #1 */){
  if(!run||run.closed||run.items[run.i]?.id!==id||!String(input).trim())return null;
  /* Retirement and XP count as usual; mastering a topic by retiring its last question does not,
