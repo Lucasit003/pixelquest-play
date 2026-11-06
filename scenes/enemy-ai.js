@@ -38,6 +38,7 @@ import {flashHit,TELE_PULSE,FRAME} from '../game/feel.js';
 import {VINE_SPRITE} from '../game/entrances.js';
 import {loadSprite,spriteFrame,spriteImage,drawSprite} from '../gfx/actors/sprites.js';
 import {sfx} from '../core/audio.js';
+import {armLegend,legendTick,legendTell} from './legend-moves.js';
 import {SIG_WORD,MOVE_KINDS,tellSound,panOf,tierAttacks,moveMarkers,moveInRange,beginMove,resolveMove,stepMove,echoAttack,pickOption,returnPass,afterHit,updateMoveFx,drawMoveFx,drawFall,darkLayer,drawLinks,perfectDodge} from './boss-moves.js';
 const OWN=new Set(MOVE_KINDS);
 
@@ -72,7 +73,7 @@ function brain(e,w){if(e.brain)return e.brain;const R=()=>rnd(w);
  /* sprites only scale by whole numbers: an elite (roster scales it by .75) is drawn at the largest whole scale below,
     and its reaches shrink with it so no hit lands beyond the art */
  /* the boss's moves as its tier plays them (heroic/legendary overrides, tier-only moves; game/enemies.js) */
- if(e.attacks?.some(a=>a.heroic||a.legendary||a.tiers))e.attacks=tierAttacks(e.attacks,e.tierKey);armHallPatterns(e,w);
+ if(e.attacks?.some(a=>a.heroic||a.legendary||a.tiers))e.attacks=tierAttacks(e.attacks,e.tierKey);armHallPatterns(e,w);/* improve27-r27a-nov6 #1 */armLegend(e,w);
  const want=Math.max(1,Math.floor((e.scale||1)+1e-6)),k=want/(d.scale||want);/* improve20-r18f-nov3 #1: a boss stepped down to fit a short view (combat.js fitBoss) shrinks only the moves that come from his body, so no hit lands past the drawn art and nothing else changes: a melee's reach (the Sleeper's lash, his drawn tentacle) and a leap's landing (his whole body); the grab, the wave, the darkness, the echoes and every move's choice range stay as they were */if(e.fitFrom&&e.attacks){if(Math.abs(k-1)>1e-6)e.attacks=e.attacks.map(a=>a.kind==='melee'?{...a,range:a.range*k}:a.kind==='leap'?{...a,radius:a.radius*k}:a);}else if(Math.abs(k-1)>1e-6&&e.attacks)e.attacks=e.attacks.map(a=>({...a,range:a.range*k,...(a.radius?{radius:a.radius*k}:{}),...(a.len?{len:a.len*k}:{})}));e.scale=want;
  e.state=hasState(e,'appear')&&e.summoned?'appear':'idle';e.z=e.z||0;
  /* identical clones must not move in lockstep or stack: random animation phase, and a nudge off any twin within 6 px */
@@ -152,7 +153,7 @@ function startTele(e,w,b,a){const p=w.player;emberPrepare(e,w,a);a=veilPrepare(e
  b.safeLane=(e.normalPacing&&a.kind==='sweep'||w.level?.encounter?.readable)&&(a.veilBeat!=null||a.kind==='sweep'||(w.level.encounter.emberkeep||w.level.encounter.veilmoor)&&['dash','wave','zone'].includes(a.kind)&&b.markers[0]?.shape==='box')?escapeRoute(w,b.markers[0],b.teleDur):null;
  if(a.veilPush)b.safeLane=veilSafe(w,a,b.markers);
  if((e.normalPacing&&a.kind==='sweep'||w.level?.encounter?.emberkeep||w.level?.encounter?.veilmoor)&&(a.veilBeat!=null||['sweep','dash','wave','zone'].includes(a.kind))&&b.markers[0]?.shape==='box'&&!b.safeLane){b.mode='move';b.gcd=.4;b.markers=[];if(a.forced||a.returnPass)b.force=a.name;if(a.returnPass)b.forceAtk=a;return;}
- (b.used||(b.used={}))[a.name]=(b.used[a.name]||0)+1;tellSound(e,w,a);if(a.hall&&e.boss&&!(b.repeat>1))hallTell(e,w,a,enemyTop(e),SIG_WORD);
+ (b.used||(b.used={}))[a.name]=(b.used[a.name]||0)+1;tellSound(e,w,a);/* improve27-r27a-nov6 #2 */if(a.legend&&legendTell(e,w,a))a=b.atk;if(a.hall&&e.boss&&!(b.repeat>1))hallTell(e,w,a,enemyTop(e),SIG_WORD);
  /* a boss names a signature move the first time it uses it in a fight, so a child can name the trick afterwards */
  if(e.boss&&a.label&&!(b.named||(b.named=new Set())).has(a.label)){b.named.add(a.label);if(!w.level?.encounter?.readable&&!e.normalPacing) w.text?.(a.label,e.x,enemyTop(e)-6,'#ffe2a8',true);}
  if(a.pose&&hasState(e,a.pose)){setState(e,a.pose);b.freeze=false;}
@@ -271,7 +272,7 @@ function step(e,w,dt,mover){_world=w;const b=brain(e,w);
  if(e.boss&&e.phaseShift&&b.phase===1&&e.hp<=e.maxHp*(e.phaseShift.at||.5)&&b.mode!=='act')enterPhase2(e,w,b);
  /* the Thorn King's phase change is roster.js's cinematic (a second life): follow it into phase two */
  if(e.cinematic&&e.phase===2&&b.phase===1){b.phase=2;b.speedMul=e.p2Speed||1.2;b.cdMul=(e.p2Cd||.75)*(e.cdMul||1);b.cd={};b.markers=[];b.mode='move';e.tint='#9dff7a';puff(w,'fx-explosion',e.x,e.y,e);if(e.phaseLine&&!w.quote)w.quote={text:e.phaseLine,at:w.run?.time||0};}
- if(e.hallP)hallPatternTick(e,w,b);
+ if(e.hallP)hallPatternTick(e,w,b);/* improve27-r27a-nov6 #1 */if(e.legend)legendTick(e,w,b);
  const stunned=e.statusTime>0&&['stun','freeze','root'].includes(e.status);
  const p=w.player;
  switch(b.mode){

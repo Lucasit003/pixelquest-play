@@ -77,7 +77,10 @@ export const HEROIC_BOSS_HP={m4:.8,v6:1.3,v4:.5};
 /* ownerbal-oct29: with the 6-potion bag (game/potions.js BAG) a post-game Mage at its own level (tests/lategame-oct27.test.js 4) could no
    longer drink through the Shadow Twin and Cthulhu Legendary fights (mana-starved boss fights of 4-13 minutes, 9-15 potions, 2-5 falls,
    against 2-3 minutes for the chapter's other bosses); v3 and v7 .75 bring them to 2-4 minutes (Warrior 70 and 94 s). */
-export const LEGENDARY_BOSS_HP={m4:.8,v4:.7,e6:.8,m5:.85,v3:.75,v7:.75};
+/* improve27-r27a-nov6 #3: the Legendary-only signatures (game/enemies.js LEGEND_MOVES) made three Legendary boss fights 8-17 s longer
+   where the clear already ran over 20% past Heroic (balance-sim kid bot, rec abilities, seed 1): ex1 75, v4 100, v5 136 s of boss time.
+   Their health is trimmed to bring the boss time back to where it was before the signature; no other Legendary number moves. */
+export const LEGENDARY_BOSS_HP={m4:.8,v4:.64,e6:.8,m5:.85,v3:.75,v7:.75,v5:.88,ex1:.9};
 export const tierBossTrim=(id,k,boss)=>!boss?1:tierKey(k)==='normal'?bossTrim(id,k,boss):(tierKey(k)==='heroic'?HEROIC_BOSS_HP:LEGENDARY_BOSS_HP)[id]||1;
 export const rampOf=l=>l&&l.kind==='level'&&!l.gentle?NORMAL_RAMP:{hp:1,atk:1};
 /* What a level's enemies carry on a tier, before the Settings assist: {hp, atk}. Arenas and towns are never tiered. */

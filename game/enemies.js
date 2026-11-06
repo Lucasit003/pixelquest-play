@@ -503,6 +503,51 @@ export const ENEMY_TYPES={
   {name:'abyss orbs',state:'cast',kind:'projectile',fx:'fx-dm-orb-blue',range:280,cd:3.2,windup:.65,dmg:1,speed:120,count:2,spread:18},
   {name:'tidal rain',state:'special',kind:'aoe',at:'player',fx:'fx-geyser',radius:18,count:6,spread:70,range:300,cd:5,windup:.85,dmg:1,phase:2}]}
 };
+/* improve27-r27a-nov6 #1 (audit17 fun plan 1: "Legendary is barely harder than Heroic"): every Story boss gets one Legendary-only signature
+   that changes how the fight is played. Each move exists only on Legendary (tiers, read by scenes/boss-moves.js tierAttacks), so Normal and
+   Heroic lists are unchanged; it is forced, so the random pick never draws it: it comes when the boss's health first falls past each of
+   its marks (legend.at, scenes/legend-moves.js legendTick), the same moments every fight. Built from the existing kinds, effects and tell
+   sounds, each with a tell of 1.2 s or more, one visible cause per hit and an answer without abilities. legend.title is the move's name on
+   the Legendary card and in its first-time banner. */
+const LEG_BASE={tiers:['legendary'],legendBeat:true,forced:true,bossOnly:true,fullTell:true,range:999,cd:1,dmg:1};
+const legMove=(name,title,o)=>({...LEG_BASE,name,legend:{title,at:[.8,.4]},...o});
+const legNext=(name,o)=>({...LEG_BASE,name,...o});
+/* the shapes: a cross of five circles round the hero (gaps safe); two beats of lit columns; a ring at the hero's distance, then a strike
+   on the hero's spot; two rings rolling out from the boss; a floor-deep sweep and its separately warned return; an ambush behind the hero */
+const legCross=(name,title,state,fx,label,o={})=>[legMove(name,title,{state,kind:'aoe',at:'player',pattern:'cross',fx,radius:18,spread:46,windup:1.6,recover:2,sound:'tell.echo.storm',label,...o})];
+const legRows=(name,title,state,impact,label,next,state2=state)=>[legMove(name,title,{state,kind:'aoe',pattern:'rows',odd:0,impact,windup:1.6,recover:.6,then:name+' ii',sound:'tell.echo.rows',label}),legNext(name+' ii',{state:state2,kind:'aoe',pattern:'rows',odd:1,impact,windup:1.2,recover:2,sound:'tell.echo.rows',label:next})];
+const legRing=(name,title,state,impact,label,strike,next)=>[legMove(name,title,{state,kind:'aoe',pattern:'band',impact,windup:1.6,recover:.6,then:strike,sound:'tell.echo.ring',label}),legNext(strike,{state,kind:'aoe',at:'player',radius:28,count:1,impact:'fx-explosion',windup:1.2,recover:2,sound:'tell.aoe',label:next})];
+const legWaves=(name,title,state,fx,label)=>[legMove(name,title,{state,kind:'wave',shape:'ring',count:2,gap:.9,r0:10,speed:60,reach:80,band:6,previewReach:true,fx,fxs:'rise',windup:1.6,recover:2,sound:'tell.wave',label})];
+const legSweep=(name,title,state,fx,label,returnLabel)=>[legMove(name,title,{state,kind:'sweep',len:96,band:8,dur:.9,from:'far',back:true,backGap:2,fx,fxs:'rise',step:12,windup:1.6,recover:2,label,returnLabel})];
+const legAmbush=(name,title,state,impact,label,puff='fx-portal')=>[legMove(name,title,{state,kind:'vanish',to:'behind',offset:18,appear:1.4,radius:30,out:.35,puff,impact,impactState:'splash',windup:1.6,recover:2.2,sound:'tell.vanish',label})];
+export const LEGEND_MOVES={
+ 'goblin-king':legCross('bomb cross','Bomb Cross','throw','fx-goblin-bomb','Bomb cross! Stand in a gap!'),
+ 'slime-king':[legMove('bog flood','Bog Flood',{state:'heal',kind:'zone',area:'lower',areaMark:true,dur:4.5,slow:.4,dmg:0,tint:'#5fae6a',fx:'fx-slime-spawn',fxs:'rise',windup:1.6,recover:.4,then:'flood flop',sound:'tell.wave',label:'Bog flood! Walk to the dry half!'}),legNext('flood flop',{state:'walk',kind:'leap',radius:30,air:.7,impact:'fx-dust',windup:1.3,recover:2,label:'Flop! Leave the circle!'})],
+ 'orc-warlord':legWaves('war drums','War Drums','shout','fx-col-physical','War drums! Step outside the big circle!'),
+ minotaur:legSweep('maze walls','Maze Walls','attack2','fx-col-physical','Maze wall! Move to the CLEAR lane!','Wall returns! Move to the CLEAR lane!'),
+ 'skeleton-king':legRows('grave rows','Grave Rows','cast','fx-col-shadow','Grave rows! Stand in a gap!','Other graves! Step across!'),
+ 'orc-shaman':legRing('spirit ring','Spirit Ring','special','fx-col-nature','Spirit ring! Step off the lit ring!','spirit slam','Spirit slam! Leave the circle!'),
+ 'stone-golem':legCross('rockfall cross','Rockfall Cross','attack','fx-molten-spear','Rockfall! Stand in a gap!'),
+ 'thorn-king':legRing('bramble cage','Bramble Cage','cast','fx-col-nature','Bramble cage! Step off the lit ring!','cage strike','Thorns! Leave the circle!'),
+ 'bandit-chief':legAmbush('ambush step','Ambush Step','attack2','fx-hit-physical','Ambush! Leave the circle behind you!'),
+ 'mushroom-lord':legRows('spore rows','Spore Rows','attack2','fx-col-poison','Spore rows! Stand in a gap!','Other rows! Step across!'),
+ 'dungeon-master':legAmbush('trapdoor step','Trapdoor Step','cast','fx-hit-fire','Trapdoor! Leave the circle behind you!'),
+ 'forge-golem':legRing('forge ring','Forge Ring','cast','fx-col-fire','Forge ring! Step off the lit ring!','anvil drop','Anvil! Leave the circle!'),
+ 'fire-wyrm':legRows('scorch rows','Scorch Rows','attack2','fx-col-fire','Scorch rows! Stand in a gap!','Other rows! Step across!','attack'),
+ 'flame-knight':legSweep('twin embers','Twin Embers','special','fx-col-fire','Ember sweep! Move to the CLEAR lane!','Sweep returns! Move to the CLEAR lane!'),
+ 'imp-lord':legWaves('furnace rings','Furnace Rings','cast','fx-col-fire','Furnace rings! Step outside the big circle!'),
+ 'obsidian-sentinel':legRing('shatter ring','Shatter Ring','attack','fx-col-arcane','Shatter ring! Step off the lit ring!','glass drop','Glass! Leave the circle!'),
+ 'demon-slime':legRows('magma rows','Magma Rows','special','fx-col-fire','Magma rows! Stand in a gap!','Other rows! Step across!'),
+ 'cinder-wraith':legCross('ember cross','Ember Cross','special','fx-fire-burst','Ember cross! Stand in a gap!'),
+ 'drowned-priest':legRows('flood rows','Flood Rows','attack2','fx-col-ice','Flood rows! Stand in a gap!','Other rows! Step across!','cast'),
+ 'wisp-mother':legRing('lantern ring','Lantern Ring','attack2','fx-col-holy','Lantern ring! Step off the lit ring!','lantern drop','Light! Leave the circle!'),
+ 'shadow-twin':legAmbush('mirror ambush','Mirror Ambush','special','fx-hit-shadow','Ambush! Leave the circle behind you!','fx-col-shadow'),
+ 'crystal-golem':legCross('prism cross','Prism Cross','cast','fx-crystal-spike','Prism cross! Stand in a gap!'),
+ lich:legRing('frost ring','Frost Ring','cast','fx-col-ice','Frost ring! Step off the lit ring!','frost drop','Frost! Leave the circle!'),
+ 'void-knight':legWaves('void rings','Void Rings','attack2','fx-col-arcane','Void rings! Step outside the big circle!'),
+ cthulhu:legRows('deep rows','Deep Rows','attack2','fx-col-shadow','Deep rows! Stand in a gap!','Other rows! Step across!','cast'),
+ 'moth-queen':legWaves('moon rings','Moon Rings','special','fx-col-holy','Moon rings! Step outside the big circle!')};
+for(const [k,list] of Object.entries(LEGEND_MOVES))ENEMY_TYPES[k].attacks.push(...list);
 /* Baked bosses no level uses yet, for later chapters. */
 export const SPARE_BOSSES=[];
 /* Every atlas an enemy type draws: its own sprite plus the fx its attacks fire. Levels can preload these at level start. */

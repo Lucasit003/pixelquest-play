@@ -45,7 +45,9 @@ export function moveMarkers(e,a,w,K){const p=w.player,f=e.facing,b=K.bounds(w),o
  switch(a.kind){
   case 'wave':if(a.shape==='front')out.push({shape:'box',x0:e.x+f*10,x1:e.x+f*Math.min(a.reach,120),y:e.y,band:a.band||14});else out.push({shape:'circle',x:e.x,y:e.y,r:a.arm||a.r0||22});if(a.previewReach)out.push({shape:'circle',x:e.x,y:e.y,r:a.reach,dim:.3});break;
   case 'sweep':{const mid=(b.y0+b.y1)/2;out.push({shape:'box',x0:e.x+f*10,x1:e.x+f*a.len,y:mid,band:(b.y1-b.y0)/2});break;}
-  case 'pillar':out.push({shape:'circle',x:e.x,y:e.y,r:a.radius||18});break;}
+  case 'pillar':out.push({shape:'circle',x:e.x,y:e.y,r:a.radius||18});break;
+  /* improve27-r27a-nov6 #1: a half-floor zone that marks its ground for the whole tell (areaMark: the Bog King's Legendary Bog Flood) */
+  case 'zone':if(a.areaMark&&(a.area==='lower'||a.area==='upper')){const mid=(b.y0+b.y1)/2,lo=a.area==='lower',y0=lo?mid+4:b.y0,y1=lo?b.y1:mid-4;out.push({shape:'box',x0:b.x0,x1:b.x1,y:(y0+y1)/2,band:(y1-y0)/2});}break;}
  return out;}
 export function moveInRange(e,a,p,K){const dx=Math.abs(p.x-e.x),dy=Math.abs(p.y-e.y);
  switch(a.kind){

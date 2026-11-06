@@ -3861,6 +3861,10 @@ html.cine-on #arena-chip{visibility:hidden}
 .worldmap-info.wm-compact .wm-grade{display:none}
 /* improve20-r20j-nov4 #3: the rune-seal line on the level card */
 .worldmap-info .wm-seal{font:700 16px/17px var(--ui);margin:0 0 4px;color:#d9c8ff}
+/* improve27-r27a-nov6 #2: the Legendary signature line on the map card and the Legendary pad card */
+.worldmap-info .wm-legend{font:700 16px/17px var(--ui);margin:0 0 4px;color:#ffd98a}
+.worldmap-info.wm-compact .wm-legend{display:none}
+dialog[data-view=tiers] .tier-card p.tier-legend{color:#ffd98a;margin:2px 0 4px}
 /* improve20-r22w-nov4 #3: a quest step on this pad, in the quest gold */
 .worldmap-info .wm-quest{font:700 16px/17px var(--ui);margin:0 0 4px;color:#ffe9a8}
 .seal-hint{margin:4px 0 6px;padding:4px 8px;border-left:3px solid #a984ff;background:rgba(40,28,70,.55);color:#efe6ff;font:700 16px/19px var(--ui)}

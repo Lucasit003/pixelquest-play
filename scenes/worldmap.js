@@ -24,6 +24,7 @@ import {ENEMY_TYPES} from '../game/enemies.js';
 import {visitPlace,canTravel,isStop} from '../game/fasttravel.js';
 /* improve20-r20j-nov4 #3: the level card's rune-seal line (game/ability-seals.js) */
 import {sealPadLine} from '../game/ability-seals.js';
+import {legendLine} from './legend-moves.js';
 
 /* W1 (owner, 15 Oct; ported 24 Oct): the hero walks at SPEED px/s, faster on long routes, so any trip ends within TRIP_S s */
 const SPEED=150;export const TRIP_S=1.2;
@@ -252,7 +253,7 @@ function info(){const id=S.walk?.to||S.at,n=nodeAt(id),st=stateOf(id);if(!n)retu
  sideGate=!nearPower&&st!=='locked'&&l.optional?waitingGate(S.save):null,sidePower=sideGate?.a?{id:sideGate.level.id,a:sideGate.a,hero:S.save.hero,label:'Go to the Library',text:`Wake ${sideGate.a.name} to open ${sideGate.level.name}.`,go:()=>S?.ctx?.onPowerGate?.(sideGate.level.id)}:null;
 
  const brk=st!=='locked'&&S.ctx.breakLead?.id===l.id?S.ctx.breakLead:null;
- return{title:l.name,boss:st==='locked'?'':boss,inside:st==='locked'?'':String(l.blurb||''),bossLine:st==='locked'||!full?'':`Boss: ${full}`,gradeLine:st==='locked'?'':padGrade(S.save,l),/* improve20-r20j-nov4 #3 */sealLine:st==='locked'?'':sealPadLine(S.save,l.id),/* improve20-r22w-nov4 #3 */questLine:st==='locked'?'':questPadLine(S.save,l.id),subtitle:st==='locked'?'Locked':'',blurb:brk?brk.text/* improve25-r25s-nov5 #1: the break level's card says the red's words */:ladderGoal(S.save,l),tiers:st==='locked'||!tiered(l)?[]:TIER_KEYS.map(k=>({key:k,label:TIERS[k].label,open:tierOpen(S.save,l.id,k),stars:starsOf(S.save,l.id,k),crest:tierCrests(S.save,l.id).includes(k)})),tierLine:st==='locked'?'':tierLine(S.save,l),/* improve20-r10c-nov2 #19 */heroicLead:st==='locked'||sidePower||brk?'':heroicLead(S.save,l.id)?.text||'',side:!!l.optional,power:brk?null:nearPower||sidePower};}
+ return{title:l.name,boss:st==='locked'?'':boss,inside:st==='locked'?'':String(l.blurb||''),bossLine:st==='locked'||!full?'':`Boss: ${full}`,gradeLine:st==='locked'?'':padGrade(S.save,l),/* improve20-r20j-nov4 #3 */sealLine:st==='locked'?'':sealPadLine(S.save,l.id),/* improve20-r22w-nov4 #3 */questLine:st==='locked'?'':questPadLine(S.save,l.id),subtitle:st==='locked'?'Locked':'',blurb:brk?brk.text/* improve25-r25s-nov5 #1: the break level's card says the red's words */:ladderGoal(S.save,l),tiers:st==='locked'||!tiered(l)?[]:TIER_KEYS.map(k=>({key:k,label:TIERS[k].label,open:tierOpen(S.save,l.id,k),stars:starsOf(S.save,l.id,k),crest:tierCrests(S.save,l.id).includes(k)})),tierLine:st==='locked'?'':tierLine(S.save,l),/* improve20-r10c-nov2 #19 *//* improve27-r27a-nov6 #2: an open Legendary names its boss's new move */legendLine:st!=='locked'&&tiered(l)&&tierOpen(S.save,l.id,'legendary')?legendLine(l.boss):'',heroicLead:st==='locked'||sidePower||brk?'':heroicLead(S.save,l.id)?.text||'',side:!!l.optional,power:brk?null:nearPower||sidePower};}
 /* improve20-r11a-nov2 #6 (audit9 a17): arriving in a new chapter, the card's title was the gate the hero stood on ("Emberkeep", the road back)
    and the news sat under it ("The Veilmoor is open!"). While the arrival's light runs to the first stop, the news is the title and the
    first stop is the line under it; when the light lands the card goes back to the stop (and "Welcome to ..." is the notice). The old
