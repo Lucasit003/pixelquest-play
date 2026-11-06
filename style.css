@@ -4701,7 +4701,7 @@ html:not(.m-mode) dialog[data-view=lesson-summary] #modal-content>.r25s-sum2.r25
    buttons were in view): on phone heights the summary takes two columns, as R25P's computer summary does: the score, lines, progress and buttons on the
    left, the seal line and the next-ability card on the right. The card goes compact there (icon, name, its topic count and meter, its one step); its
    long words wait for the Library's full card. Font floors kept (14 px). Tablets (600 px tall and up) and computers are unchanged. */
-@media (max-height:599.98px) and (min-width:700px){html.m-mode dialog[data-view=lesson-summary] #modal-content>.result.r26a-sum-ph{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);column-gap:14px;row-gap:0;align-content:start;align-items:start;justify-items:center}
+/* improve26-r26f-nov6 #3: any phone width (summary-fit.js sumPhone tries it under 700 px too, and keeps it only when it fits) */@media (max-height:599.98px){html.m-mode dialog[data-view=lesson-summary] #modal-content>.result.r26a-sum-ph{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);column-gap:14px;row-gap:0;align-content:start;align-items:start;justify-items:center}
 html.m-mode dialog[data-view=lesson-summary] #modal-content>.result.r26a-sum-ph>*{grid-column:1;margin-top:3px;margin-bottom:3px;max-width:100%}
 html.m-mode dialog[data-view=lesson-summary] #modal-content>.result.r26a-sum-ph>.r26a-side{grid-column:2;grid-row:1/span 12;align-self:start;display:flex;flex-direction:column;align-items:stretch;gap:6px;width:100%;margin:2px 0 0}
 html.m-mode dialog[data-view=lesson-summary] #modal-content>.result.r26a-sum-ph>.r26a-side>:is(.am-goal,.seal-hint){width:100%;max-width:none;margin:0;box-sizing:border-box}
@@ -4749,6 +4749,38 @@ html.in-town #objective .goal-gold{color:var(--ink-2);opacity:.92}
 .hall-next-pic{display:block;align-self:center;width:132px;height:147px;image-rendering:pixelated}
 html.m-mode .hall-next-pic{width:88px;height:98px}
 .hall-gain{margin:0;color:#e9dcb6;font-size:16px}
+/* improve26-r26f-nov6 #1 (placed before the tablets-nov2 block, which must stay last) (audit17 #17, shots 203-8: in the 667x375 Middle Money check
+   the picture table scrolled in 7 of 7 questions, 124-202 px of table in R25R's 110 px cap, while about 45 px of its row stood empty): on a short
+   phone a pinned check whose picture still scrolls (ui/quiz-fit.js picRoom) first lets the picture fill its whole row (.q-picroom); still
+   scrolling, the dots, Stop and Read to me go under the prompt and the picture takes the reading box's full height (.q-picfull), its width kept */
+@media(max-height:400px){
+html.m-mode #modal#modal#modal#modal#modal[data-view=placement] .question.qf.qf.qf.q-pin.q-picroom:has(#quiz-feedback:empty)>.question-reading:has(>:is(#quiz-pic,.question-text-card))>.question-text-card{max-height:100%!important}
+html.m-mode #modal#modal#modal#modal#modal[data-view=placement] .question.qf.qf.qf.q-pin.q-picfull:has(#quiz-feedback:empty)>.question-reading:has(>:is(#quiz-pic,.question-text-card)){grid-template-columns:40px 112px minmax(0,1fr) minmax(0,var(--r26f-picw,224px))!important;grid-template-areas:"say say say pic" "dots stop read pic"!important}
+html.m-mode #modal#modal#modal#modal#modal[data-view=placement] .question.qf.qf.qf.q-pin.q-picfull:has(#quiz-feedback:empty)>.question-reading:has(>:is(#quiz-pic,.question-text-card))>.edu-read{justify-self:start}
+html.m-mode #modal#modal#modal#modal#modal[data-view=placement] .question.qf.qf.qf.q-picgrow:has(#quiz-feedback:empty)>.question-reading>.question-text-card.question-text-card{max-height:none!important;overflow:visible}
+}
+/* improve26-r26f-nov6 #1 (audit17 #17, shot 200): a short phone's lesson step (ui/lesson-phone.js phoneSay): the eyebrow over the title goes, Read to me
+   sits in the head beside the close button (it never scrolls), and the caption's corner keeps only the Narration switch, so its float is smaller */
+@media(max-height:430px){
+html.m-mode dialog[data-view=lesson] #modal-content>.modal-head .eyebrow{display:none}
+html.m-mode dialog[data-view=lesson] #modal-content>.modal-head{align-items:flex-start;gap:8px}
+html.m-mode dialog[data-view=lesson] #modal-content>.modal-head>.edu-speak.r26f-head{flex:none;margin:0 0 0 auto;min-height:44px;display:inline-flex;align-items:center;gap:6px;padding:0 12px;white-space:nowrap}
+html.m-mode dialog[data-view=lesson].lesson-compact .lesson.r26f-pinned .edu-speech>.lesson-say::before{width:30px;height:30px}
+}
+/* improve26-r26f-nov6 #3 (R26E carried: the phone Hall of Echoes clear card's buttons sat at the sheet's bottom edge, 27% in view at 667x375): on a
+   short phone the clear card's lines close up and its button row keeps its full height and margin, pinned to the sheet's bottom while the lines
+   above it scroll */
+@media(max-height:430px){
+html.m-mode dialog[data-view=hall-end] .hall-step{gap:4px}
+html.m-mode dialog[data-view=hall-end] .hall-step>:is(p,h2){margin-top:0;margin-bottom:0}
+html.m-mode dialog[data-view=hall-end] .hall-step>.modal-actions{position:sticky;bottom:0;z-index:2;margin:6px 0 0;padding:8px 0 4px;background:var(--panel,#1b1a33);flex:none}
+html.m-mode dialog[data-view=hall-end] .hall-step>.modal-actions>button{min-height:44px}
+}
+/* improve26-r26f-nov6 #4: a phone summary still over its sheet after sumPhone's steps (ui/summary-fit.js .r26f-sum-pin) keeps its button row pinned to
+   the sheet's bottom, at full height, while the lines above it scroll */
+@media(max-height:599.98px){
+html.m-mode dialog[data-view=lesson-summary] #modal-content>.result.r26f-sum-pin>:is(.modal-actions,.actions){position:sticky;bottom:0;z-index:3;background:#1b1a33;padding-top:6px;padding-bottom:4px;box-shadow:0 -8px 10px -6px #1b1a33,0 28px 0 0 #1b1a33/* lead (R26F review): the solid shadow below covers the sheet's bottom padding, so no scrolled line shows under the pinned row */}
+}
 /* improve26-r26g-nov6 (placed before the tablets-nov2 block, which must stay last). #1 (audit17 #12): while a piece is being placed, a phone's prompt
    sits at the bottom between the stick and the thumb arc, off the back wall and the goal box (main.js #prompt.placing) */
 html.m-mode #prompt.placing{top:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 10px)}

@@ -14,7 +14,7 @@ export function phoneButtons(card,out,max=3/* improve24-r24m-nov5 #5: desktop ca
    the phone card still runs past its sheet, the rating key goes, then the grade tip moves under Details (the stars and grade badge stay) */
 export function phoneFit(card,out){const mc=card.closest('#modal-content');if(!mc)return;const over=()=>mc.scrollHeight>mc.clientHeight+1;if(!over())return;
  const key=card.querySelector(':scope>.rating-key');if(key){key.hidden=true;key.style.display='none';out.push('phone-key');}if(!over())return;
- const tip=card.querySelector(':scope>.grade-next'),ex=card.querySelector('#result-extra');if(tip&&ex){ex.prepend(tip);out.push('phone-tip');}}
+ /* improve26-r26f-nov6 #3 (R26A carried: on a very busy phone card the 3rd star's line went behind Details): the 3rd-star line (data-star-goal) stays on the face, as on desktop (noteFit, momentFit); only another grade tip moves */const tip=card.querySelector(':scope>.grade-next:not([data-star-goal])'),ex=card.querySelector('#result-extra');if(tip&&ex){ex.prepend(tip);out.push('phone-tip');}}
 /* improve20-r20d-nov4 #1 (audit14 #3, shot 02: Details, Refill and Retry, then Return, then Place runes: 5 buttons in 3 rows): every loss card (main.js levelEnd: row = the card's .modal-actions, ex = #result-extra)
    shows Details and at most 3 buttons in one row, the one red last: Retry now (when something else is red), Return, one help button when Retry
    is red (the runes, else the Library, else Refill), then the red. When the refill is red (it retries too), a first loss's rune button takes Retry now's place. Start over and anything else move behind Details, in their own row. */
@@ -87,3 +87,15 @@ export function momentFit(card,ex,out=[],{phone=false}={}){if(!card||!ex||card.d
  if(mid&&!phone&&out.includes('moment-hoist')&&mid.scrollHeight>mid.clientHeight+1){const hc=mid.querySelector('.level-result-body>canvas.level-hero');if(hc&&shown(hc)){hc.hidden=true;hc.style.display='none';out.push('moment-hero');}}
  if(mid&&!phone&&mid.clientHeight<MOMENT_MID&&mid.scrollHeight>mid.clientHeight+1){if(!out.includes('moment-notes')&&notes())out.push('moment-notes');if(!mid.textContent.trim()){mid.hidden=true;mid.style.display='none';out.push('moment-mid');}}
  cue();return out;}
+/* improve26-r26f-nov6 #3 (R26C carried: on a phone the lower reward notes in the win card's reward column, "Legendary is now open" and others,
+   could sit under the scroll box's fade or below it): after momentFit (main.js fitCard, phones only), every note from the first one under
+   MOMENT_SEEN of its height in view to the last moves behind Details, and the Details button names them ("Details: 2 more notes", or "Details:
+   rune seal" when the seal note is among them, as R26C's seal step does). A note already in view stays. First, on any phone card, an empty
+   notes box is hidden (audit17 #19, shot 49: the prologue win's empty outlined box). Returns what it did into out. */
+export function noteSeen(card,ex,out=[]){if(!card)return out;/* audit17 #19 (shot 49): an empty notes box (the prologue's) leaves no outlined frame behind */for(const hl of card.querySelectorAll('.level-highlights:not(#result-extra *)'))if(shown(hl)&&!hl.textContent.trim()&&!hl.querySelector('img,canvas,button')){hl.hidden=true;hl.style.display='none';out.push('note-empty');}if(!ex||card.dataset.outcome!=='won')return out;const doc=card.ownerDocument||globalThis.document;
+ for(const el of card.querySelectorAll('.result-mid,.level-result-body'))el.classList.toggle('more-below',el.scrollHeight-el.scrollTop-el.clientHeight>8);
+ const notes=[...card.querySelectorAll('.level-highlights>p')].filter(e=>shown(e)&&!e.closest('#result-extra,details:not([open]),[hidden]'));const i=notes.findIndex(e=>seenShare(e)<MOMENT_SEEN);if(i<0)return out;
+ const moved=notes.slice(i);let box=ex.querySelector(':scope>.goal-more');if(!box){box=doc.createElement('div');box.className='goal-more';box.dataset.goalMore='';ex.prepend(box);}for(const e of moved){e.classList.remove('note-lifted');box.append(e);}
+ for(const hl of card.querySelectorAll('.level-highlights:not(#result-extra *)'))if(!hl.querySelector(':scope>p,:scope>details')){hl.hidden=true;hl.style.display='none';}
+ const b=card.querySelector('#result-details');if(b&&!b.dataset.more){const t=moved.some(e=>e.matches('[data-seal-run]'))?'rune seal':`${moved.length} more note${moved.length===1?'':'s'}`;b.dataset.more=t;b.textContent=`Details: ${t}`;}
+ out.push('note-seen');for(const el of card.querySelectorAll('.result-mid,.level-result-body'))el.classList.toggle('more-below',el.scrollHeight-el.scrollTop-el.clientHeight>8);return out;}

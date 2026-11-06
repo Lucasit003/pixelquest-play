@@ -31,7 +31,7 @@ export function sealCast(w,a,pose){const z=w.aseal,p=w.player;if(!z||z.broken||!
  w.effect?.('nova',z.x,z.cy+z.ry*.5,{element:a.element||'arcane',radius:28,life:.5,max:.5});z.pulse=.5;
  const n=wokenCount(w.save),need=z.def.cast,was=z.hits.has(a.id);z.hits.add(a.id);
  if(n<z.def.awake){w.text?.(sealNeedText(w.save,z.def),z.x,z.cy-26,'#ffd27a',true);sfx('blocked');return true;}
- if(z.hits.size>=need){z.broken=true;z.burst=z.burstMax=1;z.brokeNow=true/* improve20-r21b-nov4 #4 */;breakSeal(w.save,z.id);/* friends2-nov5 #2: the save's first broken seal is a moment: a bigger burst and a short banner naming the cache and keepsake inside (never pauses; it goes by itself) */if(firstBreak(w.save,z)){z.burst=z.burstMax=1.6;w.effect?.('nova',z.x,z.cy+z.ry*.5,{element:'holy',radius:96,life:1.2,max:1.2});w.effect?.('killpop',z.x,z.cy,{element:'holy',n:14,life:.8,max:.8});const kt=!sealChapterDone(w.save,z.def.chapter)&&SEAL_TITLES[z.def.chapter]?.[1];try{banner('FIRST RUNE SEAL BROKEN!',`Inside: ${rewardText(z.def)}${kt?` and the title ${kt}`:''}`,'levelup',2400);}catch{}sfx('levelup');}w.effect?.('nova',z.x,z.cy+z.ry*.5,{element:'holy',radius:56,life:.9,max:.9});w.quake?.('aoe');w.text?.('SEAL BROKEN!',z.x,z.cy-30,'#fff1a8',true);w.text?.('Walk in for the cache',z.x,z.cy+30,'#f3d98a');sfx('unlock');w.events.persist?.();return true;}
+ if(z.hits.size>=need){z.broken=true;z.burst=z.burstMax=1;z.brokeNow=true/* improve20-r21b-nov4 #4 */;breakSeal(w.save,z.id);/* friends2-nov5 #2: the save's first broken seal is a moment: a bigger burst and a short banner naming the cache and keepsake inside (never pauses; it goes by itself) */if(firstBreak(w.save,z)){z.burst=z.burstMax=1.6;w.effect?.('nova',z.x,z.cy+z.ry*.5,{element:'holy',radius:96,life:1.2,max:1.2});w.effect?.('killpop',z.x,z.cy,{element:'holy',n:14,life:.8,max:.8});const kt=!sealChapterDone(w.save,z.def.chapter)&&SEAL_TITLES[z.def.chapter]?.[1];/* improve26-r26f-nov6 #2: the banner waits for the cache's words (sealBeat) */z.firstBanner={kt:kt||'',at:w.time||0};sfx('levelup');}w.effect?.('nova',z.x,z.cy+z.ry*.5,{element:'holy',radius:56,life:.9,max:.9});w.quake?.('aoe');w.text?.('SEAL BROKEN!',z.x,z.cy-30,'#fff1a8',true);w.text?.('Walk in for the cache',z.x,z.cy+30,'#f3d98a');sfx('unlock');w.events.persist?.();return true;}
  w.text?.(was?'A different ability!':`${z.hits.size} of ${need}`,z.x,z.cy-26,was?'#ffd27a':'#e9f6ff',true);sfx(was?'blocked':'ward');return true;}
 /* each move: the seal's words once a run as the hero comes near, and the cache when the hero steps in (or presses interact beside it) */
 export function sealTouch(w,pressed){const z=w.aseal,p=w.player;if(!z||!p||!w.level||w.ended)return null;/* improve20-r21b-nov4 #4: the hero walked on past the closed pocket *//* improve23-r23s-nov4 #4 (kidsim6 #10: a boss retry starts past the pocket and was counted as a walk-by): only a hero who came within POCKET.see on this run has passed it */if(!z.broken&&sealDist(w,z)<POCKET.see)z.near=true;if(!z.broken&&z.near&&p.x>z.x+POCKET.reach)z.passed=true;
@@ -39,7 +39,18 @@ export function sealTouch(w,pressed){const z=w.aseal,p=w.player;if(!z||!p||!w.le
  if(!z.broken||z.looted)return null;if(Math.hypot(p.x-z.chest.x,(p.y-z.chest.y)*1.2)>(pressed?CACHE_E:POCKET.chestR))return null;
  const got=lootSeal(w.save,z.id);z.looted=true;if(!got)return null;z.got=got;earnTitles(w.save);
  /* improve20-r21b-nov4 #4 (audit15 #16, shot 12: the cache toast sat over the hero standing in the pocket): the cache's words float on the road by the pocket (cacheY), not in a screen toast over the hero; the win card names it again */
- w.text?.(`Seal cache: +${got.gold} gold, +${got.essence} Essence`,z.chest.x,cacheY(z),'#f3d98a',false,{life:CACHE_LIFE});/* improve24-r24n-nov5 #6: GO and the way chevrons wait while these words are up (gfx/stage-view.js cacheWordsUp) */z.cacheUntil=(w.time||0)+CACHE_LIFE;if(got.title)w.text?.(`New title: ${got.title}!`,z.chest.x,cacheY(z)+24,'#fff1a8',false,{life:CACHE_LIFE});sfx('coin');w.events.sealLoot?.(z.def,got);w.events.persist?.();return got;}
+ /* improve26-r26f-nov6 #2: while the first-break banner is up the words wait for it to go (sealBeat), so the two never overlap */if((z.bannerUntil||0)>(w.time||0))z.cacheQ=got;else cacheWords(w,z,got);sfx('coin');w.events.sealLoot?.(z.def,got);w.events.persist?.();return got;}
+/* improve24-r24n-nov5 #6: GO and the way chevrons wait while these words are up (gfx/stage-view.js cacheWordsUp) */
+function cacheWords(w,z,got){w.text?.(`Seal cache: +${got.gold} gold, +${got.essence} Essence`,z.chest.x,cacheY(z),'#f3d98a',false,{life:CACHE_LIFE});z.cacheUntil=(w.time||0)+CACHE_LIFE;if(got.title)w.text?.(`New title: ${got.title}!`,z.chest.x,cacheY(z)+24,'#fff1a8',false,{life:CACHE_LIFE});}
+/* improve26-r26f-nov6 #2 (audit17 #19, shot 64: at the phone's e2 seal "FIRST RUNE SEAL BROKEN!" covered "New title: Rune Breaker"): the save's first
+   break queues its banner (z.firstBanner). Each frame (sealLayer) it goes up only while the cache's words are not floating: after they fade when
+   the hero walks straight in, or BANNER_WAIT s after the break when the cache is still shut; while it is up, a cache looted then keeps its words
+   (z.cacheQ) until it has gone (BANNER_MS). The banner never pauses the run. */
+export const BANNER_WAIT=1.5,BANNER_MS=2400;
+export function sealBeat(w){const z=w?.aseal;if(!z)return null;const now=w.time||0;
+ if(z.cacheQ&&(z.bannerUntil||0)<=now){const g=z.cacheQ;z.cacheQ=null;cacheWords(w,z,g);return 'words';}
+ const b=z.firstBanner;if(!b||cacheWordsUp(w)||z.cacheQ)return null;if(!z.looted&&now-b.at<BANNER_WAIT)return null;
+ z.firstBanner=null;z.bannerUntil=now+BANNER_MS/1000;const got=z.looted&&z.got;try{banner('FIRST RUNE SEAL BROKEN!',got?`You got ${got.gold} gold + ${got.essence} Essence${got.title?` and the title ${got.title}`:''}`:`Inside: ${rewardText(z.def)}${b.kt?` and the title ${b.kt}`:''}`,'levelup',BANNER_MS);}catch{}return 'banner';}
 /* is the hero beside something the seal offers (main.js's interact verb and the phone's interact button can read it) */
 /* improve26-r26a-nov6 #2/#5 (kidsim9 #2, shot 01; audit17 #20): right after "SEAL BROKEN!" the hero stands at the barrier, beside a rolled Scholar's Seal
    (42-54 px from the chest in e2/e3), and E opened its review while the floor said "Walk in for the cache". While the cache is unlooted, E and the prompt
@@ -62,9 +73,14 @@ export const WORDS_BELOW=20;
 export const sealWordsDue=(w,z)=>!!z&&!z.broken&&!!w?.player&&sealDist(w,z)<POCKET.see+40&&!bannerActive(w);
 function pillar(c,x,by,tint,a){c.fillStyle='#2b2438';c.fillRect(x-4,by-30,8,30);c.fillStyle='#4a3f5c';c.fillRect(x-4,by-30,3,30);c.fillStyle='#1a1426';c.fillRect(x-5,by-2,10,3);c.fillRect(x-5,by-33,10,4);
  c.globalAlpha=a;c.fillStyle=tint;c.fillRect(x-1,by-25,3,3);c.fillRect(x-1,by-18,3,3);c.fillRect(x-1,by-11,3,3);c.globalAlpha=1;}
-export function sealLayer(w,c,t,dt=1/60){const z=w.aseal;if(!z)return [];const still=w.motion===false,out=[];z.pulse=Math.max(0,z.pulse-dt);z.burst=Math.max(0,z.burst-dt*1.2);
+/* improve26-r26f-nov6 #2 (audit17 #19, shot 64: the chest stayed shut after the auto-loot): a looted cache draws open, from the same chest art
+   (no new art): the body as it is, a dark hollow at its rim, and the lid tipped back above it (its rows flipped and squashed). Rows are the 32 px art's. */
+export const CHEST_LID=[3,13];
+export function openChest(c,im,dx,dy){const [a,b]=CHEST_LID,W=im.width,H=im.height;c.drawImage(im,0,b,W,H-b,dx,dy+b,W,H-b);c.fillStyle='#1d1008';c.fillRect(dx+4,dy+b-2,W-8,4);c.fillStyle='#ffd96b';c.fillRect(dx+9,dy+b-2,2,2);c.fillRect(dx+19,dy+b-3,2,2);
+ c.save();c.translate(dx,dy+b-2);c.scale(1,-.6);c.drawImage(im,0,a,W,b-a,0,0,W,b-a);c.restore();}
+export function sealLayer(w,c,t,dt=1/60){const z=w.aseal;if(!z)return [];/* improve26-r26f-nov6 #2 */sealBeat(w);const still=w.motion===false,out=[];z.pulse=Math.max(0,z.pulse-dt);z.burst=Math.max(0,z.burst-dt*1.2);
  const cx=Math.round(z.x),by=Math.round(z.chest.y+6),rx=z.rx-6;
- out.push({y:z.chest.y-1,draw:()=>{const im=img(CHEST_ART);if(!im)return;c.save();if(z.looted)c.globalAlpha=.5;c.drawImage(im,Math.round(z.chest.x-im.width/2),Math.round(z.chest.y-im.height+6));c.restore();}});
+ out.push({y:z.chest.y-1,draw:()=>{const im=img(CHEST_ART);if(!im)return;c.save();const dx=Math.round(z.chest.x-im.width/2),dy=Math.round(z.chest.y-im.height+6);if(z.looted)openChest(c,im,dx,dy);else c.drawImage(im,dx,dy);c.restore();}});
  out.push({y:z.chest.y,draw:()=>{c.save();
   if(!z.broken&&callsNow(w,z)){/* friends2-nov5 #2: the calling seal's gold halo, pulsing (steady with Reduce motion) */const g=still?.75:.6+.25*Math.sin(t*4),gr=still?0:3*Math.sin(t*4);c.strokeStyle='#ffd96b';c.globalAlpha=g*.35;c.lineWidth=7;c.beginPath();c.ellipse(cx,by-DOME_H/2,rx+12+gr,DOME_H*.75+8+gr,0,0,Math.PI*2);c.stroke();c.globalAlpha=g;c.lineWidth=2;c.stroke();c.lineWidth=1;c.globalAlpha=1;}
   if(!z.broken){const a=still?.8:.7+.2*Math.sin(t*2.6)+z.pulse;

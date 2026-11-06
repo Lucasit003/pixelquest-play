@@ -19,7 +19,7 @@ export function fitQuestion(doc=globalThis.document){
  if(!q||!r||!mc||busy)return null;busy=true;
  try{
   const win=doc.defaultView,phone=doc.documentElement.classList.contains('m-mode')||win.innerHeight<=500,form=q.querySelector(':scope>#quiz-form');
-  q.classList.remove('q-room','q-dense','q-stack','q-flow','q-pin','q-more','q-desk','q-fbgrow');r.classList.remove('q-fit');r.style.removeProperty('--q-fs');
+  q.classList.remove('q-room','q-dense','q-stack','q-flow','q-pin','q-more','q-desk','q-fbgrow','q-picroom','q-picfull','q-picgrow'/* improve26-r26f-nov6 #1 */);r.style.removeProperty('--r26f-picw');r.classList.remove('q-fit');r.style.removeProperty('--q-fs');
   /* too tall: the reading scrolls inside itself, the dialog clips or scrolls, or a part of the question lies over an answer or a button */
   const box=e=>e.getBoundingClientRect(),hit=(a,b)=>a.left<b.right-4&&b.left<a.right-4&&a.top<b.bottom-4&&b.top<a.bottom-4,scrolls=e=>/auto|scroll/.test(win.getComputedStyle(e).overflowY);
   const over=()=>{if(scrolls(r)&&r.scrollHeight>r.clientHeight+1)return true;if(mc.scrollHeight>mc.clientHeight+1)return true;
@@ -48,6 +48,7 @@ export function fitQuestion(doc=globalThis.document){
      computer, notes taller than their box take the room they need and the answered question above them scrolls in its own box instead;
      kept only while the whole of the notes and the action row stay in the window, else the notes keep their own scroll */
   const fb=q.querySelector(':scope>#quiz-feedback');if(!phone&&fb?.textContent.trim()&&fb.scrollHeight>fb.clientHeight+1){q.classList.add('q-fbgrow');const h=win.innerHeight,b=box(fb);if(fb.scrollHeight>fb.clientHeight+1||b.bottom>h+1||[...q.querySelectorAll(':scope>.modal-actions button')].filter(shown).some(e=>box(e).bottom>h+1))q.classList.remove('q-fbgrow');else step+='+fb';}
+  /* improve26-r26f-nov6 #1 */{const pr=picRoom(q,r,doc);if(pr)step+='+'+pr;}
   q.dataset.fit=String(step);watch(q,mc,doc);return step;
  }finally{busy=false;}
 }
@@ -61,3 +62,18 @@ function watch(q,mc,doc){
  if(!ro&&typeof win.ResizeObserver==='function')ro=new win.ResizeObserver(()=>{const d=ro.el;if(!d?.isConnected||(d.clientWidth===ro.w&&d.clientHeight===ro.h))return;ro.w=d.clientWidth;ro.h=d.clientHeight;fitQuestion(doc);});
  const d=mc.closest('dialog')||mc;if(ro&&ro.el!==d){ro.disconnect();ro.observe(d);ro.el=d;}if(ro){ro.w=d.clientWidth;ro.h=d.clientHeight;}
 }
+/* improve26-r26f-nov6 #1 (audit17 #17, shots 203-8: the 667x375 Middle Money check's table scrolled in 7 of 7 questions while about 45 px of its
+   row stood empty under R25R's 110 px cap): on a short phone (PIC_ROOM_H tall or less), a pinned check not yet answered whose picture (a text
+   table or a drawn picture) still scrolls inside itself first lets the picture fill its whole row (q-picroom); still scrolling, the dots, Stop and
+   Read to me go under the prompt and the picture takes the reading box's full height at the same width (q-picfull), kept only when the prompt's
+   box scrolls no more than before. Still scrolling, it widens (picwide, PIC_STEP to PIC_WIDE). A card that fits unpinned first tries its picture uncapped (picgrow). Returns 'picgrow', 'picroom', 'picfull', 'picwide' or ''. Layout only: no size of type changes. */
+export const PIC_ROOM_H=400;
+export function picRoom(q,r,doc=q?.ownerDocument){const win=doc?.defaultView;if(!q||!r||!win||!doc.documentElement.classList.contains('m-mode')||win.innerHeight>PIC_ROOM_H)return '';
+ if(q.querySelector(':scope>#quiz-feedback')?.textContent.trim())return '';const pc=r.querySelector(':scope>.question-text-card');if(!pc)return '';const sc=()=>pc.scrollHeight>pc.clientHeight+1,rs=()=>Math.max(0,r.scrollHeight-r.clientHeight);if(!sc())return '';
+ /* a card that fits unpinned: its picture loses its cap (q-picgrow), kept only while the sheet, the prompt's box and the answer row still fit */
+ if(!q.classList.contains('q-pin')){const mc=doc.getElementById('modal-content'),ok0=()=>!mc||mc.scrollHeight<=mc.clientHeight+1,b0=rs();q.classList.add('q-picgrow');if(sc()||!ok0()||rs()>b0+1){q.classList.remove('q-picgrow');return '';}return 'picgrow';}
+ q.classList.add('q-picroom');if(!sc())return 'picroom';const before=rs(),w=Math.round(pc.getBoundingClientRect().width);r.style.setProperty('--r26f-picw',w+'px');q.classList.add('q-picfull');
+ const worse=()=>rs()>before+1||rs()>0&&before===0;if(worse()){q.classList.remove('q-picfull');r.style.removeProperty('--r26f-picw');return 'picroom';}if(!sc())return 'picfull';
+ /* still scrolling at the full height: the picture widens in PIC_STEP px steps up to PIC_WIDE of the box (a table's rows wrap less), while the prompt's box scrolls no more */
+ let best=w;for(let x=w+PIC_STEP;x<=Math.round(r.clientWidth*PIC_WIDE)&&sc();x+=PIC_STEP){r.style.setProperty('--r26f-picw',x+'px');if(worse())break;best=x;}r.style.setProperty('--r26f-picw',best+'px');return best>w?'picwide':'picfull';}
+export const PIC_STEP=24,PIC_WIDE=.6;
