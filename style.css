@@ -4690,6 +4690,33 @@ html:not(.m-mode) dialog[data-view=lesson-summary] #modal-content>.r25s-sum2.r25
 html:not(.m-mode) dialog[data-view=lesson-summary] #modal-content>.r25s-sum2.r25s-sum2.r25s-sum2.r25s-sum2>:is(.modal-actions,.actions){grid-column:1/-1;grid-row:13;display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:8px}
 }
 /* end improve25-r25s-nov5 #3 */
+/* improve26-r26a-nov6 #1 (placed before the tablets-nov2 block, which must stay last) (kidsim9 #1, shots 08 and 12: Sam mid at 844x390 saw the header, the subject
+   picker and the top of a 265 px next-ability card; the seal line spans both columns under the card, so the topic's card and its red fell to y 468).
+   On phone heights the topic's card (.edu-next) with its red and whole button row comes first: beside the next-ability card in row 1 (from 700 px wide),
+   above it in one column (below 700). Chosen over a compact card: nothing is drawn twice, the card keeps its words, and the seal line and the rest follow as before.
+   Tablets (600 px tall and up) and computers are unchanged. */
+@media (max-height:599.98px) and (min-width:700px){html.m-mode dialog[data-view=library] .library-content>.am-goal.road~.edu-next:not(.lib-awaken){grid-row:1}}
+@media (max-height:599.98px) and (max-width:699.98px){html.m-mode dialog[data-view=library] .library-content:has(>.am-goal.road~.edu-next:not(.lib-awaken)){display:grid;grid-template-columns:minmax(0,1fr);align-content:start}html.m-mode dialog[data-view=library] .library-content:has(>.am-goal.road~.edu-next:not(.lib-awaken))>*{min-width:0}html.m-mode dialog[data-view=library] .library-content>.am-goal.road~.edu-next:not(.lib-awaken){order:-1}}
+/* improve26-r26a-nov6 #3 (kidsim9 #4, shot 07: on 11 of 12 phone quiz and practice summaries "Your next ability" and the seal line were under the fold; the
+   buttons were in view): on phone heights the summary takes two columns, as R25P's computer summary does: the score, lines, progress and buttons on the
+   left, the seal line and the next-ability card on the right. The card goes compact there (icon, name, its topic count and meter, its one step); its
+   long words wait for the Library's full card. Font floors kept (14 px). Tablets (600 px tall and up) and computers are unchanged. */
+@media (max-height:599.98px) and (min-width:700px){html.m-mode dialog[data-view=lesson-summary] #modal-content>.result.r26a-sum-ph{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);column-gap:14px;row-gap:0;align-content:start;align-items:start;justify-items:center}
+html.m-mode dialog[data-view=lesson-summary] #modal-content>.result.r26a-sum-ph>*{grid-column:1;margin-top:3px;margin-bottom:3px;max-width:100%}
+html.m-mode dialog[data-view=lesson-summary] #modal-content>.result.r26a-sum-ph>.r26a-side{grid-column:2;grid-row:1/span 12;align-self:start;display:flex;flex-direction:column;align-items:stretch;gap:6px;width:100%;margin:2px 0 0}
+html.m-mode dialog[data-view=lesson-summary] #modal-content>.result.r26a-sum-ph>.r26a-side>:is(.am-goal,.seal-hint){width:100%;max-width:none;margin:0;box-sizing:border-box}
+html.m-mode dialog[data-view=lesson-summary] #modal-content>.result.r26a-sum-ph>.r26a-side>.seal-hint{line-height:1.25;font-size:14px}
+html.m-mode dialog[data-view=lesson-summary] #modal-content>.result.r26a-sum-ph>.r26a-side>.am-goal{padding:6px 10px;row-gap:2px}
+html.m-mode dialog[data-view=lesson-summary] #modal-content>.result.r26a-sum-ph>.r26a-side>.am-goal :is(.am-goal-what,.am-goal-next-what,.am-goal-checks,.road-gloss,.road-badges,.road-closer){display:none}
+html.m-mode dialog[data-view=lesson-summary] #modal-content>.result.r26a-sum-ph>.r26a-side>.am-goal :is(.am-goal-k,.road-count,.am-goal-line,.road-rune){line-height:1.2;font-size:14px}
+html.m-mode dialog[data-view=lesson-summary] #modal-content>.result.r26a-sum-ph>:is(.modal-actions,.actions){order:4;flex-wrap:wrap;justify-content:center;gap:6px}html.m-mode dialog[data-view=lesson-summary] #modal-content>.result.r26a-sum-ph>.edu-progress{order:6}
+html.m-mode dialog[data-view=lesson-summary] #modal-content>.result.r26a-sum-ph>.sum-more{order:7;font-size:14px;text-align:center}html.m-mode dialog[data-view=lesson-summary] #modal-content>.result.r26a-sum-ph>.sum-more>summary{cursor:pointer;opacity:.8}}
+@media (max-height:599.98px){html.m-mode dialog[data-view=lesson-summary] #modal-content>.result.r26a-sum-ph1>.seal-hint{order:4}html.m-mode dialog[data-view=lesson-summary] #modal-content>.result.r26a-sum-ph1>.sum-more{order:7;font-size:14px;text-align:center}}
+/* improve26-r26a-nov6 #6 (audit17 #3, shots 25 and 62: the wake card's seal line was .subtle's pale gold on parchment, about 1.1:1): the purple note the
+   result cards and the Library use for a seal line (.seal-hint), light ink on deep purple, at the 16 px floor (14 px on a phone) */
+#modal-content .edu-unlock p.edu-unlock-seal{display:block;width:fit-content;max-width:min(100%,65ch);margin:6px auto;padding:4px 10px;border-left:3px solid #a984ff;background:#2a1c48;color:#efe6ff;font:700 16px/1.25 var(--ui);text-align:left;box-sizing:border-box}
+html.m-mode #modal-content .edu-unlock p.edu-unlock-seal{margin:4px auto;padding:3px 8px;font-size:14px;line-height:1.2}
+
 /* tablets-nov2 (round 9 item 12): the tablet sweep (1024x768, 1180x820, 1280x800, 1366x1024, 1180x740 touch). A tablet is a touch screen at
    least 600 css px on its short side (ui/mobile.js tabletSize); phones in landscape are 430 px tall at most, so (min-height:600px) never
    reaches them, and every rule here sits under html.m-mode, so desktops are untouched. */

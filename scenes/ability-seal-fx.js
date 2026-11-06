@@ -36,12 +36,16 @@ export function sealCast(w,a,pose){const z=w.aseal,p=w.player;if(!z||z.broken||!
 /* each move: the seal's words once a run as the hero comes near, and the cache when the hero steps in (or presses interact beside it) */
 export function sealTouch(w,pressed){const z=w.aseal,p=w.player;if(!z||!p||!w.level||w.ended)return null;/* improve20-r21b-nov4 #4: the hero walked on past the closed pocket *//* improve23-r23s-nov4 #4 (kidsim6 #10: a boss retry starts past the pocket and was counted as a walk-by): only a hero who came within POCKET.see on this run has passed it */if(!z.broken&&sealDist(w,z)<POCKET.see)z.near=true;if(!z.broken&&z.near&&p.x>z.x+POCKET.reach)z.passed=true;
  /* the barrier's own words are drawn over it (sealLayer); a toast would sit on top of the pocket, so the approach line is a floating text *//* friends2-nov5 #2: a seal the woken abilities can break hums (the existing ward sound) as the hero comes near, once per approach */if(callsNow(w,z)){const d=sealDist(w,z);if(d<CALL.hum&&!z.hummed){z.hummed=true;sfx('ward');w.text?.('Your abilities can break this seal!',z.x,z.cy-40,'#fff1a8',true);}else if(d>CALL.hum+80)z.hummed=false;}if(!z.broken&&!z.said&&sealDist(w,z)<POCKET.see){z.said=true;w.text?.(`Inside: ${rewardText(z.def)}`,z.x,z.cy-4,'#f3d98a');}
- if(!z.broken||z.looted)return null;if(Math.hypot(p.x-z.chest.x,(p.y-z.chest.y)*1.2)>(pressed?POCKET.chestR+10:POCKET.chestR))return null;
+ if(!z.broken||z.looted)return null;if(Math.hypot(p.x-z.chest.x,(p.y-z.chest.y)*1.2)>(pressed?CACHE_E:POCKET.chestR))return null;
  const got=lootSeal(w.save,z.id);z.looted=true;if(!got)return null;z.got=got;earnTitles(w.save);
  /* improve20-r21b-nov4 #4 (audit15 #16, shot 12: the cache toast sat over the hero standing in the pocket): the cache's words float on the road by the pocket (cacheY), not in a screen toast over the hero; the win card names it again */
  w.text?.(`Seal cache: +${got.gold} gold, +${got.essence} Essence`,z.chest.x,cacheY(z),'#f3d98a',false,{life:CACHE_LIFE});/* improve24-r24n-nov5 #6: GO and the way chevrons wait while these words are up (gfx/stage-view.js cacheWordsUp) */z.cacheUntil=(w.time||0)+CACHE_LIFE;if(got.title)w.text?.(`New title: ${got.title}!`,z.chest.x,cacheY(z)+24,'#fff1a8',false,{life:CACHE_LIFE});sfx('coin');w.events.sealLoot?.(z.def,got);w.events.persist?.();return got;}
 /* is the hero beside something the seal offers (main.js's interact verb and the phone's interact button can read it) */
-export const nearSealChest=w=>{const z=w.aseal,p=w.player;return !!z&&z.broken&&!z.looted&&!!p&&Math.hypot(p.x-z.chest.x,(p.y-z.chest.y)*1.2)<POCKET.chestR+10;};
+/* improve26-r26a-nov6 #2/#5 (kidsim9 #2, shot 01; audit17 #20): right after "SEAL BROKEN!" the hero stands at the barrier, beside a rolled Scholar's Seal
+   (42-54 px from the chest in e2/e3), and E opened its review while the floor said "Walk in for the cache". While the cache is unlooted, E and the prompt
+   reach it from as far as the seal's own words show (POCKET.see), and main.js checks it before the Scholar's Seal; the cache pays as walking in does */
+export const CACHE_E=POCKET.see;
+export const nearSealChest=w=>{const z=w.aseal,p=w.player;return !!z&&z.broken&&!z.looted&&!!p&&Math.hypot(p.x-z.chest.x,(p.y-z.chest.y)*1.2)<CACHE_E;};
 
 /* drawing: depth-sorted items (World.enemyLayer). The barrier: two rune pillars and a translucent dome between them over the chest, one pip
    per ability still needed (lit as each different ability lands), and its words above it while the hero is near. Reduced motion holds it still. */
