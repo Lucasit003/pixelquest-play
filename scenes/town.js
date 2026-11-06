@@ -23,6 +23,9 @@ import {drawTrail} from '../gfx/hero-trail.js';
 import {heroGlow} from '../game/hero-glow.js'; /* improve25-r25f-nov5 #4 */
 import {drawHeroGlow} from '../gfx/hero-glow.js';
 import {trailOf} from '../game/prizes.js';
+import {wornFx} from '../game/study-looks.js'; /* improve25-r25t-nov5 #1 */
+import {drawStepTrail, drawWeaponGlow, swinging} from '../gfx/study-looks.js';
+import {equipmentAnchors} from '../gfx/actors/render.js';
 import {FURN, footprint, placeFurniture, spare, wallSpot, wallFits, WALL, /* improve25-r25q-nov5 #2 */furnNoun, plaqueMetal} from '../game/furniture.js';
 import {homePlaque} from '../ui/trophy-hall.js';
 import {talk, talkAndAdvance, nameOf, holds, stepIdOf, STORY, /* improve20-r22f-nov4 #1 */beatLines, lineText} from '../game/npcs.js';
@@ -1223,6 +1226,8 @@ export function drawHub(c, state, t, kit) {
   const figures = [];
   /* improve20-r7a-nov1 #8: a worn trail behind the hero (gfx/hero-trail.js, cosmetic) */
   { const tr = trailOf(H.save); if (tr) figures.push({y: p.y + 12, draw: () => drawTrail(c, p, tr, undefined, state.motion !== false)}); }
+  /* improve25-r25t-nov5 #1: the worn study looks (gfx/study-looks.js): step sparkles and the weapon glow, drawn just before the hero so the sprite and its outline sit over them */
+  { const tl = wornFx(H.save, 'trail'), gl = wornFx(H.save, 'glow'); if (tl || gl) figures.push({y: p.y - .5, draw: () => { const mo = state.motion !== false; drawStepTrail(c, p, tl, undefined, mo); drawWeaponGlow(c, p, gl, gl ? equipmentAnchors(p, t) : null, swinging(p), undefined, mo); }}); }
   figures.push({y: p.y, hero: true, draw: () => kit.actor(c, p, t)});
   /* ownernotes-a-nov1: while the hero pets it, the companion steps in close (PAT_SPOT), where his hand reaches when he kneels */
   if (state.pet) { const [dx, dy] = pettingNow(state.pet) ? PAT_SPOT : [22, 9]; figures.push({y: p.y + 10, draw: () => kit.companion(c, state.pet, p.x - dx * p.facing, p.y + dy, t, p.moving, p.facing, state.motion)}); }

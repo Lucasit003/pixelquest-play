@@ -4667,6 +4667,10 @@ html:not(.m-mode) dialog[data-view=lesson-summary] #modal-content>.result:is([da
 html:not(.m-mode) dialog[data-view=lesson-summary] #modal-content>.result>.sum-more{order:5;font-size:16px;text-align:center}
 html:not(.m-mode) dialog[data-view=lesson-summary] #modal-content>.result>.sum-more>summary{cursor:pointer;opacity:.8}
 }
+/* improve25-r25t-nov5 #2: the mastery card's "New look" line in two columns, and still with motion reduced (the rest of its styles sit with
+   the other study-look rules at the end; these two media rules sit above the tablets-nov2 block, whose rules are all touch-mode tablet rules) */
+@media(min-width:700px){#modal-content>.result.result:has(>.mastery-moment):has(>.mm-look)>.road{grid-row:1/span 2}#modal-content>.result.result:has(>.mastery-moment)>.mm-look{grid-column:2;grid-row:3;align-self:center;margin:0 auto}}
+@media (prefers-reduced-motion:reduce){#modal-content .mm-look{animation:none}}
 /* improve25-r25s-nov5 #2 (placed before the tablets-nov2 block, which must stay last): a phone result card that still runs past its sheet after ui/result-phone.js phoneRow's other steps drops its height cap,
    so the button row's own sticky bottom (above) keeps Details and the red in view on first paint; the card scrolls under it */
 @media(max-height:500px) and (min-width:600px){
@@ -4835,3 +4839,37 @@ dialog[data-view=result] #result-extra>.goal-more>span{display:block;text-align:
 
 /* improve25-r25f-nov5 #4 */
 .mm-glow{margin:4px 0 0;color:#cdb6ff}
+
+/* improve25-r25t-nov5 #2: study looks (ui/study-looks-ui.js), Home -> Looks: one row per slot, Off first; earned cards wear on a click, locked ones say how many topics */
+.study-looks{grid-column:1/-1;margin:14px 0 0;padding:10px 0 0;border-top:2px dashed #c1914955}
+.study-looks h3{margin:0;font-size:18px;color:var(--gold);letter-spacing:1px}.study-looks h3 small{margin-left:8px;font-size:16px;color:var(--muted);letter-spacing:0}
+.study-looks .sl-why{margin:2px 0 6px;font-size:16px;color:var(--muted)}
+.sl-row{margin:6px 0 0}.sl-slot{margin:0 0 4px;font-size:16px;color:var(--ink)}.sl-slot small{font-size:16px;color:var(--muted)}
+.sl-cards{display:flex;flex-wrap:wrap;gap:8px}
+.sl-card{width:132px;display:grid;justify-items:center;align-content:start;gap:2px;margin:0;padding:6px 4px;background:#ffffff0a;border:2px solid #ffffff22;color:var(--ink);font:inherit;font-size:16px;text-align:center;line-height:1.15;text-transform:none;letter-spacing:0;min-height:0}
+button.sl-card{cursor:pointer}button.sl-card:hover,button.sl-card:focus-visible{border-color:var(--gold-2)}
+.sl-card.on{border-color:var(--gold);background:#ffd25a22}.sl-card strong{font-size:16px}.sl-card small{font-size:16px;color:var(--muted)}.sl-card.on small{color:var(--gold)}
+.sl-card[data-state=locked]{opacity:.62;filter:grayscale(.55)}
+.sl-swatch{position:relative;display:block;width:44px;height:30px;background:#0d1424;border:1px solid #ffffff2a;overflow:hidden;flex:none}
+.sl-swatch.sl-trail i{position:absolute;width:4px;height:4px;background:var(--look);box-shadow:0 0 0 1px #0008,0 0 4px var(--look)}
+.sl-swatch.sl-trail i:nth-child(1){left:8px;top:20px}.sl-swatch.sl-trail i:nth-child(2){left:19px;top:13px;background:var(--look-light)}.sl-swatch.sl-trail i:nth-child(3){left:30px;top:6px}
+.sl-swatch.sl-shape-leaf i{width:6px;height:3px}.sl-swatch.sl-shape-flake i,.sl-swatch.sl-shape-star i{transform:rotate(45deg)}
+.sl-swatch.sl-glow i{position:absolute;left:20px;top:3px;width:3px;height:23px;background:#dfe3ea;transform:rotate(35deg);box-shadow:0 0 5px 2px var(--look),0 0 12px 5px color-mix(in srgb,var(--look) 55%,transparent)}
+.sl-swatch.sl-shape-rainbow i{box-shadow:0 0 4px 2px #ff7a7a,0 0 8px 4px #ffd36b,0 0 13px 6px #7fb8ff}
+.sl-swatch.sl-none{background:#0d1424 linear-gradient(to top right,transparent 46%,#c2b08c88 47%,#c2b08c88 53%,transparent 54%)}
+.m-mode .sl-card{width:118px}.m-mode .sl-card small,.m-mode .sl-slot small,.m-mode .study-looks .sl-why{font-size:14px}
+/* improve25-r25t-nov5 #2: the mastery card's "New look" line (a sibling after .mastery-moment): one row; with two columns it sits under the
+   next-ability card, beside the buttons, so the card grows by no row; it pulses once like the R22F cheer */
+#modal-content .mm-look{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px;width:min(100%,460px);margin:6px auto 0;padding:4px 8px;box-sizing:border-box;border:2px solid #ffd25a88;background:#ffd25a14;font-size:16px;line-height:1.2;text-align:left;animation:r22f-card-pulse .9s steps(6) 1}
+#modal-content .mm-look .sl-swatch{width:36px;height:24px}.mm-look .sl-swatch.sl-trail i:nth-child(1){left:5px;top:16px}.mm-look .sl-swatch.sl-trail i:nth-child(2){left:15px;top:10px}.mm-look .sl-swatch.sl-trail i:nth-child(3){left:25px;top:4px}.mm-look .sl-swatch.sl-glow i{left:16px;top:1px;height:21px}
+#modal-content .mm-look-text{color:#ffe9a8;font-weight:700}#modal-content .mm-look-text small{font-weight:400;color:var(--muted);font-size:16px}
+#modal-content .mm-look .mm-look-wear{margin:0;padding:3px 12px;font-size:16px;min-height:30px;width:auto;white-space:nowrap}
+:root[data-motion=reduced] #modal-content .mm-look{animation:none}
+/* improve25-r25t-nov5 #3: the next study look on the way to the next power: one line on the HUD card, a ring segment and a meter pip in its colour */
+#next-unlock .road .road-look{grid-column:1/-1;display:flex;align-items:center;gap:6px;margin:0 0 2px;font-weight:700;letter-spacing:0;text-transform:none;color:var(--ink)}
+#next-unlock .road .road-look>i{flex:none;width:8px;height:8px;transform:rotate(45deg);background:var(--look);box-shadow:0 0 0 1px #1a1008,0 0 5px var(--look)}
+#next-unlock .road .road-look-text{display:inline;font-size:16px;line-height:1.2;color:var(--ink)}
+.am-goal-meter.pips b.look{position:relative;box-shadow:inset 0 0 0 2px var(--look)}
+.am-goal-meter.pips b.look::after{content:"";position:absolute;left:50%;top:-8px;width:6px;height:6px;margin-left:-3px;transform:rotate(45deg);background:var(--look);box-shadow:0 0 0 1px #2a1a0a}
+/* improve25-r25t-nov5 #3: the marker line grows with the text size, as the card's other small words do (improve20-y-nov1 #4) */
+:root:is([data-text="125"],[data-text="150"]):not(.m-mode) #next-unlock .road .road-look-text{font-size:var(--tx-nu,16px)}
