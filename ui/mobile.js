@@ -85,7 +85,8 @@ async function startJoystick(){
   doc().documentElement.classList.add('m-dpad');
  }
 }
-const VERB=/^(talk|leave|enter|read|search|study|open|rest|shop|buy|travel|place|pray|hire|sleep|play|pet|choose|plan|defend|ask|order|warm|browse|go)\b/i;
+/* improve26-r26g-nov6 #1: "Hang the ... plaque on the wall" names its button Hang (it said Open) */
+const VERB=/^(talk|leave|enter|read|search|study|open|rest|shop|buy|travel|place|hang|pray|hire|sleep|play|pet|choose|plan|defend|ask|order|warm|browse|go)\b/i;
 /* newplayer-oct27: a sign, board or tally is read, not opened ("Village noticeboard" said Open) */
 const READS=/notice|board|signpost|timetable|tally|map\b/i;
 export function promptVerb(text){

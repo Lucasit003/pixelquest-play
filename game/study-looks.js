@@ -34,7 +34,7 @@ export const earnedLooks=(s,n=topicsLearned(s))=>STUDY_LOOKS.filter(l=>n>=l.at);
 export const nextLook=(s,n=topicsLearned(s))=>STUDY_LOOKS.find(l=>n<l.at)||null;
 export const emptyStudyLooks=()=>({worn:{trail:null,glow:null},seen:[]});
 export function cleanStudyLooks(v,s){const o=emptyStudyLooks();if(!v||typeof v!=='object'||Array.isArray(v))return o;const n=topicsLearned(s);
- o.seen=Array.isArray(v.seen)?[...new Set(v.seen.filter(id=>typeof id==='string'&&LOOK[id]))]:[];
+ o.seen=Array.isArray(v.seen)?[...new Set(v.seen.filter(id=>typeof id==='string'&&LOOK[id]))]:[];if(v.offered===true||v.offered===1)o.offered=true;/* improve26-r26g-nov6 #2 */
  const w=v.worn&&typeof v.worn==='object'?v.worn:{};for(const k of LOOK_SLOTS){const id=w[k];if(typeof id==='string'&&LOOK[id]?.slot===k&&lookEarned(s,id,n))o.worn[k]=id;}
  return o;}
 const rec=s=>{const r=s.studyLooks;if(!r||typeof r!=='object'||!r.worn||!Array.isArray(r.seen))s.studyLooks=cleanStudyLooks(r,s);return s.studyLooks;};
@@ -67,3 +67,8 @@ export function lookMarker(s,road){if(road?.sleeping)return null;const n=topicsL
  if(!road)return {look:l,left,at:0};if(road.knowledge||!road.reachable)return {look:l,left,at:0};
  if(!(left<(road.remaining|0)))return null;return {look:l,left,at:(road.done|0)+left};}
 export const markerText=m=>m?`${m.left} more topic${m.left===1?'':'s'}: ${m.look.name}`:'';
+/* improve26-r26g-nov6 #2 (audit17 #13: an older save had 4 looks seen, none worn, and was never offered them): the wear prompt, once. A save that
+   has earned looks, has been told about every one, wears none and was never offered one (no mastery card with Wear it, no summary line since
+   this) gets one line; markOffered records it (s.studyLooks.offered, additive in v9, kept by cleanStudyLooks). '' when nothing is due */
+export const wearOffer=s=>{const r=s?.studyLooks,e=earnedLooks(s);if(!e.length||r?.offered||unseenLooks(s).length||LOOK_SLOTS.some(k=>wornLook(s,k)))return '';const l=e.at(-1);return e.length===1?`Your ${l.name} look is ready to wear: Home → Looks, then Wear it.`:`You have ${e.length} study looks ready to wear, like ${l.name}: Home → Looks, then Wear it.`;};
+export function markLookOffered(s){const r=rec(s);if(r.offered)return false;r.offered=true;return true;}

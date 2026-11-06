@@ -63,12 +63,14 @@ export function initUI(c){
  d.addEventListener('click',e=>{const b=e.target.closest?.('#modal button:not([data-title]):not([data-answer]),#ui-sheet button');if(b&&!b.disabled)sfx('ui.click');},true);
  /* The objective and next-unlock cards peek in for 8 s when their text changes (town only), then slide away,
     so the resting HUD stays in two corners. */
+ /* improve26-r26g-nov6 #4: the goal box shows a second line (a quest or gold line) */
+ const twoLineGoal=d=>[...d.querySelectorAll('#objective small')].some(e=>e.textContent.trim()&&e.getClientRects().length);
  for(const id of ['#next-unlock']){const el=d.querySelector(id);if(!el||!globalThis.MutationObserver)continue;let last='',t=0;
   /* improve20-v-nov1 #19: on a phone the card covered about a quarter of the view. There it now stays in town as a small chip (the
      ability's icon and its progress bar) and opens to the full card (.open) for 8 s when its text changes, or on a tap; the desktop
      card peeks and slides away as before */
   const phone=()=>d.documentElement.classList.contains('m-mode'),shut=()=>el.classList.remove(...(phone()?['open']:['peek','open']));
-  new MutationObserver(()=>{const txt=el.textContent;if(txt===last)return;last=txt;if(c.world?.zone!=='town'||c.world?.level)return;el.classList.add('peek','open');clearTimeout(t);t=later(shut,8000);}).observe(el,{childList:true,subtree:true,characterData:true});
+  new MutationObserver(()=>{const txt=el.textContent;if(txt===last)return;last=txt;if(c.world?.zone!=='town'||c.world?.level)return;/* improve26-r26g-nov6 #4 (R26E carried: the 844x390 goal box has two lines, plus this card and the Today chip): on a phone under a two-line goal box the card stays the compact chip (its bar and the near-look line); a tap still opens it */if(phone()&&twoLineGoal(d)){el.classList.add('peek');return;}el.classList.add('peek','open');clearTimeout(t);t=later(shut,8000);}).observe(el,{childList:true,subtree:true,characterData:true});
   el.addEventListener('click',()=>{if(!phone())return;clearTimeout(t);if(el.classList.toggle('open'))t=later(shut,8000);});}
  /* Hotbar cost and potion count become number badges: copy the leading number into data-n. */
  const bar=d.querySelector('#hotbar');

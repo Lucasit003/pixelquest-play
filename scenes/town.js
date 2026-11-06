@@ -358,7 +358,7 @@ export function hubConfirmPlacing() {
   if (!at || !placingOk(S, f, at.x, at.y)) { for (const [i, x] of was) items[i].x = x; return {ok: false, reason: `The ${furnNoun(f)/* improve25-r25q-nov5 #2 */} does not fit there. Try another spot.`}; }
   if (!placeFurniture(H.save, f.id, at.x, at.y, !!at.wall)) { H.placing = null; return {ok: false, reason: 'You have none of those left to place.'}; }
   H.placing = null;
-  return {ok: true, name: f.name};
+  return {ok: true, name: f.name, noun: furnNoun(f)/* improve26-r26g-nov6 #1: a plaque keeps its boss's capitals in the toast */};
 }
 
 /* Town restoration (map agent, tools/restore-stages.mjs): Oakhaven starts run-down and each cleared
@@ -882,7 +882,17 @@ export function hubHeads() { const S = current(), v = H.view; if (!S?.room || !v
    60 px tall), so main.js keeps a toast off him (the "Runes placed" line sat over him at the smith); null outside a room or in a fade */
 /* improve25-r25r-nov5 #1 (R25Q lead: on a phone the HUD hid the Home's back wall): every piece hung on the Home's back wall, as fractions of the
    view ({id, l, r, t, b}, the box it is drawn in), so main.js can tuck the HUD panels a hung piece is under; [] outside the Home or in a fade */
-export function hubWallBoxes() { const S = current(), v = H.view; if (S?.key !== 'home' || !v || H.fade) return []; return (H.save?.house?.items ?? []).filter(it => it.wall && FURN[it.id]).map(it => { const f = FURN[it.id]; return {id: it.id, l: (it.x - f.w / 2 - v.ox) / VIEW_W, r: (it.x + f.w / 2 - v.ox) / VIEW_W, t: (it.y - f.h - v.oy) / VIEW_H, b: (it.y - v.oy) / VIEW_H}; }); }
+export function hubWallBoxes() { const S = current(), v = H.view; if (S?.key !== 'home' || !v || H.fade) return []; /* improve26-r26g-nov6 #1: the piece being hung counts too, so the HUD tucks off its spot */const f = H.placing && FURN[H.placing], at = f?.wall ? placingSpot() : null; return [...(H.save?.house?.items ?? []), ...(at?.wall ? [{id: f.id, x: at.x, y: at.y, wall: 1, placing: true}] : [])].filter(it => it.wall && FURN[it.id]).map(it => { const f = FURN[it.id]; return {id: it.id, l: (it.x - f.w / 2 - v.ox) / VIEW_W, r: (it.x + f.w / 2 - v.ox) / VIEW_W, t: (it.y - f.h - v.oy) / VIEW_H, b: (it.y - v.oy) / VIEW_H}; }); }
+/* improve26-r26g-nov6 #1: the top of the highest piece on the Home's back wall (hung, or the wall piece being hung), world units; null on a desktop or
+   with nothing on the wall. HOME_WALL_FOOT: the share of the view's bottom the hero's feet keep out of while the view rises to it */
+export const HOME_WALL_FOOT = .12;
+const phoneMode = () => typeof document !== 'undefined' && !!document.documentElement?.classList?.contains('m-mode');
+function homeWallTop(c) {
+  if (!c?.canvas?.ownerDocument?.documentElement?.classList?.contains('m-mode')) return null;
+  let t = Infinity; for (const it of H.save?.house?.items ?? []) { const f = it.wall && FURN[it.id]; if (f) t = Math.min(t, it.y - f.h); }
+  const f = H.placing && FURN[H.placing], at = f?.wall ? placingSpot() : null; if (at?.wall) t = Math.min(t, at.y - f.h);
+  return Number.isFinite(t) ? Math.round(t) : null;
+}
 /* improve25-r25r-nov5 #1: the view's world offset as the last frame drew it (shots and tests measure the Home wall against the HUD) */
 export const hubViewOffset = () => H.view ? {...H.view} : null;
 export function hubHeroBox() { const S = current(), v = H.view, p = H.player; if (!S?.room || !v || !p || H.fade) return null; return {l: (p.x - 16 - v.ox) / VIEW_W, r: (p.x + 16 - v.ox) / VIEW_W, t: (p.y - 62 - v.oy) / VIEW_H, b: (p.y + 4 - v.oy) / VIEW_H}; }
@@ -900,7 +910,7 @@ export function promptPerson(S, q) {
 }
 /** The interact prompt for the HUD: {text} or null. */
 export function hubPrompt() {
-  if (H.placing && FURN[H.placing]) { const hang = !!placingSpot()?.wall; return {text: `${hang ? 'Hang' : 'Place'} the ${furnNoun(FURN[H.placing])/* improve25-r25q-nov5 #2 */}${hang ? ' on the wall' : ''} (Escape puts it away)`}; }
+  if (H.placing && FURN[H.placing]) { const hang = !!placingSpot()?.wall; return {text: `${hang ? 'Hang' : 'Place'} the ${furnNoun(FURN[H.placing])/* improve25-r25q-nov5 #2 */}${hang ? ' on the wall' : ''} (${/* improve26-r26g-nov6 #1: touch words on a phone, where Menu puts it away (main.js pause) */phoneMode() ? 'tap Menu to put it away' : 'Escape puts it away'})`}; }
   if (!H.near) return null;
   /* where the prompt sits (round 3: on the door, not at the hero's feet): just above the marker icon
      drawn over the door frame, as fractions of the 480x270 view */
@@ -1185,8 +1195,14 @@ export function drawHub(c, state, t, kit) {
   const hudPad = S.room && by1 - by0 > VIEW_H && typeof document !== 'undefined' && !document.documentElement.classList.contains('m-mode') ? Math.round(VIEW_H * ROOM_HUD_PAD) : 0;
   /* improve20-r21c-nov4 #8: in the phone Library the camera centres the hero in the band left of the thumb arc, and may look past the room's
      east wall by the arc's width, so the teachers on the east side (Math, Coding) and their plates are not under the buttons */
-  const arc = S.key === 'library' ? phoneArc(c, VIEW_W) : null, rpad = arc ? Math.max(0, VIEW_W - arc.left) : 0;
-  const ox = fit(bx0, bx1 + rpad, VIEW_W, H.cam.x + rpad / 2), oy = fit(by0, by1 + hudPad, VIEW_H, H.cam.y);
+  /* improve26-r26g-nov6 #4 (R26E carried: at 844x390 the hero stood under the arc at the Barracks' east side, and past the screen's edge at its east wall): the Barracks too */
+  const arc = S.key === 'library' ? phoneArc(c, VIEW_W) : S.key === 'barracks' ? phoneArc(c, VIEW_W, true) : null, rpad = arc ? Math.max(0, VIEW_W - arc.left) + (S.key === 'barracks' ? 16 : 0)/* the hero's own half-width, so at the east wall he stands clear of the arc */ : 0;
+  const ox = fit(bx0, (S.key === 'barracks' && arc ? Math.max(bx1, Math.round((p?.x ?? 0) + 16))/* improve26-r26g-nov6 #4: he can walk east of the art's bound there */ : bx1) + rpad, VIEW_W, H.cam.x + rpad / 2); let oy = fit(by0, by1 + hudPad, VIEW_H, H.cam.y);
+  /* improve26-r26g-nov6 #1 (audit17 #12, shot 182: at 844x390 a hung plaque sat above the camera unless the hero stood right under it): on a phone
+     the Home's view rises to show the back wall's hung pieces (and the piece being hung) whenever that still leaves the hero's feet above the
+     view's bottom band (12%), the joystick ghost and the thumb arc; lower in the room it eases back to hero-centred. R25R's tuck then hides the HUD
+     panel a piece is under */
+  { const wt = S.key === 'home' && by1 - by0 > VIEW_H ? homeWallTop(c) : null; if (wt != null) { const g = phoneGhost(c, VIEW_W), pa = phoneArc(c, VIEW_W), hx = H.cam.x - ox; let low = VIEW_H - Math.round(VIEW_H * HOME_WALL_FOOT); if (g && hx < g.right + 12) low = Math.min(low, g.top - 4); if (pa && hx > pa.left - 12) low = Math.min(low, pa.top - 4); oy = Math.min(oy, Math.max(by0, wt - 4, Math.round(p?.y ?? H.cam.y) - low)); } }
   H.view = {ox, oy};
   c.save();
   c.imageSmoothingEnabled = false;
@@ -1370,13 +1386,14 @@ const SUBJECT_NAME = Object.fromEntries(Object.entries(SUBJECTS).map(([id, v]) =
    (R like A, N like H) and sit on half pixels. The teachers' plates now use the font's own 16 px size, on whole pixels. */
 /* improve20-r21c-nov4 #8: on a phone, the left edge and top of the touch buttons on the right half of the view (ui/mobile.js #touch, the potion),
    in view pixels; null on a desktop. Read at most every 250 ms. */
-let arcAt = -1e9, arcBox = null;
-export function phoneArc(c, viewW) {
+let arcAt = -1e9, arcBox = null; const arcBar = {at: -1e9, box: null};
+/* improve26-r26g-nov6 #4: bar=true counts the hotbar's ability buttons too (on a phone they sit in the arc's inner ring; the Barracks camera) */
+export function phoneArc(c, viewW, bar = false) {
   const d = c?.canvas?.ownerDocument; if (!d?.documentElement?.classList?.contains('m-mode')) return null;
-  const now = globalThis.performance?.now?.() ?? 0; if (now - arcAt < 250) return arcBox; arcAt = now; arcBox = null;
+  const now = globalThis.performance?.now?.() ?? 0; if (bar) { if (now - arcBar.at < 250) return arcBar.box; arcBar.at = now; arcBar.box = null; } else { if (now - arcAt < 250) return arcBox; arcAt = now; arcBox = null; }
   const box = c.canvas.getBoundingClientRect?.(); if (!box?.width) return null; const k = box.width / viewW;
-  let l = Infinity, top = Infinity; for (const el of d.querySelectorAll('#touch button,#hud-potion')) { const r = el.getBoundingClientRect(); if (!r.width || !r.height || getComputedStyle(el).visibility === 'hidden' || getComputedStyle(el).display === 'none' || r.left < box.left + box.width / 2 || r.top < box.top + box.height * .25) continue; l = Math.min(l, r.left); top = Math.min(top, r.top); }
-  return arcBox = Number.isFinite(l) ? {left: Math.round((l - box.left) / k), top: Math.round((top - box.top) / k)} : null;
+  let l = Infinity, top = Infinity; for (const el of d.querySelectorAll(bar ? '#touch button,#hud-potion,#hotbar button' : '#touch button,#hud-potion')) { const r = el.getBoundingClientRect(); if (!r.width || !r.height || getComputedStyle(el).visibility === 'hidden' || getComputedStyle(el).display === 'none' || r.left < box.left + box.width / 2 || r.top < box.top + box.height * .25) continue; l = Math.min(l, r.left); top = Math.min(top, r.top); }
+  const out = Number.isFinite(l) ? {left: Math.round((l - box.left) / k), top: Math.round((top - box.top) / k)} : null; if (bar) arcBar.box = out; else arcBox = out; return out;
 }
 /* improve20-r22b-nov4 #5: on a phone, the right edge and top of the joystick ghost (ui/mobile.js #joy-ghost, bottom-left) in view pixels; null on a
    desktop or while it is hidden. Read at most every 250 ms. */
@@ -1401,6 +1418,10 @@ function subjectPlate(c, text, x, y, size = 16, bounds = null) {
 export const hubPlates = () => [...(H.plates || [])];
 /* improve20-r14c-nov3 #4: the people standing in the current scene (figures, the hired crew, walkers where they are now) as world boxes, head to feet, so a
    town toast or the New pet card keeps off them (the smith sat under the pet card) */
+/* improve26-r26g-nov6 #4: what a phone's HUD panels must not cover, in any hub scene (the village too), as fractions of the view: the hero (x +-14,
+   50 px tall, the drawn sprite) and the people the kid walks to (keepers, figures, the hired companion; not the walkers going by); null in a fade */
+export function hubCover() { const S = current(), v = H.view, p = H.player; if (!S || !v || H.fade) return null; const fr = (x0, x1, y0, y1) => ({l: (x0 - v.ox) / VIEW_W, r: (x1 - v.ox) / VIEW_W, t: (y0 - v.oy) / VIEW_H, b: (y1 - v.oy) / VIEW_H});
+  return {hero: p ? fr(p.x - 14, p.x + 14, p.y - 50, p.y + 2) : null, people: [...S.figures, ...crewHere(S)].filter(f => Number.isFinite(f?.x)).map(f => fr(f.x - 14, f.x + 14, f.y - 60, f.y))}; }
 export function hubPeople() { const S = current(); if (!S || H.fade) return []; return [...S.figures, ...crewHere(S), ...S.walkers.map(walkerNow)].filter(f => Number.isFinite(f?.x)).map(f => ({x: f.x - 16, y: f.y - 62, w: 32, h: 66})); }
 
 /* Ambient life at the rooms' `ambient` points and a soft flicker at their `light` points, from the

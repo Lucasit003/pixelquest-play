@@ -18,6 +18,13 @@ const st={pts:[],last:null,key:'',n:0,tips:[]};
 export const stepPoints=()=>st.pts.length;
 export const tipPoints=()=>st.tips.length;
 export function resetStudyLooks(){st.pts.length=0;st.tips.length=0;st.last=null;}
+/* improve26-r26g-nov6 #2 (audit17 #13, shot z187: in a 1x phone fight Clover Steps and Sunbeam Shine were invisible, a faint glow at 3x): under
+   PHONE_W css px wide the looks draw PHONE_BOOST times larger and stronger, capped (alpha at most ALPHA_CAP; the fight glow's radius at most
+   FIGHT_RAD_CAP view px, its core at most GLOW_CORE_CAP), so enemies, telegraphs and pickups still read through and the glow stays under the
+   sprite, never on its outline. The canvas width is read at most every 500 ms */
+export const PHONE_W=900,PHONE_BOOST=2,ALPHA_CAP=.92,FIGHT_RAD_CAP=24,GLOW_CORE_CAP=.5;
+let boostAt=-1e9,boostK=1,boostCv=null;
+export function lookBoost(c,now=globalThis.performance?.now?.()??Date.now()){const cv=c?.canvas;if(cv!==boostCv||now-boostAt>500){boostCv=cv;boostAt=now;const w=cv?.clientWidth||cv?.getBoundingClientRect?.()?.width||0;boostK=w>0&&w<PHONE_W?PHONE_BOOST:1;}return boostK;}
 /* one footfall's shape, centred on x,y at size k (1 = full) */
 function mark(c,shape,x,y,k,col,light){const r=Math.max(1,Math.round(2.6*k));
  if(shape==='leaf'){c.fillStyle=col;c.fillRect(x-r,y,r*2,Math.max(1,r-1));c.fillRect(x-Math.max(1,r-1),y-1,Math.max(1,r*2-2),1);c.fillStyle=light;c.fillRect(x,y-1,1,1);return;}
@@ -30,12 +37,12 @@ export function drawStepTrail(c,p,look,now=globalThis.performance?.now?.()??Date
  const d=st.last?Math.hypot(p.x-st.last.x,p.y-st.last.y):0;if(!st.last||d>48){st.pts.length=0;st.last={x:p.x,y:p.y};}
  else if(d>=STEP){st.n++;const side=st.n%2?1:-1,dx=(p.x-st.last.x)/d,dy=(p.y-st.last.y)/d;st.pts.push({x:p.x-dy*3*side,y:p.y+dx*1.5*side+2,t:s,n:st.n});st.last={x:p.x,y:p.y};}
  const life=motion?LIFE:LIFE*.7,cap=fight?FIGHT_MAX:MAX;while(st.pts.length&&(s-st.pts[0].t>life||st.pts.length>cap))st.pts.shift();if(!st.pts.length)return;
- const rim=shade(look.color),base=fight?.7:1;c.save();
- for(const q of st.pts){const u=Math.max(0,Math.min(1,(s-q.t)/life)),a=(1-u)*base,k=(fight?.8:1)*(motion?1-u*.35:1),x=Math.round(q.x),y=Math.round(q.y-(motion?u*5:0));
+ const rim=shade(look.color),B=lookBoost(c),base=Math.min(ALPHA_CAP,(fight?.7:1)*B)/* improve26-r26g-nov6 #2 */;c.save();
+ for(const q of st.pts){const u=Math.max(0,Math.min(1,(s-q.t)/life)),a=(1-u)*base,k=(fight?.8:1)*B*(motion?1-u*.35:1),x=Math.round(q.x),y=Math.round(q.y-(motion?u*5:0));
   /* the rim first (1 px down), then the mark; a twinkle on every other footfall while motion is on */
   c.globalAlpha=a*.7;mark(c,look.shape,x,y+1,k,rim,rim);c.globalAlpha=a;const tw=motion&&q.n%2===0&&Math.sin(s*14+q.n)>.4;mark(c,look.shape,x,y,k,tw?look.light:look.color,look.light);
   /* two specks thrown up beside it (fixed offsets from the footfall's own number, never random), rising a little faster */
-  const sy=Math.round(motion?u*4:0);for(const [ox,oy,cl] of [[-5+(q.n*3)%3,-3,look.color],[4-(q.n*5)%3,-5,look.light]]){c.globalAlpha=a*.9;c.fillStyle=rim;c.fillRect(x+ox,y+oy-sy+1,2,2);c.fillStyle=cl;c.fillRect(x+ox,y+oy-sy,2,2);}}
+  const sy=Math.round(motion?u*4:0),sz=2*B;for(const [ox,oy,cl] of [[-5+(q.n*3)%3,-3,look.color],[4-(q.n*5)%3,-5,look.light]]){c.globalAlpha=a*.9;c.fillStyle=rim;c.fillRect(x+ox*B,y+oy*B-sy+1,sz,sz);c.fillStyle=cl;c.fillRect(x+ox*B,y+oy*B-sy,sz,sz);}}
  c.restore();}
 /* the hero's scale: the anchors' default chest point sits 16 art px in front of the feet (gfx/actors/hero-sprites.js anchorsFromMeta), so
    their distance gives the drawn scale in town (.85) and in a level alike; .85 when there are none */
@@ -46,13 +53,13 @@ export const handAt=(p,k)=>({x:p.x+(p.facing<0?-1:1)*8*k,y:p.y-(p.z||0)-15*k});
 /* anchors: equipmentAnchors(p, time) (read for the scale); swing: the hero is mid-attack (swinging(p)) */
 export function drawWeaponGlow(c,p,look,anchors,swing=false,now=globalThis.performance?.now?.()??Date.now(),motion=true,{fight=false}={}){if(!c||!p)return;
  if(!look){st.tips.length=0;return;}const s=now/1000,col=hueNow(look,s,motion),[r,g,b]=col.startsWith('#')?rgb(col):hsl(col),k=lookScale(p,anchors),h=handAt(p,k),face=p.facing<0?-1:1;
- const cx=Math.round(h.x),cy=Math.round(h.y),pulse=motion?.88+.12*Math.sin(s*2.2):1,rad=Math.round(((fight?10:12)+(swing?3:0))*k*1.4),f=fight?.6:1;
+ const cx=Math.round(h.x),cy=Math.round(h.y),pulse=motion?.88+.12*Math.sin(s*2.2):1,B=lookBoost(c)/* improve26-r26g-nov6 #2 */,r0=((fight?10:12)+(swing?3:0))*k*1.4,rad=Math.round(B>1?(fight?Math.min(FIGHT_RAD_CAP,r0*1.7):r0*1.5):r0),f=B>1?Math.min(GLOW_CORE_CAP/.5,(fight?.6:1)*B):fight?.6:1;
  c.save();
  /* a soft tint of the look's colour on what is behind the hand (reads on pale cobbles too), then an additive core */
  let grd=c.createRadialGradient(cx,cy,0,cx,cy,rad);grd.addColorStop(0,`rgba(${r},${g},${b},${.5*f*pulse})`);grd.addColorStop(.6,`rgba(${r},${g},${b},${.2*f*pulse})`);grd.addColorStop(1,`rgba(${r},${g},${b},0)`);c.fillStyle=grd;c.beginPath();c.arc(cx,cy,rad,0,Math.PI*2);c.fill();
- c.globalCompositeOperation='lighter';const r2=Math.round(rad*.55);grd=c.createRadialGradient(cx,cy,0,cx,cy,r2);grd.addColorStop(0,`rgba(${r},${g},${b},${.45*f*pulse*(swing?1.25:1)})`);grd.addColorStop(1,`rgba(${r},${g},${b},0)`);c.fillStyle=grd;c.beginPath();c.arc(cx,cy,r2,0,Math.PI*2);c.fill();
+ c.globalCompositeOperation='lighter';const r2=Math.round(rad*.55);grd=c.createRadialGradient(cx,cy,0,cx,cy,r2);grd.addColorStop(0,`rgba(${r},${g},${b},${Math.min(GLOW_CORE_CAP,.45*f*pulse*(swing?1.25:1))})`);grd.addColorStop(1,`rgba(${r},${g},${b},0)`);c.fillStyle=grd;c.beginPath();c.arc(cx,cy,r2,0,Math.PI*2);c.fill();
  /* three motes circling the hand (held in place when motion is reduced), in the look's light colour on a dark rim */
- c.globalCompositeOperation='source-over';const lc=look.shape==='rainbow'?col:look.light,dk=shade(look.shape==='rainbow'?'#7a5cff':look.color,.35);for(let i=0;i<3;i++){const an=(motion?s*1.4:0)+i*2.094,mx=Math.round(cx+Math.cos(an)*rad*.62),my=Math.round(cy+Math.sin(an)*rad*.4);c.globalAlpha=.8*f;c.fillStyle=dk;c.fillRect(mx-1,my,3,2);c.fillStyle=lc;c.fillRect(mx-1,my-1,2,2);}c.globalAlpha=1;
+ c.globalCompositeOperation='source-over';const lc=look.shape==='rainbow'?col:look.light,dk=shade(look.shape==='rainbow'?'#7a5cff':look.color,.35);for(let i=0;i<3;i++){const an=(motion?s*1.4:0)+i*2.094,mx=Math.round(cx+Math.cos(an)*rad*.62),my=Math.round(cy+Math.sin(an)*rad*.4);c.globalAlpha=Math.min(ALPHA_CAP,.8*f);c.fillStyle=dk;c.fillRect(mx-B,my,2*B+1,2*B);c.fillStyle=lc;c.fillRect(mx-B,my-B,2*B,2*B);}c.globalAlpha=1;
  /* the swing: a short crescent of glints in front of the hero, swept by the swing's own progress; at most TIP_MAX, none when motion is reduced */
  if(swing&&motion){const u=Math.min(1,(+p.animAge||0)/SWING_AGE),R=20*k,ox=p.x+face*3*k,oy=p.y-(p.z||0)-20*k,ang=-1.1+2.2*u,q={x:ox+face*Math.cos(ang)*R,y:oy+Math.sin(ang)*R,t:s};const lt=st.tips.at(-1);if(!lt||Math.hypot(q.x-lt.x,q.y-lt.y)>=2)st.tips.push(q);}else st.tips.length=0;
  while(st.tips.length&&(s-st.tips[0].t>.2||st.tips.length>TIP_MAX))st.tips.shift();

@@ -4749,6 +4749,20 @@ html.in-town #objective .goal-gold{color:var(--ink-2);opacity:.92}
 .hall-next-pic{display:block;align-self:center;width:132px;height:147px;image-rendering:pixelated}
 html.m-mode .hall-next-pic{width:88px;height:98px}
 .hall-gain{margin:0;color:#e9dcb6;font-size:16px}
+/* improve26-r26g-nov6 (placed before the tablets-nov2 block, which must stay last). #1 (audit17 #12): while a piece is being placed, a phone's prompt
+   sits at the bottom between the stick and the thumb arc, off the back wall and the goal box (main.js #prompt.placing) */
+html.m-mode #prompt.placing{top:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 10px)}
+/* #2 (audit17 #13, shot 31): before the first topic of a road the look's pip is an empty pip (its diamond stays, dimmer) */
+.am-goal-meter.pips b.look.look-wait{box-shadow:none}
+.am-goal-meter.pips b.look.look-wait::after{opacity:.6}
+/* #2 (audit17 #13): the phone town chip (the next-ability card at rest: icon and bar) also shows the near-look line desktop shows ("3 more topics:
+   Snowflake Steps") as a second row; the bar keeps its 56 px */
+html.m-mode.in-town #next-unlock.peek:not(.open) .road:has(>.road-look){grid-template-columns:32px auto;row-gap:2px}
+html.m-mode.in-town #next-unlock.peek:not(.open) .road:has(>.road-look)>.road-pip,html.m-mode.in-town #next-unlock.peek:not(.open) .road:has(>.road-look)>.am-goal-meter{width:56px;justify-self:start}
+html.m-mode.in-town #next-unlock.peek:not(.open) .road>.road-look{display:flex;grid-row:2;grid-column:1/-1;margin:0;white-space:nowrap}
+html.m-mode.in-town #next-unlock.peek:not(.open) .road>.road-look .road-look-text{line-height:1.15;font-size:16px}
+/* #4 (R26E carried): on a phone in town a HUD panel over the hero or a person he walks to fades (main.js npcUnder, PHONE_COVER) */
+html.m-mode :is(#objective,#next-unlock,#today-chip).cover-under{opacity:.28;transition:opacity .2s}
 /* tablets-nov2 (round 9 item 12): the tablet sweep (1024x768, 1180x820, 1280x800, 1366x1024, 1180x740 touch). A tablet is a touch screen at
    least 600 css px on its short side (ui/mobile.js tabletSize); phones in landscape are 430 px tall at most, so (min-height:600px) never
    reaches them, and every rule here sits under html.m-mode, so desktops are untouched. */
